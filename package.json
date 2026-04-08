@@ -2,10 +2,19 @@
   "name": "ondo-flutter-tests",
   "version": "1.0.0",
   "description": "E2E testing for Ondo Flutter App",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "source-inventory:generate": "python3 scripts/source_inventory.py generate",
     "source-inventory:check": "python3 scripts/source_inventory.py check",
     "repo:sync": "npm run source-inventory:generate",
+    "pencil:version": "npx -y @pencil.dev/cli version",
+    "pencil:login": "npx -y @pencil.dev/cli login",
+    "pencil:status": "npx -y @pencil.dev/cli status",
+    "pencil:interactive": "npx -y @pencil.dev/cli interactive",
     "lint": "echo \"No frontend lint configured in CI. Skipping.\"",
     "typecheck": "echo \"No static typecheck configured in CI. Skipping.\"",
     "build": "echo \"No frontend build configured in CI. Skipping.\"",
@@ -22,6 +31,8 @@
     "test:report": "playwright show-report",
     "test:install": "playwright install",
     "test:codegen": "playwright codegen",
+    "rn:typecheck": "npm run typecheck --workspace @fortune/product-contracts --workspace @fortune/design-tokens --workspace @fortune/mobile-rn",
+    "rn:test": "npm run test --workspace @fortune/product-contracts",
     "lighthouse": "lhci autorun",
     "serve:build": "npx serve build/web -l 3000 --single",
     "paper:guard": "node scripts/design/paper_sync_guard.js"
@@ -30,6 +41,8 @@
     "@playwright/test": "^1.40.0",
     "@supabase/supabase-js": "^2.86.2",
     "openai": "^6.10.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "sharp": "^0.34.5"
   },
   "author": "Fortune Team",

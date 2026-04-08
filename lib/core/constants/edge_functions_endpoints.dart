@@ -35,6 +35,9 @@ class EdgeFunctionsEndpoints {
   static const String naverOauth = '/naver-oauth';
   static const String mbtiEnergyTracker = '/mbti-energy-tracker';
   static const String personalityDna = '/personality-dna';
+  static const String constellationFortune = '/fortune-constellation';
+  static const String zodiacAnimalFortune = '/fortune-zodiac-animal';
+  static const String birthstoneFortune = '/fortune-birthstone';
 
   // ============================================================
   // Token & Payment (아직 Edge Function 미생성 - 기존 API 사용)
@@ -88,7 +91,13 @@ class EdgeFunctionsEndpoints {
   static const String movingFortune = '/fortune-moving';
 
   // 가족 운세 (통합)
-  static const String familyFortune = '/fortune-family';
+  static const String familyHealthFortune = '/fortune-family-health';
+  static const String familyRelationshipFortune =
+      '/fortune-family-relationship';
+  static const String familyChildrenFortune = '/fortune-family-children';
+  static const String familyChangeFortune = '/fortune-family-change';
+  static const String familyWealthFortune = '/fortune-family-wealth';
+  static const String familyFortune = familyHealthFortune;
 
   // 행운 아이템
   static const String luckyItemsFortune = '/fortune-lucky-items';
@@ -135,7 +144,7 @@ class EdgeFunctionsEndpoints {
       'traditional-saju': traditionalSaju,
       'face-reading': faceReadingFortune,
       'mbti': mbtiFortune,
-      'personality-dna': mbtiFortune,
+      'personality-dna': personalityDna,
       'talent': talentFortune,
 
       // 연애/관계
@@ -167,8 +176,19 @@ class EdgeFunctionsEndpoints {
       'tarot': tarotFortune,
 
       // 가족/반려
-      'family': '/fortune-family-health', // concern 기반 subtype은 호출부에서 결정
+      'family': familyFortune,
+      'family-health': familyHealthFortune,
+      'family-relationship': familyRelationshipFortune,
+      'family-children': familyChildrenFortune,
+      'family-change': familyChangeFortune,
+      'family-wealth': familyWealthFortune,
       'pet-compatibility': petCompatibilityFortune,
+
+      // 프로필 기반 별자리
+      'zodiac': constellationFortune,
+      'constellation': constellationFortune,
+      'zodiac-animal': zodiacAnimalFortune,
+      'birthstone': birthstoneFortune,
 
       // 유틸/인터랙션
       'wish': analyzeWish,

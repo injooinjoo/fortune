@@ -1,639 +1,117 @@
 # 인사이트 시스템 가이드
 
-> 최종 업데이트: 2025.01.16
+> 최종 업데이트: 2026.04.06
 
-## 개요
+Ondo의 운세/인사이트 시스템은 사용자 노출 surface, 카테고리 로딩, 결과 스키마, 비용 정책을 한 묶음으로 다뤄야 합니다. 이 문서는 현재 repo 기준 bucket과 런타임 흐름을 고정합니다.
 
-Fortune App의 인사이트 시스템은 **72% API 비용 절감**을 위한 최적화된 프로세스를 사용합니다.
-
-### 인사이트 통계 (2025.01.16)
+## 시스템 통계
 
 | 항목 | 수치 |
 |------|------|
-| 인사이트 Edge Functions | 40개 |
-| 유틸리티 Functions | 22개 |
-| 인사이트 카테고리 | 13개 |
-| 토큰 전용 | 8개 |
-| 무료 전용 | 1개 (게임 강화운세) |
+| Fortune Edge Functions | 44개 |
+| Utility Functions | 28개 |
+| Total Functions | 72개 (`_shared` 제외) |
+| 카테고리 로딩 | Firebase Remote Config + fallback defaults |
 
----
+### Fortune bucket 기준
 
-## 인사이트 조회 프로세스 (6단계)
+- `fortune-*` 접두사 함수 43개
+- `personality-dna` 1개
+- 합계 44개
 
-```
-인사이트 보기 클릭
-    ↓
-1️⃣ 개인 캐시 확인
-    ├─ 오늘 동일 조건으로 이미 조회? → YES → DB 결과 즉시 반환
-    └─ NO ↓
+`personality-dna`는 접두사는 다르지만 사용자에게 노출되는 성격/운세 분석 surface이고, `FortuneCategory`에도 직접 연결되므로 본 문서와 [25-fortune-result-schemas.md](25-fortune-result-schemas.md)에서는 운세 bucket으로 포함합니다.
 
-2️⃣ DB 풀 크기 확인
-    ├─ 동일 조건 전체 데이터 ≥1000개? → YES → DB 랜덤 선택 + 저장
-    └─ NO ↓
+## 카테고리 소스 오브 트루스
 
-3️⃣ 30% 랜덤 선택
-    ├─ Math.random() < 0.3? → YES → DB 랜덤 선택 + 저장
-    └─ NO (70%) ↓
+운세 카테고리는 하드코딩 목록이 아니라 Remote Config 우선 구조입니다.
 
-4️⃣ 프리미엄 확인 & API 호출
-    └─ Gemini 2.0 Flash Lite 호출 → DB 저장 ↓
-
-5️⃣ 결과 페이지 표시 (분기)
-    ├─ 프리미엄 사용자? → YES → 전체 결과 즉시 표시
-    └─ 일반 사용자? → NO → 프리미엄 유도 표시
-```
-
----
-
-## 구현 로직
-
-### 1단계: 개인 캐시 확인
-
-```dart
-final existingResult = await supabase
-  .from('fortune_results')
-  .select()
-  .eq('user_id', userId)
-  .eq('fortune_type', fortuneType)
-  .gte('created_at', todayStart)
-  .lte('created_at', todayEnd)
-  .matchConditions(conditions)
-  .maybeSingle();
-
-if (existingResult != null) return existingResult; // 즉시 반환
-```
-
-### 2단계: DB 풀 크기 확인
-
-```dart
-final count = await supabase
-  .from('fortune_results')
-  .count()
-  .eq('fortune_type', fortuneType)
-  .matchConditions(conditions);
-
-if (count >= 1000) {
-  final randomResult = await getRandomFromDB(conditions);
-  await Future.delayed(Duration(seconds: 5)); // 5초 대기
-  await saveToUserHistory(userId, randomResult);
-  return randomResult;
-}
-```
-
-### 3단계: 30% 랜덤 선택
-
-```dart
-final random = Random().nextDouble();
-
-if (random < 0.3) {
-  final randomResult = await getRandomFromDB(conditions);
-  await Future.delayed(Duration(seconds: 5));
-  await saveToUserHistory(userId, randomResult);
-  return randomResult;
-} else {
-  // 70% 확률로 API 호출 진행
-  proceedToAPICall();
-}
-```
-
----
-
-## 인사이트별 동일 조건 정의
-
-각 인사이트마다 "동일 조건"을 다르게 정의해야 합니다:
-
-### 일일 인사이트 (Daily)
-```dart
-conditions = {
-  'period': 'daily' | 'weekly' | 'monthly',
-  // 날짜는 제외 (매일 새로운 운세)
-}
-```
-
-### 연애 인사이트 (Love)
-```dart
-conditions = {
-  'saju': user.sajuData,
-  'date': today,
-}
-```
-
-### 타로 (Tarot)
-```dart
-conditions = {
-  'spread_type': 'basic' | 'love' | 'career',
-  'selected_cards': [1, 5, 10],
-  // 날짜 제외 (카드 조합만 중요)
-}
-```
-
-### 직업 운세 (Career)
-```dart
-conditions = {
-  'saju': user.sajuData,
-  'job_category': 'developer' | 'designer',
-  'date': today,
-}
-```
-
-### 이사운 (Moving)
-```dart
-conditions = {
-  'saju': user.sajuData,
-  'move_date': selectedDate,
-  'direction': selectedDirection,
-}
-```
-
-### 궁합 (Compatibility)
-```dart
-conditions = {
-  'user_saju': user.sajuData,
-  'partner_saju': partner.sajuData,
-}
-```
-
-### 작명 운세 (Naming)
-```dart
-conditions = {
-  'mother_saju': mother.sajuData,
-  'expected_birth_date': expectedDate,
-  'baby_gender': 'male' | 'female' | 'unknown',
-  'family_name': familyName,
-}
-```
-
-### 가족운 (Family)
-```dart
-// family-change, family-children, family-health, family-relationship, family-wealth
-conditions = {
-  'saju': user.sajuData,
-  'family_type': 'change' | 'children' | 'health' | 'relationship' | 'wealth',
-  'family_members': familyMembersList,  // 가족 구성원 사주
-  'date': today,
-}
-```
-
-### 전생/윤회 (Past-Life)
-```dart
-conditions = {
-  'saju': user.sajuData,
-  'birth_time': birthTime,
-  // 사주로만 분석, 날짜 무관
-}
-```
-
-### 시험운 (Exam)
-```dart
-conditions = {
-  'saju': user.sajuData,
-  'exam_type': 'college' | 'certification' | 'job_interview',
-  'exam_date': examDate,
-}
-```
-
-### 셀럽 매칭 (Celebrity)
-```dart
-conditions = {
-  'user_saju': user.sajuData,
-  'celebrity_id': selectedCelebrityId,
-  // 셀럽 사주는 고정값
-}
-```
-
-### 재물운 (Wealth/Investment)
-```dart
-conditions = {
-  'saju': user.sajuData,
-  'investment_type': 'stock' | 'realestate' | 'crypto' | 'general',
-  'date': today,
-}
-```
-
-### 펫 궁합 (Pet Compatibility)
-```dart
-conditions = {
-  'user_saju': user.sajuData,
-  'pet_type': 'dog' | 'cat' | 'bird' | 'etc',
-  'pet_birth_date': petBirthDate,  // optional
-}
-```
-
-### 오늘의 코디 (OOTD)
-```dart
-conditions = {
-  'saju': user.sajuData,
-  'gender': 'male' | 'female',
-  'season': currentSeason,
-  'date': today,
-}
-```
-
-### 풍수 인테리어 (Home Fengshui)
-```dart
-conditions = {
-  'saju': user.sajuData,
-  'room_type': 'bedroom' | 'living' | 'office' | 'entrance',
-  'direction': houseDirection,
-}
-```
-
-### 신년운세 (New Year)
-```dart
-conditions = {
-  'saju': user.sajuData,
-  'year': targetYear,  // 2025, 2026 등
-}
-```
-
-### 게임 강화운세 (Game Enhance)
-```dart
-// ⚠️ 무료, 입력 없음, 즉시 결과
-conditions = {
-  'saju': user.sajuData,
-  // 추가 입력 없음 - 칩 탭 시 즉시 호출
-}
-```
-
-### MBTI 운세 (MBTI)
-```dart
-conditions = {
-  'saju': user.sajuData,
-  'mbti': 'INFP' | 'ENTJ' | ...,
-  'date': today,
-}
-```
-
-### 건강 문서 (Health Document)
-```dart
-conditions = {
-  'saju': user.sajuData,
-  'health_data': {
-    'blood_pressure': value,
-    'heart_rate': value,
-    'steps': value,
-  },
-  'date': today,
-}
-```
-
----
-
-## 구독 시스템
-
-### 구독자 vs 일반 사용자
-
-| 구분 | 구독자 | 일반 |
-|------|---------|------|
-| 토큰 보너스 | 월 50개 | 없음 |
-
-**핵심**: 구독 = 토큰 정기구매. 구독자도 운세 이용 시 토큰 소비 필수.
-
-### 구독 상태 확인 방법
-
-```dart
-// 구독 상태 확인
-final tokenState = ref.read(tokenProvider);
-final premiumOverride = await DebugPremiumService.getOverrideValue();
-final isSubscribed = premiumOverride ?? tokenState.hasUnlimitedAccess;
-```
-
----
-
-## 수익화 모델 (토큰)
-
-> **상세 정책은 [22-business-model.md](22-business-model.md) 참조**
-
-### 요약
-
-| 모델 | 운세 수 | 특징 |
-|------|--------|------|
-| 🆓 **무료** | 5개 | 제한 없이 무료 |
-| 🪙 **토큰** | 31개 | 토큰 소비 |
-
-### 토큰 운세 (9개)
-- newYear (5개), traditional (5개), naming (7개)
-- babyNickname (5개), yearlyEncounter (3개), celebrity (5개)
-- lotto (3개), exam (3개), ootdEvaluation (3개)
-
-### 토큰 소비 코드
-
-```dart
-// 토큰 소비
-final tokenNotifier = ref.read(tokenProvider.notifier);
-await tokenNotifier.consumeTokens(
-  amount: getTokenCost(fortuneType),
-  fortuneType: fortuneType,
-);
-```
-
----
-
-## UnifiedFortuneService 사용법
-
-### 기본 사용
-
-```dart
-final fortuneService = ref.read(unifiedFortuneServiceProvider);
-
-final result = await fortuneService.getFortune(
-  fortuneType: 'daily',
-  inputConditions: InputConditions(
-    birthDate: DateTime(1990, 1, 1),
-    birthTime: '오시',
-    gender: 'male',
-  ),
-  conditions: FortuneConditions.daily(period: 'daily'),
-  isPremium: isPremium,
-);
-```
-
-### FortuneConditions 클래스
-
-```dart
-abstract class FortuneConditions {
-  String getConditionsHash();
-  Map<String, dynamic> buildAPIPayload();
-}
-
-class DailyFortuneConditions extends FortuneConditions {
-  final String period;
-
-  @override
-  String getConditionsHash() => 'daily_$period';
-
-  @override
-  Map<String, dynamic> buildAPIPayload() => {'period': period};
-}
-```
-
----
-
-## DB 스키마
-
-### fortune_results 테이블
-
-```sql
-CREATE TABLE fortune_results (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID REFERENCES auth.users(id),
-  fortune_type TEXT NOT NULL,
-  result_data JSONB NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  conditions_hash TEXT NOT NULL,
-
-  -- 운세별 조건 필드 (인덱싱용)
-  saju_data JSONB,
-  date DATE,
-  period TEXT,
-  selected_cards JSONB,
-
-  -- 복합 인덱스
-  CONSTRAINT unique_user_fortune_today
-    UNIQUE(user_id, fortune_type, date, conditions_hash)
-);
-
--- 성능 최적화 인덱스
-CREATE INDEX idx_fortune_type_conditions
-  ON fortune_results(fortune_type, conditions_hash, created_at DESC);
-
-CREATE INDEX idx_user_fortune_date
-  ON fortune_results(user_id, fortune_type, date DESC);
-```
-
----
-
-## 비용 절감 효과
-
-### 가정
-- 일일 사용자: 10,000명
-- 운세 종류: 39개
-- API 호출 비용: 건당 $0.01
-
-### 기존 방식 (100% API 호출)
-```
-10,000명 × 평균 3개 운세 = 30,000 API 호출/일
-30,000 × $0.01 = $300/일 = $9,000/월
-```
-
-### 최적화 방식
-```
-1단계 캐시: 20% 절감 (동일 사용자 재조회)
-2단계 DB풀: 50% 절감 (1000개 이상인 운세)
-3단계 랜덤: 30% 절감 (70%만 API 호출)
-
-실제 API 호출: 30,000 × 0.8 × 0.5 × 0.7 = 8,400 호출
-8,400 × $0.01 = $84/일 = $2,520/월
-
-절감액: $6,480/월 (72% 절감)
-```
-
----
-
-## 주요 파일
-
-| 기능 | 파일 |
+| 항목 | 기준 |
 |------|------|
-| 프리미엄 확인 | `lib/core/services/debug_premium_service.dart` |
-| 블러 위젯 | `lib/core/widgets/blurred_fortune_content.dart` |
-| FortuneResult | `lib/core/models/fortune_result.dart` |
-| UnifiedFortuneService | `lib/core/services/unified_fortune_service.dart` |
-| 운세 페이지들 | `lib/features/fortune/presentation/pages/` |
+| 서비스 | `lib/services/remote_config_service.dart` |
+| 키 | `fortune_categories_v1` |
+| 버전 키 | `fortune_categories_version` |
+| fallback | `FortuneCategory.defaults` |
+| 엔티티 | `lib/features/fortune/domain/entities/fortune_category.dart` |
 
----
+### 로딩 규칙
 
-## 관상 (Face Reading) 시스템
+1. 앱 부팅 후 `RemoteConfigService.initialize()` 수행
+2. `fortune_categories_v1` JSON 파싱 시도
+3. 파싱 성공 시 Remote Config 카테고리 사용
+4. 실패 또는 빈 값이면 `FortuneCategory.defaults` 사용
 
-관상 운세는 별도의 V2 시스템으로 운영됩니다.
+## 운세 실행 흐름
 
-### 핵심 특징
+현재 인사이트 조회는 아래 흐름을 기본으로 봅니다.
 
-| 항목 | 설명 |
-|------|------|
-| 타겟 | 2-30대 여성 |
-| 핵심 가치 | 위로·공감·공유 (자기계발 X) |
-| 말투 | 친근한 대화형 (~예요, ~해 보세요) |
-| 성별 분기 | 여성: 연애/메이크업, 남성: 리더십/커리어 |
-
-### App Store 컴플라이언스
-
-**외부 표현 (심사용)**:
-- "AI 얼굴 분석"
-- "자기발견"
-- "성격 분석"
-
-**사용 금지 단어**:
-- ~~운세~~, ~~점술~~, ~~fortune~~, ~~horoscope~~
-
-### V2 무료/프리미엄 분기
-
-| 무료 | 프리미엄 |
-|------|----------|
-| 우선순위 인사이트 3가지 | 상세 분석 전체 |
-| 컨디션/감정 요약 | 컨디션/감정 상세 |
-| 요약형 오관/십이궁 | 전체 오관/십이궁 |
-| Watch 데이터 | 관계 인상 분석 |
-| - | 스타일 추천 (성별별) |
-
-### 상세 문서
-
-**전체 가이드**: [17-face-reading-system.md](17-face-reading-system.md)
-
----
-
-## 채팅 기반 운세 조회 (Chat-First)
-
-### 개요
-
-채팅 인터페이스를 통한 운세 조회 프로세스. 기존 6단계 프로세스를 채팅 흐름으로 확장.
-
-### 채팅 운세 조회 흐름
-
-```
-사용자 입력 (채팅/칩 탭)
+```text
+사용자 입력/설문
     ↓
-1️⃣ 의도 분석 (로컬)
-    ├─ 운세 유형 감지? → YES → 해당 유형으로 진행
-    └─ 불명확? → 추천 칩 표시
+1. 사용자별 당일 캐시 확인
     ↓
-2️⃣ 기존 6단계 프로세스 실행
-    └─ (캐시 → DB풀 → 랜덤 → API → 결과)
+2. cohort/db pool 확인
     ↓
-3️⃣ FortuneResult → ChatMessage 변환
-    ├─ 요약 메시지 (공개)
-    ├─ 상세 섹션들 (블러 적용)
-    └─ 후속 추천 칩
+3. 조건 충족 시 기존 결과 재사용 또는 랜덤 선택
     ↓
-4️⃣ 순차적 채팅 UI 표시
-    └─ 500ms 간격 애니메이션
+4. 필요 시 Edge Function / LLM 호출
+    ↓
+5. 결과 저장 + 결과 surface 또는 채팅 surface로 변환
 ```
 
-### 의도 분석 (Intent Analysis)
+### 핵심 관찰 포인트
 
-```dart
-String? analyzeIntent(String message) {
-  final lower = message.toLowerCase();
+- 같은 function이라도 입력 구조는 운세 타입마다 다릅니다.
+- 결과 surface는 단일 카드가 아니라 `chat`, `shared fortune cards`, `fortune_bodies` 계층으로 재조립됩니다.
+- 상세 응답 스키마는 [25-fortune-result-schemas.md](25-fortune-result-schemas.md)를 기준으로 봅니다.
 
-  final patterns = {
-    'daily': ['오늘', '운세', '하루', '데일리'],
-    'love': ['연애', '사랑', '애인', '결혼', '썸'],
-    'money': ['재물', '돈', '금전', '투자', '재테크'],
-    'tarot': ['타로', '카드', '점'],
-    'dream': ['꿈', '해몽'],
-    'career': ['직업', '취업', '이직', '승진'],
-    'faceReading': ['얼굴', '관상', '인상'],
-    'mbti': ['mbti', '엠비티아이', '성격'],
-    'compatibility': ['궁합', '상성'],
-  };
+## 입력 패밀리
 
-  for (final entry in patterns.entries) {
-    if (entry.value.any((k) => lower.contains(k))) {
-      return entry.key;
-    }
-  }
+운세 함수 입력은 대략 아래 패밀리로 묶입니다.
 
-  return null; // 불명확 → 추천 칩 표시
-}
+| 패밀리 | 예시 함수 | 대표 입력 |
+|--------|-----------|-----------|
+| 시간/일상 | `fortune-daily`, `fortune-time`, `fortune-biorhythm` | 사용자 프로필, 날짜/기간 |
+| 관계 | `fortune-love`, `fortune-compatibility`, `fortune-blind-date` | 본인/상대 정보, 관계 상태, 채팅/사진 |
+| 전통 분석 | `fortune-traditional-saju`, `fortune-tarot`, `fortune-dream`, `fortune-face-reading` | 생년월일시, 질문, 카드, 이미지, 자유 텍스트 |
+| 재물/경력 | `fortune-wealth`, `fortune-investment`, `fortune-career`, `fortune-exam` | 직군, 자산/시험 종류, 목표, 시점 |
+| 건강/라이프스타일 | `fortune-health`, `fortune-health-document`, `fortune-exercise`, `fortune-ootd` | 컨디션, 문서/이미지, 생활 패턴 |
+| 가족/주거 | `fortune-family-*`, `fortune-naming`, `fortune-moving`, `fortune-home-fengshui` | 가족 구성원, 주거 정보, 예정일 |
+| 성격/프로필 | `fortune-mbti`, `fortune-blood-type`, `fortune-constellation`, `fortune-zodiac-animal`, `personality-dna` | MBTI, 혈액형, 별자리, 띠 |
+
+## 결과 스키마 원칙
+
+문서상 모든 운세 응답은 아래 envelope로 해석합니다.
+
+```typescript
+type FortuneEnvelope<T> = {
+  success: true;
+  data: T;
+  error?: string;
+};
 ```
 
-### FortuneResult → ChatMessage 변환
+실제 payload는 함수별로 다르지만, 문서 기준 공통 필드는 아래를 반복적으로 사용합니다.
 
-```dart
-class FortuneResultConverter {
-  static List<ChatMessage> convert(FortuneResult result) {
-    final messages = <ChatMessage>[];
+- `fortuneType`
+- `score`
+- `content`
+- `summary`
+- `advice`
+- `timestamp`
 
-    // 1. 요약 메시지 (항상 공개)
-    messages.add(ChatMessage(
-      type: ChatMessageType.fortuneResult,
-      sectionKey: 'summary',
-      text: _buildSummaryText(result),
-      isBlurred: false,
-    ));
+## Utility bucket
 
-    // 2. 상세 섹션들 (블러 적용)
-    final sections = _getSections(result.type, result.data);
-    for (final section in sections) {
-      final isBlurred = result.isBlurred &&
-                       result.blurredSections.contains(section.key);
+본문에서 제외하는 utility 28개는 아래 계열입니다.
 
-      messages.add(ChatMessage(
-        type: ChatMessageType.fortuneResult,
-        sectionKey: section.key,
-        text: section.content,
-        isBlurred: isBlurred,
-      ));
-    }
-
-    // 3. 후속 추천 칩
-    messages.add(ChatMessage(
-      type: ChatMessageType.system,
-      chips: _generateFollowUpChips(result),
-    ));
-
-    return messages;
-  }
-}
-```
-
-### 채팅 내 블러/광고 처리
-
-```dart
-// 채팅 메시지에서 블러 해제
-void unblurMessage(String messageId) {
-  final updated = state.messages.map((m) {
-    if (m.id == messageId) {
-      return m.copyWith(isBlurred: false);
-    }
-    return m;
-  }).toList();
-
-  state = state.copyWith(messages: updated);
-}
-
-// 전체 대화 블러 해제
-void unblurAllMessages() {
-  final updated = state.messages.map((m) {
-    return m.copyWith(isBlurred: false);
-  }).toList();
-
-  state = state.copyWith(messages: updated);
-}
-```
-
-### 토큰 소비 (채팅)
-
-채팅에서도 기존 토큰 소비율 동일 적용:
-
-```dart
-Future<void> requestFortuneInChat(String fortuneType) async {
-  // 토큰 확인 & 소비
-  final tokenNotifier = ref.read(tokenProvider.notifier);
-  final success = await tokenNotifier.consumeTokens(
-    amount: getTokenCost(fortuneType),
-    fortuneType: fortuneType,
-  );
-
-  if (!success) {
-    _showTokenPurchaseDialog();
-    return;
-  }
-
-  // 운세 요청 진행
-  await _processFortuneRequest(fortuneType);
-}
-```
-
-### 상세 문서
-
-→ [18-chat-first-architecture.md](18-chat-first-architecture.md)
-
----
+- 인증: `kakao-oauth`, `naver-oauth`
+- 캐릭터/채팅: `character-*`, `chat-conversation-save`, `free-chat`
+- 결제/구독/토큰: `payment-verify-purchase`, `subscription-*`, `soul-*`, `token-balance`
+- 보조 데이터/캐시: `fetch-tickers`, `sports-schedule`, `widget-cache`, `monitor-llm-usage`
+- 부가 생성/보상: `generate-*`, `profile-completion-bonus`, `analyze-wish`
 
 ## 관련 문서
 
-- [06-llm-module.md](06-llm-module.md) - Edge Function & LLM
-- [18-chat-first-architecture.md](18-chat-first-architecture.md) - Chat-First 아키텍처
-- [03-ui-design-system.md](03-ui-design-system.md) - 블러 UI 시스템
-- [17-face-reading-system.md](17-face-reading-system.md) - 관상 시스템 전체 가이드
-- [docs/data/FORTUNE_OPTIMIZATION_GUIDE.md](/docs/data/FORTUNE_OPTIMIZATION_GUIDE.md) - 상세 최적화
+- [02-architecture.md](02-architecture.md)
+- [18-chat-first-architecture.md](18-chat-first-architecture.md)
+- [24-page-layout-reference.md](24-page-layout-reference.md)
+- [25-fortune-result-schemas.md](25-fortune-result-schemas.md)

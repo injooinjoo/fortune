@@ -523,7 +523,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
           'onboarding_completed': true,
           'zodiac_sign': profile.zodiacSign,
           'chinese_zodiac': profile.chineseZodiac,
-          'fortune_preferences': profile.fortunePreferences?.toJson(),
           'primary_provider': profile.primaryProvider,
           'linked_providers': profile.linkedProviders,
           'updated_at': DateTime.now().toIso8601String(),

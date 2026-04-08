@@ -4,6 +4,7 @@ import '../../../../core/constants/tarot/tarot_card_catalog.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../shared/widgets/smart_image.dart';
 import '../utils/fortune_key_localizer.dart';
+import 'fortune_bodies/calendar_fortune_body.dart';
 import 'fortune_bodies/career_fortune_body.dart';
 import 'fortune_bodies/coaching_fortune_body.dart';
 import 'fortune_bodies/family_fortune_body.dart';
@@ -11,7 +12,9 @@ import 'fortune_bodies/health_fortune_body.dart';
 import 'fortune_bodies/interactive_fortune_body.dart';
 import 'fortune_bodies/mystical_fortune_body.dart';
 import 'fortune_bodies/personality_fortune_body.dart';
+import 'fortune_bodies/profile_fortune_body.dart';
 import 'fortune_bodies/relationship_fortune_body.dart';
+import 'fortune_bodies/tarot_fortune_body.dart';
 import 'fortune_bodies/wealth_fortune_body.dart';
 import 'fortune_bodies/_fortune_body_shared.dart';
 import 'haneul_fortune_result_widget.dart';
@@ -98,6 +101,14 @@ class EmbeddedFortuneComponent extends StatelessWidget {
     'celebrity',
     'ootd-evaluation'
   };
+  static const _calendarTypes = {'manseryeok', 'calendar'};
+  static const _profileTypes = {
+    'blood-type',
+    'zodiac',
+    'zodiac-animal',
+    'constellation',
+    'birthstone',
+  };
   static const _mysticalTypes = {'talisman', 'past-life', 'moving'};
   static const _coachingTypes = {
     'coaching',
@@ -105,6 +116,7 @@ class EmbeddedFortuneComponent extends StatelessWidget {
     'daily-review',
     'weekly-review'
   };
+  static const _tarotTypes = {'tarot'};
 
   Widget _buildFortuneResultCard(BuildContext context) {
     final fortuneType = _stringValue(componentData['fortuneType']);
@@ -158,6 +170,20 @@ class EmbeddedFortuneComponent extends StatelessWidget {
         body = CoachingFortuneBody(
             fortuneType: fortuneType, componentData: componentData);
         icon = _iconForCoaching(fortuneType);
+      } else if (_calendarTypes.contains(fortuneType)) {
+        body = CalendarFortuneBody(
+            fortuneType: fortuneType, componentData: componentData);
+        icon = Icons.calendar_month_outlined;
+      } else if (_profileTypes.contains(fortuneType)) {
+        final profileBodyType =
+            fortuneType == 'zodiac' ? 'constellation' : fortuneType;
+        body = ProfileFortuneBody(
+            fortuneType: profileBodyType, componentData: componentData);
+        icon = _iconForProfile(fortuneType);
+      } else if (_tarotTypes.contains(fortuneType)) {
+        body = TarotFortuneBody(
+            fortuneType: fortuneType, componentData: componentData);
+        icon = Icons.style_outlined;
       }
 
       if (body != null) {
@@ -166,6 +192,7 @@ class EmbeddedFortuneComponent extends StatelessWidget {
           title: _stringValue(componentData['title']) ?? '운세 결과',
           score: _intValue(componentData['score']),
           icon: icon ?? _iconForFortuneType(fortuneType),
+          fortuneType: fortuneType,
           child: body,
         );
       }
@@ -708,7 +735,7 @@ class EmbeddedFortuneComponent extends StatelessWidget {
 
     return _buildCardShell(
       context,
-      title: _stringValue(componentData['title']) ?? 'Face AI 결과',
+      title: _stringValue(componentData['title']) ?? '관상 결과',
       score: _intValue(componentData['score']),
       icon: Icons.face_outlined,
       child: Column(
@@ -771,15 +798,24 @@ class EmbeddedFortuneComponent extends StatelessWidget {
     required Widget child,
     required IconData icon,
     int? score,
+    String? fortuneType,
   }) {
     final colors = context.colors;
+    final isTalent = fortuneType == 'talent';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Talent card: Paper uses #F5F6FB bg, r16, p20 in light mode
+    final cardBg =
+        isTalent && !isDark ? const Color(0xFFF5F6FB) : colors.surface;
+    final cardRadius = isTalent ? 16.0 : DSRadius.xl;
+    final cardPadding = isTalent ? 20.0 : DSSpacing.md;
 
     return Container(
       margin: const EdgeInsets.only(top: DSSpacing.xs),
-      padding: const EdgeInsets.all(DSSpacing.md),
+      padding: EdgeInsets.all(cardPadding),
       decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(DSRadius.xl),
+        color: cardBg,
+        borderRadius: BorderRadius.circular(cardRadius),
         border: Border.all(
           color: colors.border.withValues(alpha: 0.55),
         ),
@@ -1442,6 +1478,22 @@ class EmbeddedFortuneComponent extends StatelessWidget {
         return Icons.date_range_outlined;
       default:
         return Icons.track_changes_outlined;
+    }
+  }
+
+  IconData _iconForProfile(String fortuneType) {
+    switch (fortuneType) {
+      case 'blood-type':
+        return Icons.water_drop_outlined;
+      case 'zodiac':
+      case 'constellation':
+        return Icons.auto_awesome_outlined;
+      case 'zodiac-animal':
+        return Icons.pets_outlined;
+      case 'birthstone':
+        return Icons.diamond_outlined;
+      default:
+        return Icons.person_outline;
     }
   }
 

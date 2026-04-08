@@ -6,10 +6,12 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/l10n_extension.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/navigation/fortune_chat_route.dart';
-import '../../../../core/services/supabase_connection_service.dart';
 import '../../../../core/widgets/paper_runtime_chrome.dart';
 import 'package:ondo/core/utils/haptic_utils.dart';
+import '../../../../presentation/providers/auth_provider.dart';
+import '../../../../presentation/providers/social_auth_provider.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
+import '../../../../presentation/widgets/social_login_bottom_sheet.dart';
 import '../../data/services/character_localizer.dart';
 import '../../domain/models/ai_character.dart';
 import '../../domain/models/character_chat_message.dart';
@@ -17,7 +19,6 @@ import '../../domain/models/character_chat_state.dart';
 import '../utils/character_accent_palette.dart';
 import '../utils/chat_catalog_preview.dart';
 import '../utils/onboarding_interest_catalog.dart';
-import '../utils/profile_avatar_tap_handler.dart';
 import '../providers/character_chat_provider.dart';
 import '../providers/character_provider.dart';
 import '../providers/sorted_characters_provider.dart';
@@ -25,23 +26,6 @@ import '../providers/user_created_character_provider.dart';
 import '../widgets/wave_typing_indicator.dart';
 
 const String _newFriendCreationAction = 'new_friend_creation';
-
-/// 카테고리 영문 → 한글 라벨 변환
-String _specialtyCategoryLabel(String category) {
-  const labels = {
-    'lifestyle': '라이프',
-    'traditional': '전통',
-    'zodiac': '별자리',
-    'personality': '심리',
-    'love': '연애',
-    'career': '재물',
-    'lucky': '행운',
-    'sports': '스포츠',
-    'fengshui': '풍수',
-    'special': '타로',
-  };
-  return labels[category] ?? category;
-}
 
 /// DM 목록 패널 (인스타그램 DM 스타일)
 class CharacterListPanel extends ConsumerStatefulWidget {
@@ -80,9 +64,8 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
         _isOffline = result.every((r) => r == ConnectivityResult.none);
       });
     }
-    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
-      results,
-    ) {
+    _connectivitySubscription =
+        Connectivity().onConnectivityChanged.listen((results) {
       if (mounted) {
         setState(() {
           _isOffline = results.every((r) => r == ConnectivityResult.none);
@@ -98,7 +81,9 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
     super.dispose();
   }
 
-  Future<void> _handleStarterOptionTap(OnboardingInterestOption option) async {
+  Future<void> _handleStarterOptionTap(
+    OnboardingInterestOption option,
+  ) async {
     HapticUtils.lightImpact();
     ref.read(characterListTabProvider.notifier).state = option.targetTab;
 
@@ -181,60 +166,39 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: DSSpacing.md,
-                    vertical: DSSpacing.xs + 2,
-                  ),
+                      horizontal: DSSpacing.md, vertical: DSSpacing.xs + 2),
                   color: colors.error.withValues(alpha: 0.12),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.wifi_off_rounded,
-                        size: 16,
-                        color: colors.error,
-                      ),
+                      Icon(Icons.wifi_off_rounded,
+                          size: 16, color: colors.error),
                       const SizedBox(width: DSSpacing.xs),
                       Expanded(
                         child: Text(
                           'You are offline. Some features may be limited.\n'
                           '오프라인 상태입니다. 일부 기능이 제한될 수 있습니다.',
-                          style: context.typography.labelSmall.copyWith(
-                            color: colors.error,
-                          ),
+                          style: context.typography.labelSmall
+                              .copyWith(color: colors.error),
                         ),
                       ),
                     ],
                   ),
                 ),
+              // 스토리 서클 (인스타그램 스타일)
+              if (!isCatalogPreview)
+                _StoryCirclesRow(
+                  characters: characters.take(4).toList(),
+                  onCharacterTap: widget.onCharacterSelected,
+                  onNewFriendTap: () => _showNewMessageSheet(context),
+                ),
               // 캐릭터 목록
               Expanded(
-                child: ListView.builder(
-                  controller: _listScrollController,
-                  itemCount: characters.length + (showsStarterSection ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (showsStarterSection && index == 0) {
-                      return _PersonalizedStarterSection(
-                        options: starterOptions,
-                        onOptionTap: _handleStarterOptionTap,
-                      );
-                    }
-
-                    final characterIndex =
-                        showsStarterSection ? index - 1 : index;
-                    final character = characters[characterIndex];
-                    return _CharacterListItem(
-                      character: character,
-                      previewChatState: widget.catalogPreview != null
-                          ? catalogPreviewListState(
-                              preview: widget.catalogPreview!,
-                              character: character,
-                              index: characterIndex,
-                            )
-                          : null,
-                      onTap: isCatalogPreview
-                          ? () {}
-                          : () => widget.onCharacterSelected(character),
-                    );
-                  },
+                child: _buildCharacterList(
+                  context,
+                  characters: characters,
+                  showsStarterSection: showsStarterSection,
+                  starterOptions: starterOptions,
+                  isCatalogPreview: isCatalogPreview,
                 ),
               ),
             ],
@@ -245,19 +209,13 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final userProfile = ref.watch(userProfileNotifierProvider).valueOrNull;
-    final profileImageUrl = userProfile?.profileImageUrl;
     final colors = context.colors;
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(
-        DSSpacing.md,
-        DSSpacing.md + 2,
-        DSSpacing.md,
-        DSSpacing.sm,
-      ),
+      padding:
+          const EdgeInsets.fromLTRB(20, DSSpacing.md + 2, 20, DSSpacing.sm),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (widget.isOverlay)
             IconButton(
@@ -272,65 +230,184 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
               '메시지',
               style: context.headingLarge.copyWith(
                 color: colors.textPrimary,
+                fontSize: 28,
+                fontWeight: FontWeight.w800,
                 height: 1.0,
                 letterSpacing: -0.6,
               ),
             ),
           ),
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: colors.backgroundSecondary.withValues(alpha: 0.9),
-              shape: BoxShape.circle,
-              border: Border.all(color: colors.border.withValues(alpha: 0.68)),
-            ),
-            child: IconButton(
-              icon: Icon(
-                Icons.edit_outlined,
-                size: 20,
+          GestureDetector(
+            onTap: () {
+              // TODO: 검색 기능
+              HapticUtils.lightImpact();
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Icon(
+                Icons.search,
+                size: 24,
                 color: colors.textPrimary,
               ),
-              onPressed: () => _showNewMessageSheet(context),
             ),
           ),
-          const SizedBox(width: DSSpacing.xs),
-          // 프로필 이미지 (설정으로 이동)
+          const SizedBox(width: DSSpacing.sm),
           GestureDetector(
-            onTap: () async {
-              HapticUtils.lightImpact();
-              await handleProfileAvatarTap(
-                context: context,
-                ref: ref,
-                currentUser: SupabaseConnectionService.tryGetCurrentUser(),
-                openProfileSheet: () async {
-                  context.push('/profile');
-                },
-              );
-            },
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: colors.backgroundSecondary.withValues(alpha: 0.9),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: colors.border.withValues(alpha: 0.68),
-                ),
-                image: profileImageUrl != null && profileImageUrl.isNotEmpty
-                    ? DecorationImage(
-                        image: NetworkImage(profileImageUrl),
-                        fit: BoxFit.cover,
-                      )
-                    : null,
+            onTap: () => _showNewMessageSheet(context),
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Icon(
+                Icons.edit_note_outlined,
+                size: 24,
+                color: colors.textPrimary,
               ),
-              child: profileImageUrl == null || profileImageUrl.isEmpty
-                  ? Icon(Icons.person, size: 18, color: colors.textSecondary)
-                  : null,
             ),
+          ),
+          const SizedBox(width: DSSpacing.sm),
+          // 유저 프로필 아이콘
+          GestureDetector(
+            onTap: () {
+              HapticUtils.lightImpact();
+              final currentUser = ref.read(userProvider).value;
+              if (currentUser == null) {
+                // 로그아웃 상태 → 로그인 바텀시트
+                SocialLoginBottomSheet.showForAuthentication(
+                  context,
+                  ref: ref,
+                  socialAuthService: ref.read(socialAuthServiceProvider),
+                );
+              } else {
+                context.push('/profile');
+              }
+            },
+            child: _buildProfileAvatar(context),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildProfileAvatar(BuildContext context) {
+    final colors = context.colors;
+    final userProfile = ref.watch(userProfileNotifierProvider).valueOrNull;
+    final profileImageUrl = userProfile?.profileImageUrl;
+
+    return Container(
+      width: 32,
+      height: 32,
+      decoration: BoxDecoration(
+        color: colors.backgroundSecondary,
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: colors.border.withValues(alpha: 0.68),
+        ),
+        image: profileImageUrl != null && profileImageUrl.isNotEmpty
+            ? DecorationImage(
+                image: NetworkImage(profileImageUrl),
+                fit: BoxFit.cover,
+              )
+            : null,
+      ),
+      child: profileImageUrl == null || profileImageUrl.isEmpty
+          ? Icon(
+              Icons.person_outline,
+              size: 16,
+              color: colors.textSecondary,
+            )
+          : null,
+    );
+  }
+
+  Widget _buildCharacterList(
+    BuildContext context, {
+    required List<AiCharacter> characters,
+    required bool showsStarterSection,
+    required List<OnboardingInterestOption> starterOptions,
+    required bool isCatalogPreview,
+  }) {
+    // 대화 있는 캐릭터 vs 추천 친구 분리
+    final conversationCharacters = <AiCharacter>[];
+    final recommendedCharacters = <AiCharacter>[];
+    for (final character in characters) {
+      if (isCatalogPreview) {
+        conversationCharacters.add(character);
+        continue;
+      }
+      final chatState = ref.watch(characterChatProvider(character.id));
+      if (chatState.hasConversation) {
+        conversationCharacters.add(character);
+      } else {
+        recommendedCharacters.add(character);
+      }
+    }
+
+    final itemCount = conversationCharacters.length +
+        (showsStarterSection ? 1 : 0) +
+        (recommendedCharacters.isNotEmpty ? 1 : 0) + // 섹션 헤더
+        recommendedCharacters.length;
+
+    return ListView.builder(
+      controller: _listScrollController,
+      itemCount: itemCount,
+      itemBuilder: (context, index) {
+        var cursor = 0;
+
+        // 맞춤 시작점 섹션
+        if (showsStarterSection) {
+          if (index == cursor) {
+            return _PersonalizedStarterSection(
+              options: starterOptions,
+              onOptionTap: _handleStarterOptionTap,
+            );
+          }
+          cursor++;
+        }
+
+        // 대화 있는 캐릭터들
+        if (index - cursor < conversationCharacters.length) {
+          final character = conversationCharacters[index - cursor];
+          return _CharacterListItem(
+            character: character,
+            previewChatState: isCatalogPreview
+                ? catalogPreviewListState(
+                    preview: widget.catalogPreview!,
+                    character: character,
+                    index: index - cursor,
+                  )
+                : null,
+            onTap: isCatalogPreview
+                ? () {}
+                : () => widget.onCharacterSelected(character),
+          );
+        }
+        cursor += conversationCharacters.length;
+
+        // 추천 친구 섹션 헤더
+        if (recommendedCharacters.isNotEmpty && index == cursor) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+            child: Text(
+              '추천 친구',
+              style: context.typography.labelMedium.copyWith(
+                color: context.colors.textSecondary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          );
+        }
+        if (recommendedCharacters.isNotEmpty) cursor++;
+
+        // 추천 친구 아이템들
+        if (index - cursor < recommendedCharacters.length) {
+          final character = recommendedCharacters[index - cursor];
+          return _RecommendedCharacterItem(
+            character: character,
+            onTap: () => widget.onCharacterSelected(character),
+          );
+        }
+
+        return const SizedBox.shrink();
+      },
     );
   }
 
@@ -374,9 +451,7 @@ class _PersonalizedStarterSection extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: DSSpacing.md,
-        vertical: DSSpacing.sm,
-      ),
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: PaperRuntimePanel(
         padding: const EdgeInsets.all(DSSpacing.lg),
         child: Column(
@@ -386,7 +461,9 @@ class _PersonalizedStarterSection extends StatelessWidget {
               children: [
                 Text(
                   '맞춤 시작점',
-                  style: context.heading4.copyWith(color: colors.textPrimary),
+                  style: context.heading4.copyWith(
+                    color: colors.textPrimary,
+                  ),
                 ),
                 const Spacer(),
                 PaperRuntimePill(
@@ -398,7 +475,9 @@ class _PersonalizedStarterSection extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               '방금 고른 관심사를 기준으로 바로 시작할 수 있는 흐름을 모아봤어요.',
-              style: typography.bodySmall.copyWith(color: colors.textSecondary),
+              style: typography.bodySmall.copyWith(
+                color: colors.textSecondary,
+              ),
             ),
             const SizedBox(height: 14),
             for (final option in options) ...[
@@ -419,7 +498,10 @@ class _StarterOptionCard extends StatelessWidget {
   final OnboardingInterestOption option;
   final VoidCallback onTap;
 
-  const _StarterOptionCard({required this.option, required this.onTap});
+  const _StarterOptionCard({
+    required this.option,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -437,7 +519,9 @@ class _StarterOptionCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: colors.backgroundSecondary.withValues(alpha: 0.92),
             borderRadius: BorderRadius.circular(context.radius.lg),
-            border: Border.all(color: colors.border.withValues(alpha: 0.68)),
+            border: Border.all(
+              color: colors.border.withValues(alpha: 0.68),
+            ),
           ),
           child: Row(
             children: [
@@ -479,7 +563,9 @@ class _StarterOptionCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              PaperRuntimePill(label: isStory ? '스토리' : '전문가'),
+              PaperRuntimePill(
+                label: isStory ? '스토리' : '전문가',
+              ),
               const SizedBox(width: 6),
               Icon(
                 Icons.arrow_forward_ios,
@@ -510,11 +596,7 @@ class _CharacterTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(
-        DSSpacing.md,
-        DSSpacing.xs,
-        DSSpacing.md,
-        DSSpacing.sm,
-      ),
+          DSSpacing.md, DSSpacing.xs, DSSpacing.md, DSSpacing.sm),
       child: Row(
         children: [
           _TabButton(
@@ -555,20 +637,20 @@ class _TabButton extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(
-          horizontal: DSSpacing.md,
-          vertical: DSSpacing.xs,
-        ),
+            horizontal: DSSpacing.md, vertical: DSSpacing.xs),
         decoration: BoxDecoration(
           color: isSelected ? colors.textPrimary : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
           border: isSelected
               ? null
-              : Border.all(color: colors.border.withValues(alpha: 0.68)),
+              : Border.all(
+                  color: colors.border.withValues(alpha: 0.68),
+                ),
         ),
         child: Text(
           label,
-          style: context.typography.bodySmall.copyWith(
-            fontWeight: FontWeight.w700,
+          style: context.typography.labelMedium.copyWith(
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
             color: isSelected ? colors.background : colors.textSubtitle,
           ),
         ),
@@ -625,11 +707,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(context.l10n.leaveConversation),
-        content: Text(
-          context.l10n.leaveConversationConfirm(
-            CharacterLocalizer.resolveName(context, widget.character),
-          ),
-        ),
+        content: Text(context.l10n.leaveConversationConfirm(
+            CharacterLocalizer.resolveName(context, widget.character))),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -642,7 +721,9 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                   .read(characterChatProvider(widget.character.id).notifier)
                   .clearConversationData();
             },
-            style: TextButton.styleFrom(foregroundColor: context.colors.error),
+            style: TextButton.styleFrom(
+              foregroundColor: context.colors.error,
+            ),
             child: Text(context.l10n.leave),
           ),
         ],
@@ -655,11 +736,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
     HapticUtils.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          context.l10n.notificationOffMessage(
-            CharacterLocalizer.resolveName(context, widget.character),
-          ),
-        ),
+        content: Text(context.l10n.notificationOffMessage(
+            CharacterLocalizer.resolveName(context, widget.character))),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 2),
       ),
@@ -702,10 +780,6 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
     final hasConversation = chatState.hasConversation;
     final isTyping = chatState.isCharacterTyping;
     final unreadCount = chatState.unreadCount;
-    final tagsText = CharacterLocalizer.resolveTags(
-      context,
-      widget.character,
-    ).take(3).map((t) => '#$t').join(' ');
 
     // 마지막 메시지가 캐릭터인지 확인
     final isLastMessageFromCharacter = chatState.messages.isNotEmpty &&
@@ -714,6 +788,11 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
     final hasUnread = unreadCount > 0;
     final isMyTurn =
         hasConversation && isLastMessageFromCharacter && !hasUnread;
+    final previewColor = isTyping
+        ? accentPalette.accent
+        : hasUnread
+            ? colors.textPrimary
+            : colors.textSubtitle;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -806,17 +885,9 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
               child: Container(
                 decoration: BoxDecoration(
                   color: colors.background,
-                  border: Border(
-                    bottom: BorderSide(
-                      color: colors.divider.withValues(alpha: 0.62),
-                      width: 1,
-                    ),
-                  ),
                 ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: DSSpacing.md,
-                  vertical: 12,
-                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                 child: Row(
                   children: [
                     // 아바타 (탭하면 프로필)
@@ -824,17 +895,15 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                       onTap: interactionsEnabled
                           ? () {
                               HapticUtils.lightImpact();
-                              context.push(
-                                '/character/${widget.character.id}',
-                                extra: widget.character,
-                              );
+                              context.push('/character/${widget.character.id}',
+                                  extra: widget.character);
                             }
                           : null,
                       child: Stack(
                         clipBehavior: Clip.none,
                         children: [
                           CircleAvatar(
-                            radius: 26,
+                            radius: 24,
                             backgroundColor: accentPalette.accent,
                             backgroundImage:
                                 widget.character.avatarAsset.isNotEmpty
@@ -846,6 +915,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                     style: typography.bodyLarge.copyWith(
                                       color: accentPalette.onAccent,
                                       fontWeight: FontWeight.bold,
+                                      fontSize: 18,
                                     ),
                                   )
                                 : null,
@@ -866,25 +936,24 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                     width: 1,
                                   ),
                                 ),
-                                child: const Center(
-                                  child: MiniTypingIndicator(),
-                                ),
+                                child:
+                                    const Center(child: MiniTypingIndicator()),
                               ),
                             ),
                         ],
                       ),
                     ),
-                    const SizedBox(width: DSSpacing.md),
-                    // 이름 + 태그 + 마지막 메시지 (Paper 3줄 구조)
+                    const SizedBox(width: 14),
+                    // 카톡 스타일 2줄: 이름(좌) + 시간(우) / 프리뷰(좌) + 배지(우)
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          // 줄 1: 이름 + 타임스탬프
+                          // 줄 1: 이름(좌) ← → 타임스탬프(우)
                           Row(
                             children: [
-                              Flexible(
+                              Expanded(
                                 child: Text(
                                   CharacterLocalizer.resolveName(
                                     context,
@@ -892,44 +961,13 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                   ),
                                   style: typography.bodyLarge.copyWith(
                                     fontWeight: hasUnread
-                                        ? FontWeight.bold
-                                        : FontWeight.w600,
+                                        ? FontWeight.w800
+                                        : FontWeight.w700,
                                     color: colors.textPrimary,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              // 운세 전문가 카테고리 배지
-                              if (widget.character.isFortuneExpert &&
-                                  widget.character.specialtyCategory !=
-                                      null) ...[
-                                const SizedBox(width: 6),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                    vertical: 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: colors.backgroundSecondary,
-                                    borderRadius: BorderRadius.circular(4),
-                                    border: Border.all(
-                                      color: colors.border.withValues(
-                                        alpha: 0.78,
-                                      ),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    _specialtyCategoryLabel(
-                                      widget.character.specialtyCategory!,
-                                    ),
-                                    style: typography.labelSmall.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      color: colors.textSubtitle,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                              const Spacer(),
                               if (hasConversation &&
                                   chatState.lastMessageTime != null)
                                 Text(
@@ -939,111 +977,44 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                     color: colors.textSubtitle,
                                   ),
                                 ),
-                              if (!hasConversation)
-                                Text(
-                                  context.l10n.newConversation,
-                                  style: typography.labelMedium.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    color: colors.textSubtitle,
-                                  ),
-                                ),
                             ],
                           ),
                           const SizedBox(height: 4),
-                          // 줄 2: 태그 + 배지
+                          // 줄 2: 메시지 프리뷰(좌) ← → 배지(우)
                           Row(
                             children: [
-                              if (tagsText.isNotEmpty)
-                                Expanded(
-                                  child: Text(
-                                    tagsText,
-                                    style: typography.labelSmall.copyWith(
-                                      fontWeight: FontWeight.w400,
-                                      color: DSColors.ctaBackground,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                              Expanded(
+                                child: Text(
+                                  isTyping
+                                      ? context.l10n.typing
+                                      : (hasConversation
+                                          ? chatState.lastMessagePreview
+                                          : CharacterLocalizer
+                                              .resolveShortDescription(
+                                              context,
+                                              widget.character,
+                                            )),
+                                  style: typography.bodyMedium.copyWith(
+                                    fontWeight: isTyping || hasUnread
+                                        ? FontWeight.w600
+                                        : FontWeight.w500,
+                                    color: previewColor,
+                                    height: 1.35,
                                   ),
-                                )
-                              else
-                                const Spacer(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
                               if (hasUnread) ...[
                                 const SizedBox(width: 8),
-                                DSBadge(
-                                  count: unreadCount,
-                                  color: DSBadgeColor.error,
-                                  style: DSBadgeStyle.pill,
-                                ),
+                                const _UnreadDot(),
                               ] else if (isMyTurn) ...[
                                 const SizedBox(width: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF2A2A4A),
-                                    borderRadius: BorderRadius.circular(
-                                      DSRadius.md,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    context.l10n.yourTurn,
-                                    style: typography.bodyLarge.copyWith(
-                                      fontWeight: FontWeight.w400,
-                                      color: const Color(0xFFF5F6FB),
-                                    ),
-                                  ),
-                                ),
-                              ] else if (!hasConversation) ...[
-                                const SizedBox(width: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF1A2A1A),
-                                    borderRadius: BorderRadius.circular(
-                                      DSRadius.md,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    context.l10n.newConversation,
-                                    style: typography.bodyLarge.copyWith(
-                                      fontWeight: FontWeight.w400,
-                                      color: const Color(0xFFF5F6FB),
-                                    ),
-                                  ),
+                                _InlineBadge(
+                                  label: context.l10n.yourTurn,
                                 ),
                               ],
                             ],
-                          ),
-                          const SizedBox(height: 4),
-                          // 줄 3: 메시지 미리보기
-                          Text(
-                            isTyping
-                                ? context.l10n.typing
-                                : (hasConversation
-                                    ? chatState.lastMessagePreview
-                                    : CharacterLocalizer
-                                        .resolveShortDescription(
-                                        context,
-                                        widget.character,
-                                      )),
-                            style: typography.bodySmall.copyWith(
-                              fontWeight: isTyping || hasUnread
-                                  ? FontWeight.w600
-                                  : FontWeight.w500,
-                              color: isTyping
-                                  ? accentPalette.accent
-                                  : hasUnread
-                                      ? colors.textPrimary
-                                      : colors.textSubtitle,
-                              height: 1.35,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
@@ -1067,6 +1038,283 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
     if (diff.inHours < 24) return context.l10n.hoursAgo(diff.inHours);
     if (diff.inDays < 7) return context.l10n.daysAgo(diff.inDays);
     return '${time.month}/${time.day}';
+  }
+}
+
+/// 읽지 않음 도트 (카카오톡 스타일)
+class _UnreadDot extends StatelessWidget {
+  const _UnreadDot();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 8,
+      height: 8,
+      decoration: const BoxDecoration(
+        color: DSColors.ctaBackground,
+        shape: BoxShape.circle,
+      ),
+    );
+  }
+}
+
+/// 인라인 배지 (내 차례 / 새 대화)
+class _InlineBadge extends StatelessWidget {
+  final String label;
+
+  const _InlineBadge({
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(DSRadius.full),
+        border: Border.all(
+          color: colors.borderFocus.withValues(alpha: 0.92),
+        ),
+      ),
+      child: Text(
+        label,
+        style: context.typography.labelSmall.copyWith(
+          color: DSColors.ctaBackground,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+}
+
+/// 스토리 서클 (인스타그램 DM 스타일 상단 아바타 행)
+class _StoryCirclesRow extends StatelessWidget {
+  final List<AiCharacter> characters;
+  final void Function(AiCharacter) onCharacterTap;
+  final VoidCallback onNewFriendTap;
+
+  const _StoryCirclesRow({
+    required this.characters,
+    required this.onCharacterTap,
+    required this.onNewFriendTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return SizedBox(
+      height: 104,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        children: [
+          for (final character in characters) ...[
+            _buildCircle(
+              context,
+              label: CharacterLocalizer.resolveName(context, character),
+              accentColor: CharacterAccentPalette.from(
+                source: character.accentColor,
+                brightness: Theme.of(context).brightness,
+              ),
+              character: character,
+              onTap: () => onCharacterTap(character),
+            ),
+            const SizedBox(width: 16),
+          ],
+          // 새 친구 추가 버튼
+          GestureDetector(
+            onTap: onNewFriendTap,
+            child: Column(
+              children: [
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: colors.border.withValues(alpha: 0.68),
+                      width: 1,
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.add,
+                    color: colors.textSecondary,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  '새 친구',
+                  style: typography.labelMedium.copyWith(
+                    color: colors.textSubtitle,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCircle(
+    BuildContext context, {
+    required String label,
+    required CharacterAccentPalette accentColor,
+    required AiCharacter character,
+    required VoidCallback onTap,
+  }) {
+    final typography = context.typography;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: DSColors.ctaBackground,
+                width: 2,
+              ),
+            ),
+            child: Center(
+              child: CircleAvatar(
+                radius: 24,
+                backgroundColor: accentColor.accent,
+                backgroundImage: character.avatarAsset.isNotEmpty
+                    ? AssetImage(character.avatarAsset)
+                    : null,
+                child: character.avatarAsset.isEmpty
+                    ? Text(
+                        character.initial,
+                        style: typography.bodyLarge.copyWith(
+                          color: accentColor.onAccent,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : null,
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            label,
+            style: typography.labelMedium.copyWith(
+              color: context.colors.textPrimary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 추천 친구 리스트 아이템 (인스타그램 DM 스타일)
+class _RecommendedCharacterItem extends StatelessWidget {
+  final AiCharacter character;
+  final VoidCallback onTap;
+
+  const _RecommendedCharacterItem({
+    required this.character,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final accentPalette = CharacterAccentPalette.from(
+      source: character.accentColor,
+      brightness: Theme.of(context).brightness,
+    );
+    final tags =
+        CharacterLocalizer.resolveTags(context, character).take(4).join(' · ');
+    final summary = tags.isNotEmpty
+        ? tags
+        : CharacterLocalizer.resolveShortDescription(context, character);
+
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        child: Row(
+          children: [
+            // 아바타
+            CircleAvatar(
+              radius: 24,
+              backgroundColor: accentPalette.accent,
+              backgroundImage: character.avatarAsset.isNotEmpty
+                  ? AssetImage(character.avatarAsset)
+                  : null,
+              child: character.avatarAsset.isEmpty
+                  ? Text(
+                      character.initial,
+                      style: typography.bodyLarge.copyWith(
+                        color: accentPalette.onAccent,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    )
+                  : null,
+            ),
+            const SizedBox(width: 12),
+            // 이름 + 설명
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    CharacterLocalizer.resolveName(context, character),
+                    style: typography.bodyMedium.copyWith(
+                      color: colors.textPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    summary,
+                    style: typography.labelMedium.copyWith(
+                      color: colors.textSecondary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            // 대화하기 버튼
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(DSRadius.full),
+                border: Border.all(
+                  color: colors.border.withValues(alpha: 0.68),
+                ),
+              ),
+              child: Text(
+                '대화하기',
+                style: typography.labelMedium.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -1177,11 +1425,7 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                DSSpacing.md,
-                DSSpacing.sm,
-                DSSpacing.md,
-                DSSpacing.xs + 2,
-              ),
+                  DSSpacing.md, DSSpacing.sm, DSSpacing.md, DSSpacing.xs + 2),
               child: Column(
                 children: [
                   Row(
@@ -1221,11 +1465,7 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
             const Divider(height: 1),
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                DSSpacing.md,
-                DSSpacing.sm,
-                DSSpacing.md,
-                DSSpacing.xs,
-              ),
+                  DSSpacing.md, DSSpacing.sm, DSSpacing.md, DSSpacing.xs),
               child: TextField(
                 controller: _searchController,
                 onChanged: (value) => setState(() => _query = value),
@@ -1240,7 +1480,7 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
                     color: context.colors.textSecondary,
                   ),
                   filled: true,
-                  fillColor: context.colors.surface,
+                  fillColor: context.colors.backgroundSecondary,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(DSRadius.md),
                     borderSide: BorderSide.none,
@@ -1254,11 +1494,7 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                DSSpacing.md,
-                0,
-                DSSpacing.md,
-                DSSpacing.xs,
-              ),
+                  DSSpacing.md, 0, DSSpacing.md, DSSpacing.xs),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -1274,11 +1510,7 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
               child: ListView(
                 controller: scrollController,
                 padding: const EdgeInsets.fromLTRB(
-                  DSSpacing.md,
-                  DSSpacing.xs,
-                  DSSpacing.md,
-                  DSSpacing.xl,
-                ),
+                    DSSpacing.md, DSSpacing.xs, DSSpacing.md, DSSpacing.xl),
                 children: [
                   _NewFriendActionCard(
                     onTap: () =>
@@ -1320,7 +1552,10 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
 }
 
 class _SheetSectionTitle extends StatelessWidget {
-  const _SheetSectionTitle({required this.title, this.count});
+  const _SheetSectionTitle({
+    required this.title,
+    this.count,
+  });
 
   final String title;
   final int? count;
@@ -1351,8 +1586,11 @@ class _NewFriendActionCard extends StatelessWidget {
       child: Ink(
         padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
-          color: const Color(0xFF1A1A2A),
+          color: context.colors.backgroundSecondary,
           borderRadius: BorderRadius.circular(DSRadius.lg),
+          border: Border.all(
+            color: context.colors.border.withValues(alpha: 0.5),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1360,7 +1598,7 @@ class _NewFriendActionCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: const Color(0xFF2A2A4A),
+                color: context.colors.backgroundTertiary,
                 borderRadius: BorderRadius.circular(DSRadius.md),
               ),
               child: Text(
@@ -1377,8 +1615,8 @@ class _NewFriendActionCard extends StatelessWidget {
                 Container(
                   width: 44,
                   height: 44,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF2A2A3A),
+                  decoration: BoxDecoration(
+                    color: context.colors.backgroundTertiary,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -1438,15 +1676,19 @@ class _NewFriendActionChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.sm + 4,
+        vertical: DSSpacing.xs + 2,
+      ),
       decoration: BoxDecoration(
-        color: const Color(0xFF222222),
-        borderRadius: BorderRadius.circular(10),
+        color: context.colors.backgroundTertiary,
+        borderRadius: BorderRadius.circular(DSRadius.full),
       ),
       child: Text(
         label,
-        style: context.typography.bodyLarge.copyWith(
+        style: context.typography.labelSmall.copyWith(
           color: context.colors.textPrimary,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );
@@ -1460,9 +1702,7 @@ class _NewMessageEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: DSSpacing.lg,
-        vertical: DSSpacing.xl + 4,
-      ),
+          horizontal: DSSpacing.lg, vertical: DSSpacing.xl + 4),
       decoration: BoxDecoration(
         color: context.colors.backgroundSecondary,
         borderRadius: BorderRadius.circular(context.radius.xl),

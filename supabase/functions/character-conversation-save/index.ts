@@ -30,9 +30,20 @@ interface ChatMessage {
   timestamp: string;
 }
 
+interface RuntimeStatePayload {
+  personaKey?: string;
+  romanceState?: Record<string, unknown>;
+  sceneIntent?: string;
+  responseGoal?: string;
+  safeAffectionCap?: number;
+  followUpHint?: string | null;
+  [key: string]: unknown;
+}
+
 interface SaveRequest {
   characterId: string;
   messages: ChatMessage[];
+  runtimeState?: RuntimeStatePayload | null;
 }
 
 interface SaveResponse {
@@ -97,7 +108,7 @@ serve(async (req: Request) => {
     }
 
     // 요청 파싱
-    const { characterId, messages }: SaveRequest = await req.json();
+    const { characterId, messages, runtimeState }: SaveRequest = await req.json();
 
     if (!characterId) {
       return new Response(
@@ -131,6 +142,26 @@ serve(async (req: Request) => {
       );
     }
 
+    if (
+      runtimeState !== undefined &&
+      runtimeState !== null &&
+      (typeof runtimeState !== "object" || Array.isArray(runtimeState))
+    ) {
+      return new Response(
+        JSON.stringify(
+          {
+            success: false,
+            messageCount: 0,
+            error: "runtimeState must be an object when provided",
+          } as SaveResponse,
+        ),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
+    }
+
     // 최근 50개만 저장 (오래된 메시지 제거)
     const limitedMessages = messages.slice(-MAX_MESSAGES);
 
@@ -142,6 +173,7 @@ serve(async (req: Request) => {
           user_id: user.id,
           character_id: characterId,
           messages: limitedMessages,
+          runtime_state: runtimeState ?? {},
           last_message_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },

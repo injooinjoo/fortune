@@ -1,403 +1,113 @@
 # Agents & Skills 레퍼런스
 
-> 최종 업데이트: 2025.01.03
+> 최종 업데이트: 2026.04.06
 
-## 개요
-
-Fortune App 개발에 최적화된 7개의 Agent(전문가 페르소나)와 10개의 Skill(커스텀 슬래시 커맨드)을 정의합니다.
+Ondo 저장소의 현재 Agent/Skill 구성을 repo truth 기준으로 정리한 문서입니다. 예전 다수 에이전트 체계보다, 현재 남아 있는 Generator-Evaluator 중심 구성을 기준으로 설명합니다.
 
 ## 통계
 
 | 항목 | 수치 |
 |------|------|
-| Agents | 7개 |
-| Skills | 10개 |
-| Managed Skills | 6개 (프로젝트 레벨) |
-| User Skills | 4개 (사용자 레벨) |
+| Agents | 5개 |
+| 참조 문서 | 1개 (`fortune-specialist-reference.md`) |
+| Core Skills | 4개 |
+| Template Skills | 4개 |
+| Utility Skills | 5개 |
 
----
+## 현재 워크플로우
 
-## Agents (전문가 페르소나)
-
-### 가상 개발팀 구성
-
-| Agent | 역할 | 전문 영역 |
-|-------|------|----------|
-| **flutter-architect** | Clean Architecture 설계자 | 레이어 분리, DI, 의존성 규칙 |
-| **riverpod-specialist** | 상태관리 전문가 | StateNotifier, Provider 패턴 |
-| **freezed-generator** | 모델 생성 전문가 | Freezed, JsonSerializable |
-| **design-system-guardian** | UI/UX 표준 수호자 | DSColors, 다크모드 |
-| **fortune-domain-expert** | 운세 도메인 전문가 | 비용 최적화, 블러 시스템 |
-| **testing-architect** | 테스트 설계자 | 단위/통합/E2E 테스트 |
-| **error-resolver** | 버그 헌터 | 근본원인 분석, 에러 패턴 |
-
----
-
-### Agent 상세
-
-#### flutter-architect
-
-**역할**: Clean Architecture 설계자
-
-**전문 영역**:
-- Feature Slice 구조 설계
-- 레이어 간 의존성 관리
-- Domain → Data → Presentation 분리
-- Repository 패턴 구현
-
-**검증 항목**:
-- [ ] Presentation → Data 직접 참조 금지
-- [ ] Feature 간 직접 참조 금지
-- [ ] Domain 레이어 순수 Dart 유지
-- [ ] 모든 모델 @freezed 사용
-
-**관련 문서**: [02-architecture.md](02-architecture.md)
-
----
-
-#### riverpod-specialist
-
-**역할**: 상태관리 전문가
-
-**전문 영역**:
-- StateNotifier + State 클래스 패턴
-- copyWith 메서드 구현
-- Provider 의존성 주입
-- 비동기 상태 처리
-
-**금지 패턴**:
-- ❌ `@riverpod` 어노테이션 사용
-- ❌ `riverpod_generator` 사용
-- ❌ Provider 외부에서 State 직접 수정
-
-**관련 문서**: [04-state-management.md](04-state-management.md)
-
----
-
-#### freezed-generator
-
-**역할**: 모델 생성 전문가
-
-**전문 영역**:
-- @freezed 모델 생성
-- @JsonKey 매핑
-- @Default 기본값 설정
-- factory 생성자 패턴
-
-**표준 템플릿**:
-```dart
-@freezed
-class FortuneResult with _$FortuneResult {
-  const factory FortuneResult({
-    required String id,
-    @JsonKey(name: 'overall_score') required int overallScore,
-    @Default(false) bool isBlurred,
-  }) = _FortuneResult;
-
-  factory FortuneResult.fromJson(Map<String, dynamic> json) =>
-      _$FortuneResultFromJson(json);
-}
+```text
+[Planner]
+  └─ contract.md 작성
+       ↓
+[Generator Agent]
+  └─ 구현 + build-log/discovery/rca 작성
+       ↓
+[Evaluator Agent]
+  └─ PASS/FAIL 판정 + eval-report 작성
+       ↓
+[Planner]
+  └─ 재시도 또는 ship
 ```
 
----
+### 핵심 원칙
 
-#### toss-design-guardian
+1. Generator와 Evaluator는 fresh context를 사용합니다.
+2. 통신은 `artifacts/sprint/current/`의 파일로 수행합니다.
+3. Evaluator는 default-fail 원칙을 유지합니다.
+4. Hard Block(RCA/Discovery/Verify)은 sprint contract 흐름 안에 흡수됩니다.
 
-**역할**: UI/UX 표준 수호자
+## Active Agents
 
-**전문 영역**:
-- DSColors 색상 토큰 (ChatGPT 스타일)
-- TypographyUnified 폰트 시스템
-- 다크모드 대응 패턴
-- UnifiedBlurWrapper 블러 처리
+| Agent | 파일 | 역할 |
+|-------|------|------|
+| Generator | `.claude/agents/generator.md` | contract 기반 구현 |
+| Evaluator | `.claude/agents/evaluator.md` | 독립 평가 및 증거 수집 |
+| Playwright QA | `.claude/agents/playwright-qa-agent.md` | E2E/브라우저 검증 |
+| Character Curator | `.claude/agents/character-curator.md` | 임포트 캐릭터 품질 검수 |
+| Character Importer | `.claude/agents/character-importer.md` | 외부 캐릭터 데이터 변환/적재 |
 
-**검증 항목**:
-- [ ] 하드코딩 색상 금지 → DSColors 사용
-- [ ] 하드코딩 fontSize 금지 → TypographyUnified 사용
-- [ ] isDark 조건문으로 다크모드 대응
-- [ ] AppBar에 Icons.arrow_back_ios 사용
+## Supporting Reference
 
-**관련 문서**: [03-ui-design-system.md](03-ui-design-system.md)
+| 문서 | 역할 |
+|------|------|
+| `.claude/docs/fortune-specialist-reference.md` | 운세 도메인 보조 지식 |
 
----
+## Active Skills
 
-#### fortune-domain-expert
+### Core Skills
 
-**역할**: 운세 도메인 전문가
+| Skill | 위치 | 역할 |
+|-------|------|------|
+| `sprint` | `.claude/skills/sprint/` | Planner 오케스트레이션 |
+| `generate` | `.claude/skills/generate/` | Generator 실행 진입점 |
+| `evaluate` | `.claude/skills/evaluate/` | Evaluator 실행 진입점 |
+| `quick-fix` | `.claude/skills/quick-fix/` | 경량 수정 워크플로우 |
 
-**전문 영역**:
-- 6단계 운세 조회 프로세스
-- 72% API 비용 절감 로직
-- 구독자/일반 사용자 분기
-- 블러 해제 시스템
+### Template Skills
 
-**핵심 지식**:
-- 개인 캐시 → DB 풀 → 30% 랜덤 → API 호출
-- UnifiedFortuneService 사용
-- 토큰 소비율 (Simple:1, Medium:2, Complex:3, Premium:5)
+| Skill | 위치 | 역할 |
+|-------|------|------|
+| `feature-fortune` | `.claude/skills/feature-fortune/` | 운세 기능 템플릿 |
+| `feature-chat` | `.claude/skills/feature-chat/` | 채팅 기능 가이드 |
+| `feature-ui` | `.claude/skills/feature-ui/` | presentation 범위 UI 작업 |
+| `backend-service` | `.claude/skills/backend-service/` | Edge Function/서비스 작업 |
 
-**관련 문서**: [05-fortune-system.md](05-fortune-system.md)
+### Utility Skills
 
----
+| Skill | 위치 | 역할 |
+|-------|------|------|
+| `quality-check` | `.claude/skills/quality-check/` | 품질 규칙, 검증 명령 |
+| `design-to-flutter` | `.claude/skills/design-to-flutter/` | 디자인 → Flutter 변환 |
+| `generate-character-prompt` | `.claude/skills/generate-character-prompt/` | 캐릭터 프롬프트 생성 |
+| `test-character-chat` | `.claude/skills/test-character-chat/` | 캐릭터 채팅 검증 |
+| `import-characters` | `.claude/skills/import-characters/` | 캐릭터 일괄 임포트 |
 
-#### testing-architect
+## Artifact 통신 규약
 
-**역할**: 테스트 설계자
-
-**전문 영역**:
-- Widget 테스트 작성
-- Provider 모킹
-- 통합 테스트 설계
-- 테스트 커버리지 관리
-
-**테스트 패턴**:
-```dart
-testWidgets('renders correctly', (tester) async {
-  await tester.pumpWidget(
-    ProviderScope(
-      overrides: [
-        fortuneProvider.overrideWith((ref) => MockFortuneNotifier()),
-      ],
-      child: MaterialApp(home: FortunePage()),
-    ),
-  );
-
-  expect(find.byType(FortunePage), findsOneWidget);
-});
+```text
+artifacts/sprint/
+  current/
+    contract.md
+    discovery-report.md   # 필요 시
+    rca-report.md         # 필요 시
+    build-log.md
+    eval-report.md
+    eval-history/
 ```
 
----
+### 책임 분리
 
-#### error-resolver
+- Planner: 범위, contract, Jira, ship
+- Generator: 구현, discovery/rca 수행
+- Evaluator: 증거 기반 판정
+- QA Agent: UI/E2E 검증이 필요한 경우만 추가
 
-**역할**: 버그 헌터
+## 아카이브 기준
 
-**전문 영역**:
-- 근본 원인 분석 (Root Cause Analysis)
-- 에러 패턴 전체 검색
-- 올바른 패턴 적용
-- 일관된 수정
+현재 문서 기준 활성 대상이 아닌 에이전트/스킬은 `_archive/`에 둡니다.
 
-**분석 프로세스**:
-1. 왜 에러가 발생했는지 추적
-2. 동일 패턴 전체 코드베이스 검색
-3. 올바르게 처리된 곳 찾기
-4. 근본 원인 해결 (증상만 치료 금지)
+- archived example: `quality-guardian.md`
+- archived skill lineage: `enforce-discovery`, `enforce-rca`, `enforce-verify`, `troubleshoot`
 
-**관련 문서**: [01-core-rules.md](01-core-rules.md)
-
----
-
-## Skills (커스텀 슬래시 커맨드)
-
-### 커맨드 목록
-
-| 커맨드 | 용도 | Agent 연계 |
-|--------|------|-----------|
-| `/sc:freezed-model` | Freezed 모델 생성 | freezed-generator |
-| `/sc:state-notifier` | StateNotifier 생성 | riverpod-specialist |
-| `/sc:fortune-page` | 운세 페이지 생성 | fortune-domain-expert |
-| `/sc:edge-function` | Edge Function 생성 | fortune-domain-expert |
-| `/sc:validate-arch` | 아키텍처 검증 | flutter-architect |
-| `/sc:generate-test` | 테스트 코드 생성 | testing-architect |
-| `/sc:quality-gate` | 품질 게이트 실행 | flutter-architect |
-| `/sc:analyze-error` | 에러 근본원인 분석 | error-resolver |
-| `/sc:toss-widget` | Toss 스타일 위젯 생성 | toss-design-guardian |
-| `/sc:go-route` | GoRouter 라우트 생성 | flutter-architect |
-
----
-
-### Skill 상세
-
-#### /sc:freezed-model
-
-**용도**: Freezed 모델 파일 생성
-
-**입력**: 모델 이름, 필드 정의
-
-**출력**:
-- `lib/features/{feature}/domain/models/{model}.dart`
-- `lib/features/{feature}/domain/models/{model}.freezed.dart`
-- `lib/features/{feature}/domain/models/{model}.g.dart`
-
-**실행 후**: `dart run build_runner build --delete-conflicting-outputs`
-
----
-
-#### /sc:state-notifier
-
-**용도**: StateNotifier + State 클래스 생성
-
-**입력**: Provider 이름, State 필드
-
-**출력**: `lib/features/{feature}/presentation/providers/{name}_provider.dart`
-
-**포함 내용**:
-- State 클래스 (copyWith 포함)
-- StateNotifier 클래스 (load, update, reset, clearError)
-- StateNotifierProvider 정의
-
----
-
-#### /sc:fortune-page
-
-**용도**: 운세 페이지 표준 템플릿 생성
-
-**입력**: 운세 유형, 입력 필드 정의
-
-**출력**: `lib/features/fortune/presentation/pages/{type}_fortune_page.dart`
-
-**포함 내용**:
-- UnifiedFortuneBaseWidget 사용
-- 프리미엄 확인 로직
-- 블러 처리 시스템
-- 토큰 소비 로직
-
----
-
-#### /sc:edge-function
-
-**용도**: Supabase Edge Function 생성
-
-**입력**: 운세 유형, 프롬프트 정의
-
-**출력**:
-- `supabase/functions/fortune-{type}/index.ts`
-- `supabase/functions/_shared/prompts/templates/{type}.ts`
-
-**포함 내용**:
-- LLMFactory 사용
-- PromptManager 연동
-- 표준 CORS 처리
-- 에러 핸들링
-
----
-
-#### /sc:validate-arch
-
-**용도**: 아키텍처 규칙 검증
-
-**검증 항목**:
-- Presentation → Data 직접 참조
-- Feature 간 직접 참조
-- @riverpod 어노테이션 사용 여부
-- 하드코딩된 색상/폰트
-
-**출력**: 위반 사항 리포트
-
----
-
-#### /sc:generate-test
-
-**용도**: 테스트 코드 자동 생성
-
-**입력**: 테스트 대상 파일
-
-**출력**: `test/{path}/{name}_test.dart`
-
-**테스트 유형**:
-- Widget 테스트
-- Provider 테스트
-- Service 테스트
-
----
-
-#### /sc:quality-gate
-
-**용도**: 코드 품질 게이트 실행
-
-**실행 항목**:
-1. `flutter analyze`
-2. `dart format --set-exit-if-changed .`
-3. `flutter test`
-4. 아키텍처 검증 (`/sc:validate-arch`)
-
-**통과 조건**: 모든 항목 에러 없음
-
----
-
-#### /sc:analyze-error
-
-**용도**: 에러 근본원인 분석
-
-**입력**: 에러 로그 또는 스택트레이스
-
-**분석 단계**:
-1. 에러 발생 위치 추적
-2. 동일 패턴 전체 검색
-3. 올바른 패턴 제시
-4. 수정 방안 제안
-
----
-
-#### /sc:toss-widget
-
-**용도**: Toss 디자인 스타일 위젯 생성
-
-**입력**: 위젯 유형 (card, button, input, etc.)
-
-**출력**: `lib/core/widgets/{name}.dart`
-
-**포함 내용**:
-- DSColors 색상 (ChatGPT 스타일)
-- TypographyUnified 폰트
-- 다크모드 대응
-- 접근성 고려
-
----
-
-#### /sc:go-route
-
-**용도**: GoRouter 라우트 추가
-
-**입력**: 라우트 경로, 페이지 클래스
-
-**수정 파일**: `lib/routes/route_config.dart`
-
-**포함 내용**:
-- GoRoute 정의
-- 파라미터 처리
-- 리다이렉트 로직 (필요시)
-
----
-
-## 파일 위치
-
-### Agents
-
-```
-.claude/agents/
-├── flutter-architect.md
-├── riverpod-specialist.md
-├── freezed-generator.md
-├── toss-design-guardian.md
-├── fortune-domain-expert.md
-├── testing-architect.md
-└── error-resolver.md
-```
-
-### Skills
-
-```
-.claude/commands/
-├── sc-freezed-model.md
-├── sc-state-notifier.md
-├── sc-fortune-page.md
-├── sc-edge-function.md
-├── sc-validate-arch.md
-├── sc-generate-test.md
-├── sc-quality-gate.md
-├── sc-analyze-error.md
-├── sc-toss-widget.md
-└── sc-go-route.md
-```
-
----
-
-## 관련 문서
-
-- [01-core-rules.md](01-core-rules.md) - 핵심 개발 규칙
-- [02-architecture.md](02-architecture.md) - 아키텍처 가이드
-- [03-ui-design-system.md](03-ui-design-system.md) - UI 디자인 시스템
-- [04-state-management.md](04-state-management.md) - 상태관리 가이드
-
+이들은 역사적 참고용이며, 현재 운용 기준은 본 문서의 5 agent / 13 skill 분류입니다.

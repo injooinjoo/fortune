@@ -1,27 +1,54 @@
 # Ondo Flutter App - Claude Code 가이드
 
-> 최종 업데이트: 2026.03.27
+> 최종 업데이트: 2026.04.06
 
-## 스프린트 워크플로우 (gstack 기반)
+## 스프린트 워크플로우 (Generator-Evaluator 패턴)
 
-**모든 개발 작업은 `/sc:sprint`로 시작합니다.** Think → Plan → Build → Review → QA → Ship
+**모든 개발 작업은 `/sc:sprint`로 시작합니다.** Planner → Generator → Evaluator → Ship
+
+Anthropic "Harness Design for Long-Running Apps" 원칙 적용: 코드 작성자와 평가자를 분리하여 품질 향상.
 
 ### 핵심 철학
 - **Boil the Lake**: 끝까지 완수. 엣지 케이스, 에러 경로 모두 커버
 - **Search Before Building**: 만들기 전에 찾기. 기존 코드 재사용 최대화
 - **Bisect Commits**: 하나의 논리적 변경 = 하나의 커밋
+- **Generator-Evaluator 분리**: 코드 작성자 ≠ 코드 평가자 (fresh context)
+- **Sprint Contract**: 파일 기반 명시적 완료 기준 (`artifacts/sprint/current/contract.md`)
 
-### 자동 라우팅
+### 워크플로우 아키텍처
 
-| 요청 패턴 | 진입점 | BUILD 단계 스킬 | MCP |
-|-----------|--------|----------------|-----|
-| 모든 개발 작업 | `/sc:sprint` | 자동 선택 | 자동 선택 |
-| 운세/궁합/타로/사주 추가 | `/sc:sprint` | feature-fortune | Supabase |
-| 채팅/추천 칩/메시지 | `/sc:sprint` | feature-chat | - |
-| UI/디자인/색상/레이아웃/Figma | `/sc:sprint` | feature-ui | Figma, Playwright |
-| Edge Function/API | `/sc:sprint` | backend-service | Supabase |
-| 에러/버그/안됨/수정 | `/sc:sprint` | troubleshoot | Sequential |
-| 검증/품질만 | `/sc:quality-check` | - | - |
+```
+사용자 요청
+    │
+    v
+[PLANNER] (sc:sprint, 메인 컨텍스트)
+    ├─ THINK: 분석 + Hard Block 판단
+    ├─ CONTRACT: contract.md 작성 + 사용자 확인
+    │
+    v
+[GENERATOR] (Agent subagent, fresh context)
+    ├─ contract.md 기반 구현
+    ├─ Discovery/RCA 보고서 (필요시)
+    └─ build-log.md 작성
+    │
+    v
+[EVALUATOR] (Agent subagent, fresh context)
+    ├─ contract.md + build-log.md 기반 평가
+    ├─ flutter analyze + 규칙 검증
+    └─ eval-report.md 작성 (PASS/FAIL)
+    │
+    v
+[PLANNER 복귀]
+    ├─ FAIL → Generator 재실행 (최대 3회)
+    ├─ PASS → 사용자 테스트 → SHIP
+    └─ 3회 FAIL → 사용자 에스컬레이션
+```
+
+| 진입점 | 용도 |
+|--------|------|
+| `/sc:sprint` | 3+ 파일 변경, 기능 추가, 버그 수정 |
+| `/sc:quick-fix` | 1-2 파일 단순 수정 (3-agent 세레모니 생략) |
+| `/sc:quality-check` | 품질 검증만 |
 
 **우선순위**: 사용자 명시적 요청 > 프로젝트 규칙 > 글로벌 SuperClaude
 
@@ -69,7 +96,7 @@
 | `flutter run` 직접 실행 | 로그 확인 불가 | 사용자에게 실행 요청 |
 | 일괄 수정 (for, sed -i) | 프로젝트 망가짐 | 한 파일씩 Edit |
 | @riverpod 어노테이션 | 프로젝트 패턴 위반 | StateNotifier 사용 |
-| 하드코딩 색상/폰트 | 디자인 시스템 위반 | DSColors, context.heading1 |
+| 하드코딩 색상/폰트 | 디자인 시스템 위반 | DSColors, context.typography.* |
 
 ---
 
@@ -173,36 +200,35 @@ grep -rn "class.*Service" lib/
 
 **완료 선언은 사용자가 "테스트 완료", "동작함", "확인" 응답 후에만 가능**
 
-### Block 흐름도
+### Hard Block 시행 방식
+
+Hard Block은 Sprint Contract + Evaluator를 통해 시행됩니다:
 
 ```
-사용자 요청
-    │
-    ├─ 에러/버그 키워드?
-    │   └─ ⛔ Block 1: RCA 보고서 필수
-    │       └─ 📋 JIRA Bug 이슈 자동 생성
-    │       └─ 해제 후 → Block 3으로
-    │
-    ├─ 코드 생성/추가?
-    │   └─ ⛔ Block 2: Discovery 보고서 필수
-    │       └─ 📋 JIRA Story/Task 이슈 자동 생성
-    │       └─ 해제 후 → Block 3으로
-    │
-    └─ 수정 완료?
-        └─ ⛔ Block 3: Verify 보고서 필수
-            └─ 사용자 확인 후 → JIRA 이슈 Done 전환
-            └─ 완료 선언 가능
+Planner (CONTRACT 단계)
+    ├─ 에러/버그 → contract에 "RCA required: yes" 명시
+    ├─ 새 코드 → contract에 "Discovery required: yes" 명시
+    └─ 수용 기준 + Quality Gate 명시
+
+Generator (GENERATE 단계)
+    ├─ RCA required → rca-report.md 작성 후 코드 수정
+    └─ Discovery required → discovery-report.md 작성 후 코드 생성
+
+Evaluator (EVALUATE 단계)
+    ├─ 보고서 존재 + 실질성 검증
+    ├─ flutter analyze 실행
+    ├─ 프로젝트 규칙 검증
+    └─ FAIL이면 Generator 재실행
+
+보고서는 artifacts/sprint/current/에 저장됩니다.
 ```
 
 ### JIRA 연동 (자동)
 
-**모든 Hard Block 작업은 JIRA에 기록됩니다:**
-
 | 단계 | JIRA 액션 |
 |------|----------|
-| Block 1 (RCA) 시작 | Bug 이슈 생성, RCA 보고서 첨부 |
-| Block 2 (Discovery) 시작 | Story/Task 이슈 생성, Discovery 보고서 첨부 |
-| Block 3 (Verify) 완료 | 이슈 상태 → Done, Verify 보고서 코멘트 |
+| CONTRACT 단계 | 이슈 생성 (Bug/Story/Task) |
+| SHIP 단계 | 이슈 상태 → Done, 해결 내용 코멘트 |
 
 ---
 
@@ -216,8 +242,8 @@ class FortuneNotifier extends StateNotifier<FortuneState> { }
 
 ### 2. Typography
 ```dart
-// ✅ context.heading1 | ❌ 하드코딩 TextStyle 금지
-Text('제목', style: context.heading1)
+// ✅ context.typography.headlineMedium | ❌ 하드코딩 TextStyle 금지
+Text('제목', style: context.typography.headlineMedium)
 ```
 
 ### 3. Edge Function
@@ -252,7 +278,7 @@ FortuneChipGrid(
 | 탭 | 경로 | 역할 |
 |----|------|------|
 | Home | `/chat` | 통합 채팅 진입점 |
-| 인사이트 | `/home` | 일일 인사이트 대시보드 |
+| 인사이트 alias | `/home` | 레거시 별칭, 현재는 `/chat`으로 redirect |
 | 탐구 | `/fortune` | 인사이트 카테고리 + Face AI |
 | 트렌드 | `/trend` | 트렌드 콘텐츠 |
 | 프로필 | `/profile` | 설정 + Premium |
@@ -265,7 +291,7 @@ FortuneChipGrid(
 |------|------|----------|
 | **1 (항상)** | 이 파일 (CLAUDE.md) | 모든 요청 |
 | **2 (키워드)** | 01-06, 18 | 개발 관련 키워드 시 |
-| **3 (요청)** | 07-21 | 명시적 요청 시만 |
+| **3 (요청)** | 07-26 | 명시적 요청 시만 |
 
 ### 문서 참조
 | 문서 | 트리거 키워드 |
@@ -277,6 +303,9 @@ FortuneChipGrid(
 | [05-fortune-system](.claude/docs/05-fortune-system.md) | 인사이트, Fortune, 토큰 |
 | [06-llm-module](.claude/docs/06-llm-module.md) | Edge Function, LLM, API |
 | [18-chat-first-architecture](.claude/docs/18-chat-first-architecture.md) | 채팅, chat, 대화, 추천 칩, Home |
+| [24-page-layout-reference](.claude/docs/24-page-layout-reference.md) | 페이지, 레이아웃, 라우팅, 화면 |
+| [25-fortune-result-schemas](.claude/docs/25-fortune-result-schemas.md) | 스키마, 결과, 응답, JSON, 필드 |
+| [26-widget-component-catalog](.claude/docs/26-widget-component-catalog.md) | 위젯, 컴포넌트, 카드, 서베이 |
 
 ---
 
@@ -305,36 +334,60 @@ UI/페이지 수정 완료 시 자동으로 QA 제안:
 ## 프로젝트 구조
 
 ```
-lib/features/chat/        # 채팅 진입점 (Chat-First)
-lib/features/fortune/     # 인사이트 기능 (Clean Architecture)
+lib/features/character/   # /chat, /character, /friends/new surface 조립층
+lib/features/chat/        # 채팅 카드/설문/메시지 보조 레이어
+lib/features/fortune/     # 카테고리/도메인 모델/인사이트 보조 레이어
 supabase/functions/       # Edge Functions (LLMFactory)
-.claude/agents/           # 3개 Agent (feature-orchestrator, fortune-specialist, quality-guardian)
-.claude/skills/           # 10개 Skill (sprint + Hard Block 3개 + 기능 5개 + quality-check)
-.claude/docs/             # 상세 문서 (01-21)
+artifacts/sprint/         # Generator-Evaluator 통신 디렉토리
+.claude/agents/           # active agents 5개 (generator/evaluator/playwright-qa/character-curator/character-importer)
+.claude/skills/           # core 4 + template 4 + utility 5
+.claude/docs/             # 상세 문서 (01-26) + supporting refs (fortune-specialist-reference, paper-artboard-map 등)
 ```
 
 ---
 
 ## Skill 사용법
 
-### /sc:sprint (통합 진입점)
-gstack 기반 스프린트. Think → Plan → Build → Review → QA → Ship
+### /sc:sprint (Planner 오케스트레이터)
+Generator-Evaluator 패턴 스프린트. Contract → Generate → Evaluate → Ship
 ```
 /sc:sprint 펫궁합 기능 추가
 /sc:sprint 타로 결과 로딩 버그 수정
 /sc:sprint 홈 화면 리디자인
 ```
 
-### 개별 스킬 (sprint에서 자동 호출됨)
+### /sc:quick-fix (경량 워크플로우)
+1-2 파일 단순 수정. Generator-Evaluator 세레모니 생략.
+```
+/sc:quick-fix 버튼 색상 변경
+/sc:quick-fix 오타 수정
+```
 
-| Skill | 용도 | 직접 호출 |
+### 스킬 목록
+
+| Skill | 역할 | 호출 방식 |
 |-------|------|----------|
-| `/sc:feature-fortune` | 운세 기능 전체 생성 | 가능 |
-| `/sc:feature-chat` | 채팅 기능 추가/수정 | 가능 |
-| `/sc:feature-ui` | UI만 변경 | 가능 |
-| `/sc:backend-service` | Edge Function만 | 가능 |
-| `/sc:troubleshoot` | 버그 수정 | 가능 |
-| `/sc:quality-check` | 품질 검증 | 가능 |
-| `/sc:enforce-rca` | RCA 강제 (Hard Block) | 자동 |
-| `/sc:enforce-discovery` | Discovery 강제 (Hard Block) | 자동 |
-| `/sc:enforce-verify` | Verify 강제 (Hard Block) | 자동 |
+| `/sc:sprint` | Planner 오케스트레이터 (Contract → Generate → Evaluate → Ship) | 직접 |
+| `/sc:generate` | Generator subagent 실행 | sprint에서 자동 / 직접 가능 |
+| `/sc:evaluate` | Evaluator subagent 실행 | sprint에서 자동 / 직접 가능 |
+| `/sc:quick-fix` | 1-2 파일 단순 수정 | 직접 |
+| `/sc:quality-check` | 품질 검증 (Evaluator 참조용 규칙) | 직접 |
+
+### 템플릿 스킬 (Generator가 참조)
+
+| Skill | 용도 |
+|-------|------|
+| `feature-fortune/` | 운세 기능 템플릿 |
+| `feature-chat/` | 채팅 기능 템플릿 |
+| `feature-ui/` | UI 변경 가이드 |
+| `backend-service/` | Edge Function 템플릿 |
+
+### Artifact 통신 (`artifacts/sprint/`)
+
+| 파일 | 작성자 → 독자 | 목적 |
+|------|--------------|------|
+| contract.md | Planner → Generator, Evaluator | 스코프, 수용 기준, 루브릭 |
+| discovery-report.md | Generator → Evaluator | 기존 코드 탐색 결과 |
+| rca-report.md | Generator → Evaluator | 근본 원인 분석 |
+| build-log.md | Generator → Evaluator | 변경 파일, 결정 사항 |
+| eval-report.md | Evaluator → Planner | PASS/FAIL 판정 + 증거 |

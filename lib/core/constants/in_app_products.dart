@@ -25,7 +25,7 @@ class InAppProducts {
   static const Map<String, ProductInfo> productDetails = {
     tokens10: ProductInfo(
       id: tokens10,
-      title: '10 Tokens',
+      title: '10 토큰',
       description: '기본 운세를 가볍게 체험할 수 있는 스타터 패키지',
       price: 1100,
       points: 10,
@@ -34,7 +34,7 @@ class InAppProducts {
     ),
     tokens50: ProductInfo(
       id: tokens50,
-      title: '50 Tokens',
+      title: '50 토큰',
       description: '자주 사용하는 분들을 위한 50 토큰 패키지',
       price: 4500,
       points: 50,
@@ -44,7 +44,7 @@ class InAppProducts {
     ),
     tokens100: ProductInfo(
       id: tokens100,
-      title: '100 Tokens',
+      title: '100 토큰',
       description: '다양한 운세와 깊이 있는 인사이트를 위한 알찬 패키지',
       price: 8000,
       points: 100,
@@ -54,7 +54,7 @@ class InAppProducts {
     ),
     tokens200: ProductInfo(
       id: tokens200,
-      title: '200 Tokens',
+      title: '200 토큰',
       description: '헤비 유저를 위한 최대 가성비 토큰 패키지',
       price: 14000,
       points: 200,
@@ -64,8 +64,8 @@ class InAppProducts {
     ),
     points300: ProductInfo(
       id: points300,
-      title: '350 토큰',
-      description: '호환용 토큰 패키지',
+      title: '기존 350 토큰',
+      description: '이전 결제 복원용 토큰 패키지',
       price: 3300,
       points: 350,
       basePoints: 300,
@@ -74,8 +74,8 @@ class InAppProducts {
     ),
     points600: ProductInfo(
       id: points600,
-      title: '700 토큰',
-      description: '호환용 토큰 패키지',
+      title: '기존 700 토큰',
+      description: '이전 결제 복원용 토큰 패키지',
       price: 5500,
       points: 700,
       basePoints: 600,
@@ -84,8 +84,8 @@ class InAppProducts {
     ),
     points1200: ProductInfo(
       id: points1200,
-      title: '1,650 토큰',
-      description: '호환용 토큰 패키지',
+      title: '기존 1,650 토큰',
+      description: '이전 결제 복원용 토큰 패키지',
       price: 11000,
       points: 1650,
       basePoints: 1500,
@@ -94,8 +94,8 @@ class InAppProducts {
     ),
     points3000: ProductInfo(
       id: points3000,
-      title: '4,400 토큰',
-      description: '호환용 토큰 패키지',
+      title: '기존 4,400 토큰',
+      description: '이전 결제 복원용 토큰 패키지',
       price: 22000,
       points: 4400,
       basePoints: 4000,

@@ -195,6 +195,53 @@ void main() {
       expect(fortune.luckyItems?['place'], '창가 자리');
     });
 
+    test('unwraps routed fortune envelopes from dedicated edge functions', () {
+      final result = FortuneResult(
+        id: 'fortune-7',
+        type: 'personality-dna',
+        title: '성격 DNA',
+        summary: const {},
+        data: const {
+          'success': true,
+          'data': {
+            'fortuneType': 'personality-dna',
+            'score': 93,
+            'content': '구조화된 루틴이 오늘의 흐름을 끌어올려요.',
+            'summary': '루틴을 정리하면 흐름이 좋아져요.',
+            'advice': '오늘은 하나의 일에 집중해보세요.',
+            'timestamp': '2026-04-07T09:00:00.000Z',
+            'recommendations': ['작업 목록을 3개로 줄이기'],
+            'warnings': ['과도한 멀티태스킹 주의'],
+            'metadata': {
+              'provider': 'edge',
+              'schema': 'fortune-envelope',
+            },
+          },
+          'meta': {
+            'provider': 'gemini',
+            'model': 'gemini-2.0-flash-lite',
+          },
+        },
+      );
+
+      final fortune = CharacterFortuneAdapter.fromFortuneResult(
+        result: result,
+        userId: 'user-7',
+        fortuneType: 'personality-dna',
+      );
+
+      expect(fortune.content, '구조화된 루틴이 오늘의 흐름을 끌어올려요.');
+      expect(fortune.summary, '루틴을 정리하면 흐름이 좋아져요.');
+      expect(fortune.overallScore, 93);
+      expect(fortune.recommendations, ['작업 목록을 3개로 줄이기']);
+      expect(fortune.warnings, ['과도한 멀티태스킹 주의']);
+      expect(fortune.metadata?['raw_payload'], isA<Map<String, dynamic>>());
+      expect(
+        (fortune.metadata?['raw_payload'] as Map<String, dynamic>)['content'],
+        '구조화된 루틴이 오늘의 흐름을 끌어올려요.',
+      );
+    });
+
     test('throws on invalid empty payload', () {
       final result = FortuneResult(
         id: 'fortune-3',

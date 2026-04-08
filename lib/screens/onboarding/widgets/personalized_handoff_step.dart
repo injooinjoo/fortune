@@ -4,7 +4,7 @@ import '../../../core/design_system/design_system.dart';
 import '../../../core/widgets/paper_runtime_chrome.dart';
 import '../../../features/character/presentation/utils/onboarding_interest_catalog.dart';
 
-class PersonalizedHandoffStep extends StatelessWidget {
+class PersonalizedHandoffStep extends StatefulWidget {
   final List<String> selectedInterestIds;
 
   const PersonalizedHandoffStep({
@@ -13,10 +13,34 @@ class PersonalizedHandoffStep extends StatelessWidget {
   });
 
   @override
+  State<PersonalizedHandoffStep> createState() =>
+      _PersonalizedHandoffStepState();
+}
+
+class _PersonalizedHandoffStepState extends State<PersonalizedHandoffStep>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _spinController;
+
+  @override
+  void initState() {
+    super.initState();
+    _spinController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2400),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _spinController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final selectedLabels = selectedInterestIds
+    final selectedLabels = widget.selectedInterestIds
         .take(3)
         .map((id) => onboardingInterestById[id]?.label)
         .whereType<String>()
@@ -48,10 +72,12 @@ class PersonalizedHandoffStep extends StatelessWidget {
                 ],
               ),
               child: Center(
-                child: Text(
-                  '↻',
-                  style: typography.displayMedium.copyWith(
-                    color: colors.textPrimary,
+                child: RotationTransition(
+                  turns: _spinController,
+                  child: Icon(
+                    Icons.autorenew_rounded,
+                    size: 40,
+                    color: colors.textPrimary.withValues(alpha: 0.72),
                   ),
                 ),
               ),

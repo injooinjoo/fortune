@@ -928,6 +928,214 @@ class FortuneCategoryScoreGrid extends StatelessWidget {
 
 enum CategoryStatus { great, good, normal, caution }
 
+/// Paper-style score hero: big number + linear progress bar in gradient card
+class FortuneScoreHeroCard extends StatelessWidget {
+  final String label;
+  final int score;
+  final String description;
+  final Color? accentColor;
+
+  const FortuneScoreHeroCard({
+    super.key,
+    required this.label,
+    required this.score,
+    required this.description,
+    this.accentColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final clamped = score.clamp(0, 100);
+    final color = accentColor ?? _scoreColor(context, clamped);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(DSSpacing.lg),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            color.withValues(alpha: context.isDark ? 0.18 : 0.10),
+            colors.surface,
+          ],
+        ),
+        border: Border.all(color: color.withValues(alpha: 0.15)),
+      ),
+      child: Column(
+        children: [
+          Text(
+            label,
+            style: context.labelSmall.copyWith(
+              color: colors.textSecondary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          Text(
+            '$clamped',
+            style: context.typography.displayLarge.copyWith(
+              fontWeight: FontWeight.w800,
+              color: color,
+              height: 1.1,
+            ),
+          ),
+          Text(
+            '점',
+            style: context.bodySmall.copyWith(
+              color: colors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          Text(
+            description,
+            textAlign: TextAlign.center,
+            style: context.bodySmall.copyWith(
+              color: colors.textSecondary,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          // Linear progress bar
+          Container(
+            height: 6,
+            decoration: BoxDecoration(
+              color: colors.border.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(3),
+            ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    width: constraints.maxWidth * (clamped / 100),
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    )
+        .animate()
+        .fadeIn(duration: DSAnimation.contentReveal, curve: DSAnimation.claude)
+        .scale(
+          begin: const Offset(0.96, 0.96),
+          end: const Offset(1, 1),
+          duration: DSAnimation.contentReveal,
+          curve: DSAnimation.claude,
+        );
+  }
+
+  Color _scoreColor(BuildContext context, int score) {
+    final colors = context.colors;
+    if (score >= 70) return colors.success;
+    if (score >= 40) return colors.warning;
+    return colors.error;
+  }
+}
+
+/// Paper-style colored metric tile (for 2x2 health/wealth grids)
+class FortuneColoredMetricTile extends StatelessWidget {
+  final String emoji;
+  final String label;
+  final int score;
+  final Color backgroundColor;
+
+  const FortuneColoredMetricTile({
+    super.key,
+    required this.emoji,
+    required this.label,
+    required this.score,
+    required this.backgroundColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: DSSpacing.md,
+        horizontal: DSSpacing.sm,
+      ),
+      decoration: BoxDecoration(
+        color: backgroundColor.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        border: Border.all(
+          color: backgroundColor.withValues(alpha: 0.25),
+        ),
+      ),
+      child: Column(
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 22)),
+          const SizedBox(height: DSSpacing.xxs),
+          Text(
+            label,
+            style: context.labelSmall.copyWith(
+              color: context.colors.textSecondary,
+              fontSize: 11,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.xxs),
+          Text(
+            '$score',
+            style: context.typography.headingSmall.copyWith(
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Paper-style weekly emoji row (직업운/재물운 주간 전망)
+class FortuneWeeklyEmojiRow extends StatelessWidget {
+  final List<String> emojis;
+
+  const FortuneWeeklyEmojiRow({super.key, required this.emojis});
+
+  static const _dayLabels = ['월', '화', '수', '목', '금', '토', '일'];
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final items = List.generate(
+      math.min(emojis.length, 7),
+      (i) => i,
+    );
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: items.map((i) {
+        return Column(
+          children: [
+            Text(
+              i < emojis.length ? emojis[i] : '·',
+              style: const TextStyle(fontSize: 22),
+            ),
+            const SizedBox(height: DSSpacing.xxs),
+            Text(
+              i < _dayLabels.length ? _dayLabels[i] : '',
+              style: context.labelSmall.copyWith(
+                color: colors.textTertiary,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        );
+      }).toList(growable: false),
+    );
+  }
+}
+
 class FortuneCategoryItem {
   final String emoji;
   final String label;

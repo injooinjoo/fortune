@@ -59,10 +59,18 @@ interface PersonalityDNARequest {
 }
 
 interface PersonalityDNAResponse {
+  fortuneType: string
+  score: number
+  content: string
+  summary: string
+  advice: string
+  timestamp: string
   dnaCode: string
   title: string
   emoji: string
+  description: string
   todayHighlight: string
+  traits: string[]
   loveStyle: {
     title: string
     description: string
@@ -101,6 +109,11 @@ interface PersonalityDNAResponse {
     caution: string
     bestMatchToday: string
   }
+}
+
+interface StandardFortuneEnvelope<T> {
+  success: true
+  data: T
 }
 
 // MBTI별 연애 스타일
@@ -851,7 +864,13 @@ serve(async (req) => {
     // ✅ 오늘의 조언 (날짜 기반)
     const todayAdvice = generateTodayAdvice(mbti, bloodType, currentDate)
 
-    const response = {
+    const response: PersonalityDNAResponse = {
+      fortuneType: 'personality-dna',
+      score: dailyFortune.energyLevel,
+      content: loveStyle.description,
+      summary: todayHighlight,
+      advice: todayAdvice,
+      timestamp: new Date().toISOString(),
       dnaCode,
       title: combinedTitle,
       emoji: mbti.includes('E') ? '✨' : '🌙',
@@ -870,8 +889,13 @@ serve(async (req) => {
       dailyFortune,
     }
 
+    const envelope: StandardFortuneEnvelope<PersonalityDNAResponse> = {
+      success: true,
+      data: response,
+    }
+
     return new Response(
-      JSON.stringify(response),
+      JSON.stringify(envelope),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200
@@ -881,7 +905,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in personality-dna function:', error)
     return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
+      JSON.stringify({ success: false, error: 'Internal server error' }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500

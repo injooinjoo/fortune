@@ -33,6 +33,7 @@ interface LoadResponse {
   success: boolean
   messages: ChatMessage[]
   lastMessageAt: string | null
+  runtimeState: Record<string, unknown> | null
   error?: string
 }
 
@@ -50,6 +51,7 @@ serve(async (req: Request) => {
           success: false,
           messages: [],
           lastMessageAt: null,
+          runtimeState: null,
           error: 'Missing authorization header'
         } as LoadResponse),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -73,6 +75,7 @@ serve(async (req: Request) => {
           success: false,
           messages: [],
           lastMessageAt: null,
+          runtimeState: null,
           error: 'Invalid token'
         } as LoadResponse),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -88,6 +91,7 @@ serve(async (req: Request) => {
           success: false,
           messages: [],
           lastMessageAt: null,
+          runtimeState: null,
           error: 'characterId is required'
         } as LoadResponse),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -97,7 +101,7 @@ serve(async (req: Request) => {
     // 대화 스레드 조회
     const { data, error: selectError } = await supabase
       .from('character_conversations')
-      .select('messages, last_message_at')
+      .select('messages, last_message_at, runtime_state')
       .eq('user_id', user.id)
       .eq('character_id', characterId)
       .single()
@@ -110,7 +114,8 @@ serve(async (req: Request) => {
         JSON.stringify({
           success: true,
           messages: [],
-          lastMessageAt: null
+          lastMessageAt: null,
+          runtimeState: null
         } as LoadResponse),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
@@ -123,6 +128,7 @@ serve(async (req: Request) => {
           success: false,
           messages: [],
           lastMessageAt: null,
+          runtimeState: null,
           error: selectError.message
         } as LoadResponse),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -137,7 +143,11 @@ serve(async (req: Request) => {
       JSON.stringify({
         success: true,
         messages,
-        lastMessageAt: data?.last_message_at || null
+        lastMessageAt: data?.last_message_at || null,
+        runtimeState:
+          data?.runtime_state && typeof data.runtime_state === 'object'
+            ? (data.runtime_state as Record<string, unknown>)
+            : null
       } as LoadResponse),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
@@ -149,6 +159,7 @@ serve(async (req: Request) => {
         success: false,
         messages: [],
         lastMessageAt: null,
+        runtimeState: null,
         error: error instanceof Error ? error.message : 'Unknown error'
       } as LoadResponse),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

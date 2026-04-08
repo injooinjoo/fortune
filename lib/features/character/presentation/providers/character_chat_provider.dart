@@ -77,10 +77,20 @@ const Set<String> kHaneulCardFirstFortuneTypes = {
   'fortune-cookie',
 };
 
+/// 모든 캐릭터에서 카드만 보여주고 LLM 텍스트 메시지를 억제할 운세 타입.
+/// 이 타입들은 이미 풍부한 임베디드 카드 UI를 제공하므로 추가 텍스트가 불필요합니다.
+const Set<String> kCardOnlyFortuneTypes = {
+  'talent',
+  'career',
+};
+
 bool isHaneulCardFirstFortuneFlow({
   required String characterId,
   required String fortuneType,
 }) {
+  // 모든 캐릭터에서 카드만 보여줄 운세 타입
+  if (kCardOnlyFortuneTypes.contains(fortuneType)) return true;
+  // 하늘 캐릭터 전용 카드 우선 타입
   return characterId == haneulCharacter.id &&
       kHaneulCardFirstFortuneTypes.contains(fortuneType);
 }
@@ -3458,6 +3468,73 @@ $enrichedContext
       return normalizedAnswers;
     }
 
+    // ─── family*: 설문 필드 → API 필드 매핑 ───
+    if (apiFortuneType == 'family' || apiFortuneType.startsWith('family-')) {
+      const concernLabels = {
+        'relationship': '화목/관계',
+        'health': '건강',
+        'wealth': '재물',
+        'children': '자녀 교육',
+        'change': '변화/이사',
+      };
+
+      const memberLabels = {
+        'all': '가족 전체',
+        'parents': '부모님',
+        'spouse': '배우자',
+        'children': '자녀',
+        'siblings': '형제자매',
+      };
+      const relationValues = {
+        'all': 'family',
+        'parents': 'parent',
+        'spouse': 'spouse',
+        'children': 'child',
+        'siblings': 'sibling',
+      };
+
+      final concern = _stringValue(normalizedAnswers['concern']) ??
+          _stringValue(normalizedAnswers['family_type']) ??
+          'health';
+      final member = _stringValue(normalizedAnswers['member']) ?? 'all';
+      final concernDisplay =
+          concernLabels[concern] ?? concernLabels['health'] ?? '건강';
+      final relationValue = relationValues[member] ?? relationValues['all']!;
+      final familyProfile = _asMapValue(normalizedAnswers['familyProfile']);
+      final specialQuestion =
+          _stringValue(normalizedAnswers['specialQuestion']) ??
+              _stringValue(normalizedAnswers['question']);
+
+      normalizedAnswers['concern'] = '가족 $concernDisplay';
+      normalizedAnswers['concern_label'] = concern;
+      normalizedAnswers['relationship'] = relationValue;
+      normalizedAnswers['relationshipLabel'] =
+          memberLabels[member] ?? memberLabels['all'];
+      normalizedAnswers['family_member_count'] = member == 'all' ? 4 : 1;
+      normalizedAnswers['detailed_questions'] = <String>[
+        if (specialQuestion != null && specialQuestion.isNotEmpty)
+          specialQuestion,
+      ];
+
+      if (specialQuestion != null && specialQuestion.isNotEmpty) {
+        normalizedAnswers['special_question'] = specialQuestion;
+      }
+
+      if (familyProfile != null) {
+        normalizedAnswers['familyMember'] = {
+          'name': _stringValue(familyProfile['name']),
+          'birthDate': _stringValue(familyProfile['birthDate']),
+          'birthTime': _stringValue(familyProfile['birthTime']),
+          'gender': _stringValue(familyProfile['gender']),
+          'relation': _stringValue(familyProfile['familyRelation']) ??
+              _stringValue(familyProfile['relationship']) ??
+              relationValue,
+        }..removeWhere((key, value) => value == null || value == '');
+      }
+
+      return normalizedAnswers;
+    }
+
     // ─── mbti: 설문 필드 → API 필드 매핑 ───
     if (apiFortuneType == 'mbti') {
       // mbtiType (설문 답변 키) → mbti (API 필드 키) 매핑
@@ -3470,15 +3547,18 @@ $enrichedContext
     }
 
     // ─── face-reading / ootd: 이미지 처리 ───
-    if (apiFortuneType != 'face-reading' && apiFortuneType != 'ootd') {
+    if (apiFortuneType != 'face-reading' &&
+        apiFortuneType != 'ootd' &&
+        apiFortuneType != 'ootd-evaluation') {
       return normalizedAnswers;
     }
 
     final imageBase64 = await _encodeSurveyPhotoField(
       normalizedAnswers,
-      missingImageMessage: apiFortuneType == 'ootd'
-          ? 'OOTD 평가용 사진이 없어요. 사진을 다시 올려주세요.'
-          : 'Face AI 분석용 사진이 없어요. 사진을 다시 올려주세요.',
+      missingImageMessage:
+          apiFortuneType == 'ootd' || apiFortuneType == 'ootd-evaluation'
+              ? 'OOTD 평가용 사진이 없어요. 사진을 다시 올려주세요.'
+              : '관상 분석용 사진이 없어요. 사진을 다시 올려주세요.',
       missingFileMessage: '선택한 사진 파일을 찾을 수 없어요. 다시 업로드해주세요.',
       logLabel: apiFortuneType,
     );
@@ -3487,7 +3567,7 @@ $enrichedContext
       ..remove('photo')
       ..remove('imagePath');
 
-    if (apiFortuneType == 'ootd') {
+    if (apiFortuneType == 'ootd' || apiFortuneType == 'ootd-evaluation') {
       normalizedAnswers
         ..['imageBase64'] = imageBase64
         ..['tpo'] = _stringValue(normalizedAnswers['tpo']) ?? 'casual';
@@ -3669,13 +3749,13 @@ $enrichedContext
     final unifiedService = _ref.read(characterUnifiedFortuneServiceProvider);
     final userProfile = _getUserProfileMap();
 
-    // fortuneType을 canonical API 타입으로 매핑
-    final apiFortuneType = FortuneTypeRegistry.resolveApiType(
+    // 설문 정규화에는 실제 API 타입을 참고하되, 런타임 계약은 public fortuneType을 유지한다.
+    final resolvedApiType = FortuneTypeRegistry.resolveApiType(
       fortuneType,
       answers: answers,
     );
     final normalizedAnswers =
-        await _normalizeSurveyAnswersForApi(apiFortuneType, answers);
+        await _normalizeSurveyAnswersForApi(resolvedApiType, answers);
 
     // 유저 ID 가져오기 (비로그인은 guest_<uuid> 사용)
     final userId = await _resolveFortuneUserId();
@@ -3690,18 +3770,19 @@ $enrichedContext
     );
 
     Logger.info('[CharacterChat] Calling unified fortune route', {
-      'fortuneType': apiFortuneType,
+      'fortuneType': fortuneType,
+      'resolvedApiType': resolvedApiType,
       'hasParams': apiParams.isNotEmpty,
     });
 
     final conditions = CharacterChatFortuneConditions(
-      fortuneType: apiFortuneType,
+      fortuneType: fortuneType,
       answers: normalizedAnswers,
       userProfileMergedParams: params,
     );
 
     final result = await unifiedService.getFortune(
-      fortuneType: apiFortuneType,
+      fortuneType: fortuneType,
       dataSource: FortuneDataSource.api,
       inputConditions: apiParams,
       conditions: conditions,
@@ -3710,11 +3791,12 @@ $enrichedContext
     final fortune = CharacterFortuneAdapter.fromFortuneResult(
       result: result,
       userId: userId,
-      fortuneType: apiFortuneType,
+      fortuneType: fortuneType,
     );
 
     Logger.info('[CharacterChat] Unified fortune route success', {
-      'fortuneType': apiFortuneType,
+      'fortuneType': fortuneType,
+      'resolvedApiType': resolvedApiType,
       'hasContent': fortune.content.isNotEmpty,
       'score': fortune.overallScore,
     });
@@ -3774,6 +3856,7 @@ $enrichedContext
     final rawPayload = _asMapValue(fortune.metadata?['raw_payload']);
     final summaryPayload = _asMapValue(fortune.metadata?['summary']);
     final sourcePayload = _asMapValue(fortune.metadata?['source_payload']);
+
     final payload = _buildGenericFortunePayload(
       fortuneType,
       fortune,
@@ -3954,6 +4037,89 @@ $enrichedContext
           }.take(4).toList(growable: false),
         });
         break;
+      case 'zodiac':
+      case 'constellation':
+        final constellationScores = _asMapValue(rawPayload?['scores']) ??
+            _asMapValue(rawPayload?['fortuneScores']) ??
+            _asMapValue(rawPayload?['fortune_scores']);
+        final constellationTraits = _asMapValue(rawPayload?['traits']);
+        payload.addAll({
+          'constellationName': _stringValue(rawPayload?['constellation']) ??
+              _stringValue(rawPayload?['zodiac']) ??
+              _stringValue(surveyAnswers['zodiac']),
+          'constellationEmoji':
+              _stringValue(rawPayload?['constellationEmoji']) ??
+                  _stringValue(rawPayload?['emoji']),
+          'dateRange': _stringValue(rawPayload?['dateRange']),
+          'element': _stringValue(rawPayload?['constellationElement']) ??
+              _stringValue(rawPayload?['element']),
+          'rulingPlanet': _stringValue(rawPayload?['rulingPlanet']),
+          'personality': _stringValue(constellationTraits?['personality']) ??
+              _stringValue(rawPayload?['characterDesc']),
+          'scores': {
+            if (constellationScores?['overall'] != null)
+              'overall': constellationScores?['overall'],
+            if (constellationScores?['love'] != null ||
+                constellationScores?['romance'] != null)
+              'romance': constellationScores?['romance'] ??
+                  constellationScores?['love'],
+            if (constellationScores?['career'] != null ||
+                constellationScores?['work'] != null)
+              'career': constellationScores?['career'] ??
+                  constellationScores?['work'],
+            if (constellationScores?['finance'] != null ||
+                constellationScores?['money'] != null)
+              'finance': constellationScores?['finance'] ??
+                  constellationScores?['money'],
+          },
+          'compatibility': _asMapValue(rawPayload?['compatibility']),
+        });
+        break;
+      case 'zodiac-animal':
+        final zodiacAnimalScores = _asMapValue(rawPayload?['scores']) ??
+            _asMapValue(rawPayload?['fortuneScores']) ??
+            _asMapValue(rawPayload?['fortune_scores']);
+        final zodiacAnimalTraits = _asMapValue(rawPayload?['traits']);
+        payload.addAll({
+          'animalName': _stringValue(rawPayload?['zodiacAnimal']) ??
+              _stringValue(surveyAnswers['chineseZodiac']),
+          'animalEmoji': _stringValue(rawPayload?['zodiacEmoji']) ??
+              _stringValue(rawPayload?['emoji']),
+          'earthlyBranch': _stringValue(rawPayload?['zodiacHanja']),
+          'element': _stringValue(rawPayload?['element']),
+          'personality': _stringValue(zodiacAnimalTraits?['personality']) ??
+              _stringValue(rawPayload?['characterDesc']),
+          'scores': {
+            if (zodiacAnimalScores?['overall'] != null)
+              'overall': zodiacAnimalScores?['overall'],
+            if (zodiacAnimalScores?['wealth'] != null)
+              'wealth': zodiacAnimalScores?['wealth'],
+            if (zodiacAnimalScores?['love'] != null)
+              'love': zodiacAnimalScores?['love'],
+            if (zodiacAnimalScores?['health'] != null)
+              'health': zodiacAnimalScores?['health'],
+          },
+          'compatibility': _asMapValue(rawPayload?['compatibility']),
+        });
+        break;
+      case 'birthstone':
+        final existingHighlights =
+            (payload['highlights'] as List<String>?) ?? const <String>[];
+        final keywords = _stringListValue(rawPayload?['keywords']) ?? const [];
+        payload.addAll({
+          'title': _stringValue(rawPayload?['birthMonthLabel']) != null
+              ? '${_stringValue(rawPayload?['birthMonthLabel'])} 탄생석 가이드'
+              : payload['title'],
+          'highlights': <String>{
+            ...existingHighlights,
+            if (_stringValue(rawPayload?['birthstone']) != null)
+              _stringValue(rawPayload?['birthstone'])!,
+            if (_stringValue(rawPayload?['birthstoneMeaning']) != null)
+              _stringValue(rawPayload?['birthstoneMeaning'])!,
+            ...keywords,
+          }.take(4).toList(growable: false),
+        });
+        break;
       case 'love':
         payload.addAll({
           'greeting': fortune.greeting ?? _stringValue(rawPayload?['greeting']),
@@ -4111,6 +4277,116 @@ $enrichedContext
               _asMapValue(rawPayload?['weekly_outlook']),
         });
         break;
+      case 'talent':
+        // fortune_data contains the full LLM response; rawPayload top-level
+        // fields (hexagonScores, talentInsights, weeklyPlan) may be empty/null
+        // because TalentGenerator doesn't extract everything from fortuneData.
+        final talentData =
+            _asMapValue(rawPayload?['fortune_data']) ?? rawPayload ?? {};
+        final hexScores = _asMapValue(talentData['hexagonScores']) ??
+            _asMapValue(rawPayload?['hexagonScores']) ??
+            {};
+        final tInsights = _mapListValue(talentData['talentInsights']).isNotEmpty
+            ? _mapListValue(talentData['talentInsights'])
+            : _mapListValue(rawPayload?['talentInsights']);
+        final wPlan = _mapListValue(talentData['weeklyPlan']).isNotEmpty
+            ? _mapListValue(talentData['weeklyPlan'])
+            : _mapListValue(rawPayload?['weeklyPlan']);
+        final gRoadmap = _asMapValue(talentData['growthRoadmap']) ??
+            _asMapValue(rawPayload?['growthRoadmap']);
+        // Edge Function uses 'technique'/'uniqueness' but widget expects
+        // 'technical'/'originality' — normalize keys here.
+        final normalizedScores = hexScores.isNotEmpty
+            ? <String, dynamic>{
+                'creativity': hexScores['creativity'] ?? 50,
+                'technical':
+                    hexScores['technical'] ?? hexScores['technique'] ?? 50,
+                'passion': hexScores['passion'] ?? 50,
+                'discipline': hexScores['discipline'] ?? 50,
+                'originality':
+                    hexScores['originality'] ?? hexScores['uniqueness'] ?? 50,
+                'marketValue': hexScores['marketValue'] ?? 50,
+              }
+            : <String, dynamic>{
+                'creativity': 50,
+                'technical': 50,
+                'passion': 50,
+                'discipline': 50,
+                'originality': 50,
+                'marketValue': 50,
+              };
+        payload.addAll({
+          'talentAnalysis': {
+            'scores': normalizedScores,
+            'talents': tInsights.toList().asMap().entries.map((entry) {
+              final t = entry.value;
+              // Paper: each talent has a different emoji
+              const talentEmojis = ['✍️', '📊', '🎵', '🎨', '💡', '🔬', '🧩'];
+              // Paper shows 1-line short descriptions (~20 chars).
+              // LLM generates 500+ char descriptions — truncate to first sentence.
+              final rawDesc = (t['description'] ?? '') as String;
+              final shortDesc = rawDesc
+                  .split(RegExp(r'[\n\r]'))
+                  .first
+                  .split(RegExp(r'(?<=[.!?。])\s'))
+                  .first;
+              return <String, dynamic>{
+                'name': t['talent'] ?? t['name'] ?? '',
+                'emoji': talentEmojis[entry.key % talentEmojis.length],
+                'description': shortDesc,
+                'rating': t['potential'] != null
+                    ? ((t['potential'] as num) / 20).round()
+                    : (t['rating'] ?? 3),
+              };
+            }).toList(),
+          },
+          'growthRoadmap': (() {
+            if (gRoadmap == null) return <Map<String, dynamic>>[];
+            return <Map<String, dynamic>>[
+              if (gRoadmap['month1'] != null)
+                {
+                  'phase': '탐색 단계',
+                  'description':
+                      _stringValue((gRoadmap['month1'] as Map?)?['goal']) ?? ''
+                },
+              if (gRoadmap['month3'] != null)
+                {
+                  'phase': '심화 단계',
+                  'description':
+                      _stringValue((gRoadmap['month3'] as Map?)?['goal']) ?? ''
+                },
+              if (gRoadmap['month6'] != null)
+                {
+                  'phase': '실전 단계',
+                  'description':
+                      _stringValue((gRoadmap['month6'] as Map?)?['goal']) ?? ''
+                },
+              if (gRoadmap['year1'] != null)
+                {
+                  'phase': '전문가 단계',
+                  'description':
+                      _stringValue((gRoadmap['year1'] as Map?)?['goal']) ?? ''
+                },
+            ];
+          })(),
+          'weeklyPlan': wPlan
+              .map((w) => <String, dynamic>{
+                    'day': _stringValue(w['day']) ?? '',
+                    'task': _stringValue(w['focus']) ??
+                        _stringValue(w['task']) ??
+                        '',
+                  })
+              .toList(),
+          'mentalModel': _asMapValue(talentData['mentalModel']) ??
+              _asMapValue(rawPayload?['mentalModel']),
+          'collaboration': _asMapValue(talentData['collaboration']) ??
+              _asMapValue(rawPayload?['collaboration']),
+          'learningStrategy': _asMapValue(talentData['learningStrategy']) ??
+              _asMapValue(rawPayload?['learningStrategy']),
+          'resumeAnalysis': _asMapValue(talentData['resumeAnalysis']) ??
+              _asMapValue(rawPayload?['resumeAnalysis']),
+        });
+        break;
       case 'exam':
         payload.addAll({
           'passGrade': _stringValue(rawPayload?['passGrade']) ??
@@ -4169,6 +4445,72 @@ $enrichedContext
               _stringListValue(rawPayload?['health_tips']),
         });
         break;
+      case 'personality-dna':
+        final dnaTraits = _stringListValue(rawPayload?['traits']) ?? const [];
+        final dnaCompatibility = _asMapValue(rawPayload?['compatibility']);
+        final dnaDailyFortune = _asMapValue(rawPayload?['dailyFortune']);
+        final dnaLuckyItems = {
+          ...?_asMapValue(payload['luckyItems']),
+          if (_stringValue(dnaDailyFortune?['luckyColor']) != null)
+            'color': _stringValue(dnaDailyFortune?['luckyColor']),
+          if (dnaDailyFortune?['luckyNumber'] != null)
+            'number': dnaDailyFortune?['luckyNumber'].toString(),
+        };
+        final dnaRecommendations = <String>{
+          ...?_stringListValue(payload['recommendations']),
+          if (_stringValue(dnaDailyFortune?['recommendedActivity']) != null)
+            _stringValue(dnaDailyFortune?['recommendedActivity'])!,
+          if (_stringValue(
+                  _asMapValue(rawPayload?['workStyle'])?['work_habit']) !=
+              null)
+            _stringValue(_asMapValue(rawPayload?['workStyle'])?['work_habit'])!,
+        }.toList(growable: false);
+        final dnaWarnings = <String>{
+          ...?_stringListValue(payload['warnings']),
+          if (_stringValue(dnaDailyFortune?['caution']) != null)
+            _stringValue(dnaDailyFortune?['caution'])!,
+        }.toList(growable: false);
+        payload.addAll({
+          'personalityType': _stringValue(surveyAnswers['mbti']) ??
+              _stringValue(surveyAnswers['mbtiType']) ??
+              _stringValue(rawPayload?['mbti']) ??
+              _stringValue(rawPayload?['dnaCode']),
+          'personalityTitle': _stringValue(rawPayload?['title']),
+          'todayInsight': _stringValue(rawPayload?['todayHighlight']) ??
+              _stringValue(rawPayload?['summary']),
+          'growthTip': _stringValue(rawPayload?['todayAdvice']) ??
+              _stringValue(rawPayload?['advice']),
+          'traits': dnaTraits.asMap().entries.map((entry) {
+            const traitEmojis = ['🧠', '✨', '🌿', '🚀'];
+            return <String, dynamic>{
+              'emoji': traitEmojis[entry.key % traitEmojis.length],
+              'name': 'DNA 포인트 ${entry.key + 1}',
+              'description': entry.value,
+            };
+          }).toList(growable: false),
+          'compatibility': {
+            if (_asMapValue(dnaCompatibility?['lover']) != null)
+              'best': {
+                'type': '연애 궁합',
+                'name': _stringValue(
+                    _asMapValue(dnaCompatibility?['lover'])?['mbti']),
+                'description': _stringValue(
+                    _asMapValue(dnaCompatibility?['lover'])?['description']),
+              },
+            if (_asMapValue(dnaCompatibility?['friend']) != null)
+              'good': {
+                'type': '친구 궁합',
+                'name': _stringValue(
+                    _asMapValue(dnaCompatibility?['friend'])?['mbti']),
+                'description': _stringValue(
+                    _asMapValue(dnaCompatibility?['friend'])?['description']),
+              },
+          },
+          'luckyItems': dnaLuckyItems,
+          'recommendations': dnaRecommendations,
+          'warnings': dnaWarnings,
+        });
+        break;
       // ─── P5: 건강 ───
       case 'health':
         payload.addAll({
@@ -4182,6 +4524,83 @@ $enrichedContext
         });
         break;
       // ─── P6: 가족/반려동물 ───
+      case 'family':
+        final familyMetadata = _asMapValue(rawPayload?['metadata']);
+        final familyProfile = _asMapValue(surveyAnswers['familyProfile']);
+        final member = _stringValue(surveyAnswers['member']) ??
+            _stringValue(familyMetadata?['relationship']) ??
+            'all';
+        const familyLabels = {
+          'all': '가족 전체',
+          'family': '가족 전체',
+          'parents': '부모님',
+          'parent': '부모님',
+          'spouse': '배우자',
+          'children': '자녀',
+          'child': '자녀',
+          'siblings': '형제자매',
+          'sibling': '형제자매',
+        };
+        const familyEmojis = {
+          'all': '👨‍👩‍👧‍👦',
+          'family': '👨‍👩‍👧‍👦',
+          'parents': '👴',
+          'parent': '👴',
+          'spouse': '💑',
+          'children': '👶',
+          'child': '👶',
+          'siblings': '👫',
+          'sibling': '👫',
+        };
+        final familyMembers = <Map<String, dynamic>>[
+          if (familyProfile != null)
+            {
+              'name': _stringValue(familyProfile['name']) ??
+                  familyLabels[member] ??
+                  '가족',
+              'relation': _stringValue(familyProfile['familyRelation']) ??
+                  familyLabels[member] ??
+                  '가족',
+              'score': fortune.overallScore,
+              'advice': _stringValue(rawPayload?['advice']),
+              'emoji': familyEmojis[member] ?? '😊',
+            }
+          else if (member != 'all')
+            {
+              'name': familyLabels[member] ?? '가족',
+              'relation': familyLabels[member] ?? '가족',
+              'score': fortune.overallScore,
+              'advice': _stringValue(rawPayload?['advice']),
+              'emoji': familyEmojis[member] ?? '😊',
+            },
+        ];
+        final familyRecommendations =
+            _stringListValue(rawPayload?['familyAdvice']) ??
+                _stringListValue(payload['recommendations']) ??
+                const <String>[];
+        final familyWarnings =
+            _stringListValue(payload['warnings']) ?? const <String>[];
+        payload.addAll({
+          'date': _stringValue(rawPayload?['created_at'])?.split('T').first,
+          'scoreDescription': _stringValue(rawPayload?['advice']),
+          'specialTip': _stringValue(rawPayload?['specialAnswer']) ??
+              _stringValue(payload['specialTip']) ??
+              _stringValue(rawPayload?['advice']),
+          'familyMembers': familyMembers,
+          'familyAnalysis': {
+            'members': familyMembers,
+            'goodThings': familyRecommendations,
+            'cautions': familyWarnings,
+          },
+          'luckyItems': {
+            ...?_asMapValue(payload['luckyItems']),
+            ...?_asMapValue(rawPayload?['luckyElements']),
+            ...?_asMapValue(rawPayload?['lucky_items']),
+          },
+          'recommendations': familyRecommendations,
+          'warnings': familyWarnings,
+        });
+        break;
       case 'pet-compatibility':
         payload.addAll({
           'overallCompatibility':
