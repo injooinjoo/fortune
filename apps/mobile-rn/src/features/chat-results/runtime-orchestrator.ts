@@ -108,8 +108,8 @@ export async function resolveFortuneRuntimeOutcome(
     };
   }
 
+  const conditionsHash = await buildConditionsHash(prepared.body);
   const conditionsData = buildConditionsData(prepared.body);
-  const conditionsHash = await buildConditionsHash(conditionsData);
 
   const persistedResult = await readPersistedFortuneResult({
     userId: params.session.user.id,
