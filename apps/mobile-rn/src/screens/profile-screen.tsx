@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 
 import Constants from 'expo-constants';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { Linking, Platform, Pressable, View } from 'react-native';
 import { getProductDisplayTitle } from '@fortune/product-contracts';
 
@@ -56,15 +56,39 @@ function formatIsoDateTime(value: string | null) {
 export function ProfileScreen() {
   const [isRefreshingPremium, setIsRefreshingPremium] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
-  const { session } = useAppBootstrap();
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const { session, status: bootstrapStatus } = useAppBootstrap();
   const { restorePurchases, state, syncRemoteProfile } = useMobileAppState();
+
+  if (bootstrapStatus !== 'ready') {
+    return <Screen />;
+  }
+
+  if (!session && !isSigningOut) {
+    return (
+      <Redirect
+        href={{
+          pathname: '/signup',
+          params: {
+            requireAuth: '1',
+            returnTo: '/profile',
+          },
+        }}
+      />
+    );
+  }
+
+  if (!session) {
+    return <Screen />;
+  }
+
   const savedName =
     state.profile.displayName.trim() ||
-    (session?.user.user_metadata.name as string | undefined) ||
-    (session?.user.user_metadata.full_name as string | undefined) ||
-    session?.user.email ||
-    '게스트';
-  const savedEmail = session?.user.email ?? '로컬 프로필';
+    (session.user.user_metadata.name as string | undefined) ||
+    (session.user.user_metadata.full_name as string | undefined) ||
+    session.user.email ||
+    '사용자';
+  const savedEmail = session.user.email ?? '이메일 미등록';
   const avatarLabel = savedName.slice(0, 1).toUpperCase();
   const recentCharacter = useMemo(() => {
     if (!state.chat.selectedCharacterId) {
@@ -121,9 +145,11 @@ export function ProfileScreen() {
 
   async function handleSignOut() {
     try {
+      setIsSigningOut(true);
       await supabase?.auth.signOut();
       router.replace('/chat');
     } catch (error) {
+      setIsSigningOut(false);
       await captureError(error, { surface: 'profile:sign-out' });
     }
   }
@@ -347,23 +373,10 @@ export function ProfileScreen() {
           label="테마 모드"
         />
         <ProfileMenuRow
-          badge={session ? '연결됨' : '게스트'}
-          detail={
-            session
-              ? '현재 계정과 프로필 상태가 연결되어 있어요.'
-              : '로그인하면 프로필과 구매 상태를 원격으로 동기화할 수 있어요.'
-          }
+          badge="연결됨"
+          detail="현재 계정과 프로필 상태가 연결되어 있어요."
           icon="link-outline"
           label="계정 연결"
-          onPress={
-            session
-              ? undefined
-              : () =>
-                  router.push({
-                    pathname: '/signup',
-                    params: { returnTo: '/profile' },
-                  })
-          }
           showDivider
         />
       </ProfileSection>
@@ -393,16 +406,8 @@ export function ProfileScreen() {
         }}
       >
         <FooterAction
-          label={session ? '로그아웃' : '회원가입 / 로그인'}
-          onPress={
-            session
-              ? () => void handleSignOut()
-              : () =>
-                  router.push({
-                    pathname: '/signup',
-                    params: { returnTo: '/profile' },
-                  })
-          }
+          label="로그아웃"
+          onPress={() => void handleSignOut()}
         />
         <FooterAction
           destructive

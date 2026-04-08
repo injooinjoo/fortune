@@ -60,7 +60,10 @@ function normalizeReturnTo(value: string | undefined) {
 }
 
 export function SignupScreen() {
-  const params = useLocalSearchParams<{ returnTo?: string | string[] }>();
+  const params = useLocalSearchParams<{
+    requireAuth?: string | string[];
+    returnTo?: string | string[];
+  }>();
   const [activeProviderId, setActiveProviderId] =
     useState<SocialAuthProviderId | null>(null);
   const [authMessage, setAuthMessage] = useState<string | null>(null);
@@ -71,7 +74,9 @@ export function SignupScreen() {
   } = useAppBootstrap();
   const { startSocialAuth } = useSocialAuth();
   const returnTo = normalizeReturnTo(readSearchParam(params.returnTo));
-  const backDestinationLabel = resolveBackDestinationLabel(returnTo as Href);
+  const requireAuth = readSearchParam(params.requireAuth) === '1';
+  const backDestinationHref = (requireAuth ? '/chat' : returnTo) as Href;
+  const backDestinationLabel = resolveBackDestinationLabel(backDestinationHref);
 
   useEffect(() => {
     if (bootstrapStatus !== 'ready' || !session) {
@@ -111,7 +116,7 @@ export function SignupScreen() {
     <Screen
       header={
         <RouteBackHeader
-          fallbackHref={returnTo as Href}
+          fallbackHref={backDestinationHref}
           label={backDestinationLabel}
         />
       }
@@ -168,38 +173,40 @@ export function SignupScreen() {
         </AppText>
       </Card>
 
-      <Card>
-        <AppText variant="heading4">로그인 없이 먼저 보기</AppText>
-        <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
-          서비스 흐름을 먼저 확인한 뒤, 필요할 때 계정을 연결해도 됩니다.
-        </AppText>
-        <PrimaryButton
-          onPress={() => {
-            markGuestBrowse()
-              .then(() => router.replace(returnTo as Href))
-              .catch(() => router.replace(returnTo as Href));
-          }}
-        >
-          로그인 없이 둘러보기
-        </PrimaryButton>
-        <PrimaryButton
-          onPress={() =>
-            router.push({
-              pathname: '/onboarding',
-              params: { returnTo },
-            })
-          }
-          tone="secondary"
-        >
-          정보 먼저 입력하기
-        </PrimaryButton>
-        <PrimaryButton
-          onPress={() => router.replace(returnTo as Href)}
-          tone="secondary"
-        >
-          {returnTo === '/chat' ? '채팅으로 돌아가기' : '이전 화면으로 돌아가기'}
-        </PrimaryButton>
-      </Card>
+      {!requireAuth ? (
+        <Card>
+          <AppText variant="heading4">로그인 없이 먼저 보기</AppText>
+          <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+            서비스 흐름을 먼저 확인한 뒤, 필요할 때 계정을 연결해도 됩니다.
+          </AppText>
+          <PrimaryButton
+            onPress={() => {
+              markGuestBrowse()
+                .then(() => router.replace(returnTo as Href))
+                .catch(() => router.replace(returnTo as Href));
+            }}
+          >
+            로그인 없이 둘러보기
+          </PrimaryButton>
+          <PrimaryButton
+            onPress={() =>
+              router.push({
+                pathname: '/onboarding',
+                params: { returnTo },
+              })
+            }
+            tone="secondary"
+          >
+            정보 먼저 입력하기
+          </PrimaryButton>
+          <PrimaryButton
+            onPress={() => router.replace(returnTo as Href)}
+            tone="secondary"
+          >
+            {returnTo === '/chat' ? '채팅으로 돌아가기' : '이전 화면으로 돌아가기'}
+          </PrimaryButton>
+        </Card>
+      ) : null}
     </Screen>
   );
 }
