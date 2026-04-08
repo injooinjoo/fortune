@@ -229,7 +229,7 @@ export function buildUserMessage(text: string): ChatShellMessage {
   };
 }
 
-export function buildAssistantTextMessage(text: string): ChatShellMessage {
+export function buildAssistantTextMessage(text: string): ChatShellTextMessage {
   return {
     id: createMessageId('assistant'),
     kind: 'text',

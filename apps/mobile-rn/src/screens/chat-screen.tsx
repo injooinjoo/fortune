@@ -52,6 +52,7 @@ import {
   type ChatShellAction,
   type ChatShellEmbeddedResultMessage,
   type ChatShellMessage,
+  type ChatShellTextMessage,
 } from '../lib/chat-shell';
 import {
   chatCharacters,
@@ -144,8 +145,9 @@ type ResolvedFortuneMessage =
     }
   | {
       kind: 'text';
-      message: ChatShellMessage;
+      message: ChatShellTextMessage;
       routeToPremium?: boolean;
+      routeToSignup?: boolean;
     };
 
 export function ChatScreen() {
@@ -467,6 +469,18 @@ export function ChatScreen() {
     setSurveySelections([]);
   }
 
+  function routeToSignup() {
+    setAuthMessage(null);
+    setComposerTrayOpen(false);
+    router.push({
+      pathname: '/signup',
+      params: {
+        requireAuth: '1',
+        returnTo: '/chat',
+      },
+    });
+  }
+
   function beginFortuneRuntime(
     character: ChatCharacterSpec,
     fortuneType: FortuneTypeId,
@@ -478,6 +492,11 @@ export function ChatScreen() {
     );
 
     if (runtimeBlockReason) {
+      if (runtimeBlockReason === 'login-required') {
+        routeToSignup();
+        return true;
+      }
+
       const blockMessage = buildFortuneRuntimeBlockMessage(
         fortuneType,
         runtimeBlockReason,
@@ -539,6 +558,11 @@ export function ChatScreen() {
     }
 
     if (resolved.kind === 'text') {
+      if (resolved.routeToSignup) {
+        routeToSignup();
+        return;
+      }
+
       appendMessages(character, [resolved.message]);
       if (resolved.routeToPremium) {
         router.push('/premium');
@@ -902,7 +926,7 @@ export function ChatScreen() {
         }
 
         if (error.code === 'UNAUTHORIZED') {
-          setAuthMessage(error.message);
+          routeToSignup();
           return;
         }
 
@@ -1185,6 +1209,8 @@ export function ChatScreen() {
         message: buildAssistantTextMessage(outcome.message),
         routeToPremium:
           outcome.kind === 'blocked' && outcome.routeToPremium === true,
+        routeToSignup:
+          outcome.kind === 'blocked' && outcome.reason === 'login-required',
       };
     } catch (error) {
       await captureError(error, { surface }).catch(() => undefined);
