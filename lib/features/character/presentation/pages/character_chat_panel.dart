@@ -48,10 +48,10 @@ import '../../../../data/models/secondary_profile.dart';
 import '../../../../presentation/providers/pet_profiles_provider.dart';
 import '../../../../presentation/providers/secondary_profiles_provider.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
-import '../../../../presentation/widgets/social_login_bottom_sheet.dart';
 import '../../../../services/storage_service.dart';
 import '../../data/services/active_character_chat_registry.dart';
 import '../utils/character_chat_theme.dart';
+import '../utils/character_chat_preflight_guard.dart';
 import '../utils/chat_survey_profile_utils.dart';
 import '../utils/pending_chat_auth_intent.dart';
 
@@ -568,9 +568,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
     _isShowingAuthSheet = true;
     try {
-      await SocialLoginBottomSheet.showForAuthentication(
+      await CharacterChatPreflightGuard.promptAuthentication(
         context,
-        ref: ref,
+        ref,
         onAuthenticated: () {
           unawaited(_resumePendingAuthIntentIfNeeded());
         },
@@ -583,24 +583,68 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   Future<bool> _ensureAuthenticatedForIntent(
     PendingChatAuthIntent intent,
   ) async {
-    if (widget.debugSkipRegistrationAuthGate ||
-        widget.catalogPreview != null ||
-        _hasAuthenticatedSession()) {
+    if (widget.debugSkipRegistrationAuthGate || widget.catalogPreview != null) {
+      return true;
+    }
+
+    if (_hasAuthenticatedSession()) {
       return true;
     }
 
     await _storageService.savePendingChatAuthIntent(intent.toJson());
+    if (_isShowingAuthSheet) {
+      return false;
+    }
+
     await _presentAuthenticationSheet();
     return false;
   }
 
   Future<bool> _ensureAuthenticatedForProfileRegistration() async {
-    if (widget.debugSkipRegistrationAuthGate || _hasAuthenticatedSession()) {
+    if (widget.debugSkipRegistrationAuthGate) {
+      return true;
+    }
+
+    if (_hasAuthenticatedSession()) {
+      return true;
+    }
+
+    if (_isShowingAuthSheet) {
       return true;
     }
 
     await _presentAuthenticationSheet();
     return false;
+  }
+
+  Future<bool> _ensureChatActionReady({
+    required String actionLabel,
+    required int requiredTokens,
+    PendingChatAuthIntent? pendingIntent,
+    required String trigger,
+  }) async {
+    if (widget.debugSkipRegistrationAuthGate || widget.catalogPreview != null) {
+      return true;
+    }
+
+    if (!_hasAuthenticatedSession() && _isShowingAuthSheet) {
+      if (pendingIntent != null) {
+        await _storageService.savePendingChatAuthIntent(pendingIntent.toJson());
+      }
+      return false;
+    }
+
+    return CharacterChatPreflightGuard.ensureReady(
+      context,
+      ref,
+      actionLabel: actionLabel,
+      requiredTokens: requiredTokens,
+      pendingIntent: pendingIntent,
+      trigger: trigger,
+      onAuthenticated: () {
+        unawaited(_resumePendingAuthIntentIfNeeded());
+      },
+    );
   }
 
   Future<void> _resumePendingAuthIntentIfNeeded() async {
@@ -630,13 +674,13 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       switch (pendingIntent.type) {
         case PendingChatAuthIntentType.textMessage:
           await _storageService.clearPendingChatAuthIntent();
-          _sendTextMessage(pendingIntent.text ?? '');
+          await _sendTextMessage(pendingIntent.text ?? '');
           break;
         case PendingChatAuthIntentType.choiceSelection:
           await _storageService.clearPendingChatAuthIntent();
           final choice = pendingIntent.choice;
           if (choice != null) {
-            _submitChoiceSelection(choice);
+            await _submitChoiceSelection(choice);
           }
           break;
         case PendingChatAuthIntentType.fortuneRequest:
@@ -661,7 +705,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           if (fortuneType != null &&
               fortuneType.isNotEmpty &&
               answers != null) {
-            await _submitSurveyRequestAfterAuth(
+            await _submitSurveyRequestWithPreflight(
               fortuneType: fortuneType,
               answers: answers,
             );
@@ -679,7 +723,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
             if (!mounted) {
               break;
             }
-            await _showImagePickerSheet(skipAuthGate: true);
+            await _showImagePickerSheet();
             break;
           }
 
@@ -740,7 +784,13 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       return;
     }
 
-    await _presentAuthenticationSheet();
+    await CharacterChatPreflightGuard.promptAuthentication(
+      context,
+      ref,
+      onAuthenticated: () {
+        unawaited(_resumePendingAuthIntentIfNeeded());
+      },
+    );
   }
 
   @override
@@ -777,22 +827,28 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
               return;
             }
 
-            final errorMessage = switch (next.error) {
-              'INSUFFICIENT_TOKENS' => '토큰이 부족해요.',
-              _ => context.l10n.errorOccurredRetry,
-            };
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(errorMessage),
-                backgroundColor: context.colors.error,
-                behavior: SnackBarBehavior.floating,
-                action: SnackBarAction(
-                  label: context.l10n.confirm,
-                  textColor: context.colors.ctaForeground,
-                  onPressed: () {},
+            if (next.error == 'INSUFFICIENT_TOKENS') {
+              unawaited(
+                CharacterChatPreflightGuard.showInsufficientTokensDialog(
+                  context,
+                  ref,
+                  actionLabel: '이 작업을 진행하려면',
                 ),
-              ),
-            );
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(context.l10n.errorOccurredRetry),
+                  backgroundColor: context.colors.error,
+                  behavior: SnackBarBehavior.floating,
+                  action: SnackBarAction(
+                    label: context.l10n.confirm,
+                    textColor: context.colors.ctaForeground,
+                    onPressed: () {},
+                  ),
+                ),
+              );
+            }
 
             Future.delayed(const Duration(milliseconds: 100), () {
               ref
@@ -1370,9 +1426,22 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     await _startFortuneFlow(fortuneType, displayName, resetSurvey: true);
   }
 
-  void _sendTextMessage(String text) {
+  Future<void> _sendTextMessage(String text) async {
     final normalized = text.trim();
     if (normalized.isEmpty) {
+      return;
+    }
+
+    final ready = await _ensureChatActionReady(
+      actionLabel: '메시지를 보내려면',
+      requiredTokens: CharacterChatPreflightGuard.characterChatTokenCost(),
+      pendingIntent: PendingChatAuthIntent.textMessage(
+        characterId: widget.character.id,
+        text: normalized,
+      ),
+      trigger: 'text-message',
+    );
+    if (!ready) {
       return;
     }
 
@@ -1393,7 +1462,20 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     }
   }
 
-  void _submitChoiceSelection(CharacterChoice choice) {
+  Future<void> _submitChoiceSelection(CharacterChoice choice) async {
+    final ready = await _ensureChatActionReady(
+      actionLabel: '답장을 보내려면',
+      requiredTokens: CharacterChatPreflightGuard.characterChatTokenCost(),
+      pendingIntent: PendingChatAuthIntent.choiceSelection(
+        characterId: widget.character.id,
+        choice: choice,
+      ),
+      trigger: 'choice-selection',
+    );
+    if (!ready) {
+      return;
+    }
+
     _clearSessionStartAnchor();
     ref
         .read(characterChatProvider(widget.character.id).notifier)
@@ -1409,6 +1491,21 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }) async {
     if (triggerHaptic) {
       HapticUtils.lightImpact();
+    }
+
+    final launchAllowed = await _ensureChatActionReady(
+      actionLabel: '운세를 보려면',
+      requiredTokens: CharacterChatPreflightGuard.fortuneLaunchTokenCost(
+        fortuneType,
+      ),
+      pendingIntent: PendingChatAuthIntent.fortuneRequest(
+        characterId: widget.character.id,
+        fortuneType: fortuneType,
+      ),
+      trigger: 'fortune-start.$fortuneType',
+    );
+    if (!launchAllowed) {
+      return;
     }
 
     if (resetSurvey) {
@@ -1435,16 +1532,6 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     final config = surveyType != null ? surveyConfigs[surveyType] : null;
     final hasSurvey =
         surveyType != null && config != null && config.steps.isNotEmpty;
-
-    if (!hasSurvey &&
-        !await _ensureAuthenticatedForIntent(
-          PendingChatAuthIntent.fortuneRequest(
-            characterId: widget.character.id,
-            fortuneType: fortuneType,
-          ),
-        )) {
-      return;
-    }
 
     chatNotifier.startFreshFortuneSession(
       introMessage: introMessage,
@@ -1660,14 +1747,32 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   ) async {
     final fortuneType = surveyState.fortuneTypeString ?? 'daily';
     final answers = surveyState.completedData ?? {};
-    if (!await _ensureAuthenticatedForIntent(
-      PendingChatAuthIntent.surveySubmission(
+    await _submitSurveyRequestWithPreflight(
+      fortuneType: fortuneType,
+      answers: answers,
+    );
+  }
+
+  Future<void> _submitSurveyRequestWithPreflight({
+    required String fortuneType,
+    required Map<String, dynamic> answers,
+  }) async {
+    final actionLabel =
+        fortuneType == 'talisman' ? '부적을 만들려면' : '운세 결과를 보려면';
+    final ready = await _ensureChatActionReady(
+      actionLabel: actionLabel,
+      requiredTokens: CharacterChatPreflightGuard.surveySubmissionTokenCost(
+        fortuneType,
+        answers,
+      ),
+      pendingIntent: PendingChatAuthIntent.surveySubmission(
         characterId: widget.character.id,
         fortuneType: fortuneType,
         surveyAnswers: answers,
       ),
-    )) {
-      // Auth failed — reset processing state so chips remain tappable
+      trigger: 'survey-submit.$fortuneType',
+    );
+    if (!ready) {
       ref
           .read(characterChatProvider(widget.character.id).notifier)
           .setProcessing(false);
@@ -1832,16 +1937,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   Future<void> _handleChoiceSelection(CharacterChoice choice) async {
-    if (!await _ensureAuthenticatedForIntent(
-      PendingChatAuthIntent.choiceSelection(
-        characterId: widget.character.id,
-        choice: choice,
-      ),
-    )) {
-      return;
-    }
-
-    _submitChoiceSelection(choice);
+    await _submitChoiceSelection(choice);
   }
 
   Widget _buildTypingIndicator() {
@@ -2818,14 +2914,20 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   /// 사진 선택 바텀시트 표시
   Future<void> _showImagePickerSheet({bool skipAuthGate = false}) async {
-    if (!skipAuthGate &&
-        !await _ensureAuthenticatedForIntent(
-          PendingChatAuthIntent.openImagePicker(
+    final pendingIntent = skipAuthGate
+        ? null
+        : PendingChatAuthIntent.openImagePicker(
             characterId: widget.character.id,
             fortuneType: _activeFortuneType(),
             target: PendingChatImagePickerTarget.composerSheet,
-          ),
-        )) {
+          );
+    final ready = await _ensureChatActionReady(
+      actionLabel: '사진을 보내려면',
+      requiredTokens: CharacterChatPreflightGuard.characterChatTokenCost(),
+      pendingIntent: pendingIntent,
+      trigger: skipAuthGate ? 'image-picker.resume' : 'image-picker',
+    );
+    if (!ready) {
       return;
     }
 
@@ -3022,17 +3124,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                     if (text.isEmpty) {
                       return;
                     }
-
-                    if (!await _ensureAuthenticatedForIntent(
-                      PendingChatAuthIntent.textMessage(
-                        characterId: widget.character.id,
-                        text: text,
-                      ),
-                    )) {
-                      return;
-                    }
-
-                    _sendTextMessage(text);
+                    await _sendTextMessage(text);
                   },
                 ),
               ),

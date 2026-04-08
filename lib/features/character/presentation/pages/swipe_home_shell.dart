@@ -16,6 +16,8 @@ import '../providers/user_created_character_provider.dart';
 import '../../data/fortune_characters.dart';
 import '../../domain/models/ai_character.dart';
 import '../utils/chat_catalog_preview.dart';
+import '../utils/character_chat_preflight_guard.dart';
+import '../utils/pending_chat_auth_intent.dart';
 import 'character_list_panel.dart';
 import 'character_chat_panel.dart';
 import '../../../../services/storage_service.dart';
@@ -98,8 +100,7 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
             localProfile?['onboarding_completed'] == true;
 
     // force_onboarding 플래그: 테스트 계정은 매번 온보딩 표시
-    final forceOnboarding =
-        _shouldForceOnboarding(localProfile) ||
+    final forceOnboarding = _shouldForceOnboarding(localProfile) ||
         await _checkForceOnboardingFromDb(currentUser);
 
     _ShellOnboardingGate nextGate = _ShellOnboardingGate.none;
@@ -278,6 +279,17 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
     }
 
     final resolvedRequest = launchRequest.copyWith(characterId: character.id);
+    final routeLaunchReady = await _ensureFortuneRouteLaunchReady(
+      resolvedRequest,
+      character,
+    );
+    if (!routeLaunchReady) {
+      if (ref.read(authServiceProvider).isAuthenticated) {
+        await _storageService.clearPendingChatAuthIntent();
+      }
+      return;
+    }
+
     if (_handledRouteLaunchSignature == resolvedRequest.launchSignature &&
         _showChatOverlay) {
       return;
@@ -294,6 +306,33 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
     if (!_showChatOverlay) {
       _showChatPanel();
     }
+  }
+
+  Future<bool> _ensureFortuneRouteLaunchReady(
+    FortuneChatLaunchRequest request,
+    AiCharacter character,
+  ) async {
+    final fortuneType = request.fortuneType;
+    if (fortuneType == null || fortuneType.isEmpty) {
+      return true;
+    }
+
+    return CharacterChatPreflightGuard.ensureReady(
+      context,
+      ref,
+      actionLabel: '운세를 보려면',
+      requiredTokens: CharacterChatPreflightGuard.fortuneLaunchTokenCost(
+        fortuneType,
+      ),
+      pendingIntent: PendingChatAuthIntent.fortuneRequest(
+        characterId: character.id,
+        fortuneType: fortuneType,
+      ),
+      trigger: 'route-launch.$fortuneType',
+      onAuthenticated: () {
+        unawaited(_handleOpenCharacterFromRoute());
+      },
+    );
   }
 
   Future<AiCharacter?> _resolveLaunchCharacter(
