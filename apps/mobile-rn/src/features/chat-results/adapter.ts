@@ -126,6 +126,11 @@ export function buildEmbeddedResultPayloadFromNormalizedResult(
     normalizedResult.summary ??
     normalizedResult.content ??
     fallback.summary;
+  const extractedMetrics = extractMetricTiles(fortuneType, payload);
+  const extractedHighlights = extractHighlights(fortuneType, payload);
+  const extractedRecommendations = extractRecommendations(fortuneType, payload);
+  const extractedWarnings = extractWarnings(fortuneType, payload);
+  const extractedLuckyItems = extractLuckyItems(fortuneType, payload);
 
   return {
     ...fallback,
@@ -137,30 +142,35 @@ export function buildEmbeddedResultPayloadFromNormalizedResult(
     ),
     contextTags:
       normalizedContext.tags.length > 0 ? normalizedContext.tags : undefined,
-    metrics: mergeMetricTiles(
-      extractMetricTiles(fortuneType, payload),
+    metrics: selectMetricTiles(
+      fortuneType,
+      extractedMetrics,
       fallback.metrics,
     ),
-    highlights: mergeUnique(
-      extractHighlights(fortuneType, payload),
+    highlights: selectTextItems(
+      fortuneType,
+      extractedHighlights,
       mergeUnique(
         buildContextualHighlights(fortuneType, normalizedContext),
         fallback.highlights,
       ),
     ),
-    recommendations: mergeUnique(
-      extractRecommendations(fortuneType, payload),
+    recommendations: selectTextItems(
+      fortuneType,
+      extractedRecommendations,
       mergeUnique(
         contextualAction ? [contextualAction] : [],
         fallback.recommendations,
       ),
     ),
-    warnings: mergeUnique(
-      extractWarnings(fortuneType, payload),
+    warnings: selectTextItems(
+      fortuneType,
+      extractedWarnings,
       fallback.warnings,
     ),
-    luckyItems: mergeUnique(
-      extractLuckyItems(fortuneType, payload),
+    luckyItems: selectTextItems(
+      fortuneType,
+      extractedLuckyItems,
       fallback.luckyItems,
     ),
     specialTip:
@@ -583,11 +593,129 @@ function mergeMetricTiles(
   return merged.length > 0 ? merged.slice(0, 4) : undefined;
 }
 
+function selectMetricTiles(
+  fortuneType: FortuneTypeId,
+  preferred: MetricTileData[] | undefined,
+  fallback: MetricTileData[] | undefined,
+) {
+  if (fortuneType === 'daily' && preferred && preferred.length > 0) {
+    return preferred.slice(0, 4);
+  }
+
+  return mergeMetricTiles(preferred, fallback);
+}
+
+function selectTextItems(
+  fortuneType: FortuneTypeId,
+  preferred: string[] | undefined,
+  fallback: string[] | undefined,
+) {
+  if (fortuneType === 'daily' && preferred && preferred.length > 0) {
+    return preferred.slice(0, 5);
+  }
+
+  return mergeUnique(preferred, fallback);
+}
+
+function extractDailyMetricTiles(payload: UnknownRecord): MetricTileData[] | undefined {
+  const categories = asRecord(payload.categories);
+  const entries = [
+    toDailyCategoryMetric('종합운', categories.total),
+    toDailyCategoryMetric('연애', categories.love),
+    toDailyCategoryMetric('재물', categories.money),
+    toDailyCategoryMetric('일/학업', categories.work ?? categories.study),
+  ].filter(Boolean) as MetricTileData[];
+
+  return entries.length > 0 ? entries : undefined;
+}
+
+function toDailyCategoryMetric(
+  label: string,
+  categoryValue: unknown,
+): MetricTileData | null {
+  const category = asRecord(categoryValue);
+  const base = toMetricTile(label, category.score);
+
+  if (!base) {
+    return null;
+  }
+
+  const advice = asRecord(category.advice);
+  const note = firstText(advice.description, advice.idiom, category.advice);
+
+  return note ? { ...base, note: trimValue(note, 24) } : base;
+}
+
+function extractDailyActionItems(value: unknown) {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.flatMap((item) => {
+    const action = asRecord(item);
+    const title = firstText(action.title);
+    const why = firstText(action.why);
+    const content = [title, why].filter(Boolean).join(': ');
+
+    return content ? [content] : [];
+  });
+}
+
+function extractDailyLowestCategoryAdvice(payload: UnknownRecord) {
+  const categories = asRecord(payload.categories);
+  const candidates = [
+    { label: '연애', value: categories.love },
+    { label: '재물', value: categories.money },
+    { label: '일', value: categories.work },
+    { label: '공부', value: categories.study },
+    { label: '건강', value: categories.health },
+  ];
+
+  let lowest: { label: string; score: number; advice: string | null } | null = null;
+
+  for (const candidate of candidates) {
+    const category = asRecord(candidate.value);
+    const score = readScore(category.score);
+
+    if (score == null) {
+      continue;
+    }
+
+    const advice = firstText(asRecord(category.advice).description, category.advice);
+    if (!advice) {
+      continue;
+    }
+
+    if (!lowest || score < lowest.score) {
+      lowest = { label: candidate.label, score, advice };
+    }
+  }
+
+  return lowest ? `${lowest.label} 흐름: ${lowest.advice}` : null;
+}
+
+function readScore(value: unknown) {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === 'string' && value.trim()) {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+
+  return null;
+}
+
 function extractMetricTiles(
   fortuneType: FortuneTypeId,
   payload: UnknownRecord,
 ): MetricTileData[] | undefined {
   switch (fortuneType) {
+    case 'daily':
+      return extractDailyMetricTiles(payload);
     case 'compatibility':
       return mergeMetricTiles(
         [
@@ -662,6 +790,12 @@ function extractHighlights(
   payload: UnknownRecord,
 ) {
   switch (fortuneType) {
+    case 'daily':
+      return collectTextItems(
+        payload.ai_insight,
+        asRecord(asRecord(payload.categories).total).advice,
+        asRecord(asRecord(payload.fortuneSummary).byZodiacAnimal).content,
+      );
     case 'compatibility':
       return collectTextItems(
         payload.personality_match,
@@ -696,6 +830,12 @@ function extractRecommendations(
   payload: UnknownRecord,
 ) {
   switch (fortuneType) {
+    case 'daily':
+      return collectTextItems(
+        extractDailyActionItems(payload.personalActions),
+        payload.ai_tips,
+        payload.advice,
+      );
     case 'exam':
       return collectTextItems(payload.csatFocus, payload.csatChecklist, payload.dday_advice);
     case 'naming':
@@ -733,6 +873,11 @@ function extractWarnings(
   payload: UnknownRecord,
 ) {
   switch (fortuneType) {
+    case 'daily':
+      return collectTextItems(
+        payload.caution,
+        extractDailyLowestCategoryAdvice(payload),
+      );
     case 'avoid-people':
       return collectTextItems(
         payload.cautionTimes,
@@ -757,7 +902,14 @@ function extractLuckyItems(
 ) {
   switch (fortuneType) {
     case 'daily':
-      return collectTextItems(payload.lucky_items, payload.lucky_numbers);
+      return collectTextItems(
+        asRecord(payload.lucky_items).time,
+        asRecord(payload.lucky_items).color,
+        asRecord(payload.lucky_items).number,
+        asRecord(payload.lucky_items).direction,
+        asRecord(payload.lucky_items).item,
+        payload.lucky_numbers,
+      );
     case 'lucky-items':
       return collectTextItems(payload.color, payload.fashion, payload.numbers);
     case 'yearly-encounter':

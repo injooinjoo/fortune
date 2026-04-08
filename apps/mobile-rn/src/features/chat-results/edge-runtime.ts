@@ -328,7 +328,6 @@ function normalizeAnswerValue(value: unknown) {
 
 function requiresBirthDate(fortuneType: FortuneTypeId) {
   return (
-    fortuneType === 'daily' ||
     fortuneType === 'blood-type' ||
     fortuneType === 'zodiac' ||
     fortuneType === 'zodiac-animal' ||
