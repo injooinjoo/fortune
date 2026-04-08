@@ -2,30 +2,33 @@
 
 Date: 2026-04-09
 Target: `apps/mobile-rn`
+Scope: edge-backed fortune card readability
 
 ## Symptom
 
-Several RN fortunes were already calling real edge functions, but the resulting cards still looked generic, over-flattened, or visually inconsistent with the underlying payload.
+- edge는 구조화된 결과를 내려주는데 RN 채팅 카드에서 숫자형 운세와 paired guidance가 충분히 드러나지 않았다.
+- 같은 payload라도 카드가 generic bullet/card 묶음처럼 보여 정보 밀도가 떨어졌다.
 
-## Why
+## WHY
 
-1. `adapter.ts` had explicit extraction for only part of the fortune surface.
-2. `embedded-result-card.tsx` rendered almost everything as metric grids, bullet lists, and pills.
-3. Existing UI primitives for numeric comparison and paired actions were not connected to the embedded result payload.
+- 어댑터가 이미 `scoreRails`와 `actionPair`를 만들더라도 카드 렌더러가 그 구조를 직접 소비하지 않으면, 실제 edge 구조화 결과가 일반 리스트로 다운그레이드된다.
 
-## Where
+## WHERE
 
-- `apps/mobile-rn/src/features/chat-results/adapter.ts`
-- `apps/mobile-rn/src/features/chat-results/embedded-result-card.tsx`
-- `apps/mobile-rn/src/features/chat-results/types.ts`
+- [embedded-result-card.tsx](/Users/jacobmac/Desktop/Dev/fortune/apps/mobile-rn/src/features/chat-results/embedded-result-card.tsx)
 
-## Where Else
+## WHERE ELSE
 
-- `zodiac` used daily-like payloads without daily-like rendering.
-- `zodiac-animal`, `constellation`, `birthstone`, `biorhythm`, `game-enhance` exposed edge-native structure that the card did not honor.
+- `adapter.ts`의 `extractScoreRails`, `buildActionPair`, `luckyItems` 추출 경로
+- `fortune-results/primitives.tsx`의 `StatRail`, `DoDontPair`
 
-## Fix Strategy
+## HOW
 
-- Reuse the existing primitives instead of introducing a new card system.
-- Add minimal payload extensions.
-- Promote the remaining edge-backed fortunes from generic flatten to fortune-specific extraction where the payload shape clearly supports it.
+- 카드 렌더러에서 `scoreRails`와 `actionPair`를 직접 읽는다.
+- `luckyItems` 길이에 따라 pills와 bullets를 분기해서 읽기성을 맞춘다.
+- 기존 카드 구조와 토큰/edge/runtime 절차는 건드리지 않는다.
+## Verification Plan
+
+- `npm --prefix apps/mobile-rn run typecheck`
+- `npx expo export --platform ios --output-dir /tmp/fortune-rn-export-batch4-20260409`
+- `flutter analyze`

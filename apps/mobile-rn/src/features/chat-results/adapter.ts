@@ -811,6 +811,33 @@ function extractDetailSections(
         ],
         ["궁합 힌트", payload.compatibility],
       ]);
+    case "compatibility":
+      return compactSections([
+        createTextSection(
+          "전반 궁합",
+          firstReadableText(payload.overall_compatibility, payload.content),
+          readScore(payload.score ?? payload.overall_score) ?? undefined,
+        ),
+        createTextSection(
+          "이름 궁합",
+          firstReadableText(payload.compatibility_keyword),
+          readScore(payload.name_compatibility) ?? undefined,
+        ),
+        createRecordSection("띠 궁합", payload.zodiac_animal),
+        createRecordSection("별자리 궁합", payload.star_sign),
+        createRecordSection("운명수", payload.destiny_number),
+        createRecordSection("계절 리듬", payload.season),
+      ]);
+    case "blind-date":
+      return createRecordSections([
+        ["성공 예측", payload.successPrediction],
+        ["첫인상 팁", payload.firstImpressionTips],
+        ["추천 대화 주제", asRecord(payload.conversationTopics).recommended],
+        ["피하면 좋은 주제", asRecord(payload.conversationTopics).avoid],
+        ["스타일 제안", payload.outfitAdvice],
+        ["장소 제안", payload.locationAdvice],
+        ["만남 정보", payload.meetingInfo],
+      ]);
     case "face-reading":
       return extractFaceReadingDetailSections(payload);
     case "ootd-evaluation":
@@ -840,10 +867,14 @@ function extractDetailSections(
       return createRecordSections([
         ["관계 카테고리", payload.relationshipCategories],
         ["재물 카테고리", payload.wealthCategories],
-        ["자녀 분석", payload.childAnalysis],
+        ["자녀 카테고리", payload.childrenCategories ?? payload.childAnalysis],
         ["변화 분석", payload.changeCategories],
-        ["건강 카테고리", payload.healthCategories],
+        ["건강 카테고리", payload.healthCategories ?? payload.healthAnalysis],
+        ["계절 조언", payload.seasonalAdvice],
+        ["가족 시너지", payload.familySynergy],
+        ["월별 흐름", payload.monthlyFlow],
         ["소통 조언", payload.communicationAdvice],
+        ["교육 조언", payload.educationAdvice],
         ["타이밍 조언", payload.timingAdvice],
         ["가족 팁", payload.familyAdvice],
       ]);
@@ -1054,6 +1085,13 @@ function createRecordSections(
     .filter(Boolean) as EmbeddedResultDetailSection[];
 
   return sections.length > 0 ? sections : undefined;
+}
+
+function compactSections(
+  sections: Array<EmbeddedResultDetailSection | null | undefined>,
+): EmbeddedResultDetailSection[] | undefined {
+  const filtered = sections.filter(Boolean) as EmbeddedResultDetailSection[];
+  return filtered.length > 0 ? filtered : undefined;
 }
 
 function createRecordSection(
@@ -1295,13 +1333,16 @@ function extractMetricTiles(
     case "compatibility":
       return mergeMetricTiles(
         [
-          toMetricTile(
-            "궁합 점수",
-            payload.overall_compatibility ?? payload.overall_score,
-          ),
-          toMetricTile("궁합 등급", payload.compatibility_grade),
+          toMetricTile("궁합 점수", payload.score ?? payload.overall_score),
+          toMetricTile("이름 궁합", payload.name_compatibility),
+          toMetricTile("띠 궁합", asRecord(payload.zodiac_animal).score),
+          toMetricTile("별자리 궁합", asRecord(payload.star_sign).score),
         ].filter(Boolean) as MetricTileData[],
-        mapRecordToMetricTiles(asRecord(payload.personality_match)),
+        [
+          toMetricTile("궁합 등급", payload.compatibility_grade),
+          toMetricTile("운명수", asRecord(payload.destiny_number).number),
+          toMetricTile("나이 차이", asRecord(payload.age_difference).years),
+        ].filter(Boolean) as MetricTileData[],
       );
     case "blind-date":
       return mergeMetricTiles(
@@ -1388,6 +1429,10 @@ function extractMetricTiles(
           toScoredMetricTile(
             "건강 흐름",
             asRecord(payload.healthCategories).physical,
+          ),
+          toScoredMetricTile(
+            "자녀 흐름",
+            asRecord(payload.childrenCategories).education,
           ),
           toMetricTile(
             "변화 타이밍",
@@ -1479,7 +1524,23 @@ function extractScoreRails(
 ): StatRailData[] | undefined {
   switch (fortuneType) {
     case "compatibility":
-      return mapRecordToStatRails(asRecord(payload.personality_match));
+      return compactStatRails([
+        toStatRail(
+          "이름 궁합",
+          payload.name_compatibility,
+          payload.compatibility_keyword,
+        ),
+        toStatRail(
+          "띠 궁합",
+          asRecord(payload.zodiac_animal).score,
+          asRecord(payload.zodiac_animal).message,
+        ),
+        toStatRail(
+          "별자리 궁합",
+          asRecord(payload.star_sign).score,
+          asRecord(payload.star_sign).message,
+        ),
+      ]);
     case "biorhythm":
       return [
         toStatRail(
@@ -1543,14 +1604,18 @@ function extractHighlights(fortuneType: FortuneTypeId, payload: UnknownRecord) {
         asRecord(payload.today_recommendation).relationship_tip,
       );
     case "compatibility":
-      return collectTextItems(
+      return collectReadableTextItems(
+        payload.overall_compatibility,
         payload.personality_match,
         payload.communication_match,
         payload.love_match,
+        payload.strengths,
+        asRecord(payload.season).message,
       );
     case "blind-date":
-      return collectTextItems(
+      return collectReadableTextItems(
         payload.successPrediction,
+        payload.firstImpressionTips,
         payload.conversationTopics,
       );
     case "avoid-people":
@@ -1627,12 +1692,14 @@ function extractHighlights(fortuneType: FortuneTypeId, payload: UnknownRecord) {
         payload.summary,
       );
     case "family":
-      return collectTextItems(
+      return collectReadableTextItems(
         payload.relationshipCategories,
         payload.wealthCategories,
-        payload.childAnalysis,
+        payload.childrenCategories ?? payload.childAnalysis,
         payload.changeCategories,
-        payload.healthCategories,
+        payload.healthCategories ?? payload.healthAnalysis,
+        asRecord(payload.familySynergy).compatibility,
+        asRecord(payload.monthlyFlow).current,
       );
     case "mbti":
       return collectTextItems(
@@ -1732,6 +1799,12 @@ function extractRecommendations(
         payload.status_message,
         payload.today_recommendation,
       );
+    case "compatibility":
+      return collectTextItems(
+        payload.advice,
+        payload.detailed_advice,
+        payload.strengths,
+      );
     case "dream":
       return collectTextItems(
         payload.todayGuidance,
@@ -1765,6 +1838,8 @@ function extractRecommendations(
         payload.educationAdvice,
         payload.educationTips,
         payload.relationshipGuide,
+        asRecord(payload.seasonalAdvice).best_activity,
+        asRecord(payload.monthlyFlow).advice,
         asRecord(payload.familyAdvice).tips,
         payload.recommendations,
       );
@@ -1821,6 +1896,15 @@ function extractRecommendations(
         asRecord(payload.owner_bond).bonding_tip,
         asRecord(payload.bonding_mission).description,
         payload.special_tips,
+      );
+    case "blind-date":
+      return collectTextItems(
+        payload.firstImpressionTips,
+        asRecord(payload.conversationTopics).recommended,
+        payload.locationAdvice,
+        payload.dosList,
+        payload.outfitAdvice,
+        payload.advice,
       );
     case "match-insight":
       return collectTextItems(
@@ -1880,7 +1964,11 @@ function extractWarnings(fortuneType: FortuneTypeId, payload: UnknownRecord) {
     case "health":
       return collectTextItems(payload.weak_organs, payload.cautions);
     case "blind-date":
-      return collectTextItems(payload.dontsList);
+      return collectTextItems(
+        payload.dontsList,
+        asRecord(payload.conversationTopics).avoid,
+        asRecord(payload.chatAnalysis).redFlags,
+      );
     case "yearly-encounter":
       return collectTextItems(
         payload.fateSignalWarnings,
@@ -1924,6 +2012,8 @@ function extractWarnings(fortuneType: FortuneTypeId, payload: UnknownRecord) {
     case "family":
       return collectTextItems(
         payload.warnings,
+        asRecord(payload.seasonalAdvice).caution_period,
+        asRecord(payload.monthlyFlow).current,
         asRecord(payload.monthlyTrend).caution_period,
       );
     case "face-reading":
@@ -2095,6 +2185,14 @@ function extractSpecialTip(fortuneType: FortuneTypeId, payload: UnknownRecord) {
       return firstText(payload.seasonal_advice, payload.advice);
     case "family":
       return firstText(payload.specialAnswer, payload.special_answer);
+    case "compatibility":
+      return firstText(payload.advice, payload.detailed_advice);
+    case "blind-date":
+      return firstText(
+        payload.finalMessage,
+        payload.advice,
+        asRecord(payload.successPrediction).advice,
+      );
     case "decision":
       return firstText(payload.recommendation);
     case "face-reading":
@@ -2675,6 +2773,13 @@ function mapRecordToStatRails(
     .filter(Boolean) as StatRailData[];
 
   return entries.length > 0 ? entries.slice(0, 4) : undefined;
+}
+
+function compactStatRails(
+  rails: Array<StatRailData | null | undefined>,
+): StatRailData[] | undefined {
+  const filtered = rails.filter(Boolean) as StatRailData[];
+  return filtered.length > 0 ? filtered.slice(0, 4) : undefined;
 }
 
 function toStatRail(

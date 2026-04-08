@@ -326,48 +326,109 @@ function buildFortuneRequestBody(
       );
       break;
     case "compatibility":
-      copyLabeledValue(
-        payload,
-        profile.displayName || context.characterName || "본인",
-        "name",
-        "person1_name",
-      );
-      copyLabeledValue(
-        payload,
-        profile.birthDate,
-        "birthDate",
-        "birth_date",
-        "person1_birth_date",
-      );
-      copyLabeledValue(
-        payload,
-        readString(answers.partnerName),
-        "partnerName",
-        "person2_name",
-      );
-      copyLabeledValue(
-        payload,
-        readString(answers.partnerBirth),
-        "partnerBirth",
-        "person2_birth_date",
-      );
-      copyLabeledValue(payload, labels.relationship, "relationship");
+      {
+        const person1Name =
+          profile.displayName || context.characterName || "본인";
+        const partnerName = readString(answers.partnerName);
+        const partnerBirth = readString(answers.partnerBirth);
+        const compatibilityType = resolveCompatibilityType(
+          readString(answers.relationship),
+        );
+
+        copyLabeledValue(
+          payload,
+          person1Name,
+          "name",
+          "person1_name",
+        );
+        copyLabeledValue(
+          payload,
+          profile.birthDate,
+          "birthDate",
+          "birth_date",
+          "person1_birth_date",
+        );
+        copyLabeledValue(
+          payload,
+          partnerName,
+          "partnerName",
+          "person2_name",
+        );
+        copyLabeledValue(
+          payload,
+          partnerBirth,
+          "partnerBirth",
+          "person2_birth_date",
+        );
+        copyLabeledValue(payload, labels.relationship, "relationship");
+        copyLabeledValue(
+          payload,
+          compatibilityType,
+          "compatibilityType",
+          "compatibility_type",
+        );
+        payload.person1 = {
+          name: person1Name,
+          birthDate: profile.birthDate ?? null,
+          gender: profile.gender ?? null,
+          birthTime: profile.birthTime ?? null,
+        };
+        payload.person2 = {
+          name: partnerName ?? null,
+          birthDate: partnerBirth ?? null,
+        };
+      }
       break;
     case "blind-date":
-      copyLabeledValue(payload, labels.dateType, "dateType", "date_type");
-      copyLabeledValue(payload, labels.expectation, "expectation");
-      copyLabeledValue(
-        payload,
-        labels.meetingTime,
-        "meetingTime",
-        "meeting_time",
-      );
-      copyLabeledValue(
-        payload,
-        labels.isFirstBlindDate,
-        "isFirstBlindDate",
-        "is_first_blind_date",
-      );
+      {
+        const expectation = labels.expectation ?? readString(answers.expectation);
+        const meetingTime = labels.meetingTime ?? readString(answers.meetingTime);
+        const dateType = labels.dateType ?? readString(answers.dateType);
+        const isFirstBlindDate = normalizeYesNo(
+          readString(answers.isFirstBlindDate),
+        );
+
+        copyLabeledValue(payload, dateType, "dateType", "date_type");
+        copyLabeledValue(payload, expectation, "expectation");
+        copyLabeledValue(payload, meetingTime, "meetingTime", "meeting_time");
+        payload.isFirstBlindDate = isFirstBlindDate;
+        payload.is_first_blind_date = isFirstBlindDate;
+        copyLabeledValue(
+          payload,
+          new Date().toISOString().slice(0, 10),
+          "meetingDate",
+          "meeting_date",
+        );
+        copyLabeledValue(
+          payload,
+          resolveBlindDateMeetingType(readString(answers.dateType), dateType),
+          "meetingType",
+          "meeting_type",
+        );
+        copyLabeledValue(payload, "지인 소개", "introducer");
+        copyLabeledValue(
+          payload,
+          resolveBlindDateIdealFirstDate(readString(answers.dateType), meetingTime),
+          "idealFirstDate",
+          "ideal_first_date",
+        );
+        copyLabeledValue(
+          payload,
+          resolveBlindDateConfidence(
+            readString(answers.isFirstBlindDate),
+            readString(answers.expectation),
+          ),
+          "confidence",
+        );
+        payload.importantQualities = resolveBlindDateImportantQualities(
+          readString(answers.expectation),
+        );
+        payload.important_qualities = payload.importantQualities;
+        copyLabeledValue(payload, "비슷한 또래", "agePreference", "age_preference");
+        payload.concerns = expectation ? [expectation] : [];
+        payload.analysisType = "basic";
+        payload.analysis_type = "basic";
+      }
       break;
     case "ex-lover":
       {
@@ -586,6 +647,20 @@ function buildFortuneRequestBody(
       break;
     case "lucky-items":
       copyLabeledValue(payload, labels.category, "category");
+      if (labels.category) {
+        payload.interests = [labels.category];
+      }
+      break;
+    case "past-life":
+      copyLabeledValue(payload, labels.curiosity, "curiosity", "questionFocus");
+      copyLabeledValue(payload, labels.eraVibe, "eraVibe", "era_vibe");
+      copyLabeledValue(
+        payload,
+        labels.feeling,
+        "feeling",
+        "dominantFeeling",
+        "dominant_feeling",
+      );
       break;
     case "dream":
       copyLabeledValue(
@@ -1038,6 +1113,9 @@ function requiresBirthDate(fortuneType: FortuneTypeId) {
     fortuneType === "new-year" ||
     fortuneType === "love" ||
     fortuneType === "naming" ||
+    fortuneType === "lucky-items" ||
+    fortuneType === "biorhythm" ||
+    fortuneType === "past-life" ||
     fortuneType === "zodiac" ||
     fortuneType === "zodiac-animal" ||
     fortuneType === "constellation" ||
@@ -1127,6 +1205,88 @@ function resolveFavoriteTeam(answers: Record<string, unknown>) {
   }
 
   return null;
+}
+
+function resolveCompatibilityType(rawValue?: string | null) {
+  switch (rawValue) {
+    case "dating":
+    case "married":
+    case "crush":
+      return "love";
+    case "friend":
+      return "friendship";
+    default:
+      return null;
+  }
+}
+
+function normalizeYesNo(rawValue?: string | null) {
+  return rawValue === "yes";
+}
+
+function resolveBlindDateMeetingType(
+  rawValue?: string | null,
+  label?: string | null,
+) {
+  switch (rawValue) {
+    case "casual":
+      return "가벼운 첫 만남";
+    case "serious":
+      return "진지한 소개팅";
+    case "group":
+      return "지인 동반 만남";
+    default:
+      return label ?? "소개팅";
+  }
+}
+
+function resolveBlindDateImportantQualities(rawValue?: string | null) {
+  switch (rawValue) {
+    case "chemistry":
+      return ["대화 케미", "공감", "자연스러운 리액션"];
+    case "romance":
+      return ["설렘", "호감 표현", "분위기"];
+    case "stability":
+      return ["진중함", "신뢰감", "생활 감각"];
+    case "fun":
+      return ["유머", "편안함", "에너지"];
+    default:
+      return ["대화 케미", "편안함"];
+  }
+}
+
+function resolveBlindDateIdealFirstDate(
+  rawValue?: string | null,
+  meetingTime?: string | null,
+) {
+  switch (rawValue) {
+    case "casual":
+      return meetingTime === "점심" ? "가벼운 브런치" : "편한 카페 대화";
+    case "serious":
+      return meetingTime === "저녁" ? "차분한 디너 코스" : "조용한 티타임";
+    case "group":
+      return "부담 없는 모임형 만남";
+    default:
+      return "대화가 편한 카페 만남";
+  }
+}
+
+function resolveBlindDateConfidence(
+  firstBlindDate?: string | null,
+  expectation?: string | null,
+) {
+  if (firstBlindDate === "yes") {
+    return "조금 긴장돼요";
+  }
+
+  switch (expectation) {
+    case "romance":
+      return "설렘이 큰 편이에요";
+    case "stability":
+      return "차분하게 보고 싶어요";
+    default:
+      return "편하게 만나볼 수 있어요";
+  }
 }
 
 function resolveNewYearGoal(rawGoal?: string | null) {

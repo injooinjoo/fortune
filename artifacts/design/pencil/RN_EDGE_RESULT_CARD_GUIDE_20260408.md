@@ -1,6 +1,6 @@
 # RN Edge Result Card Guide
 
-Date: 2026-04-08
+Date: 2026-04-09
 Target: `apps/mobile-rn`
 
 ## Goal
@@ -29,6 +29,9 @@ Target: `apps/mobile-rn`
 - metric 값은 1줄 강제 축약보다 줄바꿈 허용을 우선
 - `행운 포인트`가 긴 문장형이면 pill 대신 bullet list로 내린다
 - `compatibility`, `face-reading`, `ootd-evaluation`, `game-enhance`, `biorhythm`처럼 수치 비교가 중요한 운세는 `score rail` 우선
+- `zodiac-animal`, `constellation`, `birthstone`처럼 상징형 운세는 짧은 요약보다 `detailSections + score rail` 구조를 우선한다
+- `blind-date`는 `firstImpressionTips`, `conversationTopics`, `outfitAdvice`, `locationAdvice`, `meetingInfo`를 별도 섹션으로 유지한다
+- `family`는 subtype별 `childrenCategories`, `seasonalAdvice`, `familySynergy`, `monthlyFlow`를 generic flatten으로 합치지 말고 섹션 단위로 보여준다
 
 ## Runtime Truthfulness
 
@@ -49,3 +52,5 @@ Target: `apps/mobile-rn`
 
 - 현재 공통 카드 구조는 유지
 - 이번 배치의 핵심은 “더 예쁜 새 카드”보다 “실제 edge payload를 정직하게 보여주는 카드”이다
+- 이번 배치부터 `EmbeddedResultCard`가 `scoreRails`, `DoDontPair`, 긴 `luckyItems`의 bullet fallback을 직접 소비한다
+- 이번 배치부터 `compatibility`는 `이름/띠/별자리` 숫자축을 score rail로, `blind-date`는 첫인상/대화/룩/장소/만남정보를, `family`는 subtype 공통 구조를 더 직접 소비한다

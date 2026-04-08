@@ -2,42 +2,36 @@
 
 Date: 2026-04-09
 Target: `apps/mobile-rn`
+Scope: embedded result card readability for already edge-backed fortunes
 
-## Scope
+## Goal
 
-- Continue the RN edge rollout after commit `1bdcd51d`
-- Focus on fortunes that were technically edge-backed but still rendered through generic flatten paths
-- Improve embedded result readability without changing the overall chat-card architecture
+- RN 카드가 이미 edge에서 내려오는 구조화된 payload를 generic flatten보다 더 잘 읽도록 보강한다.
+- 특히 `zodiac`, `zodiac-animal`, `constellation`, `birthstone`, `biorhythm`, `game-enhance` 같은 타입의 가독성을 올린다.
+
+## What I Checked
+
+- [adapter.ts](/Users/jacobmac/Desktop/Dev/fortune/apps/mobile-rn/src/features/chat-results/adapter.ts)
+- [embedded-result-card.tsx](/Users/jacobmac/Desktop/Dev/fortune/apps/mobile-rn/src/features/chat-results/embedded-result-card.tsx)
+- [primitives.tsx](/Users/jacobmac/Desktop/Dev/fortune/apps/mobile-rn/src/features/fortune-results/primitives.tsx)
+- [fortune-zodiac-animal/index.ts](/Users/jacobmac/Desktop/Dev/fortune/supabase/functions/fortune-zodiac-animal/index.ts)
+- [fortune-constellation/index.ts](/Users/jacobmac/Desktop/Dev/fortune/supabase/functions/fortune-constellation/index.ts)
+- [fortune-birthstone/index.ts](/Users/jacobmac/Desktop/Dev/fortune/supabase/functions/fortune-birthstone/index.ts)
+- [fortune-biorhythm/index.ts](/Users/jacobmac/Desktop/Dev/fortune/supabase/functions/fortune-biorhythm/index.ts)
 
 ## Findings
 
-1. `zodiac` still consumed `/fortune-daily` output through non-daily code paths.
-   - Request side was already wired.
-   - Display side missed `daily`-style summary, metrics, warnings, lucky items, and timeline extraction.
-
-2. `zodiac-animal`, `constellation`, `birthstone`, `biorhythm`, and `game-enhance` had real edge payloads but weak presentation.
-   - Most of them fell back to generic text flattening.
-   - Their native structures were better suited for score rails or structured detail sections.
-
-3. `embedded-result-card` still underused existing RN result primitives.
-   - `StatRail` and `DoDontPair` already existed in `fortune-results/primitives.tsx`.
-   - The chat card did not consume them, even when edge payloads had strong numeric or paired recommendation/warning structure.
-
-4. Long `luckyItems` phrases still rendered as pills.
-   - This made some real edge payloads harder to scan than necessary.
+- `adapter.ts`는 이미 여러 운세에서 `scoreRails`, `actionPair`, 전용 `detailSections`를 뽑고 있다.
+- 하지만 RN 카드 렌더러는 그 richer payload를 충분히 소비하지 못하면, 결국 숫자형 운세도 긴 bullet/card 묶음처럼 보이게 된다.
+- `KeywordPills`는 짧은 키워드에는 맞지만 긴 phrase형 `luckyItems`에는 읽기성이 떨어진다.
 
 ## Decision
 
-- Keep the existing embedded result card architecture.
-- Extend the payload shape minimally with:
-  - `scoreRails`
-  - `actionPair`
-- Add targeted extraction for the remaining high-signal fortune groups instead of redesigning the whole card system.
+- 카드 자체는 유지하되, richer payload를 노출하는 최소 렌더링 보강을 우선한다.
+- 새 디자인 시스템을 만들지 않고, 기존 primitive인 `StatRail`, `DoDontPair`, `BulletList` 재사용으로 해결한다.
 
-## Files To Touch
+## Implementation Focus
 
-- `apps/mobile-rn/src/features/chat-results/adapter.ts`
-- `apps/mobile-rn/src/features/chat-results/embedded-result-card.tsx`
-- `apps/mobile-rn/src/features/chat-results/types.ts`
-- `artifacts/design/pencil/RN_EDGE_RESULT_CARD_GUIDE_20260408.md`
-- `artifacts/runtime/rn-edge-rollout-20260408/INTEGRATION_MATRIX.md`
+- `scoreRails` 렌더링 활성화
+- `actionPair`가 있으면 `recommendations/warnings`를 분리 렌더링하지 않고 쌍 구조 우선
+- `luckyItems`가 길면 pills 대신 bullet list로 렌더링

@@ -1,6 +1,6 @@
 # RN Fortune Edge Rollout Matrix
 
-Date: 2026-04-08
+Date: 2026-04-09
 Target: `apps/mobile-rn`
 
 ## Status Buckets
@@ -23,18 +23,21 @@ Target: `apps/mobile-rn`
 | 무현 도사  | `face-reading`                                                                             | `edge-ready (photo survey)`      |
 | 스텔라     | `zodiac`, `zodiac-animal`, `constellation`, `birthstone`                                   | `edge-ready (profile birthDate)` |
 | Dr. 마인드 | `mbti`                                                                                     | `edge-ready (profile birthDate)` |
-| Dr. 마인드 | `personality-dna`, `talent`, `past-life`, `decision`                                       | `edge-ready`                     |
+| Dr. 마인드 | `personality-dna`, `talent`, `decision`                                                    | `edge-ready`                     |
+| Dr. 마인드 | `past-life`                                                                                | `edge-ready (profile birthDate)` |
 | Dr. 마인드 | `coaching`, `daily-review`, `weekly-review`, `chat-insight`                                | `local-only`                     |
 | 로제       | `love`                                                                                     | `edge-ready (profile birthDate)` |
-| 로제       | `compatibility`, `blind-date`, `ex-lover`, `avoid-people`, `celebrity`, `yearly-encounter` | `edge-ready`                     |
+| 로제       | `compatibility`                                                                            | `edge-ready (profile birthDate)` |
+| 로제       | `blind-date`, `ex-lover`, `avoid-people`, `celebrity`, `yearly-encounter`                  | `edge-ready`                     |
 | 제임스 김  | `career`, `wealth`, `exam`                                                                 | `edge-ready`                     |
-| 럭키       | `lucky-items`                                                                              | `edge-ready`                     |
+| 럭키       | `lucky-items`                                                                              | `edge-ready (profile birthDate)` |
 | 럭키       | `lotto`                                                                                    | `edge-unavailable`               |
 | 럭키       | `ootd-evaluation`                                                                          | `edge-ready (photo survey)`      |
 | 마르코     | `health`, `match-insight`, `game-enhance`, `exercise`                                      | `edge-ready`                     |
 | 마르코     | `breathing`                                                                                | `local-only`                     |
 | 리나       | `moving`                                                                                   | `edge-ready`                     |
-| 루나       | `tarot`, `dream`, `biorhythm`, `family`, `pet-compatibility`, `talisman`, `wish`           | `edge-ready`                     |
+| 루나       | `biorhythm`                                                                                | `edge-ready (profile birthDate)` |
+| 루나       | `tarot`, `dream`, `family`, `pet-compatibility`, `talisman`, `wish`                        | `edge-ready`                     |
 
 ## This Batch
 
@@ -58,6 +61,8 @@ Target: `apps/mobile-rn`
 - Reduced result-card truncation and widened readable text limits for long edge payloads
 - Added richer RN card consumption for `zodiac`, `zodiac-animal`, `constellation`, `birthstone`, `biorhythm`, `game-enhance`
 - Added shared `score rail` / `추천-주의 pair` rendering path for edge payloads with strong numeric or paired-action structure
+- Added long `luckyItems` fallback from pills to bullet list when the payload is phrase-heavy
+- Added structured adapter consumption for `compatibility`, `blind-date`, and `family` so their edge-native sections render with less generic flattening
 
 ## Next Batch
 
