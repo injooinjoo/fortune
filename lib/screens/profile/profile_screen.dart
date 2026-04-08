@@ -417,13 +417,11 @@ class _ProfileAvatar extends StatelessWidget {
 
     return CircleAvatar(
       radius: 36,
-      backgroundColor: context.colors.selectionBackground.withValues(
-        alpha: 0.92,
-      ),
+      backgroundColor: context.colors.surface,
       child: Text(
         initial,
         style: context.typography.headingMedium.copyWith(
-          color: context.colors.selectionForeground,
+          color: context.colors.textPrimary,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -443,11 +441,7 @@ class _ProfileStatChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokenBalance = profile?.tokenBalance ?? 0;
-    final sajuInfo = profile?.zodiacSign?.isNotEmpty == true
-        ? profile!.zodiacSign!
-        : (profile?.chineseZodiac?.isNotEmpty == true
-            ? '${profile!.chineseZodiac}띠'
-            : '-');
+    final sajuInfo = _sajuElementValue(profile);
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -458,7 +452,7 @@ class _ProfileStatChips extends StatelessWidget {
           Expanded(
             child: _StatChip(
               value: sajuInfo,
-              label: '사주 정보',
+              label: '사주 원소',
             ),
           ),
           const SizedBox(width: DSSpacing.sm),
@@ -473,6 +467,7 @@ class _ProfileStatChips extends StatelessWidget {
             child: _StatChip(
               value: '$tokenBalance',
               label: '토큰 잔액',
+              valueColor: context.colors.warning,
             ),
           ),
         ],
@@ -484,10 +479,12 @@ class _ProfileStatChips extends StatelessWidget {
 class _StatChip extends StatelessWidget {
   final String value;
   final String label;
+  final Color? valueColor;
 
   const _StatChip({
     required this.value,
     required this.label,
+    this.valueColor,
   });
 
   @override
@@ -508,7 +505,7 @@ class _StatChip extends StatelessWidget {
           Text(
             value,
             style: context.typography.headingSmall.copyWith(
-              color: context.colors.textPrimary,
+              color: valueColor ?? context.colors.textPrimary,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -656,14 +653,13 @@ class _ProfileActionTile extends StatelessWidget {
           const Spacer(),
           if (trailing != null) ...[
             trailing!,
-            if (onTap != null) const SizedBox(width: DSSpacing.xs),
+            const SizedBox(width: DSSpacing.xs),
           ],
-          if (onTap != null)
-            Icon(
-              Icons.chevron_right,
-              size: 18,
-              color: colors.textTertiary,
-            ),
+          Icon(
+            Icons.chevron_right,
+            size: 18,
+            color: colors.textTertiary,
+          ),
         ],
       ),
     );
@@ -811,6 +807,18 @@ void _handleBack(BuildContext context) {
   }
 
   context.go('/chat');
+}
+
+String _sajuElementValue(UserProfile? profile) {
+  if (profile?.zodiacSign?.isNotEmpty == true) {
+    return profile!.zodiacSign!;
+  }
+
+  if (profile?.chineseZodiac?.isNotEmpty == true) {
+    return profile!.chineseZodiac!;
+  }
+
+  return '-';
 }
 
 String _providerLabel(String? provider) {
