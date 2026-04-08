@@ -479,6 +479,10 @@ export function ChatScreen() {
 
   useEffect(() => {
     if (directCharacterId) {
+      if (directCharacter && blockGuestStoryChat(directCharacter)) {
+        return;
+      }
+
       setSelectedCharacterId(directCharacterId);
       setActiveTab(directCharacter?.kind ?? "story");
       setSurfaceMode("chat");
@@ -548,6 +552,15 @@ export function ChatScreen() {
     selectedThread.length,
     currentSurveyStep?.step.id,
   ]);
+
+  useEffect(() => {
+    if (gate !== "ready" || surfaceMode !== "chat") {
+      return;
+    }
+
+    blockGuestStoryChat(selectedCharacter);
+  }, [gate, selectedCharacter, surfaceMode]);
+
   useEffect(() => {
     if (launchOrigin !== "deeplink" || !activeFortuneType) {
       return;
@@ -648,6 +661,21 @@ export function ChatScreen() {
         }).catch(() => undefined);
       })
       .finally(navigate);
+  }
+
+  function blockGuestStoryChat(character: ChatCharacterSpec) {
+    if (character.kind !== "story" || session) {
+      return false;
+    }
+
+    setActiveTab("story");
+    setActiveFortuneType(null);
+    setComposerTrayOpen(false);
+    setSurfaceMode("list");
+    routeToSignup({
+      returnTo: buildChatReturnTo(character.id),
+    });
+    return true;
   }
 
   async function ensureStoryPilotSendReady(character: ChatCharacterSpec) {
@@ -858,6 +886,10 @@ export function ChatScreen() {
 
   function handleCharacterSelect(characterId: string) {
     const character = findChatCharacterById(characterId);
+
+    if (character && blockGuestStoryChat(character)) {
+      return;
+    }
 
     setSelectedCharacterId(characterId);
     setActiveTab(character?.kind ?? "story");
@@ -1259,6 +1291,10 @@ export function ChatScreen() {
 
   function handleSendDraft() {
     const trimmed = draft.trim();
+
+    if (blockGuestStoryChat(selectedCharacter)) {
+      return;
+    }
 
     if (!trimmed) {
       if (selectedCharacterActions.length > 0) {
