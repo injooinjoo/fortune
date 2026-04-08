@@ -1153,6 +1153,11 @@ export function ChatScreen() {
     }
 
     if (resolved.kind === 'text') {
+      if (resolved.routeToSignup) {
+        routeToSignup();
+        return;
+      }
+
       appendMessages(character, [resolved.message]);
       if (resolved.routeToPremium) {
         router.push('/premium');
