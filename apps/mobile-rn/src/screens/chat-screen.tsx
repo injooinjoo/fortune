@@ -479,10 +479,6 @@ export function ChatScreen() {
 
   useEffect(() => {
     if (directCharacterId) {
-      if (directCharacter && blockGuestStoryChat(directCharacter)) {
-        return;
-      }
-
       setSelectedCharacterId(directCharacterId);
       setActiveTab(directCharacter?.kind ?? "story");
       setSurfaceMode("chat");
@@ -552,14 +548,6 @@ export function ChatScreen() {
     selectedThread.length,
     currentSurveyStep?.step.id,
   ]);
-
-  useEffect(() => {
-    if (gate !== "ready" || surfaceMode !== "chat") {
-      return;
-    }
-
-    blockGuestStoryChat(selectedCharacter);
-  }, [gate, selectedCharacter, surfaceMode]);
 
   useEffect(() => {
     if (launchOrigin !== "deeplink" || !activeFortuneType) {
@@ -668,10 +656,6 @@ export function ChatScreen() {
       return false;
     }
 
-    setActiveTab("story");
-    setActiveFortuneType(null);
-    setComposerTrayOpen(false);
-    setSurfaceMode("list");
     routeToSignup({
       returnTo: buildChatReturnTo(character.id),
     });
@@ -886,10 +870,6 @@ export function ChatScreen() {
 
   function handleCharacterSelect(characterId: string) {
     const character = findChatCharacterById(characterId);
-
-    if (character && blockGuestStoryChat(character)) {
-      return;
-    }
 
     setSelectedCharacterId(characterId);
     setActiveTab(character?.kind ?? "story");
