@@ -660,13 +660,23 @@ function extractTimelineEntries(
   }
 
   const predictions = asRecord(payload.daily_predictions);
-  const entries = [
+  const directEntries = [
     createTimelineEntry('오전', predictions.morning),
     createTimelineEntry('오후', predictions.afternoon),
     createTimelineEntry('저녁', predictions.evening),
   ].filter(Boolean) as TimelineEntry[];
 
-  return entries.length > 0 ? entries : undefined;
+  if (directEntries.length > 0) {
+    return directEntries;
+  }
+
+  const legacyEntries = Array.isArray(payload.timeSpecificFortunes)
+    ? payload.timeSpecificFortunes
+        .map((entry) => createLegacyTimelineEntry(entry))
+        .filter(Boolean) as TimelineEntry[]
+    : [];
+
+  return legacyEntries.length > 0 ? legacyEntries : undefined;
 }
 
 function extractDailyMetricTiles(payload: UnknownRecord): MetricTileData[] | undefined {
@@ -785,6 +795,25 @@ function createTimelineEntry(
   const body = firstDailyReadableText(value);
 
   if (!body) {
+    return null;
+  }
+
+  return {
+    title,
+    body,
+  };
+}
+
+function createLegacyTimelineEntry(value: unknown): TimelineEntry | null {
+  const entry = asRecord(value);
+  const title = firstDailyReadableText(entry.time, entry.label, entry.title);
+  const body = firstDailyReadableText(
+    entry.description,
+    entry.recommendation,
+    entry.body,
+  );
+
+  if (!title || !body) {
     return null;
   }
 
