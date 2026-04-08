@@ -5,7 +5,6 @@ import {
   fortuneTypesById,
   type FortuneTypeId,
 } from '@fortune/product-contracts';
-import * as ImagePicker from 'expo-image-picker';
 import { Alert, ScrollView, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
@@ -89,11 +88,46 @@ import { useMobileAppState } from '../providers/mobile-app-state-provider';
 import { useSocialAuth } from '../providers/social-auth-provider';
 
 type SurfaceMode = 'list' | 'chat';
+type ImagePickerModule = typeof import('expo-image-picker');
+
+let imagePickerModulePromise: Promise<ImagePickerModule | null> | null = null;
 
 function readSearchParam(
   value: string | string[] | undefined,
 ): string | undefined {
   return Array.isArray(value) ? value[0] : value;
+}
+
+function isImagePickerNativeModuleError(error: unknown) {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  return (
+    error.message.includes("Cannot find native module 'ExponentImagePicker'") ||
+    error.message.includes('ExponentImagePicker') ||
+    error.message.includes('expo-image-picker')
+  );
+}
+
+async function loadImagePickerModule() {
+  if (!imagePickerModulePromise) {
+    imagePickerModulePromise = import('expo-image-picker')
+      .then((module) => module)
+      .catch(async (error) => {
+        if (!isImagePickerNativeModuleError(error)) {
+          throw error;
+        }
+
+        await captureError(error, {
+          surface: 'chat:load-image-picker',
+        }).catch(() => undefined);
+
+        return null;
+      });
+  }
+
+  return imagePickerModulePromise;
 }
 
 function supportsChatNativeRuntime(fortuneType: FortuneTypeId) {
@@ -635,8 +669,18 @@ export function ChatScreen() {
     }
 
     try {
+      const imagePicker = await loadImagePickerModule();
+
+      if (!imagePicker) {
+        Alert.alert(
+          '사진 선택 준비 중',
+          '현재 설치된 앱 빌드에는 사진 선택 기능이 아직 포함되지 않았어요. iOS dev client를 다시 빌드한 뒤 다시 시도해주세요.',
+        );
+        return;
+      }
+
       const permission =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
+        await imagePicker.requestMediaLibraryPermissionsAsync();
 
       if (!permission.granted) {
         Alert.alert(
@@ -646,7 +690,7 @@ export function ChatScreen() {
         return;
       }
 
-      const result = await ImagePicker.launchImageLibraryAsync({
+      const result = await imagePicker.launchImageLibraryAsync({
         allowsEditing: true,
         base64: true,
         mediaTypes: ['images'],
