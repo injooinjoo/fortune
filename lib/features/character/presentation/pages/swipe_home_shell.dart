@@ -98,8 +98,7 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
             localProfile?['onboarding_completed'] == true;
 
     // force_onboarding 플래그: 테스트 계정은 매번 온보딩 표시
-    final forceOnboarding =
-        _shouldForceOnboarding(localProfile) ||
+    final forceOnboarding = _shouldForceOnboarding(localProfile) ||
         await _checkForceOnboardingFromDb(currentUser);
 
     _ShellOnboardingGate nextGate = _ShellOnboardingGate.none;
