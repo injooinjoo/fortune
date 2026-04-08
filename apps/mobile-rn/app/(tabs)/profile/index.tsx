@@ -15,7 +15,10 @@ export default function ProfileRoute() {
       <Redirect
         href={{
           pathname: '/signup',
-          params: { returnTo: '/profile' },
+          params: {
+            requireAuth: '1',
+            returnTo: '/profile',
+          },
         }}
       />
     );
