@@ -1,6 +1,6 @@
 import Constants from 'expo-constants';
-import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
+import { requireOptionalNativeModule } from 'expo-modules-core';
 import { Platform } from 'react-native';
 
 import type { FortuneTypeId } from '@fortune/product-contracts';
@@ -9,6 +9,15 @@ import { supabase, type SupabaseSession } from '../supabase';
 
 const androidChannelId = 'fortune-main';
 const dailyReminderIdentifier = 'fortune-daily-reminder';
+
+type OptionalExpoDeviceModule = {
+  isDevice?: boolean;
+  brand?: string | null;
+  deviceName?: string | null;
+  modelName?: string | null;
+  osName?: string | null;
+  osVersion?: string | null;
+};
 
 export type NotificationPermissionStatus =
   | 'undetermined'
@@ -48,6 +57,18 @@ function readProjectId() {
     Constants.easConfig?.projectId ??
     null
   );
+}
+
+let cachedExpoDeviceModule: OptionalExpoDeviceModule | null | undefined;
+
+function getExpoDeviceModule() {
+  if (cachedExpoDeviceModule !== undefined) {
+    return cachedExpoDeviceModule;
+  }
+
+  cachedExpoDeviceModule =
+    requireOptionalNativeModule<OptionalExpoDeviceModule>('ExpoDevice');
+  return cachedExpoDeviceModule;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -190,8 +211,11 @@ class NotificationService {
 
     let devicePushToken = this.registration.devicePushToken;
     let expoPushToken = this.registration.expoPushToken;
+    const deviceModule = getExpoDeviceModule();
+    const canAttemptPushRegistration =
+      deviceModule?.isDevice ?? Platform.OS !== 'web';
 
-    if (Device.isDevice) {
+    if (canAttemptPushRegistration) {
       const nativeToken = await Notifications.getDevicePushTokenAsync().catch(
         () => null,
       );
@@ -223,11 +247,11 @@ class NotificationService {
           token: devicePushToken,
           platform: Platform.OS === 'ios' ? 'ios' : 'android',
           deviceInfo: {
-            brand: Device.brand ?? null,
-            deviceName: Device.deviceName ?? null,
-            modelName: Device.modelName ?? null,
-            osName: Device.osName ?? null,
-            osVersion: Device.osVersion ?? null,
+            brand: deviceModule?.brand ?? null,
+            deviceName: deviceModule?.deviceName ?? null,
+            modelName: deviceModule?.modelName ?? null,
+            osName: deviceModule?.osName ?? null,
+            osVersion: deviceModule?.osVersion ?? null,
           },
           preferences: {
             enabled: preferences.push,
