@@ -116,9 +116,9 @@ export function SignupScreen() {
         />
       }
     >
-      <AppText variant="displaySmall">계정을 연결하고 시작</AppText>
+      <AppText variant="displaySmall">로그인</AppText>
 
-      <Card>
+      <Card style={{ gap: fortuneTheme.spacing.sm }}>
         {authMessage ? (
           <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
             {authMessage}
@@ -149,8 +149,8 @@ export function SignupScreen() {
       </Card>
 
       {!requireAuth ? (
-        <Card>
-          <AppText variant="heading4">로그인 없이 먼저 보기</AppText>
+        <Card style={{ gap: fortuneTheme.spacing.sm }}>
+          <AppText variant="heading4">둘러보기</AppText>
           <PrimaryButton
             onPress={() => {
               markGuestBrowse()
@@ -158,7 +158,7 @@ export function SignupScreen() {
                 .catch(() => router.replace(returnTo as Href));
             }}
           >
-            로그인 없이 둘러보기
+            둘러보기
           </PrimaryButton>
           <PrimaryButton
             onPress={() =>
@@ -169,13 +169,13 @@ export function SignupScreen() {
             }
             tone="secondary"
           >
-            정보 먼저 입력하기
+            정보 입력
           </PrimaryButton>
           <PrimaryButton
             onPress={() => router.replace(returnTo as Href)}
             tone="secondary"
           >
-            {returnTo === '/chat' ? '채팅으로 돌아가기' : '이전 화면으로 돌아가기'}
+            {returnTo === '/chat' ? '채팅으로' : '돌아가기'}
           </PrimaryButton>
         </Card>
       ) : null}
