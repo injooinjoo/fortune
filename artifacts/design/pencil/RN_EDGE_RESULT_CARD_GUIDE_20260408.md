@@ -13,10 +13,11 @@ Target: `apps/mobile-rn`
 2. 요약: 한 문단으로 시작
 3. 핵심 시각화
    - `daily`: metric grid + timeline
-   - others: metric grid
+   - score-heavy fortunes: `metric grid + score rail`
 4. 분야별 읽기: `detailSections`
 5. 핵심 포인트: bullet list
 6. 추천 액션 / 주의 포인트
+   - 둘 다 있으면 `DoDontPair` 우선
 7. 행운 포인트: keyword pills
 8. 마무리 한 줄: `specialTip`
 
@@ -26,6 +27,8 @@ Target: `apps/mobile-rn`
 - markdown `**`, 링크 문법, 번호 목록은 카드에서 제거
 - slang는 edge 또는 adapter에서 일반어로 치환
 - metric 값은 1줄 강제 축약보다 줄바꿈 허용을 우선
+- `행운 포인트`가 긴 문장형이면 pill 대신 bullet list로 내린다
+- `compatibility`, `face-reading`, `ootd-evaluation`, `game-enhance`, `biorhythm`처럼 수치 비교가 중요한 운세는 `score rail` 우선
 
 ## Runtime Truthfulness
 

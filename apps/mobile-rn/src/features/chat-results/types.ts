@@ -1,8 +1,10 @@
 import type { FortuneTypeId } from "@fortune/product-contracts";
 
 import type {
+  DoDontData,
   MetricTileData,
   ResultKind,
+  StatRailData,
   TimelineEntry,
 } from "../fortune-results/types";
 
@@ -40,10 +42,12 @@ export interface EmbeddedResultPayload {
   score?: number;
   contextTags?: string[];
   metrics?: MetricTileData[];
+  scoreRails?: StatRailData[];
   timeline?: TimelineEntry[];
   highlights?: string[];
   recommendations?: string[];
   warnings?: string[];
+  actionPair?: DoDontData;
   luckyItems?: string[];
   specialTip?: string;
   detailSections?: EmbeddedResultDetailSection[];

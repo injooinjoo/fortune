@@ -9,8 +9,10 @@ import {
 } from "../chat-survey/registry";
 import type { ChatSurveyStep } from "../chat-survey/types";
 import type {
+  DoDontData,
   MetricTileData,
   ResultKind,
+  StatRailData,
   TimelineEntry,
 } from "../fortune-results/types";
 import { buildFallbackEmbeddedResultPayload } from "./fixtures";
@@ -185,6 +187,11 @@ export function buildEmbeddedResultPayloadFromNormalizedResult(
   const extractedLuckyItems = extractLuckyItems(fortuneType, payload);
   const extractedDetailSections = extractDetailSections(fortuneType, payload);
   const extractedTimeline = extractTimelineEntries(fortuneType, payload);
+  const extractedScoreRails = extractScoreRails(fortuneType, payload);
+  const extractedActionPair = buildActionPair(
+    extractedRecommendations,
+    extractedWarnings,
+  );
   const summary = formatSummaryForDisplay(
     fortuneType,
     summarySource,
@@ -200,6 +207,7 @@ export function buildEmbeddedResultPayloadFromNormalizedResult(
     contextTags:
       normalizedContext.tags.length > 0 ? normalizedContext.tags : undefined,
     metrics: selectMetricTiles(extractedMetrics, fallback.metrics),
+    scoreRails: extractedScoreRails,
     highlights: selectTextItems(
       extractedHighlights,
       mergeUnique(
@@ -215,6 +223,7 @@ export function buildEmbeddedResultPayloadFromNormalizedResult(
       ),
     ),
     warnings: selectTextItems(extractedWarnings, fallback.warnings),
+    actionPair: extractedActionPair,
     luckyItems: selectTextItems(extractedLuckyItems, fallback.luckyItems),
     timeline: extractedTimeline,
     specialTip:
@@ -231,7 +240,7 @@ function formatSummaryForDisplay(
   context: NormalizedSurveyContext,
 ) {
   const baseSummary =
-    fortuneType === "daily"
+    fortuneType === "daily" || fortuneType === "zodiac"
       ? sanitizeDailyReadableText(summarySource)
       : trimParagraph(sanitizeReadableText(summarySource), 320);
 
@@ -707,12 +716,29 @@ function selectTextItems(
   return mergeUnique(preferred, fallback);
 }
 
+function buildActionPair(
+  recommendations: string[] | undefined,
+  warnings: string[] | undefined,
+): DoDontData | undefined {
+  if (!recommendations?.length || !warnings?.length) {
+    return undefined;
+  }
+
+  return {
+    doTitle: "추천 액션",
+    doItems: recommendations.slice(0, 3),
+    dontTitle: "주의 포인트",
+    dontItems: warnings.slice(0, 3),
+  };
+}
+
 function extractDetailSections(
   fortuneType: FortuneTypeId,
   payload: UnknownRecord,
 ): EmbeddedResultDetailSection[] | undefined {
   switch (fortuneType) {
     case "daily":
+    case "zodiac":
       return extractDailyDetailSections(payload);
     case "daily-calendar":
       return createRecordSections([
@@ -729,11 +755,60 @@ function extractDetailSections(
         ["행동 계획", payload.actionPlan],
         ["월별 하이라이트", payload.monthlyHighlights],
       ]);
+    case "biorhythm":
+      return createRecordSections([
+        ["신체 리듬", payload.physical],
+        ["감정 리듬", payload.emotional],
+        ["지성 리듬", payload.intellectual],
+        ["오늘 추천", payload.today_recommendation],
+      ]);
     case "personality-dna":
       return createRecordSections([
         ["연애 스타일", payload.loveStyle],
         ["업무 스타일", payload.workStyle],
         ["일상 매칭", payload.dailyMatching],
+        ["궁합 힌트", payload.compatibility],
+      ]);
+    case "zodiac-animal":
+      return createRecordSections([
+        ["띠 성향", payload.traits],
+        ["띠 궁합", payload.compatibility],
+        [
+          "기본 정보",
+          {
+            띠: payload.zodiacAnimal,
+            한자: payload.zodiacHanja,
+            오행: payload.element,
+            행운시간: payload.luckyTimeSlot,
+          },
+        ],
+      ]);
+    case "constellation":
+      return createRecordSections([
+        ["별자리 성향", payload.traits],
+        ["별자리 궁합", payload.compatibility],
+        [
+          "별 메시지",
+          {
+            별자리: payload.constellation,
+            상징: payload.constellationSymbol,
+            지배행성: payload.rulingPlanet,
+            원소: payload.constellationElement,
+            메시지: payload.starMessage,
+          },
+        ],
+      ]);
+    case "birthstone":
+      return createRecordSections([
+        [
+          "탄생석 의미",
+          {
+            탄생석: payload.birthstone,
+            영문명: payload.birthstoneEnglish,
+            의미: payload.birthstoneMeaning,
+            월: payload.birthMonthLabel,
+          },
+        ],
         ["궁합 힌트", payload.compatibility],
       ]);
     case "face-reading":
@@ -836,6 +911,14 @@ function extractDetailSections(
         ["상대팀 분석", payload.opponentAnalysis],
         ["행운 요소", payload.fortuneElements],
       ]);
+    case "game-enhance":
+      return createRecordSections([
+        ["강화 스탯", payload.enhance_stats],
+        ["행운 시간", payload.lucky_times],
+        ["강화 루틴", payload.enhance_ritual],
+        ["강화 로드맵", payload.enhance_roadmap],
+        ["행운 정보", payload.lucky_info],
+      ]);
     case "decision":
       return createDecisionDetailSections(payload.options);
     default:
@@ -847,7 +930,7 @@ function extractTimelineEntries(
   fortuneType: FortuneTypeId,
   payload: UnknownRecord,
 ): TimelineEntry[] | undefined {
-  if (fortuneType !== "daily") {
+  if (fortuneType !== "daily" && fortuneType !== "zodiac") {
     return undefined;
   }
 
@@ -1187,6 +1270,7 @@ function extractMetricTiles(
 ): MetricTileData[] | undefined {
   switch (fortuneType) {
     case "daily":
+    case "zodiac":
       return extractDailyMetricTiles(payload);
     case "daily-calendar":
       return [
@@ -1389,9 +1473,49 @@ function extractMetricTiles(
   }
 }
 
+function extractScoreRails(
+  fortuneType: FortuneTypeId,
+  payload: UnknownRecord,
+): StatRailData[] | undefined {
+  switch (fortuneType) {
+    case "compatibility":
+      return mapRecordToStatRails(asRecord(payload.personality_match));
+    case "biorhythm":
+      return [
+        toStatRail(
+          "신체 리듬",
+          asRecord(payload.physical).value,
+          asRecord(payload.physical).status,
+        ),
+        toStatRail(
+          "감정 리듬",
+          asRecord(payload.emotional).value,
+          asRecord(payload.emotional).status,
+        ),
+        toStatRail(
+          "지성 리듬",
+          asRecord(payload.intellectual).value,
+          asRecord(payload.intellectual).status,
+        ),
+      ].filter(Boolean) as StatRailData[];
+    case "zodiac-animal":
+    case "constellation":
+      return mapRecordToStatRails(asRecord(payload.fortuneScores));
+    case "game-enhance":
+      return mapRecordToStatRails(asRecord(payload.enhance_stats));
+    case "face-reading":
+      return extractFaceReadingScoreRails(payload);
+    case "ootd-evaluation":
+      return extractOotdScoreRails(payload);
+    default:
+      return undefined;
+  }
+}
+
 function extractHighlights(fortuneType: FortuneTypeId, payload: UnknownRecord) {
   switch (fortuneType) {
     case "daily":
+    case "zodiac":
       return collectReadableTextItems(
         sanitizeDailyReadableText(readStringValue(payload.ai_insight)),
         extractDailyCategoryBody(asRecord(payload.categories).total),
@@ -1411,6 +1535,12 @@ function extractHighlights(fortuneType: FortuneTypeId, payload: UnknownRecord) {
         payload.monthlyHighlights,
         payload.sajuAnalysis,
         payload.specialMessage,
+      );
+    case "biorhythm":
+      return collectReadableTextItems(
+        payload.status_message,
+        asRecord(payload.today_recommendation).focus,
+        asRecord(payload.today_recommendation).relationship_tip,
       );
     case "compatibility":
       return collectTextItems(
@@ -1478,6 +1608,24 @@ function extractHighlights(fortuneType: FortuneTypeId, payload: UnknownRecord) {
       );
     case "past-life":
       return collectTextItems(payload.story, payload.chapters);
+    case "zodiac-animal":
+      return collectTextItems(
+        payload.todayInsight,
+        payload.traits,
+        asRecord(payload.compatibility).bestReason,
+      );
+    case "constellation":
+      return collectTextItems(
+        payload.todayInsight,
+        payload.starMessage,
+        payload.traits,
+      );
+    case "birthstone":
+      return collectTextItems(
+        payload.birthstoneMeaning,
+        payload.keywords,
+        payload.summary,
+      );
     case "family":
       return collectTextItems(
         payload.relationshipCategories,
@@ -1522,6 +1670,12 @@ function extractHighlights(fortuneType: FortuneTypeId, payload: UnknownRecord) {
         payload.favoriteTeamAnalysis,
         payload.opponentAnalysis,
       );
+    case "game-enhance":
+      return collectTextItems(
+        payload.status_message,
+        payload.enhance_roadmap,
+        payload.hashtags,
+      );
     case "decision":
       return collectTextItems(
         payload.confidenceFactors,
@@ -1544,6 +1698,7 @@ function extractRecommendations(
 ) {
   switch (fortuneType) {
     case "daily":
+    case "zodiac":
       return collectReadableTextItems(
         extractDailyActionItems(payload.personalActions),
         payload.ai_tips,
@@ -1572,13 +1727,23 @@ function extractRecommendations(
     case "lucky-items":
       return collectTextItems(payload.fashion, payload.color);
     case "biorhythm":
-      return collectTextItems(payload.greeting, payload.status_message);
+      return collectTextItems(
+        payload.greeting,
+        payload.status_message,
+        payload.today_recommendation,
+      );
     case "dream":
       return collectTextItems(
         payload.todayGuidance,
         payload.actionAdvice,
         payload.analysis,
       );
+    case "zodiac-animal":
+      return collectTextItems(payload.recommendations, payload.todayInsight);
+    case "constellation":
+      return collectTextItems(payload.recommendations, payload.starMessage);
+    case "birthstone":
+      return collectTextItems(payload.advice, payload.summary);
     case "talisman":
       return collectTextItems(
         payload.recommendations,
@@ -1662,6 +1827,13 @@ function extractRecommendations(
         asRecord(payload.fortuneElements).luckyAction,
         asRecord(payload.fortuneElements).luckySection,
       );
+    case "game-enhance":
+      return collectTextItems(
+        payload.enhance_ritual,
+        payload.enhance_roadmap,
+        payload.encouragement,
+        payload.advice,
+      );
     case "decision":
       return collectTextItems(payload.nextSteps, payload.recommendation);
     case "exercise":
@@ -1687,6 +1859,7 @@ function extractRecommendations(
 function extractWarnings(fortuneType: FortuneTypeId, payload: UnknownRecord) {
   switch (fortuneType) {
     case "daily":
+    case "zodiac":
       return collectReadableTextItems(
         sanitizeDailyReadableText(readStringValue(payload.caution)),
         extractDailyLowestCategoryAdvice(payload),
@@ -1722,6 +1895,18 @@ function extractWarnings(fortuneType: FortuneTypeId, payload: UnknownRecord) {
       );
     case "mbti":
       return collectTextItems(payload.todayTrap, payload.challenges);
+    case "zodiac-animal":
+      return collectTextItems(
+        asRecord(payload.compatibility).cautionReason,
+        payload.warnings,
+      );
+    case "constellation":
+      return collectTextItems(
+        asRecord(payload.compatibility).cautionReason,
+        payload.warnings,
+      );
+    case "birthstone":
+      return collectTextItems(asRecord(payload.compatibility).caution);
     case "personality-dna":
       return collectTextItems(asRecord(payload.dailyFortune).caution);
     case "love":
@@ -1762,6 +1947,8 @@ function extractWarnings(fortuneType: FortuneTypeId, payload: UnknownRecord) {
         asRecord(payload.favoriteTeamAnalysis).concerns,
         asRecord(payload.opponentAnalysis).concerns,
       );
+    case "game-enhance":
+      return collectTextItems(payload.warnings);
     case "exercise":
       return collectTextItems(payload.weaknesses, payload.injuryPrevention);
     case "ootd-evaluation":
@@ -1778,6 +1965,7 @@ function extractWarnings(fortuneType: FortuneTypeId, payload: UnknownRecord) {
 function extractLuckyItems(fortuneType: FortuneTypeId, payload: UnknownRecord) {
   switch (fortuneType) {
     case "daily":
+    case "zodiac":
       return collectReadableKeywordItems(
         asRecord(payload.lucky_items).time,
         asRecord(payload.lucky_items).color,
@@ -1795,6 +1983,16 @@ function extractLuckyItems(fortuneType: FortuneTypeId, payload: UnknownRecord) {
       );
     case "new-year":
       return collectTextItems(payload.luckyItems);
+    case "zodiac-animal":
+      return collectTextItems(payload.luckyItems, payload.luckyTimeSlot);
+    case "constellation":
+      return collectTextItems(payload.luckyItems);
+    case "birthstone":
+      return collectTextItems(
+        payload.luckyItems,
+        payload.birthstone,
+        payload.color,
+      );
     case "lucky-items":
       return collectTextItems(payload.color, payload.fashion, payload.numbers);
     case "yearly-encounter":
@@ -1857,6 +2055,7 @@ function extractLuckyItems(fortuneType: FortuneTypeId, payload: UnknownRecord) {
 function extractSpecialTip(fortuneType: FortuneTypeId, payload: UnknownRecord) {
   switch (fortuneType) {
     case "daily":
+    case "zodiac":
       return firstDailyReadableText(payload.special_tip);
     case "daily-calendar":
       return firstText(
@@ -1870,6 +2069,17 @@ function extractSpecialTip(fortuneType: FortuneTypeId, payload: UnknownRecord) {
       return firstText(payload.statusMessage, payload.positive_message);
     case "yearly-encounter":
       return firstText(payload.encounterSpotStory);
+    case "biorhythm":
+      return firstText(
+        asRecord(payload.today_recommendation).energy_management,
+        payload.status_message,
+      );
+    case "zodiac-animal":
+      return firstText(payload.todayInsight, payload.advice);
+    case "constellation":
+      return firstText(payload.starMessage, payload.advice);
+    case "birthstone":
+      return firstText(payload.specialNote, payload.advice);
     case "love":
       return firstText(
         asRecord(payload.todaysAdvice).general,
@@ -1908,6 +2118,12 @@ function extractSpecialTip(fortuneType: FortuneTypeId, payload: UnknownRecord) {
       );
     case "match-insight":
       return firstText(asRecord(payload.prediction).mvpCandidate);
+    case "game-enhance":
+      return firstText(
+        payload.encouragement,
+        payload.status_message,
+        payload.advice,
+      );
     case "ootd-evaluation":
       return extractOotdSpecialTip(payload);
     default:
@@ -2451,6 +2667,35 @@ function mapRecordToMetricTiles(
   return entries.length > 0 ? entries.slice(0, 4) : undefined;
 }
 
+function mapRecordToStatRails(
+  record: UnknownRecord,
+): StatRailData[] | undefined {
+  const entries = Object.entries(record)
+    .map(([key, value]) => toStatRail(formatMetricLabel(key), value))
+    .filter(Boolean) as StatRailData[];
+
+  return entries.length > 0 ? entries.slice(0, 4) : undefined;
+}
+
+function toStatRail(
+  label: string,
+  value: unknown,
+  highlight?: unknown,
+): StatRailData | null {
+  const numericValue = readScore(value);
+  if (numericValue == null) {
+    return null;
+  }
+
+  const highlightText = firstReadableText(highlight);
+
+  return {
+    label,
+    value: numericValue,
+    highlight: highlightText ? trimParagraph(highlightText, 72) : undefined,
+  };
+}
+
 function toScoredMetricTile(
   label: string,
   value: unknown,
@@ -2489,6 +2734,31 @@ function toMetricTile(label: string, value: unknown): MetricTileData | null {
   }
 
   return null;
+}
+
+function extractFaceReadingScoreRails(
+  payload: UnknownRecord,
+): StatRailData[] | undefined {
+  const breakdown = asRecord(payload.scoreBreakdown);
+
+  return [
+    toStatRail("오관", breakdown.ogwan),
+    toStatRail("삼정", breakdown.samjeong),
+    toStatRail("십이궁", breakdown.sibigung),
+  ].filter(Boolean) as StatRailData[];
+}
+
+function extractOotdScoreRails(
+  payload: UnknownRecord,
+): StatRailData[] | undefined {
+  const categories = asRecord(asRecord(payload.details).categories);
+
+  return [
+    toStatRail("색 조합", categories.colorHarmony),
+    toStatRail("실루엣", categories.silhouette),
+    toStatRail("디테일", categories.details),
+    toStatRail("TPO", categories.tpo),
+  ].filter(Boolean) as StatRailData[];
 }
 
 function formatMetricLabel(key: string) {
