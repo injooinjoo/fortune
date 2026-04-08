@@ -27,6 +27,10 @@ import {
 } from '../features/chat-survey/registry';
 import type { ActiveChatSurvey } from '../features/chat-survey/types';
 import { fetchEmbeddedEdgeResultPayload } from '../features/chat-results/edge-runtime';
+import {
+  buildFortuneRuntimeBlockMessage,
+  resolveFortuneRuntimeBlockReason,
+} from '../features/chat-results/runtime-capabilities';
 import { resolveResultKindFromFortuneType } from '../features/fortune-results/mapping';
 import { captureError } from '../lib/error-reporting';
 import {
@@ -415,6 +419,24 @@ export function ChatScreen() {
     character: ChatCharacterSpec,
     fortuneType: FortuneTypeId,
   ) {
+    const runtimeBlockReason = resolveFortuneRuntimeBlockReason(
+      fortuneType,
+      mobileAppState.profile,
+    );
+
+    if (runtimeBlockReason) {
+      const blockMessage = buildFortuneRuntimeBlockMessage(
+        fortuneType,
+        runtimeBlockReason,
+      );
+
+      if (blockMessage) {
+        appendMessages(character, [buildAssistantTextMessage(blockMessage)]);
+      }
+
+      return true;
+    }
+
     const definition = getChatSurveyDefinition(fortuneType);
 
     if (definition) {

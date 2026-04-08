@@ -123,6 +123,14 @@ function buildFortuneRequestBody(
     case 'new-year':
       copyLabeledValue(payload, labels.goal, 'goal');
       break;
+    case 'mbti':
+      copyLabeledValue(
+        payload,
+        labels.mbtiType ?? profile.mbti,
+        'mbti',
+      );
+      copyLabeledValue(payload, labels.category, 'category');
+      break;
     case 'exam':
       copyLabeledValue(payload, labels.examType, 'examType', 'exam_type');
       copyLabeledValue(payload, readString(answers.examDate), 'examDate', 'exam_date');
@@ -179,6 +187,7 @@ function buildFortuneRequestBody(
       copyLabeledValue(payload, labels.targetGender, 'targetGender', 'target_gender');
       copyLabeledValue(payload, labels.userAge, 'userAge', 'user_age');
       copyLabeledValue(payload, labels.idealMbti, 'idealMbti', 'ideal_mbti');
+      copyLabeledValue(payload, labels.idealStyle, 'idealStyle', 'ideal_style');
       copyLabeledValue(payload, readString(answers.idealType), 'idealType', 'ideal_type');
       break;
     case 'health':
@@ -190,6 +199,19 @@ function buildFortuneRequestBody(
       );
       copyLabeledValue(payload, labels.concern, 'concern');
       copyLabeledValue(payload, labels.stressLevel, 'stressLevel', 'stress_level');
+      copyLabeledValue(payload, labels.sleepQuality, 'sleepQuality', 'sleep_quality');
+      copyLabeledValue(
+        payload,
+        labels.exerciseFrequency,
+        'exerciseFrequency',
+        'exercise_frequency',
+      );
+      copyLabeledValue(
+        payload,
+        labels.mealRegularity,
+        'mealRegularity',
+        'meal_regularity',
+      );
       break;
     case 'family':
       payload.concern = resolveFamilyConcern(readString(answers.concern), labels.concern);
@@ -231,6 +253,146 @@ function buildFortuneRequestBody(
     case 'ootd-evaluation':
       copyLabeledValue(payload, labels.tpo, 'tpo');
       copyLabeledValue(payload, readString(answers.lookNote), 'lookNote', 'look_note');
+      break;
+    case 'personality-dna':
+      copyLabeledValue(payload, labels.mbti, 'mbti');
+      copyLabeledValue(payload, labels.bloodType, 'bloodType', 'blood_type');
+      copyLabeledValue(payload, labels.zodiac, 'zodiac');
+      copyLabeledValue(
+        payload,
+        labels.zodiacAnimal,
+        'zodiacAnimal',
+        'animal',
+      );
+      break;
+    case 'wealth':
+      copyLabeledValue(payload, labels.goal, 'goal');
+      copyLabeledValue(payload, labels.concern, 'concern');
+      copyLabeledValue(payload, labels.income, 'income');
+      copyLabeledValue(payload, labels.expense, 'expense');
+      copyLabeledValue(payload, labels.risk, 'risk');
+      copyLabeledValue(payload, labels.urgency, 'urgency');
+      if (Array.isArray(answers.interests)) {
+        payload.interests = answers.interests;
+      }
+      break;
+    case 'talent':
+      copyLabeledValue(payload, labels.workStyle, 'workStyle', 'work_style');
+      copyLabeledValue(
+        payload,
+        labels.problemSolving,
+        'problemSolving',
+        'problem_solving',
+      );
+      copyLabeledValue(payload, labels.experience, 'experience');
+      copyLabeledValue(
+        payload,
+        labels.timeAvailable,
+        'timeAvailable',
+        'time_available',
+      );
+      if (Array.isArray(answers.interest)) {
+        payload.interest = answers.interest;
+      }
+      if (Array.isArray(answers.challenges)) {
+        payload.challenges = answers.challenges;
+      }
+      break;
+    case 'moving':
+      copyLabeledValue(
+        payload,
+        readString(answers.currentArea),
+        'currentArea',
+        'current_area',
+      );
+      copyLabeledValue(
+        payload,
+        readString(answers.targetArea),
+        'targetArea',
+        'target_area',
+      );
+      copyLabeledValue(
+        payload,
+        labels.movingPeriod,
+        'movingPeriod',
+        'moving_period',
+      );
+      copyLabeledValue(payload, labels.purpose, 'purpose');
+      copyLabeledValue(payload, labels.purpose, 'purposeCategory', 'purpose_category');
+      if (Array.isArray(answers.concerns)) {
+        payload.concerns = answers.concerns;
+      }
+      break;
+    case 'celebrity':
+      copyLabeledValue(
+        payload,
+        readString(answers.celebrityName),
+        'celebrity_name',
+        'celebrityName',
+      );
+      copyLabeledValue(
+        payload,
+        labels.connectionType,
+        'connection_type',
+        'connectionType',
+      );
+      copyLabeledValue(
+        payload,
+        labels.interest,
+        'question_type',
+        'questionType',
+      );
+      break;
+    case 'pet-compatibility':
+      copyLabeledValue(payload, readString(answers.petName), 'pet_name', 'petName');
+      copyLabeledValue(
+        payload,
+        labels.petSpecies,
+        'pet_species',
+        'petSpecies',
+      );
+      copyNumericValue(payload, readString(answers.petAge), 'pet_age', 'petAge');
+      copyLabeledValue(
+        payload,
+        labels.petGender,
+        'pet_gender',
+        'petGender',
+      );
+      copyLabeledValue(
+        payload,
+        labels.petPersonality,
+        'pet_personality',
+        'petPersonality',
+      );
+      break;
+    case 'match-insight': {
+      copyLabeledValue(payload, labels.sport, 'sport');
+      copyLabeledValue(
+        payload,
+        readString(answers.homeTeam),
+        'homeTeam',
+        'home_team',
+      );
+      copyLabeledValue(
+        payload,
+        readString(answers.awayTeam),
+        'awayTeam',
+        'away_team',
+      );
+      copyLabeledValue(
+        payload,
+        readString(answers.gameDate),
+        'gameDate',
+        'game_date',
+      );
+      const favoriteTeam = resolveFavoriteTeam(answers);
+      copyLabeledValue(payload, favoriteTeam, 'favoriteTeam', 'favorite_team');
+      break;
+    }
+    case 'decision':
+      copyLabeledValue(payload, labels.decisionType, 'decisionType', 'decision_type');
+      copyLabeledValue(payload, readString(answers.question), 'question');
+      payload.options = parseOptionsList(readString(answers.optionsText));
       break;
     case 'blood-type':
       copyLabeledValue(payload, profile.bloodType, 'bloodType', 'blood_type');
@@ -288,7 +450,7 @@ function applyProfileFields(
   payload: UnknownRecord,
   profile: EmbeddedResultProfileContext,
 ) {
-  copyLabeledValue(payload, profile.displayName, 'name', 'displayName');
+  copyLabeledValue(payload, profile.displayName ?? '회원님', 'name', 'displayName');
   copyLabeledValue(payload, profile.birthDate, 'birthDate', 'birth_date');
   copyLabeledValue(payload, profile.birthTime, 'birthTime', 'birth_time');
   copyLabeledValue(payload, profile.mbti, 'mbti');
@@ -310,6 +472,26 @@ function copyLabeledValue(
   }
 }
 
+function copyNumericValue(
+  payload: UnknownRecord,
+  value: string | null | undefined,
+  ...keys: string[]
+) {
+  const text = readString(value);
+  if (!text) {
+    return;
+  }
+
+  const parsed = Number(text);
+  if (!Number.isFinite(parsed)) {
+    return;
+  }
+
+  for (const key of keys) {
+    payload[key] = parsed;
+  }
+}
+
 function normalizeAnswerValue(value: unknown) {
   if (value == null || value === '' || value === 'skip') {
     return null;
@@ -328,13 +510,42 @@ function normalizeAnswerValue(value: unknown) {
 
 function requiresBirthDate(fortuneType: FortuneTypeId) {
   return (
-    fortuneType === 'blood-type' ||
     fortuneType === 'zodiac' ||
     fortuneType === 'zodiac-animal' ||
     fortuneType === 'constellation' ||
     fortuneType === 'birthstone' ||
-    fortuneType === 'compatibility'
+    fortuneType === 'compatibility' ||
+    fortuneType === 'mbti'
   );
+}
+
+function resolveFavoriteTeam(answers: Record<string, unknown>) {
+  const favoriteSide = readString(answers.favoriteSide);
+  if (!favoriteSide) {
+    return null;
+  }
+
+  if (favoriteSide === 'home') {
+    return readString(answers.homeTeam);
+  }
+
+  if (favoriteSide === 'away') {
+    return readString(answers.awayTeam);
+  }
+
+  return null;
+}
+
+function parseOptionsList(value: string | null) {
+  if (!value) {
+    return [];
+  }
+
+  return value
+    .split(/[\n,]/u)
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 5);
 }
 
 function resolveFamilyConcern(

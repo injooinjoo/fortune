@@ -120,7 +120,7 @@ export const fortuneTypeSpecs = [
   {
     id: 'lotto',
     labelKey: 'fortuneLuckyLottery',
-    endpoint: '/fortune-lucky-lottery',
+    endpoint: null,
     isLocalOnly: true,
   },
   {
@@ -163,7 +163,6 @@ export const fortuneTypeSpecs = [
     id: 'wish',
     labelKey: 'fortuneWish',
     endpoint: '/analyze-wish',
-    isLocalOnly: true,
   },
   {
     id: 'talisman',
@@ -231,7 +230,6 @@ export const fortuneTypeSpecs = [
     id: 'decision',
     labelKey: 'fortuneDecisionHelper',
     endpoint: '/fortune-decision',
-    isLocalOnly: true,
   },
   {
     id: 'view-all',

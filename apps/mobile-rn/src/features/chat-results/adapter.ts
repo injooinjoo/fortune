@@ -48,9 +48,13 @@ const contextLabelByStepId: Partial<Record<string, string>> = {
   targetGender: '상대 성별',
   userAge: '나이대',
   idealMbti: '이상형 MBTI',
+  idealStyle: '선호 스타일',
   idealType: '이상형 이미지',
   currentCondition: '컨디션',
   stressLevel: '스트레스',
+  sleepQuality: '수면 상태',
+  exerciseFrequency: '운동 빈도',
+  mealRegularity: '식사 규칙성',
   dreamContent: '꿈 장면',
   emotion: '꿈 감정',
   member: '대상',
@@ -67,12 +71,20 @@ const contextLabelByStepId: Partial<Record<string, string>> = {
   mbti: 'MBTI',
   bloodType: '혈액형',
   zodiac: '별자리',
+  zodiacAnimal: '띠',
   goal: '목표',
+  income: '수입 흐름',
+  expense: '지출 흐름',
+  risk: '리스크 성향',
+  urgency: '변화 시급도',
   generationMode: '부적 스타일',
   situation: '상황',
   interests: '관심',
   interest: '관심 분야',
   workStyle: '작업 스타일',
+  problemSolving: '문제 해결 방식',
+  experience: '경험 수준',
+  timeAvailable: '투자 가능 시간',
   challenges: '어려운 점',
   intensity: '강도',
   examType: '시험 종류',
@@ -84,6 +96,24 @@ const contextLabelByStepId: Partial<Record<string, string>> = {
   tpo: '상황',
   lookNote: '룩 설명',
   bokchae: '복채',
+  currentArea: '현재 지역',
+  targetArea: '이사 지역',
+  movingPeriod: '이사 시기',
+  celebrityName: '유명인',
+  connectionType: '관계 관점',
+  petName: '반려동물 이름',
+  petSpecies: '반려동물 종류',
+  petAge: '반려동물 나이',
+  petGender: '반려동물 성별',
+  petPersonality: '반려동물 성격',
+  sport: '종목',
+  homeTeam: '홈팀',
+  awayTeam: '원정팀',
+  gameDate: '경기 날짜',
+  favoriteSide: '응원 방향',
+  decisionType: '결정 유형',
+  question: '고민 질문',
+  optionsText: '선택지',
 };
 
 interface NormalizedSurveyContext {
@@ -198,7 +228,7 @@ function formatSummaryForDisplay(
   const baseSummary =
     fortuneType === 'daily'
       ? sanitizeDailyReadableText(summarySource)
-      : trimParagraph(summarySource, 220);
+      : trimParagraph(sanitizeReadableText(summarySource), 320);
 
   return buildContextualSummary(fortuneType, baseSummary, context);
 }
@@ -308,7 +338,7 @@ function formatAnswerValue(
     return null;
   }
 
-  return trimValue(label, step.inputKind === 'text' ? 36 : 22);
+  return trimValue(label, step.inputKind === 'text' ? 64 : 40);
 }
 
 function contextLabelForStep(step: ChatSurveyStep) {
@@ -395,7 +425,7 @@ function buildIntroSentence(
       return joinSentence([
         labels.category ? `${labels.category} 소원을 중심으로` : '현재 바람을 중심으로',
         context.firstFreeText
-          ? `“${trimValue(context.firstFreeText, 20)}”라는 문장을 기준으로`
+          ? `“${trimValue(context.firstFreeText, 36)}”라는 문장을 기준으로`
           : null,
         '해석했습니다.',
       ]);
@@ -428,7 +458,7 @@ function buildIntroSentence(
       return joinSentence([
         labels.purpose ? `${labels.purpose} 주제에 맞춰` : null,
         context.firstFreeText
-          ? `“${trimValue(context.firstFreeText, 18)}”를 질문으로 삼아`
+          ? `“${trimValue(context.firstFreeText, 32)}”를 질문으로 삼아`
           : null,
         labels.tarotSelection ? `${labels.tarotSelection} 흐름을 기준으로` : '카드 흐름을 기준으로',
         '읽었습니다.',
@@ -437,7 +467,7 @@ function buildIntroSentence(
       return joinSentence([
         labels.tpo ? `${labels.tpo} 상황 기준으로` : null,
         context.firstFreeText
-          ? `“${trimValue(context.firstFreeText, 20)}” 룩 설명을 반영해`
+          ? `“${trimValue(context.firstFreeText, 36)}” 룩 설명을 반영해`
           : '현재 룩 무드를 반영해',
         '정리했습니다.',
       ]);
@@ -644,11 +674,47 @@ function extractDetailSections(
   fortuneType: FortuneTypeId,
   payload: UnknownRecord,
 ): EmbeddedResultDetailSection[] | undefined {
-  if (fortuneType !== 'daily') {
-    return undefined;
+  switch (fortuneType) {
+    case 'daily':
+      return extractDailyDetailSections(payload);
+    case 'personality-dna':
+      return createRecordSections([
+        ['연애 스타일', payload.loveStyle],
+        ['업무 스타일', payload.workStyle],
+        ['일상 매칭', payload.dailyMatching],
+        ['궁합 힌트', payload.compatibility],
+      ]);
+    case 'moving':
+      return createRecordSections([
+        ['방향 분석', payload.directionAnalysis],
+        ['시기 조언', payload.timingAdvice],
+        ['지역 궁합', payload.areaCompatibility],
+      ]);
+    case 'celebrity':
+      return createRecordSections([
+        ['사주 분석', payload.saju_analysis],
+        ['전생 인연', payload.past_life],
+        ['운명의 시기', payload.destined_timing],
+      ]);
+    case 'pet-compatibility':
+      return createRecordSections([
+        ['오늘 스토리', payload.today_story],
+        ['품종 포인트', payload.breed_specific],
+        ['교감 흐름', payload.owner_bond],
+        ['오늘의 미션', payload.bonding_mission],
+      ]);
+    case 'match-insight':
+      return createRecordSections([
+        ['승부 예측', payload.prediction],
+        ['응원팀 분석', payload.favoriteTeamAnalysis],
+        ['상대팀 분석', payload.opponentAnalysis],
+        ['행운 요소', payload.fortuneElements],
+      ]);
+    case 'decision':
+      return createDecisionDetailSections(payload.options);
+    default:
+      return undefined;
   }
-
-  return extractDailyDetailSections(payload);
 }
 
 function extractTimelineEntries(
@@ -766,6 +832,103 @@ function extractDailyDetailSections(
   ].filter(Boolean) as EmbeddedResultDetailSection[];
 
   return sections.length > 0 ? sections : undefined;
+}
+
+function createRecordSections(
+  entries: Array<[string, unknown]>,
+): EmbeddedResultDetailSection[] | undefined {
+  const sections = entries
+    .map(([title, value]) => createRecordSection(title, value))
+    .filter(Boolean) as EmbeddedResultDetailSection[];
+
+  return sections.length > 0 ? sections : undefined;
+}
+
+function createRecordSection(
+  title: string,
+  value: unknown,
+): EmbeddedResultDetailSection | null {
+  const body = summarizeSectionValue(value);
+  if (!body) {
+    return null;
+  }
+
+  const record = asRecord(value);
+  const score =
+    readScore(record.score) ??
+    readScore(record.overall_score) ??
+    readScore(record.overallScore) ??
+    undefined;
+
+  return {
+    title,
+    body,
+    score,
+  };
+}
+
+function createDecisionDetailSections(
+  value: unknown,
+): EmbeddedResultDetailSection[] | undefined {
+  if (!Array.isArray(value)) {
+    return undefined;
+  }
+
+  const sections = value
+    .map((entry) => {
+      const record = asRecord(entry);
+      const option = firstReadableText(record.option);
+      const pros = toReadableTextItems(record.pros).slice(0, 2);
+      const cons = toReadableTextItems(record.cons).slice(0, 2);
+      const body = [
+        pros.length > 0 ? `장점: ${pros.join(' / ')}` : null,
+        cons.length > 0 ? `주의: ${cons.join(' / ')}` : null,
+      ]
+        .filter(Boolean)
+        .join('\n');
+
+      if (!option || !body) {
+        return null;
+      }
+
+      return {
+        title: option,
+        body,
+      };
+    })
+    .filter(Boolean) as EmbeddedResultDetailSection[];
+
+  return sections.length > 0 ? sections : undefined;
+}
+
+function summarizeSectionValue(value: unknown) {
+  const direct = firstReadableText(value);
+  if (direct) {
+    return direct;
+  }
+
+  const record = asRecord(value);
+  const summary = firstReadableText(
+    record.description,
+    record.analysis,
+    record.interpretation,
+    record.summary,
+    record.content,
+    record.reason,
+    record.tip,
+    record.advice,
+    record.opening,
+    record.story,
+    record.title,
+    record.text,
+  );
+
+  if (summary) {
+    return summary;
+  }
+
+  const items = toReadableTextItems(value).slice(0, 3);
+  return items.length > 0 ? items.join(' / ') : null;
 }
 
 function createDailyDetailSection(
@@ -920,10 +1083,21 @@ function extractMetricTiles(
           toMetricTile('집중 흐름', payload.score),
         ].filter(Boolean) as MetricTileData[],
       );
+    case 'mbti':
+      return [
+        toMetricTile('종합 점수', payload.overallScore),
+        toMetricTile('에너지 레벨', payload.energyLevel),
+      ].filter(Boolean) as MetricTileData[];
     case 'biorhythm':
       return [
         toMetricTile('신체 리듬', payload.physical),
         toMetricTile('감정 리듬', payload.emotional),
+      ].filter(Boolean) as MetricTileData[];
+    case 'personality-dna':
+      return [
+        toMetricTile('DNA 코드', payload.dnaCode),
+        toMetricTile('에너지 레벨', asRecord(payload.dailyFortune).energyLevel),
+        toMetricTile('소셜 랭킹', payload.socialRanking),
       ].filter(Boolean) as MetricTileData[];
     case 'health':
       return mergeMetricTiles(
@@ -932,6 +1106,27 @@ function extractMetricTiles(
           Boolean,
         ) as MetricTileData[],
       );
+    case 'moving':
+      return [
+        toMetricTile('전체 점수', payload.overallScore),
+        toMetricTile('이사 방향', asRecord(payload.directionAnalysis).direction),
+        toMetricTile('방향 점수', asRecord(payload.directionAnalysis).score),
+      ].filter(Boolean) as MetricTileData[];
+    case 'celebrity':
+      return [
+        toMetricTile('궁합 점수', payload.overall_score),
+        toMetricTile('궁합 등급', payload.compatibility_grade),
+      ].filter(Boolean) as MetricTileData[];
+    case 'pet-compatibility':
+      return [
+        toMetricTile('오늘 컨디션', asRecord(payload.daily_condition).overall_score),
+        toMetricTile('교감 점수', asRecord(payload.owner_bond).bond_score),
+      ].filter(Boolean) as MetricTileData[];
+    case 'match-insight':
+      return [
+        toMetricTile('승률 예측', asRecord(payload.prediction).winProbability),
+        toMetricTile('확신도', asRecord(payload.prediction).confidence),
+      ].filter(Boolean) as MetricTileData[];
     case 'game-enhance':
       return mergeMetricTiles(
         [
@@ -996,6 +1191,36 @@ function extractHighlights(
       return collectTextItems(payload.cardInterpretations, payload.storyTitle);
     case 'past-life':
       return collectTextItems(payload.story, payload.chapters);
+    case 'mbti':
+      return collectTextItems(
+        payload.todayFortune,
+        payload.todayTrap,
+        payload.cognitiveStrengths,
+      );
+    case 'personality-dna':
+      return collectTextItems(payload.todayHighlight, payload.traits, payload.funStats);
+    case 'moving':
+      return collectTextItems(
+        payload.directionAnalysis,
+        payload.timingAdvice,
+        payload.areaCompatibility,
+      );
+    case 'celebrity':
+      return collectTextItems(payload.main_message, payload.strengths);
+    case 'pet-compatibility':
+      return collectTextItems(
+        asRecord(payload.today_story).opening,
+        asRecord(payload.breed_specific).trait_today,
+        payload.activity_recommendation,
+      );
+    case 'match-insight':
+      return collectTextItems(
+        asRecord(payload.prediction).keyFactors,
+        payload.favoriteTeamAnalysis,
+        payload.opponentAnalysis,
+      );
+    case 'decision':
+      return collectTextItems(payload.confidenceFactors, payload.recommendation);
     default:
       return collectTextItems(
         payload.highlights,
@@ -1036,6 +1261,32 @@ function extractRecommendations(
         payload.relationshipGuide,
         payload.recommendations,
       );
+    case 'personality-dna':
+      return collectTextItems(
+        payload.todayAdvice,
+        asRecord(payload.dailyFortune).recommendedActivity,
+      );
+    case 'moving':
+      return collectTextItems(
+        payload.recommendations,
+        asRecord(payload.timingAdvice).reason,
+        payload.advice,
+      );
+    case 'celebrity':
+      return collectTextItems(payload.recommendations, payload.special_message);
+    case 'pet-compatibility':
+      return collectTextItems(
+        asRecord(payload.owner_bond).bonding_tip,
+        asRecord(payload.bonding_mission).description,
+        payload.special_tips,
+      );
+    case 'match-insight':
+      return collectTextItems(
+        asRecord(payload.fortuneElements).luckyAction,
+        asRecord(payload.fortuneElements).luckySection,
+      );
+    case 'decision':
+      return collectTextItems(payload.nextSteps, payload.recommendation);
     default:
       return collectTextItems(
         payload.advice,
@@ -1071,6 +1322,25 @@ function extractWarnings(
       return collectTextItems(payload.dontsList);
     case 'yearly-encounter':
       return collectTextItems(payload.fateSignalWarnings, payload.fateSignalRisk);
+    case 'mbti':
+      return collectTextItems(payload.todayTrap, payload.challenges);
+    case 'personality-dna':
+      return collectTextItems(asRecord(payload.dailyFortune).caution);
+    case 'moving':
+      return collectTextItems(payload.warnings);
+    case 'celebrity':
+      return collectTextItems(payload.challenges);
+    case 'pet-compatibility':
+      return collectTextItems(
+        asRecord(payload.breed_specific).health_watch,
+        payload.health_insight,
+      );
+    case 'match-insight':
+      return collectTextItems(
+        payload.cautionMessage,
+        asRecord(payload.favoriteTeamAnalysis).concerns,
+        asRecord(payload.opponentAnalysis).concerns,
+      );
     default:
       return collectTextItems(payload.warnings, payload.cautions, payload.dontsList);
   }
@@ -1094,6 +1364,23 @@ function extractLuckyItems(
       return collectTextItems(payload.color, payload.fashion, payload.numbers);
     case 'yearly-encounter':
       return collectTextItems(payload.encounterSpotTitle);
+    case 'personality-dna':
+      return collectTextItems(
+        asRecord(payload.dailyFortune).luckyColor,
+        asRecord(payload.dailyFortune).luckyNumber,
+        asRecord(payload.dailyFortune).bestMatchToday,
+      );
+    case 'celebrity':
+      return collectTextItems(payload.lucky_factors);
+    case 'pet-compatibility':
+      return collectTextItems(payload.lucky_items);
+    case 'match-insight':
+      return collectTextItems(
+        asRecord(payload.fortuneElements).luckyColor,
+        asRecord(payload.fortuneElements).luckyNumber,
+        asRecord(payload.fortuneElements).luckyTime,
+        asRecord(payload.fortuneElements).luckyItem,
+      );
     default:
       return collectTextItems(payload.luckyItems, payload.lucky_items, payload.color);
   }
@@ -1112,6 +1399,19 @@ function extractSpecialTip(
       return firstText(payload.encounterSpotStory);
     case 'decision':
       return firstText(payload.recommendation);
+    case 'personality-dna':
+      return firstText(payload.todayAdvice, payload.todayHighlight);
+    case 'moving':
+      return firstText(payload.advice);
+    case 'celebrity':
+      return firstText(payload.special_message, payload.main_message);
+    case 'pet-compatibility':
+      return firstText(
+        asRecord(payload.pets_voice).heartfelt_letter,
+        payload.summary,
+      );
+    case 'match-insight':
+      return firstText(asRecord(payload.prediction).mvpCandidate);
     default:
       return firstText(
         payload.specialTip,
@@ -1234,7 +1534,7 @@ function toMetricTile(label: string, value: unknown): MetricTileData | null {
   if (typeof value === 'string' && value.trim()) {
     return {
       label,
-      value: trimValue(value.trim(), 24),
+      value: trimValue(value.trim(), 40),
     };
   }
 
@@ -1250,15 +1550,29 @@ function formatMetricLabel(key: string) {
 
 function trimParagraph(value: string, limit: number) {
   const normalized = value.replace(/\s+/g, ' ').trim();
-  return normalized.length > limit
-    ? `${normalized.slice(0, limit - 1)}…`
-    : normalized;
+
+  if (normalized.length <= limit) {
+    return normalized;
+  }
+
+  const window = normalized.slice(0, limit + 24);
+  const breakpoints = [
+    window.lastIndexOf('. '),
+    window.lastIndexOf('! '),
+    window.lastIndexOf('? '),
+    window.lastIndexOf('。'),
+    window.lastIndexOf(' '),
+  ];
+  const breakpoint = breakpoints.find((index) => index >= Math.floor(limit * 0.7));
+  const cutIndex = breakpoint && breakpoint > 0 ? breakpoint : limit;
+
+  return `${window.slice(0, cutIndex).trim()}…`;
 }
 
 function firstText(...values: unknown[]) {
   for (const value of values) {
     if (typeof value === 'string' && value.trim()) {
-      return trimParagraph(value, 200);
+      return trimParagraph(sanitizeReadableText(value), 280);
     }
   }
 
@@ -1334,6 +1648,20 @@ function sanitizeDailyReadableText(value: string | null | undefined) {
     .replace(/\b칼퇴\b/gu, '일정 마무리')
     .replace(/\bMAX\b/gu, '높은')
     .replace(/\bUP\b/gu, '상승')
+    .replace(/완전 핫한데요\??/gu, '분위기가 좋은 편입니다.')
+    .replace(/무지성으로 질러봐요/gu, '가볍게 먼저 말을 건네보세요')
+    .replace(/탕후루처럼 달콤한/gu, '부드러운')
+    .replace(/탕후루/gu, '')
+    .replace(/힙한/gu, '새로운')
+    .replace(/럭키 찬스/gu, '기회')
+    .replace(/뿜뿜/gu, '살아나는')
+    .replace(/갓성비/gu, '효율')
+    .replace(/칭찬은 고래도 춤추게 한다잖아요\??/gu, '칭찬 한마디가 분위기를 부드럽게 만듭니다.')
+    .replace(/레전드 찍을 각/gu, '좋은 흐름을 기대해볼 만합니다')
+    .replace(/기대해도 됨!?/gu, '기대해볼 만합니다.')
+    .replace(/기대해도 좋아!?/gu, '기대해볼 만합니다.')
+    .replace(/잘 될 거임!?/gu, '잘 풀릴 가능성이 있습니다.')
+    .replace(/NewJeans처럼/gu, '')
     .replace(/[“”"]/gu, '')
     .replace(/\(\s*진심\s*\)/gu, '')
     .replace(/[!]{2,}/gu, '!')

@@ -384,6 +384,30 @@ const yearlyEncounterSurvey: ChatSurveyDefinition = {
       ],
     },
     {
+      id: 'idealStyle',
+      question: '어떤 분위기가 끌리세요?',
+      inputKind: 'chips',
+      showWhen: { targetGender: 'male' },
+      options: [
+        { id: 'dandy', label: '댄디하고 정갈함' },
+        { id: 'sporty', label: '활기찬 스포티 무드' },
+        { id: 'casual', label: '편안한 감성' },
+        { id: 'street', label: '스트릿하고 힙한 느낌' },
+      ],
+    },
+    {
+      id: 'idealStyle',
+      question: '어떤 분위기가 끌리세요?',
+      inputKind: 'chips',
+      showWhen: { targetGender: 'female' },
+      options: [
+        { id: 'innocent', label: '청순하고 따뜻함' },
+        { id: 'career', label: '시크하고 또렷함' },
+        { id: 'girlcrush', label: '걸크러쉬 무드' },
+        { id: 'pure', label: '수수하고 편안함' },
+      ],
+    },
+    {
       id: 'idealType',
       question: '원하는 느낌을 짧게 적어주세요.',
       inputKind: 'text-with-skip',
@@ -454,7 +478,7 @@ const biorhythmSurvey: ChatSurveyDefinition = {
 const healthSurvey: ChatSurveyDefinition = {
   fortuneType: 'health',
   title: '건강운',
-  introReply: '건강 흐름으로 먼저 볼게요. 오늘 컨디션만 빠르게 맞춰보겠습니다.',
+  introReply: '건강 흐름으로 먼저 볼게요. 컨디션과 생활 리듬을 짧게 맞춰보겠습니다.',
   submitReply: '좋아요. 건강 점수와 웰니스 플랜을 카드로 이어드릴게요.',
   steps: [
     {
@@ -487,6 +511,42 @@ const healthSurvey: ChatSurveyDefinition = {
         { id: 'low', label: '낮아요' },
         { id: 'mid', label: '보통' },
         { id: 'high', label: '높아요' },
+      ],
+    },
+    {
+      id: 'sleepQuality',
+      question: '수면 상태는 어떤가요?',
+      inputKind: 'chips',
+      options: [
+        { id: '1', label: '매우 나쁨' },
+        { id: '2', label: '나쁨' },
+        { id: '3', label: '보통' },
+        { id: '4', label: '좋음' },
+        { id: '5', label: '매우 좋음' },
+      ],
+    },
+    {
+      id: 'exerciseFrequency',
+      question: '운동은 얼마나 자주 하나요?',
+      inputKind: 'chips',
+      options: [
+        { id: '1', label: '거의 안 함' },
+        { id: '2', label: '가끔' },
+        { id: '3', label: '주 2-3회' },
+        { id: '4', label: '주 4-5회' },
+        { id: '5', label: '거의 매일' },
+      ],
+    },
+    {
+      id: 'mealRegularity',
+      question: '식사는 규칙적인 편인가요?',
+      inputKind: 'chips',
+      options: [
+        { id: '1', label: '매우 불규칙' },
+        { id: '2', label: '자주 거름' },
+        { id: '3', label: '보통' },
+        { id: '4', label: '대체로 규칙적' },
+        { id: '5', label: '매우 규칙적' },
       ],
     },
   ],
@@ -771,10 +831,37 @@ const personalityDnaSurvey: ChatSurveyDefinition = {
       question: '별자리를 선택해주세요.',
       inputKind: 'chips',
       options: [
-        { id: 'aries', label: '양자리' },
-        { id: 'taurus', label: '황소자리' },
-        { id: 'gemini', label: '쌍둥이자리' },
-        { id: 'cancer', label: '게자리' },
+        { id: '양자리', label: '양자리' },
+        { id: '황소자리', label: '황소자리' },
+        { id: '쌍둥이자리', label: '쌍둥이자리' },
+        { id: '게자리', label: '게자리' },
+        { id: '사자자리', label: '사자자리' },
+        { id: '처녀자리', label: '처녀자리' },
+        { id: '천칭자리', label: '천칭자리' },
+        { id: '전갈자리', label: '전갈자리' },
+        { id: '사수자리', label: '사수자리' },
+        { id: '염소자리', label: '염소자리' },
+        { id: '물병자리', label: '물병자리' },
+        { id: '물고기자리', label: '물고기자리' },
+      ],
+    },
+    {
+      id: 'zodiacAnimal',
+      question: '띠를 선택해주세요.',
+      inputKind: 'chips',
+      options: [
+        { id: '쥐', label: '쥐띠' },
+        { id: '소', label: '소띠' },
+        { id: '호랑이', label: '호랑이띠' },
+        { id: '토끼', label: '토끼띠' },
+        { id: '용', label: '용띠' },
+        { id: '뱀', label: '뱀띠' },
+        { id: '말', label: '말띠' },
+        { id: '양', label: '양띠' },
+        { id: '원숭이', label: '원숭이띠' },
+        { id: '닭', label: '닭띠' },
+        { id: '개', label: '개띠' },
+        { id: '돼지', label: '돼지띠' },
       ],
     },
   ],
@@ -783,7 +870,7 @@ const personalityDnaSurvey: ChatSurveyDefinition = {
 const wealthSurvey: ChatSurveyDefinition = {
   fortuneType: 'wealth',
   title: '재물운',
-  introReply: '재물운으로 들어갈게요. 목표와 불안 포인트만 먼저 맞춰볼게요.',
+  introReply: '재물운으로 들어갈게요. 금전 흐름을 읽을 핵심 항목만 빠르게 맞춰볼게요.',
   submitReply: '좋아요. 금전 흐름과 행동 포인트를 카드로 정리해드릴게요.',
   steps: [
     {
@@ -809,16 +896,45 @@ const wealthSurvey: ChatSurveyDefinition = {
       ],
     },
     {
-      id: 'interests',
-      question: '관심 분야를 골라주세요.',
-      inputKind: 'multi-select',
-      required: false,
-      maxSelections: 2,
+      id: 'income',
+      question: '현재 수입 흐름은 어떤 편인가요?',
+      inputKind: 'chips',
       options: [
-        { id: 'salary', label: '연봉/수입' },
-        { id: 'stocks', label: '주식' },
-        { id: 'crypto', label: '코인' },
-        { id: 'side-job', label: '부수입' },
+        { id: 'stable', label: '안정적이에요' },
+        { id: 'growing', label: '늘어나는 중' },
+        { id: 'variable', label: '들쑥날쑥해요' },
+        { id: 'tight', label: '빠듯해요' },
+      ],
+    },
+    {
+      id: 'expense',
+      question: '지출 흐름은 어떤가요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'controlled', label: '잘 관리 중' },
+        { id: 'rising', label: '점점 늘어요' },
+        { id: 'impulsive', label: '충동 지출이 있어요' },
+        { id: 'heavy', label: '고정비가 커요' },
+      ],
+    },
+    {
+      id: 'risk',
+      question: '금전 선택에서는 어떤 편인가요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'low', label: '안전 우선' },
+        { id: 'balanced', label: '균형 있게' },
+        { id: 'high', label: '기회가 보이면 과감하게' },
+      ],
+    },
+    {
+      id: 'urgency',
+      question: '얼마나 빨리 변화가 필요하다고 느끼나요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'low', label: '천천히 준비해도 돼요' },
+        { id: 'mid', label: '올해 안엔 바꾸고 싶어요' },
+        { id: 'high', label: '지금 바로 필요해요' },
       ],
     },
   ],
@@ -827,7 +943,7 @@ const wealthSurvey: ChatSurveyDefinition = {
 const talentSurvey: ChatSurveyDefinition = {
   fortuneType: 'talent',
   title: '재능 분석',
-  introReply: '숨은 재능 흐름으로 볼게요. 흥미와 작업 습관을 먼저 맞춰볼게요.',
+  introReply: '숨은 재능 흐름으로 볼게요. 흥미와 일하는 방식을 조금 더 정확히 맞춰볼게요.',
   submitReply: '좋아요. 강점 축과 성장 로드맵을 카드로 이어드릴게요.',
   steps: [
     {
@@ -854,6 +970,39 @@ const talentSurvey: ChatSurveyDefinition = {
       ],
     },
     {
+      id: 'problemSolving',
+      question: '문제는 보통 어떻게 푸는 편인가요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'logical', label: '논리적으로 분석' },
+        { id: 'intuitive', label: '직감적으로 판단' },
+        { id: 'collaborative', label: '사람들과 같이 푼다' },
+        { id: 'experimental', label: '직접 부딪혀 본다' },
+      ],
+    },
+    {
+      id: 'experience',
+      question: '관심 분야 경험은 어느 정도인가요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'beginner', label: '처음 시작 단계' },
+        { id: 'some', label: '조금 해봤어요' },
+        { id: 'intermediate', label: '어느 정도 익숙해요' },
+        { id: 'experienced', label: '꽤 깊게 해봤어요' },
+      ],
+    },
+    {
+      id: 'timeAvailable',
+      question: '일주일에 얼마나 투자할 수 있나요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'minimal', label: '주 1-2시간' },
+        { id: 'moderate', label: '주 5-10시간' },
+        { id: 'significant', label: '주 10시간 이상' },
+        { id: 'fulltime', label: '거의 풀타임 가능' },
+      ],
+    },
+    {
       id: 'challenges',
       question: '요즘 어렵게 느끼는 부분을 골라주세요.',
       inputKind: 'multi-select',
@@ -865,6 +1014,244 @@ const talentSurvey: ChatSurveyDefinition = {
         { id: 'direction', label: '방향 선택' },
         { id: 'consistency', label: '꾸준함' },
       ],
+    },
+  ],
+};
+
+const movingSurvey: ChatSurveyDefinition = {
+  fortuneType: 'moving',
+  title: '이사운',
+  introReply: '이사 흐름으로 볼게요. 현재 지역과 옮길 방향만 정확히 맞춰볼게요.',
+  submitReply: '좋아요. 시기와 방향, 주의 포인트를 카드로 정리해드릴게요.',
+  steps: [
+    {
+      id: 'currentArea',
+      question: '지금 살고 있는 지역을 적어주세요.',
+      inputKind: 'text',
+      placeholder: '예: 서울 강남구',
+    },
+    {
+      id: 'targetArea',
+      question: '어디로 옮길 예정인가요?',
+      inputKind: 'text',
+      placeholder: '예: 경기 성남시 분당구',
+    },
+    {
+      id: 'movingPeriod',
+      question: '이사 시기는 어느 쪽에 가까운가요?',
+      inputKind: 'chips',
+      options: [
+        { id: '1month', label: '1개월 이내' },
+        { id: '3months', label: '3개월 이내' },
+        { id: '6months', label: '6개월 이내' },
+        { id: 'year', label: '1년 이내' },
+        { id: 'undecided', label: '아직 미정' },
+      ],
+    },
+    {
+      id: 'purpose',
+      question: '이사 이유는 무엇인가요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'work', label: '직장/이직' },
+        { id: 'marriage', label: '결혼/동거' },
+        { id: 'education', label: '교육 환경' },
+        { id: 'better_life', label: '더 나은 생활 환경' },
+        { id: 'investment', label: '투자/자산' },
+        { id: 'family', label: '가족 사정' },
+        { id: 'other', label: '새로운 시작' },
+      ],
+    },
+    {
+      id: 'concerns',
+      question: '걱정되는 점이 있으면 골라주세요.',
+      inputKind: 'multi-select',
+      required: false,
+      maxSelections: 2,
+      options: [
+        { id: 'direction', label: '방위가 걱정돼요' },
+        { id: 'timing', label: '시기가 맞을지 걱정돼요' },
+        { id: 'adaptation', label: '적응이 걱정돼요' },
+        { id: 'neighbors', label: '이웃/분위기가 걱정돼요' },
+        { id: 'cost', label: '비용이 부담돼요' },
+      ],
+    },
+  ],
+};
+
+const celebritySurvey: ChatSurveyDefinition = {
+  fortuneType: 'celebrity',
+  title: '유명인 궁합',
+  introReply: '좋아하는 유명인과의 흐름으로 볼게요. 누구를 어떤 관점으로 볼지만 맞춰볼게요.',
+  submitReply: '좋아요. 인연 포인트와 궁합 메시지를 카드로 정리해드릴게요.',
+  steps: [
+    {
+      id: 'celebrityName',
+      question: '궁합을 보고 싶은 유명인 이름을 적어주세요.',
+      inputKind: 'text',
+      placeholder: '예: 아이유, 손흥민',
+    },
+    {
+      id: 'connectionType',
+      question: '어떤 관점으로 볼까요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'ideal_match', label: '이상형으로 보기' },
+        { id: 'compatibility', label: '전체 궁합 보기' },
+        { id: 'career_advice', label: '커리어 영감 보기' },
+      ],
+    },
+    {
+      id: 'interest',
+      question: '어떤 결이 가장 궁금하세요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'love', label: '연애/감정' },
+        { id: 'career', label: '커리어/성공' },
+        { id: 'life', label: '인생 방향' },
+        { id: 'friendship', label: '친구/인맥' },
+      ],
+    },
+  ],
+};
+
+const petCompatibilitySurvey: ChatSurveyDefinition = {
+  fortuneType: 'pet-compatibility',
+  title: '반려동물 궁합',
+  introReply: '반려동물과의 궁합 흐름으로 볼게요. 아이 정보만 짧게 맞춰볼게요.',
+  submitReply: '좋아요. 오늘 컨디션과 교감 포인트를 카드로 정리해드릴게요.',
+  steps: [
+    {
+      id: 'petName',
+      question: '반려동물 이름을 적어주세요.',
+      inputKind: 'text',
+      placeholder: '예: 몽이',
+    },
+    {
+      id: 'petSpecies',
+      question: '어떤 반려동물인가요?',
+      inputKind: 'chips',
+      options: [
+        { id: '강아지', label: '강아지' },
+        { id: '고양이', label: '고양이' },
+        { id: '토끼', label: '토끼' },
+        { id: '새', label: '새' },
+        { id: '햄스터', label: '햄스터' },
+        { id: '기타', label: '기타' },
+      ],
+    },
+    {
+      id: 'petAge',
+      question: '나이를 숫자로 적어주세요.',
+      inputKind: 'text',
+      placeholder: '예: 3',
+    },
+    {
+      id: 'petGender',
+      question: '성별을 알려주세요.',
+      inputKind: 'chips',
+      required: false,
+      options: [
+        { id: '수컷', label: '수컷' },
+        { id: '암컷', label: '암컷' },
+        { id: '모름', label: '잘 모르겠어요' },
+      ],
+    },
+    {
+      id: 'petPersonality',
+      question: '성격은 어느 쪽에 가까운가요?',
+      inputKind: 'chips',
+      required: false,
+      options: [
+        { id: '활발함', label: '활발하고 에너지가 많아요' },
+        { id: '차분함', label: '차분하고 안정적이에요' },
+        { id: '수줍음', label: '조심스럽고 수줍어요' },
+        { id: '애교쟁이', label: '애교가 많아요' },
+      ],
+    },
+  ],
+};
+
+const matchInsightSurvey: ChatSurveyDefinition = {
+  fortuneType: 'match-insight',
+  title: '경기 인사이트',
+  introReply: '경기 흐름으로 볼게요. 어떤 매치인지 짧게 맞추면 바로 읽을 수 있어요.',
+  submitReply: '좋아요. 경기 분위기와 응원 포인트를 카드로 정리해드릴게요.',
+  steps: [
+    {
+      id: 'sport',
+      question: '어떤 종목인가요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'baseball', label: '야구' },
+        { id: 'soccer', label: '축구' },
+        { id: 'basketball', label: '농구' },
+        { id: 'volleyball', label: '배구' },
+        { id: 'esports', label: 'e스포츠' },
+      ],
+    },
+    {
+      id: 'homeTeam',
+      question: '홈팀 이름을 적어주세요.',
+      inputKind: 'text',
+      placeholder: '예: 두산 베어스',
+    },
+    {
+      id: 'awayTeam',
+      question: '원정팀 이름을 적어주세요.',
+      inputKind: 'text',
+      placeholder: '예: LG 트윈스',
+    },
+    {
+      id: 'gameDate',
+      question: '경기 날짜를 알려주세요.',
+      inputKind: 'date',
+    },
+    {
+      id: 'favoriteSide',
+      question: '어느 쪽을 응원하시나요?',
+      inputKind: 'chips',
+      required: false,
+      options: [
+        { id: 'home', label: '홈팀' },
+        { id: 'away', label: '원정팀' },
+        { id: 'neutral', label: '중립' },
+      ],
+    },
+  ],
+};
+
+const decisionSurvey: ChatSurveyDefinition = {
+  fortuneType: 'decision',
+  title: '의사결정',
+  introReply: '결정 흐름으로 볼게요. 질문과 선택지만 짧게 정리해주시면 돼요.',
+  submitReply: '좋아요. 선택지별 장단점과 추천 흐름을 카드로 정리해드릴게요.',
+  steps: [
+    {
+      id: 'decisionType',
+      question: '어떤 종류의 결정인가요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'dating', label: '연애/관계' },
+        { id: 'career', label: '커리어/일' },
+        { id: 'money', label: '돈/소비' },
+        { id: 'wellness', label: '건강/생활관리' },
+        { id: 'lifestyle', label: '일상 선택' },
+        { id: 'relationship', label: '대인관계' },
+      ],
+    },
+    {
+      id: 'question',
+      question: '지금 고민하는 질문을 적어주세요.',
+      inputKind: 'text',
+      placeholder: '예: 이번 제안을 받아들이는 게 맞을까요?',
+    },
+    {
+      id: 'optionsText',
+      question: '선택지가 있으면 쉼표로 나눠 적어주세요.',
+      inputKind: 'text-with-skip',
+      required: false,
+      placeholder: '예: 지금 한다, 한 달 더 본다, 하지 않는다',
     },
   ],
 };
@@ -1038,6 +1425,11 @@ const surveyDefinitions = [
   talentSurvey,
   exerciseSurvey,
   tarotSurvey,
+  movingSurvey,
+  celebritySurvey,
+  petCompatibilitySurvey,
+  matchInsightSurvey,
+  decisionSurvey,
   examSurvey,
   ootdSurvey,
 ] as const satisfies readonly ChatSurveyDefinition[];
@@ -1050,9 +1442,7 @@ const surveyDefinitionAliasByFortuneType: Partial<
   Record<FortuneTypeId, FortuneTypeId>
 > = {
   'face-reading': 'traditional-saju',
-  celebrity: 'love',
   lotto: 'wealth',
-  'pet-compatibility': 'family',
 };
 
 export function getChatSurveyDefinition(fortuneType: FortuneTypeId) {
