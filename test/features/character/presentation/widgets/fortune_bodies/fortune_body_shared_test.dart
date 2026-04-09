@@ -47,7 +47,7 @@ void main() {
       await tester.pump();
 
       expect(tester.takeException(), isNull);
-      expect(find.text('루나의 한마디'), findsOneWidget);
+      expect(find.text('🌙 루나의 한마디'), findsOneWidget);
       expect(find.text('감정의 흐름을 천천히 읽어보세요.'), findsOneWidget);
     },
   );
