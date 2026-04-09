@@ -541,7 +541,7 @@ class _SocialAuthEntryPanelState extends ConsumerState<SocialAuthEntryPanel> {
             Text(
               widget.title,
               style: typography.bodySmall.copyWith(
-                color: const Color(0xFFD0D4E0),
+                color: colors.textSecondary,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.5,
               ),
@@ -578,11 +578,61 @@ class _SocialAuthEntryPanelState extends ConsumerState<SocialAuthEntryPanel> {
             isLoading: _activeProvider == 'google',
           ),
           const SizedBox(height: DSSpacing.md),
-          Text(
-            '계속 진행하면 이용약관 및 개인정보처리방침에 동의한 것으로 간주됩니다.',
-            style: typography.bodySmall.copyWith(
-              color: const Color(0xFF7F8596),
-              height: 1.5,
+          Text.rich(
+            TextSpan(
+              text: '계속 진행하면 ',
+              style: typography.bodySmall.copyWith(
+                color: colors.textTertiary,
+                height: 1.5,
+              ),
+              children: [
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.baseline,
+                  baseline: TextBaseline.alphabetic,
+                  child: GestureDetector(
+                    onTap: () => context.push('/terms-of-service'),
+                    child: Text(
+                      '이용약관',
+                      style: typography.bodySmall.copyWith(
+                        color: colors.textTertiary,
+                        height: 1.5,
+                        decoration: TextDecoration.underline,
+                        decorationColor: colors.textTertiary,
+                      ),
+                    ),
+                  ),
+                ),
+                TextSpan(
+                  text: ' 및 ',
+                  style: typography.bodySmall.copyWith(
+                    color: colors.textTertiary,
+                    height: 1.5,
+                  ),
+                ),
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.baseline,
+                  baseline: TextBaseline.alphabetic,
+                  child: GestureDetector(
+                    onTap: () => context.push('/privacy-policy'),
+                    child: Text(
+                      '개인정보처리방침',
+                      style: typography.bodySmall.copyWith(
+                        color: colors.textTertiary,
+                        height: 1.5,
+                        decoration: TextDecoration.underline,
+                        decorationColor: colors.textTertiary,
+                      ),
+                    ),
+                  ),
+                ),
+                TextSpan(
+                  text: '에 동의한 것으로 간주됩니다.',
+                  style: typography.bodySmall.copyWith(
+                    color: colors.textTertiary,
+                    height: 1.5,
+                  ),
+                ),
+              ],
             ),
           ),
           if (widget.showBrowseAction) ...[
@@ -596,10 +646,10 @@ class _SocialAuthEntryPanelState extends ConsumerState<SocialAuthEntryPanel> {
                     '둘러보기',
                     style: typography.bodyMedium.copyWith(
                       fontSize: 15,
-                      color: const Color(0xFFCFD3DE),
+                      color: colors.textSecondary,
                       fontWeight: FontWeight.w600,
                       decoration: TextDecoration.underline,
-                      decorationColor: const Color(0xFFCFD3DE),
+                      decorationColor: colors.textSecondary,
                     ),
                   ),
                 ),

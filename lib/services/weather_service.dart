@@ -4,13 +4,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:developer' as developer;
 
+import '../core/config/environment.dart';
 import '../core/services/location_manager.dart';
 import '../core/constants/location_mappings.dart';
 
 /// 날씨 정보를 가져오는 서비스
 class WeatherService {
-  // OpenWeatherMap API Key
-  static const String _apiKey = '378423f7fe3cf4848a8b5573845302b3';
+  // OpenWeatherMap API Key (loaded from environment)
+  static String get _apiKey => Environment.weatherApiKey;
   static const String _baseUrl = 'https://api.openweathermap.org/data/2.5';
 
   /// 현재 위치의 날씨 정보 가져오기 (캐싱 적용)

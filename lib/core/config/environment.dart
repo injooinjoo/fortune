@@ -99,6 +99,13 @@ class Environment {
         dotenvValue: dotenv.env['JWT_SECRET'],
       );
 
+  // Weather API 설정
+  static String get weatherApiKey => _readEnvValue(
+        'WEATHER_API_KEY',
+        dotenvValue: dotenv.env['WEATHER_API_KEY'],
+        fallback: '',
+      );
+
   // AI API 설정
   static String get openAiApiKey => _readEnvValue(
         'OPENAI_API_KEY',
@@ -478,6 +485,8 @@ class Environment {
         return const String.fromEnvironment('ENCRYPTION_KEY');
       case 'JWT_SECRET':
         return const String.fromEnvironment('JWT_SECRET');
+      case 'WEATHER_API_KEY':
+        return const String.fromEnvironment('WEATHER_API_KEY');
       case 'OPENAI_API_KEY':
         return const String.fromEnvironment('OPENAI_API_KEY');
       case 'INTERNAL_API_KEY':
