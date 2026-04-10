@@ -2,12 +2,12 @@
 
 This file is the agent-facing visual contract for Fortune.
 
-- Official design source of truth: `paper/README.md` and `docs/design/PAPER_*`
+- Official design source of truth (Pencil): `paper/README.md` and `docs/design/PAPER_*`
 - Runtime source of truth: Flutter design system tokens and widgets under `lib/core/design_system/`
 - Inspiration source for this file's structure: `VoltAgent/awesome-design-md`
-- Visual reference direction: `linear.app`, adapted to Fortune's existing Paper-aligned tokens and Korean-first product surface
+- Visual reference direction: `linear.app`, adapted to Fortune's existing Pencil-aligned tokens and Korean-first product surface
 
-If this file conflicts with Paper docs or checked-in Flutter tokens, Paper and the Flutter runtime win.
+If this file conflicts with Pencil docs or checked-in Flutter tokens, Pencil and the Flutter runtime win.
 
 ## 1. Visual Theme & Atmosphere
 
@@ -235,7 +235,7 @@ Layout behavior:
 When generating new UI for this project, use prompts like:
 
 - "Use the Fortune DESIGN.md and build a dark-mode-first mobile screen with a calm premium chat aesthetic, cool white text, graphite surfaces, and a single violet CTA."
-- "Match the Paper-aligned Fortune design system. Keep the layout mobile-first, rounded, understated, and emotionally readable."
+- "Match the Pencil-aligned Fortune design system. Keep the layout mobile-first, rounded, understated, and emotionally readable."
 - "Use NotoSansKR for the main interface, reserve NanumMyeongjo only for selective fortune content, and avoid generic dashboard patterns."
 
 Quick checklist for agents:

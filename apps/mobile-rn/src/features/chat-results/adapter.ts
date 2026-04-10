@@ -9,6 +9,7 @@ import {
 } from '../chat-survey/registry';
 import type { ChatSurveyStep } from '../chat-survey/types';
 import type { MetricTileData, ResultKind } from '../fortune-results/types';
+import { calculateManseryeok } from '../../lib/manseryeok-local';
 import { buildFallbackEmbeddedResultPayload } from './fixtures';
 import type {
   EmbeddedResultBuildContext,
@@ -79,6 +80,9 @@ const contextLabelByStepId: Partial<Record<string, string>> = {
   tpo: '상황',
   lookNote: '룩 설명',
   bokchae: '복채',
+  currentArea: '현재 지역',
+  targetArea: '이사 예정지',
+  movingDate: '이사 예정일',
 };
 
 interface NormalizedSurveyContext {
@@ -96,7 +100,7 @@ export function buildEmbeddedResultPayload(
   const normalized = normalizeSurveyContext(fortuneType, context);
   const contextualAction = buildContextualAction(fortuneType, normalized);
 
-  return {
+  const payload: EmbeddedResultPayload = {
     ...fallback,
     score: applyContextualScore(fallback.score, fortuneType, context),
     summary: buildContextualSummary(fortuneType, fallback.summary, normalized),
@@ -110,6 +114,13 @@ export function buildEmbeddedResultPayload(
       fallback.recommendations,
     ),
   };
+
+  // Attach local manseryeok data for daily-calendar fortune type
+  if (fortuneType === 'daily-calendar') {
+    payload.manseryeok = calculateManseryeok();
+  }
+
+  return payload;
 }
 
 export function buildEmbeddedResultPayloadFromNormalizedResult(
@@ -132,7 +143,7 @@ export function buildEmbeddedResultPayloadFromNormalizedResult(
   const extractedWarnings = extractWarnings(fortuneType, payload);
   const extractedLuckyItems = extractLuckyItems(fortuneType, payload);
 
-  return {
+  const resultPayload: EmbeddedResultPayload = {
     ...fallback,
     score: normalizedResult.score ?? applyContextualScore(fallback.score, fortuneType, context),
     summary: buildContextualSummary(
@@ -178,6 +189,19 @@ export function buildEmbeddedResultPayloadFromNormalizedResult(
       normalizedResult.summary ??
       fallback.specialTip,
   };
+
+  // Attach local manseryeok data for daily-calendar fortune type
+  if (fortuneType === 'daily-calendar') {
+    resultPayload.manseryeok = calculateManseryeok();
+  }
+
+  // rawApiResponse is attached in edge-runtime.ts with the ORIGINAL API data
+  // (before normalization). Only set here as fallback if edge-runtime didn't set it.
+  if (!resultPayload.rawApiResponse) {
+    resultPayload.rawApiResponse = payload;
+  }
+
+  return resultPayload;
 }
 
 function normalizeSurveyContext(
@@ -643,7 +667,7 @@ function toDailyCategoryMetric(
   const advice = asRecord(category.advice);
   const note = firstText(advice.description, advice.idiom, category.advice);
 
-  return note ? { ...base, note: trimValue(note, 24) } : base;
+  return note ? { ...base, note } : base;
 }
 
 function extractDailyActionItems(value: unknown) {
@@ -1000,7 +1024,7 @@ function toMetricTile(label: string, value: unknown): MetricTileData | null {
   if (typeof value === 'string' && value.trim()) {
     return {
       label,
-      value: trimValue(value.trim(), 18),
+      value: trimValue(value.trim(), 40),
     };
   }
 

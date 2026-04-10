@@ -1,7 +1,8 @@
-import type { PropsWithChildren, ReactNode } from 'react';
+import { useState, useEffect, useRef, useCallback, type PropsWithChildren, type ReactNode } from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
-import { Image, Pressable, TextInput, View } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { Animated, Image, PanResponder, Pressable, TextInput, View } from 'react-native';
 
 import type { FortuneTypeId } from '@fortune/product-contracts';
 
@@ -9,7 +10,9 @@ import { AppleAuthButton } from '../../components/apple-auth-button';
 import { AppText } from '../../components/app-text';
 import { Card } from '../../components/card';
 import { Chip } from '../../components/chip';
+import { InlineCalendar } from '../../components/inline-calendar';
 import { PrimaryButton } from '../../components/primary-button';
+import { SurveyComposer } from '../../components/survey-composer';
 import { SocialAuthPillButton } from '../../components/social-auth-pill-button';
 import {
   isFortuneChatCharacter,
@@ -23,9 +26,13 @@ import type {
 } from '../../lib/chat-shell';
 import { buildSuggestedActions, formatFortuneTypeLabel } from '../../lib/chat-shell';
 import { resolveChatCharacterAvatarSource } from '../../lib/chat-character-avatar';
+import { confirmAction } from '../../lib/haptics';
 import { fortuneTheme } from '../../lib/theme';
 import { EmbeddedResultCard } from '../chat-results/embedded-result-card';
+import { FortuneCookieCard } from '../fortune-cookie/fortune-cookie-card';
+import { SajuPreviewCard } from '../fortune-cookie/saju-preview-card';
 import type { ChatSurveyStep } from '../chat-survey/types';
+import { TarotDrawWidget } from '../chat-survey/tarot-draw-widget';
 
 function CharacterAvatar({
   characterId,
@@ -294,6 +301,7 @@ function CharacterListRow({
   character,
   badge,
   onPress,
+  onDelete,
   onPickAction,
   optionActions = [],
   selected = false,
@@ -301,11 +309,36 @@ function CharacterListRow({
   character: ChatCharacterSpec;
   badge?: string;
   onPress: () => void;
+  onDelete?: () => void;
   onPickAction?: (fortuneType: FortuneTypeId) => void;
   optionActions?: readonly ChatShellAction[];
   selected?: boolean;
 }) {
-  return (
+  const swipeX = useRef(new Animated.Value(0)).current;
+  const DELETE_THRESHOLD = -80;
+
+  const panResponder = useRef(
+    onDelete
+      ? PanResponder.create({
+          onMoveShouldSetPanResponder: (_, gesture) =>
+            Math.abs(gesture.dx) > 10 && Math.abs(gesture.dy) < 20,
+          onPanResponderMove: (_, gesture) => {
+            if (gesture.dx < 0) {
+              swipeX.setValue(Math.max(gesture.dx, -120));
+            }
+          },
+          onPanResponderRelease: (_, gesture) => {
+            if (gesture.dx < DELETE_THRESHOLD) {
+              Animated.spring(swipeX, { toValue: -100, useNativeDriver: true }).start();
+            } else {
+              Animated.spring(swipeX, { toValue: 0, useNativeDriver: true }).start();
+            }
+          },
+        })
+      : null,
+  ).current;
+
+  const cardContent = (
     <View
       style={{
         backgroundColor: selected
@@ -323,7 +356,7 @@ function CharacterListRow({
     >
       <Pressable
         accessibilityRole="button"
-        onPress={onPress}
+        onPress={() => { confirmAction(); onPress(); }}
         style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
       >
         <View
@@ -380,11 +413,49 @@ function CharacterListRow({
       ) : null}
     </View>
   );
+
+  if (!onDelete) {
+    return cardContent;
+  }
+
+  return (
+    <View style={{ overflow: 'hidden', borderRadius: fortuneTheme.radius.lg }}>
+      {/* Delete button behind */}
+      <View
+        style={{
+          position: 'absolute',
+          right: 0,
+          top: 0,
+          bottom: 0,
+          width: 100,
+          backgroundColor: fortuneTheme.colors.error,
+          borderRadius: fortuneTheme.radius.lg,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Pressable onPress={onDelete} style={{ alignItems: 'center', padding: 12 }}>
+          <Ionicons name="trash-outline" size={22} color="#FFFFFF" />
+          <AppText variant="caption" color="#FFFFFF" style={{ marginTop: 2 }}>
+            삭제
+          </AppText>
+        </Pressable>
+      </View>
+      {/* Swipeable card */}
+      <Animated.View
+        style={{ transform: [{ translateX: swipeX }] }}
+        {...(panResponder?.panHandlers ?? {})}
+      >
+        {cardContent}
+      </Animated.View>
+    </View>
+  );
 }
 
 function MessageBubble({ message }: { message: ChatShellTextMessage }) {
   const isAssistant = message.sender === 'assistant';
   const isSystem = message.sender === 'system';
+  const isUser = message.sender === 'user';
 
   return (
     <View
@@ -401,7 +472,7 @@ function MessageBubble({ message }: { message: ChatShellTextMessage }) {
           borderColor: fortuneTheme.colors.border,
           borderRadius: fortuneTheme.radius.messageBubble,
           borderWidth: 1,
-          maxWidth: '84%',
+          maxWidth: isUser ? undefined : '84%',
           paddingHorizontal: 14,
           paddingVertical: 10,
         }}
@@ -443,30 +514,44 @@ function TypingIndicatorBubble({ character }: { character: ChatCharacterSpec }) 
           borderColor: fortuneTheme.colors.border,
           borderRadius: fortuneTheme.radius.messageBubble,
           borderWidth: 1,
-          maxWidth: '84%',
           paddingHorizontal: 14,
-          paddingVertical: 10,
+          paddingVertical: 12,
         }}
       >
-        <View style={{ flexDirection: 'row', gap: 4, marginBottom: 4 }}>
-          {Array.from({ length: 3 }).map((_, index) => (
-            <View
-              key={index}
-              style={{
-                backgroundColor: fortuneTheme.colors.textSecondary,
-                borderRadius: 999,
-                height: 6,
-                opacity: 0.7 - index * 0.15,
-                width: 6,
-              }}
-            />
-          ))}
+        <View style={{ flexDirection: 'row', gap: 5 }}>
+          <PulseDot delay={0} />
+          <PulseDot delay={200} />
+          <PulseDot delay={400} />
         </View>
-        <AppText variant="caption" color={fortuneTheme.colors.textSecondary}>
-          답장하는 중
-        </AppText>
       </View>
     </View>
+  );
+}
+
+function PulseDot({ delay }: { delay: number }) {
+  const opacity = useRef(new Animated.Value(0.25)).current;
+
+  useEffect(() => {
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, { toValue: 1, duration: 500, delay, useNativeDriver: true }),
+        Animated.timing(opacity, { toValue: 0.25, duration: 500, useNativeDriver: true }),
+      ]),
+    );
+    animation.start();
+    return () => animation.stop();
+  }, [delay, opacity]);
+
+  return (
+    <Animated.View
+      style={{
+        width: 7,
+        height: 7,
+        borderRadius: 999,
+        backgroundColor: fortuneTheme.colors.ctaBackground,
+        opacity,
+      }}
+    />
   );
 }
 
@@ -490,8 +575,9 @@ function ChatThreadMessage({
   message: ChatShellMessage;
 }) {
   const isUser = message.sender === 'user';
-  const isEmbeddedResult = message.kind === 'embedded-result';
-  const showAssistantAvatar = !isUser && !isEmbeddedResult;
+  const isFullWidth =
+    message.kind === 'embedded-result' || message.kind === 'fortune-cookie' || message.kind === 'saju-preview';
+  const showAssistantAvatar = !isUser && !isFullWidth;
 
   return (
     <View
@@ -512,13 +598,24 @@ function ChatThreadMessage({
       ) : null}
       <View
         style={{
-          flex: isUser || isEmbeddedResult ? 0 : 1,
+          flex: isUser || isFullWidth ? 0 : 1,
           maxWidth: isUser ? '84%' : '100%',
-          width: isEmbeddedResult ? '100%' : undefined,
+          width: isFullWidth ? '100%' : undefined,
         }}
       >
         {message.kind === 'embedded-result' ? (
           <EmbeddedResultMessage message={message} />
+        ) : message.kind === 'fortune-cookie' ? (
+          <View style={{ width: '100%' }}>
+            <FortuneCookieCard />
+          </View>
+        ) : message.kind === 'saju-preview' ? (
+          <View style={{ width: '100%' }}>
+            <SajuPreviewCard
+              data={message.sajuData as import('../../lib/saju-remote').SajuData}
+              userName={message.userName}
+            />
+          </View>
         ) : (
           <MessageBubble message={message} />
         )}
@@ -661,6 +758,7 @@ export function ChatFirstRunSurface({
   onOpenRecentResult,
   onSelectCharacter,
   onPickCharacterAction,
+  onDeleteFriend,
 }: {
   activeTab: ChatCharacterTab;
   characters: readonly ChatCharacterSpec[];
@@ -671,6 +769,7 @@ export function ChatFirstRunSurface({
   onOpenRecentResult: (fortuneType: FortuneTypeId) => void;
   onSelectCharacter: (characterId: string) => void;
   onPickCharacterAction: (characterId: string, fortuneType: FortuneTypeId) => void;
+  onDeleteFriend?: (characterId: string) => void;
 }) {
   const safeCharacters = Array.isArray(characters) ? characters : [];
   const orderedCharacters = [
@@ -704,65 +803,69 @@ export function ChatFirstRunSurface({
           {visibleCharacters.map((character) => (
             <CharacterListRow
               key={character.id}
-              badge="스토리"
+              badge={character.id.startsWith('custom_') ? '내 친구' : '스토리'}
               character={character}
+              onDelete={
+                character.id.startsWith('custom_') && onDeleteFriend
+                  ? () => onDeleteFriend(character.id)
+                  : undefined
+              }
               onPress={() => onSelectCharacter(character.id)}
               selected={character.id === selectedCharacterId}
             />
           ))}
         </View>
       ) : (
-        <>
-          <Card>
-            <View
-              style={{
-                alignItems: 'center',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                gap: fortuneTheme.spacing.sm,
-              }}
-            >
-              <View style={{ flex: 1, gap: 4 }}>
-                <AppText variant="heading4">최근 상담</AppText>
-                <AppText
-                  variant="bodySmall"
-                  color={fortuneTheme.colors.textSecondary}
-                >
-                  설문과 결과가 같은 채팅 안에서 이어지는 전문가 목록입니다.
-                </AppText>
-              </View>
-              <Chip label="운세보기" tone="success" />
+        <View style={{ gap: fortuneTheme.spacing.md }}>
+          <View
+            style={{
+              alignItems: 'center',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              gap: fortuneTheme.spacing.sm,
+              paddingHorizontal: 4,
+            }}
+          >
+            <View style={{ flex: 1, gap: 4 }}>
+              <AppText variant="heading4">최근 상담</AppText>
+              <AppText
+                variant="bodySmall"
+                color={fortuneTheme.colors.textSecondary}
+              >
+                설문과 결과가 같은 채팅 안에서 이어지는 전문가 목록입니다.
+              </AppText>
             </View>
-            <View style={{ gap: fortuneTheme.spacing.sm }}>
-              {lastFortuneType ? (
-                <EntryActionRow
-                  badge="최근 결과"
-                  onPress={() => onOpenRecentResult(lastFortuneType)}
-                  subtitle={`${formatFortuneTypeLabel(lastFortuneType)} 결과를 같은 채팅 안에서 다시 엽니다.`}
-                  title={`${formatFortuneTypeLabel(lastFortuneType)} 이어보기`}
-                  tone="accent"
-                />
-              ) : null}
-              {visibleCharacters.map((character) => (
-                <CharacterListRow
-                  key={character.id}
-                  badge={`${character.specialties.length}개 운세`}
-                  character={character}
-                  onPickAction={(fortuneType) =>
-                    onPickCharacterAction(character.id, fortuneType)
-                  }
-                  onPress={() => onSelectCharacter(character.id)}
-                  optionActions={
-                    isFortuneChatCharacter(character)
-                      ? buildSuggestedActions(character)
-                      : []
-                  }
-                  selected={character.id === selectedCharacterId}
-                />
-              ))}
-            </View>
-          </Card>
-        </>
+            <Chip label="운세보기" tone="success" />
+          </View>
+          <View style={{ gap: fortuneTheme.spacing.sm }}>
+            {lastFortuneType ? (
+              <EntryActionRow
+                badge="최근 결과"
+                onPress={() => onOpenRecentResult(lastFortuneType)}
+                subtitle={`${formatFortuneTypeLabel(lastFortuneType)} 결과를 같은 채팅 안에서 다시 엽니다.`}
+                title={`${formatFortuneTypeLabel(lastFortuneType)} 이어보기`}
+                tone="accent"
+              />
+            ) : null}
+            {visibleCharacters.map((character) => (
+              <CharacterListRow
+                key={character.id}
+                badge={`${character.specialties.length}개 운세`}
+                character={character}
+                onPickAction={(fortuneType) =>
+                  onPickCharacterAction(character.id, fortuneType)
+                }
+                onPress={() => onSelectCharacter(character.id)}
+                optionActions={
+                  isFortuneChatCharacter(character)
+                    ? buildSuggestedActions(character)
+                    : []
+                }
+                selected={character.id === selectedCharacterId}
+              />
+            ))}
+          </View>
+        </View>
       )}
 
     </View>
@@ -1023,37 +1126,325 @@ export function ActiveChatComposer({
   );
 }
 
-function formatDateLabel(offset: number) {
-  const target = new Date();
-  target.setDate(target.getDate() + offset);
-
-  const month = target.getMonth() + 1;
-  const day = target.getDate();
-
-  if (offset === 0) {
-    return `오늘 ${month}/${day}`;
-  }
-
-  if (offset === 1) {
-    return `내일 ${month}/${day}`;
-  }
-
-  return `${month}/${day}`;
+function formatIsoDate(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
+    d.getDate(),
+  ).padStart(2, '0')}`;
 }
 
-function buildDateAnswer(offset: number) {
-  const target = new Date();
-  target.setDate(target.getDate() + offset);
+function SurveyDatePicker({ onSelect }: { onSelect: (isoDate: string) => void }) {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [showCalendar, setShowCalendar] = useState(true);
 
-  return `${target.getFullYear()}-${String(target.getMonth() + 1).padStart(2, '0')}-${String(
-    target.getDate(),
-  ).padStart(2, '0')}`;
+  const handleQuickChip = useCallback(
+    (offset: number) => {
+      const target = new Date();
+      target.setDate(target.getDate() + offset);
+      setSelectedDate(target);
+      onSelect(formatIsoDate(target));
+    },
+    [onSelect],
+  );
+
+  const handleCalendarSelect = useCallback(
+    (date: Date) => {
+      setSelectedDate(date);
+      onSelect(formatIsoDate(date));
+    },
+    [onSelect],
+  );
+
+  return (
+    <View style={{ gap: fortuneTheme.spacing.sm }}>
+      {/* Quick-pick chips */}
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => handleQuickChip(0)}
+          style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
+        >
+          <Chip label={`오늘 ${new Date().getMonth() + 1}/${new Date().getDate()}`} tone="neutral" />
+        </Pressable>
+
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => handleQuickChip(1)}
+          style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
+        >
+          <Chip
+            label={(() => {
+              const t = new Date();
+              t.setDate(t.getDate() + 1);
+              return `내일 ${t.getMonth() + 1}/${t.getDate()}`;
+            })()}
+            tone="neutral"
+          />
+        </Pressable>
+
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => setShowCalendar((v) => !v)}
+          style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
+        >
+          <Chip
+            label={showCalendar ? '달력 닫기' : '직접 선택'}
+            tone={showCalendar ? 'accent' : 'neutral'}
+          />
+        </Pressable>
+      </View>
+
+      {/* Inline calendar */}
+      {showCalendar ? (
+        <InlineCalendar
+          selectedDate={selectedDate}
+          onSelectDate={handleCalendarSelect}
+        />
+      ) : null}
+    </View>
+  );
+}
+
+const MBTI_AXES = [
+  { id: 'EI', left: { key: 'E', label: '외향 (E)', desc: '에너지를 밖에서' }, right: { key: 'I', label: '내향 (I)', desc: '에너지를 안에서' } },
+  { id: 'SN', left: { key: 'S', label: '감각 (S)', desc: '현실·사실 중심' }, right: { key: 'N', label: '직관 (N)', desc: '가능성·패턴 중심' } },
+  { id: 'TF', left: { key: 'T', label: '사고 (T)', desc: '논리·원칙 중심' }, right: { key: 'F', label: '감정 (F)', desc: '가치·공감 중심' } },
+  { id: 'JP', left: { key: 'J', label: '판단 (J)', desc: '계획·체계적' }, right: { key: 'P', label: '인식 (P)', desc: '유연·즉흥적' } },
+  { id: 'AO', left: { key: 'A', label: '주장적 (A)', desc: '자신감·스트레스 저항' }, right: { key: 'T', label: '격동적 (T)', desc: '완벽주의·자기개선' } },
+] as const;
+
+function MbtiAxisPicker({ onSubmit }: { onSubmit: (value: string) => void }) {
+  const [selections, setSelections] = useState<Record<string, string | null>>({
+    EI: null, SN: null, TF: null, JP: null, AO: null,
+  });
+
+  const handleSelect = (axisId: string, value: string) => {
+    setSelections((prev) => ({
+      ...prev,
+      [axisId]: prev[axisId] === value ? null : value,
+    }));
+  };
+
+  const handleUnknown = (axisId: string) => {
+    setSelections((prev) => ({
+      ...prev,
+      [axisId]: prev[axisId] === '?' ? null : '?',
+    }));
+  };
+
+  const coreComplete = selections.EI && selections.SN && selections.TF && selections.JP;
+
+  const handleSubmit = () => {
+    const core = [
+      selections.EI === '?' ? 'X' : (selections.EI || 'X'),
+      selections.SN === '?' ? 'X' : (selections.SN || 'X'),
+      selections.TF === '?' ? 'X' : (selections.TF || 'X'),
+      selections.JP === '?' ? 'X' : (selections.JP || 'X'),
+    ].join('');
+    const extra = selections.AO && selections.AO !== '?' ? `-${selections.AO}` : '';
+    onSubmit(`${core}${extra}`);
+  };
+
+  return (
+    <View style={{ gap: 12 }}>
+      {MBTI_AXES.map((axis) => {
+        const sel = selections[axis.id];
+        const isOptional = axis.id === 'AO';
+        return (
+          <View key={axis.id} style={{ gap: 6 }}>
+            {isOptional ? (
+              <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+                선택사항: 정체성 축
+              </AppText>
+            ) : null}
+            <View style={{ flexDirection: 'row', gap: 6 }}>
+              <Pressable
+                onPress={() => handleSelect(axis.id, axis.left.key)}
+                style={({ pressed }) => ({
+                  flex: 1,
+                  backgroundColor: sel === axis.left.key ? fortuneTheme.colors.ctaBackground + '25' : fortuneTheme.colors.surfaceSecondary,
+                  borderWidth: sel === axis.left.key ? 2 : 1,
+                  borderColor: sel === axis.left.key ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.border,
+                  borderRadius: fortuneTheme.radius.md,
+                  paddingVertical: 10,
+                  paddingHorizontal: 12,
+                  opacity: pressed ? 0.7 : 1,
+                })}
+              >
+                <AppText variant="labelLarge" color={sel === axis.left.key ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.textPrimary}>
+                  {axis.left.label}
+                </AppText>
+                <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+                  {axis.left.desc}
+                </AppText>
+              </Pressable>
+              <Pressable
+                onPress={() => handleSelect(axis.id, axis.right.key)}
+                style={({ pressed }) => ({
+                  flex: 1,
+                  backgroundColor: sel === axis.right.key ? fortuneTheme.colors.ctaBackground + '25' : fortuneTheme.colors.surfaceSecondary,
+                  borderWidth: sel === axis.right.key ? 2 : 1,
+                  borderColor: sel === axis.right.key ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.border,
+                  borderRadius: fortuneTheme.radius.md,
+                  paddingVertical: 10,
+                  paddingHorizontal: 12,
+                  opacity: pressed ? 0.7 : 1,
+                })}
+              >
+                <AppText variant="labelLarge" color={sel === axis.right.key ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.textPrimary}>
+                  {axis.right.label}
+                </AppText>
+                <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+                  {axis.right.desc}
+                </AppText>
+              </Pressable>
+              <Pressable
+                onPress={() => handleUnknown(axis.id)}
+                style={({ pressed }) => ({
+                  backgroundColor: sel === '?' ? fortuneTheme.colors.surfaceSecondary : 'transparent',
+                  borderWidth: 1,
+                  borderColor: sel === '?' ? fortuneTheme.colors.textTertiary : fortuneTheme.colors.border,
+                  borderRadius: fortuneTheme.radius.md,
+                  paddingVertical: 10,
+                  paddingHorizontal: 8,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  opacity: pressed ? 0.7 : 1,
+                })}
+              >
+                <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>모름</AppText>
+              </Pressable>
+            </View>
+          </View>
+        );
+      })}
+      <Pressable
+        onPress={handleSubmit}
+        disabled={!coreComplete}
+        style={({ pressed }) => ({
+          backgroundColor: coreComplete ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.surfaceSecondary,
+          borderRadius: fortuneTheme.radius.full,
+          paddingVertical: 14,
+          alignItems: 'center',
+          opacity: !coreComplete ? 0.5 : pressed ? 0.8 : 1,
+        })}
+      >
+        <AppText variant="labelLarge" color={coreComplete ? '#FFFFFF' : fortuneTheme.colors.textTertiary}>
+          {coreComplete ? '확인' : '4개 기본 축을 선택해주세요'}
+        </AppText>
+      </Pressable>
+    </View>
+  );
+}
+
+function SurveyImagePicker({
+  onPickImage,
+}: {
+  onPickImage: (base64: string) => void;
+}) {
+  const [previewUri, setPreviewUri] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function pickFromSource(source: 'camera' | 'gallery') {
+    setIsLoading(true);
+
+    try {
+      const permissionResult =
+        source === 'camera'
+          ? await ImagePicker.requestCameraPermissionsAsync()
+          : await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (!permissionResult.granted) {
+        setIsLoading(false);
+        return;
+      }
+
+      const launchFn =
+        source === 'camera'
+          ? ImagePicker.launchCameraAsync
+          : ImagePicker.launchImageLibraryAsync;
+
+      const result = await launchFn({
+        mediaTypes: ['images'],
+        quality: 0.7,
+        base64: true,
+        allowsEditing: true,
+        aspect: [1, 1],
+      });
+
+      if (result.canceled || !result.assets?.[0]) {
+        setIsLoading(false);
+        return;
+      }
+
+      const asset = result.assets[0];
+      setPreviewUri(asset.uri);
+
+      if (asset.base64) {
+        onPickImage(asset.base64);
+      }
+    } catch {
+      setIsLoading(false);
+    }
+  }
+
+  if (previewUri) {
+    return (
+      <View style={{ gap: fortuneTheme.spacing.sm, alignItems: 'center' }}>
+        <Image
+          source={{ uri: previewUri }}
+          style={{
+            width: 120,
+            height: 120,
+            borderRadius: fortuneTheme.radius.card,
+            borderWidth: 1,
+            borderColor: fortuneTheme.colors.border,
+          }}
+        />
+        <AppText variant="bodySmall" style={{ color: fortuneTheme.colors.textSecondary }}>
+          사진이 전송되었어요
+        </AppText>
+      </View>
+    );
+  }
+
+  return (
+    <View style={{ gap: fortuneTheme.spacing.sm }}>
+      <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.sm }}>
+        <View style={{ flex: 1 }}>
+          <PrimaryButton
+            disabled={isLoading}
+            onPress={() => pickFromSource('camera')}
+          >
+            카메라로 촬영
+          </PrimaryButton>
+        </View>
+        <View style={{ flex: 1 }}>
+          <PrimaryButton
+            disabled={isLoading}
+            tone="secondary"
+            onPress={() => pickFromSource('gallery')}
+          >
+            갤러리에서 선택
+          </PrimaryButton>
+        </View>
+      </View>
+      {isLoading ? (
+        <AppText
+          variant="bodySmall"
+          style={{ color: fortuneTheme.colors.textSecondary, textAlign: 'center' }}
+        >
+          사진을 처리하고 있어요...
+        </AppText>
+      ) : null}
+    </View>
+  );
 }
 
 export function ActiveSurveyFooter({
   step,
   draft,
   selections,
+  surveyAnswers,
   onDraftChange,
   onPickSingle,
   onToggleSelection,
@@ -1064,6 +1455,7 @@ export function ActiveSurveyFooter({
   step: ChatSurveyStep;
   draft: string;
   selections: readonly string[];
+  surveyAnswers?: Record<string, unknown>;
   onDraftChange: (value: string) => void;
   onPickSingle: (value: string) => void;
   onToggleSelection: (value: string) => void;
@@ -1098,24 +1490,33 @@ export function ActiveSurveyFooter({
 
   if (step.inputKind === 'date') {
     return (
-      <View style={{ gap: fortuneTheme.spacing.sm }}>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-          {[0, 1, 2, 3, 4].map((offset) => (
-            <Pressable
-              key={offset}
-              accessibilityRole="button"
-              onPress={() => onPickSingle(buildDateAnswer(offset))}
-              style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
-            >
-              <Chip label={formatDateLabel(offset)} tone="neutral" />
-            </Pressable>
-          ))}
-        </View>
-      </View>
+      <SurveyDatePicker onSelect={(isoDate) => onPickSingle(isoDate)} />
     );
   }
 
-  if (step.inputKind === 'multi-select' || step.inputKind === 'card-draw') {
+  if (step.inputKind === 'card-draw') {
+    const deckColorMap: Record<string, { primary: string; secondary: string; label: string }> = {
+      classic: { primary: '#4A5568', secondary: '#ECC94B', label: '클래식' },
+      moonlight: { primary: '#1A1A4E', secondary: '#A78BFA', label: '문라이트' },
+      gold: { primary: '#5C3D1E', secondary: '#FFD700', label: '골드' },
+    };
+    const selectedDeckId = typeof surveyAnswers?.deckId === 'string' ? surveyAnswers.deckId : 'classic';
+    const deck = deckColorMap[selectedDeckId] ?? deckColorMap.classic;
+    const deckColors = { primary: deck.primary, secondary: deck.secondary };
+    const deckName = deck.label;
+    const requiredCount = step.maxSelections ?? 3;
+
+    return (
+      <TarotDrawWidget
+        requiredCount={requiredCount}
+        deckName={deckName}
+        deckColors={deckColors}
+        onComplete={(cards) => onPickSingle(cards.join(','))}
+      />
+    );
+  }
+
+  if (step.inputKind === 'multi-select') {
     return (
       <View style={{ gap: fortuneTheme.spacing.sm }}>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
@@ -1143,43 +1544,24 @@ export function ActiveSurveyFooter({
     );
   }
 
+  if (step.inputKind === 'image') {
+    return (
+      <SurveyImagePicker onPickImage={onPickSingle} />
+    );
+  }
+
+  if (step.inputKind === 'mbti-axis') {
+    return <MbtiAxisPicker onSubmit={onPickSingle} />;
+  }
+
   return (
-    <View style={{ gap: fortuneTheme.spacing.sm }}>
-      <View
-        style={{
-          backgroundColor: fortuneTheme.colors.surfaceSecondary,
-          borderColor: fortuneTheme.colors.border,
-          borderRadius: fortuneTheme.radius.inputArea,
-          borderWidth: 1,
-          paddingHorizontal: 12,
-          paddingVertical: 10,
-        }}
-      >
-        <TextInput
-          multiline
-          onChangeText={onDraftChange}
-          placeholder={step.placeholder ?? '답변을 적어주세요.'}
-          placeholderTextColor={fortuneTheme.colors.textTertiary}
-          style={{
-            color: fortuneTheme.colors.textPrimary,
-            minHeight: 36,
-            maxHeight: 120,
-            textAlignVertical: 'top',
-          }}
-          value={draft}
-        />
-      </View>
-      <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.sm }}>
-        {step.inputKind === 'text-with-skip' ? (
-          <PrimaryButton onPress={onSkip} tone="secondary">
-            건너뛰기
-          </PrimaryButton>
-        ) : null}
-        <PrimaryButton disabled={!canSubmitText} onPress={onSubmitText}>
-          답변 보내기
-        </PrimaryButton>
-      </View>
-    </View>
+    <SurveyComposer
+      value={draft}
+      onChangeText={onDraftChange}
+      onSubmit={onSubmitText}
+      onSkip={step.inputKind === 'text-with-skip' ? onSkip : undefined}
+      placeholder={step.placeholder ?? '답변을 적어주세요.'}
+    />
   );
 }
 
@@ -1210,7 +1592,8 @@ export function ActiveCharacterChatSurface({
   const visibleMessages = messages;
   const promptActions = actions;
   const hasEmbeddedResult = visibleMessages.some(
-    (message) => message.kind === 'embedded-result',
+    (message) =>
+      message.kind === 'embedded-result' || message.kind === 'fortune-cookie' || message.kind === 'saju-preview',
   );
   const previewMessages = visibleMessages.some((message) => message.sender === 'user')
     ? visibleMessages

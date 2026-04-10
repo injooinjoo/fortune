@@ -218,14 +218,12 @@ export const fortuneTypeSpecs = [
   {
     id: 'chat-insight',
     labelKey: 'fortuneChatInsight',
-    endpoint: null,
-    isLocalOnly: true,
+    endpoint: '/fortune-chat-insight',
   },
   {
     id: 'coaching',
     labelKey: 'fortuneCoaching',
-    endpoint: null,
-    isLocalOnly: true,
+    endpoint: '/fortune-coaching',
   },
   {
     id: 'decision',

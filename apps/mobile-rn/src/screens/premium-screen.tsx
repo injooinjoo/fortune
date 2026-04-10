@@ -19,6 +19,7 @@ import { PrimaryButton } from '../components/primary-button';
 import { RouteBackHeader } from '../components/route-back-header';
 import { Screen } from '../components/screen';
 import { captureError } from '../lib/error-reporting';
+import { purchaseSuccess } from '../lib/haptics';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
@@ -207,6 +208,7 @@ export function PremiumScreen() {
 
     try {
       await purchaseProduct(selectedProduct.id);
+      purchaseSuccess();
     } catch (error) {
       await captureError(error, {
         productId: selectedProduct.id,
@@ -381,6 +383,17 @@ export function PremiumScreen() {
                   ? storeError
                   : '선택한 상품을 바로 결제하고 계정 상태에 반영할 수 있어요.'}
         </AppText>
+        {selectedProduct.isSubscription ? (
+          <AppText
+            variant="bodySmall"
+            color={fortuneTheme.colors.textTertiary}
+            style={{ lineHeight: 18 }}
+          >
+            자동 갱신 구독입니다. 구독 기간 종료 최소 24시간 전에 자동 갱신을
+            해제하지 않으면 구독이 자동으로 갱신됩니다. 설정 {'>'} Apple ID {'>'}{' '}
+            구독에서 관리할 수 있습니다.
+          </AppText>
+        ) : null}
         {!session ? (
           <PrimaryButton
             disabled={actionState !== 'idle' || isPurchasePending}
@@ -420,7 +433,7 @@ export function PremiumScreen() {
           </PrimaryButton>
         )}
         <PrimaryButton
-          onPress={actionState === 'idle' && !isPurchasePending ? handleRestore : undefined}
+          onPress={actionState === 'idle' && !isPurchasePending ? () => handleRestore() : undefined}
           tone="secondary"
         >
           {isPurchasePending ? '구매 상태 확인 중...' : '구매 복원'}

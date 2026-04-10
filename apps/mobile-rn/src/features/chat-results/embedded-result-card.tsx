@@ -69,7 +69,7 @@ export function EmbeddedResultCard({
             {payload.summary}
           </AppText>
 
-          {payload.contextTags?.length ? (
+          {message.fortuneType !== 'celebrity' && payload.contextTags?.length ? (
             <SectionCard title="입력된 맥락">
               <KeywordPills keywords={payload.contextTags} />
             </SectionCard>
@@ -103,6 +103,9 @@ export function EmbeddedResultCard({
 
           {payload.specialTip ? <InsetQuote text={payload.specialTip} /> : null}
 
+          <AppText variant="caption" color={fortuneTheme.colors.textTertiary} style={{ textAlign: 'center', marginTop: 8 }}>
+            오락 목적의 AI 생성 콘텐츠입니다
+          </AppText>
         </View>
       </Card>
     </View>

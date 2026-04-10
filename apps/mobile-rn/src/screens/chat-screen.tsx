@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { type FortuneTypeId } from '@fortune/product-contracts';
@@ -33,6 +33,8 @@ import {
   buildAssistantTextMessage,
   buildEmbeddedResultMessage,
   buildEmbeddedResultMessageFromPayload,
+  buildFortuneCookieMessage,
+  buildSajuPreviewMessage,
   buildDraftReply,
   buildInitialThread,
   buildLaunchMessages,
@@ -42,16 +44,21 @@ import {
   type ChatShellAction,
   type ChatShellEmbeddedResultMessage,
   type ChatShellMessage,
+  type ChatShellTextMessage,
 } from '../lib/chat-shell';
 import {
+  buildChatCharactersWithCustomFriends,
+  buildStoryCharactersWithCustomFriends,
   chatCharacters,
   findChatCharacterById,
   fortuneChatCharacters,
+  isCustomFriendCharacter,
   isFortuneChatCharacter,
   storyChatCharacters,
   type ChatCharacterSpec,
   type ChatCharacterTab,
 } from '../lib/chat-characters';
+import { supabase } from '../lib/supabase';
 import {
   buildNextStoryThreadSnapshot,
   buildStoryFallbackAssistantMessage,
@@ -108,9 +115,10 @@ export function ChatScreen() {
   const {
     state: mobileAppState,
     recordChatIntent,
+    saveProfile,
     syncRemoteProfile,
   } = useMobileAppState();
-  const { resetDraft } = useFriendCreation();
+  const { createdFriends, resetDraft, removeFriend } = useFriendCreation();
   const { isSupported, startSocialAuth } = useSocialAuth();
   const [activeFortuneType, setActiveFortuneType] =
     useState<FortuneTypeId | null>(null);
@@ -177,6 +185,7 @@ export function ChatScreen() {
     Record<string, ActiveChatSurvey | null>
   >({});
   const hydratedStoryThreadsKeyRef = useRef<string | null>(null);
+  const hydratedCharacterIdsRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     if (!pendingChatFortuneType) {
@@ -194,84 +203,90 @@ export function ChatScreen() {
     });
   }, [consumePendingChatFortuneType, pendingChatFortuneType]);
 
+  // Hydrate a single story character's conversation from remote
+  const hydrateStoryCharacter = useCallback(
+    async (characterId: string) => {
+      if (hydratedCharacterIdsRef.current.has(characterId)) {
+        return;
+      }
+
+      if (!isStoryRomancePilotCharacterId(characterId)) {
+        return;
+      }
+
+      hydratedCharacterIdsRef.current.add(characterId);
+
+      try {
+        const snapshot = await loadStoryThreadSnapshot(characterId);
+
+        if (!snapshot) {
+          return;
+        }
+
+        setMessagesByCharacterId((current) => ({
+          ...current,
+          [characterId]: snapshot.messages,
+        }));
+        setStoryThreadSnapshotsByCharacterId((current) => ({
+          ...current,
+          [characterId]: snapshot,
+        }));
+      } catch (error) {
+        // Remove from set so it can be retried
+        hydratedCharacterIdsRef.current.delete(characterId);
+        await captureError(error, {
+          surface: 'chat:hydrate-story-character',
+        }).catch(() => undefined);
+      }
+    },
+    [],
+  );
+
+  // On gate ready: only hydrate the currently selected character (not all)
   useEffect(() => {
     if (gate !== 'ready') {
       return;
     }
 
     const hydrationKey = session?.user.id ?? 'guest';
-    if (hydratedStoryThreadsKeyRef.current === hydrationKey) {
-      return;
+    if (hydratedStoryThreadsKeyRef.current !== hydrationKey) {
+      hydratedStoryThreadsKeyRef.current = hydrationKey;
+      hydratedCharacterIdsRef.current = new Set();
     }
 
-    hydratedStoryThreadsKeyRef.current = hydrationKey;
-    let cancelled = false;
+    // Resolve which character is initially selected
+    const initialCharacterId =
+      directCharacterId ??
+      mobileAppState.chat.selectedCharacterId ??
+      storyChatCharacters[0]?.id;
 
-    async function hydrateStoryThreads() {
-      try {
-        const snapshots = await Promise.all(
-          storyChatCharacters
-            .filter((character) => isStoryRomancePilotCharacterId(character.id))
-            .map(async (character) => ({
-              characterId: character.id,
-              snapshot: await loadStoryThreadSnapshot(character.id),
-            })),
-        );
-
-        if (cancelled) {
-          return;
-        }
-
-        const nextMessages: Record<string, ChatShellMessage[]> = {};
-        const nextSnapshots: Record<string, StoryChatThreadSnapshot | null> = {};
-
-        for (const { characterId, snapshot } of snapshots) {
-          if (snapshot) {
-            nextMessages[characterId] = snapshot.messages;
-            nextSnapshots[characterId] = snapshot;
-          }
-        }
-
-        if (Object.keys(nextMessages).length === 0) {
-          return;
-        }
-
-        setMessagesByCharacterId((current) => ({
-          ...current,
-          ...nextMessages,
-        }));
-        setStoryThreadSnapshotsByCharacterId((current) => ({
-          ...current,
-          ...nextSnapshots,
-        }));
-      } catch (error) {
-        await captureError(error, { surface: 'chat:hydrate-story-threads' }).catch(
-          () => undefined,
-        );
-      }
+    if (initialCharacterId && isStoryRomancePilotCharacterId(initialCharacterId)) {
+      void hydrateStoryCharacter(initialCharacterId);
     }
+  }, [gate, session?.user.id, directCharacterId, mobileAppState.chat.selectedCharacterId, hydrateStoryCharacter]);
 
-    void hydrateStoryThreads();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [gate, session?.user.id]);
-
+  const allStoryCharacters = useMemo(
+    () => buildStoryCharactersWithCustomFriends(createdFriends),
+    [createdFriends],
+  );
+  const allChatCharacters = useMemo(
+    () => buildChatCharactersWithCustomFriends(createdFriends),
+    [createdFriends],
+  );
   const highlightedExpert = activeFortuneType
     ? fortuneChatCharacters.find((character) =>
         character.specialties.includes(activeFortuneType),
       )
     : undefined;
   const tabCharacters =
-    activeTab === 'story' ? storyChatCharacters : fortuneChatCharacters;
+    activeTab === 'story' ? allStoryCharacters : fortuneChatCharacters;
   const defaultCharacter =
     highlightedExpert ??
     (activeTab === 'fortune'
       ? fortuneChatCharacters[0]
       : tabCharacters[0]) ??
-    storyChatCharacters[0] ??
-    chatCharacters[0];
+    allStoryCharacters[0] ??
+    allChatCharacters[0];
   const selectedCharacter = useMemo(() => {
     const targetId =
       selectedCharacterId ??
@@ -279,11 +294,12 @@ export function ChatScreen() {
       mobileAppState.chat.selectedCharacterId;
 
     return (
-      findChatCharacterById(targetId) ??
+      findChatCharacterById(targetId, createdFriends) ??
       highlightedExpert ??
       defaultCharacter
     );
   }, [
+    createdFriends,
     defaultCharacter,
     directCharacterId,
     highlightedExpert,
@@ -314,10 +330,53 @@ export function ChatScreen() {
     highlightedExpert?.id,
   ]);
 
+  // Lazy-load story conversation when user switches to a character not yet hydrated
+  useEffect(() => {
+    if (gate !== 'ready') {
+      return;
+    }
+
+    if (
+      selectedCharacter.kind === 'story' &&
+      isStoryRomancePilotCharacterId(selectedCharacter.id)
+    ) {
+      void hydrateStoryCharacter(selectedCharacter.id);
+    }
+  }, [gate, hydrateStoryCharacter, selectedCharacter.id, selectedCharacter.kind]);
+
+  useEffect(() => {
+    if (createdFriends.length === 0) {
+      return;
+    }
+
+    const newEntries: Record<string, ChatShellMessage[]> = {};
+
+    for (const friend of createdFriends) {
+      if (!messagesByCharacterId[friend.id]) {
+        const character = findChatCharacterById(friend.id, createdFriends);
+
+        if (character) {
+          const snapshot = buildStoryThreadSnapshot(character);
+          newEntries[friend.id] =
+            snapshot?.messages ?? buildInitialThread(character);
+        }
+      }
+    }
+
+    if (Object.keys(newEntries).length > 0) {
+      setMessagesByCharacterId((current) => ({
+        ...current,
+        ...newEntries,
+      }));
+    }
+  }, [createdFriends, messagesByCharacterId]);
+
   const selectedThread = messagesByCharacterId[selectedCharacter.id] ?? [];
   const selectedStorySnapshot =
     storyThreadSnapshotsByCharacterId[selectedCharacter.id] ?? null;
+  const [fortuneTypingCharacterId, setFortuneTypingCharacterId] = useState<string | null>(null);
   const selectedStoryIsTyping = storyTypingCharacterId === selectedCharacter.id;
+  const selectedFortuneIsTyping = fortuneTypingCharacterId === selectedCharacter.id;
   const storySendInFlight = storyTypingCharacterId !== null;
   const activeSurvey = activeSurveysByCharacterId[selectedCharacter.id] ?? null;
   const currentSurveyStep = activeSurvey
@@ -415,9 +474,69 @@ export function ChatScreen() {
     character: ChatCharacterSpec,
     fortuneType: FortuneTypeId,
   ) {
+    // Fortune cookie is local-only — no survey, no API call
+    if (fortuneType === 'fortune-cookie') {
+      setActiveSurvey(character.id, null);
+      appendMessages(character, [
+        buildAssistantTextMessage(
+          '오늘의 쿠키를 준비했어요. 꾹 눌러서 깨뜨려 보세요!',
+        ),
+        buildFortuneCookieMessage(),
+      ]);
+      return true;
+    }
+
+    // Blood type already known — skip survey, go straight to result
+    if (fortuneType === 'blood-type' && mobileAppState.profile.bloodType) {
+      setActiveSurvey(character.id, null);
+      void appendResolvedFortuneResult(character, fortuneType);
+      return true;
+    }
+
     const definition = getChatSurveyDefinition(fortuneType);
 
     if (definition) {
+      // 전통사주: 설문 전에 사주 비주얼 카드를 먼저 보여줌
+      if (fortuneType === 'traditional-saju' && session && mobileAppState.profile.birthDate) {
+        void (async () => {
+          try {
+            const { getSajuData: fetchSaju } = await import('../lib/saju-remote');
+            setFortuneTypingCharacterId(character.id);
+            const sajuData = await fetchSaju(
+              session,
+              mobileAppState.profile.birthDate,
+              mobileAppState.profile.birthTime,
+            );
+            setFortuneTypingCharacterId(null);
+
+            const userName =
+              mobileAppState.profile.displayName ||
+              (session.user.user_metadata.name as string | undefined) ||
+              '회원';
+
+            appendMessages(character, [
+              buildSajuPreviewMessage(userName, sajuData),
+            ]);
+          } catch {
+            setFortuneTypingCharacterId(null);
+          }
+        })();
+      }
+
+      // Celebrity: show favorites hint before survey
+      if (fortuneType === 'celebrity') {
+        import('../lib/favorite-celebrities').then(({ loadFavoriteCelebrities }) =>
+          loadFavoriteCelebrities().then((favs) => {
+            if (favs.length > 0) {
+              const names = favs.slice(0, 5).map((f) => f.name).join(', ');
+              appendMessages(character, [
+                buildAssistantTextMessage(`최근 본 연예인: ${names}\n이름을 입력하거나 새로운 연예인을 검색해보세요.`),
+              ]);
+            }
+          }),
+        ).catch(() => undefined);
+      }
+
       const survey = startChatSurvey(definition);
       const question =
         resolveSurveyQuestion(survey, {
@@ -427,7 +546,14 @@ export function ChatScreen() {
       setActiveSurvey(character.id, survey);
 
       if (question) {
-        appendMessages(character, [buildAssistantTextMessage(question)]);
+        // 전통사주일 때는 사주카드 뒤에 설문 질문이 약간 지연되어 보이도록
+        if (fortuneType === 'traditional-saju' && session && mobileAppState.profile.birthDate) {
+          setTimeout(() => {
+            appendMessages(character, [buildAssistantTextMessage(question)]);
+          }, 1500);
+        } else {
+          appendMessages(character, [buildAssistantTextMessage(question)]);
+        }
       }
 
       return true;
@@ -435,6 +561,17 @@ export function ChatScreen() {
 
     if (!resolveResultKindFromFortuneType(fortuneType)) {
       return false;
+    }
+
+    // Dedup: check if this fortune type already has a recent result
+    const existing = findMostRecentEmbeddedResult(character.id, fortuneType);
+    if (existing) {
+      reopenFortuneResult(
+        character,
+        fortuneType,
+        '이전 결과를 다시 보여드릴게요.',
+      );
+      return true;
     }
 
     setActiveSurvey(character.id, null);
@@ -452,24 +589,48 @@ export function ChatScreen() {
   ) {
     const definition = getChatSurveyDefinition(completed.fortuneType);
     setActiveSurvey(character.id, null);
+    setFortuneTypingCharacterId(character.id);
 
-    const embeddedResult = await resolveFortuneResultMessage(
-      completed.fortuneType,
-      buildResultContext(character, completed.answers),
-      'chat:complete-survey',
-    );
-
-    if (!embeddedResult) {
-      return;
+    // Save blood type to profile for next time
+    if (completed.fortuneType === 'blood-type' && completed.answers.bloodType) {
+      saveProfile({ bloodType: String(completed.answers.bloodType) }).catch(
+        () => undefined,
+      );
     }
 
-    appendMessages(character, [
-      buildAssistantTextMessage(
-        definition?.submitReply ??
-          '좋아요. 결과를 같은 채팅 안에서 바로 보여드릴게요.',
-      ),
-      embeddedResult,
-    ]);
+    // Auto-save celebrity to favorites
+    if (completed.fortuneType === 'celebrity' && completed.answers.celebrityName) {
+      import('../lib/favorite-celebrities').then(({ saveFavoriteCelebrity }) =>
+        saveFavoriteCelebrity({
+          name: String(completed.answers.celebrityName),
+          addedAt: new Date().toISOString(),
+          lastMode: String(completed.answers.mode ?? ''),
+          lastReason: String(completed.answers.reason ?? ''),
+        }),
+      ).catch(() => undefined);
+    }
+
+    try {
+      const embeddedResult = await resolveFortuneResultMessage(
+        completed.fortuneType,
+        buildResultContext(character, completed.answers),
+        'chat:complete-survey',
+      );
+
+      if (!embeddedResult) {
+        return;
+      }
+
+      appendMessages(character, [
+        buildAssistantTextMessage(
+          definition?.submitReply ??
+            '좋아요. 결과를 같은 채팅 안에서 바로 보여드릴게요.',
+        ),
+        embeddedResult,
+      ]);
+    } finally {
+      setFortuneTypingCharacterId(null);
+    }
   }
 
   function reopenFortuneResult(
@@ -498,7 +659,7 @@ export function ChatScreen() {
   }
 
   function handleCharacterSelect(characterId: string) {
-    const character = findChatCharacterById(characterId);
+    const character = findChatCharacterById(characterId, createdFriends);
 
     setSelectedCharacterId(characterId);
     setActiveTab(character?.kind ?? 'story');
@@ -517,7 +678,7 @@ export function ChatScreen() {
     characterId: string,
     fortuneType: FortuneTypeId,
   ) {
-    const character = findChatCharacterById(characterId) ?? selectedCharacter;
+    const character = findChatCharacterById(characterId, createdFriends) ?? selectedCharacter;
     const action = buildSuggestedActions(character).find(
       (candidate) => candidate.fortuneType === fortuneType,
     );
@@ -571,11 +732,63 @@ export function ChatScreen() {
 
   function handleOpenPhotoPicker() {
     setComposerTrayOpen(false);
-    Alert.alert('사진 보내기', '사진 첨부 연결은 다음 단계에서 바로 붙이겠습니다.');
+    // Photo attachment — silently ignore until feature is implemented
   }
 
   function handleStartVoiceInput() {
-    Alert.alert('목소리로 하기', '음성 입력 연결은 다음 단계에서 바로 붙이겠습니다.');
+    let SpeechModule: {
+      start: (o: { lang: string; interimResults: boolean }) => void;
+      stop: () => void;
+      requestPermissionsAsync: () => Promise<{ granted: boolean }>;
+      addListener: (event: string, handler: (data: unknown) => void) => { remove: () => void };
+    } | null = null;
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const mod = require('expo-speech-recognition');
+      SpeechModule = mod.ExpoSpeechRecognitionModule ?? null;
+    } catch {
+      // not available
+    }
+
+    if (!SpeechModule) {
+      // Voice input module unavailable — silently return
+      return;
+    }
+
+    void (async () => {
+      try {
+        const { granted } = await SpeechModule!.requestPermissionsAsync();
+        if (!granted) {
+          Alert.alert('마이크 권한', '음성 입력을 위해 마이크 권한이 필요합니다.');
+          return;
+        }
+
+        const resultSub = SpeechModule!.addListener('result', (event: unknown) => {
+          const e = event as { results?: Array<{ transcript?: string }> };
+          const transcript = e.results?.[0]?.transcript;
+          if (transcript) {
+            setDraft((prev) => prev ? `${prev} ${transcript}` : transcript);
+          }
+        });
+
+        const endSub = SpeechModule!.addListener('end', () => {
+          resultSub.remove();
+          endSub.remove();
+          errorSub.remove();
+        });
+
+        const errorSub = SpeechModule!.addListener('error', () => {
+          resultSub.remove();
+          endSub.remove();
+          errorSub.remove();
+        });
+
+        SpeechModule!.start({ lang: 'ko-KR', interimResults: false });
+      } catch {
+        // ignore
+      }
+    })();
   }
 
   function handleOpenRecentResult(fortuneType: FortuneTypeId) {
@@ -588,7 +801,7 @@ export function ChatScreen() {
     setSelectedCharacterId(recentFortuneCharacterId);
     setSurfaceMode('chat');
     const character =
-      findChatCharacterById(recentFortuneCharacterId) ?? selectedCharacter;
+      findChatCharacterById(recentFortuneCharacterId, createdFriends) ?? selectedCharacter;
     const reopened = reopenFortuneResult(
       character,
       fortuneType,
@@ -796,6 +1009,165 @@ export function ChatScreen() {
     }
   }
 
+  async function sendCharacterChatMessage(
+    character: ChatCharacterSpec,
+    text: string,
+  ) {
+    const trimmed = text.trim();
+
+    if (!trimmed) {
+      return;
+    }
+
+    const existingThread =
+      messagesByCharacterId[character.id] ?? buildInitialThread(character);
+    const optimisticThread = [
+      ...existingThread,
+      buildUserMessage(trimmed),
+    ];
+    let shouldClearDraft = true;
+
+    setMessagesByCharacterId((current) => ({
+      ...current,
+      [character.id]: optimisticThread,
+    }));
+    setStoryTypingCharacterId(character.id);
+    setComposerTrayOpen(false);
+    setSurfaceMode('chat');
+
+    try {
+      if (!session) {
+        throw new RemoteTokenConsumeError(
+          'UNAUTHORIZED',
+          '로그인이 필요해요. 로그인 후 다시 이어서 보내주세요.',
+        );
+      }
+
+      await consumeRemoteTokens(session, {
+        fortuneType: 'character-chat',
+        referenceId: `character:${character.id}`,
+      });
+
+      syncRemoteProfile().catch((error: unknown) => {
+        captureError(error, {
+          surface: 'chat:character-chat-sync-premium-after-consume',
+        }).catch(() => undefined);
+      });
+
+      await recordChatIntent({
+        characterId: character.id,
+        fortuneType: activeFortuneType,
+        incrementMessages: true,
+      }).catch((error: unknown) => {
+        captureError(error, {
+          surface: 'chat:character-chat-record-intent',
+        }).catch(() => undefined);
+      });
+
+      if (!supabase) {
+        throw new Error('Supabase is not configured.');
+      }
+
+      const customFriend = isCustomFriendCharacter(character.id)
+        ? createdFriends.find((f) => f.id === character.id) ?? null
+        : null;
+
+      const recentMessages = optimisticThread
+        .filter((m): m is ChatShellTextMessage => m.kind === 'text')
+        .slice(-10)
+        .map((m) => ({
+          role: m.sender === 'user' ? ('user' as const) : ('assistant' as const),
+          content: m.text,
+        }));
+
+      const { data, error } = await supabase.functions.invoke('character-chat', {
+        body: {
+          characterId: character.id,
+          characterName: character.name,
+          characterTraits: character.shortDescription,
+          systemPrompt: customFriend
+            ? `당신은 "${character.name}"입니다. ${customFriend.scenario ? `상황: ${customFriend.scenario}. ` : ''}성격: ${customFriend.personalityTags.join(', ')}. ${customFriend.memoryNote ? `기억: ${customFriend.memoryNote}. ` : ''}스타일: ${customFriend.stylePreset || '자연스러운 대화'}. 사용자와 ${customFriend.relationship === 'friend' ? '친구' : customFriend.relationship === 'crush' ? '썸 상대' : customFriend.relationship === 'partner' ? '연인' : '동료'} 관계예요. 짧고 자연스럽게, 캐릭터답게 대화하세요.`
+            : `당신은 "${character.name}"입니다. ${character.shortDescription}. 짧고 자연스럽게, 캐릭터답게 대화하세요.`,
+          messages: recentMessages,
+          userMessage: trimmed,
+          userName:
+            (session.user.user_metadata.name as string | undefined) ||
+            (session.user.user_metadata.full_name as string | undefined) ||
+            mobileAppState.profile.displayName ||
+            'user',
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      const payload = data as { response?: string; success?: boolean; error?: string } | null;
+      if (!payload?.response || (payload.success === false)) {
+        throw new Error(payload?.error ?? 'Character chat response is empty.');
+      }
+
+      const assistantText = payload.response.trim();
+      const assistantMessage = buildAssistantTextMessage(assistantText);
+      const nextMessages = [...optimisticThread, assistantMessage];
+
+      setMessagesByCharacterId((current) => ({
+        ...current,
+        [character.id]: nextMessages,
+      }));
+    } catch (error) {
+      if (error instanceof RemoteTokenConsumeError) {
+        shouldClearDraft = false;
+        setDraft(trimmed);
+        setMessagesByCharacterId((current) => ({
+          ...current,
+          [character.id]: existingThread,
+        }));
+
+        await syncRemoteProfile().catch((syncError: unknown) => {
+          captureError(syncError, {
+            surface: 'chat:character-chat-sync-premium-after-consume-error',
+          }).catch(() => undefined);
+        });
+
+        if (error.code === 'INSUFFICIENT_TOKENS') {
+          router.push('/premium');
+          return;
+        }
+
+        if (error.code === 'UNAUTHORIZED') {
+          setAuthMessage(error.message);
+          return;
+        }
+
+        await captureError(error, {
+          surface: 'chat:character-chat-consume-tokens',
+        }).catch(() => undefined);
+
+        return;
+      }
+
+      await captureError(error, { surface: 'chat:character-chat-send' }).catch(
+        () => undefined,
+      );
+
+      const fallbackMessage = buildDraftReply(character, trimmed);
+      const nextMessages = [...optimisticThread, fallbackMessage];
+
+      setMessagesByCharacterId((current) => ({
+        ...current,
+        [character.id]: nextMessages,
+      }));
+    } finally {
+      setStoryTypingCharacterId((current) =>
+        current === character.id ? null : current,
+      );
+      if (shouldClearDraft) {
+        setDraft('');
+      }
+    }
+  }
+
   function handleSendDraft() {
     const trimmed = draft.trim();
 
@@ -815,6 +1187,11 @@ export function ChatScreen() {
         isStoryRomancePilotCharacterId(selectedCharacter.id)
       ) {
         void sendStoryPilotMessage(selectedCharacter, followUpText);
+        return;
+      }
+
+      if (selectedCharacter.kind === 'story') {
+        void sendCharacterChatMessage(selectedCharacter, followUpText);
         return;
       }
 
@@ -840,6 +1217,11 @@ export function ChatScreen() {
       isStoryRomancePilotCharacterId(selectedCharacter.id)
     ) {
       void sendStoryPilotMessage(selectedCharacter, trimmed);
+      return;
+    }
+
+    if (selectedCharacter.kind === 'story') {
+      void sendCharacterChatMessage(selectedCharacter, trimmed);
       return;
     }
 
@@ -911,7 +1293,11 @@ export function ChatScreen() {
       answers,
       characterName: character.name,
       profile: {
-        displayName: mobileAppState.profile.displayName || undefined,
+        displayName:
+          mobileAppState.profile.displayName ||
+          (session?.user.user_metadata.name as string | undefined) ||
+          (session?.user.user_metadata.full_name as string | undefined) ||
+          undefined,
         birthDate: mobileAppState.profile.birthDate || undefined,
         birthTime: mobileAppState.profile.birthTime || undefined,
         mbti: mobileAppState.profile.mbti || undefined,
@@ -960,20 +1346,25 @@ export function ChatScreen() {
     character: ChatCharacterSpec,
     fortuneType: FortuneTypeId,
   ) {
-    const embeddedResult = await resolveFortuneResultMessage(
-      fortuneType,
-      buildResultContext(character),
-      'chat:begin-runtime',
-    );
+    setFortuneTypingCharacterId(character.id);
+    try {
+      const embeddedResult = await resolveFortuneResultMessage(
+        fortuneType,
+        buildResultContext(character),
+        'chat:begin-runtime',
+      );
 
-    if (!embeddedResult) {
-      return;
+      if (!embeddedResult) {
+        return;
+      }
+
+      appendMessages(character, [
+        buildAssistantTextMessage('좋아요. 결과를 같은 대화 안에 바로 붙여드릴게요.'),
+        embeddedResult,
+      ]);
+    } finally {
+      setFortuneTypingCharacterId(null);
     }
-
-    appendMessages(character, [
-      buildAssistantTextMessage('좋아요. 결과를 같은 대화 안에 바로 붙여드릴게요.'),
-      embeddedResult,
-    ]);
   }
 
   async function resolveFortuneResultMessage(
@@ -1116,6 +1507,7 @@ export function ChatScreen() {
               onToggleSelection={handleSurveyToggleSelection}
               selections={surveySelections}
               step={currentSurveyStep.step}
+              surveyAnswers={activeSurvey?.answers}
             />
           ) : (
             <ActiveChatComposer
@@ -1182,7 +1574,7 @@ export function ChatScreen() {
           <ActiveCharacterChatSurface
             actions={selectedCharacterActions}
             character={selectedCharacter}
-            isTyping={selectedStoryIsTyping}
+            isTyping={selectedStoryIsTyping || selectedFortuneIsTyping}
             messages={selectedThread}
             surveyActive={Boolean(currentSurveyStep)}
             surveyEyebrow={
@@ -1208,6 +1600,20 @@ export function ChatScreen() {
             onChangeTab={setActiveTab}
             onOpenProfile={() => router.push('/profile')}
             onOpenRecentResult={handleOpenRecentResult}
+            onDeleteFriend={(id) => {
+              Alert.alert(
+                '캐릭터 삭제',
+                '이 캐릭터를 삭제하시겠어요? 대화 기록도 사라집니다.',
+                [
+                  { text: '취소', style: 'cancel' },
+                  {
+                    text: '삭제',
+                    style: 'destructive',
+                    onPress: () => void removeFriend(id),
+                  },
+                ],
+              );
+            }}
             onPickCharacterAction={handleCharacterActionPress}
             onSelectCharacter={handleCharacterSelect}
             selectedCharacterId={selectedCharacter.id}

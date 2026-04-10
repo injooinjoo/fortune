@@ -18,7 +18,7 @@ export const fortuneCharacters = [
   },
   {
     id: 'fortune_muhyeon',
-    name: '무현 도사',
+    name: '현우',
     category: 'traditional',
     shortDescription: '사주와 전통 명리학으로 당신의 근본을 봅니다',
     specialties: ['traditional-saju', 'face-reading', 'blood-type', 'naming'],
@@ -28,7 +28,7 @@ export const fortuneCharacters = [
     name: '스텔라',
     category: 'zodiac',
     shortDescription: '별들이 속삭이는 당신의 이야기를 전해드려요',
-    specialties: ['zodiac', 'zodiac-animal', 'constellation', 'birthstone'],
+    specialties: ['zodiac', 'zodiac-animal', 'birthstone'],
   },
   {
     id: 'fortune_dr_mind',
@@ -40,9 +40,6 @@ export const fortuneCharacters = [
       'personality-dna',
       'talent',
       'coaching',
-      'decision',
-      'daily-review',
-      'weekly-review',
       'chat-insight',
       'past-life',
     ],

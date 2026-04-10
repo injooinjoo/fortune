@@ -27,9 +27,25 @@ export interface ChatShellEmbeddedResultMessage {
   payload: EmbeddedResultPayload;
 }
 
+export interface ChatShellFortuneCookieMessage {
+  id: string;
+  kind: 'fortune-cookie';
+  sender: 'assistant';
+}
+
+export interface ChatShellSajuPreviewMessage {
+  id: string;
+  kind: 'saju-preview';
+  sender: 'assistant';
+  userName: string;
+  sajuData: unknown;
+}
+
 export type ChatShellMessage =
   | ChatShellTextMessage
-  | ChatShellEmbeddedResultMessage;
+  | ChatShellEmbeddedResultMessage
+  | ChatShellFortuneCookieMessage
+  | ChatShellSajuPreviewMessage;
 
 export interface ChatShellAction {
   id: string;
@@ -46,9 +62,8 @@ const fortuneTypeLabels: Partial<Record<FortuneTypeId, string>> = {
   'traditional-saju': '전통 사주',
   'face-reading': '관상',
   mbti: 'MBTI 결과',
-  'blood-type': '혈액형 결과',
-  'zodiac-animal': '띠 결과',
-  constellation: '별자리 결과',
+  'blood-type': '혈액형',
+  'zodiac-animal': '띠 운세',
   'personality-dna': '성격운',
   love: '연애 운세',
   compatibility: '궁합',
@@ -199,6 +214,57 @@ export function buildLaunchMessages(
   ];
 }
 
+type FallbackTemplate = (name: string, draft: string) => string;
+
+const storyFallbackTemplates: readonly FallbackTemplate[] = [
+  (name, draft) =>
+    `"${draft}"… 그 말에 ${name}도 잠깐 생각에 잠겼어요.`,
+  (name) =>
+    `흠, 그렇군요. ${name}은(는) 조금 다른 생각을 하고 있었거든요.`,
+  (_name, draft) =>
+    `"${draft}"라니… 그 이야기 더 해줄 수 있어요?`,
+  (name) =>
+    `${name}은(는) 살짝 웃으면서 고개를 끄덕였어요.`,
+  (_name, draft) =>
+    `"${draft}"… 왠지 오늘따라 그 얘기가 더 와닿네요.`,
+  (name) =>
+    `그래요? ${name}도 비슷한 적 있었어요. 좀 더 들려주세요.`,
+  (name) =>
+    `${name}은(는) 잠깐 눈을 감았다가 천천히 말했어요. "계속 해봐요."`,
+  (_name, draft) =>
+    `"${draft}"… 그 말, 가볍게 넘길 수가 없네요.`,
+  (name) =>
+    `오, 진심으로요? ${name}은(는) 조금 놀란 눈으로 당신을 바라봤어요.`,
+  (name) =>
+    `${name}은(는) 고개를 살짝 기울이며 물었어요. "더 있죠?"`,
+  (_name, draft) =>
+    `"${draft}"… 그 말 속에 뭔가 더 있는 것 같아요.`,
+  (name) =>
+    `${name}은(는) 미소를 띠며 조용히 귀 기울이고 있어요.`,
+];
+
+const fortuneFallbackTemplates: readonly FallbackTemplate[] = [
+  (name, draft) =>
+    `"${draft}"라고 느끼셨군요. ${name}의 시선으로 보면 지금은 감정의 결을 먼저 정리하고, 필요한 흐름만 바로 이어보는 편이 좋아 보여요.`,
+  (name, draft) =>
+    `"${draft}"… 그 흐름이 보이네요. ${name}이 함께 짚어볼게요.`,
+  (name) =>
+    `지금 느끼는 그 감각, ${name}의 눈에도 선명해요. 조금 더 풀어볼까요?`,
+  (name, draft) =>
+    `"${draft}"… 흥미로운 흐름이에요. ${name}이 읽어드릴게요.`,
+  (name) =>
+    `그 이야기 속에 오늘의 기운이 담겨 있네요. ${name}이 이어서 볼게요.`,
+];
+
+function pickRandomFallbackText(
+  templates: readonly FallbackTemplate[],
+  name: string,
+  draft: string,
+): string {
+  const index = Math.floor(Math.random() * templates.length);
+  return templates[index](name, draft);
+}
+
 export function buildDraftReply(
   character: ChatCharacterSpec,
   draft: string,
@@ -208,7 +274,7 @@ export function buildDraftReply(
       id: createMessageId('assistant'),
       kind: 'text',
       sender: 'assistant',
-      text: `"${draft}"라니, 그 이야기 더 듣고 싶어요. ${character.name}의 호흡으로 천천히 이어가 볼까요?`,
+      text: pickRandomFallbackText(storyFallbackTemplates, character.name, draft),
     };
   }
 
@@ -216,7 +282,7 @@ export function buildDraftReply(
     id: createMessageId('assistant'),
     kind: 'text',
     sender: 'assistant',
-    text: `"${draft}"라고 느끼셨군요. ${character.name}의 시선으로 보면 지금은 감정의 결을 먼저 정리하고, 필요한 흐름만 바로 이어보는 편이 좋아 보여요.`,
+    text: pickRandomFallbackText(fortuneFallbackTemplates, character.name, draft),
   };
 }
 
@@ -244,6 +310,27 @@ export function buildSystemTextMessage(text: string): ChatShellMessage {
     kind: 'text',
     sender: 'system',
     text,
+  };
+}
+
+export function buildFortuneCookieMessage(): ChatShellFortuneCookieMessage {
+  return {
+    id: createMessageId('fortune-cookie'),
+    kind: 'fortune-cookie',
+    sender: 'assistant',
+  };
+}
+
+export function buildSajuPreviewMessage(
+  userName: string,
+  sajuData: unknown,
+): ChatShellSajuPreviewMessage {
+  return {
+    id: createMessageId('saju-preview'),
+    kind: 'saju-preview',
+    sender: 'assistant',
+    userName,
+    sajuData,
   };
 }
 

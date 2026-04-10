@@ -1,14 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { router } from "expo-router";
-import { Switch, View } from "react-native";
+import { Pressable, Switch, View } from "react-native";
 
 import { AppText } from "../components/app-text";
 import { Card } from "../components/card";
 import { PrimaryButton } from "../components/primary-button";
 import { RouteBackHeader } from "../components/route-back-header";
 import { Screen } from "../components/screen";
-import { formatFortuneTypeLabel } from "../lib/chat-shell";
+import { formSubmit, toggleSelect } from "../lib/haptics";
 import { fortuneTheme } from "../lib/theme";
 import { useAppBootstrap } from "../providers/app-bootstrap-provider";
 import { useMobileAppState } from "../providers/mobile-app-state-provider";
@@ -19,27 +18,55 @@ type NotificationPreferenceKey =
   | "weeklyDigest"
   | "marketing";
 
+const ACTIVE_PURPLE = "#8B7BE8";
+const INACTIVE_TRACK = "#39393D";
+
+const ALARM_TIMES = [
+  { hour: 6, minute: 0 },
+  { hour: 6, minute: 30 },
+  { hour: 7, minute: 0 },
+  { hour: 7, minute: 30 },
+  { hour: 8, minute: 0 },
+  { hour: 8, minute: 30 },
+  { hour: 9, minute: 0 },
+] as const;
+
+function formatAlarmTime(hour: number, minute: number): string {
+  return `매일 ${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+}
+
 const preferenceMeta: Record<
   NotificationPreferenceKey,
-  { label: string; description: string }
+  { label: string; description: string; defaultOn: boolean }
 > = {
   push: {
-    label: "푸시 알림",
-    description: "새 메시지, 딥링크 복귀, 구독 상태 알림",
+    label: "일일 운세 알림",
+    description: "매일 아침 오늘의 운세를 알려드려요",
+    defaultOn: true,
   },
   chatReminders: {
-    label: "채팅 리마인더",
-    description: "캐릭터 대화가 끊겼을 때 다시 들어오게 돕습니다.",
+    label: "캐릭터 메시지",
+    description: "캐릭터가 새 메시지를 보냈을 때",
+    defaultOn: true,
   },
   weeklyDigest: {
-    label: "주간 요약",
-    description: "한 주 동안 쌓인 핵심 인사이트를 요약합니다.",
+    label: "이벤트 및 프로모션",
+    description: "특별 이벤트와 할인 정보를 받습니다",
+    defaultOn: false,
   },
   marketing: {
-    label: "프로모션 안내",
-    description: "상품과 이벤트 관련 안내를 표시합니다.",
+    label: "토큰 알림",
+    description: "토큰이 부족할 때 미리 알려드려요",
+    defaultOn: false,
   },
 };
+
+const preferenceOrder: NotificationPreferenceKey[] = [
+  "push",
+  "chatReminders",
+  "weeklyDigest",
+  "marketing",
+];
 
 export function ProfileNotificationsScreen() {
   const { pendingChatFortuneType, session } = useAppBootstrap();
@@ -53,6 +80,8 @@ export function ProfileNotificationsScreen() {
     marketing: false,
   });
   const [hydrated, setHydrated] = useState(false);
+  const [alarmTimeIndex, setAlarmTimeIndex] = useState(2); // default index 2 = 07:00
+  const alarmTime = ALARM_TIMES[alarmTimeIndex];
   const enabledCount = useMemo(
     () => Object.values(preferences).filter(Boolean).length,
     [preferences],
@@ -87,91 +116,84 @@ export function ProfileNotificationsScreen() {
     <Screen
       header={<RouteBackHeader fallbackHref="/profile" />}
     >
-      <AppText variant="displaySmall">알림 설정</AppText>
-      <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        저장된 알림 기본값을 불러와 편집하고 다시 저장합니다.
+      {/* Title */}
+      <AppText
+        variant="heading2"
+        style={{ textAlign: "center", marginBottom: fortuneTheme.spacing.sm }}
+      >
+        알림 설정
       </AppText>
 
-      <Card>
-        <AppText variant="heading4">상태</AppText>
-        <View style={{ gap: 8 }}>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            활성화된 알림은 {enabledCount}개예요.
-          </AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {pendingChatFortuneType
-              ? `대기 중인 운세 신호: ${formatFortuneTypeLabel(pendingChatFortuneType)}`
-              : '대기 중인 운세 신호는 없어요.'}
-          </AppText>
-        </View>
-      </Card>
-
-      <Card>
-        <AppText variant="heading4">저장된 기본값</AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          푸시 {state.notifications.push ? "켜짐" : "꺼짐"} · 채팅 리마인더{" "}
-          {state.notifications.chatReminders ? "켜짐" : "꺼짐"} · 주간 요약{" "}
-          {state.notifications.weeklyDigest ? "켜짐" : "꺼짐"} · 마케팅{" "}
-          {state.notifications.marketing ? "켜짐" : "꺼짐"}
-        </AppText>
-      </Card>
-
-      <Card>
-        <AppText variant="heading4">알림 기본값</AppText>
-        {(Object.keys(preferenceMeta) as NotificationPreferenceKey[]).map(
-          (key) => (
-            <NotificationRow
-              key={key}
-              description={preferenceMeta[key].description}
-              label={preferenceMeta[key].label}
-              value={preferences[key]}
-              onValueChange={(next) =>
-                setPreferences((current) => ({ ...current, [key]: next }))
-              }
-            />
-          ),
-        )}
-      </Card>
-
-      <Card>
-        <AppText variant="heading4">미리보기</AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {preferences.push
-            ? "새 메시지와 딥링크는 표시됩니다."
-            : "푸시가 꺼져 있습니다."}
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {preferences.chatReminders
-            ? "대화 리마인더가 활성화되었습니다."
-            : "대화 리마인더가 비활성화되었습니다."}
-        </AppText>
-      </Card>
-
-      <Card>
-        <AppText variant="heading4">동작</AppText>
-        <PrimaryButton onPress={() => void handleSave()}>
-          저장하기
-        </PrimaryButton>
-        {!session ? (
-          <PrimaryButton
-            onPress={() =>
-              router.push({
-                pathname: '/signup',
-                params: { returnTo: '/profile/notifications' },
-              })
+      {/* Toggle rows */}
+      <Card style={{ gap: 0 }}>
+        {preferenceOrder.map((key, index) => (
+          <NotificationRow
+            key={key}
+            description={preferenceMeta[key].description}
+            label={preferenceMeta[key].label}
+            value={preferences[key]}
+            isLast={index === preferenceOrder.length - 1}
+            onValueChange={(next) =>
+              setPreferences((current) => ({ ...current, [key]: next }))
             }
-            tone="secondary"
-          >
-            계정 연결
-          </PrimaryButton>
-        ) : null}
-        <PrimaryButton onPress={() => router.back()} tone="secondary">
-          돌아가기
-        </PrimaryButton>
-        <PrimaryButton onPress={() => router.replace("/chat")} tone="secondary">
-          채팅으로 이동
-        </PrimaryButton>
+          />
+        ))}
       </Card>
+
+      {/* Morning alarm time section */}
+      <Card>
+        <AppText variant="heading4">아침 알림 시간</AppText>
+        <AppText
+          variant="bodySmall"
+          color={fortuneTheme.colors.textSecondary}
+        >
+          일일 운세 알림을 받을 시간을 정합니다
+        </AppText>
+        <Pressable
+          onPress={() => {
+            toggleSelect();
+            setAlarmTimeIndex((prev) => (prev + 1) % ALARM_TIMES.length);
+          }}
+          style={({ pressed }) => ({
+            alignSelf: "flex-start",
+            backgroundColor: ACTIVE_PURPLE,
+            borderRadius: fortuneTheme.radius.chip,
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+            marginTop: fortuneTheme.spacing.xs,
+            opacity: pressed ? 0.82 : 1,
+          })}
+        >
+          <AppText
+            variant="labelLarge"
+            color={fortuneTheme.colors.ctaForeground}
+          >
+            {formatAlarmTime(alarmTime.hour, alarmTime.minute)}
+          </AppText>
+        </Pressable>
+      </Card>
+
+      {/* Permission note */}
+      <AppText
+        variant="caption"
+        color={fortuneTheme.colors.textSecondary}
+        style={{
+          textAlign: "center",
+          paddingHorizontal: fortuneTheme.spacing.md,
+        }}
+      >
+        알림 권한이 꺼져 있으면 테스트 알림은 동작하지 않습니다.
+      </AppText>
+
+      {/* Test notification CTA */}
+      <PrimaryButton
+        onPress={() => {
+          formSubmit();
+          void handleSave();
+        }}
+      >
+        테스트 알림 보내기
+      </PrimaryButton>
     </Screen>
   );
 }
@@ -180,23 +202,26 @@ function NotificationRow({
   description,
   label,
   value,
+  isLast,
   onValueChange,
 }: {
   description: string;
   label: string;
   value: boolean;
+  isLast: boolean;
   onValueChange: (next: boolean) => void;
 }) {
   return (
     <View
       style={{
         alignItems: "center",
-        borderBottomColor: fortuneTheme.colors.border,
-        borderBottomWidth: 1,
+        borderBottomColor: isLast
+          ? "transparent"
+          : fortuneTheme.colors.border,
+        borderBottomWidth: isLast ? 0 : 1,
         flexDirection: "row",
-        gap: fortuneTheme.spacing.md,
         justifyContent: "space-between",
-        paddingVertical: fortuneTheme.spacing.sm,
+        paddingVertical: fortuneTheme.spacing.md,
       }}
     >
       <View style={{ flex: 1, gap: fortuneTheme.spacing.xs }}>
@@ -206,11 +231,14 @@ function NotificationRow({
         </AppText>
       </View>
       <Switch
-        onValueChange={onValueChange}
-        thumbColor={value ? fortuneTheme.colors.ctaBackground : "#FFFFFF"}
+        onValueChange={(next) => {
+          toggleSelect();
+          onValueChange(next);
+        }}
+        thumbColor="#FFFFFF"
         trackColor={{
-          false: fortuneTheme.colors.borderOpaque,
-          true: fortuneTheme.colors.accentSecondary,
+          false: INACTIVE_TRACK,
+          true: ACTIVE_PURPLE,
         }}
         value={value}
       />

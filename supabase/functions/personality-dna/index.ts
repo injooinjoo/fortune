@@ -794,13 +794,13 @@ serve(async (req) => {
     const {
       userId = 'anonymous',
       name = 'Guest',
-      mbti,
       zodiac,
     } = requestData
 
-    // 필드명 변환 지원 (snake_case, camelCase 모두 지원)
-    const bloodType = requestData.bloodType || requestData.blood_type
-    let zodiacAnimal = requestData.zodiacAnimal || requestData.animal
+    // ✅ 필드명 변환 + null guard (새 설문에서 다른 필드명으로 올 수 있음)
+    const mbti = requestData.mbti || requestData.mbtiAxes || 'INFP'
+    const bloodType = requestData.bloodType || requestData.blood_type || 'A'
+    let zodiacAnimal = requestData.zodiacAnimal || requestData.animal || '용'
 
     // "양띠" → "양" 변환 (띠 제거)
     if (zodiacAnimal && zodiacAnimal.endsWith('띠')) {

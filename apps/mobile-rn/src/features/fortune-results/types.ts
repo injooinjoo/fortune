@@ -1,12 +1,17 @@
 import type { FortuneTypeId } from '@fortune/product-contracts';
 
+import type { EmbeddedResultPayload } from '../chat-results/types';
+
+export interface FortuneResultComponentProps {
+  payload?: EmbeddedResultPayload;
+}
+
 export const resultKinds = [
   'traditional-saju',
   'daily-calendar',
   'mbti',
   'blood-type',
   'zodiac-animal',
-  'constellation',
   'career',
   'love',
   'health',
@@ -29,6 +34,13 @@ export const resultKinds = [
   'yearly-encounter',
   'decision',
   'daily-review',
+  'face-reading',
+  'naming',
+  'birthstone',
+  'celebrity',
+  'pet-compatibility',
+  'lucky-items',
+  'moving',
 ] as const;
 
 export type ResultKind = (typeof resultKinds)[number];

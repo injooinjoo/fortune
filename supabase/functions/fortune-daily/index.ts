@@ -57,13 +57,14 @@ interface DailyFortuneResponse {
   description: string;
   
   // 필수 카테고리별 운세 (모든 필드 필수)
+  // non-total 카테고리: advice = { description: 15자 이내 카드용, detail: 본문 }
   categories: {
     total: { score: number; advice: { idiom: string; description: string; }; };
-    love: { score: number; advice: string; };
-    money: { score: number; advice: string; };
-    work: { score: number; advice: string; };
-    study: { score: number; advice: string; };
-    health: { score: number; advice: string; };
+    love: { score: number; advice: { description: string; detail: string; }; };
+    money: { score: number; advice: { description: string; detail: string; }; };
+    work: { score: number; advice: { description: string; detail: string; }; };
+    study: { score: number; advice: { description: string; detail: string; }; };
+    health: { score: number; advice: { description: string; detail: string; }; };
   };
   
   // 필수 행운 요소들 (모든 필드 필수)
@@ -247,7 +248,7 @@ function validateFortuneResponse(fortune: any): fortune is DailyFortuneResponse 
       return false;
     }
 
-    // total의 advice는 객체, 나머지는 문자열
+    // total: { idiom, description }, 나머지: { description, detail }
     if (category === 'total') {
       if (!fortune.categories[category].advice?.idiom ||
           !fortune.categories[category].advice?.description) {
@@ -255,8 +256,9 @@ function validateFortuneResponse(fortune: any): fortune is DailyFortuneResponse 
         return false;
       }
     } else {
-      if (!fortune.categories[category].advice) {
-        console.error(`Missing ${category} advice`);
+      if (!fortune.categories[category].advice ||
+          !fortune.categories[category].advice?.description) {
+        console.error(`Missing ${category} advice or description`);
         return false;
       }
     }
@@ -701,16 +703,17 @@ serve(async (req) => {
 
         let prompt = '';
         if (category === 'total' && idiom) {
-          prompt = `오늘의 ${categoryName} 조언을 MZ 감성으로 작성해줘!
+          prompt = `${name}님의 오늘의 ${categoryName} 조언을 MZ 감성으로 작성해줘!
 
 조건:
+- 사용자 이름: ${name}님 (본문에서 "${name}님" 호칭을 자연스럽게 1~2회 사용!)
 - 참고 키워드: ${idiom} (딱딱하게 쓰지 말고 현대적으로 해석!)
 - 갓생 지수: ${categoryScore}점 🔥
 - 300~400자 정도로 핵심만!
 
 형식:
 💫 오늘의 바이브
-"${categoryScore >= 85 ? '오늘 뭘 해도 다 됨!' : categoryScore >= 70 ? '무난하게 잘 풀리는 날' : '천천히 가도 OK인 날'}" 이런 느낌으로 한 줄!
+"${name}님, ${categoryScore >= 85 ? '오늘 뭘 해도 다 됨!' : categoryScore >= 70 ? '무난하게 잘 풀리는 날' : '천천히 가도 OK인 날'}" 이런 느낌으로 한 줄!
 
 🎯 갓생 치트키
 • 진짜 실행 가능한 꿀팁 3가지
@@ -720,7 +723,7 @@ serve(async (req) => {
 한 줄로 짧게! (근데 무섭지 않게)
 
 💬 오늘의 한마디
-응원 메시지 (친구가 말하듯이!)
+${name}님에게 보내는 응원 메시지 (친구가 말하듯이!)
 
 스타일:
 - MZ 말투 (~해봐요, 진짜 좋음!, 레전드!)
@@ -732,16 +735,20 @@ serve(async (req) => {
 
 조건:
 - 갓생 지수: ${categoryScore}점
-- 200~300자로 핵심만!
 - ${categoryName}에 맞는 실용적인 내용
+- 이름(사용자명) 절대 넣지 마! 카테고리 카드용이라 짧아야 함
+
+⚠️ 중요: 반드시 첫 줄에 [한줄요약]을 작성!
+- [한줄요약]은 반드시 15자 이내! (이모지 포함, 예: "💕 설레는 만남 예감")
+- [한줄요약] 다음 줄부터 본문 작성 (150~200자로 핵심만!)
 
 형식:
+[한줄요약] (15자 이내, 카드에 표시될 짧은 문구)
 💫 ${categoryName} 바이브
 오늘의 흐름 2-3문장 (친구한테 말하듯이!)
 
 🎯 실천 꿀팁
 • 바로 할 수 있는 것 2-3가지
-• 왜 좋은지도 간단히!
 
 💬 한마디
 "${categoryScore >= 80 ? '오늘 진짜 기대해도 됨!' : '천천히 가도 괜찮아!'}" 느낌으로!
@@ -756,19 +763,35 @@ serve(async (req) => {
         // ✅ LLM 모듈 사용 (DB 설정 기반 동적 모델 선택)
         const llm = await LLMFactory.createFromConfigAsync('daily')
 
-        const response = await llm.generate([
-          {
-            role: 'system',
-            content: `MZ 세대 감성의 친근한 인사이트 전문가야!
+        const systemContent = category === 'total'
+          ? `MZ 세대 감성의 친근한 인사이트 전문가야! 지금 상담 중인 사용자 이름은 "${name}님"이야.
 
 🔥 스타일 가이드:
 - 친구처럼 반말+존댓말 섞어서 (~해봐요, ~거예요, 진짜 좋음!)
+- "${name}님"을 자연스럽게 불러줘 (인사, 응원 등에서 1~2회)
 - "갓생", "럭키비키", "무지성", "레전드" 같은 MZ 표현 적극 활용
 - 이모지 적극 사용 (✨💫🔥💪😎🍀💯 등)
 - 짧고 임팩트 있게! 두바이 초콜릿처럼 달달하게!
 - 인사말/서두 없이 바로 본론
 - 딱딱한 사자성어나 고어 절대 금지!
 - 요즘 트렌드 (소금빵, 탕후루, NewJeans 등) 비유 활용 OK`
+          : `MZ 세대 감성의 친근한 인사이트 전문가야! 카테고리별 카드 조언 담당이야.
+
+🔥 스타일 가이드:
+- 친구처럼 반말+존댓말 섞어서 (~해봐요, ~거예요, 진짜 좋음!)
+- ⚠️ 사용자 이름 절대 넣지 마! 카테고리 카드는 이름 없이 작성!
+- ⚠️ 반드시 첫 줄에 [한줄요약] 15자 이내로! (카드 UI에 표시됨)
+- "갓생", "럭키비키", "무지성", "레전드" 같은 MZ 표현 적극 활용
+- 이모지 적극 사용 (✨💫🔥💪😎🍀💯 등)
+- 짧고 임팩트 있게! 두바이 초콜릿처럼 달달하게!
+- 인사말/서두 없이 바로 본론
+- 딱딱한 사자성어나 고어 절대 금지!
+- 요즘 트렌드 (소금빵, 탕후루, NewJeans 등) 비유 활용 OK`;
+
+        const response = await llm.generate([
+          {
+            role: 'system',
+            content: systemContent
           },
           {
             role: 'user',
@@ -792,7 +815,24 @@ serve(async (req) => {
           metadata: { category, categoryScore, idiom, name, birthDate, zodiacAnimal, zodiacSign, mbtiType }
         })
 
-        return response.content.trim()
+        const rawContent = response.content.trim()
+
+        // 카테고리 카드용: 첫 줄 [한줄요약] 파싱 (total 제외)
+        if (category !== 'total') {
+          const lines = rawContent.split('\n')
+          const firstLine = lines[0]?.trim() || ''
+          // [한줄요약] 태그가 있으면 파싱, 없으면 첫 줄을 15자로 자름
+          let shortDesc = firstLine.replace(/^\[한줄요약\]\s*/, '').trim()
+          if (shortDesc.length > 15) {
+            shortDesc = shortDesc.slice(0, 14) + '…'
+          }
+          const detail = firstLine.startsWith('[한줄요약]')
+            ? lines.slice(1).join('\n').trim()
+            : rawContent
+          return { description: shortDesc, detail }
+        }
+
+        return rawContent
       } catch (error) {
         console.error(`GPT API 호출 실패 (${category}):`, error);
         // Fallback: 기본 조언 반환
@@ -801,16 +841,20 @@ serve(async (req) => {
     };
 
     // Fallback 조언 생성 (GPT API 실패 시) - MZ 스타일!
-    const generateFallbackAdvice = (category: string, categoryScore: number) => {
-      const fallbackMessages: Record<string, string> = {
-        'total': '💫 오늘의 바이브\n무난하게 잘 풀리는 날이에요! 긍정 마인드로 시작하면 좋은 일들이 찾아올 거예요 ✨\n\n🎯 갓생 치트키\n• 아침에 좋아하는 음료 한 잔으로 기분 UP!\n• 할 일 리스트 3개만 적고 하나씩 클리어하기\n• 누군가에게 먼저 인사하면 좋은 기운이 옴!\n\n💬 오늘의 한마디\n"오늘도 럭키비키한 하루 보내세요!" 🍀',
-        'love': '💕 애정운 바이브\n마음이 따뜻해지는 날이에요! 솔직하게 감정 표현하면 좋은 반응 올 확률 높음 ✨\n\n🎯 실천 꿀팁\n• 좋아하는 사람한테 먼저 연락하기!\n• 작은 선물이나 칭찬으로 마음 전하기\n• 혼자라면? 셀프 데이트도 추천! 🎬\n\n💬 한마디\n"사랑은 용기 있는 자의 것!" 💪',
-        'money': '💰 금전운 바이브\n지갑 지키기 모드 ON! 계획적인 소비가 답이에요 📊\n\n🎯 실천 꿀팁\n• 충동구매 참기 (3일 뒤에도 생각나면 그때 사기!)\n• 작은 저축이라도 오늘 시작하기\n• 가계부 한 번 훑어보면 좋은 날!\n\n💬 한마디\n"돈은 모이면 기분이 좋아지는 마법 💫"',
-        'work': '💼 직장운 바이브\n집중력 MAX인 날! 핵심 업무 먼저 처리하면 순삭 예정 🔥\n\n🎯 실천 꿀팁\n• 중요한 일 오전에 끝내기\n• 동료한테 먼저 손 내밀면 협업 시너지 UP!\n• 점심시간에 잠깐 산책하면 오후 능률 상승\n\n💬 한마디\n"오늘의 고생이 내일의 칼퇴를 만든다!" 💪',
-        'study': '📚 학업운 바이브\n뇌가 말랑말랑한 날! 새로운 거 배우기 딱 좋음 ✨\n\n🎯 실천 꿀팁\n• 25분 집중 + 5분 휴식 (뽀모도로 기법!)\n• 어려운 건 유튜브로 쉽게 이해하기\n• 복습 10분이면 기억력 2배!\n\n💬 한마디\n"오늘 외운 건 시험에 나온다 (진심)" 💯',
-        'health': '💪 건강운 바이브\n몸이 먼저인 날! 무리하지 말고 쉬어가도 OK 🌿\n\n🎯 실천 꿀팁\n• 물 한 잔 더 마시기 (피부에도 좋음!)\n• 5분 스트레칭으로 뻣뻣한 몸 풀어주기\n• 일찍 자면 내일 컨디션 레전드!\n\n💬 한마디\n"건강해야 갓생 살 수 있다!" 🔥'
+    const generateFallbackAdvice = (category: string, _categoryScore: number) => {
+      if (category === 'total') {
+        return '💫 오늘의 바이브\n무난하게 잘 풀리는 날이에요! 긍정 마인드로 시작하면 좋은 일들이 찾아올 거예요 ✨\n\n🎯 갓생 치트키\n• 아침에 좋아하는 음료 한 잔으로 기분 UP!\n• 할 일 리스트 3개만 적고 하나씩 클리어하기\n• 누군가에게 먼저 인사하면 좋은 기운이 옴!\n\n💬 오늘의 한마디\n"오늘도 럭키비키한 하루 보내세요!" 🍀';
+      }
+
+      // 카테고리별 fallback (description: 15자 이내 카드용, detail: 본문)
+      const fallbacks: Record<string, { description: string; detail: string }> = {
+        'love': { description: '💕 따뜻한 감정의 날', detail: '마음이 따뜻해지는 날이에요! 솔직하게 감정 표현하면 좋은 반응 올 확률 높음 ✨\n\n🎯 실천 꿀팁\n• 좋아하는 사람한테 먼저 연락하기!\n• 작은 선물이나 칭찬으로 마음 전하기' },
+        'money': { description: '💰 계획적 소비의 날', detail: '지갑 지키기 모드 ON! 계획적인 소비가 답이에요 📊\n\n🎯 실천 꿀팁\n• 충동구매 참기!\n• 작은 저축이라도 오늘 시작하기' },
+        'work': { description: '💼 집중력 MAX!', detail: '집중력 MAX인 날! 핵심 업무 먼저 처리하면 순삭 예정 🔥\n\n🎯 실천 꿀팁\n• 중요한 일 오전에 끝내기\n• 동료한테 먼저 손 내밀기' },
+        'study': { description: '📚 배움에 딱 좋은 날', detail: '뇌가 말랑말랑한 날! 새로운 거 배우기 딱 좋음 ✨\n\n🎯 실천 꿀팁\n• 25분 집중 + 5분 휴식!\n• 복습 10분이면 기억력 2배!' },
+        'health': { description: '💪 몸이 먼저인 날', detail: '몸이 먼저인 날! 무리하지 말고 쉬어가도 OK 🌿\n\n🎯 실천 꿀팁\n• 물 한 잔 더 마시기!\n• 5분 스트레칭으로 몸 풀어주기' }
       };
-      return fallbackMessages[category] || fallbackMessages['total'];
+      return fallbacks[category] || { description: '✨ 좋은 하루!', detail: '오늘도 럭키비키한 하루 보내세요! 🍀' };
     };
 
     // GPT API로 각 카테고리 조언 생성 (비동기 병렬 처리)

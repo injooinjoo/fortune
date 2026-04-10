@@ -47,7 +47,7 @@ function buildInsertPayload(session: Session) {
     profile_image_url: sessionAvatarUrl(session),
     primary_provider: provider,
     linked_providers: provider ? [provider] : [],
-    token_balance: 100,
+    token_balance: 0,
   };
 }
 

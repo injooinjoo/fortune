@@ -56,7 +56,7 @@ function parseEnvFile(filePath: string, protectedKeys: ReadonlySet<string>) {
 }
 
 function loadWorkspaceEnvFiles() {
-  const workspaceRoot = path.resolve(__dirname, '../..');
+  const workspaceRoot = path.resolve(process.cwd(), '../..');
   const initialKeys = new Set(Object.keys(process.env));
   const appEnvironment =
     process.env.EXPO_PUBLIC_APP_ENV ??
@@ -116,13 +116,32 @@ const config: ExpoConfig = {
     'expo-iap',
     'expo-apple-authentication',
     'expo-web-browser',
+    ['expo-speech-recognition', {
+      microphonePermission: '음성으로 텍스트를 입력하기 위해 마이크 접근이 필요합니다.',
+    }],
+    [
+      'expo-image-picker',
+      {
+        photosPermission: '관상 분석을 위해 사진 접근이 필요합니다.',
+        cameraPermission: '관상 분석을 위해 카메라 접근이 필요합니다.',
+      },
+    ],
     './plugins/with-ios-prebuilt-react-native',
   ],
+  updates: {
+    url: 'https://u.expo.dev/f7a724ea-b46e-494a-b83c-94e7a6fec02a',
+  },
+  runtimeVersion: {
+    policy: 'appVersion',
+  },
   experiments: {
     typedRoutes: true,
     autolinkingModuleResolution: true,
   },
   extra: {
+    eas: {
+      projectId: 'f7a724ea-b46e-494a-b83c-94e7a6fec02a',
+    },
     appEnv: process.env.EXPO_PUBLIC_APP_ENV ?? process.env.APP_ENV ?? 'development',
     supabaseUrl:
       process.env.EXPO_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL ?? '',

@@ -3,138 +3,369 @@ import { Pressable, View } from "react-native";
 
 import { AppText } from "../components/app-text";
 import { Card } from "../components/card";
-import { PrimaryButton } from "../components/primary-button";
 import { RouteBackHeader } from "../components/route-back-header";
 import { Screen } from "../components/screen";
-import { findChatCharacterById, storyChatCharacters } from "../lib/chat-characters";
+import {
+  chatCharacters,
+  findChatCharacterById,
+} from "../lib/chat-characters";
 import { formatFortuneTypeLabel } from "../lib/chat-shell";
 import { fortuneTheme } from "../lib/theme";
-import { useAppBootstrap } from "../providers/app-bootstrap-provider";
 import { useMobileAppState } from "../providers/mobile-app-state-provider";
 
+/* ------------------------------------------------------------------ */
+/*  Avatar color palette — stable color per character initial          */
+/* ------------------------------------------------------------------ */
+
+const AVATAR_PALETTE: Record<string, string> = {
+  "\uB7EC": "#3B9EA0", // teal
+  "\uC815": "#E8965A", // orange
+  "\uC11C": "#9B72CF", // purple
+  "\uAC15": "#5B8DEF", // blue
+  "\uC81C": "#E06B8A", // rose
+  "\uC2DC": "#6BC5A0", // mint
+  "\uC774": "#D4A853", // gold
+  "\uD55C": "#7C8EF5", // indigo
+  "\uBC31": "#E07B5F", // coral
+  "\uBBFC": "#58B4D1", // sky
+  "\uD558": "#3B9EA0", // teal (하늘)
+  "\uD604": "#9B72CF", // purple (현우)
+  "\uC2A4": "#E06B8A", // rose (스텔라)
+  "\uB85C": "#E8965A", // orange (로제)
+  "\uB7ED": "#6BC5A0", // mint (럭키)
+  "\uB9C8": "#5B8DEF", // blue (마르코)
+  "\uB9AC": "#D4A853", // gold (리나)
+  "\uB8E8": "#7C8EF5", // indigo (루나)
+  D: "#58B4D1", // sky (Dr. 마인드)
+};
+
+const FALLBACK_AVATAR_COLOR = "#8B7BE8";
+
+function getAvatarColor(name: string): string {
+  const initial = name.charAt(0);
+  return AVATAR_PALETTE[initial] ?? FALLBACK_AVATAR_COLOR;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Stat chip                                                          */
+/* ------------------------------------------------------------------ */
+
+function StatChip({ label }: { label: string }) {
+  return (
+    <View
+      style={{
+        backgroundColor: fortuneTheme.colors.surfaceSecondary,
+        borderRadius: fortuneTheme.radius.chip,
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+      }}
+    >
+      <AppText variant="caption" color={fortuneTheme.colors.textSecondary}>
+        {label}
+      </AppText>
+    </View>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Status chip (colored)                                              */
+/* ------------------------------------------------------------------ */
+
+function StatusChip({
+  label,
+  color,
+}: {
+  label: string;
+  color?: string;
+}) {
+  const chipBg = color
+    ? `${color}1A`
+    : `${fortuneTheme.colors.ctaBackground}1A`;
+  const chipText = color ?? fortuneTheme.colors.ctaBackground;
+
+  return (
+    <View
+      style={{
+        backgroundColor: chipBg,
+        borderRadius: fortuneTheme.radius.chip,
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+      }}
+    >
+      <AppText variant="caption" color={chipText}>
+        {label}
+      </AppText>
+    </View>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Character relationship card                                        */
+/* ------------------------------------------------------------------ */
+
+function CharacterRelationshipCard({
+  name,
+  description,
+  isSelected,
+  sentMessageCount,
+  onPress,
+}: {
+  name: string;
+  description: string;
+  isSelected: boolean;
+  sentMessageCount: number;
+  onPress: () => void;
+}) {
+  const avatarColor = getAvatarColor(name);
+  const initial = name.charAt(0);
+
+  return (
+    <Pressable
+      accessibilityRole="button"
+      onPress={onPress}
+      style={({ pressed }) => ({
+        opacity: pressed ? 0.85 : 1,
+      })}
+    >
+      <View
+        style={{
+          backgroundColor: isSelected
+            ? fortuneTheme.colors.surfaceSecondary
+            : fortuneTheme.colors.surface,
+          borderWidth: 1,
+          borderColor: isSelected
+            ? fortuneTheme.colors.ctaBackground
+            : fortuneTheme.colors.border,
+          borderRadius: fortuneTheme.radius.card,
+          padding: fortuneTheme.spacing.cardPadding,
+          gap: fortuneTheme.spacing.sm,
+        }}
+      >
+        {/* Top row: avatar + name */}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: fortuneTheme.spacing.sm,
+          }}
+        >
+          {/* Colored circle avatar */}
+          <View
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 22,
+              backgroundColor: avatarColor,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <AppText
+              variant="heading4"
+              color="#FFFFFF"
+              style={{ textAlign: "center" }}
+            >
+              {initial}
+            </AppText>
+          </View>
+
+          {/* Name and description */}
+          <View style={{ flex: 1, gap: 2 }}>
+            <AppText variant="labelLarge">{name}</AppText>
+            <AppText
+              variant="bodySmall"
+              color={fortuneTheme.colors.textSecondary}
+              numberOfLines={1}
+            >
+              {description}
+            </AppText>
+          </View>
+        </View>
+
+        {/* Status chips row */}
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: 6,
+            marginTop: 4,
+          }}
+        >
+          {isSelected ? (
+            <StatusChip label="최근 대화" color="#3B9EA0" />
+          ) : (
+            <StatusChip
+              label="대화 가능"
+              color={fortuneTheme.colors.textSecondary}
+            />
+          )}
+          {isSelected && sentMessageCount > 0 ? (
+            <StatusChip
+              label={`메시지 ${sentMessageCount}개`}
+              color={fortuneTheme.colors.accentSecondary}
+            />
+          ) : null}
+        </View>
+      </View>
+    </Pressable>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Section header                                                     */
+/* ------------------------------------------------------------------ */
+
+function SectionHeader({ title }: { title: string }) {
+  return (
+    <AppText
+      variant="heading4"
+      style={{ marginTop: 8 }}
+    >
+      {title}
+    </AppText>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Main screen                                                        */
+/* ------------------------------------------------------------------ */
+
 export function ProfileRelationshipsScreen() {
-  const { session } = useAppBootstrap();
   const { state } = useMobileAppState();
-  const previewCharacters = storyChatCharacters.slice(0, 4);
-  const selectedCharacter = findChatCharacterById(state.chat.selectedCharacterId);
+
+  const allCharacters = chatCharacters;
+  const storyChars = allCharacters.filter((c) => c.kind === "story");
+  const fortuneChars = allCharacters.filter((c) => c.kind === "fortune");
+  const totalCount = allCharacters.length;
+
+  const selectedCharacter = findChatCharacterById(
+    state.chat.selectedCharacterId,
+  );
+  const sentMessageCount = state.chat.sentMessageCount;
   const lastFortuneLabel = state.chat.lastFortuneType
     ? formatFortuneTypeLabel(state.chat.lastFortuneType)
     : null;
 
+  // Build summary text from real state
+  const summaryParts: string[] = [];
+  if (selectedCharacter) {
+    summaryParts.push(
+      `현재 ${selectedCharacter.name}과 가장 가까운 관계를 유지하고 있어요.`,
+    );
+  }
+  if (sentMessageCount > 0) {
+    summaryParts.push(
+      `지금까지 총 ${sentMessageCount}개의 메시지를 나눴어요.`,
+    );
+  }
+  if (lastFortuneLabel) {
+    summaryParts.push(`최근 운세 신호: ${lastFortuneLabel}`);
+  }
+  if (summaryParts.length === 0) {
+    summaryParts.push(
+      "아직 시작된 관계가 없어요. 캐릭터와 대화를 시작해보세요!",
+    );
+  }
+
+  const navigateToCharacter = (characterId: string) => {
+    router.push({
+      pathname: "/character/[id]",
+      params: { id: characterId, returnTo: "/profile/relationships" },
+    });
+  };
+
   return (
-    <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
-      <AppText variant="displaySmall">관계도</AppText>
-      <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        저장된 최근 채팅 신호를 기준으로 관계 흐름을 이어갑니다.
-      </AppText>
+    <Screen
+      header={
+        <RouteBackHeader fallbackHref="/profile" label="프로필" />
+      }
+    >
+      {/* Page title */}
+      <AppText variant="displaySmall">캐릭터 관계도</AppText>
 
+      {/* Summary card */}
       <Card>
-        <AppText variant="heading4">최근 채팅 신호</AppText>
-        <View style={{ gap: 8 }}>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {selectedCharacter
-              ? `최근 선택 캐릭터: ${selectedCharacter.name}`
-              : '최근 선택 캐릭터가 아직 없어요.'}
-          </AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {state.chat.sentMessageCount > 0
-              ? `메시지 ${state.chat.sentMessageCount}개를 보냈어요.`
-              : '아직 보낸 메시지가 없어요.'}
-          </AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {session ? '로그인한 계정이에요.' : '게스트로 보고 있어요.'}
-          </AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {lastFortuneLabel
-              ? `최근 운세 신호: ${lastFortuneLabel}`
-              : '최근 운세 신호는 아직 없어요.'}
-          </AppText>
+        <AppText variant="heading4">관계 요약</AppText>
+        <AppText
+          variant="bodySmall"
+          color={fortuneTheme.colors.textSecondary}
+          style={{ lineHeight: 20 }}
+        >
+          {summaryParts.join(" ")}
+        </AppText>
+
+        {/* Stat chips row — real data only */}
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: 8,
+            marginTop: 4,
+          }}
+        >
+          <StatChip label={`캐릭터 ${totalCount}명`} />
+          <StatChip label={`대화 ${sentMessageCount}개`} />
         </View>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {state.chat.sentMessageCount > 0
-            ? "최근 선택과 메시지 카운트를 기준으로 추천 연결을 보여줍니다."
-            : "아직 최근 채팅이 없어서 추천 연결만 먼저 보여줍니다."}
-        </AppText>
       </Card>
 
-      <Card>
-        <AppText variant="heading4">추천 연결</AppText>
-        {previewCharacters.map((character) => {
-          const isSelected = selectedCharacter?.id === character.id;
+      {/* Story characters section */}
+      <SectionHeader title="스토리 캐릭터" />
+      {storyChars.map((character) => {
+        const isSelected = selectedCharacter?.id === character.id;
+        return (
+          <CharacterRelationshipCard
+            key={character.id}
+            name={character.name}
+            description={character.shortDescription}
+            isSelected={isSelected}
+            sentMessageCount={isSelected ? sentMessageCount : 0}
+            onPress={() => navigateToCharacter(character.id)}
+          />
+        );
+      })}
 
-          return (
-            <Pressable
-              key={character.id}
-              accessibilityRole="button"
-              onPress={() =>
-                router.push({
-                  pathname: "/character/[id]",
-                  params: { id: character.id, returnTo: '/profile/relationships' },
-                })
-              }
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.85 : 1,
-              })}
-            >
-              <View
-                style={{
-                  backgroundColor: isSelected
-                    ? fortuneTheme.colors.surfaceSecondary
-                    : "transparent",
-                  borderBottomColor: fortuneTheme.colors.border,
-                  borderBottomWidth: 1,
-                  gap: fortuneTheme.spacing.xs,
-                  paddingVertical: fortuneTheme.spacing.sm,
-                }}
-              >
-                <AppText variant="labelLarge">{character.name}</AppText>
-                <AppText
-                  variant="bodySmall"
-                  color={fortuneTheme.colors.textSecondary}
-                >
-                  {character.shortDescription}
-                </AppText>
-                <AppText
-                  variant="bodySmall"
-                  color={fortuneTheme.colors.textSecondary}
-                >
-                  {isSelected
-                    ? '지금 선택된 캐릭터예요.'
-                    : '추천 연결 후보로 보여드려요.'}
-                </AppText>
-              </View>
-            </Pressable>
-          );
+      {/* Fortune characters section */}
+      <SectionHeader title="운세 캐릭터" />
+      {fortuneChars.map((character) => {
+        const isSelected = selectedCharacter?.id === character.id;
+        return (
+          <CharacterRelationshipCard
+            key={character.id}
+            name={character.name}
+            description={character.shortDescription}
+            isSelected={isSelected}
+            sentMessageCount={isSelected ? sentMessageCount : 0}
+            onPress={() => navigateToCharacter(character.id)}
+          />
+        );
+      })}
+
+      {/* "New friend" action at the bottom */}
+      <Pressable
+        accessibilityRole="button"
+        onPress={() =>
+          router.push({
+            pathname: "/friends/new/basic",
+            params: { reset: "1", returnTo: "/profile/relationships" },
+          })
+        }
+        style={({ pressed }) => ({
+          backgroundColor: fortuneTheme.colors.ctaBackground,
+          borderRadius: fortuneTheme.radius.full,
+          paddingVertical: 14,
+          paddingHorizontal: 18,
+          opacity: pressed ? 0.82 : 1,
+          marginTop: 4,
         })}
-      </Card>
-
-      <Card>
-        <AppText variant="heading4">관계 액션</AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {lastFortuneLabel
-            ? `최근 운세 신호: ${lastFortuneLabel}`
-            : "최근 운세 신호는 아직 없습니다."}
-        </AppText>
-        <PrimaryButton
-          onPress={() =>
-            router.push({
-              pathname: '/friends/new/basic',
-              params: { reset: '1', returnTo: '/profile/relationships' },
-            })
-          }
+      >
+        <AppText
+          variant="labelLarge"
+          color={fortuneTheme.colors.ctaForeground}
+          style={{ textAlign: "center" }}
         >
           새 친구 만들기
-        </PrimaryButton>
-        <PrimaryButton onPress={() => router.push("/profile/saju-summary")}>
-          사주 요약으로 이동
-        </PrimaryButton>
-        <PrimaryButton onPress={() => router.push("/chat")}>
-          채팅으로 이동
-        </PrimaryButton>
-        <PrimaryButton onPress={() => router.back()} tone="secondary">
-          돌아가기
-        </PrimaryButton>
-      </Card>
+        </AppText>
+      </Pressable>
     </Screen>
   );
 }

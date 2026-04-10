@@ -4,6 +4,8 @@ import {
   type FortuneTypeId,
 } from '@fortune/product-contracts';
 
+import { type CreatedFriend } from '../providers/friend-creation-provider';
+
 export type ChatCharacterTab = 'story' | 'fortune';
 
 export interface StoryCharacterSpec {
@@ -116,16 +118,60 @@ export const chatCharacters: readonly ChatCharacterSpec[] = [
   ...fortuneChatCharacters,
 ];
 
-export function findChatCharacterById(id: string | null | undefined) {
+export function createdFriendToStoryCharacter(
+  friend: CreatedFriend,
+): StoryCharacterSpec {
+  const relationshipLabel =
+    friend.relationship === 'friend'
+      ? '친구'
+      : friend.relationship === 'crush'
+        ? '썸'
+        : friend.relationship === 'partner'
+          ? '연인'
+          : '동료';
+
+  return {
+    id: friend.id,
+    name: friend.name,
+    kind: 'story',
+    category: 'story',
+    shortDescription: `${relationshipLabel} · ${friend.personalityTags.slice(0, 2).join(', ')}`,
+    specialties: [],
+  };
+}
+
+export function buildChatCharactersWithCustomFriends(
+  friends: readonly CreatedFriend[],
+): readonly ChatCharacterSpec[] {
+  const customStoryCharacters = friends.map(createdFriendToStoryCharacter);
+  return [...customStoryCharacters, ...storyChatCharacters, ...fortuneChatCharacters];
+}
+
+export function buildStoryCharactersWithCustomFriends(
+  friends: readonly CreatedFriend[],
+): readonly StoryCharacterSpec[] {
+  const customStoryCharacters = friends.map(createdFriendToStoryCharacter);
+  return [...customStoryCharacters, ...storyChatCharacters];
+}
+
+export function findChatCharacterById(
+  id: string | null | undefined,
+  customFriends: readonly CreatedFriend[] = [],
+) {
   if (!id) {
     return null;
   }
 
-  return chatCharacters.find((character) => character.id === id) ?? null;
+  const allCharacters = buildChatCharactersWithCustomFriends(customFriends);
+  return allCharacters.find((character) => character.id === id) ?? null;
 }
 
 export function isFortuneChatCharacter(
   character: ChatCharacterSpec,
 ): character is FortuneChatCharacterSpec {
   return character.kind === 'fortune';
+}
+
+export function isCustomFriendCharacter(characterId: string): boolean {
+  return characterId.startsWith('custom_');
 }

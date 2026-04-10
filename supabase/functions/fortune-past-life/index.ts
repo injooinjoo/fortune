@@ -2116,50 +2116,23 @@ Render this person as if they lived in Joseon Dynasty, maintaining their unique 
 `;
   }
 
-  return `=== KOREAN TRADITIONAL MINHWA PORTRAIT ===
+  return `Create a Korean traditional Minhwa (민화) style portrait painting.
 
-SUBJECT: A ${scenario.trait} ${jobKr} (${jobEn})
-A single ${genderEn}, ${jobDesc}, ${scene}.
-Story Moment: "${scenario.storySeed}" - ${atmosphere.mood}
-Era: ${era}
-
-=== ATMOSPHERE & LIGHTING ===
-Mood: ${atmosphere.mood}
-Lighting: ${atmosphere.light}
-${
-    atmosphere.season
-      ? `Season hint: ${atmosphere.season} elements may subtly appear`
-      : ""
-  }
-
-${MINHWA_STYLE_BASE}
-
-=== CHARACTER DETAILS ===
-Occupation: ${jobKr} (${jobEn})
-Attire: ${clothing}, appropriate for ${era}
-Props/Accessories: ${accessories}
+Subject: A ${scenario.trait} ${genderEn} ${jobEn} (${jobKr}) from ${era} Korea.
 Activity: ${scene}
-Personality: ${scenario.trait} (${genderKo})
+Clothing: ${clothing}
+Mood: ${atmosphere.mood}, ${atmosphere.light}
+Pose: ${poseOption.pose}
+Background: ${background.desc}
+
+Style requirements:
+- Single person portrait, 2:3 vertical orientation
+- Korean traditional painting (민화/수묵담채) aesthetic
+- Fine ink outlines with soft watercolor fills
+- Aged Hanji paper texture
+- Centered upper body framing
 ${faceDescription}
-
-=== COMPOSITION ===
-- Single figure portrait (한 명만, one person only)
-- Pose: ${poseOption.pose}
-- Background: ${background.desc}
-- Frame: 2:3 portrait orientation
-- Framing: Subject centered, full upper body or 3/4 view
-- Depth: Subtle atmospheric perspective separating figure from background
-
-=== ARTISTIC QUALITY ===
-${qualityModifier}
-- Fine ink outlines (섬세한 먹선) with soft watercolor fills
-- Meticulous fabric texture showing the quality of ${clothing}
-- Traditional Korean color harmony using natural pigments
-- Aged Hanji paper texture visible as subtle base
-- Expressive brushwork that conveys ${scenario.trait} personality
-- Harmonious balance between figure and ${background.type} background
-
-${MINHWA_FORBIDDEN}`;
+IMPORTANT: Do NOT include any text, watermark, or signature in the image.`.trim();
 }
 
 /**
@@ -2190,6 +2163,9 @@ async function generatePortraitWithGemini(
       ],
       generationConfig: {
         responseModalities: ["TEXT", "IMAGE"],
+        imageGenerationConfig: {
+          imageDimension: "MEDIUM",
+        },
       },
     };
 
@@ -2376,33 +2352,33 @@ async function getRandomPortraitFromPool(
 function getDefaultPortraitUrl(status: string): string {
   const statusFallbacks: Record<string, string> = {
     king:
-      "https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-king.jpg",
+      "https://hayjukwfcsdmppairazc.supabase.co/storage/v1/object/public/assets/past-life/default-king.jpg",
     queen:
-      "https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-queen.jpg",
+      "https://hayjukwfcsdmppairazc.supabase.co/storage/v1/object/public/assets/past-life/default-queen.jpg",
     gisaeng:
-      "https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-gisaeng.jpg",
+      "https://hayjukwfcsdmppairazc.supabase.co/storage/v1/object/public/assets/past-life/default-gisaeng.jpg",
     scholar:
-      "https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-scholar.jpg",
+      "https://hayjukwfcsdmppairazc.supabase.co/storage/v1/object/public/assets/past-life/default-scholar.jpg",
     warrior:
-      "https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-warrior.jpg",
+      "https://hayjukwfcsdmppairazc.supabase.co/storage/v1/object/public/assets/past-life/default-warrior.jpg",
     noble:
-      "https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-noble.jpg",
+      "https://hayjukwfcsdmppairazc.supabase.co/storage/v1/object/public/assets/past-life/default-noble.jpg",
     merchant:
-      "https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-merchant.jpg",
+      "https://hayjukwfcsdmppairazc.supabase.co/storage/v1/object/public/assets/past-life/default-merchant.jpg",
     farmer:
-      "https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-farmer.jpg",
+      "https://hayjukwfcsdmppairazc.supabase.co/storage/v1/object/public/assets/past-life/default-farmer.jpg",
     monk:
-      "https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-monk.jpg",
+      "https://hayjukwfcsdmppairazc.supabase.co/storage/v1/object/public/assets/past-life/default-monk.jpg",
     artisan:
-      "https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-artisan.jpg",
+      "https://hayjukwfcsdmppairazc.supabase.co/storage/v1/object/public/assets/past-life/default-artisan.jpg",
     shaman:
-      "https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-shaman.jpg",
+      "https://hayjukwfcsdmppairazc.supabase.co/storage/v1/object/public/assets/past-life/default-shaman.jpg",
     servant:
-      "https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-servant.jpg",
+      "https://hayjukwfcsdmppairazc.supabase.co/storage/v1/object/public/assets/past-life/default-servant.jpg",
   };
 
   return statusFallbacks[status] ||
-    "https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-portrait.jpg";
+    "https://hayjukwfcsdmppairazc.supabase.co/storage/v1/object/public/assets/past-life/default-portrait.jpg";
 }
 
 /**

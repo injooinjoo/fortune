@@ -26,7 +26,7 @@
 - Tier 3 (명시 요청 시): `.claude/docs/07~23`
 
 ## 2.1. GStack 우선 규칙
-- 글로벌 gstack 설치 경로는 `~/.codex/skills/gstack`를 기준으로 본다.
+- 글로벌 gstack 설치 경로는 `~/.claude/skills/gstack`를 기준으로 본다.
 - gstack와 기능이 겹치는 스킬이 동시에 존재하면 gstack 스킬을 우선한다.
 - 기본 매핑:
   - 브라우징/스크린샷/웹 QA: `gstack-browse`, `gstack-qa`, `gstack-qa-only`

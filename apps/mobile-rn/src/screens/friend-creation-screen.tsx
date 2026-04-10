@@ -1,12 +1,14 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import { router, useLocalSearchParams, type Href } from 'expo-router';
-import { Pressable, TextInput, View } from 'react-native';
+import { ActivityIndicator, Image, Pressable, TextInput, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { PrimaryButton } from '../components/primary-button';
 import { Screen } from '../components/screen';
+import { VoiceTextInput } from '../components/voice-text-input';
+import { supabase } from '../lib/supabase';
 import { fortuneTheme } from '../lib/theme';
 import {
   type FriendCreationDraft,
@@ -98,7 +100,6 @@ function toggleTag(current: string[], next: string) {
 function FriendWizardScaffold({
   children,
   footer,
-  routePath,
   step,
   title,
   description,
@@ -106,28 +107,21 @@ function FriendWizardScaffold({
 }: {
   children: ReactNode;
   footer: ReactNode;
-  routePath: string;
   step: string;
   title: string;
   description: string;
   onBack: () => void;
 }) {
   return (
-    <Screen footer={footer}>
+    <Screen footer={footer} keyboardAvoiding>
       <View style={{ gap: fortuneTheme.spacing.sm }}>
         <Pressable
           accessibilityRole="button"
           onPress={onBack}
           style={({ pressed }) => ({ opacity: pressed ? 0.82 : 1 })}
         >
-          <AppText variant="heading4">‹</AppText>
+          <AppText variant="heading4" color={fortuneTheme.colors.accentSecondary}>‹</AppText>
         </Pressable>
-        <AppText
-          variant="labelMedium"
-          color={fortuneTheme.colors.accentSecondary}
-        >
-          {routePath}
-        </AppText>
         <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>
           새 친구 만들기
         </AppText>
@@ -137,7 +131,6 @@ function FriendWizardScaffold({
         </AppText>
         <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.xs }}>
           <TokenChip label={step} selected />
-          <TokenChip label="wizard" />
         </View>
       </View>
 
@@ -311,11 +304,13 @@ function inputStyle(multiline = false) {
     borderRadius: fortuneTheme.radius.lg,
     borderWidth: 1,
     color: fortuneTheme.colors.textPrimary,
+    fontFamily: 'System',
+    fontSize: 15,
     minHeight: multiline ? 104 : 52,
     paddingHorizontal: 14,
     paddingVertical: multiline ? 14 : 12,
     textAlignVertical: multiline ? ('top' as const) : ('center' as const),
-  };
+  } as const;
 }
 
 function relationshipLabel(value: FriendDraftRelationship | null) {
@@ -397,8 +392,8 @@ export function FriendCreationBasicScreen() {
         />
       }
       onBack={() => router.replace(returnTo as Href)}
-      routePath="/friends/new/basic"
-      step="1/4"
+
+      step="1/5"
       title="기본 정보"
     >
       <FriendSection
@@ -406,9 +401,11 @@ export function FriendCreationBasicScreen() {
         title="표시 이름"
       >
         <TextInput
+          autoFocus
           onChangeText={(value) => updateBasic({ name: value })}
           placeholder="이름을 입력하세요"
           placeholderTextColor={fortuneTheme.colors.textTertiary}
+          returnKeyType="done"
           style={inputStyle()}
           value={draft.name}
         />
@@ -472,8 +469,8 @@ export function FriendCreationPersonaScreen() {
         />
       }
       onBack={() => router.back()}
-      routePath="/friends/new/persona"
-      step="2/4"
+
+      step="2/5"
       title="캐릭터 설정"
     >
       <FriendSection
@@ -572,8 +569,8 @@ export function FriendCreationStoryScreen() {
         />
       }
       onBack={() => router.back()}
-      routePath="/friends/new/story"
-      step="3/4"
+
+      step="3/5"
       title="관계 설정"
     >
       <FriendSection
@@ -590,12 +587,10 @@ export function FriendCreationStoryScreen() {
             />
           ))}
         </View>
-        <TextInput
+        <VoiceTextInput
           multiline
           onChangeText={(value) => updateStory({ scenario: value })}
-          placeholder="관계 배경을 직접 적어보세요"
-          placeholderTextColor={fortuneTheme.colors.textTertiary}
-          style={inputStyle(true)}
+          placeholder="관계 배경을 직접 적어보세요 (마이크로 말해도 돼요)"
           value={draft.scenario}
         />
       </FriendSection>
@@ -604,12 +599,10 @@ export function FriendCreationStoryScreen() {
         subtitle="말투나 분위기에 반영될 메모입니다."
         title="기억 노트"
       >
-        <TextInput
+        <VoiceTextInput
           multiline
           onChangeText={(value) => updateStory({ memoryNote: value })}
           placeholder="예: 퇴근길마다 같이 산책하는 사이예요"
-          placeholderTextColor={fortuneTheme.colors.textTertiary}
-          style={inputStyle(true)}
           value={draft.memoryNote}
         />
       </FriendSection>
@@ -661,20 +654,20 @@ export function FriendCreationReviewScreen() {
         <FooterRow
           onPrimary={() =>
             router.push({
-              pathname: '/friends/new/creating',
+              pathname: '/friends/new/avatar',
               params: { returnTo },
             })
           }
           onSecondary={() => router.back()}
           primaryDisabled={!canProceed}
-          primaryLabel="대화 시작하기"
+          primaryLabel="다음"
           secondaryLabel="이전"
         />
       }
       onBack={() => router.back()}
-      routePath="/friends/new/review"
-      step="4/4"
-      title="대화 시작하기"
+
+      step="4/5"
+      title="확인하기"
     >
       <SummaryCard lines={lines.basic} title="기본 정보" />
       <SummaryCard lines={lines.persona} title="캐릭터 설정" />
@@ -683,6 +676,209 @@ export function FriendCreationReviewScreen() {
   );
 }
 
+type AvatarGenerationStatus = 'idle' | 'generating' | 'done' | 'error';
+
+async function generateFriendAvatar(
+  gender: string,
+  appearancePrompt: string,
+  name: string,
+  stylePreset: string,
+): Promise<string> {
+  if (!supabase) {
+    throw new Error('Supabase client is not configured');
+  }
+
+  const { data, error } = await supabase.functions.invoke(
+    'generate-friend-avatar',
+    {
+      body: { gender, appearancePrompt, name, stylePreset },
+    },
+  );
+
+  if (error) {
+    throw error;
+  }
+
+  const result = data as { success: boolean; data?: { avatarUrl: string }; error?: string };
+
+  if (!result.success || !result.data?.avatarUrl) {
+    throw new Error(result.error ?? '이미지 생성에 실패했어요');
+  }
+
+  return result.data.avatarUrl;
+}
+
+export function FriendCreationAvatarScreen() {
+  const params = useLocalSearchParams<{ returnTo?: string | string[] }>();
+  const returnTo = normalizeReturnTo(params.returnTo);
+  const {
+    draft,
+    isBasicComplete,
+    isPersonaComplete,
+    isStoryComplete,
+    updateAvatar,
+  } = useFriendCreation();
+
+  const [status, setStatus] = useState<AvatarGenerationStatus>('idle');
+  const [promptText, setPromptText] = useState(draft.avatarPrompt);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(draft.avatarUrl);
+
+  useEffect(() => {
+    if (!isBasicComplete || !isPersonaComplete || !isStoryComplete) {
+      router.replace('/friends/new/basic');
+    }
+  }, [isBasicComplete, isPersonaComplete, isStoryComplete]);
+
+  async function handleGenerate() {
+    if (!promptText.trim()) return;
+
+    setStatus('generating');
+    try {
+      const url = await generateFriendAvatar(
+        draft.gender ?? 'other',
+        promptText.trim(),
+        draft.name,
+        draft.stylePreset ?? 'warm',
+      );
+      setPreviewUrl(url);
+      updateAvatar({ avatarPrompt: promptText.trim(), avatarUrl: url });
+      setStatus('done');
+    } catch {
+      setStatus('error');
+    }
+  }
+
+  function handleRegenerate() {
+    setPreviewUrl(null);
+    setStatus('idle');
+  }
+
+  function handleConfirm() {
+    updateAvatar({ avatarPrompt: promptText.trim(), avatarUrl: previewUrl });
+    router.push({
+      pathname: '/friends/new/creating',
+      params: { returnTo },
+    });
+  }
+
+  function handleSkip() {
+    updateAvatar({ avatarPrompt: '', avatarUrl: null });
+    router.push({
+      pathname: '/friends/new/creating',
+      params: { returnTo },
+    });
+  }
+
+  const canGenerate = promptText.trim().length > 0 && status !== 'generating';
+
+  return (
+    <FriendWizardScaffold
+      description={`${draft.name || '친구'}의 외모를 묘사하면 AI가 프로필 이미지를 만들어줘요. 건너뛰어도 괜찮아요.`}
+      footer={
+        status === 'done' && previewUrl ? (
+          <FooterRow
+            onPrimary={handleConfirm}
+            onSecondary={handleRegenerate}
+            primaryLabel="이 얼굴로 결정"
+            secondaryLabel="다시 생성"
+          />
+        ) : (
+          <FooterRow
+            onPrimary={status === 'idle' || status === 'error' ? handleGenerate : () => undefined}
+            onSecondary={handleSkip}
+            primaryDisabled={!canGenerate}
+            primaryLabel={status === 'generating' ? '생성 중...' : '생성하기'}
+            secondaryLabel="건너뛰기"
+          />
+        )
+      }
+      onBack={() => router.back()}
+      step="5/5"
+      title="얼굴 만들기"
+    >
+      <FriendSection
+        subtitle="외모 특징을 자유롭게 적어주세요."
+        title="외모 묘사"
+      >
+        <VoiceTextInput
+          multiline
+          onChangeText={setPromptText}
+          placeholder="예: 짧은 머리, 날카로운 눈매, 부드러운 미소"
+          value={promptText}
+        />
+      </FriendSection>
+
+      {status === 'generating' ? (
+        <Card>
+          <View
+            style={{
+              alignItems: 'center',
+              gap: fortuneTheme.spacing.md,
+              paddingVertical: fortuneTheme.spacing.xl,
+            }}
+          >
+            <ActivityIndicator
+              color={fortuneTheme.colors.ctaBackground}
+              size="large"
+            />
+            <AppText
+              color={fortuneTheme.colors.textSecondary}
+              variant="bodyLarge"
+            >
+              AI가 얼굴을 그리고 있어요...
+            </AppText>
+          </View>
+        </Card>
+      ) : null}
+
+      {status === 'error' ? (
+        <Card>
+          <View
+            style={{
+              alignItems: 'center',
+              gap: fortuneTheme.spacing.sm,
+              paddingVertical: fortuneTheme.spacing.md,
+            }}
+          >
+            <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
+              이미지 생성에 실패했어요. 다시 시도해주세요.
+            </AppText>
+          </View>
+        </Card>
+      ) : null}
+
+      {status === 'done' && previewUrl ? (
+        <Card>
+          <View style={{ alignItems: 'center', gap: fortuneTheme.spacing.md }}>
+            <View
+              style={{
+                borderRadius: fortuneTheme.radius.lg,
+                overflow: 'hidden',
+                width: 200,
+                height: 200,
+              }}
+            >
+              <Image
+                source={{ uri: previewUrl, cache: 'force-cache' }}
+                style={{ width: 200, height: 200 }}
+                resizeMode="cover"
+              />
+            </View>
+            <AppText
+              color={fortuneTheme.colors.textSecondary}
+              variant="bodySmall"
+            >
+              마음에 드는 얼굴인가요?
+            </AppText>
+          </View>
+        </Card>
+      ) : null}
+    </FriendWizardScaffold>
+  );
+}
+
+type CreatingStatus = 'saving' | 'success' | 'error';
+
 export function FriendCreationCreatingScreen() {
   const {
     draft,
@@ -690,10 +886,12 @@ export function FriendCreationCreatingScreen() {
     isPersonaComplete,
     isStoryComplete,
     resetDraft,
+    saveFriend,
   } = useFriendCreation();
   const params = useLocalSearchParams<{ returnTo?: string | string[] }>();
-  const [isReady, setIsReady] = useState(false);
+  const [status, setStatus] = useState<CreatingStatus>('saving');
   const returnTo = normalizeReturnTo(params.returnTo);
+  const attemptedRef = useRef(false);
 
   useEffect(() => {
     if (!isBasicComplete || !isPersonaComplete || !isStoryComplete) {
@@ -701,15 +899,29 @@ export function FriendCreationCreatingScreen() {
       return;
     }
 
-    const timeout = setTimeout(() => {
-      setIsReady(true);
-    }, 1400);
+    if (attemptedRef.current) {
+      return;
+    }
 
-    return () => clearTimeout(timeout);
+    attemptedRef.current = true;
+
+    async function createFriend() {
+      try {
+        setStatus('saving');
+        await saveFriend(draft);
+        setStatus('success');
+      } catch {
+        setStatus('error');
+      }
+    }
+
+    void createFriend();
   }, [
+    draft,
     isBasicComplete,
     isPersonaComplete,
     isStoryComplete,
+    saveFriend,
   ]);
 
   function handleFinish() {
@@ -717,70 +929,104 @@ export function FriendCreationCreatingScreen() {
     router.replace(returnTo as Href);
   }
 
+  function handleRetry() {
+    setStatus('saving');
+
+    saveFriend(draft)
+      .then(() => setStatus('success'))
+      .catch(() => setStatus('error'));
+  }
+
+  const statusLabel =
+    status === 'saving'
+      ? '친구 생성 설정을 저장하고 있어요.'
+      : status === 'success'
+        ? '준비가 끝났어요. 채팅 허브로 돌아가 새 친구 흐름을 이어갈 수 있습니다.'
+        : '저장 중 문제가 발생했어요. 다시 시도해주세요.';
+
+  const statusEmoji = status === 'error' ? '!' : '✦';
+
   return (
     <Screen>
       <View
         style={{
           alignItems: 'center',
-          gap: fortuneTheme.spacing.md,
+          gap: fortuneTheme.spacing.lg,
           justifyContent: 'center',
           minHeight: 520,
+          paddingTop: 60,
         }}
       >
-        <View
-          style={{
-            alignItems: 'center',
-            backgroundColor: fortuneTheme.colors.surfaceSecondary,
-            borderColor: fortuneTheme.colors.border,
-            borderRadius: 999,
-            borderWidth: 1,
-            height: 84,
-            justifyContent: 'center',
-            width: 84,
-          }}
-        >
-          <AppText
-            variant="displaySmall"
-            color={fortuneTheme.colors.accentSecondary}
+        {/* Avatar */}
+        {draft.avatarUrl ? (
+          <View
+            style={{
+              borderRadius: 999,
+              height: 100,
+              overflow: 'hidden',
+              width: 100,
+            }}
           >
-            ✦
-          </AppText>
-        </View>
-        <View style={{ alignItems: 'center', gap: fortuneTheme.spacing.xs }}>
-          <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
-            /friends/new/creating
-          </AppText>
-          <AppText variant="displaySmall">친구를 만들고 있어요</AppText>
-          <AppText
-            variant="bodyLarge"
-            color={fortuneTheme.colors.textSecondary}
-            style={{ maxWidth: 300, textAlign: 'center' }}
-          >
-            {draft.name
-              ? `${draft.name}의 분위기와 관계 설정을 바탕으로 대화 시작점을 정리하고 있어요.`
-              : '성격과 관계 배경을 바탕으로 대화 시작점을 정리하고 있어요.'}
-          </AppText>
-        </View>
-        <Card style={{ width: '100%' }}>
-          <AppText variant="heading4">생성 준비</AppText>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-            <TokenChip label={`name:${draft.name || 'pending'}`} selected />
-            <TokenChip label={`persona:${draft.personalityTags.length}`} />
-            <TokenChip label={`interest:${draft.interestTags.length}`} />
-            <TokenChip label={`mode:${timeModeLabel(draft.timeMode)}`} />
+            <Image
+              source={{ uri: draft.avatarUrl, cache: 'force-cache' }}
+              style={{ width: 100, height: 100 }}
+              resizeMode="cover"
+            />
           </View>
-        </Card>
-        <Card style={{ width: '100%' }}>
-          <AppText variant="heading4">다음 동작</AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {isReady
-              ? '준비가 끝났어요. 채팅 허브로 돌아가 새 친구 흐름을 이어갈 수 있습니다.'
-              : '친구 생성 설정을 정리하고 있어요.'}
-          </AppText>
-          <PrimaryButton onPress={isReady ? handleFinish : undefined}>
-            {isReady ? '채팅으로 이동' : '준비 중...'}
-          </PrimaryButton>
-        </Card>
+        ) : (
+          <View
+            style={{
+              alignItems: 'center',
+              backgroundColor: status === 'error'
+                ? fortuneTheme.colors.surfaceElevated
+                : fortuneTheme.colors.ctaBackground + '20',
+              borderRadius: 999,
+              height: 100,
+              justifyContent: 'center',
+              width: 100,
+            }}
+          >
+            <AppText style={{ fontSize: 44 }}>
+              {status === 'error' ? '😢' : status === 'success' ? '🎉' : '✨'}
+            </AppText>
+          </View>
+        )}
+
+        {/* Title */}
+        <AppText variant="displaySmall" style={{ textAlign: 'center' }}>
+          {status === 'error'
+            ? '저장에 실패했어요'
+            : status === 'success'
+              ? `${draft.name || '친구'}가 준비됐어요!`
+              : `${draft.name || '친구'}를 만들고 있어요`}
+        </AppText>
+
+        {/* Subtitle */}
+        <AppText
+          variant="bodyLarge"
+          color={fortuneTheme.colors.textSecondary}
+          style={{ maxWidth: 280, textAlign: 'center' }}
+        >
+          {status === 'error'
+            ? '다시 시도해주세요.'
+            : status === 'success'
+              ? '채팅에서 바로 대화를 시작할 수 있어요.'
+              : '성격과 관계를 바탕으로 대화를 준비하고 있어요.'}
+        </AppText>
+
+        {/* Action */}
+        <View style={{ width: '100%', paddingHorizontal: 20, marginTop: 20 }}>
+          {status === 'error' ? (
+            <PrimaryButton onPress={handleRetry}>다시 시도</PrimaryButton>
+          ) : (
+            <PrimaryButton
+              onPress={status === 'success' ? handleFinish : undefined}
+              disabled={status === 'saving'}
+            >
+              {status === 'success' ? '채팅 시작하기' : '준비 중...'}
+            </PrimaryButton>
+          )}
+        </View>
       </View>
     </Screen>
   );

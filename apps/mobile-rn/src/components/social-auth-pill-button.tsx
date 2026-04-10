@@ -6,6 +6,7 @@ import {
   View,
 } from 'react-native';
 
+import { confirmAction } from '../lib/haptics';
 import { fortuneTheme } from '../lib/theme';
 import { AppText } from './app-text';
 
@@ -79,7 +80,7 @@ export function SocialAuthPillButton({
       accessibilityLabel={label}
       accessibilityRole="button"
       disabled={disabled}
-      onPress={disabled || !onPress ? undefined : onPress}
+      onPress={disabled || !onPress ? undefined : () => { confirmAction(); onPress(); }}
       style={({ pressed }) => ({
         backgroundColor: visual.backgroundColor,
         borderRadius: fortuneTheme.radius.full,

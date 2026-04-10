@@ -6,7 +6,9 @@ export type ChatSurveyInputKind =
   | 'text'
   | 'text-with-skip'
   | 'date'
-  | 'card-draw';
+  | 'card-draw'
+  | 'image'
+  | 'mbti-axis';
 
 export interface ChatSurveyOption {
   id: string;

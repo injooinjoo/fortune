@@ -91,18 +91,18 @@ serve(async (req) => {
     )
 
     const requestData: TalentRequest = await req.json()
-    const {
-      talentArea,
-      currentSkills,
-      goals,
-      experience,
-      timeAvailable,
-      challenges,
-      userId,
-      isPremium = false, // ✅ 프리미엄 사용자 여부
-      hasResume = false, // ✅ 이력서 포함 여부
-      resumeText // ✅ 이력서에서 추출한 텍스트
-    } = requestData
+
+    // ✅ Null guard: 새 설문에서 다른 필드명으로 올 수 있음
+    const talentArea = requestData.talentArea || (requestData as any).talent_area || (requestData as any).interest || 'general'
+    const currentSkills = requestData.currentSkills || (requestData as any).current_skills || []
+    const goals = requestData.goals || 'explore'
+    const experience = requestData.experience || 'beginner'
+    const timeAvailable = requestData.timeAvailable || (requestData as any).time_available || '5to10'
+    const challenges = requestData.challenges || []
+    const userId = requestData.userId
+    const isPremium = requestData.isPremium ?? false
+    const hasResume = requestData.hasResume ?? false
+    const resumeText = requestData.resumeText
 
     console.log('💎 [Talent] Premium 상태:', isPremium, '| 이력서:', hasResume ? '있음' : '없음')
 

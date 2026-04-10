@@ -1,89 +1,86 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Linking, Platform, Pressable, View } from 'react-native';
-import { getProductDisplayTitle } from '@fortune/product-contracts';
+import type { Href } from 'expo-router';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { PrimaryButton } from '../components/primary-button';
 import { Screen } from '../components/screen';
-import { findChatCharacterById } from '../lib/chat-characters';
-import { formatFortuneTypeLabel } from '../lib/chat-shell';
 import { captureError } from '../lib/error-reporting';
 import { supabase } from '../lib/supabase';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
 
-function formatIsoDate(value: string | null) {
-  if (!value) {
-    return null;
-  }
+const APP_VERSION = '2.3.1';
 
-  const parsed = new Date(value);
+const ZODIAC_ANIMALS = ['쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양', '원숭이', '닭', '개', '돼지'];
+const ZODIAC_EMOJI = ['🐭', '🐄', '🐯', '🐰', '🐉', '🐍', '🐴', '🐑', '🐵', '🐓', '🐶', '🐷'];
 
-  if (Number.isNaN(parsed.getTime())) {
-    return null;
-  }
-
-  return parsed.toLocaleDateString('ko-KR');
+function getZodiacAnimal(birthDate: string) {
+  const year = new Date(birthDate).getFullYear();
+  if (!year || year < 1900) return null;
+  const idx = (year - 4) % 12;
+  return { name: ZODIAC_ANIMALS[idx], emoji: ZODIAC_EMOJI[idx], year };
 }
 
-function formatIsoDateTime(value: string | null) {
-  if (!value) {
-    return null;
+function getConstellation(birthDate: string) {
+  const d = new Date(birthDate);
+  const m = d.getMonth() + 1;
+  const day = d.getDate();
+  const signs = [
+    { name: '물병자리', emoji: '♒', start: [1, 20] },
+    { name: '물고기자리', emoji: '♓', start: [2, 19] },
+    { name: '양자리', emoji: '♈', start: [3, 21] },
+    { name: '황소자리', emoji: '♉', start: [4, 20] },
+    { name: '쌍둥이자리', emoji: '♊', start: [5, 21] },
+    { name: '게자리', emoji: '♋', start: [6, 22] },
+    { name: '사자자리', emoji: '♌', start: [7, 23] },
+    { name: '처녀자리', emoji: '♍', start: [8, 23] },
+    { name: '천칭자리', emoji: '♎', start: [9, 23] },
+    { name: '전갈자리', emoji: '♏', start: [10, 23] },
+    { name: '사수자리', emoji: '♐', start: [11, 22] },
+    { name: '염소자리', emoji: '♑', start: [12, 22] },
+  ];
+  for (let i = signs.length - 1; i >= 0; i--) {
+    const [sm, sd] = signs[i]!.start;
+    if (m > sm! || (m === sm && day >= sd!)) return signs[i]!;
   }
-
-  const parsed = new Date(value);
-
-  if (Number.isNaN(parsed.getTime())) {
-    return null;
-  }
-
-  return parsed.toLocaleString('ko-KR', {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  return signs[signs.length - 1]!;
 }
 
 export function ProfileScreen() {
-  const [isRefreshingPremium, setIsRefreshingPremium] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
-  const { onboardingProgress, session } = useAppBootstrap();
+  const [themeMode, setThemeMode] = useState<'system' | 'light' | 'dark'>('system');
+  const { session } = useAppBootstrap();
   const { restorePurchases, state, syncRemoteProfile } = useMobileAppState();
+
   const savedName =
     state.profile.displayName.trim() ||
     (session?.user.user_metadata.name as string | undefined) ||
     (session?.user.user_metadata.full_name as string | undefined) ||
     session?.user.email ||
-    '게스트';
-  const recentCharacter = useMemo(() => {
-    if (!state.chat.selectedCharacterId) {
-      return null;
-    }
+    '사용자';
 
-    return findChatCharacterById(state.chat.selectedCharacterId);
-  }, [state.chat.selectedCharacterId]);
-  const lastFortuneLabel = state.chat.lastFortuneType
-    ? formatFortuneTypeLabel(state.chat.lastFortuneType)
-    : null;
-  const activeProductLabel = state.premium.activeProductId
-    ? getProductDisplayTitle(state.premium.activeProductId)
-    : null;
-  const premiumExpiryLabel = formatIsoDate(state.premium.subscriptionExpiresAt);
-  const premiumSyncedLabel = formatIsoDateTime(state.premium.lastSyncedAt);
-  const tokenBalanceLabel = state.premium.isUnlimited
-    ? '무제한 이용'
-    : `${state.premium.tokenBalance.toLocaleString('ko-KR')} 토큰`;
-  const hasRecentChatSignal = Boolean(
-    state.chat.selectedCharacterId ||
-    state.chat.lastFortuneType ||
-    state.chat.sentMessageCount > 0,
-  );
+  const email = session?.user.email ?? null;
+
+  const authProvider = useMemo(() => {
+    const provider = session?.user.app_metadata.provider;
+    if (provider === 'google') return 'Google';
+    if (provider === 'apple') return 'Apple';
+    if (provider === 'kakao') return 'Kakao';
+    if (provider) return '이메일';
+    return null;
+  }, [session]);
+
+  const tokenLabel = state.premium.isUnlimited
+    ? '∞'
+    : `${state.premium.tokenBalance}`;
+
+  const initial = savedName.charAt(0).toUpperCase() || 'U';
 
   async function handleSignOut() {
     try {
@@ -116,203 +113,217 @@ export function ProfileScreen() {
     );
   }
 
-  async function handleRefreshPremiumState() {
-    try {
-      setIsRefreshingPremium(true);
-      await syncRemoteProfile();
-    } catch (error) {
-      await captureError(error, { surface: 'profile:refresh-premium' });
-    } finally {
-      setIsRefreshingPremium(false);
-    }
-  }
-
   return (
-    <Screen>
-      <AppText variant="displaySmall">프로필 허브</AppText>
-      <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        저장된 프로필, 프리미엄 상태, 최근 채팅 신호를 한눈에 볼 수 있습니다.
-      </AppText>
-
-      <Card>
-        <AppText variant="heading4">저장된 프로필</AppText>
-        <AppText variant="labelLarge">{savedName}</AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {state.profile.birthDate || state.profile.birthTime
-            ? [
-                state.profile.birthDate || "생년월일 미저장",
-                state.profile.birthTime || "시간 미저장",
-              ].join(" · ")
-            : "생년월일 미저장"}
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {state.profile.mbti || "MBTI 미저장"} ·{" "}
-          {state.profile.bloodType || "혈액형 미저장"}
-        </AppText>
-        <View style={{ gap: 8 }}>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {session ? '로그인한 계정으로 보고 있어요.' : '게스트 상태로 보고 있어요.'}
-          </AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {state.profile.displayName
-              ? '저장된 이름이 있어요.'
-              : '저장된 이름은 아직 없어요.'}
-          </AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {state.profile.birthDate
-              ? '사주 해석에 필요한 출생 정보가 준비되어 있어요.'
-              : '사주 해석을 위해 출생 정보 저장이 먼저 필요해요.'}
-          </AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {onboardingProgress.birthCompleted
-              ? '대화 준비용 출생 정보는 입력돼 있어요.'
-              : '대화 준비용 출생 정보는 아직 비어 있어요.'}
-          </AppText>
-        </View>
-      </Card>
-
-      <Card>
-        <AppText variant="heading4">프리미엄 / 토큰</AppText>
-        <AppText variant="labelLarge">{tokenBalanceLabel}</AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {state.premium.status === "subscription"
-            ? "구독이 활성화되어 있어요."
-            : state.premium.status === "lifetime"
-              ? "평생 이용 상태예요."
-              : "아직 구독 전 상태예요."}
-        </AppText>
-        <View style={{ gap: 8 }}>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            구매 복원은 {state.premium.restoreCount}번 반영됐어요.
-          </AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {activeProductLabel
-              ? `연결된 상품: ${activeProductLabel}`
-              : '연결된 구독 상품은 아직 없어요.'}
-          </AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {premiumExpiryLabel
-              ? `구독 만료일 ${premiumExpiryLabel}`
-              : '활성 구독 만료 정보가 없어요.'}
-          </AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {premiumSyncedLabel
-              ? `마지막 확인 ${premiumSyncedLabel}`
-              : '구독 상태는 아직 확인하지 않았어요.'}
-          </AppText>
-        </View>
-        <PrimaryButton
-          onPress={() => void handleRefreshPremiumState()}
-          tone="secondary"
-        >
-          {isRefreshingPremium ? '구독 상태 새로고침 중...' : '구독 상태 새로고침'}
-        </PrimaryButton>
-      </Card>
-
-      <Card>
-        <AppText variant="heading4">최근 채팅 신호</AppText>
-        <AppText variant="labelLarge">
-          {recentCharacter?.name ?? "최근 캐릭터 없음"}
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {hasRecentChatSignal
-            ? state.chat.sentMessageCount > 0
-              ? `메시지 ${state.chat.sentMessageCount}개를 보냈어요.`
-              : `최근 선택 캐릭터: ${recentCharacter?.name ?? '기록 없음'}`
-            : "아직 채팅 신호가 없습니다."}
-        </AppText>
-        <View style={{ gap: 8 }}>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {state.chat.sentMessageCount > 0
-              ? `최근 운세 신호: ${lastFortuneLabel ?? '정리 중'}`
-              : '최근 운세 신호가 아직 없어요.'}
-          </AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {recentCharacter
-              ? `최근 캐릭터: ${recentCharacter.name}`
-              : '최근 캐릭터 기록이 없어요.'}
-          </AppText>
-        </View>
-        {recentCharacter ? (
-        <PrimaryButton
-          onPress={() =>
-            router.push({
-              pathname: '/character/[id]',
-              params: { id: recentCharacter.id, returnTo: '/profile' },
-              })
-            }
-            tone="secondary"
+    <Screen
+      header={
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+          <Pressable
+            accessibilityLabel="뒤로 가기"
+            onPress={() => router.canGoBack() ? router.back() : router.replace('/chat')}
+            style={({ pressed }) => ({
+              position: 'absolute',
+              left: 0,
+              opacity: pressed ? 0.6 : 1,
+              padding: 4,
+            })}
           >
-            최근 캐릭터 프로필 보기
-          </PrimaryButton>
-        ) : null}
-        <PrimaryButton onPress={() => router.push('/chat')} tone="secondary">
-          채팅으로 이어가기
-        </PrimaryButton>
-      </Card>
-
-      <Card>
-        <AppText variant="heading4">나의 온도</AppText>
-        <ProfileMenuRow
-          label="프로필 수정"
-          description="이름과 출생 정보를 수정합니다."
-          onPress={() => router.push('/profile/edit')}
-        />
-        <ProfileMenuRow
-          label="사주 요약"
-          description="저장된 출생 정보와 최근 신호를 한 번에 확인합니다."
-          onPress={() => router.push('/profile/saju-summary')}
-        />
-        <ProfileMenuRow
-          label="인간관계"
-          description="최근 선택과 운세 신호를 바탕으로 연결 흐름을 봅니다."
-          onPress={() => router.push('/profile/relationships')}
-        />
-        <ProfileMenuRow
-          label="알림 설정"
-          description="알림 기본값을 조정합니다."
-          onPress={() => router.push('/profile/notifications')}
-        />
-      </Card>
-
-      <Card>
-        <AppText variant="heading4">구독 관리</AppText>
-        <ProfileMenuRow
-          label="구독 및 토큰 구매"
-          description="프로 구독, 맥스 구독, 토큰 10·50·100·200"
-          onPress={() => router.push('/premium')}
-        />
-        <ProfileMenuRow
-          label={isRestoring ? '구매 복원 중...' : '구매 복원'}
-          description='이 기기의 프리미엄/토큰 상태를 다시 반영'
-          onPress={() => void handleRestorePurchases()}
-        />
-        <ProfileMenuRow
-          label='구독 관리'
-          description='스토어의 구독 관리 화면 열기'
-          onPress={() => void handleOpenSubscriptionManagement()}
-        />
-        <ProfileMenuRow
-          label="개인정보처리방침"
-          description="법률 및 정책 문서"
-          onPress={() => router.push('/privacy-policy')}
-        />
-        <ProfileMenuRow
-          label="이용약관"
-          description="서비스 이용 정책"
-          onPress={() => router.push('/terms-of-service')}
-        />
-      </Card>
-
-      {!session ? (
-        <Card>
-          <AppText variant="heading4">계정 연결</AppText>
+            <Ionicons name="chevron-back" size={22} color={fortuneTheme.colors.accentSecondary} />
+          </Pressable>
+          <AppText variant="heading3" style={{ fontWeight: '700' }}>
+            프로필
+          </AppText>
+        </View>
+      }
+    >
+      {/* Profile Summary Card */}
+      <Card style={{ alignItems: 'center', paddingVertical: 28 }}>
+        <View
+          style={{
+            width: 80,
+            height: 80,
+            borderRadius: 40,
+            backgroundColor: fortuneTheme.colors.ctaBackground + '30',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <AppText
+            variant="displaySmall"
+            color={fortuneTheme.colors.ctaBackground}
+            style={{ fontWeight: '800', fontSize: 32 }}
+          >
+            {initial}
+          </AppText>
+        </View>
+        <AppText variant="heading4" style={{ fontWeight: '700', marginTop: 14 }}>
+          {savedName}
+        </AppText>
+        {email ? (
           <AppText
             variant="bodySmall"
             color={fortuneTheme.colors.textSecondary}
+            style={{ marginTop: 4 }}
           >
-            로그인하면 원격 계정과 동기화할 수 있지만, 지금 보이는 프로필 상태는
-            이 기기에 저장된 값입니다.
+            {email}
+          </AppText>
+        ) : null}
+        <View style={{ marginTop: 16 }}>
+          <PrimaryButton onPress={() => router.push('/profile/edit')}>
+            프로필 수정
+          </PrimaryButton>
+        </View>
+      </Card>
+
+      {/* User Info Grid */}
+      <ProfileInfoGrid
+        profile={state.profile}
+        tokenLabel={tokenLabel}
+        messageCount={state.chat.sentMessageCount}
+      />
+
+      {/* 나의 온도 */}
+      <SectionLabel>나의 온도</SectionLabel>
+      <Card style={{ paddingHorizontal: 0, paddingVertical: 0, overflow: 'hidden' }}>
+        <IconMenuTile
+          icon="ellipse-outline"
+          title="사주 요약"
+          onPress={() => router.push('/profile/saju-summary')}
+        />
+        <IconMenuTile
+          icon="people-outline"
+          title="인간관계"
+          onPress={() => router.push('/profile/relationships')}
+        />
+        <IconMenuTile
+          icon="notifications-outline"
+          title="알림 설정"
+          onPress={() => router.push('/profile/notifications')}
+          showDivider={false}
+        />
+      </Card>
+
+      {/* 구독 관리 */}
+      <SectionLabel>구독 관리</SectionLabel>
+      <Card style={{ paddingHorizontal: 0, paddingVertical: 0, overflow: 'hidden' }}>
+        <IconMenuTile
+          icon="star-outline"
+          title="구독 및 토큰"
+          onPress={() => router.push('/premium')}
+        />
+        <IconMenuTile
+          icon="refresh-outline"
+          title={isRestoring ? '구매 복원 중...' : '구매 복원'}
+          onPress={() => void handleRestorePurchases()}
+        />
+        <IconMenuTile
+          icon="card-outline"
+          title="구독 관리"
+          onPress={() => void handleOpenSubscriptionManagement()}
+          showDivider={false}
+        />
+      </Card>
+
+      {/* 설정 */}
+      <SectionLabel>설정</SectionLabel>
+      <Card style={{ paddingHorizontal: 16, paddingVertical: 14, gap: 16 }}>
+        {/* 테마 모드 */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Ionicons
+              name="moon-outline"
+              size={18}
+              color={fortuneTheme.colors.textSecondary}
+            />
+            <AppText variant="bodyMedium">테마 모드</AppText>
+          </View>
+          <View style={{ flexDirection: 'row', gap: 4 }}>
+            <ThemeChip label="시스템" active={themeMode === 'system'} onPress={() => setThemeMode('system')} />
+            <ThemeChip label="라이트" active={themeMode === 'light'} onPress={() => setThemeMode('light')} />
+            <ThemeChip label="다크" active={themeMode === 'dark'} onPress={() => setThemeMode('dark')} />
+          </View>
+        </View>
+
+        {/* 계정 연결 */}
+        {authProvider ? (
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <Ionicons
+                name="link-outline"
+                size={18}
+                color={fortuneTheme.colors.textSecondary}
+              />
+              <AppText variant="bodyMedium">계정 연결</AppText>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <View
+                style={{
+                  backgroundColor: fortuneTheme.colors.surfaceSecondary,
+                  borderRadius: fortuneTheme.radius.sm,
+                  paddingHorizontal: 10,
+                  paddingVertical: 4,
+                }}
+              >
+                <AppText variant="labelSmall" color={fortuneTheme.colors.textSecondary}>
+                  {authProvider}
+                </AppText>
+              </View>
+              <Ionicons
+                name="chevron-forward"
+                size={16}
+                color={fortuneTheme.colors.textTertiary}
+              />
+            </View>
+          </View>
+        ) : null}
+      </Card>
+
+      {/* 정보 */}
+      <SectionLabel>정보</SectionLabel>
+      <Card style={{ paddingHorizontal: 0, paddingVertical: 0, overflow: 'hidden' }}>
+        <IconMenuTile
+          icon="document-text-outline"
+          title="개인정보처리방침"
+          onPress={() => router.push('/privacy-policy')}
+        />
+        <IconMenuTile
+          icon="document-outline"
+          title="이용약관"
+          onPress={() => router.push('/terms-of-service')}
+        />
+        <IconMenuTile
+          icon="alert-circle-outline"
+          title="면책 조항"
+          onPress={() => router.push('/disclaimer')}
+          showDivider={false}
+        />
+      </Card>
+
+      {/* 로그인 / 계정 */}
+      {!session ? (
+        <Card style={{ alignItems: 'center', paddingVertical: 24 }}>
+          <Ionicons
+            name="lock-closed-outline"
+            size={28}
+            color={fortuneTheme.colors.textSecondary}
+          />
+          <AppText
+            variant="bodySmall"
+            color={fortuneTheme.colors.textSecondary}
+            style={{ textAlign: 'center', marginTop: 8 }}
+          >
+            로그인하면 프로필을 클라우드에 동기화할 수 있어요.
           </AppText>
           <PrimaryButton
             onPress={() =>
@@ -325,53 +336,196 @@ export function ProfileScreen() {
             회원가입 / 로그인
           </PrimaryButton>
         </Card>
-      ) : null}
+      ) : (
+        <View style={{ alignItems: 'center', gap: 8, marginTop: 12 }}>
+          <Pressable
+            onPress={() => void handleSignOut()}
+            style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
+          >
+            <AppText
+              variant="bodyMedium"
+              color={fortuneTheme.colors.textSecondary}
+            >
+              로그아웃
+            </AppText>
+          </Pressable>
+          <Pressable
+            onPress={() => router.push('/account-deletion')}
+            style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
+          >
+            <AppText
+              variant="bodySmall"
+              color={fortuneTheme.colors.textTertiary}
+            >
+              계정 삭제
+            </AppText>
+          </Pressable>
+        </View>
+      )}
 
-      {session ? (
-        <Card>
-          <AppText variant="heading4">계정</AppText>
-          <PrimaryButton onPress={() => void handleSignOut()} tone="secondary">
-            로그아웃
-          </PrimaryButton>
-          <PrimaryButton onPress={() => router.push('/account-deletion')}>
-            계정 삭제
-          </PrimaryButton>
-        </Card>
-      ) : null}
+      {/* Version */}
+      <AppText
+        variant="caption"
+        color={fortuneTheme.colors.textTertiary}
+        style={{ textAlign: 'center', marginTop: 4 }}
+      >
+        v{APP_VERSION}
+      </AppText>
     </Screen>
   );
 }
 
-function ProfileMenuRow({
-  description,
-  label,
-  onPress,
+function ProfileInfoGrid({
+  profile,
+  tokenLabel,
+  messageCount,
 }: {
-  description: string;
-  label: string;
+  profile: { displayName: string; birthDate: string; birthTime: string; mbti: string; bloodType: string };
+  tokenLabel: string;
+  messageCount: number;
+}) {
+  const zodiac = profile.birthDate ? getZodiacAnimal(profile.birthDate) : null;
+  const constellation = profile.birthDate ? getConstellation(profile.birthDate) : null;
+
+  const formatBirthDate = (bd: string) => {
+    if (!bd) return null;
+    const d = new Date(bd);
+    if (isNaN(d.getTime())) return bd;
+    return `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()}`;
+  };
+
+  const items: { label: string; value: string; icon: string; editField?: string }[] = [
+    { label: '이름', value: profile.displayName || '—', icon: '👤', editField: 'displayName' },
+    { label: '생년월일', value: formatBirthDate(profile.birthDate) || '—', icon: '📅', editField: 'birthDate' },
+    { label: '태어난 시간', value: profile.birthTime || '—', icon: '🕐', editField: 'birthTime' },
+    { label: 'MBTI', value: profile.mbti || '—', icon: '🧠', editField: 'mbti' },
+    { label: '혈액형', value: profile.bloodType ? `${profile.bloodType}형` : '—', icon: '🩸', editField: 'bloodType' },
+    { label: '띠', value: zodiac ? `${zodiac.emoji} ${zodiac.name}띠` : '—', icon: '' },
+    { label: '별자리', value: constellation && profile.birthDate ? `${constellation.emoji} ${constellation.name}` : '—', icon: '' },
+    { label: '토큰', value: tokenLabel, icon: '💎' },
+  ];
+
+  return (
+    <Card style={{ paddingHorizontal: 0, paddingVertical: 8, gap: 0 }}>
+      {items.map((item, idx) => (
+        <Pressable
+          key={item.label}
+          onPress={item.editField ? () => router.push('/profile/edit' as Href) : undefined}
+          style={({ pressed }) => ({
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingHorizontal: 16,
+            paddingVertical: 13,
+            opacity: pressed && item.editField ? 0.7 : 1,
+            borderBottomWidth: idx < items.length - 1 ? 1 : 0,
+            borderBottomColor: fortuneTheme.colors.border,
+          })}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            {item.icon ? (
+              <AppText style={{ fontSize: 16 }}>{item.icon}</AppText>
+            ) : null}
+            <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+              {item.label}
+            </AppText>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <AppText
+              variant="bodyMedium"
+              style={{ fontWeight: '600' }}
+              color={item.value === '—' ? fortuneTheme.colors.textTertiary : undefined}
+            >
+              {item.value}
+            </AppText>
+            {item.editField ? (
+              <Ionicons name="chevron-forward" size={14} color={fortuneTheme.colors.textTertiary} />
+            ) : null}
+          </View>
+        </Pressable>
+      ))}
+    </Card>
+  );
+}
+
+function SectionLabel({ children }: { children: string }) {
+  return (
+    <AppText
+      variant="labelLarge"
+      style={{ marginTop: 4, fontWeight: '700' }}
+    >
+      {children}
+    </AppText>
+  );
+}
+
+function IconMenuTile({
+  icon,
+  title,
+  onPress,
+  showDivider = true,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  title: string;
   onPress: () => void;
+  showDivider?: boolean;
 }) {
   return (
     <Pressable
       accessibilityRole="button"
       onPress={onPress}
       style={({ pressed }) => ({
-        opacity: pressed ? 0.82 : 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 16,
+        paddingVertical: 16,
+        opacity: pressed ? 0.7 : 1,
+        borderBottomWidth: showDivider ? 1 : 0,
+        borderBottomColor: fortuneTheme.colors.border,
       })}
     >
-      <View
-        style={{
-          borderBottomColor: fortuneTheme.colors.border,
-          borderBottomWidth: 1,
-          gap: fortuneTheme.spacing.xs,
-          paddingVertical: fortuneTheme.spacing.sm,
-        }}
+      <Ionicons
+        name={icon}
+        size={18}
+        color={fortuneTheme.colors.textSecondary}
+        style={{ marginRight: 12 }}
+      />
+      <AppText variant="bodyMedium" style={{ flex: 1 }}>
+        {title}
+      </AppText>
+      <Ionicons
+        name="chevron-forward"
+        size={16}
+        color={fortuneTheme.colors.textTertiary}
+      />
+    </Pressable>
+  );
+}
+
+function ThemeChip({ label, active = false, onPress }: { label: string; active?: boolean; onPress?: () => void }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => ({
+        backgroundColor: active
+          ? fortuneTheme.colors.surfaceSecondary
+          : 'transparent',
+        borderRadius: fortuneTheme.radius.sm,
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        opacity: pressed ? 0.7 : 1,
+      })}
+    >
+      <AppText
+        variant="labelSmall"
+        color={
+          active
+            ? fortuneTheme.colors.textPrimary
+            : fortuneTheme.colors.textTertiary
+        }
       >
-        <AppText variant="bodyMedium">{label}</AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {description}
-        </AppText>
-      </View>
+        {label}
+      </AppText>
     </Pressable>
   );
 }

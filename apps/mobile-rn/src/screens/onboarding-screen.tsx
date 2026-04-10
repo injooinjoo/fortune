@@ -5,7 +5,9 @@ import {
   useLocalSearchParams,
   type Href,
 } from 'expo-router';
-import { Pressable, TextInput, View } from 'react-native';
+import { Modal, Pressable, TextInput, View } from 'react-native';
+
+import * as SecureStore from 'expo-secure-store';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
@@ -17,6 +19,7 @@ import {
 import { Screen } from '../components/screen';
 import { appEnv } from '../lib/env';
 import { captureError } from '../lib/error-reporting';
+import { pageSnap } from '../lib/haptics';
 import { onboardingInterestOptions } from '../lib/onboarding-interest-catalog';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
@@ -75,7 +78,25 @@ function normalizeInterestParam(value: string | undefined) {
     .filter((item) => item.length > 0);
 }
 
+const DISCLAIMER_STORAGE_KEY = 'fortune.disclaimer-accepted.v1';
+
 export function OnboardingScreen() {
+  const [disclaimerVisible, setDisclaimerVisible] = useState(false);
+
+  useEffect(() => {
+    void (async () => {
+      const accepted = await SecureStore.getItemAsync(DISCLAIMER_STORAGE_KEY);
+      if (!accepted) {
+        setDisclaimerVisible(true);
+      }
+    })();
+  }, []);
+
+  async function handleAcceptDisclaimer() {
+    await SecureStore.setItemAsync(DISCLAIMER_STORAGE_KEY, 'true');
+    setDisclaimerVisible(false);
+  }
+
   const params = useLocalSearchParams<{
     returnTo?: string | string[];
     debugStep?: string | string[];
@@ -174,6 +195,7 @@ export function OnboardingScreen() {
       await updateOnboardingProgress({
         birthCompleted: birthDate.trim().length > 0,
       });
+      pageSnap();
       setActiveStepId('interest');
     } catch (error) {
       await captureError(error, { surface: 'onboarding:save-birth' });
@@ -188,6 +210,7 @@ export function OnboardingScreen() {
       await updateOnboardingProgress({
         interestCompleted: selectedInterestIds.length >= 3,
       });
+      pageSnap();
       setActiveStepId('handoff');
     } catch (error) {
       await captureError(error, { surface: 'onboarding:save-interests' });
@@ -230,6 +253,43 @@ export function OnboardingScreen() {
         />
       }
     >
+      <Modal
+        animationType="fade"
+        transparent
+        visible={disclaimerVisible}
+        onRequestClose={() => void handleAcceptDisclaimer()}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingHorizontal: 24,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: fortuneTheme.colors.surface,
+              borderRadius: fortuneTheme.radius.card,
+              padding: 24,
+              width: '100%',
+              maxWidth: 360,
+              gap: 16,
+            }}
+          >
+            <AppText variant="heading4">오락 목적 안내</AppText>
+            <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+              이 앱은 오락 목적으로 제공됩니다. AI가 생성한 인사이트는 실제 예측이
+              아니며, 전문적인 조언을 대체하지 않습니다.
+            </AppText>
+            <PrimaryButton onPress={() => void handleAcceptDisclaimer()}>
+              확인
+            </PrimaryButton>
+          </View>
+        </View>
+      </Modal>
+
       <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
         시작 안내
       </AppText>
@@ -453,7 +513,7 @@ export function OnboardingScreen() {
         <PrimaryButton onPress={() => router.replace(returnTo as Href)} tone="secondary">
           {returnTo === '/chat' ? '메시지로 이동' : '원래 화면으로 돌아가기'}
         </PrimaryButton>
-        {isDevelopment && debugStep ? (
+        {__DEV__ && debugStep ? (
           <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
             개발용 debug step: {debugStep}
           </AppText>

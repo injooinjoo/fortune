@@ -42,6 +42,7 @@ export const FORTUNE_SPECIFIC_MODELS: Record<string, string | undefined> = {
   "talisman": GEMINI_SAFE_TEXT_MODEL,
   "yearly-encounter": GEMINI_SAFE_TEXT_MODEL,
   "free-chat": GEMINI_CHAT_MODEL, // 대화 맥락 이해 개선
+  "chat-insight": GEMINI_CHAT_MODEL, // 카톡 대화 분석 — 대화 맥락 이해 필요
 };
 
 export function getModelConfig(fortuneType: string) {

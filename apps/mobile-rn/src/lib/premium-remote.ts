@@ -170,9 +170,27 @@ async function fetchActiveSubscription(session: Session) {
   };
 }
 
+const TOKEN_BALANCE_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+let tokenBalanceCache: {
+  userId: string;
+  result: { balance: number | null; isUnlimited: boolean };
+  fetchedAt: number;
+} | null = null;
+
 async function fetchTokenBalance(session: Session) {
   if (!appEnv.isSupabaseConfigured) {
     return null;
+  }
+
+  // Return cached result if still fresh and same user
+  const now = Date.now();
+  if (
+    tokenBalanceCache &&
+    tokenBalanceCache.userId === session.user.id &&
+    now - tokenBalanceCache.fetchedAt < TOKEN_BALANCE_CACHE_TTL_MS
+  ) {
+    return tokenBalanceCache.result;
   }
 
   const response = await fetch(`${appEnv.supabaseUrl}/functions/v1/token-balance`, {
@@ -190,13 +208,29 @@ async function fetchTokenBalance(session: Session) {
     throw new Error(payload.error ?? `token-balance:${response.status}`);
   }
 
-  return {
+  const result = {
     balance:
       typeof payload.balance === 'number' && Number.isFinite(payload.balance)
         ? payload.balance
         : null,
     isUnlimited: payload.isUnlimited === true,
   };
+
+  tokenBalanceCache = {
+    userId: session.user.id,
+    result,
+    fetchedAt: now,
+  };
+
+  return result;
+}
+
+/**
+ * Invalidate the token balance cache so the next fetch hits the server.
+ * Call after token-consuming operations (purchases, fortune consumption).
+ */
+export function invalidateTokenBalanceCache() {
+  tokenBalanceCache = null;
 }
 
 export async function fetchRemotePremiumSnapshot(
@@ -224,6 +258,9 @@ export async function verifyRemotePurchase(
   session: Session,
   payload: RemotePurchaseVerificationPayload,
 ): Promise<RemotePurchaseVerificationResult> {
+  // Invalidate cached balance — purchase adds tokens
+  invalidateTokenBalanceCache();
+
   if (!appEnv.isSupabaseConfigured) {
     throw new Error('Supabase 설정이 없어 구매 검증을 진행할 수 없습니다.');
   }
@@ -283,6 +320,9 @@ export async function consumeRemoteTokens(
   session: Session,
   payload: RemoteTokenConsumePayload,
 ): Promise<RemoteTokenConsumeResult> {
+  // Invalidate cached balance — consumption changes it
+  invalidateTokenBalanceCache();
+
   if (!appEnv.isSupabaseConfigured) {
     throw new RemoteTokenConsumeError(
       'UNKNOWN',

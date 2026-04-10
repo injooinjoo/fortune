@@ -1,30 +1,40 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { TextInput, View } from "react-native";
+import { Animated, Pressable, TextInput, View } from "react-native";
 
 import { AppText } from "../components/app-text";
-import { Card } from "../components/card";
-import { PrimaryButton } from "../components/primary-button";
-import { RouteBackHeader } from "../components/route-back-header";
+import { InlineCalendar } from "../components/inline-calendar";
 import { Screen } from "../components/screen";
 import { captureError } from "../lib/error-reporting";
 import { fortuneTheme } from "../lib/theme";
+import { invalidateFortuneResultCache } from "../features/chat-results/edge-runtime";
 import { useAppBootstrap } from "../providers/app-bootstrap-provider";
 import { useMobileAppState } from "../providers/mobile-app-state-provider";
 
-const bloodTypes = ["A", "B", "O", "AB"] as const;
+type Gender = "male" | "female" | null;
+
+const genderOptions: readonly { label: string; value: Gender }[] = [
+  { label: "남성", value: "male" },
+  { label: "여성", value: "female" },
+];
 
 export function ProfileEditScreen() {
-  const { onboardingProgress, session, updateOnboardingProgress } =
-    useAppBootstrap();
+  const { session, updateOnboardingProgress } = useAppBootstrap();
   const { state, saveProfile, status } = useMobileAppState();
   const [displayName, setDisplayName] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [birthTime, setBirthTime] = useState("");
   const [mbti, setMbti] = useState("");
   const [bloodType, setBloodType] = useState("");
+  const [gender, setGender] = useState<Gender>(null);
   const [hydrated, setHydrated] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [showSavedFeedback, setShowSavedFeedback] = useState(false);
+  const feedbackOpacity = useRef(new Animated.Value(0)).current;
+
+  const email = session?.user.email ?? null;
 
   useEffect(() => {
     if (status !== "ready" || hydrated) {
@@ -47,7 +57,26 @@ export function ProfileEditScreen() {
     status,
   ]);
 
+  function showSavedToast() {
+    setShowSavedFeedback(true);
+    Animated.sequence([
+      Animated.timing(feedbackOpacity, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.delay(1200),
+      Animated.timing(feedbackOpacity, {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+    ]).start(() => setShowSavedFeedback(false));
+  }
+
   async function handleSave() {
+    if (saving) return;
+    setSaving(true);
     try {
       const nextProfile = {
         displayName: displayName.trim(),
@@ -61,146 +90,291 @@ export function ProfileEditScreen() {
       await updateOnboardingProgress({
         birthCompleted: nextProfile.birthDate.length > 0,
       });
+      invalidateFortuneResultCache();
+      showSavedToast();
     } catch (error) {
       void captureError(error, { surface: "profile-edit:save" });
+    } finally {
+      setSaving(false);
     }
   }
 
+  function handleCancel() {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/profile");
+    }
+  }
+
+  const initial =
+    displayName.trim().charAt(0).toUpperCase() ||
+    (session?.user.user_metadata.name as string | undefined)?.charAt(0).toUpperCase() ||
+    "U";
+
   return (
-    <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
-      <AppText variant="displaySmall">프로필 수정</AppText>
-      <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        저장된 프로필을 불러와 수정하고, 생년월일이 있으면 시작 준비 상태도 함께
-        갱신합니다.
-      </AppText>
+    <Screen
+      keyboardAvoiding
+      header={
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingVertical: fortuneTheme.spacing.xs,
+          }}
+        >
+          <Pressable
+            accessibilityLabel="취소"
+            accessibilityRole="button"
+            hitSlop={8}
+            onPress={handleCancel}
+            style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
+          >
+            <AppText
+              variant="bodyLarge"
+              color={fortuneTheme.colors.accentSecondary}
+            >
+              취소
+            </AppText>
+          </Pressable>
 
-      <Card>
-        <AppText variant="heading4">저장된 값</AppText>
-        <AppText variant="labelLarge">
-          {state.profile.displayName || displayName || "이름 미저장"}
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {state.profile.birthDate || "생년월일 미저장"} ·{" "}
-          {state.profile.birthTime || "시간 미저장"}
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {state.profile.mbti || "MBTI 미저장"} ·{" "}
-          {state.profile.bloodType || "혈액형 미저장"}
-        </AppText>
-      </Card>
+          <AppText variant="heading4">프로필 수정</AppText>
 
-      <Card>
-        <AppText variant="heading4">시작 준비 상태</AppText>
-        <View style={{ gap: 8 }}>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {onboardingProgress.softGateCompleted
-              ? '첫 확인 단계가 끝났어요.'
-              : '첫 확인 단계가 아직 진행 중이에요.'}
-          </AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {onboardingProgress.authCompleted
-              ? '계정 연결이 완료됐어요.'
-              : '계정 연결은 아직 진행 중이에요.'}
-          </AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {onboardingProgress.birthCompleted
-              ? '출생 정보 단계가 완료됐어요.'
-              : '출생 정보 단계가 아직 진행 중이에요.'}
-          </AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {onboardingProgress.interestCompleted
-              ? '관심사 단계도 완료됐어요.'
-              : '관심사 단계는 아직 진행 중이에요.'}
-          </AppText>
+          <Pressable
+            accessibilityLabel="저장"
+            accessibilityRole="button"
+            disabled={saving}
+            hitSlop={8}
+            onPress={() => void handleSave()}
+            style={({ pressed }) => ({
+              opacity: saving ? 0.4 : pressed ? 0.6 : 1,
+            })}
+          >
+            <AppText
+              variant="bodyLarge"
+              color={fortuneTheme.colors.accentSecondary}
+              style={{ fontWeight: "700" }}
+            >
+              저장
+            </AppText>
+          </Pressable>
         </View>
-      </Card>
+      }
+    >
+      {/* Avatar */}
+      <View style={{ alignItems: "center", paddingVertical: fortuneTheme.spacing.lg }}>
+        <View
+          style={{
+            width: 96,
+            height: 96,
+            borderRadius: 48,
+            backgroundColor: fortuneTheme.colors.surfaceSecondary,
+            borderWidth: 1,
+            borderColor: fortuneTheme.colors.border,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <AppText
+            variant="displayMedium"
+            color={fortuneTheme.colors.textSecondary}
+          >
+            {initial}
+          </AppText>
 
-      <Card>
-        <AppText variant="heading4">기본 정보</AppText>
+          {/* Camera icon overlay */}
+          <View
+            style={{
+              position: "absolute",
+              bottom: 0,
+              right: 0,
+              width: 32,
+              height: 32,
+              borderRadius: 16,
+              backgroundColor: fortuneTheme.colors.ctaBackground,
+              alignItems: "center",
+              justifyContent: "center",
+              borderWidth: 2,
+              borderColor: fortuneTheme.colors.background,
+            }}
+          >
+            <Ionicons
+              name="camera"
+              size={16}
+              color={fortuneTheme.colors.ctaForeground}
+            />
+          </View>
+        </View>
+      </View>
+
+      {/* Form fields */}
+      <View style={{ gap: fortuneTheme.spacing.lg }}>
         <Field
-          label="표시 이름"
-          placeholder="이름"
+          label="이름"
+          placeholder="이름을 입력해주세요"
           value={displayName}
           onChangeText={setDisplayName}
         />
-        <Field
-          label="생년월일"
-          placeholder="YYYY-MM-DD"
-          value={birthDate}
-          onChangeText={setBirthDate}
-        />
-        <Field
-          label="태어난 시간"
-          placeholder="HH:MM"
-          value={birthTime}
-          onChangeText={setBirthTime}
-        />
-        <Field
-          label="MBTI"
-          placeholder="INFJ"
-          value={mbti}
-          onChangeText={setMbti}
-        />
-        <Field
-          label="혈액형"
-          placeholder="A / B / O / AB"
-          value={bloodType}
-          onChangeText={setBloodType}
-        />
 
-        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-          {bloodTypes.map((type) => (
-            <PrimaryButton
-              key={type}
-              onPress={() => setBloodType(type)}
-              tone={bloodType === type ? "primary" : "secondary"}
+        <ReadOnlyField label="이메일" value={email ?? "로그인 후 표시됩니다"} />
+
+        {/* 생년월일 — 달력 선택 */}
+        <View style={{ gap: fortuneTheme.spacing.xs }}>
+          <AppText variant="labelSmall" color={fortuneTheme.colors.textSecondary}>
+            생년월일
+          </AppText>
+          {birthDate ? (
+            <Pressable
+              onPress={() => setBirthDate("")}
+              style={({ pressed }) => ({
+                backgroundColor: fortuneTheme.colors.surfaceSecondary,
+                borderColor: fortuneTheme.colors.ctaBackground,
+                borderRadius: fortuneTheme.radius.lg,
+                borderWidth: 1,
+                paddingHorizontal: fortuneTheme.spacing.md,
+                paddingVertical: 14,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                opacity: pressed ? 0.8 : 1,
+              })}
             >
-              {type}
-            </PrimaryButton>
-          ))}
+              <AppText variant="bodyMedium">{birthDate}</AppText>
+              <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>변경</AppText>
+            </Pressable>
+          ) : (
+            <InlineCalendar
+              selectedDate={null}
+              onSelectDate={(date) => {
+                const y = date.getFullYear();
+                const m = String(date.getMonth() + 1).padStart(2, "0");
+                const d = String(date.getDate()).padStart(2, "0");
+                setBirthDate(`${y}-${m}-${d}`);
+              }}
+              maxDate={new Date()}
+            />
+          )}
         </View>
-      </Card>
 
-      <Card>
-        <AppText variant="heading4">미리보기</AppText>
-        <AppText variant="labelLarge">
-          {displayName || "이름을 입력해 주세요"}
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {birthDate || "생년월일 미입력"} · {birthTime || "시간 미입력"}
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {mbti || "MBTI 미입력"} · {bloodType || "혈액형 미입력"}
-        </AppText>
-        <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-          {state.profile.birthDate
-            ? "저장된 생년월일이 있어서 시작 준비 상태도 함께 반영돼요."
-            : "생년월일을 저장하면 시작 준비 상태도 함께 갱신돼요."}
-        </AppText>
-      </Card>
+        {/* 성별 — 칩 선택 */}
+        <ChipSelector
+          label="성별"
+          options={genderOptions}
+          selected={gender}
+          onSelect={(v) => setGender(v as Gender)}
+        />
 
-      <Card>
-        <AppText variant="heading4">동작</AppText>
-        <PrimaryButton onPress={() => void handleSave()}>
-          임시 저장
-        </PrimaryButton>
-        {!session ? (
-          <PrimaryButton
-            onPress={() =>
-              router.push({
-                pathname: '/signup',
-                params: { returnTo: '/profile/edit' },
-              })
-            }
-            tone="secondary"
+        {/* 태어난 시간 — 시간 칩 */}
+        <View style={{ gap: fortuneTheme.spacing.xs }}>
+          <AppText variant="labelSmall" color={fortuneTheme.colors.textSecondary}>
+            태어난 시간
+          </AppText>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
+            {["모름", "00:00~02:00", "02:00~04:00", "04:00~06:00", "06:00~08:00", "08:00~10:00", "10:00~12:00", "12:00~14:00", "14:00~16:00", "16:00~18:00", "18:00~20:00", "20:00~22:00", "22:00~24:00"].map((slot) => {
+              const isSelected = birthTime === slot || (slot === "모름" && birthTime === "");
+              return (
+                <Pressable
+                  key={slot}
+                  onPress={() => setBirthTime(slot === "모름" ? "" : slot)}
+                  style={({ pressed }) => ({
+                    paddingHorizontal: 12,
+                    paddingVertical: 8,
+                    borderRadius: fortuneTheme.radius.full,
+                    borderWidth: 1,
+                    borderColor: isSelected ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.border,
+                    backgroundColor: isSelected ? fortuneTheme.colors.ctaBackground + "20" : fortuneTheme.colors.surfaceSecondary,
+                    opacity: pressed ? 0.7 : 1,
+                  })}
+                >
+                  <AppText
+                    variant="labelSmall"
+                    color={isSelected ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.textSecondary}
+                  >
+                    {slot}
+                  </AppText>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* MBTI — 칩 선택 */}
+        <View style={{ gap: fortuneTheme.spacing.xs }}>
+          <AppText variant="labelSmall" color={fortuneTheme.colors.textSecondary}>
+            MBTI
+          </AppText>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
+            {["INTJ", "INTP", "ENTJ", "ENTP", "INFJ", "INFP", "ENFJ", "ENFP", "ISTJ", "ISFJ", "ESTJ", "ESFJ", "ISTP", "ISFP", "ESTP", "ESFP", "모름"].map((type) => {
+              const isSelected = mbti === type || (type === "모름" && mbti === "");
+              return (
+                <Pressable
+                  key={type}
+                  onPress={() => setMbti(type === "모름" ? "" : type)}
+                  style={({ pressed }) => ({
+                    paddingHorizontal: 12,
+                    paddingVertical: 8,
+                    borderRadius: fortuneTheme.radius.full,
+                    borderWidth: 1,
+                    borderColor: isSelected ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.border,
+                    backgroundColor: isSelected ? fortuneTheme.colors.ctaBackground + "20" : fortuneTheme.colors.surfaceSecondary,
+                    opacity: pressed ? 0.7 : 1,
+                  })}
+                >
+                  <AppText
+                    variant="labelSmall"
+                    color={isSelected ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.textSecondary}
+                  >
+                    {type}
+                  </AppText>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* 혈액형 — 칩 선택 */}
+        <ChipSelector
+          label="혈액형"
+          options={[
+            { label: "A형", value: "A" },
+            { label: "B형", value: "B" },
+            { label: "O형", value: "O" },
+            { label: "AB형", value: "AB" },
+            { label: "모름", value: "" },
+          ]}
+          selected={bloodType}
+          onSelect={setBloodType}
+        />
+      </View>
+
+      {/* Saved feedback toast */}
+      {showSavedFeedback ? (
+        <Animated.View
+          pointerEvents="none"
+          style={{
+            position: "absolute",
+            bottom: 40,
+            left: 0,
+            right: 0,
+            alignItems: "center",
+            opacity: feedbackOpacity,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: fortuneTheme.colors.success,
+              paddingHorizontal: fortuneTheme.spacing.lg,
+              paddingVertical: fortuneTheme.spacing.sm,
+              borderRadius: fortuneTheme.radius.full,
+            }}
           >
-            계정 연결
-          </PrimaryButton>
-        ) : null}
-        <PrimaryButton onPress={() => router.back()} tone="secondary">
-          돌아가기
-        </PrimaryButton>
-      </Card>
+            <AppText variant="labelLarge" color="#FFFFFF">
+              저장됨
+            </AppText>
+          </View>
+        </Animated.View>
+      ) : null}
     </Screen>
   );
 }
@@ -210,11 +384,13 @@ function Field({
   placeholder,
   value,
   onChangeText,
+  autoCapitalize,
 }: {
   label: string;
   placeholder: string;
   value: string;
   onChangeText: (value: string) => void;
+  autoCapitalize?: "none" | "sentences" | "words" | "characters";
 }) {
   return (
     <View style={{ gap: fortuneTheme.spacing.xs }}>
@@ -222,6 +398,7 @@ function Field({
         {label}
       </AppText>
       <TextInput
+        autoCapitalize={autoCapitalize}
         onChangeText={onChangeText}
         placeholder={placeholder}
         placeholderTextColor={fortuneTheme.colors.textTertiary}
@@ -231,11 +408,88 @@ function Field({
           borderRadius: fortuneTheme.radius.lg,
           borderWidth: 1,
           color: fortuneTheme.colors.textPrimary,
+          fontFamily: "System",
+          fontSize: 15,
           paddingHorizontal: fortuneTheme.spacing.md,
-          paddingVertical: 12,
+          paddingVertical: 14,
         }}
         value={value}
       />
+    </View>
+  );
+}
+
+function ChipSelector({
+  label,
+  options,
+  selected,
+  onSelect,
+}: {
+  label: string;
+  options: readonly { label: string; value: string | null }[];
+  selected: string | null;
+  onSelect: (value: string) => void;
+}) {
+  return (
+    <View style={{ gap: fortuneTheme.spacing.xs }}>
+      <AppText variant="labelSmall" color={fortuneTheme.colors.textSecondary}>
+        {label}
+      </AppText>
+      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+        {options.map((option) => {
+          const isSelected = selected === option.value;
+          return (
+            <Pressable
+              key={option.label}
+              accessibilityRole="button"
+              onPress={() => onSelect(option.value ?? "")}
+              style={({ pressed }) => ({
+                flex: options.length <= 3 ? 1 : undefined,
+                paddingVertical: 14,
+                paddingHorizontal: 16,
+                borderRadius: fortuneTheme.radius.lg,
+                borderWidth: 1,
+                borderColor: isSelected ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.border,
+                backgroundColor: isSelected ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.surfaceSecondary,
+                alignItems: "center",
+                opacity: pressed ? 0.8 : 1,
+              })}
+            >
+              <AppText
+                variant="labelLarge"
+                color={isSelected ? fortuneTheme.colors.ctaForeground : fortuneTheme.colors.textPrimary}
+              >
+                {option.label}
+              </AppText>
+            </Pressable>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+
+function ReadOnlyField({ label, value }: { label: string; value: string }) {
+  return (
+    <View style={{ gap: fortuneTheme.spacing.xs }}>
+      <AppText variant="labelSmall" color={fortuneTheme.colors.textSecondary}>
+        {label}
+      </AppText>
+      <View
+        style={{
+          backgroundColor: fortuneTheme.colors.surfaceSecondary,
+          borderColor: fortuneTheme.colors.border,
+          borderRadius: fortuneTheme.radius.lg,
+          borderWidth: 1,
+          paddingHorizontal: fortuneTheme.spacing.md,
+          paddingVertical: 14,
+          opacity: 0.6,
+        }}
+      >
+        <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+          {value}
+        </AppText>
+      </View>
     </View>
   );
 }

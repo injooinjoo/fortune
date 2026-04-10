@@ -98,31 +98,13 @@ const newYearSurvey: ChatSurveyDefinition = {
 const mbtiSurvey: ChatSurveyDefinition = {
   fortuneType: 'mbti',
   title: 'MBTI',
-  introReply: 'MBTI 흐름으로 볼게요. 성향 축을 바로 맞춰서 이어가겠습니다.',
+  introReply: 'MBTI 흐름으로 볼게요. 각 축을 하나씩 골라주세요.',
   submitReply: '좋아요. MBTI 결과를 같은 채팅 안에 카드로 정리해드릴게요.',
   steps: [
     {
-      id: 'mbtiConfirm',
-      question: '지금 저장된 MBTI가 맞나요?',
-      inputKind: 'chips',
-      options: commonYesNoOptions,
-    },
-    {
-      id: 'mbtiType',
-      question: 'MBTI 유형을 선택해주세요.',
-      inputKind: 'chips',
-      required: false,
-      showWhen: { mbtiConfirm: 'no' },
-      options: [
-        { id: 'INFP', label: 'INFP' },
-        { id: 'ENFP', label: 'ENFP' },
-        { id: 'INFJ', label: 'INFJ' },
-        { id: 'ENFJ', label: 'ENFJ' },
-        { id: 'INTJ', label: 'INTJ' },
-        { id: 'ENTJ', label: 'ENTJ' },
-        { id: 'ISTJ', label: 'ISTJ' },
-        { id: 'ESTJ', label: 'ESTJ' },
-      ],
+      id: 'mbtiAxes',
+      question: '각 성향 축을 선택해주세요. 모르는 축은 "모름"을 눌러도 괜찮아요.',
+      inputKind: 'mbti-axis',
     },
     {
       id: 'category',
@@ -172,46 +154,69 @@ const compatibilitySurvey: ChatSurveyDefinition = {
 const blindDateSurvey: ChatSurveyDefinition = {
   fortuneType: 'blind-date',
   title: '소개팅 운세',
-  introReply: '소개팅 흐름으로 볼게요. 만남 분위기만 먼저 짧게 맞춰볼게요.',
-  submitReply: '좋아요. 성공 포인트와 대화 흐름을 카드로 바로 이어드릴게요.',
+  introReply: '소개팅 전에 준비할 게 있어요. 상대 정보를 알려주시면 더 정확해져요.',
+  submitReply: '소개팅 분석을 준비하고 있어요. 오늘의 전략을 만들어드릴게요.',
   steps: [
     {
       id: 'dateType',
-      question: '이번 만남은 어떤 성격에 가까운가요?',
+      question: '어떤 만남인가요?',
       inputKind: 'chips',
       options: [
-        { id: 'casual', label: '가벼운 첫 만남' },
-        { id: 'serious', label: '진지한 소개팅' },
-        { id: 'group', label: '지인 동반' },
+        { id: 'first', label: '첫 소개팅' },
+        { id: 'second', label: '두 번째 만남' },
+        { id: 'app', label: '앱 매칭' },
+        { id: 'setup', label: '지인 소개' },
       ],
     },
     {
-      id: 'expectation',
-      question: '가장 기대하는 건 무엇인가요?',
-      inputKind: 'chips',
-      options: [
-        { id: 'chemistry', label: '대화 케미' },
-        { id: 'romance', label: '설렘' },
-        { id: 'stability', label: '진중함' },
-        { id: 'fun', label: '편한 분위기' },
-      ],
+      id: 'partnerInfo',
+      question: '상대에 대해 아는 것을 적어주세요. (나이, 직업, 성격 등)',
+      inputKind: 'text-with-skip',
+      placeholder: '예: 28세, 디자이너, 조용한 편이라고 들었어요',
+    },
+    {
+      id: 'partnerPhoto',
+      question: '상대 사진이나 인스타 프로필이 있다면 올려주세요. (선택)',
+      inputKind: 'image',
     },
     {
       id: 'meetingTime',
-      question: '언제 만날 예정인가요?',
+      question: '언제 만나요?',
       inputKind: 'chips',
       options: [
-        { id: 'lunch', label: '점심' },
-        { id: 'afternoon', label: '오후' },
-        { id: 'dinner', label: '저녁' },
-        { id: 'late', label: '늦은 시간' },
+        { id: 'today', label: '오늘' },
+        { id: 'tomorrow', label: '내일' },
+        { id: 'thisWeek', label: '이번 주' },
+        { id: 'notYet', label: '아직 미정' },
       ],
     },
     {
-      id: 'isFirstBlindDate',
-      question: '소개팅이 처음인가요?',
+      id: 'concern',
+      question: '가장 궁금하거나 걱정되는 건?',
       inputKind: 'chips',
-      options: commonYesNoOptions,
+      options: [
+        { id: 'firstImpression', label: '첫인상 전략' },
+        { id: 'conversation', label: '대화 주제' },
+        { id: 'compatibility', label: '궁합 분석' },
+        { id: 'outfit', label: '코디/패션' },
+        { id: 'redFlags', label: '위험 신호 체크' },
+        { id: 'afterDate', label: '만남 후 행동' },
+      ],
+    },
+    {
+      id: 'myStrength',
+      question: '본인의 매력 포인트는? (최대 2개)',
+      inputKind: 'multi-select',
+      maxSelections: 2,
+      required: false,
+      options: [
+        { id: 'humor', label: '유머' },
+        { id: 'listening', label: '경청' },
+        { id: 'looks', label: '외모' },
+        { id: 'intelligence', label: '지적 매력' },
+        { id: 'warmth', label: '따뜻함' },
+        { id: 'confidence', label: '자신감' },
+      ],
     },
   ],
 };
@@ -393,45 +398,89 @@ const yearlyEncounterSurvey: ChatSurveyDefinition = {
   ],
 };
 
+const celebritySurvey: ChatSurveyDefinition = {
+  fortuneType: 'celebrity',
+  title: '연예인 궁합',
+  introReply: '어떤 연예인이 궁금하세요? 이름과 모드를 알려주세요.',
+  submitReply: '연예인과의 인연을 분석하고 있어요.',
+  steps: [
+    {
+      id: 'celebrityName',
+      question: '어떤 연예인이 궁금하세요?',
+      inputKind: 'text',
+      placeholder: '예: 차은우, 아이유, BTS 정국...',
+    },
+    {
+      id: 'mode',
+      question: '어떤 분석을 원하세요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'compatibility', label: '나와의 궁합' },
+        { id: 'todayFortune', label: '이 연예인의 오늘 운세' },
+        { id: 'pastLife', label: '전생 인연' },
+      ],
+    },
+    {
+      id: 'reason',
+      question: '이 연예인에게 끌리는 이유는?',
+      inputKind: 'chips',
+      required: false,
+      options: [
+        { id: 'looks', label: '외모' },
+        { id: 'talent', label: '재능/실력' },
+        { id: 'personality', label: '성격/매력' },
+        { id: 'voice', label: '목소리' },
+        { id: 'vibe', label: '분위기' },
+        { id: 'unknown', label: '그냥 끌림' },
+      ],
+    },
+  ],
+};
+
 const loveSurvey: ChatSurveyDefinition = {
   fortuneType: 'love',
   title: '연애운',
-  introReply: '연애운 흐름으로 갈게요. 지금 관계 맥락만 먼저 맞춰볼게요.',
-  submitReply: '좋아요. 연애 에너지와 타이밍을 같은 채팅 안에서 바로 보여드릴게요.',
+  introReply: '연애 에너지를 읽어볼게요. 지금 상황을 알려주세요.',
+  submitReply: '연애 분석을 준비 중이에요. 오늘의 연애 흐름을 정리해드릴게요.',
   steps: [
     {
       id: 'status',
-      question: '지금 연애 상태가 어떤가요?',
+      question: '지금 연애 상태는?',
       inputKind: 'chips',
       options: [
         { id: 'single', label: '솔로' },
+        { id: 'some', label: '썸 타는 중' },
         { id: 'dating', label: '연애 중' },
-        { id: 'crush', label: '짝사랑' },
+        { id: 'longterm', label: '장기 연애' },
         { id: 'complicated', label: '복잡한 관계' },
+        { id: 'healing', label: '이별 후 힐링' },
       ],
     },
     {
       id: 'concern',
-      question: '가장 궁금한 건 무엇인가요?',
+      question: '가장 궁금한 건?',
       inputKind: 'chips',
       options: [
-        { id: 'meeting', label: '만남/인연' },
-        { id: 'confession', label: '고백 타이밍' },
-        { id: 'relationship', label: '관계 발전' },
-        { id: 'future', label: '미래/결혼' },
+        { id: 'meeting', label: '새로운 만남 시기' },
+        { id: 'feelings', label: '상대 마음 읽기' },
+        { id: 'timing', label: '고백/프로포즈 타이밍' },
+        { id: 'conflict', label: '갈등 해결법' },
+        { id: 'future', label: '관계의 미래' },
+        { id: 'attraction', label: '매력 올리는 법' },
       ],
     },
     {
-      id: 'datingStyle',
-      question: '연애할 때 본인 스타일을 골라주세요.',
+      id: 'loveLanguage',
+      question: '사랑을 표현하는 방식은? (최대 2개)',
       inputKind: 'multi-select',
-      required: false,
       maxSelections: 2,
+      required: false,
       options: [
-        { id: 'active', label: '적극적' },
-        { id: 'romantic', label: '로맨틱' },
-        { id: 'practical', label: '현실적' },
-        { id: 'independent', label: '개인 시간 중요' },
+        { id: 'words', label: '말로 표현' },
+        { id: 'time', label: '함께 시간 보내기' },
+        { id: 'gift', label: '선물/서프라이즈' },
+        { id: 'touch', label: '스킨십' },
+        { id: 'service', label: '행동으로 보여주기' },
       ],
     },
   ],
@@ -745,15 +794,9 @@ const personalityDnaSurvey: ChatSurveyDefinition = {
   submitReply: '좋아요. 성향 스펙트럼과 성장 조언을 카드로 정리해드릴게요.',
   steps: [
     {
-      id: 'mbti',
-      question: 'MBTI를 선택해주세요.',
-      inputKind: 'chips',
-      options: [
-        { id: 'INFP', label: 'INFP' },
-        { id: 'ENFP', label: 'ENFP' },
-        { id: 'INFJ', label: 'INFJ' },
-        { id: 'INTJ', label: 'INTJ' },
-      ],
+      id: 'mbtiAxes',
+      question: '각 성향 축을 선택해주세요. 모르는 축은 "모름"을 눌러도 괜찮아요.',
+      inputKind: 'mbti-axis',
     },
     {
       id: 'bloodType',
@@ -775,6 +818,14 @@ const personalityDnaSurvey: ChatSurveyDefinition = {
         { id: 'taurus', label: '황소자리' },
         { id: 'gemini', label: '쌍둥이자리' },
         { id: 'cancer', label: '게자리' },
+        { id: 'leo', label: '사자자리' },
+        { id: 'virgo', label: '처녀자리' },
+        { id: 'libra', label: '천칭자리' },
+        { id: 'scorpio', label: '전갈자리' },
+        { id: 'sagittarius', label: '궁수자리' },
+        { id: 'capricorn', label: '염소자리' },
+        { id: 'aquarius', label: '물병자리' },
+        { id: 'pisces', label: '물고기자리' },
       ],
     },
   ],
@@ -826,44 +877,82 @@ const wealthSurvey: ChatSurveyDefinition = {
 
 const talentSurvey: ChatSurveyDefinition = {
   fortuneType: 'talent',
-  title: '재능 분석',
-  introReply: '숨은 재능 흐름으로 볼게요. 흥미와 작업 습관을 먼저 맞춰볼게요.',
-  submitReply: '좋아요. 강점 축과 성장 로드맵을 카드로 이어드릴게요.',
+  title: '숨은 재능',
+  introReply: '당신의 숨은 재능을 찾아볼게요. 몇 가지만 알려주세요.',
+  submitReply: '분석 중이에요. 당신만의 재능 리포트를 만들고 있습니다.',
   steps: [
     {
       id: 'interest',
-      question: '관심 있는 분야를 골라주세요.',
+      question: '관심 있는 분야를 골라주세요. (최대 3개)',
       inputKind: 'multi-select',
       maxSelections: 3,
       options: [
-        { id: 'writing', label: '글/기획' },
-        { id: 'design', label: '디자인' },
-        { id: 'analysis', label: '분석' },
+        { id: 'tech', label: '기술/개발' },
+        { id: 'design', label: '디자인/미술' },
+        { id: 'writing', label: '글쓰기/기획' },
+        { id: 'data', label: '데이터/분석' },
+        { id: 'business', label: '비즈니스/경영' },
         { id: 'communication', label: '커뮤니케이션' },
+        { id: 'education', label: '교육/코칭' },
+        { id: 'media', label: '영상/미디어' },
+        { id: 'food', label: '요리/F&B' },
+        { id: 'sports', label: '스포츠/운동' },
       ],
     },
     {
-      id: 'workStyle',
-      question: '일할 때 어떤 스타일인가요?',
+      id: 'currentSkills',
+      question: '자신 있는 스킬이나 경험이 있다면 적어주세요.',
+      inputKind: 'text-with-skip',
+      placeholder: '예: 엑셀, 영상 편집, 요리, 운동 지도...',
+    },
+    {
+      id: 'experience',
+      question: '이 분야 경험은 어느 정도인가요?',
       inputKind: 'chips',
       options: [
-        { id: 'deep', label: '깊게 몰입' },
-        { id: 'fast', label: '빠르게 실행' },
-        { id: 'team', label: '함께 조율' },
-        { id: 'solo', label: '혼자 정리' },
+        { id: 'beginner', label: '입문 (경험 없음)' },
+        { id: 'junior', label: '초급 (1~2년)' },
+        { id: 'mid', label: '중급 (3~5년)' },
+        { id: 'senior', label: '숙련 (5년+)' },
+      ],
+    },
+    {
+      id: 'goals',
+      question: '어떤 목표를 이루고 싶으세요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'career-change', label: '이직/전직' },
+        { id: 'side-project', label: '부업/사이드' },
+        { id: 'deepen', label: '전문성 심화' },
+        { id: 'startup', label: '창업' },
+        { id: 'hobby-to-job', label: '취미를 직업으로' },
+        { id: 'explore', label: '아직 탐색 중' },
+      ],
+    },
+    {
+      id: 'timeAvailable',
+      question: '재능 개발에 투자할 수 있는 시간은?',
+      inputKind: 'chips',
+      options: [
+        { id: 'under5', label: '주 5시간 미만' },
+        { id: '5to10', label: '주 5~10시간' },
+        { id: '10to20', label: '주 10~20시간' },
+        { id: 'over20', label: '주 20시간 이상' },
       ],
     },
     {
       id: 'challenges',
-      question: '요즘 어렵게 느끼는 부분을 골라주세요.',
+      question: '요즘 어렵게 느끼는 부분이 있다면? (최대 2개)',
       inputKind: 'multi-select',
-      required: false,
       maxSelections: 2,
+      required: false,
       options: [
-        { id: 'focus', label: '집중 유지' },
-        { id: 'confidence', label: '확신 부족' },
-        { id: 'direction', label: '방향 선택' },
-        { id: 'consistency', label: '꾸준함' },
+        { id: 'time', label: '시간 부족' },
+        { id: 'direction', label: '방향 모르겠음' },
+        { id: 'plateau', label: '실력 정체' },
+        { id: 'monetize', label: '수익화 어려움' },
+        { id: 'portfolio', label: '포트폴리오 없음' },
+        { id: 'motivation', label: '동기 부족' },
       ],
     },
   ],
@@ -986,6 +1075,29 @@ const examSurvey: ChatSurveyDefinition = {
   ],
 };
 
+const faceReadingSurvey: ChatSurveyDefinition = {
+  fortuneType: 'face-reading',
+  title: '관상 분석',
+  introReply: '관상을 봐드릴게요. 먼저 얼굴 사진을 준비해주세요.',
+  submitReply: '사진을 분석하고 있어요. 잠시만 기다려주세요.',
+  steps: [
+    {
+      id: 'gender',
+      question: '성별을 선택해주세요.',
+      inputKind: 'chips',
+      options: [
+        { id: 'male', label: '남성' },
+        { id: 'female', label: '여성' },
+      ],
+    },
+    {
+      id: 'faceImage',
+      question: '정면 얼굴 사진을 올려주세요. 카메라로 촬영하거나 갤러리에서 선택할 수 있어요.',
+      inputKind: 'image',
+    },
+  ],
+};
+
 const ootdSurvey: ChatSurveyDefinition = {
   fortuneType: 'ootd-evaluation',
   title: 'OOTD 코디',
@@ -1012,6 +1124,256 @@ const ootdSurvey: ChatSurveyDefinition = {
   ],
 };
 
+const bloodTypeSurvey: ChatSurveyDefinition = {
+  fortuneType: 'blood-type',
+  title: '혈액형',
+  introReply: '혈액형 운세를 볼게요.',
+  submitReply: '혈액형 분석을 준비하고 있어요.',
+  steps: [
+    {
+      id: 'bloodType',
+      question: '혈액형을 선택해주세요.',
+      inputKind: 'chips',
+      options: [
+        { id: 'A', label: 'A형' },
+        { id: 'B', label: 'B형' },
+        { id: 'O', label: 'O형' },
+        { id: 'AB', label: 'AB형' },
+      ],
+    },
+  ],
+};
+
+const coachingSurvey: ChatSurveyDefinition = {
+  fortuneType: 'coaching',
+  title: '코칭운',
+  introReply: '오늘의 실행력을 분석해볼게요. 지금 상황만 간단히 알려주세요.',
+  submitReply: '코칭 분석을 준비하고 있어요. 오늘의 실행 전략을 만들어드릴게요.',
+  steps: [
+    {
+      id: 'currentGoal',
+      question: '지금 가장 집중하고 싶은 건 뭐예요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'work', label: '업무/프로젝트' },
+        { id: 'study', label: '공부/자격증' },
+        { id: 'health', label: '운동/건강' },
+        { id: 'creative', label: '창작/사이드' },
+        { id: 'habit', label: '습관 만들기' },
+        { id: 'decision', label: '중요한 결정' },
+      ],
+    },
+    {
+      id: 'blocker',
+      question: '요즘 실행을 방해하는 게 있다면?',
+      inputKind: 'chips',
+      options: [
+        { id: 'motivation', label: '동기 부족' },
+        { id: 'overwhelm', label: '할 게 너무 많음' },
+        { id: 'perfectionism', label: '완벽주의' },
+        { id: 'time', label: '시간 부족' },
+        { id: 'direction', label: '방향 모르겠음' },
+        { id: 'energy', label: '에너지 부족' },
+      ],
+    },
+    {
+      id: 'timeAvailable',
+      question: '오늘 집중할 수 있는 시간은?',
+      inputKind: 'chips',
+      options: [
+        { id: '30min', label: '30분 이내' },
+        { id: '1hr', label: '1시간' },
+        { id: '2hr', label: '2~3시간' },
+        { id: 'halfday', label: '반나절 이상' },
+      ],
+    },
+  ],
+};
+
+const chatInsightSurvey: ChatSurveyDefinition = {
+  fortuneType: 'chat-insight',
+  title: '카톡 대화 분석',
+  introReply: '카톡 대화를 분석해드릴게요. 먼저 관계와 궁금한 점을 알려주세요.',
+  submitReply: '대화를 분석하고 있어요. 잠시만 기다려주세요.',
+  steps: [
+    {
+      id: 'relationship',
+      question: '이 대화 상대와의 관계는?',
+      inputKind: 'chips',
+      options: [
+        { id: 'crush', label: '썸/관심' },
+        { id: 'lover', label: '연인' },
+        { id: 'ex', label: '전 연인' },
+        { id: 'friend', label: '친구' },
+        { id: 'colleague', label: '직장 동료' },
+        { id: 'family', label: '가족' },
+      ],
+    },
+    {
+      id: 'curiosity',
+      question: '가장 궁금한 포인트는?',
+      inputKind: 'chips',
+      options: [
+        { id: 'feelings', label: '상대 감정/관심도' },
+        { id: 'pattern', label: '대화 패턴 분석' },
+        { id: 'advice', label: '앞으로 어떻게 할지' },
+        { id: 'red-flags', label: '위험 신호 체크' },
+        { id: 'compatibility', label: '관계 궁합' },
+      ],
+    },
+    {
+      id: 'chatContent',
+      question: '카톡 대화를 붙여넣어주세요.\n\n💡 카카오톡 → 대화방 → ⋮ → 대화 내보내기 → 텍스트로 저장 → 내용 복사',
+      inputKind: 'text',
+      placeholder: '대화 내용을 여기에 붙여넣으세요... (길수록 정확해요)',
+    },
+  ],
+};
+
+const matchInsightSurvey: ChatSurveyDefinition = {
+  fortuneType: 'match-insight',
+  title: '경기 인사이트',
+  introReply: '경기 분석을 도와드릴게요. 경기 정보를 알려주세요.',
+  submitReply: '경기를 분석하고 있어요.',
+  steps: [
+    {
+      id: 'sport',
+      question: '어떤 스포츠인가요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'baseball', label: '야구' },
+        { id: 'soccer', label: '축구' },
+        { id: 'basketball', label: '농구' },
+        { id: 'esports', label: 'e스포츠' },
+        { id: 'volleyball', label: '배구' },
+      ],
+    },
+    {
+      id: 'teams',
+      question: '어떤 경기인가요? (예: 두산 vs LG)',
+      inputKind: 'text',
+      placeholder: '예: 두산 vs LG, T1 vs GenG',
+    },
+    {
+      id: 'favoriteTeam',
+      question: '응원하는 팀은? (선택)',
+      inputKind: 'text-with-skip',
+      placeholder: '예: 두산, T1',
+    },
+  ],
+};
+
+const petCompatibilitySurvey: ChatSurveyDefinition = {
+  fortuneType: 'pet-compatibility',
+  title: '반려동물 궁합',
+  introReply: '반려동물과의 궁합을 봐드릴게요. 반려동물 정보를 알려주세요.',
+  submitReply: '반려동물과의 인연을 분석하고 있어요.',
+  steps: [
+    {
+      id: 'petName',
+      question: '반려동물 이름이 뭐예요?',
+      inputKind: 'text',
+      placeholder: '예: 콩이, 초코, 나비',
+    },
+    {
+      id: 'petType',
+      question: '어떤 동물인가요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'dog', label: '🐶 강아지' },
+        { id: 'cat', label: '🐱 고양이' },
+        { id: 'bird', label: '🐦 새' },
+        { id: 'hamster', label: '🐹 햄스터' },
+        { id: 'rabbit', label: '🐰 토끼' },
+        { id: 'fish', label: '🐟 물고기' },
+        { id: 'reptile', label: '🦎 파충류' },
+        { id: 'other', label: '기타' },
+      ],
+    },
+    {
+      id: 'petGender',
+      question: '성별은?',
+      inputKind: 'chips',
+      required: false,
+      options: [
+        { id: 'male', label: '수컷' },
+        { id: 'female', label: '암컷' },
+        { id: 'unknown', label: '모름' },
+      ],
+    },
+  ],
+};
+
+const gameEnhanceSurvey: ChatSurveyDefinition = {
+  fortuneType: 'game-enhance',
+  title: '게임 컨디션',
+  introReply: '오늘의 게임 운을 봐드릴게요.',
+  submitReply: '게임 운세를 분석하고 있어요. 오늘의 골든타임을 찾아볼게요.',
+  steps: [
+    {
+      id: 'gameType',
+      question: '주로 어떤 게임을 하세요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'moba', label: 'MOBA (롤, 오버워치)' },
+        { id: 'fps', label: 'FPS (배그, 발로란트)' },
+        { id: 'rpg', label: 'RPG (메이플, 로아)' },
+        { id: 'sports', label: '스포츠 (피파, NBA)' },
+        { id: 'casual', label: '캐주얼/모바일' },
+        { id: 'gacha', label: '가챠 (원신, 블아)' },
+      ],
+    },
+    {
+      id: 'goal',
+      question: '오늘 게임 목표는?',
+      inputKind: 'chips',
+      options: [
+        { id: 'rank', label: '랭크 상승' },
+        { id: 'enhance', label: '강화/뽑기' },
+        { id: 'fun', label: '그냥 재미' },
+        { id: 'grind', label: '파밍/노가다' },
+      ],
+    },
+  ],
+};
+
+const movingSurvey: ChatSurveyDefinition = {
+  fortuneType: 'moving',
+  title: '이사운세',
+  introReply: '이사 분석을 도와드릴게요. 현재 위치와 목적지를 알려주세요.',
+  submitReply: '이사 운세를 분석하고 있어요. 방위, 손없는 날, 풍수까지 봐드릴게요.',
+  steps: [
+    {
+      id: 'currentArea',
+      question: '현재 거주 지역은 어디인가요?',
+      inputKind: 'text',
+      placeholder: '예: 서울 강남구, 경기 수원시',
+    },
+    {
+      id: 'targetArea',
+      question: '이사 예정 지역은 어디인가요?',
+      inputKind: 'text',
+      placeholder: '예: 경기 분당, 서울 마포구',
+    },
+    {
+      id: 'movingDate',
+      question: '이사 예정일이 있나요?',
+      inputKind: 'date',
+    },
+    {
+      id: 'concern',
+      question: '가장 궁금한 건?',
+      inputKind: 'chips',
+      options: [
+        { id: 'direction', label: '방위 길흉' },
+        { id: 'timing', label: '손없는 날' },
+        { id: 'fengshui', label: '풍수 배치' },
+        { id: 'overall', label: '전체 분석' },
+      ],
+    },
+  ],
+};
+
 const surveyDefinitions = [
   traditionalSurvey,
   dailyCalendarSurvey,
@@ -1024,6 +1386,7 @@ const surveyDefinitions = [
   avoidPeopleSurvey,
   yearlyEncounterSurvey,
   loveSurvey,
+  celebritySurvey,
   biorhythmSurvey,
   healthSurvey,
   dreamSurvey,
@@ -1040,6 +1403,14 @@ const surveyDefinitions = [
   tarotSurvey,
   examSurvey,
   ootdSurvey,
+  faceReadingSurvey,
+  bloodTypeSurvey,
+  coachingSurvey,
+  chatInsightSurvey,
+  matchInsightSurvey,
+  movingSurvey,
+  petCompatibilitySurvey,
+  gameEnhanceSurvey,
 ] as const satisfies readonly ChatSurveyDefinition[];
 
 export const surveyDefinitionByFortuneType = Object.fromEntries(
@@ -1049,10 +1420,7 @@ export const surveyDefinitionByFortuneType = Object.fromEntries(
 const surveyDefinitionAliasByFortuneType: Partial<
   Record<FortuneTypeId, FortuneTypeId>
 > = {
-  'face-reading': 'traditional-saju',
-  celebrity: 'love',
   lotto: 'wealth',
-  'pet-compatibility': 'family',
 };
 
 export function getChatSurveyDefinition(fortuneType: FortuneTypeId) {
@@ -1200,6 +1568,14 @@ export function formatSurveyAnswerLabel(
   step: ChatSurveyStep,
   answer: unknown,
 ) {
+  if (step.inputKind === 'image') {
+    return '사진을 보냈어요';
+  }
+
+  if (step.inputKind === 'mbti-axis') {
+    return typeof answer === 'string' ? answer : 'MBTI 선택';
+  }
+
   if (Array.isArray(answer)) {
     return answer
       .map((item) => formatSingleAnswerLabel(step, item))
