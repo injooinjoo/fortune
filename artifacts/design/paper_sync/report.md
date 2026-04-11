@@ -6,7 +6,8 @@
 
 ## Changed Files
 
-- docs/design/PAPER_SYNC_CHANGELOG.md
+- artifacts/design/paper_sync/report.json
+- artifacts/design/paper_sync/report.md
 
 ## Errors
 

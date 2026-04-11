@@ -5,8 +5,9 @@
     "mode": "git-range",
     "range": "HEAD~1..HEAD",
     "files": [
-      "docs/design/PAPER_SYNC_CHANGELOG.md"
+      "artifacts/design/paper_sync/report.json",
+      "artifacts/design/paper_sync/report.md"
     ]
   },
-  "checkedAt": "2026-04-09T00:13:07.373Z"
+  "checkedAt": "2026-04-11T00:35:49.386Z"
 }
