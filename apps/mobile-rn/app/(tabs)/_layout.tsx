@@ -1,4 +1,5 @@
 import { Tabs } from 'expo-router';
+import { Platform } from 'react-native';
 
 import { fortuneTheme } from '../../src/lib/theme';
 
@@ -8,7 +9,7 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          display: 'none',
+          display: Platform.OS === 'web' ? 'flex' : 'none',
           backgroundColor: fortuneTheme.colors.surface,
           borderTopColor: fortuneTheme.colors.borderOpaque,
         },

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { type FortuneTypeId } from '@fortune/product-contracts';
-import { Alert, ScrollView, View } from 'react-native';
+import { Alert, Dimensions, ScrollView, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
@@ -383,10 +383,50 @@ export function ChatScreen() {
     ? getCurrentSurveyStep(activeSurvey)
     : null;
 
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevContentHeightRef = useRef(0);
+  const scrollViewHeightRef = useRef(Dimensions.get('window').height * 0.7);
+
   function scrollChatToBottom(animated = true) {
-    requestAnimationFrame(() => {
-      chatScrollRef.current?.scrollToEnd({ animated });
-    });
+    if (scrollTimerRef.current) {
+      clearTimeout(scrollTimerRef.current);
+    }
+    scrollTimerRef.current = setTimeout(() => {
+      requestAnimationFrame(() => {
+        chatScrollRef.current?.scrollToEnd({ animated });
+      });
+    }, 100);
+  }
+
+  function scrollChatOnContentGrow(contentHeight: number) {
+    const prevHeight = prevContentHeightRef.current;
+    const viewportHeight = scrollViewHeightRef.current;
+    prevContentHeightRef.current = contentHeight;
+
+    if (prevHeight <= 0) return;
+
+    const addedHeight = contentHeight - prevHeight;
+    if (addedHeight <= 0) return;
+
+    if (scrollTimerRef.current) {
+      clearTimeout(scrollTimerRef.current);
+    }
+
+    if (addedHeight > viewportHeight * 0.8) {
+      // Large content (fortune result card): scroll to show its top
+      scrollTimerRef.current = setTimeout(() => {
+        requestAnimationFrame(() => {
+          chatScrollRef.current?.scrollTo({ y: prevHeight - 80, animated: true });
+        });
+      }, 120);
+    } else {
+      // Small content (regular message): scroll to end
+      scrollTimerRef.current = setTimeout(() => {
+        requestAnimationFrame(() => {
+          chatScrollRef.current?.scrollToEnd({ animated: true });
+        });
+      }, 100);
+    }
   }
 
   useEffect(() => {
@@ -611,6 +651,13 @@ export function ChatScreen() {
     }
 
     try {
+      if (session) {
+        await consumeRemoteTokens(session, {
+          fortuneType: completed.fortuneType,
+          referenceId: `fortune:${character.id}:${completed.fortuneType}`,
+        });
+      }
+
       const embeddedResult = await resolveFortuneResultMessage(
         completed.fortuneType,
         buildResultContext(character, completed.answers),
@@ -628,6 +675,16 @@ export function ChatScreen() {
         ),
         embeddedResult,
       ]);
+    } catch (error) {
+      if (error instanceof RemoteTokenConsumeError) {
+        appendMessages(character, [
+          buildAssistantTextMessage(
+            error.message || '토큰이 부족해요. 토큰을 충전한 뒤 다시 시도해주세요.',
+          ),
+        ]);
+        return;
+      }
+      throw error;
     } finally {
       setFortuneTypingCharacterId(null);
     }
@@ -1471,9 +1528,9 @@ export function ChatScreen() {
           ? 88
           : 0
       }
-      onScrollContentSizeChange={() => {
+      onScrollContentSizeChange={(_w, h) => {
         if (gate === 'ready' && surfaceMode === 'chat') {
-          scrollChatToBottom(true);
+          scrollChatOnContentGrow(h);
         }
       }}
       scrollViewRef={chatScrollRef}
@@ -1557,6 +1614,8 @@ export function ChatScreen() {
           onGoogle={() => void handleSocialAuthStart('google')}
           onKakao={() => void handleSocialAuthStart('kakao')}
           onNaver={() => void handleSocialAuthStart('naver')}
+          onEmail={() => router.push('/auth/email')}
+          onPhone={() => router.push('/auth/phone')}
         />
       ) : null}
 

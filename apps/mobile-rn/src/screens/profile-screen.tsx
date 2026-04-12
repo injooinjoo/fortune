@@ -1,8 +1,9 @@
 import { useMemo, useState, useCallback } from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
+import Constants from 'expo-constants';
 import { router } from 'expo-router';
-import { Linking, Platform, Pressable, View } from 'react-native';
+import { Alert, Linking, Platform, Pressable, View } from 'react-native';
 import type { Href } from 'expo-router';
 
 import { AppText } from '../components/app-text';
@@ -15,7 +16,7 @@ import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
 
-const APP_VERSION = '2.3.1';
+const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
 
 const ZODIAC_ANIMALS = ['쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양', '원숭이', '닭', '개', '돼지'];
 const ZODIAC_EMOJI = ['🐭', '🐄', '🐯', '🐰', '🐉', '🐍', '🐴', '🐑', '🐵', '🐓', '🐶', '🐷'];
@@ -96,7 +97,9 @@ export function ProfileScreen() {
       setIsRestoring(true);
       await restorePurchases();
     } catch (error) {
-      await captureError(error, { surface: 'profile:restore-purchases' });
+      const message =
+        error instanceof Error ? error.message : '구매 복원 중 오류가 발생했어요.';
+      Alert.alert('구매 복원', message);
     } finally {
       setIsRestoring(false);
     }

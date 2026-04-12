@@ -1,4 +1,7 @@
+import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+
+const isWeb = Platform.OS === 'web';
 
 const secureStoreChunkSize = 1800;
 const secureStoreChunkCountSuffix = '.__chunk_count';
@@ -52,6 +55,10 @@ function splitIntoChunks(value: string) {
 }
 
 export async function getSecureItem(key: string) {
+  if (isWeb) {
+    return localStorage.getItem(key);
+  }
+
   const chunkCount = await readChunkCount(key);
 
   if (chunkCount === 0) {
@@ -74,6 +81,11 @@ export async function getSecureItem(key: string) {
 }
 
 export async function setSecureItem(key: string, value: string) {
+  if (isWeb) {
+    localStorage.setItem(key, value);
+    return;
+  }
+
   const chunks = splitIntoChunks(value);
 
   if (chunks.length <= 1) {
@@ -93,6 +105,11 @@ export async function setSecureItem(key: string, value: string) {
 }
 
 export async function deleteSecureItem(key: string) {
+  if (isWeb) {
+    localStorage.removeItem(key);
+    return;
+  }
+
   await SecureStore.deleteItemAsync(key);
   await clearChunkedValue(key);
 }

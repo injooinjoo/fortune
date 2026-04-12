@@ -598,7 +598,8 @@ function ChatThreadMessage({
       ) : null}
       <View
         style={{
-          flex: isUser || isFullWidth ? 0 : 1,
+          flex: isUser ? undefined : isFullWidth ? undefined : 1,
+          flexShrink: isUser ? 1 : isFullWidth ? 0 : undefined,
           maxWidth: isUser ? '84%' : '100%',
           width: isFullWidth ? '100%' : undefined,
         }}
@@ -631,6 +632,8 @@ export function ChatSoftGate({
   authMessage,
   onKakao,
   onNaver,
+  onEmail,
+  onPhone,
 }: {
   onApple: () => void;
   onGoogle: () => void;
@@ -638,6 +641,8 @@ export function ChatSoftGate({
   authMessage?: string | null;
   onKakao?: () => void;
   onNaver?: () => void;
+  onEmail?: () => void;
+  onPhone?: () => void;
 }) {
   return (
     <View style={{ gap: fortuneTheme.spacing.lg }}>
@@ -729,6 +734,86 @@ export function ChatSoftGate({
               {authMessage}
             </AppText>
           ) : null}
+
+          {onEmail || onPhone ? (
+            <>
+              <View
+                style={{
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  gap: 12,
+                  paddingVertical: 4,
+                }}
+              >
+                <View style={{ flex: 1, height: 1, backgroundColor: fortuneTheme.colors.divider }} />
+                <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+                  또는
+                </AppText>
+                <View style={{ flex: 1, height: 1, backgroundColor: fortuneTheme.colors.divider }} />
+              </View>
+              {onEmail ? (
+                <Pressable
+                  accessibilityLabel="이메일로 시작"
+                  accessibilityRole="button"
+                  onPress={onEmail}
+                  style={({ pressed }) => ({
+                    alignItems: 'center',
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: fortuneTheme.radius.full,
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    minHeight: 52,
+                    opacity: pressed ? 0.84 : 1,
+                    paddingHorizontal: 16,
+                    width: '100%',
+                  })}
+                >
+                  <View style={{ alignItems: 'center', flexDirection: 'row', width: '100%' }}>
+                    <View style={{ alignItems: 'center', justifyContent: 'center', width: 24 }}>
+                      <Ionicons color="#111111" name="mail-outline" size={18} />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <AppText variant="labelLarge" color="#111111" style={{ fontWeight: '700', textAlign: 'center' }}>
+                        이메일로 시작
+                      </AppText>
+                    </View>
+                    <View style={{ width: 24 }} />
+                  </View>
+                </Pressable>
+              ) : null}
+              {onPhone ? (
+                <Pressable
+                  accessibilityLabel="전화번호로 시작"
+                  accessibilityRole="button"
+                  onPress={onPhone}
+                  style={({ pressed }) => ({
+                    alignItems: 'center',
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: fortuneTheme.radius.full,
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    minHeight: 52,
+                    opacity: pressed ? 0.84 : 1,
+                    paddingHorizontal: 16,
+                    width: '100%',
+                  })}
+                >
+                  <View style={{ alignItems: 'center', flexDirection: 'row', width: '100%' }}>
+                    <View style={{ alignItems: 'center', justifyContent: 'center', width: 24 }}>
+                      <Ionicons color="#111111" name="call-outline" size={18} />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <AppText variant="labelLarge" color="#111111" style={{ fontWeight: '700', textAlign: 'center' }}>
+                        전화번호로 시작
+                      </AppText>
+                    </View>
+                    <View style={{ width: 24 }} />
+                  </View>
+                </Pressable>
+              ) : null}
+            </>
+          ) : null}
+
           <Pressable
             accessibilityRole="button"
             onPress={onBrowse}

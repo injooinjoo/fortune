@@ -86,7 +86,7 @@ loadWorkspaceEnvFiles();
 const config: ExpoConfig = {
   name: '온도',
   slug: 'ondo-mobile-rn',
-  version: '1.0.0',
+  version: '1.0.8',
   orientation: 'portrait',
   icon: './assets/icon.png',
   scheme: 'com.beyond.fortune',
@@ -101,6 +101,9 @@ const config: ExpoConfig = {
     supportsTablet: true,
     bundleIdentifier: 'com.beyond.fortune',
     usesAppleSignIn: true,
+    infoPlist: {
+      ITSAppUsesNonExemptEncryption: false,
+    },
   },
   android: {
     package: 'com.beyond.fortune',

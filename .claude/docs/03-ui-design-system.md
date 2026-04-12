@@ -172,7 +172,7 @@ Text('라벨', style: context.typography.labelSmall)
 | 상황 | 우선 사용 |
 |------|-----------|
 | 일반 앱 UI | `DS*` + `context.colors` + `context.typography` |
-| Paper-aligned 페이지 shell | `PaperRuntime*` |
+| Pencil-aligned 페이지 shell | `PaperRuntime*` |
 | 운세 결과 공용 card shell | `Fortune*` shared cards |
 | 결과 타입별 전용 조립 | feature 전용 `fortune_bodies/` 또는 page/widget layer |
 
@@ -183,7 +183,7 @@ Text('라벨', style: context.typography.labelSmall)
 | `Color(0xFF...)` 하드코딩 | `DSColors.*`, `context.colors.*` |
 | raw `fontSize` 직접 사용 | `context.typography.*`, `DSTypography.*` |
 | `Colors.white`, `Colors.black` | `context.colors.textPrimary`, `background` |
-| 오래된 ChatGPT 문법을 기본 규칙으로 설명 | Paper-aligned DS 문법으로 설명 |
+| 오래된 ChatGPT 문법을 기본 규칙으로 설명 | Pencil-aligned DS 문법으로 설명 |
 
 ## 관련 문서
 

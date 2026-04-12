@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 
+import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { AppleAuthButton } from '../components/apple-auth-button';
 import { AppText } from '../components/app-text';
@@ -14,6 +15,7 @@ import {
 import { Screen } from '../components/screen';
 import { SocialAuthPillButton } from '../components/social-auth-pill-button';
 import { captureError } from '../lib/error-reporting';
+import { confirmAction } from '../lib/haptics';
 import {
   socialAuthProviderLabelById,
   type SocialAuthProviderId,
@@ -123,17 +125,13 @@ export function SignupScreen() {
 
       <Card>
         <AppText variant="heading4">연결하고 바로 시작</AppText>
-        <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
-          한 번 로그인해 두면 결과 저장, 개인화, 결제 상태가 계정에 연결됩니다.
-          원하는 방법으로 바로 시작하세요.
-        </AppText>
         {authMessage ? (
           <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
             {authMessage}
           </AppText>
         ) : null}
         {authOptions.map((option) => (
-          <View key={option.id} style={{ gap: 8 }}>
+          <View key={option.id}>
             {option.id === 'apple' ? (
               <AppleAuthButton
                 disabled={activeProviderId === option.id}
@@ -152,27 +150,136 @@ export function SignupScreen() {
                 provider={option.id}
               />
             )}
-            <AppText
-              variant="bodySmall"
-              color={fortuneTheme.colors.textTertiary}
-            >
-              {option.note}
-            </AppText>
           </View>
         ))}
-        <AppText
-          variant="bodySmall"
-          color={fortuneTheme.colors.textTertiary}
-        >
-          하나의 계정으로 기록, 추천, 구매 상태를 계속 이어갈 수 있습니다.
+      </Card>
+
+      <View
+        style={{
+          alignItems: 'center',
+          flexDirection: 'row',
+          gap: fortuneTheme.spacing.md,
+        }}
+      >
+        <View
+          style={{
+            flex: 1,
+            height: 1,
+            backgroundColor: fortuneTheme.colors.divider,
+          }}
+        />
+        <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
+          또는
         </AppText>
+        <View
+          style={{
+            flex: 1,
+            height: 1,
+            backgroundColor: fortuneTheme.colors.divider,
+          }}
+        />
+      </View>
+
+      <Card>
+        <AppText variant="heading4">다른 방법으로 시작</AppText>
+        <Pressable
+          accessibilityLabel="이메일로 시작"
+          accessibilityRole="button"
+          onPress={() => {
+            confirmAction();
+            router.push('/auth/email');
+          }}
+          style={({ pressed }) => ({
+            alignItems: 'center',
+            backgroundColor: '#FFFFFF',
+            borderRadius: fortuneTheme.radius.full,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            minHeight: 52,
+            opacity: pressed ? 0.84 : 1,
+            paddingHorizontal: 16,
+            width: '100%',
+          })}
+        >
+          <View
+            style={{
+              alignItems: 'center',
+              flexDirection: 'row',
+              width: '100%',
+            }}
+          >
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 24,
+              }}
+            >
+              <Ionicons color="#111111" name="mail-outline" size={18} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <AppText
+                variant="labelLarge"
+                color="#111111"
+                style={{ fontWeight: '700', textAlign: 'center' }}
+              >
+                이메일로 시작
+              </AppText>
+            </View>
+            <View style={{ width: 24 }} />
+          </View>
+        </Pressable>
+        <Pressable
+          accessibilityLabel="전화번호로 시작"
+          accessibilityRole="button"
+          onPress={() => {
+            confirmAction();
+            router.push('/auth/phone');
+          }}
+          style={({ pressed }) => ({
+            alignItems: 'center',
+            backgroundColor: '#FFFFFF',
+            borderRadius: fortuneTheme.radius.full,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            minHeight: 52,
+            opacity: pressed ? 0.84 : 1,
+            paddingHorizontal: 16,
+            width: '100%',
+          })}
+        >
+          <View
+            style={{
+              alignItems: 'center',
+              flexDirection: 'row',
+              width: '100%',
+            }}
+          >
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 24,
+              }}
+            >
+              <Ionicons color="#111111" name="call-outline" size={18} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <AppText
+                variant="labelLarge"
+                color="#111111"
+                style={{ fontWeight: '700', textAlign: 'center' }}
+              >
+                전화번호로 시작
+              </AppText>
+            </View>
+            <View style={{ width: 24 }} />
+          </View>
+        </Pressable>
       </Card>
 
       <Card>
         <AppText variant="heading4">로그인 없이 먼저 보기</AppText>
-        <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
-          서비스 흐름을 먼저 확인한 뒤, 필요할 때 계정을 연결해도 됩니다.
-        </AppText>
         <PrimaryButton
           onPress={() => {
             markGuestBrowse()

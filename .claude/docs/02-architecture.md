@@ -74,7 +74,7 @@ presentation -> domain <- data
 
 ### 2. Shared UI system
 - 범용 UI primitive는 `lib/core/design_system/`가 소스 오브 트루스입니다.
-- Paper-aligned page chrome은 `lib/core/widgets/paper_runtime_*.dart`가 담당합니다.
+- Pencil-aligned page chrome은 `lib/core/widgets/paper_runtime_*.dart`가 담당합니다.
 - 운세 결과용 공용 shell은 `lib/shared/components/cards/fortune_cards.dart`에 있습니다.
 
 ### 3. State management

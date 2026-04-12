@@ -160,20 +160,20 @@ export function FortuneCookieCard() {
           width: '100%',
         }}
       >
-        <Animated.View
-          style={[
-            {
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'absolute',
-            },
-            cookieAnimatedStyle,
-          ]}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="포춘쿠키 탭하기"
+          onPress={handleTap}
+          style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute' }}
         >
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="포춘쿠키 탭하기"
-            onPress={handleTap}
+          <Animated.View
+            style={[
+              {
+                alignItems: 'center',
+                justifyContent: 'center',
+              },
+              cookieAnimatedStyle,
+            ]}
           >
             <AppText
               variant="heading1"
@@ -181,8 +181,8 @@ export function FortuneCookieCard() {
             >
               🥠
             </AppText>
-          </Pressable>
-        </Animated.View>
+          </Animated.View>
+        </Pressable>
 
         <Animated.View
           style={[
