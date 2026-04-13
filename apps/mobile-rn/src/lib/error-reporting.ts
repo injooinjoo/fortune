@@ -36,6 +36,17 @@ function stringifyErrorMessage(error: unknown) {
   return String(error);
 }
 
+function isExpectedEdgeFunctionError(error: unknown): boolean {
+  const message = stringifyErrorMessage(error);
+  return (
+    message.includes('Edge Function returned a non-2xx status code') ||
+    message.includes('Failed to send a request to the Edge Function') ||
+    message.includes('edge function') ||
+    message.includes('FunctionsHttpError') ||
+    message.includes('FunctionsRelayError')
+  );
+}
+
 export async function captureError(
   error: unknown,
   context: Record<string, unknown> = {},
@@ -46,7 +57,11 @@ export async function captureError(
   };
 
   if (__DEV__ || !appEnv.isCrashReportingConfigured) {
-    console.error('[error-reporting]', payload);
+    if (isExpectedEdgeFunctionError(error)) {
+      console.warn('[error-reporting]', payload);
+    } else {
+      console.error('[error-reporting]', payload);
+    }
   }
 
   await trackEvent('app_error', payload);

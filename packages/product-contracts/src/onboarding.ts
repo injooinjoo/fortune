@@ -44,7 +44,10 @@ export function resolveChatOnboardingGate(args: {
   const { hasAuthenticatedUser, progress } = args;
 
   if (!hasAuthenticatedUser) {
-    return progress.softGateCompleted ? 'ready' : 'auth-entry';
+    // Apple Guideline 5.1.1(v): non-account-based features must be freely
+    // accessible. Skip the auth gate entirely for guests — show login as an
+    // opt-in prompt inside the app instead of a blocking gate.
+    return 'ready';
   }
 
   const needsBirthStep = !progress.birthCompleted;

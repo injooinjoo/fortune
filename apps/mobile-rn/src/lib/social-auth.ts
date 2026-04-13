@@ -74,6 +74,7 @@ async function startAppleNativeAuth(
         AppleAuthentication.AppleAuthenticationScope.EMAIL,
         AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
       ],
+      ...(Platform.isPad ? { state: 'apple-auth' } : {}),
     });
 
     if (!credential.identityToken) {
@@ -166,6 +167,10 @@ async function completeInAppAuthSession(
     const result = await WebBrowser.openAuthSessionAsync(
       authorizationUrl,
       redirectTo,
+      {
+        preferEphemeralSession: true,
+        ...(Platform.isPad ? { presentationStyle: WebBrowser.WebBrowserPresentationStyle.FULL_SCREEN } : {}),
+      },
     );
 
     if (result.type === 'cancel' || result.type === 'dismiss') {

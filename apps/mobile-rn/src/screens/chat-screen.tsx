@@ -1441,8 +1441,8 @@ export function ChatScreen() {
       if (payload) {
         return buildEmbeddedResultMessageFromPayload(payload);
       }
-    } catch (error) {
-      await captureError(error, { surface }).catch(() => undefined);
+    } catch {
+      // Edge Function 실패 시 로컬 fallback으로 자동 전환 — 에러 무시
     }
 
     return buildEmbeddedResultMessage(fortuneType, context);
