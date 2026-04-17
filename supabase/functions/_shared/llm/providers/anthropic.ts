@@ -7,6 +7,7 @@ import {
   LLMResponse,
 } from "../types.ts";
 import { assertLlmRequestAllowed } from "../safety.ts";
+import { normalizeGenerateOptions } from "../generate-options.ts";
 
 export class AnthropicProvider implements ILLMProvider {
   constructor(
@@ -34,14 +35,20 @@ export class AnthropicProvider implements ILLMProvider {
         mode: "text",
       });
 
+      const normalized = normalizeGenerateOptions(options, {
+        providerDefault: 8192,
+        providerName: "anthropic",
+        featureName: this.config.featureName || "shared-anthropic-provider",
+      });
+
       const requestBody: Record<string, unknown> = {
         model: this.config.model,
-        max_tokens: options?.maxTokens ?? 8192,
+        max_tokens: normalized.maxTokens,
         messages: nonSystemMessages.map((m) => ({
           role: m.role,
           content: m.content,
         })),
-        temperature: options?.temperature ?? 1,
+        temperature: normalized.temperature ?? 1,
       };
 
       // system message가 있으면 별도 파라미터로 추가

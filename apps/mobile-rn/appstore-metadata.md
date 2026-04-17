@@ -49,9 +49,14 @@
 - Violence: None
 
 ## App Review Notes
-This is an AI-powered fortune telling and interactive story app. All fortune content is AI-generated entertainment and is clearly labeled as such. The app includes a disclaimer visible to users. Login is optional (guest browsing available).
+This is an AI-powered fortune telling and interactive story app. All fortune content is AI-generated entertainment and is clearly labeled as such. The app includes a disclaimer visible to users.
 
-Test account: Not required - users can browse without login by tapping "로그인 없이 둘러보기" on the login screen.
+No login required. Users land directly on the main chat/fortune screen upon launch. All fortune features (30+ categories) are freely accessible without creating an account. Login is available optionally via the profile screen for saving history and syncing across devices.
+
+## App Review Info (App Store Connect)
+- Sign-in required: NO (uncheck the box)
+- Demo account: Not needed
+- Review notes: "No login required to access fortune features. Users land directly on the main screen."
 
 ## Screenshots (6.7" iPhone 16 Pro Max, 1320x2868)
 1. 16promax-chat-home.png - Main message/character list

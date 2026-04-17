@@ -7,6 +7,7 @@ import {
   GenerateOptions,
 } from '../types.ts'
 import { assertLlmRequestAllowed } from '../safety.ts'
+import { normalizeGenerateOptions } from '../generate-options.ts'
 
 export class GrokProvider implements ILLMProvider {
   constructor(
@@ -27,6 +28,12 @@ export class GrokProvider implements ILLMProvider {
         mode: 'text',
       })
 
+      const normalized = normalizeGenerateOptions(options, {
+        providerDefault: 8192,
+        providerName: 'grok',
+        featureName: this.config.featureName || 'shared-grok-provider',
+      })
+
       const response = await fetch('https://api.x.ai/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -36,10 +43,10 @@ export class GrokProvider implements ILLMProvider {
         body: JSON.stringify({
           model: this.config.model,
           messages: messages,
-          temperature: options?.temperature ?? 1,
-          max_tokens: options?.maxTokens ?? 8192,
+          temperature: normalized.temperature ?? 1,
+          max_tokens: normalized.maxTokens,
           // Grok은 OpenAI 호환 API이므로 response_format 지원
-          response_format: options?.jsonMode ? { type: 'json_object' } : undefined,
+          response_format: normalized.jsonMode ? { type: 'json_object' } : undefined,
         }),
       })
 

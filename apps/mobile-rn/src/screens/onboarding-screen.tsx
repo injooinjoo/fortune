@@ -40,7 +40,7 @@ const onboardingSteps: readonly {
   {
     id: 'interest',
     title: '관심사 선택',
-    description: '지금 보고 싶은 대화와 운세 방향을 골라요.',
+    description: '지금 보고 싶은 대화와 인사이트 방향을 골라요.',
   },
   {
     id: 'handoff',
@@ -295,7 +295,7 @@ export function OnboardingScreen() {
       </AppText>
       <AppText variant="displaySmall">처음 설정하기</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        대화와 운세를 더 자연스럽게 이어가기 위해 필요한 정보만 빠르게 확인해요.
+        대화와 인사이트를 더 자연스럽게 이어가기 위해 필요한 정보만 빠르게 확인해요.
       </AppText>
 
       <Card>

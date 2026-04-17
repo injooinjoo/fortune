@@ -34,6 +34,7 @@ export function Screen({
             paddingHorizontal: fortuneTheme.spacing.pageHorizontal,
             paddingTop: fortuneTheme.spacing.pageVertical,
             paddingBottom: fortuneTheme.spacing.sm,
+            zIndex: 10,
           }}
         >
           {header}
@@ -49,6 +50,9 @@ export function Screen({
             (footer ? fortuneTheme.spacing.md : fortuneTheme.spacing.pageVertical) +
             contentBottomInset,
           gap: fortuneTheme.spacing.md,
+          maxWidth: 600,
+          alignSelf: 'center',
+          width: '100%',
         }}
         keyboardShouldPersistTaps="handled"
         onContentSizeChange={onScrollContentSizeChange}

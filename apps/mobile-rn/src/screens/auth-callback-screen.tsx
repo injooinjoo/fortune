@@ -109,7 +109,10 @@ export function AuthCallbackScreen() {
         }
 
         setHasHandled(true);
-        router.replace(callbackMeta.returnTo as Href);
+        const destination = callbackMeta.returnTo === '/chat'
+          ? '/chat?showList=1'
+          : callbackMeta.returnTo;
+        router.replace(destination as Href);
       } catch (error) {
         await captureError(error, { surface: 'auth-callback:finalize' });
       }

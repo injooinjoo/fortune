@@ -139,7 +139,7 @@ export function CharacterProfileScreen() {
             {character.name}
           </AppText>
           <Chip
-            label={isFortune ? '운세 캐릭터' : '스토리 캐릭터'}
+            label={isFortune ? '인사이트 캐릭터' : '스토리 캐릭터'}
             tone={isFortune ? 'accent' : 'success'}
           />
           <AppText

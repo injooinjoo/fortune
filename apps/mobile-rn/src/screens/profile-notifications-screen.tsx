@@ -40,8 +40,8 @@ const preferenceMeta: Record<
   { label: string; description: string; defaultOn: boolean }
 > = {
   push: {
-    label: "일일 운세 알림",
-    description: "매일 아침 오늘의 운세를 알려드려요",
+    label: "일일 인사이트 알림",
+    description: "매일 아침 오늘의 인사이트를 알려드려요",
     defaultOn: true,
   },
   chatReminders: {
@@ -147,7 +147,7 @@ export function ProfileNotificationsScreen() {
           variant="bodySmall"
           color={fortuneTheme.colors.textSecondary}
         >
-          일일 운세 알림을 받을 시간을 정합니다
+          일일 인사이트 알림을 받을 시간을 정합니다
         </AppText>
         <Pressable
           onPress={() => {

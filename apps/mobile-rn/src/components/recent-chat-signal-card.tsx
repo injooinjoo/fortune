@@ -46,8 +46,8 @@ export function RecentChatSignalCard({
       <View style={{ gap: 8 }}>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
           {sentMessageCount > 0 && lastFortuneType
-            ? `최근 운세 신호: ${formatFortuneTypeLabel(lastFortuneType)}`
-            : '최근 운세 신호가 아직 없어요.'}
+            ? `최근 인사이트: ${formatFortuneTypeLabel(lastFortuneType)}`
+            : '최근 인사이트가 아직 없어요.'}
         </AppText>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
           {recentCharacter

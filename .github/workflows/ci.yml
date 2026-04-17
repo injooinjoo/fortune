@@ -48,15 +48,54 @@ jobs:
           path: artifacts/design/paper_sync/
           retention-days: 7
 
+  mobile-rn-typecheck:
+    name: mobile-rn typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: apps/mobile-rn
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install dependencies (root)
+        run: npm ci
+        working-directory: .
+
+      - name: Install dependencies (mobile-rn)
+        run: npm install --no-audit --no-fund
+
+      - name: tsc --noEmit
+        run: npm run typecheck
+
+  rls-static-audit:
+    name: Supabase RLS static audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run static RLS audit
+        run: bash supabase/scripts/rls-static-audit.sh
+
   notify-slack:
     name: Slack Notification
-    needs: [repository-guards]
-    if: always() && (needs.repository-guards.result == 'failure' || needs.repository-guards.result == 'cancelled')
+    needs: [repository-guards, mobile-rn-typecheck, rls-static-audit]
+    if: always() && (needs.repository-guards.result == 'failure' || needs.mobile-rn-typecheck.result == 'failure' || needs.rls-static-audit.result == 'failure')
     uses: ./.github/workflows/slack-notify.yml
     with:
       workflow_name: 'CI Pipeline'
-      job_status: ${{ needs.repository-guards.result == 'failure' && 'failure' || 'cancelled' }}
-      failed_jobs: 'repository-guards'
+      job_status: 'failure'
+      failed_jobs: 'repository-guards,mobile-rn-typecheck,rls-static-audit'
       pr_number: ${{ github.event.pull_request.number || '' }}
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

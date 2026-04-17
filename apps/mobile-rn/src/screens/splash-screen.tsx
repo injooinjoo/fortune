@@ -76,7 +76,7 @@ export function SplashScreen() {
             color={fortuneTheme.colors.textSecondary}
             style={{ textAlign: 'center' }}
           >
-            대화와 운세 흐름을 이어 붙이기 전에 현재 상태를 먼저 정리하고 있어요.
+            대화와 인사이트 흐름을 이어 붙이기 전에 현재 상태를 먼저 정리하고 있어요.
           </AppText>
         </View>
       </View>

@@ -41,6 +41,8 @@ export const resultKinds = [
   'pet-compatibility',
   'lucky-items',
   'moving',
+  'new-year',
+  'match-insight',
 ] as const;
 
 export type ResultKind = (typeof resultKinds)[number];

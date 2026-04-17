@@ -38,6 +38,7 @@ const registry: Record<ResultKind, ComponentType<FortuneResultComponentProps>> =
   exercise: ResultBatchD.ExerciseResult,
   tarot: ResultBatchD.TarotResult,
   'game-enhance': ResultBatchD.GameEnhanceResult,
+  'match-insight': ResultBatchD.GameEnhanceResult,
   'ootd-evaluation': ResultBatchD.OotdEvaluationResult,
   exam: ResultBatchE.ExamResult,
   compatibility: ResultBatchE.CompatibilityResult,
@@ -54,6 +55,7 @@ const registry: Record<ResultKind, ComponentType<FortuneResultComponentProps>> =
   'pet-compatibility': PetCompatibilityResult,
   'lucky-items': LuckyItemsResult,
   moving: MovingResult,
+  'new-year': ResultBatchA.NewYearResult,
 };
 
 export function RenderFortuneResult({

@@ -1,14 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Animated, Pressable, TextInput, View } from "react-native";
+import { Alert, Pressable, TextInput, View } from "react-native";
 
 import { AppText } from "../components/app-text";
 import { InlineCalendar } from "../components/inline-calendar";
+import { PrimaryButton } from "../components/primary-button";
 import { Screen } from "../components/screen";
 import { captureError } from "../lib/error-reporting";
+import { patchMobileAppState } from "../lib/storage";
 import { fortuneTheme } from "../lib/theme";
+import { ensureRemoteUserProfile, updateRemoteUserProfile } from "../lib/user-profile-remote";
 import { invalidateFortuneResultCache } from "../features/chat-results/edge-runtime";
 import { useAppBootstrap } from "../providers/app-bootstrap-provider";
 import { useMobileAppState } from "../providers/mobile-app-state-provider";
@@ -22,7 +25,7 @@ const genderOptions: readonly { label: string; value: Gender }[] = [
 
 export function ProfileEditScreen() {
   const { session, updateOnboardingProgress } = useAppBootstrap();
-  const { state, saveProfile, status } = useMobileAppState();
+  const { state, refreshLocalState, status } = useMobileAppState();
   const [displayName, setDisplayName] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [birthTime, setBirthTime] = useState("");
@@ -31,8 +34,7 @@ export function ProfileEditScreen() {
   const [gender, setGender] = useState<Gender>(null);
   const [hydrated, setHydrated] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [showSavedFeedback, setShowSavedFeedback] = useState(false);
-  const feedbackOpacity = useRef(new Animated.Value(0)).current;
+  const [editingBirthDate, setEditingBirthDate] = useState(false);
 
   const email = session?.user.email ?? null;
 
@@ -57,23 +59,6 @@ export function ProfileEditScreen() {
     status,
   ]);
 
-  function showSavedToast() {
-    setShowSavedFeedback(true);
-    Animated.sequence([
-      Animated.timing(feedbackOpacity, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-      Animated.delay(1200),
-      Animated.timing(feedbackOpacity, {
-        toValue: 0,
-        duration: 400,
-        useNativeDriver: true,
-      }),
-    ]).start(() => setShowSavedFeedback(false));
-  }
-
   async function handleSave() {
     if (saving) return;
     setSaving(true);
@@ -86,14 +71,57 @@ export function ProfileEditScreen() {
         bloodType: bloodType.trim().toUpperCase(),
       };
 
-      await saveProfile(nextProfile);
-      await updateOnboardingProgress({
+      const userId = session?.user.id ?? null;
+
+      // 1. Write directly to SecureStore (bypasses provider's serialized queue)
+      console.log('[profile-edit] saving:', JSON.stringify(nextProfile));
+      await patchMobileAppState(
+        {
+          profile: {
+            ...nextProfile,
+            interestIds: state.profile.interestIds,
+          },
+        },
+        userId,
+      );
+      console.log('[profile-edit] SecureStore write done');
+
+      // 2. Sync React state from SecureStore immediately
+      await refreshLocalState();
+      console.log('[profile-edit] refreshLocalState done');
+
+      // 3. Push to Supabase BEFORE navigating back, so syncRemoteProfile
+      //    on the profile screen won't read stale remote data.
+      if (session) {
+        try {
+          await ensureRemoteUserProfile(session);
+          await updateRemoteUserProfile(session.user.id, {
+            name: nextProfile.displayName || null,
+            birth_date: nextProfile.birthDate || null,
+            birth_time: nextProfile.birthTime || null,
+            mbti: nextProfile.mbti || null,
+            blood_type: nextProfile.bloodType || null,
+          });
+          console.log('[profile-edit] Supabase push done');
+        } catch (remoteError) {
+          console.warn('[profile-edit] Supabase push failed:', remoteError);
+        }
+      }
+
+      updateOnboardingProgress({
         birthCompleted: nextProfile.birthDate.length > 0,
-      });
+      }).catch(() => undefined);
       invalidateFortuneResultCache();
-      showSavedToast();
+
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace("/profile");
+      }
+      setTimeout(() => Alert.alert("저장 완료", "프로필이 저장되었어요."), 300);
     } catch (error) {
       void captureError(error, { surface: "profile-edit:save" });
+      Alert.alert("저장 실패", error instanceof Error ? error.message : "프로필을 저장하지 못했어요. 다시 시도해주세요.");
     } finally {
       setSaving(false);
     }
@@ -127,9 +155,15 @@ export function ProfileEditScreen() {
           <Pressable
             accessibilityLabel="취소"
             accessibilityRole="button"
-            hitSlop={8}
+            hitSlop={16}
             onPress={handleCancel}
-            style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
+            style={({ pressed }) => ({
+              minWidth: 44,
+              minHeight: 44,
+              alignItems: "center",
+              justifyContent: "center",
+              opacity: pressed ? 0.6 : 1,
+            })}
           >
             <AppText
               variant="bodyLarge"
@@ -145,9 +179,13 @@ export function ProfileEditScreen() {
             accessibilityLabel="저장"
             accessibilityRole="button"
             disabled={saving}
-            hitSlop={8}
+            hitSlop={16}
             onPress={() => void handleSave()}
             style={({ pressed }) => ({
+              minWidth: 44,
+              minHeight: 44,
+              alignItems: "center",
+              justifyContent: "center",
               opacity: saving ? 0.4 : pressed ? 0.6 : 1,
             })}
           >
@@ -224,9 +262,9 @@ export function ProfileEditScreen() {
           <AppText variant="labelSmall" color={fortuneTheme.colors.textSecondary}>
             생년월일
           </AppText>
-          {birthDate ? (
+          {birthDate && !editingBirthDate ? (
             <Pressable
-              onPress={() => setBirthDate("")}
+              onPress={() => setEditingBirthDate(true)}
               style={({ pressed }) => ({
                 backgroundColor: fortuneTheme.colors.surfaceSecondary,
                 borderColor: fortuneTheme.colors.ctaBackground,
@@ -245,12 +283,13 @@ export function ProfileEditScreen() {
             </Pressable>
           ) : (
             <InlineCalendar
-              selectedDate={null}
+              selectedDate={birthDate ? (() => { const [y, m, d] = birthDate.split("-").map(Number); return new Date(y, m - 1, d); })() : null}
               onSelectDate={(date) => {
                 const y = date.getFullYear();
                 const m = String(date.getMonth() + 1).padStart(2, "0");
                 const d = String(date.getDate()).padStart(2, "0");
                 setBirthDate(`${y}-${m}-${d}`);
+                setEditingBirthDate(false);
               }}
               maxDate={new Date()}
             />
@@ -283,13 +322,13 @@ export function ProfileEditScreen() {
                     borderRadius: fortuneTheme.radius.full,
                     borderWidth: 1,
                     borderColor: isSelected ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.border,
-                    backgroundColor: isSelected ? fortuneTheme.colors.ctaBackground + "20" : fortuneTheme.colors.surfaceSecondary,
+                    backgroundColor: isSelected ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.surfaceSecondary,
                     opacity: pressed ? 0.7 : 1,
                   })}
                 >
                   <AppText
                     variant="labelSmall"
-                    color={isSelected ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.textSecondary}
+                    color={isSelected ? fortuneTheme.colors.ctaForeground : fortuneTheme.colors.textSecondary}
                   >
                     {slot}
                   </AppText>
@@ -317,13 +356,13 @@ export function ProfileEditScreen() {
                     borderRadius: fortuneTheme.radius.full,
                     borderWidth: 1,
                     borderColor: isSelected ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.border,
-                    backgroundColor: isSelected ? fortuneTheme.colors.ctaBackground + "20" : fortuneTheme.colors.surfaceSecondary,
+                    backgroundColor: isSelected ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.surfaceSecondary,
                     opacity: pressed ? 0.7 : 1,
                   })}
                 >
                   <AppText
                     variant="labelSmall"
-                    color={isSelected ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.textSecondary}
+                    color={isSelected ? fortuneTheme.colors.ctaForeground : fortuneTheme.colors.textSecondary}
                   >
                     {type}
                   </AppText>
@@ -346,35 +385,15 @@ export function ProfileEditScreen() {
           selected={bloodType}
           onSelect={setBloodType}
         />
+        {/* 저장 버튼 (폼 하단) */}
+        <PrimaryButton
+          disabled={saving}
+          onPress={() => void handleSave()}
+        >
+          {saving ? "저장 중..." : "프로필 저장"}
+        </PrimaryButton>
       </View>
 
-      {/* Saved feedback toast */}
-      {showSavedFeedback ? (
-        <Animated.View
-          pointerEvents="none"
-          style={{
-            position: "absolute",
-            bottom: 40,
-            left: 0,
-            right: 0,
-            alignItems: "center",
-            opacity: feedbackOpacity,
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: fortuneTheme.colors.success,
-              paddingHorizontal: fortuneTheme.spacing.lg,
-              paddingVertical: fortuneTheme.spacing.sm,
-              borderRadius: fortuneTheme.radius.full,
-            }}
-          >
-            <AppText variant="labelLarge" color="#FFFFFF">
-              저장됨
-            </AppText>
-          </View>
-        </Animated.View>
-      ) : null}
     </Screen>
   );
 }

@@ -5,6 +5,7 @@ import { GeminiProvider } from "./providers/gemini.ts";
 import { OpenAIProvider } from "./providers/openai.ts";
 import { AnthropicProvider } from "./providers/anthropic.ts";
 import { GrokProvider } from "./providers/grok.ts";
+import { GemmaProvider } from "./providers/gemma.ts";
 import { getModelConfig } from "./config.ts";
 import { ConfigService } from "./config-service.ts";
 
@@ -44,12 +45,12 @@ export class LLMFactory {
 
   /**
    * 특정 Provider와 모델로 직접 생성
-   * @param provider 'gemini' | 'openai' | 'anthropic' | 'grok'
+   * @param provider 'gemini' | 'openai' | 'anthropic' | 'grok' | 'gemma'
    * @param model 모델 이름
    * @returns ILLMProvider 인스턴스
    */
   static create(
-    provider: "gemini" | "openai" | "anthropic" | "grok",
+    provider: "gemini" | "openai" | "anthropic" | "grok" | "gemma",
     model: string,
     featureName = "direct",
   ): ILLMProvider {
@@ -60,7 +61,7 @@ export class LLMFactory {
    * Provider 인스턴스 생성 (내부용)
    */
   private static createProvider(
-    provider: "gemini" | "openai" | "anthropic" | "grok",
+    provider: "gemini" | "openai" | "anthropic" | "grok" | "gemma",
     model: string,
     featureName: string,
   ): ILLMProvider {
@@ -89,6 +90,13 @@ export class LLMFactory {
       case "grok":
         return new GrokProvider({
           apiKey: Deno.env.get("XAI_API_KEY") || "",
+          model,
+          featureName,
+        });
+
+      case "gemma":
+        return new GemmaProvider({
+          apiKey: Deno.env.get("GROQ_API_KEY") || "",
           model,
           featureName,
         });

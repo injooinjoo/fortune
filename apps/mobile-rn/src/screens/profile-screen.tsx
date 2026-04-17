@@ -2,7 +2,7 @@ import { useMemo, useState, useCallback } from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { Alert, Linking, Platform, Pressable, View } from 'react-native';
 import type { Href } from 'expo-router';
 
@@ -14,6 +14,7 @@ import { captureError } from '../lib/error-reporting';
 import { supabase } from '../lib/supabase';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
+import { onDeviceLLMEngine, type ModelStatus } from '../lib/on-device-llm';
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
 
 const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
@@ -56,8 +57,29 @@ function getConstellation(birthDate: string) {
 export function ProfileScreen() {
   const [isRestoring, setIsRestoring] = useState(false);
   const [themeMode, setThemeMode] = useState<'system' | 'light' | 'dark'>('system');
+  const [modelStatus, setModelStatus] = useState<ModelStatus>(onDeviceLLMEngine.getStatus());
+  const [downloadPct, setDownloadPct] = useState(0);
   const { session } = useAppBootstrap();
-  const { restorePurchases, state, syncRemoteProfile } = useMobileAppState();
+  const { refreshLocalState, restorePurchases, saveSettings, state, syncRemoteProfile } = useMobileAppState();
+
+  // Re-sync state when this screen gains focus (e.g. returning from profile-edit).
+  // refreshLocalState reads directly from SecureStore into React state (no
+  // runSerialized) so it picks up writes made via patchMobileAppState immediately.
+  // syncRemoteProfile is fired in the background to pull any remote changes.
+  useFocusEffect(
+    useCallback(() => {
+      refreshLocalState().catch(() => undefined);
+      syncRemoteProfile().catch(() => undefined);
+      setModelStatus(onDeviceLLMEngine.getStatus());
+
+      const unsub = (onDeviceLLMEngine as any).onStatusChange?.((s: ModelStatus) => {
+        setModelStatus(s);
+        const progress = onDeviceLLMEngine.getDownloadProgress();
+        if (progress) setDownloadPct(progress.percentage);
+      });
+      return () => unsub?.();
+    }, [refreshLocalState, syncRemoteProfile]),
+  );
 
   const savedName =
     state.profile.displayName.trim() ||
@@ -83,13 +105,22 @@ export function ProfileScreen() {
 
   const initial = savedName.charAt(0).toUpperCase() || 'U';
 
-  async function handleSignOut() {
-    try {
-      await supabase?.auth.signOut();
-      router.replace('/chat');
-    } catch (error) {
-      await captureError(error, { surface: 'profile:sign-out' });
-    }
+  function handleSignOut() {
+    Alert.alert('로그아웃', '정말 로그아웃 하시겠어요?', [
+      { text: '취소', style: 'cancel' },
+      {
+        text: '로그아웃',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await supabase?.auth.signOut();
+            router.replace({ pathname: '/chat', params: { showList: '1' } });
+          } catch (error) {
+            await captureError(error, { surface: 'profile:sign-out' });
+          }
+        },
+      },
+    ]);
   }
 
   async function handleRestorePurchases() {
@@ -251,6 +282,111 @@ export function ProfileScreen() {
             <ThemeChip label="다크" active={themeMode === 'dark'} onPress={() => setThemeMode('dark')} />
           </View>
         </View>
+
+        {/* AI 응답 모드 */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Ionicons
+              name="hardware-chip-outline"
+              size={18}
+              color={fortuneTheme.colors.textSecondary}
+            />
+            <AppText variant="bodyMedium">AI 응답</AppText>
+          </View>
+          <View style={{ flexDirection: 'row', gap: 4 }}>
+            <ThemeChip label="클라우드" active={state.settings.aiMode === 'cloud'} onPress={() => saveSettings({ aiMode: 'cloud' })} />
+            <ThemeChip label="온디바이스" active={state.settings.aiMode === 'on-device'} onPress={() => saveSettings({ aiMode: 'on-device' })} />
+            <ThemeChip label="자동" active={state.settings.aiMode === 'auto'} onPress={() => saveSettings({ aiMode: 'auto' })} />
+          </View>
+        </View>
+
+        {/* 온디바이스 모델 상태 */}
+        {state.settings.aiMode !== 'cloud' ? (
+          <View style={{ gap: 6 }}>
+            {modelStatus === 'not-downloaded' ? (
+              <Pressable
+                onPress={() => {
+                  onDeviceLLMEngine.startDownload().catch(() => setModelStatus('error'));
+                }}
+                style={{
+                  backgroundColor: fortuneTheme.colors.surfaceSecondary,
+                  borderRadius: fortuneTheme.radius.sm,
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
+                <Ionicons name="cloud-download-outline" size={16} color={fortuneTheme.colors.ctaBackground} />
+                <AppText variant="bodySmall" color={fortuneTheme.colors.ctaBackground}>
+                  AI 모델 다운로드 (~1.5GB)
+                </AppText>
+              </Pressable>
+            ) : modelStatus === 'downloading' ? (
+              <View style={{ gap: 4 }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+                    다운로드 중... {downloadPct}%
+                  </AppText>
+                  <Pressable onPress={() => onDeviceLLMEngine.cancelDownload()}>
+                    <AppText variant="bodySmall" color={fortuneTheme.colors.textTertiary}>취소</AppText>
+                  </Pressable>
+                </View>
+                <View
+                  style={{
+                    height: 4,
+                    backgroundColor: fortuneTheme.colors.surfaceSecondary,
+                    borderRadius: 2,
+                    overflow: 'hidden',
+                  }}
+                >
+                  <View
+                    style={{
+                      height: 4,
+                      width: `${downloadPct}%`,
+                      backgroundColor: fortuneTheme.colors.ctaBackground,
+                      borderRadius: 2,
+                    }}
+                  />
+                </View>
+              </View>
+            ) : modelStatus === 'ready' ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Ionicons name="checkmark-circle" size={14} color="#4CAF50" />
+                <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+                  온디바이스 AI 준비됨
+                </AppText>
+              </View>
+            ) : modelStatus === 'loading' ? (
+              <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+                모델 로딩 중...
+              </AppText>
+            ) : modelStatus === 'error' ? (
+              <Pressable
+                onPress={() => {
+                  onDeviceLLMEngine.startDownload().catch(() => undefined);
+                }}
+              >
+                <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+                  오류 발생 — 탭하여 재시도
+                </AppText>
+              </Pressable>
+            ) : null}
+          </View>
+        ) : null}
 
         {/* 계정 연결 */}
         {authProvider ? (

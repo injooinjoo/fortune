@@ -107,6 +107,17 @@ function constellationDateRange(c: (typeof CONSTELLATIONS)[number]): string {
 function TraditionalSajuResult(props: FortuneResultComponentProps) {
   const meta = resultMetadataByKind['traditional-saju'];
   const result = useResultData(props.payload);
+  const raw = _obj(props.payload?.rawApiResponse);
+  const data = _obj(raw.data ?? raw.fortune ?? raw);
+
+  // Direct API fields
+  const sections = _obj(data.sections);
+  const analysis = _str(sections.analysis);
+  const answer = _str(sections.answer);
+  const adviceText = _str(sections.advice) || _str(data.advice);
+  const supplement = _str(sections.supplement);
+  const sajuSummary = _str(data.saju_summary);
+  const question = _str(data.question);
 
   const pillarMetrics = result.hasApiData && result.metrics.length >= 4
     ? result.metrics.slice(0, 4)
@@ -136,7 +147,6 @@ function TraditionalSajuResult(props: FortuneResultComponentProps) {
     : [
         '오늘은 강한 화 기운이 보이므로, 새로운 일을 벌이기보다 이미 시작한 일을 밀어붙이는 편이 좋습니다.',
         '토와 금이 약한 편이라 감정이 올라오면 판단이 급해질 수 있습니다.',
-        '사람 앞에서 결정을 말하기 전에 메모로 한 번 더 정리하면 흔들림이 줄어듭니다.',
       ];
 
   const fortuneMetrics = result.hasApiData && result.metrics.length >= 13
@@ -148,9 +158,9 @@ function TraditionalSajuResult(props: FortuneResultComponentProps) {
         { label: '회복운', value: '중상', note: '잠깐 쉬어야 운이 유지됩니다.' },
       ];
 
-  const summary = result.hasApiData && result.summary
+  const summary = sajuSummary || (result.hasApiData && result.summary
     ? result.summary
-    : '오행의 균형은 크게 흔들리지 않지만, 오늘은 강한 기운을 어디에 쓰는지가 더 중요합니다. 힘을 분산하지 말고 우선순위를 먼저 잡아야 합니다.';
+    : '오행의 균형은 크게 흔들리지 않지만, 오늘은 강한 기운을 어디에 쓰는지가 더 중요합니다.');
 
   const chips = result.hasApiData && result.contextTags.length > 0
     ? result.contextTags
@@ -173,13 +183,38 @@ function TraditionalSajuResult(props: FortuneResultComponentProps) {
         <StatRail items={elementStats} />
       </SectionCard>
 
+      {/* Raw sections from API */}
+      {analysis ? (
+        <SectionCard title="사주 분석">
+          <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>{analysis}</AppText>
+        </SectionCard>
+      ) : null}
+
+      {answer ? (
+        <SectionCard title="질문 답변">
+          <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>{answer}</AppText>
+        </SectionCard>
+      ) : null}
+
       <SectionCard title="핵심 포인트">
         <BulletList items={highlights} />
       </SectionCard>
 
-      <SectionCard title="운세 포인트">
+      <SectionCard title="인사이트 포인트">
         <MetricGrid items={fortuneMetrics} />
       </SectionCard>
+
+      {adviceText ? (
+        <SectionCard title="조언">
+          <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>{adviceText}</AppText>
+        </SectionCard>
+      ) : null}
+
+      {supplement ? (
+        <SectionCard title="보완 방법">
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>{supplement}</AppText>
+        </SectionCard>
+      ) : null}
     </View>
   );
 }
@@ -303,6 +338,48 @@ function DailyCalendarResult(props: FortuneResultComponentProps) {
   const ageDescription = _str(ageFortune.description);
   const hasAgeFortune = !!(ageGroup || ageTitle);
 
+  /* --- Missing fields: personalActions, caution, lucky_outfit, daily_predictions, lucky_numbers --- */
+  const personalActions = _arr(raw.personalActions)
+    .map((a) => {
+      const act = _obj(a);
+      const title = _str(act.title);
+      const why = _str(act.why);
+      return title ? (why ? `${title}: ${why}` : title) : '';
+    })
+    .filter(Boolean);
+
+  const caution = _str(raw.caution);
+
+  const luckyOutfit = _obj(raw.lucky_outfit);
+  const outfitTitle = _str(luckyOutfit.title);
+  const outfitItems = _arr(luckyOutfit.items).map((i) => _str(i)).filter(Boolean);
+
+  const dailyPredictions = _obj(raw.daily_predictions);
+  const hasDailyPredictions = _num(dailyPredictions.tomorrow) > 0 || _num(dailyPredictions.yesterday) > 0;
+
+  const luckyNumbers = _arr(raw.lucky_numbers).map((n) => String(n)).filter(Boolean);
+
+  const celebsSimilarSaju = _arr(raw.celebrities_similar_saju)
+    .map((c) => {
+      const cel = _obj(c);
+      return { name: _str(cel.name), year: _str(cel.year), description: _str(cel.description) };
+    })
+    .filter((c) => c.name);
+
+  const godlife = _str(raw.godlife);
+  const greeting = _str(raw.greeting);
+
+  /* --- Fortune Summary (by MBTI, zodiac sign, zodiac animal) --- */
+  const fortuneSummaryObj = _obj(raw.fortuneSummary);
+  const byMBTI = _obj(fortuneSummaryObj.byMBTI);
+  const byZodiacSign = _obj(fortuneSummaryObj.byZodiacSign);
+  const byZodiacAnimal = _obj(fortuneSummaryObj.byZodiacAnimal);
+  const hasFortuneSummary = _str(byMBTI.title) || _str(byZodiacSign.title) || _str(byZodiacAnimal.title);
+
+  /* --- Saju Insight --- */
+  const sajuInsight = _obj(raw.sajuInsight);
+  const sajuKeyword = _str(sajuInsight.keyword);
+
   /* --- Summary (no chips / no context tags — they looked like debug) --- */
   const summary = result.hasApiData && result.summary
     ? result.summary
@@ -398,7 +475,7 @@ function DailyCalendarResult(props: FortuneResultComponentProps) {
         <View style={{ gap: fortuneTheme.spacing.sm }}>
           <View style={{ paddingHorizontal: 4 }}>
             <AppText variant="labelLarge" color={fortuneTheme.colors.textPrimary}>
-              카테고리별 운세
+              카테고리별 인사이트
             </AppText>
           </View>
 
@@ -641,7 +718,7 @@ function DailyCalendarResult(props: FortuneResultComponentProps) {
           }}
         >
           <AppText variant="labelLarge" color={fortuneTheme.colors.textPrimary}>
-            {ageGroup ? `${ageGroup} 나이대 운세` : '나이 운세'}
+            {ageGroup ? `${ageGroup} 나이대 분석` : '나이 분석'}
           </AppText>
           {ageTitle ? (
             <AppText variant="heading4" color={fortuneTheme.colors.accentTertiary}>
@@ -654,6 +731,99 @@ function DailyCalendarResult(props: FortuneResultComponentProps) {
             </AppText>
           ) : null}
         </Card>
+      ) : null}
+
+      {/* ===== Personal Actions (추천 행동) ===== */}
+      {personalActions.length > 0 ? (
+        <SectionCard title="추천 행동">
+          <BulletList items={personalActions} />
+        </SectionCard>
+      ) : null}
+
+      {/* ===== Caution (주의 사항) ===== */}
+      {caution ? (
+        <SectionCard title="주의 사항">
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>{caution}</AppText>
+        </SectionCard>
+      ) : null}
+
+      {/* ===== Lucky Outfit (오늘의 코디) ===== */}
+      {outfitTitle || outfitItems.length > 0 ? (
+        <SectionCard title={outfitTitle || '오늘의 코디'}>
+          {outfitItems.length > 0 ? <KeywordPills keywords={outfitItems} /> : null}
+        </SectionCard>
+      ) : null}
+
+      {/* ===== Daily Predictions (전후일 점수) ===== */}
+      {hasDailyPredictions ? (
+        <SectionCard title="주변 날짜 흐름">
+          <MetricGrid items={[
+            ..._num(dailyPredictions.before_yesterday) > 0 ? [{ label: '그저께', value: `${_num(dailyPredictions.before_yesterday)}`, note: '' }] : [],
+            ..._num(dailyPredictions.yesterday) > 0 ? [{ label: '어제', value: `${_num(dailyPredictions.yesterday)}`, note: '' }] : [],
+            ..._num(dailyPredictions.tomorrow) > 0 ? [{ label: '내일', value: `${_num(dailyPredictions.tomorrow)}`, note: '' }] : [],
+            ..._num(dailyPredictions.after_tomorrow) > 0 ? [{ label: '모레', value: `${_num(dailyPredictions.after_tomorrow)}`, note: '' }] : [],
+          ]} />
+        </SectionCard>
+      ) : null}
+
+      {/* ===== Lucky Numbers (행운 번호) ===== */}
+      {luckyNumbers.length > 0 ? (
+        <SectionCard title="행운 번호">
+          <KeywordPills keywords={luckyNumbers} />
+        </SectionCard>
+      ) : null}
+
+      {/* ===== Celebrities Similar Saju (비슷한 사주 유명인) ===== */}
+      {celebsSimilarSaju.length > 0 ? (
+        <SectionCard title="비슷한 사주 유명인">
+          {celebsSimilarSaju.map((cel, i) => (
+            <AppText key={i} variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+              {cel.name} ({cel.year}) — {cel.description}
+            </AppText>
+          ))}
+        </SectionCard>
+      ) : null}
+
+      {/* ===== Godlife (갓생 팁) ===== */}
+      {godlife ? (
+        <InsetQuote text={godlife} />
+      ) : null}
+
+      {/* ===== Fortune Summary by type (MBTI/별자리/띠) ===== */}
+      {hasFortuneSummary ? (
+        <SectionCard title="유형별 인사이트 요약">
+          {_str(byMBTI.title) ? (
+            <View style={{ marginBottom: fortuneTheme.spacing.sm }}>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.ctaBackground}>🧠 MBTI ({_num(byMBTI.score)}점)</AppText>
+              <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+                {_str(byMBTI.title)}: {_str(byMBTI.content)}
+              </AppText>
+            </View>
+          ) : null}
+          {_str(byZodiacSign.title) ? (
+            <View style={{ marginBottom: fortuneTheme.spacing.sm }}>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.ctaBackground}>⭐ 별자리 ({_num(byZodiacSign.score)}점)</AppText>
+              <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+                {_str(byZodiacSign.title)}: {_str(byZodiacSign.content)}
+              </AppText>
+            </View>
+          ) : null}
+          {_str(byZodiacAnimal.title) ? (
+            <View>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.ctaBackground}>🐉 띠 ({_num(byZodiacAnimal.score)}점)</AppText>
+              <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+                {_str(byZodiacAnimal.title)}: {_str(byZodiacAnimal.content)}
+              </AppText>
+            </View>
+          ) : null}
+        </SectionCard>
+      ) : null}
+
+      {/* ===== Saju Insight (사주 키워드) ===== */}
+      {sajuKeyword ? (
+        <SectionCard title="사주 키워드">
+          <KeywordPills keywords={[sajuKeyword]} />
+        </SectionCard>
       ) : null}
 
       {/* ===== Fallback memo when no specialTip or aiInsight ===== */}
@@ -686,52 +856,68 @@ function DailyCalendarResult(props: FortuneResultComponentProps) {
 function MbtiResult(props: FortuneResultComponentProps) {
   const meta = resultMetadataByKind.mbti;
   const result = useResultData(props.payload);
+  const raw = _obj(props.payload?.rawApiResponse);
+  const data = _obj(raw.data ?? raw.fortune ?? raw);
 
-  const heroDescription = result.hasApiData && result.summary
-    ? result.summary
-    : '유형 자체보다 오늘 어떤 축이 먼저 드러나는지가 중요합니다. MBTI 결과를 행동 기준으로 번역한 화면입니다.';
+  // Direct API fields
+  const mbtiType = _str(data.mbti) || _str(data.mbtiType) || (result.hasApiData && result.metrics.length > 0 ? result.metrics[0]!.value : 'INFJ');
+  const mbtiDesc = _str(data.mbtiDescription) || '유형 자체보다 오늘 어떤 축이 먼저 드러나는지가 중요합니다.';
+  const score = _num(data.score) || _num(data.overallScore) || result.score;
+  const heroDescription = _str(data.summary) || result.summary || '유형 자체보다 오늘 어떤 축이 먼저 드러나는지가 중요합니다.';
+  const todayFortune = _str(data.todayFortune);
+  const todayTrap = _str(data.todayTrap);
+  const luckyColor = _str(data.luckyColor);
+  const luckyNumber = _str(data.luckyNumber);
+  const energyLevel = _num(data.energyLevel);
 
-  const heroChips = result.hasApiData && result.contextTags.length > 0
-    ? result.contextTags
-    : ['행동 축', '성향 해석', '오늘의 힌트'];
-
-  const mbtiType = result.hasApiData && result.metrics.length > 0
-    ? result.metrics[0]!.value
-    : 'INFJ';
-
-  const mbtiDescription = result.hasApiData && result.metrics.length > 1
-    ? result.metrics[1]!.note ?? '오늘은 직관과 판단 축이 더 강하게 올라옵니다. 감정 공감은 좋지만, 기준을 먼저 세우는 편이 안정적입니다.'
-    : '오늘은 직관과 판단 축이 더 강하게 올라옵니다. 감정 공감은 좋지만, 기준을 먼저 세우는 편이 안정적입니다.';
-
-  const mbtiKeywords = result.hasApiData && result.luckyItems.length > 0
-    ? result.luckyItems
-    : ['직관', '판단', '공감', '정리'];
-
-  const dimensionStats = result.hasApiData && result.metrics.length >= 6
-    ? result.metrics.slice(2, 6).map((m) => ({
-        label: m.label,
-        value: parseInt(m.value, 10) || 70,
-        highlight: m.note,
+  // Dimensions (E/N/T/J axis data)
+  const rawDimensions = Array.isArray(data.dimensions) ? data.dimensions as Record<string, unknown>[] : [];
+  const dimensionStats = rawDimensions.length > 0
+    ? rawDimensions.map((d) => ({
+        label: _str(d.dimension),
+        value: _num(d.score, 70),
+        highlight: _str(d.tip) || _str(d.fortune).slice(0, 40),
       }))
-    : [
-        { label: 'E ↔ I', value: 68, highlight: '혼자 정리한 뒤 말할 때 더 정확합니다.' },
-        { label: 'S ↔ N', value: 86, highlight: '맥락과 미래 흐름을 먼저 읽습니다.' },
-        { label: 'T ↔ F', value: 61, highlight: '감정 공감이 크지만 오늘은 기준이 필요합니다.' },
-        { label: 'J ↔ P', value: 80, highlight: '정리된 계획이 있을수록 힘이 납니다.' },
-      ];
+    : result.hasApiData && result.metrics.length >= 6
+      ? result.metrics.slice(2, 6).map((m) => ({
+          label: m.label,
+          value: parseInt(m.value, 10) || 70,
+          highlight: m.note,
+        }))
+      : [
+          { label: 'E ↔ I', value: 68, highlight: '혼자 정리한 뒤 말할 때 더 정확합니다.' },
+          { label: 'S ↔ N', value: 86, highlight: '맥락과 미래 흐름을 먼저 읽습니다.' },
+          { label: 'T ↔ F', value: 61, highlight: '감정 공감이 크지만 오늘은 기준이 필요합니다.' },
+          { label: 'J ↔ P', value: 80, highlight: '정리된 계획이 있을수록 힘이 납니다.' },
+        ];
 
-  const fortuneMetrics = result.hasApiData && result.metrics.length >= 10
-    ? result.metrics.slice(6, 10)
-    : [
-        { label: '대화 운', value: '87', note: '짧고 깊은 대화에 강함' },
-        { label: '집중 운', value: '91', note: '혼자 정리할 때 상승' },
-        { label: '협업 운', value: '70', note: '역할 분리가 있어야 편함' },
-        { label: '회복 운', value: '75', note: '저녁 고요한 시간이 도움' },
-      ];
+  // Category fortunes
+  const loveFortune = _str(data.loveFortune);
+  const careerFortune = _str(data.careerFortune);
+  const moneyFortune = _str(data.moneyFortune);
+  const healthFortune = _str(data.healthFortune);
+  const hasCategoryFortunes = loveFortune || careerFortune || moneyFortune || healthFortune;
 
-  const cautionTip = result.hasApiData && result.specialTip
-    ? result.specialTip
-    : '상대의 감정을 먼저 읽는 습관 때문에 내 결정을 미루지 않도록 주의하세요. 오늘은 \'내 기준 한 줄\'을 먼저 적는 게 중요합니다.';
+  // Compatibility
+  // compatibility can be string[] (MBTI types) or object[] (detailed)
+  const rawCompatRaw = Array.isArray(data.compatibility) ? data.compatibility : [];
+  const rawCompat = rawCompatRaw.length > 0 && typeof rawCompatRaw[0] === 'string'
+    ? (rawCompatRaw as string[]).map((mbtiType, i) => ({ label: `궁합 ${i + 1}`, value: mbtiType, note: '' }))
+    : (rawCompatRaw as Record<string, unknown>[]).map((c) => ({
+        label: _str(c.type) || _str(c.mbti) || `궁합`,
+        value: _str(c.score) || _str(c.compatibility) || '?',
+        note: _str(c.description) || _str(c.reason) || '',
+      }));
+
+  // Cognitive strengths & challenges
+  const cognitiveStrengths = _strArr(data.cognitiveStrengths);
+  const challenges = _strArr(data.challenges);
+
+  // Category insight
+  const catInsight = _obj(data.categoryInsight);
+  const catInsightTips = _strArr(catInsight.tips);
+
+  const advice = _str(data.advice) || _str(data.mbti_advice);
 
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
@@ -739,35 +925,125 @@ function MbtiResult(props: FortuneResultComponentProps) {
         emoji="🧠"
         title={meta.title}
         description={heroDescription}
-        chips={heroChips}
       />
 
+      {/* MBTI 타입 카드 */}
       <SectionCard title="오늘의 MBTI 요약">
-        <Card
-          style={{
-            backgroundColor: fortuneTheme.colors.backgroundTertiary,
-            gap: fortuneTheme.spacing.sm,
-          }}
-        >
-          <AppText variant="displaySmall">{mbtiType}</AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {mbtiDescription}
-          </AppText>
-          <KeywordPills keywords={mbtiKeywords} />
+        <Card style={{ backgroundColor: fortuneTheme.colors.backgroundTertiary, gap: fortuneTheme.spacing.sm, alignItems: 'center', paddingVertical: 20 }}>
+          <AppText variant="displayMedium">{mbtiType}</AppText>
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>{mbtiDesc}</AppText>
+          {energyLevel > 0 ? (
+            <AppText variant="labelLarge" color={fortuneTheme.colors.ctaBackground}>에너지 레벨: {energyLevel}%</AppText>
+          ) : null}
+          {luckyColor || luckyNumber ? (
+            <KeywordPills keywords={[
+              ...(luckyColor ? [`행운 색상: ${luckyColor}`] : []),
+              ...(luckyNumber ? [`행운 숫자: ${luckyNumber}`] : []),
+            ]} />
+          ) : null}
         </Card>
       </SectionCard>
 
+      {/* 오늘의 흐름 */}
+      {todayFortune ? (
+        <SectionCard title="오늘의 흐름">
+          <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>{todayFortune}</AppText>
+        </SectionCard>
+      ) : null}
+
+      {/* 성향 축 */}
       <SectionCard title="성향 축">
         <StatRail items={dimensionStats} />
+        {rawDimensions.length > 0 ? (
+          <View style={{ gap: fortuneTheme.spacing.xs, marginTop: fortuneTheme.spacing.sm }}>
+            {rawDimensions.map((d, i) => {
+              const warning = _str(d.warning);
+              return warning ? (
+                <AppText key={i} variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+                  ⚠️ {_str(d.dimension)}: {warning}
+                </AppText>
+              ) : null;
+            })}
+          </View>
+        ) : null}
       </SectionCard>
 
-      <SectionCard title="행운 포인트">
-        <MetricGrid items={fortuneMetrics} />
-      </SectionCard>
+      {/* 카테고리 인사이트 */}
+      {_str(catInsight.title) ? (
+        <SectionCard title={_str(catInsight.title)}>
+          {_str(catInsight.content) ? (
+            <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>{_str(catInsight.content)}</AppText>
+          ) : null}
+          {catInsightTips.length > 0 ? (
+            <BulletList items={catInsightTips} />
+          ) : null}
+        </SectionCard>
+      ) : null}
 
-      <SectionCard title="주의 문장">
-        <InsetQuote text={cautionTip} />
-      </SectionCard>
+      {/* 카테고리별 인사이트 */}
+      {hasCategoryFortunes ? (
+        <SectionCard title="분야별 인사이트">
+          {loveFortune ? (
+            <View style={{ marginBottom: fortuneTheme.spacing.sm }}>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>💕 연애</AppText>
+              <AppText variant="bodySmall" color={fortuneTheme.colors.textPrimary}>{loveFortune}</AppText>
+            </View>
+          ) : null}
+          {careerFortune ? (
+            <View style={{ marginBottom: fortuneTheme.spacing.sm }}>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>💼 직장</AppText>
+              <AppText variant="bodySmall" color={fortuneTheme.colors.textPrimary}>{careerFortune}</AppText>
+            </View>
+          ) : null}
+          {moneyFortune ? (
+            <View style={{ marginBottom: fortuneTheme.spacing.sm }}>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>💰 금전</AppText>
+              <AppText variant="bodySmall" color={fortuneTheme.colors.textPrimary}>{moneyFortune}</AppText>
+            </View>
+          ) : null}
+          {healthFortune ? (
+            <View>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>🏃 건강</AppText>
+              <AppText variant="bodySmall" color={fortuneTheme.colors.textPrimary}>{healthFortune}</AppText>
+            </View>
+          ) : null}
+        </SectionCard>
+      ) : null}
+
+      {/* 인지 강점 */}
+      {cognitiveStrengths.length > 0 ? (
+        <SectionCard title="인지 강점">
+          <BulletList items={cognitiveStrengths} />
+        </SectionCard>
+      ) : null}
+
+      {/* 도전 과제 */}
+      {challenges.length > 0 ? (
+        <SectionCard title="오늘의 도전 과제">
+          <BulletList items={challenges} />
+        </SectionCard>
+      ) : null}
+
+      {/* 궁합 */}
+      {rawCompat.length > 0 ? (
+        <SectionCard title="MBTI 궁합">
+          <KeywordPills keywords={rawCompat.map((c) => c.value).filter(Boolean)} />
+        </SectionCard>
+      ) : null}
+
+      {/* 주의 (오늘의 함정) */}
+      {todayTrap ? (
+        <SectionCard title="오늘의 함정 ⚠️">
+          <InsetQuote text={todayTrap} />
+        </SectionCard>
+      ) : null}
+
+      {/* 조언 */}
+      {advice ? (
+        <SectionCard title="조언">
+          <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>{advice}</AppText>
+        </SectionCard>
+      ) : null}
     </View>
   );
 }
@@ -779,95 +1055,160 @@ function MbtiResult(props: FortuneResultComponentProps) {
 function BloodTypeResult(props: FortuneResultComponentProps) {
   const meta = resultMetadataByKind['blood-type'];
   const result = useResultData(props.payload);
+  const raw = _obj(props.payload?.rawApiResponse);
+  const data = _obj(raw.data ?? raw.fortune ?? raw);
 
-  const heroDescription = result.hasApiData && result.summary
-    ? result.summary
-    : '혈액형 성향은 오늘의 분위기와 만나면 더 현실적인 조언으로 바뀝니다. 프로필형 결과 구조를 RN으로 옮긴 화면입니다.';
+  // Direct API fields
+  const bloodTypeLabel = _str(data.bloodTypeLabel) || _str(data.bloodType) || 'A형';
+  const bloodTypeKeyword = _str(data.bloodTypeKeyword);
+  const bloodTypeElement = _str(data.bloodTypeElement);
+  const personality = _obj(data.personalityAnalysis);
+  const coreTrait = _str(personality.coreTrait);
+  const strengths = _strArr(personality.strengths);
+  const watchOut = _str(personality.watchOut);
+  const moodKeyword = _str(personality.moodKeyword);
+  const categories = _obj(data.categories);
+  const compat = _obj(data.compatibility);
+  const lucky = _obj(data.luckyItems);
+  const specialNote = _str(data.specialNote);
+  const highlights = _strArr(data.highlights);
 
-  const heroChips = result.hasApiData && result.contextTags.length > 0
-    ? result.contextTags
-    : ['성향', '궁합', '오늘의 포인트'];
+  const heroDescription = _str(data.summary) || result.summary
+    || '혈액형 성향은 오늘의 분위기와 만나면 더 현실적인 조언으로 바뀝니다.';
 
-  const bloodType = result.hasApiData && result.metrics.length > 0
-    ? result.metrics[0]!.value
-    : 'A형';
+  const score = _num(data.score) || result.score;
 
-  const bloodTypeNote = result.hasApiData && result.metrics.length > 0
-    ? result.metrics[0]!.note ?? '꼼꼼하고 기준을 세우는 데 강합니다.'
-    : '꼼꼼하고 기준을 세우는 데 강합니다.';
-
-  const todayKeywords = result.hasApiData && result.luckyItems.length > 0
-    ? result.luckyItems
-    : ['정리', '배려', '조심스런 추진'];
-
-  const compatibilityMetrics = result.hasApiData && result.metrics.length >= 3
-    ? result.metrics.slice(1, 3)
-    : [
-        { label: '잘 맞는 타입', value: 'O형', note: '속도와 안정의 균형' },
-        { label: '조심할 타입', value: 'B형', note: '리듬 차이가 큼' },
-      ];
-
-  const recommendations = result.hasApiData && result.recommendations.length > 0
-    ? result.recommendations
-    : [
-        '오늘은 먼저 정리한 사람이 분위기를 주도합니다.',
-        '상대를 배려하되, 기준 없는 양보는 하지 않는 편이 좋습니다.',
-        '작은 약속을 지키는 행동이 신뢰를 크게 올립니다.',
-      ];
-
-  const luckyKeywords = result.hasApiData && result.highlights.length > 0
-    ? result.highlights
-    : ['연한 네이비', '메모 앱', '오전 11시', '정돈된 책상'];
+  // Category scores
+  const catLove = _obj(categories.love);
+  const catWork = _obj(categories.work);
+  const catMoney = _obj(categories.money);
+  const catHealth = _obj(categories.health);
 
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
       {/* Big Blood Type Identity Card */}
       <Card style={{ alignItems: 'center', paddingVertical: 24, backgroundColor: fortuneTheme.colors.backgroundTertiary }}>
         <AppText style={{ fontSize: 64, lineHeight: 76 }}>🩸</AppText>
-        <AppText variant="displaySmall" style={{ marginTop: 8 }}>{bloodType}</AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary} style={{ marginTop: 4 }}>
-          {bloodTypeNote}
-        </AppText>
+        <AppText variant="displaySmall" style={{ marginTop: 8 }}>{bloodTypeLabel}</AppText>
+        {bloodTypeKeyword ? (
+          <AppText variant="bodyMedium" color={fortuneTheme.colors.ctaBackground} style={{ marginTop: 4 }}>
+            {bloodTypeKeyword}
+          </AppText>
+        ) : null}
+        {bloodTypeElement ? (
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary} style={{ marginTop: 2 }}>
+            오행: {bloodTypeElement}
+          </AppText>
+        ) : null}
+        {moodKeyword ? (
+          <KeywordPills keywords={[`오늘의 무드: ${moodKeyword}`]} />
+        ) : null}
       </Card>
 
       <HeroCard
         emoji="🩸"
         title={meta.title}
         description={heroDescription}
-        chips={heroChips}
       />
 
-      <SectionCard title="혈액형 정보">
-        <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.sm }}>
-          <Card style={{ flex: 1, gap: fortuneTheme.spacing.xs }}>
-            <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>
-              타입
-            </AppText>
-            <AppText variant="displaySmall">{bloodType}</AppText>
-            <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-              {bloodTypeNote}
-            </AppText>
-          </Card>
-          <Card style={{ flex: 1, gap: fortuneTheme.spacing.xs }}>
-            <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>
-              오늘의 키워드
-            </AppText>
-            <KeywordPills keywords={todayKeywords} />
-          </Card>
-        </View>
-      </SectionCard>
+      {/* 성격 분석 */}
+      {coreTrait ? (
+        <SectionCard title="성격 분석">
+          <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>
+            {coreTrait}
+          </AppText>
+          {strengths.length > 0 ? (
+            <View style={{ marginTop: fortuneTheme.spacing.sm }}>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary} style={{ marginBottom: 4 }}>
+                강점
+              </AppText>
+              <BulletList items={strengths} />
+            </View>
+          ) : null}
+          {watchOut ? (
+            <View style={{ marginTop: fortuneTheme.spacing.sm }}>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary} style={{ marginBottom: 4 }}>
+                주의할 점
+              </AppText>
+              <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+                {watchOut}
+              </AppText>
+            </View>
+          ) : null}
+        </SectionCard>
+      ) : null}
 
-      <SectionCard title="궁합 포인트">
-        <MetricGrid items={compatibilityMetrics} />
-      </SectionCard>
+      {/* 카테고리별 점수 */}
+      {_num(catLove.score) > 0 || _num(catWork.score) > 0 ? (
+        <SectionCard title="오늘의 흐름">
+          <MetricGrid
+            items={[
+              ..._num(catLove.score) > 0 ? [{ label: '연애', value: `${_num(catLove.score)}%`, note: _str(catLove.description).slice(0, 30) }] : [],
+              ..._num(catWork.score) > 0 ? [{ label: '직장', value: `${_num(catWork.score)}%`, note: _str(catWork.description).slice(0, 30) }] : [],
+              ..._num(catMoney.score) > 0 ? [{ label: '금전', value: `${_num(catMoney.score)}%`, note: _str(catMoney.description).slice(0, 30) }] : [],
+              ..._num(catHealth.score) > 0 ? [{ label: '건강', value: `${_num(catHealth.score)}%`, note: _str(catHealth.description).slice(0, 30) }] : [],
+            ]}
+          />
+        </SectionCard>
+      ) : null}
 
-      <SectionCard title="추천 행동">
-        <BulletList items={recommendations} />
-      </SectionCard>
+      {/* 궁합 */}
+      {_str(compat.bestMatch) ? (
+        <SectionCard title="궁합 포인트">
+          <MetricGrid items={[
+            { label: '잘 맞는 타입', value: _str(compat.bestMatch), note: _str(compat.bestReason) },
+            { label: '조심할 타입', value: _str(compat.cautionMatch), note: _str(compat.cautionReason) },
+          ]} />
+        </SectionCard>
+      ) : (
+        <SectionCard title="궁합 포인트">
+          <MetricGrid items={result.metrics.length >= 3
+            ? result.metrics.slice(1, 3)
+            : [
+                { label: '잘 맞는 타입', value: 'O형', note: '속도와 안정의 균형' },
+                { label: '조심할 타입', value: 'B형', note: '리듬 차이가 큼' },
+              ]} />
+        </SectionCard>
+      )}
 
-      <SectionCard title="행운 포인트">
-        <KeywordPills keywords={luckyKeywords} />
-      </SectionCard>
+      {/* 하이라이트 */}
+      {highlights.length > 0 ? (
+        <SectionCard title="핵심 포인트">
+          <BulletList items={highlights} />
+        </SectionCard>
+      ) : null}
+
+      {/* 조언 */}
+      {_str(data.advice) ? (
+        <SectionCard title="추천 행동">
+          <BulletList items={[_str(data.advice)]} />
+        </SectionCard>
+      ) : result.recommendations.length > 0 ? (
+        <SectionCard title="추천 행동">
+          <BulletList items={result.recommendations} />
+        </SectionCard>
+      ) : null}
+
+      {/* 특별 메모 */}
+      {specialNote ? (
+        <InsetQuote text={specialNote} />
+      ) : null}
+
+      {/* 행운 아이템 */}
+      {_str(lucky.color) || _str(lucky.number) ? (
+        <SectionCard title="행운 포인트">
+          <KeywordPills keywords={[
+            ..._str(lucky.color) ? [_str(lucky.color)] : [],
+            ..._str(lucky.number) ? [_str(lucky.number)] : [],
+            ..._str(lucky.time) ? [_str(lucky.time)] : [],
+            ..._str(lucky.item) ? [_str(lucky.item)] : [],
+          ]} />
+        </SectionCard>
+      ) : result.highlights.length > 0 ? (
+        <SectionCard title="행운 포인트">
+          <KeywordPills keywords={result.highlights} />
+        </SectionCard>
+      ) : null}
     </View>
   );
 }
@@ -970,12 +1311,12 @@ function ZodiacAnimalResult(props: FortuneResultComponentProps) {
   const heroDescription = summary
     || (isConstellation
       ? '별자리의 에너지와 오늘의 흐름이 만나, 관계와 기회를 더 선명하게 읽어드립니다.'
-      : '띠의 기본 기질과 오늘의 운세가 겹치며, 사람 관계와 타이밍 해석이 더 도드라지는 화면입니다.');
+      : '띠의 기본 기질과 오늘의 흐름이 겹치며, 사람 관계와 타이밍 해석이 더 도드라지는 화면입니다.');
 
   const heroChips = result.hasApiData && result.contextTags.length > 0
     ? result.contextTags
     : isConstellation
-      ? ['별자리 흐름', '원소 에너지', '오늘의 운세']
+      ? ['별자리 흐름', '원소 에너지', '오늘의 흐름']
       : ['띠별 흐름', '궁합', '타이밍 읽기'];
 
   // --- Category scores (대인운/실행운/감정운/타이밍운) ---
@@ -1083,7 +1424,7 @@ function ZodiacAnimalResult(props: FortuneResultComponentProps) {
 
       <HeroCard
         emoji={identityEmoji}
-        title={isConstellation ? '별자리 운세' : meta.title}
+        title={isConstellation ? '별자리 인사이트' : meta.title}
         description={heroDescription}
         chips={heroChips}
       />
@@ -1132,7 +1473,7 @@ function ZodiacAnimalResult(props: FortuneResultComponentProps) {
       {/*  Overall score badge                                         */}
       {/* ============================================================ */}
       {overallScore > 0 && (
-        <SectionCard title="오늘의 종합 운세">
+        <SectionCard title="오늘의 종합 인사이트">
           <View style={{ alignItems: 'center', gap: fortuneTheme.spacing.sm }}>
             <Card
               style={{
@@ -1280,6 +1621,497 @@ function ZodiacAnimalResult(props: FortuneResultComponentProps) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  6. NewYearResult                                                  */
+/* ------------------------------------------------------------------ */
+
+/** Ohaeng element emoji helper */
+const ELEMENT_EMOJI: Record<string, string> = {
+  '목': '🌳',
+  '화': '🔥',
+  '토': '🏔️',
+  '금': '⚙️',
+  '수': '💧',
+  wood: '🌳',
+  fire: '🔥',
+  earth: '🏔️',
+  metal: '⚙️',
+  water: '💧',
+};
+
+function elementEmoji(element: string): string {
+  const lower = element.toLowerCase();
+  return ELEMENT_EMOJI[lower] ?? ELEMENT_EMOJI[element.charAt(0)] ?? '✨';
+}
+
+/** Score-to-color for monthly timeline */
+function monthScoreColor(score: number): string {
+  if (score >= 85) return '#4CAF50';
+  if (score >= 70) return '#8FB8FF';
+  if (score >= 55) return '#FFD54F';
+  return '#FF8A65';
+}
+
+const QUARTER_LABELS = ['1분기 (1~3월)', '2분기 (4~6월)', '3분기 (7~9월)', '4분기 (10~12월)'];
+
+function NewYearResult(props: FortuneResultComponentProps) {
+  const result = useResultData(props.payload);
+  const raw = _obj(props.payload?.rawApiResponse);
+  const data = _obj(raw.data ?? raw.fortune ?? raw);
+
+  /* --- Top-level fields --- */
+  const score = _num(data.overallScore) || _num(data.score) || _num(raw.overallScore) || _num(raw.score) || _num(result.score);
+  const summary = _str(data.summary) || _str(raw.summary) || result.summary || '';
+  const greeting = _str(data.greeting) || _str(raw.greeting);
+  const specialMessage = _str(data.specialMessage) || _str(raw.specialMessage);
+  const recommendations = _strArr(data.recommendations).length > 0
+    ? _strArr(data.recommendations)
+    : _strArr(raw.recommendations).length > 0
+      ? _strArr(raw.recommendations)
+      : result.recommendations;
+
+  /* --- Goal Fortune --- */
+  const goalFortune = _obj(data.goalFortune ?? raw.goalFortune);
+  const goalEmoji = _str(goalFortune.emoji) || '🎯';
+  const goalLabel = _str(goalFortune.goalLabel);
+  const goalTitle = _str(goalFortune.title);
+  const goalPrediction = _str(goalFortune.prediction);
+  const goalDeepAnalysis = _str(goalFortune.deepAnalysis);
+  const goalBestMonths = _strArr(goalFortune.bestMonths);
+  const goalCautionMonths = _strArr(goalFortune.cautionMonths);
+  const goalQuarterlyMilestones = _arr(goalFortune.quarterlyMilestones).map((m) => {
+    const item = _obj(m);
+    return { quarter: _str(item.quarter), milestone: _str(item.milestone) || _str(item.description) || _str(item.goal) };
+  }).filter((m) => m.milestone);
+  const goalRiskAnalysis = _arr(goalFortune.riskAnalysis).map((r) => {
+    const item = _obj(r);
+    return _str(item.risk) || _str(item.description) || String(r);
+  }).filter(Boolean);
+  const goalSuccessFactors = _strArr(goalFortune.successFactors);
+  const goalActionItems = _arr(goalFortune.actionItems).map((a) => {
+    const item = _obj(a);
+    return _str(item.action) || _str(item.description) || _str(a as unknown as string);
+  }).filter(Boolean);
+  const hasGoalFortune = !!(goalTitle || goalPrediction || goalLabel);
+
+  /* --- Saju Analysis --- */
+  const sajuAnalysis = _obj(data.sajuAnalysis ?? raw.sajuAnalysis);
+  const dominantElement = _str(sajuAnalysis.dominantElement);
+  const yearElement = _str(sajuAnalysis.yearElement);
+  const sajuCompatibility = _str(sajuAnalysis.compatibility);
+  const compatibilityReason = _str(sajuAnalysis.compatibilityReason);
+  const elementalAdvice = _str(sajuAnalysis.elementalAdvice);
+  const balanceElements = _strArr(sajuAnalysis.balanceElements);
+  const strengthenTips = _strArr(sajuAnalysis.strengthenTips);
+  const hasSajuAnalysis = !!(dominantElement || yearElement || sajuCompatibility);
+
+  /* --- Monthly Highlights --- */
+  const monthlyHighlights = _arr(data.monthlyHighlights ?? raw.monthlyHighlights).map((m) => {
+    const item = _obj(m);
+    return {
+      month: _num(item.month),
+      theme: _str(item.theme),
+      score: _num(item.score),
+      advice: _str(item.advice),
+      energyLevel: _str(item.energyLevel),
+      bestDays: _strArr(item.bestDays),
+      recommendedAction: _str(item.recommendedAction),
+      avoidAction: _str(item.avoidAction),
+    };
+  }).filter((m) => m.month > 0);
+  const hasMonthlyHighlights = monthlyHighlights.length > 0;
+
+  /* --- Action Plan --- */
+  const actionPlan = _obj(data.actionPlan ?? raw.actionPlan);
+  const immediateActions = _arr(actionPlan.immediate).map((a) => {
+    const item = _obj(a);
+    const action = _str(item.action) || _str(a as unknown as string);
+    const timeframe = _str(item.timeframe);
+    return action ? (timeframe ? `${action} (${timeframe})` : action) : '';
+  }).filter(Boolean);
+  const shortTermActions = _arr(actionPlan.shortTerm).map((a) => {
+    const item = _obj(a);
+    const action = _str(item.action) || _str(a as unknown as string);
+    const timeframe = _str(item.timeframe);
+    return action ? (timeframe ? `${action} (${timeframe})` : action) : '';
+  }).filter(Boolean);
+  const longTermActions = _arr(actionPlan.longTerm).map((a) => {
+    const item = _obj(a);
+    const action = _str(item.action) || _str(a as unknown as string);
+    const timeframe = _str(item.timeframe);
+    return action ? (timeframe ? `${action} (${timeframe})` : action) : '';
+  }).filter(Boolean);
+  const hasActionPlan = immediateActions.length > 0 || shortTermActions.length > 0 || longTermActions.length > 0;
+
+  /* --- Lucky Items --- */
+  const luckyItems = _obj(data.luckyItems ?? raw.luckyItems);
+  const luckyColor = _str(luckyItems.color);
+  const luckyNumber = _str(luckyItems.number);
+  const luckyDirection = _str(luckyItems.direction);
+  const luckyItem = _str(luckyItems.item);
+  const luckyFood = _str(luckyItems.food);
+  const hasLuckyItems = !!(luckyColor || luckyNumber || luckyDirection || luckyItem || luckyFood);
+
+  /* --- Hero description --- */
+  const heroDescription = greeting || summary || '새해 목표와 사주를 결합해 한 해의 흐름을 종합적으로 분석한 결과입니다.';
+
+  /* --- Score color --- */
+  const scoreColor = score >= 80 ? '#4CAF50' : score >= 60 ? '#FFD54F' : '#FF8A65';
+
+  return (
+    <View style={{ gap: fortuneTheme.spacing.md }}>
+      {/* ===== 1. Hero — Year + Score + Goal Badge ===== */}
+      <HeroCard
+        emoji="🎍"
+        title="새해 인사이트"
+        description={heroDescription}
+        chips={goalLabel ? [goalLabel] : undefined}
+        aside={
+          score > 0 ? (
+            <View
+              style={{
+                width: 72,
+                height: 72,
+                borderRadius: 36,
+                borderWidth: 3,
+                borderColor: scoreColor,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: `${scoreColor}15`,
+              }}
+            >
+              <AppText style={{ fontSize: 24, fontWeight: '800', color: scoreColor }}>
+                {score}
+              </AppText>
+              <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+                종합
+              </AppText>
+            </View>
+          ) : undefined
+        }
+      />
+
+      {/* Goal badge row */}
+      {goalLabel ? (
+        <Card style={{ backgroundColor: fortuneTheme.colors.backgroundTertiary, flexDirection: 'row', alignItems: 'center', gap: fortuneTheme.spacing.sm, paddingVertical: fortuneTheme.spacing.md }}>
+          <AppText style={{ fontSize: 36 }}>{goalEmoji}</AppText>
+          <View style={{ flex: 1 }}>
+            <AppText variant="labelLarge" color={fortuneTheme.colors.textPrimary}>
+              올해의 목표
+            </AppText>
+            <AppText variant="bodySmall" color={fortuneTheme.colors.accentTertiary}>
+              {goalLabel}
+            </AppText>
+          </View>
+        </Card>
+      ) : null}
+
+      {/* ===== 2. Goal Fortune ===== */}
+      {hasGoalFortune ? (
+        <SectionCard title="목표 인사이트" description={goalTitle || undefined}>
+          {goalPrediction ? (
+            <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>
+              {goalPrediction}
+            </AppText>
+          ) : null}
+
+          {goalDeepAnalysis ? (
+            <View style={{ marginTop: fortuneTheme.spacing.sm }}>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary} style={{ marginBottom: 4 }}>
+                심층 분석
+              </AppText>
+              <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+                {goalDeepAnalysis}
+              </AppText>
+            </View>
+          ) : null}
+
+          {goalBestMonths.length > 0 ? (
+            <View style={{ marginTop: fortuneTheme.spacing.sm }}>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary} style={{ marginBottom: 4 }}>
+                최적의 달
+              </AppText>
+              <KeywordPills keywords={goalBestMonths} />
+            </View>
+          ) : null}
+
+          {goalCautionMonths.length > 0 ? (
+            <View style={{ marginTop: fortuneTheme.spacing.sm }}>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary} style={{ marginBottom: 4 }}>
+                주의할 달
+              </AppText>
+              <KeywordPills keywords={goalCautionMonths} />
+            </View>
+          ) : null}
+
+          {goalSuccessFactors.length > 0 ? (
+            <View style={{ marginTop: fortuneTheme.spacing.sm }}>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary} style={{ marginBottom: 4 }}>
+                성공 요인
+              </AppText>
+              <BulletList items={goalSuccessFactors} />
+            </View>
+          ) : null}
+
+          {goalRiskAnalysis.length > 0 ? (
+            <View style={{ marginTop: fortuneTheme.spacing.sm }}>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary} style={{ marginBottom: 4 }}>
+                리스크 분석
+              </AppText>
+              <BulletList items={goalRiskAnalysis} />
+            </View>
+          ) : null}
+
+          {goalActionItems.length > 0 ? (
+            <View style={{ marginTop: fortuneTheme.spacing.sm }}>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary} style={{ marginBottom: 4 }}>
+                실행 항목
+              </AppText>
+              <BulletList items={goalActionItems} />
+            </View>
+          ) : null}
+        </SectionCard>
+      ) : null}
+
+      {/* ===== 3. Saju/Ohaeng Analysis ===== */}
+      {hasSajuAnalysis ? (
+        <SectionCard title="사주 오행 분석">
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: fortuneTheme.spacing.sm }}>
+            {dominantElement ? (
+              <Card style={{ backgroundColor: fortuneTheme.colors.backgroundTertiary, alignItems: 'center', gap: 4, paddingVertical: fortuneTheme.spacing.md, minWidth: '45%', flexGrow: 1 }}>
+                <AppText style={{ fontSize: 28 }}>{elementEmoji(dominantElement)}</AppText>
+                <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>주도 원소</AppText>
+                <AppText variant="labelLarge" color={fortuneTheme.colors.textPrimary}>{dominantElement}</AppText>
+              </Card>
+            ) : null}
+            {yearElement ? (
+              <Card style={{ backgroundColor: fortuneTheme.colors.backgroundTertiary, alignItems: 'center', gap: 4, paddingVertical: fortuneTheme.spacing.md, minWidth: '45%', flexGrow: 1 }}>
+                <AppText style={{ fontSize: 28 }}>{elementEmoji(yearElement)}</AppText>
+                <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>올해의 원소</AppText>
+                <AppText variant="labelLarge" color={fortuneTheme.colors.textPrimary}>{yearElement}</AppText>
+              </Card>
+            ) : null}
+          </View>
+
+          {sajuCompatibility ? (
+            <View style={{ marginTop: fortuneTheme.spacing.sm }}>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary} style={{ marginBottom: 4 }}>
+                궁합도
+              </AppText>
+              <AppText variant="bodyMedium" color={fortuneTheme.colors.ctaBackground}>
+                {sajuCompatibility}
+              </AppText>
+              {compatibilityReason ? (
+                <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary} style={{ marginTop: 2 }}>
+                  {compatibilityReason}
+                </AppText>
+              ) : null}
+            </View>
+          ) : null}
+
+          {elementalAdvice ? (
+            <View style={{ marginTop: fortuneTheme.spacing.sm }}>
+              <InsetQuote text={elementalAdvice} />
+            </View>
+          ) : null}
+
+          {balanceElements.length > 0 ? (
+            <View style={{ marginTop: fortuneTheme.spacing.sm }}>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary} style={{ marginBottom: 4 }}>
+                균형 원소
+              </AppText>
+              <KeywordPills keywords={balanceElements} />
+            </View>
+          ) : null}
+
+          {strengthenTips.length > 0 ? (
+            <View style={{ marginTop: fortuneTheme.spacing.sm }}>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary} style={{ marginBottom: 4 }}>
+                보강 팁
+              </AppText>
+              <BulletList items={strengthenTips} />
+            </View>
+          ) : null}
+        </SectionCard>
+      ) : null}
+
+      {/* ===== 4. Monthly Timeline (compact 12-month grid) ===== */}
+      {hasMonthlyHighlights ? (
+        <SectionCard title="월별 하이라이트" description="12개월의 테마와 에너지 흐름을 한눈에 볼 수 있습니다.">
+          <View style={{ gap: fortuneTheme.spacing.sm }}>
+            {monthlyHighlights.map((m) => {
+              const color = monthScoreColor(m.score);
+              return (
+                <Card
+                  key={m.month}
+                  style={{
+                    backgroundColor: fortuneTheme.colors.backgroundTertiary,
+                    borderLeftWidth: 3,
+                    borderLeftColor: color,
+                    gap: fortuneTheme.spacing.xs,
+                  }}
+                >
+                  {/* Header: month + score */}
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <AppText variant="labelLarge" color={fortuneTheme.colors.textPrimary}>
+                      {m.month}월
+                    </AppText>
+                    {m.score > 0 ? (
+                      <AppText style={{ fontSize: 16, fontWeight: '700', color }}>
+                        {m.score}점
+                      </AppText>
+                    ) : null}
+                  </View>
+
+                  {/* Theme */}
+                  {m.theme ? (
+                    <AppText variant="bodySmall" color={fortuneTheme.colors.accentTertiary}>
+                      {m.theme}
+                    </AppText>
+                  ) : null}
+
+                  {/* Advice */}
+                  {m.advice ? (
+                    <AppText variant="caption" color={fortuneTheme.colors.textSecondary}>
+                      {m.advice}
+                    </AppText>
+                  ) : null}
+
+                  {/* Energy + recommended/avoid */}
+                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 2 }}>
+                    {m.energyLevel ? (
+                      <View style={{ backgroundColor: `${color}20`, borderRadius: fortuneTheme.radius.chip, paddingHorizontal: 8, paddingVertical: 2 }}>
+                        <AppText variant="caption" color={color}>{m.energyLevel}</AppText>
+                      </View>
+                    ) : null}
+                    {m.recommendedAction ? (
+                      <View style={{ backgroundColor: '#4CAF5020', borderRadius: fortuneTheme.radius.chip, paddingHorizontal: 8, paddingVertical: 2 }}>
+                        <AppText variant="caption" color="#4CAF50">{m.recommendedAction}</AppText>
+                      </View>
+                    ) : null}
+                    {m.avoidAction ? (
+                      <View style={{ backgroundColor: '#FF8A6520', borderRadius: fortuneTheme.radius.chip, paddingHorizontal: 8, paddingVertical: 2 }}>
+                        <AppText variant="caption" color="#FF8A65">{m.avoidAction}</AppText>
+                      </View>
+                    ) : null}
+                  </View>
+
+                  {/* Best days */}
+                  {m.bestDays.length > 0 ? (
+                    <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+                      좋은 날: {m.bestDays.join(', ')}
+                    </AppText>
+                  ) : null}
+                </Card>
+              );
+            })}
+          </View>
+        </SectionCard>
+      ) : null}
+
+      {/* ===== 5. Quarterly Milestones ===== */}
+      {goalQuarterlyMilestones.length > 0 ? (
+        <SectionCard title="분기별 마일스톤">
+          <View style={{ gap: fortuneTheme.spacing.sm }}>
+            {goalQuarterlyMilestones.map((m, idx) => (
+              <Card
+                key={idx}
+                style={{
+                  backgroundColor: fortuneTheme.colors.backgroundTertiary,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: fortuneTheme.spacing.sm,
+                }}
+              >
+                <View
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 18,
+                    backgroundColor: fortuneTheme.colors.ctaBackground + '25',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <AppText variant="labelLarge" color={fortuneTheme.colors.ctaBackground}>
+                    Q{idx + 1}
+                  </AppText>
+                </View>
+                <View style={{ flex: 1, gap: 2 }}>
+                  <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
+                    {m.quarter || QUARTER_LABELS[idx] || `${idx + 1}분기`}
+                  </AppText>
+                  <AppText variant="bodySmall" color={fortuneTheme.colors.textPrimary}>
+                    {m.milestone}
+                  </AppText>
+                </View>
+              </Card>
+            ))}
+          </View>
+        </SectionCard>
+      ) : null}
+
+      {/* ===== 6. Action Plan ===== */}
+      {hasActionPlan ? (
+        <SectionCard title="실행 계획">
+          {immediateActions.length > 0 ? (
+            <View style={{ marginBottom: fortuneTheme.spacing.sm }}>
+              <AppText variant="labelLarge" color="#F06292" style={{ marginBottom: 4 }}>
+                즉시 실행
+              </AppText>
+              <BulletList items={immediateActions} />
+            </View>
+          ) : null}
+          {shortTermActions.length > 0 ? (
+            <View style={{ marginBottom: fortuneTheme.spacing.sm }}>
+              <AppText variant="labelLarge" color="#8FB8FF" style={{ marginBottom: 4 }}>
+                단기 계획
+              </AppText>
+              <BulletList items={shortTermActions} />
+            </View>
+          ) : null}
+          {longTermActions.length > 0 ? (
+            <View>
+              <AppText variant="labelLarge" color="#CE93D8" style={{ marginBottom: 4 }}>
+                장기 계획
+              </AppText>
+              <BulletList items={longTermActions} />
+            </View>
+          ) : null}
+        </SectionCard>
+      ) : null}
+
+      {/* ===== 7. Lucky Items ===== */}
+      {hasLuckyItems ? (
+        <SectionCard title="올해의 행운 아이템">
+          <MetricGrid items={[
+            ...(luckyColor ? [{ label: '색상', value: luckyColor, note: '' }] : []),
+            ...(luckyNumber ? [{ label: '숫자', value: luckyNumber, note: '' }] : []),
+            ...(luckyDirection ? [{ label: '방위', value: luckyDirection, note: '' }] : []),
+            ...(luckyItem ? [{ label: '아이템', value: luckyItem, note: '' }] : []),
+            ...(luckyFood ? [{ label: '음식', value: luckyFood, note: '' }] : []),
+          ]} />
+        </SectionCard>
+      ) : null}
+
+      {/* ===== 8. Special Message ===== */}
+      {specialMessage ? (
+        <SectionCard title="특별 메시지">
+          <InsetQuote text={specialMessage} />
+        </SectionCard>
+      ) : null}
+
+      {/* ===== 9. Recommendations & Warnings ===== */}
+      {recommendations.length > 0 ? (
+        <SectionCard title="추천 사항">
+          <BulletList items={recommendations} />
+        </SectionCard>
+      ) : null}
+    </View>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Export                                                            */
 /* ------------------------------------------------------------------ */
 
@@ -1289,4 +2121,5 @@ export const ResultBatchA = {
   MbtiResult,
   BloodTypeResult,
   ZodiacAnimalResult,
+  NewYearResult,
 };

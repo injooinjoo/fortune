@@ -137,32 +137,54 @@ function OhaengBar({
 }
 
 /* ------------------------------------------------------------------ */
-/*  RankBadge — #1, #2, #3 with medal colors                          */
+/*  RankBadge — #1, #2, #3 with medal colors + glow for top 3         */
 /* ------------------------------------------------------------------ */
 
+const RANK_STYLES: Record<number, { bg: string; fg: string; emoji: string; glow: string }> = {
+  1: { bg: '#FFD700', fg: '#1A1200', emoji: '👑', glow: 'rgba(255,215,0,0.25)' },
+  2: { bg: '#C0C0C0', fg: '#1A1A1A', emoji: '🥈', glow: 'rgba(192,192,192,0.2)' },
+  3: { bg: '#CD7F32', fg: '#1A1200', emoji: '🥉', glow: 'rgba(205,127,50,0.2)' },
+};
+
 function RankBadge({ rank }: { rank: number }) {
-  const bg =
-    rank === 1
-      ? '#FFD700'
-      : rank === 2
-        ? '#C0C0C0'
-        : rank === 3
-          ? '#CD7F32'
-          : fortuneTheme.colors.surfaceSecondary;
-  const fg = rank <= 3 ? '#0B0B10' : fortuneTheme.colors.textPrimary;
+  const style = RANK_STYLES[rank];
+
+  if (style) {
+    return (
+      <View
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: fortuneTheme.radius.full,
+          backgroundColor: style.bg,
+          alignItems: 'center',
+          justifyContent: 'center',
+          shadowColor: style.bg,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.5,
+          shadowRadius: 6,
+          elevation: 4,
+        }}
+      >
+        <AppText style={{ fontSize: 18 }}>{style.emoji}</AppText>
+      </View>
+    );
+  }
 
   return (
     <View
       style={{
-        width: 32,
-        height: 32,
+        width: 36,
+        height: 36,
         borderRadius: fortuneTheme.radius.full,
-        backgroundColor: bg,
+        backgroundColor: fortuneTheme.colors.surfaceSecondary,
+        borderWidth: 1,
+        borderColor: fortuneTheme.colors.border,
         alignItems: 'center',
         justifyContent: 'center',
       }}
     >
-      <AppText variant="labelLarge" style={{ color: fg, fontSize: 13 }}>
+      <AppText variant="labelLarge" style={{ color: fortuneTheme.colors.textSecondary, fontSize: 13 }}>
         #{rank}
       </AppText>
     </View>
@@ -212,6 +234,75 @@ function ScoreBar({ score, label }: { score: number; label?: string }) {
 /*  RecommendedNameCard                                                */
 /* ------------------------------------------------------------------ */
 
+/* ------------------------------------------------------------------ */
+/*  CircleScore — circular score badge with ring indicator              */
+/* ------------------------------------------------------------------ */
+
+function CircleScore({ score }: { score: number }) {
+  const clamped = Math.max(0, Math.min(100, score));
+  const color =
+    clamped >= 90
+      ? '#34C759'
+      : clamped >= 75
+        ? fortuneTheme.colors.accentSecondary
+        : clamped >= 60
+          ? '#FFCC00'
+          : '#FF6B6B';
+
+  return (
+    <View
+      style={{
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        borderWidth: 3,
+        borderColor: color,
+        backgroundColor: fortuneTheme.colors.surfaceSecondary,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <AppText variant="heading2" style={{ color, fontSize: 20 }}>
+        {clamped}
+      </AppText>
+      <AppText variant="caption" color={fortuneTheme.colors.textTertiary} style={{ fontSize: 9, marginTop: -2 }}>
+        점
+      </AppText>
+    </View>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  OhaengTag — compact ohaeng label chip                              */
+/* ------------------------------------------------------------------ */
+
+function OhaengTag({ label, value }: { label: string; value: string }) {
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: fortuneTheme.spacing.xs,
+        backgroundColor: fortuneTheme.colors.surfaceSecondary,
+        borderRadius: fortuneTheme.radius.full,
+        paddingVertical: 6,
+        paddingHorizontal: fortuneTheme.spacing.sm + 2,
+      }}
+    >
+      <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+        {label}
+      </AppText>
+      <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
+        {value}
+      </AppText>
+    </View>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  RecommendedNameCard — polished per-name card                       */
+/* ------------------------------------------------------------------ */
+
 function RecommendedNameCard({ data }: { data: R }) {
   const rank = num(data.rank, 0);
   const koreanName = str(data.koreanName, '이름');
@@ -223,16 +314,27 @@ function RecommendedNameCard({ data }: { data: R }) {
   const analysis = str(data.analysis);
   const compatibility = str(data.compatibility);
 
+  const isTop3 = rank <= 3;
+  const rankStyle = RANK_STYLES[rank];
+  const accentBorderColor = rankStyle?.bg ?? 'transparent';
+
   return (
     <Card
       style={{
-        backgroundColor: rank <= 3
-          ? fortuneTheme.colors.backgroundTertiary
-          : fortuneTheme.colors.surfaceSecondary,
+        backgroundColor: fortuneTheme.colors.surfaceSecondary,
         gap: fortuneTheme.spacing.md,
+        borderLeftWidth: isTop3 ? 3 : 0,
+        borderLeftColor: accentBorderColor,
+        ...(isTop3 && {
+          shadowColor: accentBorderColor,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.15,
+          shadowRadius: 8,
+          elevation: 3,
+        }),
       }}
     >
-      {/* Header: rank badge + names */}
+      {/* Header: rank badge + name + circle score */}
       <View
         style={{
           flexDirection: 'row',
@@ -242,113 +344,49 @@ function RecommendedNameCard({ data }: { data: R }) {
       >
         <RankBadge rank={rank} />
         <View style={{ flex: 1, gap: 2 }}>
-          <AppText variant="heading2">{koreanName}</AppText>
+          <AppText variant="heading2" style={{ fontSize: isTop3 ? 24 : 20 }}>
+            {koreanName}
+          </AppText>
           {hanjaName ? (
-            <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+            <AppText variant="bodySmall" color={fortuneTheme.colors.textTertiary}>
               {hanjaName}
             </AppText>
           ) : null}
         </View>
-        <View
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: fortuneTheme.colors.surfaceSecondary,
-            borderRadius: fortuneTheme.radius.lg,
-            paddingVertical: fortuneTheme.spacing.xs,
-            paddingHorizontal: fortuneTheme.spacing.sm,
-            minWidth: 56,
-          }}
-        >
-          <AppText variant="heading3" color={fortuneTheme.colors.accentSecondary}>
-            {totalScore}
-          </AppText>
-          <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary} style={{ fontSize: 10 }}>
-            총점
-          </AppText>
-        </View>
+        <CircleScore score={totalScore} />
       </View>
 
-      {/* Hanja meaning breakdown */}
+      {/* Hanja meaning — pill style */}
       {hanjaMeaning.length > 0 ? (
         <View style={{ gap: fortuneTheme.spacing.xs }}>
           <AppText variant="labelMedium" color={fortuneTheme.colors.textSecondary}>
-            한자 의미
+            한자 풀이
           </AppText>
-          {hanjaMeaning.map((meaning, idx) => (
-            <View
-              key={`meaning-${idx}`}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'flex-start',
-                gap: fortuneTheme.spacing.xs,
-              }}
-            >
+          <View style={{ gap: 6 }}>
+            {hanjaMeaning.map((meaning, idx) => (
               <View
+                key={`meaning-${idx}`}
                 style={{
-                  backgroundColor: fortuneTheme.colors.ctaBackground,
-                  borderRadius: fortuneTheme.radius.full,
-                  width: 6,
-                  height: 6,
-                  marginTop: 7,
-                  opacity: 0.6,
+                  backgroundColor: fortuneTheme.colors.backgroundTertiary,
+                  borderRadius: fortuneTheme.radius.md,
+                  paddingVertical: 8,
+                  paddingHorizontal: fortuneTheme.spacing.sm,
                 }}
-              />
-              <AppText
-                variant="bodySmall"
-                color={fortuneTheme.colors.textSecondary}
-                style={{ flex: 1 }}
               >
-                {meaning}
-              </AppText>
-            </View>
-          ))}
+                <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+                  {meaning}
+                </AppText>
+              </View>
+            ))}
+          </View>
         </View>
       ) : null}
 
-      {/* Ohaeng tags */}
+      {/* Ohaeng tags — inline chips */}
       {(pronunciationOhaeng || strokeOhaeng) ? (
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: fortuneTheme.spacing.sm }}>
-          {pronunciationOhaeng ? (
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: fortuneTheme.spacing.xs,
-                backgroundColor: fortuneTheme.colors.surfaceSecondary,
-                borderRadius: fortuneTheme.radius.md,
-                paddingVertical: fortuneTheme.spacing.xs,
-                paddingHorizontal: fortuneTheme.spacing.sm,
-              }}
-            >
-              <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
-                발음오행
-              </AppText>
-              <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
-                {pronunciationOhaeng}
-              </AppText>
-            </View>
-          ) : null}
-          {strokeOhaeng ? (
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: fortuneTheme.spacing.xs,
-                backgroundColor: fortuneTheme.colors.surfaceSecondary,
-                borderRadius: fortuneTheme.radius.md,
-                paddingVertical: fortuneTheme.spacing.xs,
-                paddingHorizontal: fortuneTheme.spacing.sm,
-              }}
-            >
-              <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
-                수리오행
-              </AppText>
-              <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
-                {strokeOhaeng}
-              </AppText>
-            </View>
-          ) : null}
+          {pronunciationOhaeng ? <OhaengTag label="발음" value={pronunciationOhaeng} /> : null}
+          {strokeOhaeng ? <OhaengTag label="수리" value={strokeOhaeng} /> : null}
         </View>
       ) : null}
 
@@ -357,11 +395,18 @@ function RecommendedNameCard({ data }: { data: R }) {
 
       {/* Analysis */}
       {analysis ? (
-        <View style={{ gap: fortuneTheme.spacing.xs }}>
+        <View
+          style={{
+            backgroundColor: fortuneTheme.colors.backgroundTertiary,
+            borderRadius: fortuneTheme.radius.md,
+            padding: fortuneTheme.spacing.md,
+            gap: fortuneTheme.spacing.xs,
+          }}
+        >
           <AppText variant="labelMedium" color={fortuneTheme.colors.textSecondary}>
-            분석
+            이름 분석
           </AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textPrimary}>
             {analysis}
           </AppText>
         </View>
@@ -369,7 +414,12 @@ function RecommendedNameCard({ data }: { data: R }) {
 
       {/* Compatibility */}
       {compatibility ? (
-        <InsetQuote text={compatibility} />
+        <View style={{ gap: fortuneTheme.spacing.xs }}>
+          <AppText variant="labelMedium" color={fortuneTheme.colors.textSecondary}>
+            사주 궁합
+          </AppText>
+          <InsetQuote text={compatibility} />
+        </View>
       ) : null}
     </Card>
   );
@@ -393,6 +443,8 @@ export function NamingResult(props: FortuneResultComponentProps) {
   const recommendedNames = arr(raw.recommendedNames);
   const namingTips = strArr(raw.namingTips);
   const warnings = strArr(raw.warnings);
+  const content = str(raw.content);
+  const advice = str(raw.advice);
 
   const hasRaw = Object.keys(raw).length > 0 && recommendedNames.length > 0;
 
@@ -423,7 +475,7 @@ export function NamingResult(props: FortuneResultComponentProps) {
       {/*  Hero                                                         */}
       {/* ============================================================ */}
       <HeroCard
-        emoji="🏒"
+        emoji="👶"
         title={meta.title}
         description={heroDescription}
         chips={heroChips}
@@ -448,6 +500,17 @@ export function NamingResult(props: FortuneResultComponentProps) {
           </View>
         }
       />
+
+      {/* ============================================================ */}
+      {/*  Content — main narrative from API                            */}
+      {/* ============================================================ */}
+      {content ? (
+        <SectionCard title="작명 리딩" description="사주 흐름을 기반으로 이름의 기운을 읽었습니다.">
+          <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+            {content}
+          </AppText>
+        </SectionCard>
+      ) : null}
 
       {/* ============================================================ */}
       {/*  Ohaeng Distribution                                          */}
@@ -559,6 +622,27 @@ export function NamingResult(props: FortuneResultComponentProps) {
       {namingTips.length > 0 ? (
         <SectionCard title="작명 팁" description="이름을 최종 결정하기 전에 참고하세요.">
           <BulletList items={namingTips} accent="팁" />
+        </SectionCard>
+      ) : null}
+
+      {/* ============================================================ */}
+      {/*  Advice — actionable tip from API                             */}
+      {/* ============================================================ */}
+      {advice ? (
+        <SectionCard title="작명 조언">
+          <View
+            style={{
+              backgroundColor: fortuneTheme.colors.backgroundTertiary,
+              borderRadius: fortuneTheme.radius.md,
+              borderLeftWidth: 3,
+              borderLeftColor: fortuneTheme.colors.ctaBackground,
+              padding: fortuneTheme.spacing.md,
+            }}
+          >
+            <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>
+              {advice}
+            </AppText>
+          </View>
         </SectionCard>
       ) : null}
 

@@ -1,6 +1,21 @@
 import { trackEvent } from './analytics';
 import { appEnv } from './env';
 
+// Hook point for a crash reporter (Sentry, Bugsnag, etc.). Register at app
+// bootstrap (e.g. in a top-level provider) with:
+//   import * as Sentry from '@sentry/react-native';
+//   Sentry.init({ dsn: appEnv.crashReportingDsn });
+//   setCrashReporter((err, ctx) => Sentry.captureException(err, { extra: ctx }));
+//
+// Keeping the integration as an opt-in adapter means `captureError` stays the
+// single call site for the rest of the app. Swapping vendors is a one-line change.
+type CrashReporter = (error: unknown, context: Record<string, unknown>) => void;
+let registeredCrashReporter: CrashReporter | null = null;
+
+export function setCrashReporter(reporter: CrashReporter | null): void {
+  registeredCrashReporter = reporter;
+}
+
 function stringifyErrorMessage(error: unknown) {
   if (error instanceof Error) {
     return error.message;
@@ -61,6 +76,14 @@ export async function captureError(
       console.warn('[error-reporting]', payload);
     } else {
       console.error('[error-reporting]', payload);
+    }
+  }
+
+  if (registeredCrashReporter && !isExpectedEdgeFunctionError(error)) {
+    try {
+      registeredCrashReporter(error, context);
+    } catch (reportingFailure) {
+      console.warn('[error-reporting] crash reporter threw', reportingFailure);
     }
   }
 

@@ -166,7 +166,7 @@ export function PetCompatibilityResult(props: FortuneResultComponentProps) {
   const greeting = str(raw.greeting);
   const summary = str(
     raw.summary,
-    result.summary || `${petName}와(과) 함께하는 오늘의 운세를 확인해보세요.`,
+    result.summary || `${petName}와(과) 함께하는 오늘의 인사이트를 확인해보세요.`,
   );
 
   // today_story

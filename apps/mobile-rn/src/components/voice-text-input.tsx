@@ -1,30 +1,24 @@
 /**
  * TextInput with a microphone button for speech-to-text (STT).
- * Uses expo-speech-recognition for native STT on iOS/Android.
- * Falls back gracefully if the module is not available.
+ * Uses expo-av recording + OpenAI Whisper via Supabase Edge Function.
+ * Works in Expo Go without native modules.
  */
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, TextInput, View, type TextInputProps } from 'react-native';
+import {
+  ActivityIndicator,
+  Animated,
+  Easing,
+  Pressable,
+  TextInput,
+  View,
+  type TextInputProps,
+} from 'react-native';
 
 import { fortuneTheme } from '../lib/theme';
-
-let SpeechModule: {
-  start: (options: { lang: string; interimResults: boolean }) => void;
-  stop: () => void;
-  requestPermissionsAsync: () => Promise<{ granted: boolean }>;
-  addListener: (event: string, handler: (data: unknown) => void) => { remove: () => void };
-} | null = null;
-
-try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mod = require('expo-speech-recognition');
-  SpeechModule = mod.ExpoSpeechRecognitionModule ?? null;
-} catch {
-  // Not available
-}
+import { useVoiceInput } from '../lib/use-voice-input';
 
 interface VoiceTextInputProps extends Omit<TextInputProps, 'style'> {
   onChangeText: (text: string) => void;
@@ -39,60 +33,43 @@ export function VoiceTextInput({
   placeholder,
   ...rest
 }: VoiceTextInputProps) {
-  const [isListening, setIsListening] = useState(false);
-  const subscriptionsRef = useRef<Array<{ remove: () => void }>>([]);
+  const handleTranscript = useCallback(
+    (text: string) => {
+      onChangeText(value ? `${value} ${text}` : text);
+    },
+    [onChangeText, value],
+  );
 
-  const cleanup = useCallback(() => {
-    for (const sub of subscriptionsRef.current) {
-      sub.remove();
+  const { isRecording, isTranscribing, toggleRecording } = useVoiceInput({
+    onTranscript: handleTranscript,
+  });
+
+  // Pulse animation for recording indicator
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    if (isRecording) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, {
+            toValue: 0.5,
+            duration: 600,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseAnim, {
+            toValue: 1,
+            duration: 600,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ]),
+      ).start();
+    } else {
+      pulseAnim.stopAnimation();
+      pulseAnim.setValue(1);
     }
-    subscriptionsRef.current = [];
-    setIsListening(false);
-  }, []);
-
-  const handleMicPress = useCallback(async () => {
-    if (!SpeechModule) return;
-
-    if (isListening) {
-      try { SpeechModule.stop(); } catch { /* ignore */ }
-      cleanup();
-      return;
-    }
-
-    try {
-      const { granted } = await SpeechModule.requestPermissionsAsync();
-      if (!granted) return;
-
-      setIsListening(true);
-
-      const resultSub = SpeechModule.addListener('result', (event: unknown) => {
-        const e = event as { results?: Array<{ transcript?: string }> };
-        const transcript = e.results?.[0]?.transcript;
-        if (transcript) {
-          onChangeText(value ? `${value} ${transcript}` : transcript);
-        }
-      });
-
-      const endSub = SpeechModule.addListener('end', () => {
-        cleanup();
-      });
-
-      const errorSub = SpeechModule.addListener('error', () => {
-        cleanup();
-      });
-
-      subscriptionsRef.current = [resultSub, endSub, errorSub];
-
-      SpeechModule.start({
-        lang: 'ko-KR',
-        interimResults: false,
-      });
-    } catch {
-      cleanup();
-    }
-  }, [isListening, onChangeText, value, cleanup]);
-
-  const hasMic = SpeechModule != null;
+  }, [isRecording, pulseAnim]);
 
   return (
     <View
@@ -100,7 +77,9 @@ export function VoiceTextInput({
         flexDirection: 'row',
         alignItems: 'flex-start',
         backgroundColor: fortuneTheme.colors.surfaceSecondary,
-        borderColor: isListening ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.border,
+        borderColor: isRecording
+          ? '#EF4444'
+          : fortuneTheme.colors.border,
         borderRadius: fortuneTheme.radius.lg,
         borderWidth: 1,
       }}
@@ -109,8 +88,10 @@ export function VoiceTextInput({
         {...rest}
         multiline={multiline}
         onChangeText={onChangeText}
-        placeholder={placeholder}
-        placeholderTextColor={fortuneTheme.colors.textTertiary}
+        placeholder={isRecording ? '녹음 중...' : placeholder}
+        placeholderTextColor={
+          isRecording ? '#EF4444' : fortuneTheme.colors.textTertiary
+        }
         style={{
           flex: 1,
           color: fortuneTheme.colors.textPrimary,
@@ -123,26 +104,40 @@ export function VoiceTextInput({
         }}
         value={value}
       />
-      {hasMic ? (
-        <Pressable
-          accessibilityLabel={isListening ? '음성 입력 중지' : '음성 입력 시작'}
-          accessibilityRole="button"
-          onPress={() => void handleMicPress()}
-          style={({ pressed }) => ({
-            alignItems: 'center',
-            justifyContent: 'center',
-            paddingHorizontal: 12,
-            paddingVertical: multiline ? 14 : 14,
-            opacity: pressed ? 0.6 : 1,
-          })}
-        >
-          <Ionicons
-            name={isListening ? 'mic' : 'mic-outline'}
-            size={20}
-            color={isListening ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.textTertiary}
+      <Pressable
+        accessibilityLabel={
+          isRecording
+            ? '녹음 중지'
+            : isTranscribing
+              ? '변환 중'
+              : '음성 입력 시작'
+        }
+        accessibilityRole="button"
+        disabled={isTranscribing}
+        onPress={() => void toggleRecording()}
+        style={({ pressed }) => ({
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingHorizontal: 12,
+          paddingVertical: multiline ? 14 : 14,
+          opacity: pressed ? 0.6 : 1,
+        })}
+      >
+        {isTranscribing ? (
+          <ActivityIndicator
+            size="small"
+            color={fortuneTheme.colors.ctaBackground}
           />
-        </Pressable>
-      ) : null}
+        ) : (
+          <Animated.View style={{ opacity: isRecording ? pulseAnim : 1 }}>
+            <Ionicons
+              name={isRecording ? 'mic' : 'mic-outline'}
+              size={20}
+              color={isRecording ? '#EF4444' : fortuneTheme.colors.textTertiary}
+            />
+          </Animated.View>
+        )}
+      </Pressable>
     </View>
   );
 }

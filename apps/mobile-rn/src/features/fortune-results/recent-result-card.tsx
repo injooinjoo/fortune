@@ -45,7 +45,7 @@ export function RecentResultCard({
       <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
         {recentFortuneCharacter
           ? `${recentFortuneCharacter.name}와 보던 결과를 같은 채팅 안에서 다시 열 수 있습니다.`
-          : '직전 운세 결과를 같은 채팅 안에서 다시 엽니다.'}
+          : '직전 인사이트 결과를 같은 채팅 안에서 다시 엽니다.'}
       </AppText>
       {recentFortuneCharacter ? (
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>

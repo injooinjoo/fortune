@@ -846,6 +846,7 @@ export async function invokeStoryChat(
   character: ChatCharacterSpec,
   userMessage: string,
   thread: StoryChatThreadSnapshot | null,
+  options?: { userDescription?: string },
 ): Promise<StoryChatResponse> {
   const request = buildStoryChatRequest(character, userMessage, thread);
 
@@ -857,8 +858,12 @@ export async function invokeStoryChat(
     throw new Error('Supabase is not configured.');
   }
 
+  const body = options?.userDescription
+    ? { ...request, userDescription: options.userDescription }
+    : request;
+
   const { data, error } = await supabase.functions.invoke('character-chat', {
-    body: request,
+    body,
   });
 
   if (error) {
@@ -974,4 +979,68 @@ export function buildNextStoryThreadSnapshot(
       profile.romanceState.dailyHook,
     updatedAt: new Date().toISOString(),
   };
+}
+
+// ---------------------------------------------------------------------------
+// Generic character conversation persistence (non-romance characters)
+// Uses the same edge functions but without romance-specific runtime state.
+// ---------------------------------------------------------------------------
+
+export async function loadCharacterConversation(
+  characterId: string,
+): Promise<ChatShellMessage[] | null> {
+  if (!supabase) {
+    return null;
+  }
+
+  const session = await resolveCurrentSession();
+  if (!session) {
+    return null;
+  }
+
+  try {
+    const { data, error } = await supabase.functions.invoke(
+      'character-conversation-load',
+      { body: { characterId } },
+    );
+
+    if (error) {
+      return null;
+    }
+
+    const payload = normalizeStoryConversationLoadResponse(data);
+    if (payload.success === false) {
+      return null;
+    }
+
+    const messages = fromPersistedStoryMessages(payload.messages);
+    return messages.length > 0 ? messages : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function saveCharacterConversation(
+  characterId: string,
+  messages: ChatShellMessage[],
+): Promise<void> {
+  if (!supabase) {
+    return;
+  }
+
+  const session = await resolveCurrentSession();
+  if (!session) {
+    return;
+  }
+
+  try {
+    await supabase.functions.invoke('character-conversation-save', {
+      body: {
+        characterId,
+        messages: toPersistedStoryMessages(messages),
+      },
+    });
+  } catch {
+    // Soft-fail: don't disrupt the user experience
+  }
 }

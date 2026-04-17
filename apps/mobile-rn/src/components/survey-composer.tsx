@@ -1,30 +1,18 @@
 /**
  * Compact bottom-bar text input for surveys.
  * Mirrors the chat composer design: [skip?] [TextInput] [mic|send]
+ *
+ * Voice input uses expo-av recording + OpenAI Whisper via Supabase Edge Function.
  */
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, TextInput, View } from 'react-native';
+import { ActivityIndicator, Animated, Easing, Pressable, TextInput, View } from 'react-native';
 
 import { AppText } from './app-text';
 import { fortuneTheme } from '../lib/theme';
-
-let SpeechModule: {
-  start: (options: { lang: string; interimResults: boolean }) => void;
-  stop: () => void;
-  requestPermissionsAsync: () => Promise<{ granted: boolean }>;
-  addListener: (event: string, handler: (data: unknown) => void) => { remove: () => void };
-} | null = null;
-
-try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mod = require('expo-speech-recognition');
-  SpeechModule = mod.ExpoSpeechRecognitionModule ?? null;
-} catch {
-  // Not available
-}
+import { useVoiceInput } from '../lib/use-voice-input';
 
 interface SurveyComposerProps {
   value: string;
@@ -41,68 +29,54 @@ export function SurveyComposer({
   onSkip,
   placeholder = '답변을 적어주세요.',
 }: SurveyComposerProps) {
-  const [isListening, setIsListening] = useState(false);
-  const subscriptionsRef = useRef<Array<{ remove: () => void }>>([]);
   const hasDraft = value.trim().length > 0;
-  const hasMic = SpeechModule != null;
 
-  const cleanup = useCallback(() => {
-    for (const sub of subscriptionsRef.current) {
-      sub.remove();
+  const handleTranscript = useCallback(
+    (text: string) => {
+      onChangeText(value ? `${value} ${text}` : text);
+    },
+    [onChangeText, value],
+  );
+
+  const { isRecording, isTranscribing, isActive, toggleRecording } =
+    useVoiceInput({ onTranscript: handleTranscript });
+
+  // Pulse animation for recording indicator
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    if (isRecording) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, {
+            toValue: 0.5,
+            duration: 600,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseAnim, {
+            toValue: 1,
+            duration: 600,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ]),
+      ).start();
+    } else {
+      pulseAnim.stopAnimation();
+      pulseAnim.setValue(1);
     }
-    subscriptionsRef.current = [];
-    setIsListening(false);
-  }, []);
-
-  const handleMicPress = useCallback(async () => {
-    if (!SpeechModule) return;
-
-    if (isListening) {
-      try { SpeechModule.stop(); } catch { /* ignore */ }
-      cleanup();
-      return;
-    }
-
-    try {
-      const { granted } = await SpeechModule.requestPermissionsAsync();
-      if (!granted) return;
-
-      setIsListening(true);
-
-      const resultSub = SpeechModule.addListener('result', (event: unknown) => {
-        const e = event as { results?: Array<{ transcript?: string }> };
-        const transcript = e.results?.[0]?.transcript;
-        if (transcript) {
-          onChangeText(value ? `${value} ${transcript}` : transcript);
-        }
-      });
-
-      const endSub = SpeechModule.addListener('end', () => {
-        cleanup();
-      });
-
-      const errorSub = SpeechModule.addListener('error', () => {
-        cleanup();
-      });
-
-      subscriptionsRef.current = [resultSub, endSub, errorSub];
-
-      SpeechModule.start({
-        lang: 'ko-KR',
-        interimResults: false,
-      });
-    } catch {
-      cleanup();
-    }
-  }, [isListening, onChangeText, value, cleanup]);
+  }, [isRecording, pulseAnim]);
 
   return (
     <View
       style={{
         backgroundColor: fortuneTheme.colors.surfaceSecondary,
-        borderColor: isListening
-          ? fortuneTheme.colors.ctaBackground
-          : fortuneTheme.colors.border,
+        borderColor: isRecording
+          ? '#EF4444'
+          : isActive
+            ? fortuneTheme.colors.ctaBackground
+            : fortuneTheme.colors.border,
         borderRadius: fortuneTheme.radius.inputArea,
         borderWidth: 1,
         paddingHorizontal: 12,
@@ -149,8 +123,10 @@ export function SurveyComposer({
             accessibilityLabel="survey text input"
             multiline
             onChangeText={onChangeText}
-            placeholder={placeholder}
-            placeholderTextColor={fortuneTheme.colors.textTertiary}
+            placeholder={isRecording ? '녹음 중...' : placeholder}
+            placeholderTextColor={
+              isRecording ? '#EF4444' : fortuneTheme.colors.textTertiary
+            }
             style={{
               color: fortuneTheme.colors.textPrimary,
               maxHeight: 72,
@@ -165,42 +141,50 @@ export function SurveyComposer({
 
         {/* Right button: send or mic */}
         <Pressable
-          accessibilityLabel={hasDraft ? '답변 보내기' : isListening ? '음성 입력 중지' : '음성 입력'}
-          accessibilityRole="button"
-          disabled={hasDraft ? false : !hasMic}
-          onPress={
+          accessibilityLabel={
             hasDraft
+              ? '답변 보내기'
+              : isRecording
+                ? '녹음 중지'
+                : isTranscribing
+                  ? '변환 중'
+                  : '음성 입력'
+          }
+          accessibilityRole="button"
+          disabled={isTranscribing}
+          onPress={
+            hasDraft && !isActive
               ? onSubmit
-              : hasMic
-                ? () => void handleMicPress()
-                : undefined
+              : () => void toggleRecording()
           }
           style={{
             alignItems: 'center',
-            backgroundColor: hasDraft
+            backgroundColor: hasDraft && !isActive
               ? fortuneTheme.colors.ctaBackground
-              : fortuneTheme.colors.surfaceElevated,
+              : isRecording
+                ? '#EF4444'
+                : fortuneTheme.colors.surfaceElevated,
             borderRadius: 16,
             height: 32,
             justifyContent: 'center',
             minWidth: 32,
-            paddingHorizontal: hasDraft ? 10 : 0,
+            paddingHorizontal: hasDraft && !isActive ? 10 : 0,
           }}
         >
-          {hasDraft ? (
+          {hasDraft && !isActive ? (
             <AppText variant="labelLarge" color={fortuneTheme.colors.ctaForeground}>
               보내기
             </AppText>
+          ) : isTranscribing ? (
+            <ActivityIndicator size="small" color={fortuneTheme.colors.ctaBackground} />
           ) : (
-            <Ionicons
-              color={
-                isListening
-                  ? fortuneTheme.colors.ctaBackground
-                  : fortuneTheme.colors.textSecondary
-              }
-              name={isListening ? 'mic' : 'mic-outline'}
-              size={18}
-            />
+            <Animated.View style={{ opacity: isRecording ? pulseAnim : 1 }}>
+              <Ionicons
+                color={isRecording ? '#FFFFFF' : fortuneTheme.colors.textSecondary}
+                name={isRecording ? 'mic' : 'mic-outline'}
+                size={18}
+              />
+            </Animated.View>
           )}
         </Pressable>
       </View>

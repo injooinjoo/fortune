@@ -37,10 +37,14 @@ export function EmailAuthScreen() {
   const [isLoading, setIsLoading] = useState(false);
 
   const isSignup = mode === 'signup';
+
+  const passwordLongEnough = password.length >= 6;
+  const passwordsMatch = password === confirmPassword;
+  const passwordTouched = password.length > 0;
+  const confirmTouched = confirmPassword.length > 0;
+
   const isFormValid = isSignup
-    ? email.trim().length > 0 &&
-      password.length >= 6 &&
-      password === confirmPassword
+    ? email.trim().length > 0 && passwordLongEnough && passwordsMatch
     : email.trim().length > 0 && password.length >= 1;
 
   async function handleSubmit() {
@@ -146,10 +150,31 @@ export function EmailAuthScreen() {
             placeholder="6자 이상 입력"
             placeholderTextColor={fortuneTheme.colors.textTertiary}
             secureTextEntry
-            style={INPUT_STYLE}
+            style={[
+              INPUT_STYLE,
+              isSignup && passwordTouched && !passwordLongEnough
+                ? { borderColor: fortuneTheme.colors.error }
+                : isSignup && passwordLongEnough
+                  ? { borderColor: fortuneTheme.colors.success ?? '#34C759' }
+                  : undefined,
+            ]}
             textContentType={isSignup ? 'newPassword' : 'password'}
             value={password}
           />
+          {isSignup && passwordTouched ? (
+            <AppText
+              variant="caption"
+              color={
+                passwordLongEnough
+                  ? fortuneTheme.colors.success ?? '#34C759'
+                  : fortuneTheme.colors.error
+              }
+            >
+              {passwordLongEnough
+                ? '\u2713 6자 이상 입력됨'
+                : `\u2717 6자 이상 필요 (현재 ${password.length}자)`}
+            </AppText>
+          ) : null}
         </View>
 
         {isSignup ? (
@@ -169,10 +194,31 @@ export function EmailAuthScreen() {
               placeholder="비밀번호를 다시 입력"
               placeholderTextColor={fortuneTheme.colors.textTertiary}
               secureTextEntry
-              style={INPUT_STYLE}
+              style={[
+                INPUT_STYLE,
+                confirmTouched && !passwordsMatch
+                  ? { borderColor: fortuneTheme.colors.error }
+                  : confirmTouched && passwordsMatch && passwordLongEnough
+                    ? { borderColor: fortuneTheme.colors.success ?? '#34C759' }
+                    : undefined,
+              ]}
               textContentType="newPassword"
               value={confirmPassword}
             />
+            {confirmTouched ? (
+              <AppText
+                variant="caption"
+                color={
+                  passwordsMatch && passwordLongEnough
+                    ? fortuneTheme.colors.success ?? '#34C759'
+                    : fortuneTheme.colors.error
+                }
+              >
+                {passwordsMatch
+                  ? '\u2713 비밀번호가 일치합니다'
+                  : '\u2717 비밀번호가 일치하지 않습니다'}
+              </AppText>
+            ) : null}
           </View>
         ) : null}
 

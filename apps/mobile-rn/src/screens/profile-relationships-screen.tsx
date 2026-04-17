@@ -259,7 +259,7 @@ export function ProfileRelationshipsScreen() {
     );
   }
   if (lastFortuneLabel) {
-    summaryParts.push(`최근 운세 신호: ${lastFortuneLabel}`);
+    summaryParts.push(`최근 인사이트: ${lastFortuneLabel}`);
   }
   if (summaryParts.length === 0) {
     summaryParts.push(
@@ -325,7 +325,7 @@ export function ProfileRelationshipsScreen() {
       })}
 
       {/* Fortune characters section */}
-      <SectionHeader title="운세 캐릭터" />
+      <SectionHeader title="인사이트 캐릭터" />
       {fortuneChars.map((character) => {
         const isSelected = selectedCharacter?.id === character.id;
         return (

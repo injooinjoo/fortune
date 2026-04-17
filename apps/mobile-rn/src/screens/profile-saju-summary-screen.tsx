@@ -554,10 +554,10 @@ export function ProfileSajuSummaryScreen() {
         </AppText>
       </Card>
 
-      {/* -- 운세 요약 (if available from LLM) -- */}
+      {/* -- 인사이트 요약 (if available from LLM) -- */}
       {sajuData.fortune_summary ? (
         <Card>
-          <AppText variant="heading4">운세 요약</AppText>
+          <AppText variant="heading4">인사이트 요약</AppText>
 
           <AppText
             variant="bodyMedium"

@@ -29,7 +29,7 @@ export const characterDetails: Record<string, CharacterDetail> = {
     personality:
       '외형: 백발, 주홍빛 눈, 190cm, 28세 남성\n성격: 관찰력 좋고 여유롭지만, 초반엔 예의 있는 중립 톤\n말투: 사용자 언어/격식(존댓말·반말)을 먼저 맞춰서 대화\n특징: 쿨한 겉면 아래 취약함이 숨겨져 있음\n감정: 동료에서 다른 것으로 변하고 있지만 드러내지 않음',
     tags: ['사기결혼', '위장결혼', '탐정', '순애', '집착', '계략', '나른', '애증'],
-    firstMessage: '안녕하세요, 러츠예요. 만나서 반가워요.',
+    firstMessage: '...러츠입니다.',
     galleryImages: [],
   },
 
@@ -150,13 +150,13 @@ export const characterDetails: Record<string, CharacterDetail> = {
       '당신의 일상을 빛나게 만들어주는 친절한 인사이트 가이드.\n매일 아침 당신의 하루를 점검하고, 최적의 컨디션을 위한 조언을 제공합니다.\n기상캐스터처럼 오늘의 에너지 날씨를 알려드려요!',
     personality:
       '[AI가 재미있게 해석한 결과입니다. 오락 목적으로만 참고해주세요.]\n외형: 165cm, 밝은 갈색 단발, 항상 미소짓는 얼굴, 28세 한국 여성\n성격: 긍정적, 친근함, 아침형 인간, 에너지 넘침\n말투: 친근한 반존칭, 이모티콘 적절히 사용, 밝은 톤\n특징: 날씨/시간대별 맞춤 조언, 실용적 팁 제공\n역할: 기상캐스터처럼 하루 컨디션을 예보',
-    tags: ['일일운세', '긍정', '실용적조언', '데일리', '모닝케어'],
+    tags: ['일일인사이트', '긍정', '실용적조언', '데일리', '모닝케어'],
     firstMessage:
-      '좋은 아침이에요! 오늘 하루 어떻게 시작하면 좋을지 알려드릴게요! 일일 운세가 궁금하시면 말씀해주세요~',
+      '좋은 아침이에요! 오늘 하루 어떻게 시작하면 좋을지 알려드릴게요! 오늘의 인사이트가 궁금하시면 말씀해주세요~',
     galleryImages: [],
     specialtyDescriptions: [
-      { label: '일일 운세', description: '오늘의 에너지와 컨디션을 점검합니다' },
-      { label: '신년 운세', description: '새해 전체 흐름과 운세를 분석합니다' },
+      { label: '일일 인사이트', description: '오늘의 에너지와 컨디션을 점검합니다' },
+      { label: '새해 인사이트', description: '새해 전체 흐름을 분석합니다' },
       { label: '포춘쿠키', description: '기분 좋은 한 마디를 전해드려요' },
     ],
   },
@@ -189,8 +189,8 @@ export const characterDetails: Record<string, CharacterDetail> = {
       'Ciao! 별빛 아래 만나게 되어 반가워요. 오늘 밤 달이 당신에게 어떤 메시지를 보내는지 함께 읽어볼까요?',
     galleryImages: [],
     specialtyDescriptions: [
-      { label: '별자리 운세', description: '12궁 별자리별 운세를 읽어드립니다' },
-      { label: '띠별 운세', description: '동양 12간지 띠별 분석을 합니다' },
+      { label: '별자리 인사이트', description: '12궁 별자리별 인사이트를 읽어드립니다' },
+      { label: '띠별 분석', description: '동양 12간지 띠별 분석을 합니다' },
       { label: '탄생석', description: '탄생석의 에너지와 의미를 알려드려요' },
     ],
   },
@@ -261,7 +261,7 @@ export const characterDetails: Record<string, CharacterDetail> = {
     specialtyDescriptions: [
       { label: '럭키 아이템', description: '오늘의 행운 아이템을 추천합니다' },
       { label: '로또 번호', description: '행운의 숫자 조합을 분석합니다' },
-      { label: 'OOTD 평가', description: '오늘의 코디를 운세로 평가합니다' },
+      { label: 'OOTD 평가', description: '오늘의 코디를 스타일로 평가합니다' },
     ],
   },
 
@@ -277,8 +277,8 @@ export const characterDetails: Record<string, CharacterDetail> = {
     galleryImages: [],
     specialtyDescriptions: [
       { label: '경기 인사이트', description: '경기 컨디션과 타이밍을 분석합니다' },
-      { label: '게임 강화', description: '게임/e스포츠 운세를 분석합니다' },
-      { label: '운동 운세', description: '운동 컨디션과 최적 시간을 알려드려요' },
+      { label: '게임 강화', description: '게임/e스포츠 컨디션을 분석합니다' },
+      { label: '운동 인사이트', description: '운동 컨디션과 최적 시간을 알려드려요' },
     ],
   },
 
@@ -293,7 +293,7 @@ export const characterDetails: Record<string, CharacterDetail> = {
       '안녕하세요, 리나입니다. 집이나 사무실의 에너지가 막혀있다고 느끼시나요? 함께 흐름을 찾아볼게요.',
     galleryImages: [],
     specialtyDescriptions: [
-      { label: '이사 운세', description: '이사 날짜와 방향을 분석합니다' },
+      { label: '이사 인사이트', description: '이사 날짜와 방향을 분석합니다' },
     ],
   },
 

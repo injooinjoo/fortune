@@ -442,6 +442,12 @@ function buildIntroSentence(
           : '현재 룩 무드를 반영해',
         '정리했습니다.',
       ]);
+    case 'naming':
+      return joinSentence([
+        labels.lastName ? `${labels.lastName}씨 가문의 오행을 기준으로` : '사주 오행을 기준으로',
+        labels.style ? `${labels.style} 느낌의 이름을` : '아기에게 어울리는 이름을',
+        '추천했습니다.',
+      ]);
     case 'blood-type':
       return labels.bloodType
         ? `${labels.bloodType} 기질을 기준으로 포인트를 정리했습니다.`
@@ -789,6 +795,19 @@ function extractMetricTiles(
         toMetricTile('전체 등급', payload.overallGrade),
         toMetricTile('TPO 점수', payload.tpoScore),
       ].filter(Boolean) as MetricTileData[];
+    case 'naming': {
+      const ohaeng = asRecord(payload.ohaengAnalysis);
+      const names = Array.isArray(payload.recommendedNames) ? payload.recommendedNames : [];
+      return mergeMetricTiles(
+        [
+          toMetricTile('추천 이름', names.length > 0 ? `${names.length}개` : undefined),
+          toMetricTile('용신', ohaeng.yongsin),
+          toMetricTile('부족 오행', Array.isArray(ohaeng.missing) ? (ohaeng.missing as string[]).join(', ') : ohaeng.missing),
+          toMetricTile('최고 점수', names.length > 0 ? asRecord(names[0]).totalScore : undefined),
+        ].filter(Boolean) as MetricTileData[],
+        undefined,
+      );
+    }
     case 'wealth':
       return [
         toMetricTile('재물 잠재력', payload.wealthPotential),

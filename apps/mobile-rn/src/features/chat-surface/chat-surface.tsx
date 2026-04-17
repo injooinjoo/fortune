@@ -2,7 +2,9 @@ import { useState, useEffect, useRef, useCallback, type PropsWithChildren, type 
 
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { Animated, Image, PanResponder, Pressable, TextInput, View } from 'react-native';
+import { ActivityIndicator, Animated, Easing, Image, PanResponder, Pressable, TextInput, View } from 'react-native';
+
+import type { VoiceInputState } from '../../lib/use-voice-input';
 
 import type { FortuneTypeId } from '@fortune/product-contracts';
 
@@ -27,12 +29,21 @@ import type {
 import { buildSuggestedActions, formatFortuneTypeLabel } from '../../lib/chat-shell';
 import { resolveChatCharacterAvatarSource } from '../../lib/chat-character-avatar';
 import { confirmAction } from '../../lib/haptics';
-import { fortuneTheme } from '../../lib/theme';
+import { fortuneTheme, romanceTintBackground } from '../../lib/theme';
 import { EmbeddedResultCard } from '../chat-results/embedded-result-card';
 import { FortuneCookieCard } from '../fortune-cookie/fortune-cookie-card';
 import { SajuPreviewCard } from '../fortune-cookie/saju-preview-card';
 import type { ChatSurveyStep } from '../chat-survey/types';
 import { TarotDrawWidget } from '../chat-survey/tarot-draw-widget';
+
+function formatChatHeaderTimestamp(date: Date): string {
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+  const isAfternoon = hour >= 12;
+  const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+  const paddedMinute = minute.toString().padStart(2, '0');
+  return `${isAfternoon ? '오후' : '오전'} ${displayHour}:${paddedMinute}`;
+}
 
 function CharacterAvatar({
   characterId,
@@ -232,16 +243,18 @@ function SegmentedPills({
       >
         <Chip label="스토리" tone={activeTab === 'story' ? 'accent' : 'neutral'} />
       </Pressable>
+      {/* TODO: 호기심 탭 임시 비활성화
       <Pressable
         accessibilityRole="button"
         onPress={() => onChangeTab('fortune')}
         style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
       >
         <Chip
-          label="운세보기"
+          label="호기심"
           tone={activeTab === 'fortune' ? 'accent' : 'neutral'}
         />
       </Pressable>
+      */}
     </View>
   );
 }
@@ -305,6 +318,7 @@ function CharacterListRow({
   onPickAction,
   optionActions = [],
   selected = false,
+  romanceScore = 0,
 }: {
   character: ChatCharacterSpec;
   badge?: string;
@@ -313,9 +327,11 @@ function CharacterListRow({
   onPickAction?: (fortuneType: FortuneTypeId) => void;
   optionActions?: readonly ChatShellAction[];
   selected?: boolean;
+  romanceScore?: number;
 }) {
   const swipeX = useRef(new Animated.Value(0)).current;
-  const DELETE_THRESHOLD = -80;
+  const DELETE_WIDTH = 80;
+  const DELETE_THRESHOLD = -50;
 
   const panResponder = useRef(
     onDelete
@@ -324,12 +340,12 @@ function CharacterListRow({
             Math.abs(gesture.dx) > 10 && Math.abs(gesture.dy) < 20,
           onPanResponderMove: (_, gesture) => {
             if (gesture.dx < 0) {
-              swipeX.setValue(Math.max(gesture.dx, -120));
+              swipeX.setValue(Math.max(gesture.dx, -DELETE_WIDTH));
             }
           },
           onPanResponderRelease: (_, gesture) => {
             if (gesture.dx < DELETE_THRESHOLD) {
-              Animated.spring(swipeX, { toValue: -100, useNativeDriver: true }).start();
+              Animated.spring(swipeX, { toValue: -DELETE_WIDTH, useNativeDriver: true }).start();
             } else {
               Animated.spring(swipeX, { toValue: 0, useNativeDriver: true }).start();
             }
@@ -338,80 +354,43 @@ function CharacterListRow({
       : null,
   ).current;
 
-  const cardContent = (
-    <View
-      style={{
-        backgroundColor: selected
-          ? fortuneTheme.colors.backgroundTertiary
-          : fortuneTheme.colors.surfaceSecondary,
-        borderColor: selected
-          ? fortuneTheme.colors.accentTertiary
-          : fortuneTheme.colors.border,
-        borderRadius: fortuneTheme.radius.lg,
-        borderWidth: 1,
-        gap: optionActions.length > 0 ? fortuneTheme.spacing.sm : 0,
-        paddingHorizontal: fortuneTheme.spacing.md,
-        paddingVertical: fortuneTheme.spacing.sm,
-      }}
-    >
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => { confirmAction(); onPress(); }}
-        style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
-      >
-        <View
-          style={{
-            alignItems: 'center',
-            flexDirection: 'row',
-            gap: fortuneTheme.spacing.sm,
-          }}
-        >
-          <CharacterAvatar characterId={character.id} name={character.name} />
-          <View style={{ flex: 1, gap: 2 }}>
-            <AppText variant="labelLarge">{character.name}</AppText>
-            <AppText
-              numberOfLines={optionActions.length > 0 ? 2 : 1}
-              variant="bodySmall"
-              color={fortuneTheme.colors.textSecondary}
-            >
-              {character.shortDescription}
-            </AppText>
-          </View>
-          {badge ? <Chip label={badge} tone="neutral" /> : null}
-        </View>
-      </Pressable>
+  const tintBg = romanceScore > 5 ? romanceTintBackground(romanceScore) : fortuneTheme.colors.background;
 
-      {optionActions.length > 0 && onPickAction ? (
-        <View
-          style={{
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            gap: 8,
-            paddingLeft: 56,
-          }}
-        >
-          {optionActions.map((action, index) => (
-            <Pressable
-              key={action.id}
-              accessibilityRole="button"
-              onPress={() => onPickAction(action.fortuneType)}
-              style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
-            >
-              <Chip
-                label={action.label}
-                tone={
-                  selected && index === 0
-                    ? 'accent'
-                    : index % 3 === 0
-                      ? 'success'
-                      : 'neutral'
-                }
-              />
-            </Pressable>
-          ))}
+  const cardContent = (
+    <Pressable
+      accessibilityRole="button"
+      onPress={() => { confirmAction(); onPress(); }}
+      style={({ pressed }) => ({
+        backgroundColor: tintBg,
+        borderBottomColor: fortuneTheme.colors.border,
+        borderBottomWidth: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: fortuneTheme.spacing.md,
+        opacity: pressed ? 0.6 : 1,
+        paddingHorizontal: 20,
+        paddingVertical: 16,
+      })}
+    >
+      <CharacterAvatar characterId={character.id} name={character.name} size={60} />
+      <View style={{ flex: 1, gap: 4 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <AppText variant="labelLarge" style={{ flex: 1 }}>{character.name}</AppText>
+          {badge ? (
+            <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+              {badge}
+            </AppText>
+          ) : null}
         </View>
-      ) : null}
-    </View>
+        <AppText
+          numberOfLines={1}
+          variant="bodySmall"
+          color={fortuneTheme.colors.textSecondary}
+        >
+          {character.shortDescription}
+        </AppText>
+      </View>
+    </Pressable>
   );
 
   if (!onDelete) {
@@ -419,29 +398,31 @@ function CharacterListRow({
   }
 
   return (
-    <View style={{ overflow: 'hidden', borderRadius: fortuneTheme.radius.lg }}>
+    <View style={{ overflow: 'hidden' }}>
       {/* Delete button behind */}
-      <View
+      <Pressable
+        onPress={() => {
+          Animated.spring(swipeX, { toValue: 0, useNativeDriver: true }).start();
+          onDelete();
+        }}
         style={{
           position: 'absolute',
           right: 0,
           top: 0,
           bottom: 0,
-          width: 100,
-          backgroundColor: fortuneTheme.colors.error,
-          borderRadius: fortuneTheme.radius.lg,
+          width: DELETE_WIDTH,
+          backgroundColor: '#FF3B30',
           alignItems: 'center',
           justifyContent: 'center',
+          gap: 6,
         }}
       >
-        <Pressable onPress={onDelete} style={{ alignItems: 'center', padding: 12 }}>
-          <Ionicons name="trash-outline" size={22} color="#FFFFFF" />
-          <AppText variant="caption" color="#FFFFFF" style={{ marginTop: 2 }}>
-            삭제
-          </AppText>
-        </Pressable>
-      </View>
-      {/* Swipeable card */}
+        <Ionicons name="trash" size={24} color="#FFFFFF" />
+        <AppText variant="labelSmall" color="#FFFFFF">
+          삭제
+        </AppText>
+      </Pressable>
+      {/* Swipeable row */}
       <Animated.View
         style={{ transform: [{ translateX: swipeX }] }}
         {...(panResponder?.panHandlers ?? {})}
@@ -577,6 +558,7 @@ function ChatThreadMessage({
   const isUser = message.sender === 'user';
   const isFullWidth =
     message.kind === 'embedded-result' || message.kind === 'fortune-cookie' || message.kind === 'saju-preview';
+  const isImage = message.kind === 'image';
   const showAssistantAvatar = !isUser && !isFullWidth;
 
   return (
@@ -616,6 +598,23 @@ function ChatThreadMessage({
               data={message.sajuData as import('../../lib/saju-remote').SajuData}
               userName={message.userName}
             />
+          </View>
+        ) : isImage ? (
+          <View style={{ gap: 4 }}>
+            <Image
+              source={{ uri: message.imageUrl }}
+              style={{
+                width: 200,
+                height: 200,
+                borderRadius: fortuneTheme.radius.card,
+              }}
+              resizeMode="cover"
+            />
+            {message.caption ? (
+              <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+                {message.caption}
+              </AppText>
+            ) : null}
           </View>
         ) : (
           <MessageBubble message={message} />
@@ -844,6 +843,7 @@ export function ChatFirstRunSurface({
   onSelectCharacter,
   onPickCharacterAction,
   onDeleteFriend,
+  romanceScores,
 }: {
   activeTab: ChatCharacterTab;
   characters: readonly ChatCharacterSpec[];
@@ -855,6 +855,7 @@ export function ChatFirstRunSurface({
   onSelectCharacter: (characterId: string) => void;
   onPickCharacterAction: (characterId: string, fortuneType: FortuneTypeId) => void;
   onDeleteFriend?: (characterId: string) => void;
+  romanceScores?: Record<string, number>;
 }) {
   const safeCharacters = Array.isArray(characters) ? characters : [];
   const orderedCharacters = [
@@ -884,7 +885,7 @@ export function ChatFirstRunSurface({
       </View>
 
       {activeTab === 'story' ? (
-        <View style={{ gap: fortuneTheme.spacing.sm }}>
+        <View style={{ marginHorizontal: -20 }}>
           {visibleCharacters.map((character) => (
             <CharacterListRow
               key={character.id}
@@ -896,60 +897,31 @@ export function ChatFirstRunSurface({
                   : undefined
               }
               onPress={() => onSelectCharacter(character.id)}
+              romanceScore={romanceScores?.[character.id] ?? 0}
               selected={character.id === selectedCharacterId}
             />
           ))}
         </View>
       ) : (
-        <View style={{ gap: fortuneTheme.spacing.md }}>
-          <View
-            style={{
-              alignItems: 'center',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              gap: fortuneTheme.spacing.sm,
-              paddingHorizontal: 4,
-            }}
-          >
-            <View style={{ flex: 1, gap: 4 }}>
-              <AppText variant="heading4">최근 상담</AppText>
-              <AppText
-                variant="bodySmall"
-                color={fortuneTheme.colors.textSecondary}
-              >
-                설문과 결과가 같은 채팅 안에서 이어지는 전문가 목록입니다.
-              </AppText>
-            </View>
-            <Chip label="운세보기" tone="success" />
-          </View>
-          <View style={{ gap: fortuneTheme.spacing.sm }}>
-            {lastFortuneType ? (
-              <EntryActionRow
-                badge="최근 결과"
-                onPress={() => onOpenRecentResult(lastFortuneType)}
-                subtitle={`${formatFortuneTypeLabel(lastFortuneType)} 결과를 같은 채팅 안에서 다시 엽니다.`}
-                title={`${formatFortuneTypeLabel(lastFortuneType)} 이어보기`}
-                tone="accent"
-              />
-            ) : null}
-            {visibleCharacters.map((character) => (
-              <CharacterListRow
-                key={character.id}
-                badge={`${character.specialties.length}개 운세`}
-                character={character}
-                onPickAction={(fortuneType) =>
-                  onPickCharacterAction(character.id, fortuneType)
-                }
-                onPress={() => onSelectCharacter(character.id)}
-                optionActions={
-                  isFortuneChatCharacter(character)
-                    ? buildSuggestedActions(character)
-                    : []
-                }
-                selected={character.id === selectedCharacterId}
-              />
-            ))}
-          </View>
+        <View style={{ marginHorizontal: -20 }}>
+          {lastFortuneType ? (
+            <EntryActionRow
+              badge="최근 결과"
+              onPress={() => onOpenRecentResult(lastFortuneType)}
+              subtitle={`${formatFortuneTypeLabel(lastFortuneType)} 결과를 같은 채팅 안에서 다시 엽니다.`}
+              title={`${formatFortuneTypeLabel(lastFortuneType)} 이어보기`}
+              tone="accent"
+            />
+          ) : null}
+          {visibleCharacters.map((character) => (
+            <CharacterListRow
+              key={character.id}
+              badge={`${character.specialties.length}개 인사이트`}
+              character={character}
+              onPress={() => onSelectCharacter(character.id)}
+              selected={character.id === selectedCharacterId}
+            />
+          ))}
         </View>
       )}
 
@@ -962,19 +934,24 @@ export function ActiveChatComposer({
   onDraftChange,
   onSend,
   onOpenPhotoPicker,
-  onStartVoiceInput,
+  onOpenPersonaSettings,
+  onToggleVoiceInput,
+  voiceInputState = 'idle',
   quickActions,
   trayOpen,
   onToggleTray,
   onPickAction,
   auxiliaryAction,
   sendDisabled = false,
+  hasCustomPersona = false,
 }: {
   draft: string;
   onDraftChange: (value: string) => void;
   onSend: () => void;
   onOpenPhotoPicker: () => void;
-  onStartVoiceInput: () => void;
+  onOpenPersonaSettings?: () => void;
+  onToggleVoiceInput: () => void;
+  voiceInputState?: VoiceInputState;
   quickActions: ChatShellAction[];
   trayOpen: boolean;
   onToggleTray: () => void;
@@ -984,16 +961,50 @@ export function ActiveChatComposer({
     onPress: () => void;
   };
   sendDisabled?: boolean;
+  hasCustomPersona?: boolean;
 }) {
   const composerHasDraft = draft.trim().length > 0;
   const safeQuickActions = Array.isArray(quickActions) ? quickActions : [];
   const trayActions = safeQuickActions.slice(0, 12);
+  const voiceRecording = voiceInputState === 'recording';
+  const voiceTranscribing = voiceInputState === 'transcribing';
+  const voiceActive = voiceInputState !== 'idle';
+
+  // Pulse animation for recording indicator
+  const micPulseAnim = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    if (voiceRecording) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(micPulseAnim, {
+            toValue: 0.5,
+            duration: 600,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(micPulseAnim, {
+            toValue: 1,
+            duration: 600,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ]),
+      ).start();
+    } else {
+      micPulseAnim.stopAnimation();
+      micPulseAnim.setValue(1);
+    }
+  }, [voiceRecording, micPulseAnim]);
 
   return (
     <View
       style={{
         backgroundColor: fortuneTheme.colors.surfaceSecondary,
-        borderColor: fortuneTheme.colors.border,
+        borderColor: voiceRecording
+          ? '#EF4444'
+          : voiceActive
+            ? fortuneTheme.colors.ctaBackground
+            : fortuneTheme.colors.border,
         borderRadius: fortuneTheme.radius.inputArea,
         borderWidth: 1,
         paddingHorizontal: 12,
@@ -1037,6 +1048,40 @@ export function ActiveChatComposer({
                 <AppText variant="labelLarge">사진 보내기</AppText>
               </View>
             </Pressable>
+            {onOpenPersonaSettings ? (
+              <Pressable
+                accessibilityLabel="성격 설정"
+                accessibilityRole="button"
+                onPress={onOpenPersonaSettings}
+                style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
+              >
+                <View
+                  style={{
+                    alignItems: 'center',
+                    backgroundColor: hasCustomPersona
+                      ? 'rgba(232, 236, 255, 0.96)'
+                      : fortuneTheme.colors.backgroundTertiary,
+                    borderRadius: 999,
+                    flexDirection: 'row',
+                    gap: 8,
+                    paddingHorizontal: 14,
+                    paddingVertical: 8,
+                  }}
+                >
+                  <Ionicons
+                    color={hasCustomPersona ? fortuneTheme.colors.background : fortuneTheme.colors.textPrimary}
+                    name="sparkles-outline"
+                    size={16}
+                  />
+                  <AppText
+                    variant="labelLarge"
+                    color={hasCustomPersona ? fortuneTheme.colors.background : undefined}
+                  >
+                    성격 설정
+                  </AppText>
+                </View>
+              </Pressable>
+            ) : null}
             {trayActions.map((action, actionIndex) => (
               <Pressable
                 key={action.id}
@@ -1145,8 +1190,10 @@ export function ActiveChatComposer({
             accessibilityLabel="chat composer"
             multiline
             onChangeText={onDraftChange}
-            placeholder="메시지..."
-            placeholderTextColor={fortuneTheme.colors.textTertiary}
+            placeholder={voiceRecording ? '녹음 중...' : '메시지...'}
+            placeholderTextColor={
+              voiceRecording ? '#EF4444' : fortuneTheme.colors.textTertiary
+            }
             style={{
               color: fortuneTheme.colors.textPrimary,
               maxHeight: 72,
@@ -1160,34 +1207,42 @@ export function ActiveChatComposer({
         </View>
         <Pressable
           accessibilityLabel={
-            composerHasDraft ? 'send message' : 'start voice input'
+            composerHasDraft && !voiceActive
+              ? 'send message'
+              : voiceRecording
+                ? '녹음 중지'
+                : voiceTranscribing
+                  ? '변환 중'
+                  : 'start voice input'
           }
           accessibilityRole="button"
-          accessibilityState={{ disabled: sendDisabled }}
-          disabled={sendDisabled}
+          accessibilityState={{ disabled: sendDisabled || voiceTranscribing }}
+          disabled={sendDisabled || voiceTranscribing}
           onPress={
-            sendDisabled
+            sendDisabled && !voiceActive
               ? undefined
-              : composerHasDraft
+              : composerHasDraft && !voiceActive
                 ? onSend
-                : onStartVoiceInput
+                : onToggleVoiceInput
           }
           style={{
             alignItems: 'center',
-            backgroundColor: composerHasDraft
+            backgroundColor: composerHasDraft && !voiceActive
               ? sendDisabled
                 ? fortuneTheme.colors.surfaceElevated
                 : fortuneTheme.colors.ctaBackground
-              : fortuneTheme.colors.surfaceElevated,
+              : voiceRecording
+                ? '#EF4444'
+                : fortuneTheme.colors.surfaceElevated,
             borderRadius: 16,
             height: 32,
             justifyContent: 'center',
             minWidth: 32,
-            paddingHorizontal: composerHasDraft ? 10 : 0,
-            opacity: sendDisabled ? 0.72 : 1,
+            paddingHorizontal: composerHasDraft && !voiceActive ? 10 : 0,
+            opacity: sendDisabled && !voiceActive ? 0.72 : 1,
           }}
         >
-          {composerHasDraft ? (
+          {composerHasDraft && !voiceActive ? (
             <AppText
               variant="labelLarge"
               color={
@@ -1198,12 +1253,19 @@ export function ActiveChatComposer({
             >
               {sendDisabled ? '응답 중' : '보내기'}
             </AppText>
-          ) : (
-            <Ionicons
-              color={fortuneTheme.colors.textSecondary}
-              name="mic-outline"
-              size={18}
+          ) : voiceTranscribing ? (
+            <ActivityIndicator
+              size="small"
+              color={fortuneTheme.colors.ctaBackground}
             />
+          ) : (
+            <Animated.View style={{ opacity: voiceRecording ? micPulseAnim : 1 }}>
+              <Ionicons
+                color={voiceRecording ? '#FFFFFF' : fortuneTheme.colors.textSecondary}
+                name={voiceRecording ? 'mic' : 'mic-outline'}
+                size={18}
+              />
+            </Animated.View>
           )}
         </Pressable>
       </View>
@@ -1661,6 +1723,7 @@ export function ActiveCharacterChatSurface({
   onOpenProfile,
   onPickAction,
   showHeader = true,
+  romanceScore = 0,
 }: {
   character: ChatCharacterSpec;
   actions: ChatShellAction[];
@@ -1672,6 +1735,7 @@ export function ActiveCharacterChatSurface({
   onOpenProfile: () => void;
   onPickAction: (fortuneType: FortuneTypeId) => void;
   showHeader?: boolean;
+  romanceScore?: number;
 }) {
   const isFortuneCharacter = isFortuneChatCharacter(character);
   const visibleMessages = messages;
@@ -1713,8 +1777,10 @@ export function ActiveCharacterChatSurface({
         },
       ];
 
+  const chatTintBg = romanceScore > 5 ? romanceTintBackground(romanceScore) : undefined;
+
   return (
-    <View style={{ gap: fortuneTheme.spacing.md }}>
+    <View style={{ gap: fortuneTheme.spacing.md, backgroundColor: chatTintBg }}>
       {showHeader ? (
         <ActiveCharacterChatHeader
           character={character}
@@ -1780,7 +1846,7 @@ export function ActiveCharacterChatSurface({
         }}
       >
         <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-          오늘 3:24
+          {formatChatHeaderTimestamp(new Date())}
         </AppText>
         {surveyActive && surveyEyebrow ? (
           <Chip label={surveyEyebrow} tone="accent" />
@@ -1854,64 +1920,109 @@ export function ActiveCharacterChatSurface({
 
 export function ActiveCharacterChatHeader({
   character,
+  affinity,
   onBack,
   onOpenProfile,
 }: {
   character: ChatCharacterSpec;
+  affinity?: number;
   onBack: () => void;
   onOpenProfile: () => void;
 }) {
   const isFortuneCharacter = isFortuneChatCharacter(character);
+  const showAffinity = !isFortuneCharacter && typeof affinity === 'number' && affinity > 0;
+  const affinityLabel =
+    affinity == null ? ''
+    : affinity < 25 ? '알아가는 중'
+    : affinity < 50 ? '관심'
+    : affinity < 75 ? '친밀'
+    : '깊은 유대';
+  const affinityColor =
+    affinity == null ? fortuneTheme.colors.ctaBackground
+    : affinity < 25 ? '#8E8E93'
+    : affinity < 50 ? '#5AC8FA'
+    : affinity < 75 ? '#AF52DE'
+    : '#FF2D55';
 
   return (
-    <View
-      style={{
-        alignItems: 'center',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-      }}
-    >
-      <Pressable
-        accessibilityRole="button"
-        onPress={onBack}
-        style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
-      >
-        <Ionicons
-          color={fortuneTheme.colors.textPrimary}
-          name="chevron-back"
-          size={22}
-        />
-      </Pressable>
+    <View style={{ gap: 6 }}>
       <View
         style={{
           alignItems: 'center',
-          flex: 1,
           flexDirection: 'row',
-          gap: 10,
-          justifyContent: 'center',
+          justifyContent: 'space-between',
         }}
       >
-        <CharacterAvatar characterId={character.id} name={character.name} size={34} />
-        <View style={{ alignItems: 'center', gap: 2 }}>
-          <AppText variant="labelLarge">{character.name}</AppText>
-          <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-            {isFortuneCharacter
-              ? '운세 상담사 · 대화를 이어보세요'
-              : '스토리 캐릭터 · 관계를 이어보세요'}
-          </AppText>
+        <Pressable
+          accessibilityRole="button"
+          onPress={onBack}
+          style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
+        >
+          <Ionicons
+            color={fortuneTheme.colors.textPrimary}
+            name="chevron-back"
+            size={22}
+          />
+        </Pressable>
+        <View
+          style={{
+            alignItems: 'center',
+            flex: 1,
+            flexDirection: 'row',
+            gap: 10,
+            justifyContent: 'center',
+          }}
+        >
+          <CharacterAvatar characterId={character.id} name={character.name} size={34} />
+          <View style={{ alignItems: 'center', gap: 2 }}>
+            <AppText variant="labelLarge">{character.name}</AppText>
+            <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+              {isFortuneCharacter
+                ? 'AI 상담사 · 대화를 이어보세요'
+                : '스토리 캐릭터 · 관계를 이어보세요'}
+            </AppText>
+          </View>
         </View>
+        <Pressable
+          accessibilityRole="button"
+          onPress={onOpenProfile}
+          style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
+        >
+          <Ionicons
+            color={fortuneTheme.colors.textPrimary}
+            name="information-circle-outline"
+            size={22}
+          />
+        </Pressable>
       </View>
-      <Pressable
-        accessibilityRole="button"
-        onPress={onOpenProfile}
-        style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
-      >
-        <Ionicons
-          color={fortuneTheme.colors.textPrimary}
-          name="information-circle-outline"
-          size={22}
-        />
-      </Pressable>
+      {showAffinity ? (
+        <View style={{ alignItems: 'center', gap: 4, paddingHorizontal: 40 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Ionicons name="heart" size={12} color={affinityColor} />
+            <AppText variant="caption" color={affinityColor}>
+              {affinityLabel}
+            </AppText>
+          </View>
+          <View
+            style={{
+              width: '100%',
+              height: 3,
+              backgroundColor: fortuneTheme.colors.surfaceSecondary,
+              borderRadius: 2,
+              overflow: 'hidden',
+            }}
+          >
+            <View
+              style={{
+                width: `${Math.min(affinity ?? 0, 100)}%`,
+                height: '100%',
+                backgroundColor: affinityColor,
+                borderRadius: 2,
+              }}
+            />
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -1932,7 +2043,7 @@ export function ProfileFlowGateCard({
       <View style={{ gap: fortuneTheme.spacing.xs }}>
         <AppText variant="displaySmall">대화를 시작하기 전</AppText>
         <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-          출생 정보와 관심사를 마치면 채팅과 운세 흐름이 더 정확하게 이어집니다.
+          출생 정보와 관심사를 마치면 채팅과 인사이트 흐름이 더 정확하게 이어집니다.
         </AppText>
       </View>
 

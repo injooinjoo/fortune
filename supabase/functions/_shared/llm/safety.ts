@@ -12,7 +12,7 @@ import {
 } from "./models.ts";
 import { GcpLoggingService } from "../monitoring/gcp-logging.ts";
 
-type LlmProvider = "gemini" | "openai" | "anthropic" | "grok";
+type LlmProvider = "gemini" | "openai" | "anthropic" | "grok" | "gemma";
 type LlmRequestMode = "text" | "image";
 type GuardSeverity = "healthy" | "warning" | "critical";
 type GuardStatus = "healthy" | "warning" | "blocked";

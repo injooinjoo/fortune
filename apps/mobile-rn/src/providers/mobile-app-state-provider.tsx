@@ -40,6 +40,7 @@ import {
   applyProductPurchase,
   emptyMobileAppState,
   mergeMobileAppState,
+  type AppSettings,
   type MobileAppState,
   type MobileProfileState,
   type NotificationPreferences,
@@ -79,11 +80,13 @@ interface MobileAppStateContextValue {
   storeStatus: MobileStoreStatus;
   isPurchasePending: boolean;
   refreshStoreProducts: () => Promise<void>;
+  refreshLocalState: () => Promise<void>;
   syncRemoteProfile: () => Promise<MobileAppState | null>;
   saveProfile: (profile: Partial<MobileProfileState>) => Promise<void>;
   saveNotifications: (
     notifications: Partial<NotificationPreferences>,
   ) => Promise<void>;
+  saveSettings: (settings: Partial<AppSettings>) => Promise<void>;
   recordChatIntent: (payload: {
     characterId?: string | null;
     fortuneType?: FortuneTypeId | null;
@@ -100,10 +103,12 @@ const MobileAppStateContext = createContext<MobileAppStateContextValue>({
   storePriceLabels: {},
   storeStatus: 'loading',
   isPurchasePending: false,
+  refreshLocalState: async () => undefined,
   refreshStoreProducts: async () => undefined,
   syncRemoteProfile: async () => null,
   saveProfile: async () => undefined,
   saveNotifications: async () => undefined,
+  saveSettings: async () => undefined,
   recordChatIntent: async () => undefined,
   purchaseProduct: async () => undefined,
   restorePurchases: async () => undefined,
@@ -259,6 +264,8 @@ function getPurchasePlatform(): 'ios' | 'android' {
   return Platform.OS === 'ios' ? 'ios' : 'android';
 }
 
+const IOS_RECEIPT_REFRESH_DELAYS_MS = [0, 500, 1500];
+
 async function getIosReceiptDataForVerification() {
   if (Platform.OS !== 'ios') {
     return null;
@@ -270,8 +277,25 @@ async function getIosReceiptDataForVerification() {
     return existingReceipt;
   }
 
-  const refreshedReceipt = await requestReceiptRefreshIOS().catch(() => '');
-  return refreshedReceipt || null;
+  for (let attempt = 0; attempt < IOS_RECEIPT_REFRESH_DELAYS_MS.length; attempt += 1) {
+    const delay = IOS_RECEIPT_REFRESH_DELAYS_MS[attempt];
+    if (delay > 0) {
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+
+    const refreshed = await requestReceiptRefreshIOS().catch((err) => {
+      console.warn(
+        `[iap] receipt refresh attempt ${attempt + 1} failed: ${err?.message ?? err}`,
+      );
+      return '';
+    });
+
+    if (refreshed) {
+      return refreshed;
+    }
+  }
+
+  return null;
 }
 
 export function MobileAppStateProvider({ children }: PropsWithChildren) {
@@ -322,10 +346,30 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
       releaseQueue = resolve;
     });
 
-    await previousWrite;
+    // Wait for previous write with a 3s timeout to prevent deadlocks
+    // (e.g. SecureStore hangs in Expo Go)
+    try {
+      await Promise.race([
+        previousWrite,
+        new Promise<void>((resolve) => setTimeout(resolve, 3000)),
+      ]);
+    } catch {
+      // Previous write rejected — safe to proceed, we just needed it to settle.
+    }
 
     try {
-      return await operation();
+      // Run the operation with a 5s timeout so a hanging operation
+      // (e.g. SecureStore on Expo Go) doesn't deadlock the entire queue.
+      const result = await Promise.race([
+        operation(),
+        new Promise<never>((_, reject) =>
+          setTimeout(
+            () => reject(new Error('runSerialized: operation timed out after 5 s')),
+            5000,
+          ),
+        ),
+      ]);
+      return result;
     } finally {
       releaseQueue();
     }
@@ -524,6 +568,15 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
     updateOnboardingProgress,
   ]);
 
+  const refreshLocalState = useCallback(async () => {
+    try {
+      const freshState = await getMobileAppState(activeUserIdRef.current);
+      setState(freshState);
+    } catch (error) {
+      await captureError(error, { surface: 'mobile-app-state:refresh-local' });
+    }
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -554,6 +607,15 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
         mergeMobileAppState(current, {
           notifications,
         }),
+      );
+    },
+    [persistFromCurrent],
+  );
+
+  const saveSettings = useCallback(
+    async (settings: Partial<AppSettings>) => {
+      await persistFromCurrent((current) =>
+        mergeMobileAppState(current, { settings }),
       );
     },
     [persistFromCurrent],
@@ -937,6 +999,7 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
   const value = useMemo(
     () => ({
       isPurchasePending,
+      refreshLocalState,
       refreshStoreProducts,
       state,
       status,
@@ -950,6 +1013,7 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
       syncRemoteProfile,
       saveProfile,
       saveNotifications,
+      saveSettings,
       recordChatIntent,
       purchaseProduct,
       restorePurchases,
@@ -957,11 +1021,13 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
     [
       isPurchasePending,
       purchaseProduct,
+      refreshLocalState,
       refreshStoreProducts,
       recordChatIntent,
       restorePurchases,
       saveNotifications,
       saveProfile,
+      saveSettings,
       state,
       status,
       storeError,

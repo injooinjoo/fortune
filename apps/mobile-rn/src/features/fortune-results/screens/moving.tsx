@@ -370,7 +370,7 @@ export function MovingResult(props: FortuneResultComponentProps) {
   // --- Extract structured API data ---
 
   // Top-level
-  const title = str(raw.title, result.summary || '이사운세 분석');
+  const title = str(raw.title, result.summary || '이사 인사이트 분석');
   const overallFortune = str(raw.overall_fortune, str(raw.overallFortune, ''));
   const score = num(raw.score, result.score ?? 81);
 

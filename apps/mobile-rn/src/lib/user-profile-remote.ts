@@ -68,7 +68,7 @@ function buildSyncUpdates(
     updates.email = nextEmail;
   }
 
-  if (nextName && current.name !== nextName) {
+  if (nextName && !current.name) {
     updates.name = nextName;
   }
 

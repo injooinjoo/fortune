@@ -14,7 +14,7 @@ export const fortuneCharacters = [
     name: '하늘',
     category: 'lifestyle',
     shortDescription: '오늘 하루, 내일의 에너지를 미리 알려드릴게요!',
-    specialties: ['daily', 'daily-calendar', 'new-year', 'fortune-cookie'],
+    specialties: ['daily', 'new-year', 'fortune-cookie'],
   },
   {
     id: 'fortune_muhyeon',

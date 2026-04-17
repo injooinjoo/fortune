@@ -384,15 +384,29 @@ export function PremiumScreen() {
                   : '선택한 상품을 바로 결제하고 계정 상태에 반영할 수 있어요.'}
         </AppText>
         {selectedProduct.isSubscription ? (
-          <AppText
-            variant="bodySmall"
-            color={fortuneTheme.colors.textTertiary}
-            style={{ lineHeight: 18 }}
-          >
-            자동 갱신 구독입니다. 구독 기간 종료 최소 24시간 전에 자동 갱신을
-            해제하지 않으면 구독이 자동으로 갱신됩니다. 설정 {'>'} Apple ID {'>'}{' '}
-            구독에서 관리할 수 있습니다.
-          </AppText>
+          <>
+            <AppText
+              variant="bodySmall"
+              color={fortuneTheme.colors.textTertiary}
+              style={{ lineHeight: 18 }}
+            >
+              자동 갱신 구독입니다. 구독 기간 종료 최소 24시간 전에 자동 갱신을
+              해제하지 않으면 구독이 자동으로 갱신됩니다. 설정 {'>'} Apple ID {'>'}{' '}
+              구독에서 관리할 수 있습니다.
+            </AppText>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 16, marginTop: 8 }}>
+              <Pressable onPress={() => void Linking.openURL('https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages/terms-of-service')}>
+                <AppText variant="caption" color={fortuneTheme.colors.ctaBackground} style={{ textDecorationLine: 'underline' }}>
+                  이용약관
+                </AppText>
+              </Pressable>
+              <Pressable onPress={() => void Linking.openURL('https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages/privacy-policy')}>
+                <AppText variant="caption" color={fortuneTheme.colors.ctaBackground} style={{ textDecorationLine: 'underline' }}>
+                  개인정보처리방침
+                </AppText>
+              </Pressable>
+            </View>
+          </>
         ) : null}
         {!session ? (
           <PrimaryButton

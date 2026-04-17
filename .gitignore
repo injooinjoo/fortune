@@ -4,6 +4,23 @@
 *.pyc
 *.swp
 
+# Node / JS
+node_modules/
+
+# RN / Expo builds & dev artifacts
+apps/mobile-rn/build-*.ipa
+apps/mobile-rn/expo-go-qr.png
+apps/mobile-rn/screenshots/
+
+# Supabase temp
+supabase/.temp/
+
+# Audit / transfer artifacts
+artifacts/fortune-audit/
+export/
+fortune-transfer-bundle*
+pencil-profile-export.png
+
 # MCP configuration (may contain API keys)
 .mcp.json
 .DS_Store

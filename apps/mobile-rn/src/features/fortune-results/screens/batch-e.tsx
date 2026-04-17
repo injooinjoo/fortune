@@ -2761,80 +2761,105 @@ function YearlyEncounterResult(props: FortuneResultComponentProps) {
 function DecisionResult(props: FortuneResultComponentProps) {
   const meta = resultMetadataByKind.decision;
   const result = useResultData(props.payload);
+  const raw = obj(props.payload?.rawApiResponse);
+  const data = obj(raw.data ?? raw.fortune ?? raw);
 
-  const summary =
-    result.summary ||
-    '의사결정 운세는 정답을 찾기보다 기준을 선명하게 세우는 쪽에 반응합니다. 오늘은 선택지 수를 줄일수록 결정력이 살아납니다.';
+  // Direct API fields
+  const question = str(data.question);
+  const decisionType = str(data.decisionType);
+  const recommendation = str(data.recommendation);
+  const rawOptions = arr(data.options) as R[];
+  const confidenceFactors = strArr(data.confidenceFactors);
+  const nextSteps = strArr(data.nextSteps);
 
-  const chips =
-    result.contextTags.length > 0
-      ? result.contextTags
-      : ['기준 정렬', '우선순위', '리스크 감각'];
-
-  const metrics =
-    result.metrics.length > 0
-      ? result.metrics
-      : [
-          { label: '명확도', value: '86', note: '기준만 세우면 빠름' },
-          { label: '확신도', value: '79', note: '막판 흔들림 관리 필요' },
-          { label: '리스크 감각', value: '82', note: '손실 회피 본능 양호' },
-          { label: '추진력', value: '77', note: '선택 뒤 바로 실행해야 힘이 붙음' },
-        ];
-
-  const highlights =
-    result.highlights.length > 0
-      ? result.highlights
-      : [
-          '선택지 셋 이상이면 두 개로 줄여 다시 보세요.',
-          '한 번 결정했다면 다음 행동을 바로 연결하세요.',
-        ];
-
-  const warnings =
-    result.warnings.length > 0
-      ? result.warnings
-      : [
-          '모든 가능성을 다 검토하려고 끝없이 미루는 것',
-          '감정이 높은 상태에서 손익 판단을 같이 하는 것',
-        ];
+  const summary = str(data.summary) || result.summary
+    || '의사결정 인사이트는 정답을 찾기보다 기준을 선명하게 세우는 쪽에 반응합니다.';
 
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
-      <HeroCard emoji="🤔" title={meta.title} description={summary} chips={chips} />
+      <HeroCard emoji="🤔" title={meta.title} description={summary} />
 
-      <SectionCard title="결정 지표">
-        <MetricGrid items={metrics} />
-      </SectionCard>
-
-      <SectionCard title="3단계 판단 흐름">
-        <Timeline
-          items={[
-            { title: '정의', tag: '기준', body: '이번 선택에서 절대 포기 못할 기준을 한 문장으로 적습니다.' },
-            { title: '분기', tag: '비교', body: '좋은 점보다 위험 신호를 먼저 비교하면 판단이 빨라집니다.' },
-            { title: '확정', tag: '실행', body: '결정 후 첫 행동을 바로 예약해야 후회가 줄어듭니다.' },
-          ]}
-        />
-      </SectionCard>
-
-      <DoDontPair
-        data={{
-          doTitle: '지금 좋은 판단',
-          doItems: highlights,
-          dontTitle: '지금 피할 판단',
-          dontItems: warnings,
-        }}
-      />
-
-      {result.hasApiData && result.specialTip && (
-        <SectionCard title="결정 팁">
-          <InsetQuote text={result.specialTip} />
+      {/* 질문 표시 */}
+      {question ? (
+        <SectionCard title="고민">
+          <InsetQuote text={question} />
         </SectionCard>
+      ) : null}
+
+      {/* 옵션별 장단점 분석 */}
+      {rawOptions.length > 0 ? (
+        <SectionCard title="선택지 분석">
+          {rawOptions.map((opt, i) => {
+            const optionName = str(opt.option) || str(opt.name) || `옵션 ${i + 1}`;
+            const pros = strArr(opt.pros);
+            const cons = strArr(opt.cons);
+            return (
+              <Card key={i} style={{ marginBottom: fortuneTheme.spacing.sm, gap: fortuneTheme.spacing.xs }}>
+                <AppText variant="heading4">{optionName}</AppText>
+                {pros.length > 0 ? (
+                  <View>
+                    <AppText variant="labelLarge" color={fortuneTheme.colors.ctaBackground}>장점</AppText>
+                    <BulletList items={pros} />
+                  </View>
+                ) : null}
+                {cons.length > 0 ? (
+                  <View style={{ marginTop: fortuneTheme.spacing.xs }}>
+                    <AppText variant="labelLarge" color={fortuneTheme.colors.error}>단점</AppText>
+                    <BulletList items={cons} />
+                  </View>
+                ) : null}
+              </Card>
+            );
+          })}
+        </SectionCard>
+      ) : (
+        <>
+          <SectionCard title="결정 지표">
+            <MetricGrid items={result.metrics.length > 0 ? result.metrics : [
+              { label: '명확도', value: '86', note: '기준만 세우면 빠름' },
+              { label: '확신도', value: '79', note: '막판 흔들림 관리 필요' },
+            ]} />
+          </SectionCard>
+          <SectionCard title="3단계 판단 흐름">
+            <Timeline items={[
+              { title: '정의', tag: '기준', body: '이번 선택에서 절대 포기 못할 기준을 한 문장으로 적습니다.' },
+              { title: '분기', tag: '비교', body: '좋은 점보다 위험 신호를 먼저 비교하면 판단이 빨라집니다.' },
+              { title: '확정', tag: '실행', body: '결정 후 첫 행동을 바로 예약해야 후회가 줄어듭니다.' },
+            ]} />
+          </SectionCard>
+        </>
       )}
 
-      {result.hasApiData && result.recommendations.length > 0 && (
+      {/* 추천 */}
+      {recommendation ? (
+        <SectionCard title="추천">
+          <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>{recommendation}</AppText>
+        </SectionCard>
+      ) : null}
+
+      {/* 확신 요소 */}
+      {confidenceFactors.length > 0 ? (
+        <SectionCard title="확신을 높이는 요소">
+          <BulletList items={confidenceFactors} />
+        </SectionCard>
+      ) : null}
+
+      {/* 다음 단계 */}
+      {nextSteps.length > 0 ? (
+        <SectionCard title="다음 단계">
+          <BulletList items={nextSteps} />
+        </SectionCard>
+      ) : result.recommendations.length > 0 ? (
         <SectionCard title="추천 행동">
           <BulletList items={result.recommendations} />
         </SectionCard>
-      )}
+      ) : null}
+
+      {result.hasApiData && result.specialTip ? (
+        <SectionCard title="결정 팁">
+          <InsetQuote text={result.specialTip} />
+        </SectionCard>
+      ) : null}
     </View>
   );
 }

@@ -25,12 +25,12 @@ const displayMetadataByFortuneType: Partial<
   Record<FortuneTypeId, EmbeddedResultDisplayMetadata>
 > = {
   daily: {
-    title: '오늘 운세',
+    title: '오늘 흐름',
     subtitle: '하루 에너지와 타이밍을 가볍게 읽는 결과',
     eyebrow: '오늘의 하루 흐름',
   },
   'new-year': {
-    title: '신년 운세',
+    title: '새해 인사이트',
     subtitle: '한 해의 기운과 전환 포인트를 정리한 결과',
     eyebrow: '올해의 흐름 요약',
   },
@@ -50,7 +50,7 @@ const displayMetadataByFortuneType: Partial<
     eyebrow: '오늘의 이름 흐름',
   },
   zodiac: {
-    title: '별자리 운세',
+    title: '별자리 인사이트',
     subtitle: '별자리 흐름과 감정 리듬을 정리한 결과',
     eyebrow: '오늘의 별 흐름',
   },
@@ -65,12 +65,12 @@ const displayMetadataByFortuneType: Partial<
     eyebrow: '오늘의 궁합 흐름',
   },
   'blind-date': {
-    title: '소개팅 운세',
+    title: '소개팅 분석',
     subtitle: '첫인상과 대화 흐름, 만남 포인트를 담은 결과',
     eyebrow: '오늘의 만남 흐름',
   },
   'ex-lover': {
-    title: '재회 운세',
+    title: '재회 분석',
     subtitle: '관계 여운과 재접점 가능성을 읽는 결과',
     eyebrow: '오늘의 재회 흐름',
   },
@@ -100,7 +100,7 @@ const displayMetadataByFortuneType: Partial<
     eyebrow: '오늘의 행운 포인트',
   },
   lotto: {
-    title: '로또 운세',
+    title: '로또 인사이트',
     subtitle: '운의 밀도와 가볍게 참고할 포인트를 담은 결과',
     eyebrow: '오늘의 행운 흐름',
   },
@@ -110,7 +110,7 @@ const displayMetadataByFortuneType: Partial<
     eyebrow: '오늘의 경기 흐름',
   },
   moving: {
-    title: '이사 운세',
+    title: '이사 인사이트',
     subtitle: '공간 이동과 자리 변화의 흐름을 읽는 결과',
     eyebrow: '오늘의 공간 흐름',
   },
@@ -368,7 +368,7 @@ export const embeddedResultSeedByKind: Record<ResultKind, EmbeddedResultSeed> = 
   },
   exercise: {
     score: 76,
-    summary: '운동 운세는 무난한 편이고, 강도보다 루틴 고정이 더 중요합니다.',
+    summary: '운동 인사이트는 무난한 편이고, 강도보다 루틴 고정이 더 중요합니다.',
     metrics: [
       { label: '체력 흐름', value: '76%', note: '과부하 금지' },
       { label: '꾸준함', value: '상승', note: '짧은 반복 유리' },
@@ -485,7 +485,7 @@ export const embeddedResultSeedByKind: Record<ResultKind, EmbeddedResultSeed> = 
   },
   decision: {
     score: 83,
-    summary: '의사결정 운세는 정답 탐색보다 선택 기준을 줄이는 데서 빠르게 살아납니다.',
+    summary: '의사결정 인사이트는 정답 탐색보다 선택 기준을 줄이는 데서 빠르게 살아납니다.',
     metrics: [
       { label: '명확도', value: '86', note: '기준만 세우면 빠름' },
       { label: '확신도', value: '79', note: '막판 흔들림 주의' },
@@ -509,7 +509,7 @@ export const embeddedResultSeedByKind: Record<ResultKind, EmbeddedResultSeed> = 
   },
   'face-reading': {
     score: 82,
-    summary: '얼굴의 균형과 오관, 삼정을 종합 분석하여 운세와 성격, 개운법까지 한눈에 정리한 프리미엄 관상 리포트입니다.',
+    summary: '얼굴의 균형과 오관, 삼정을 종합 분석하여 흐름과 성격, 개운법까지 한눈에 정리한 프리미엄 관상 리포트입니다.',
     metrics: [
       { label: '복점수', value: '82', note: '전체 관상 복 점수' },
       { label: '신뢰도', value: '78', note: '첫인상 신뢰 점수' },
@@ -543,7 +543,7 @@ export const embeddedResultSeedByKind: Record<ResultKind, EmbeddedResultSeed> = 
     ],
     highlights: ['탄생석 에너지가 안정적으로 작동하는 시기입니다', '보석의 상징과 현재 고민이 잘 연결됩니다'],
     recommendations: ['탄생석 색상의 소품을 가까이 두세요', '보석의 의미를 떠올리며 하루를 시작해보세요'],
-    warnings: ['탄생석 운세를 절대적 기준으로 삼기보다 방향 참고로 활용하세요'],
+    warnings: ['탄생석 인사이트를 절대적 기준으로 삼기보다 방향 참고로 활용하세요'],
     luckyItems: ['탄생석 액세서리', '보석 컬러 소품'],
     specialTip: '탄생석은 자신만의 보호석입니다. 가까이 두면 안정감과 집중력이 높아지는 효과를 느낄 수 있어요.',
   },
@@ -598,6 +598,18 @@ export const embeddedResultSeedByKind: Record<ResultKind, EmbeddedResultSeed> = 
     warnings: ['급한 이사 결정은 한 번 더 확인해보세요', '입주 첫 주에 큰 공사를 피하세요'],
     luckyItems: ['쌀', '소금', '새 수건'],
     specialTip: '이사는 공간의 기운을 바꾸는 일입니다. 첫날의 분위기가 앞으로의 흐름을 좌우합니다.',
+  },
+  'new-year': {
+    score: 85,
+    summary: '올해는 목표를 중심으로 에너지가 집중되며, 상반기에 기반을 잡고 하반기에 성과를 거두는 흐름입니다.',
+    metrics: [
+      { label: '종합 인사이트', value: '85', note: '안정적이고 확장 가능한 한 해' },
+      { label: '목표 달성률', value: '78%', note: '꾸준한 실행이 핵심' },
+    ],
+    highlights: ['상반기에 기초를 탄탄히 다지면 하반기 성과가 배가됩니다', '3월과 9월이 전환점이 될 수 있습니다'],
+    recommendations: ['분기별 목표를 세분화하세요', '체력 관리를 병행하면 집중력이 유지됩니다'],
+    warnings: ['5월 전후로 과도한 일정에 주의하세요', '중요 결정은 감정이 차분할 때 내리세요'],
+    specialTip: '새해 인사이트는 큰 방향을 잡는 데 유용합니다. 매달 흐름을 점검하면서 유연하게 조정하세요.',
   },
 };
 

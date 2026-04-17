@@ -119,7 +119,7 @@ export function BirthstoneResult(props: FortuneResultComponentProps) {
     ? result.metrics
     : [
         { label: '탄생석', value: monthly.name, note: `${monthly.nameEn}` },
-        { label: '종합 점수', value: String(overallScore), note: '탄생석 운세 점수' },
+        { label: '종합 점수', value: String(overallScore), note: '탄생석 인사이트 점수' },
         { label: '의미', value: monthly.meaning, note: `${monthly.month}월 탄생석` },
         ...(daily
           ? [{ label: '일별 탄생석', value: daily.name, note: daily.nameEn }]
@@ -253,8 +253,8 @@ export function BirthstoneResult(props: FortuneResultComponentProps) {
       {/* ============================================================ */}
       {hasRaw && categoryStatItems.length > 0 && (
         <SectionCard
-          title="탄생석 운세"
-          description={`${monthly.name}의 기운으로 읽는 오늘의 운세 흐름입니다.`}
+          title="탄생석 인사이트"
+          description={`${monthly.name}의 기운으로 읽는 오늘의 인사이트 흐름입니다.`}
         >
           <StatRail items={categoryStatItems} />
 

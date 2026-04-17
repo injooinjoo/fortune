@@ -257,7 +257,7 @@ export function FaceReadingResult(props: FortuneResultComponentProps) {
   const overallBlessingScore = num(overview.overallBlessingScore, result.score ?? 75);
   const heroFirstImpression = str(
     overview.firstImpression,
-    result.summary || '얼굴의 균형과 오관, 삼정을 종합적으로 분석하여 운세와 성격, 개운법까지 한눈에 정리한 프리미엄 관상 리포트입니다.',
+    result.summary || '얼굴의 균형과 오관, 삼정을 종합적으로 분석하여 흐름과 성격, 개운법까지 한눈에 정리한 프리미엄 관상 리포트입니다.',
   );
 
   const heroChips = result.contextTags.length > 0
@@ -378,7 +378,7 @@ export function FaceReadingResult(props: FortuneResultComponentProps) {
       {/* ============================================================ */}
       {/*  Section 2: Animal Type - 동물상                               */}
       {/* ============================================================ */}
-      {hasRaw && (
+      {hasRaw && primaryAnimal && primaryAnimal !== '분석 중' && (
         <SectionCard title="동물상 분석" description="얼굴 특징에서 읽히는 동물상 유형입니다.">
           <Card
             style={{
@@ -477,7 +477,7 @@ export function FaceReadingResult(props: FortuneResultComponentProps) {
       {/*  Section 4: Samjeong - 삼정 (3 life periods)                   */}
       {/* ============================================================ */}
       {hasRaw && (
-        <SectionCard title="삼정 분석" description="초년, 중년, 말년 세 시기의 운세 흐름입니다.">
+        <SectionCard title="삼정 분석" description="초년, 중년, 말년 세 시기의 흐름 분석입니다.">
           <View style={{ gap: fortuneTheme.spacing.sm }}>
             {samjeongKeys.map((key) => {
               const periodData = obj(samjeong[key]);
@@ -501,10 +501,10 @@ export function FaceReadingResult(props: FortuneResultComponentProps) {
       )}
 
       {/* ============================================================ */}
-      {/*  Section 5: Fortunes - 운세 (재물/연애/직업/건강/종합)            */}
+      {/*  Section 5: Fortunes - 흐름 (재물/연애/직업/건강/종합)            */}
       {/* ============================================================ */}
       {hasRaw && (
-        <SectionCard title="운세 분석" description="관상에서 읽히는 다섯 가지 운세 흐름입니다.">
+        <SectionCard title="흐름 분석" description="관상에서 읽히는 다섯 가지 흐름 분석입니다.">
           <StatRail items={fortuneStatItems} />
 
           {/* Fortune detail cards */}

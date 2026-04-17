@@ -201,9 +201,9 @@ function WealthResult(props: FortuneResultComponentProps) {
         <View style={{ alignItems: 'center', gap: fortuneTheme.spacing.sm }}>
           <View
             style={{
-              width: 140,
-              height: 140,
-              borderRadius: 70,
+              width: 160,
+              height: 160,
+              borderRadius: 80,
               borderWidth: 10,
               borderColor: scoreColor,
               alignItems: 'center',
@@ -211,7 +211,7 @@ function WealthResult(props: FortuneResultComponentProps) {
               backgroundColor: `${scoreColor}15`,
             }}
           >
-            <AppText style={{ fontSize: 44, fontWeight: '800', color: scoreColor }}>
+            <AppText style={{ fontSize: 40, fontWeight: '700', color: scoreColor, lineHeight: 48, includeFontPadding: false }}>
               {mainScore}
             </AppText>
             <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
@@ -518,12 +518,12 @@ function WealthResult(props: FortuneResultComponentProps) {
       />
 
       {/* ====== ACTION TIPS ====== */}
-      <SectionCard title="\uC801\uC6A9 \uD301">
+      <SectionCard title="적용 팁">
         <BulletList items={recommendations} />
       </SectionCard>
 
       {result.hasApiData && result.specialTip && (
-        <SectionCard title="\uD2B9\uBCC4 \uC870\uC5B8">
+        <SectionCard title="특별 조언">
           <InsetQuote text={result.specialTip} />
         </SectionCard>
       )}
@@ -544,7 +544,15 @@ function TalentResult(props: FortuneResultComponentProps) {
   const hexagonScores = obj(raw.hexagonScores ?? raw.hexagon_scores);
   const talentInsights = arr(raw.talentInsights ?? raw.talent_insights);
   const weeklyPlan = arr(raw.weeklyPlan ?? raw.weekly_plan);
-  const growthRoadmap = arr(raw.growthRoadmap ?? raw.growth_roadmap);
+  const growthRoadmapRaw = raw.growthRoadmap ?? raw.growth_roadmap;
+  const growthRoadmap = Array.isArray(growthRoadmapRaw)
+    ? growthRoadmapRaw
+    : typeof growthRoadmapRaw === 'object' && growthRoadmapRaw != null
+      ? Object.entries(growthRoadmapRaw as Record<string, unknown>).map(([key, val]) => ({
+          ...(typeof val === 'object' && val != null ? val : {}),
+          phase: key === 'month1' ? '1개월' : key === 'month3' ? '3개월' : key === 'month6' ? '6개월' : key === 'year1' ? '1년' : key,
+        }))
+      : [];
   const mentalModel = obj(raw.mentalModel ?? raw.mental_model);
   const collaboration = obj(raw.collaboration);
   const learningStrategy = obj(raw.learningStrategy ?? raw.learning_strategy);
@@ -613,7 +621,7 @@ function TalentResult(props: FortuneResultComponentProps) {
   if (learningStyle) mentalModelItems.push({ label: '학습 방식', value: learningStyle });
 
   // --- Collaboration ---
-  const goodMatches = strArr(collaboration.goodMatches ?? collaboration.good_matches);
+  const goodMatches = strArr(collaboration.goodMatch ?? collaboration.goodMatches ?? collaboration.good_matches ?? collaboration.good_match);
   const collabChallenges = strArr(collaboration.challenges);
   const teamRole = str(collaboration.teamRole ?? collaboration.team_role);
 
@@ -621,7 +629,7 @@ function TalentResult(props: FortuneResultComponentProps) {
   const effectiveMethods = strArr(learningStrategy.effectiveMethods ?? learningStrategy.effective_methods);
   const timeManagement = str(learningStrategy.timeManagement ?? learningStrategy.time_management);
   const recommendedBooks = strArr(learningStrategy.recommendedBooks ?? learningStrategy.recommended_books);
-  const courses = strArr(learningStrategy.courses);
+  const courses = strArr(learningStrategy.recommendedCourses ?? learningStrategy.recommended_courses ?? learningStrategy.courses);
   const mentorshipAdvice = str(learningStrategy.mentorshipAdvice ?? learningStrategy.mentorship_advice);
 
   // --- Warnings ---
@@ -1516,7 +1524,7 @@ function ExerciseResult(props: FortuneResultComponentProps) {
       </Card>
 
       {result.hasApiData && result.specialTip && (
-        <SectionCard title="\uC624\uB298\uC758 \uD301">
+        <SectionCard title="오늘의 팁">
           <InsetQuote text={result.specialTip} />
         </SectionCard>
       )}

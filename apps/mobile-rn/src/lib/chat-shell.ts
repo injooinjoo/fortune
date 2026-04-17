@@ -41,11 +41,20 @@ export interface ChatShellSajuPreviewMessage {
   sajuData: unknown;
 }
 
+export interface ChatShellImageMessage {
+  id: string;
+  kind: 'image';
+  sender: 'assistant' | 'user';
+  imageUrl: string;
+  caption?: string;
+}
+
 export type ChatShellMessage =
   | ChatShellTextMessage
   | ChatShellEmbeddedResultMessage
   | ChatShellFortuneCookieMessage
-  | ChatShellSajuPreviewMessage;
+  | ChatShellSajuPreviewMessage
+  | ChatShellImageMessage;
 
 export interface ChatShellAction {
   id: string;
@@ -56,49 +65,49 @@ export interface ChatShellAction {
 }
 
 const fortuneTypeLabels: Partial<Record<FortuneTypeId, string>> = {
-  daily: '오늘 운세',
+  daily: '오늘의 흐름',
   'daily-calendar': '만세력',
-  'new-year': '신년 운세',
+  'new-year': '새해 인사이트',
   'traditional-saju': '전통 사주',
   'face-reading': '관상',
   mbti: 'MBTI 결과',
   'blood-type': '혈액형',
-  'zodiac-animal': '띠 운세',
-  'personality-dna': '성격운',
-  love: '연애 운세',
+  'zodiac-animal': '띠별 분석',
+  'personality-dna': '성격 분석',
+  love: '연애 인사이트',
   compatibility: '궁합',
-  'blind-date': '소개팅 운세',
-  'ex-lover': '재회 운세',
+  'blind-date': '소개팅 분석',
+  'ex-lover': '재회 분석',
   'avoid-people': '피해야 할 인연',
-  'yearly-encounter': '올해의 인연운',
-  career: '커리어 운세',
-  wealth: '재물 운세',
+  'yearly-encounter': '올해의 인연',
+  career: '커리어 인사이트',
+  wealth: '재물 인사이트',
   talent: '재능 분석',
-  coaching: '코칭운',
+  coaching: '코칭 분석',
   decision: '의사결정',
   'daily-review': '일일 리뷰',
   'weekly-review': '주간 리뷰',
   'chat-insight': '카톡 대화 분석',
-  exam: '시험운',
+  exam: '시험 분석',
   'lucky-items': '행운 아이템',
-  lotto: '로또 운세',
+  lotto: '로또 분석',
   'match-insight': '경기 인사이트',
   'game-enhance': '게임 컨디션',
-  exercise: '운동 운세',
+  exercise: '운동 인사이트',
   breathing: '명상 가이드',
   dream: '꿈 해몽',
   tarot: '타로',
   'past-life': '전생 리딩',
   health: '건강 흐름',
   'pet-compatibility': '반려동물 궁합',
-  family: '가족 운세',
+  family: '가족 인사이트',
   naming: '작명',
-  moving: '이사 운세',
+  moving: '이사 인사이트',
   celebrity: '연예인 궁합',
   biorhythm: '바이오리듬',
   wish: '소원 리딩',
   talisman: '부적',
-  zodiac: '별자리 운세',
+  zodiac: '별자리 인사이트',
   birthstone: '탄생석 가이드',
   'fortune-cookie': '포춘쿠키',
   'ootd-evaluation': 'OOTD 코디',
@@ -301,6 +310,32 @@ export function buildAssistantTextMessage(text: string): ChatShellMessage {
     kind: 'text',
     sender: 'assistant',
     text,
+  };
+}
+
+export function buildUserImageMessage(
+  imageUrl: string,
+  caption?: string,
+): ChatShellImageMessage {
+  return {
+    id: createMessageId('user'),
+    kind: 'image',
+    sender: 'user',
+    imageUrl,
+    caption,
+  };
+}
+
+export function buildAssistantImageMessage(
+  imageUrl: string,
+  caption?: string,
+): ChatShellImageMessage {
+  return {
+    id: createMessageId('assistant'),
+    kind: 'image',
+    sender: 'assistant',
+    imageUrl,
+    caption,
   };
 }
 

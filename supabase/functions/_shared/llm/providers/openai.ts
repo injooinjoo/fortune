@@ -9,6 +9,7 @@ import {
   LLMResponse,
 } from "../types.ts";
 import { assertLlmRequestAllowed } from "../safety.ts";
+import { normalizeGenerateOptions } from "../generate-options.ts";
 
 export class OpenAIProvider implements ILLMProvider {
   constructor(
@@ -78,6 +79,12 @@ export class OpenAIProvider implements ILLMProvider {
         mode: "text",
       });
 
+      const normalized = normalizeGenerateOptions(options, {
+        providerDefault: 16_000,
+        providerName: "openai",
+        featureName: this.config.featureName || "shared-openai-provider",
+      });
+
       const response = await fetch(
         "https://api.openai.com/v1/chat/completions",
         {
@@ -89,9 +96,9 @@ export class OpenAIProvider implements ILLMProvider {
           body: JSON.stringify({
             model: this.config.model,
             messages: messages,
-            temperature: options?.temperature ?? 1,
-            max_completion_tokens: options?.maxTokens ?? 16000,
-            response_format: options?.jsonMode
+            temperature: normalized.temperature ?? 1,
+            max_completion_tokens: normalized.maxTokens,
+            response_format: normalized.jsonMode
               ? { type: "json_object" }
               : undefined,
           }),

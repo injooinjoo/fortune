@@ -22,6 +22,41 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
+import {
+  parseAndValidateLLMResponse,
+  v,
+} from '../_shared/llm/validation.ts'
+
+const PROMPT_INJECTION_CONTROL_CHARS = /[\u0000-\u001f\u007f]/g;
+
+function sanitizePromptField(
+  raw: string | undefined | null,
+  opts: { maxLength?: number } = {},
+): string {
+  if (raw == null) return '';
+  const maxLength = opts.maxLength ?? 80;
+  const stripped = String(raw)
+    .replace(PROMPT_INJECTION_CONTROL_CHARS, ' ')
+    .replace(/`/g, "'")
+    .replace(/\$\{/g, '$ {')
+    .replace(/\{\{/g, '{ {')
+    .replace(/\}\}/g, '} }')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+  return stripped.length > maxLength ? stripped.slice(0, maxLength) : stripped;
+}
+
+function sanitizeStringArray(
+  values: unknown,
+  opts: { maxEntries?: number; maxLength?: number } = {},
+): string[] {
+  if (!Array.isArray(values)) return [];
+  const maxEntries = opts.maxEntries ?? 10;
+  return values
+    .slice(0, maxEntries)
+    .map((entry) => sanitizePromptField(String(entry ?? ''), { maxLength: opts.maxLength ?? 40 }))
+    .filter((entry) => entry.length > 0);
+}
 
 // TypeScript 인터페이스 정의
 interface NamingFortuneRequest {
@@ -189,24 +224,32 @@ async function generateNamingFortune(params: NamingFortuneRequest): Promise<any>
 - 발음하기 쉽고 부르기 좋은 이름
 - 반드시 유효한 JSON 형식으로 출력`;
 
+  const safeMotherBirthDate = sanitizePromptField(params.motherBirthDate, { maxLength: 16 });
+  const safeMotherBirthTime = sanitizePromptField(params.motherBirthTime, { maxLength: 16 });
+  const safeExpectedBirthDate = sanitizePromptField(params.expectedBirthDate, { maxLength: 16 });
+  const safeFamilyName = sanitizePromptField(params.familyName, { maxLength: 4 });
+  const safeFamilyNameHanja = sanitizePromptField(params.familyNameHanja, { maxLength: 4 });
+  const safeAvoidSounds = sanitizeStringArray(params.avoidSounds, { maxEntries: 8, maxLength: 8 });
+  const safeDesiredMeanings = sanitizeStringArray(params.desiredMeanings, { maxEntries: 8, maxLength: 30 });
+
   const userPrompt = `# 작명 의뢰서
 
 ## 엄마 정보
-- 생년월일: ${params.motherBirthDate}
-- 출생시간: ${getBirthTimeLabel(params.motherBirthTime)}
+- 생년월일: ${safeMotherBirthDate}
+- 출생시간: ${getBirthTimeLabel(safeMotherBirthTime || params.motherBirthTime)}
 
 ## 아기 정보
-- 출산예정일: ${params.expectedBirthDate}
+- 출산예정일: ${safeExpectedBirthDate}
 - 성별: ${getGenderLabel(params.babyGender)}
 
 ## 성씨 정보
-- 한글 성: ${params.familyName}
-${params.familyNameHanja ? `- 한자 성: ${params.familyNameHanja}` : ''}
+- 한글 성: ${safeFamilyName}
+${safeFamilyNameHanja ? `- 한자 성: ${safeFamilyNameHanja}` : ''}
 
 ## 작명 요청사항
 - 이름 스타일: ${getStyleLabel(params.nameStyle)}
-${params.avoidSounds && params.avoidSounds.length > 0 ? `- 피하고 싶은 발음: ${params.avoidSounds.join(', ')}` : ''}
-${params.desiredMeanings && params.desiredMeanings.length > 0 ? `- 원하는 의미: ${params.desiredMeanings.join(', ')}` : ''}
+${safeAvoidSounds.length > 0 ? `- 피하고 싶은 발음: ${safeAvoidSounds.join(', ')}` : ''}
+${safeDesiredMeanings.length > 0 ? `- 원하는 의미: ${safeDesiredMeanings.join(', ')}` : ''}
 
 ---
 
@@ -245,7 +288,44 @@ ${params.desiredMeanings && params.desiredMeanings.length > 0 ? `- 원하는 의
     }
   })
 
-  return JSON.parse(response.content)
+  const namingSchema = v.object({
+    ohaengAnalysis: v.optional(v.object({
+      distribution: v.optional(v.record(v.number())),
+      missing: v.optional(v.array(v.string())),
+      yongsin: v.optional(v.string()),
+      recommendation: v.optional(v.string()),
+    })),
+    recommendedNames: v.array(
+      v.object({
+        rank: v.optional(v.number()),
+        koreanName: v.string({ min: 1, max: 20 }),
+        hanjaName: v.optional(v.string({ max: 20 })),
+        hanjaMeaning: v.optional(v.array(v.string({ max: 60 }))),
+        pronunciationOhaeng: v.optional(v.string({ max: 80 })),
+        strokeOhaeng: v.optional(v.string({ max: 80 })),
+        totalScore: v.optional(v.number({ min: 0, max: 100 })),
+        analysis: v.optional(v.string({ max: 600 })),
+        compatibility: v.optional(v.string({ max: 400 })),
+      }),
+      { min: 1, max: 20 },
+    ),
+    namingTips: v.optional(v.array(v.string({ max: 400 }))),
+    warnings: v.optional(v.array(v.string({ max: 400 }))),
+  });
+
+  const validation = parseAndValidateLLMResponse(
+    response.content,
+    namingSchema,
+  );
+
+  if (!validation.ok) {
+    console.error(
+      `[fortune-naming] LLM response validation failed: ${validation.error}`,
+    );
+    throw new Error(`LLM 응답이 올바른 형식이 아닙니다. (${validation.error})`);
+  }
+
+  return validation.value;
 }
 
 // 캐시 조회 함수

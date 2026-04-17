@@ -10,6 +10,7 @@ import {
 } from "../types.ts";
 import { assertLlmRequestAllowed } from "../safety.ts";
 import { GEMINI_IMAGE_MODEL } from "../models.ts";
+import { normalizeGenerateOptions } from "../generate-options.ts";
 
 export class GeminiProvider implements ILLMProvider {
   constructor(
@@ -31,12 +32,18 @@ export class GeminiProvider implements ILLMProvider {
         JSON.stringify(contents).substring(0, 200),
       );
 
+      const normalized = normalizeGenerateOptions(options, {
+        providerDefault: 2048,
+        providerName: "gemini",
+        featureName: this.config.featureName || "shared-gemini-provider",
+      });
+
       const requestBody = {
         contents,
         generationConfig: {
-          temperature: options?.temperature ?? 0.7,
-          maxOutputTokens: options?.maxTokens ?? 2048,
-          responseMimeType: options?.jsonMode
+          temperature: normalized.temperature ?? 0.7,
+          maxOutputTokens: normalized.maxTokens,
+          responseMimeType: normalized.jsonMode
             ? "application/json"
             : "text/plain",
         },

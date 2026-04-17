@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import { router, useLocalSearchParams, type Href } from 'expo-router';
-import { ActivityIndicator, Image, Pressable, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Pressable, TextInput, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
@@ -10,6 +10,7 @@ import { Screen } from '../components/screen';
 import { VoiceTextInput } from '../components/voice-text-input';
 import { supabase } from '../lib/supabase';
 import { fortuneTheme } from '../lib/theme';
+import { useMobileAppState } from '../providers/mobile-app-state-provider';
 import {
   type FriendCreationDraft,
   type FriendDraftGender,
@@ -678,6 +679,23 @@ export function FriendCreationReviewScreen() {
 
 type AvatarGenerationStatus = 'idle' | 'generating' | 'done' | 'error';
 
+async function invokeAvatarFunction(
+  body: { gender: string; appearancePrompt: string; name: string; stylePreset: string },
+): Promise<string> {
+  const { data, error } = await supabase!.functions.invoke(
+    'generate-friend-avatar',
+    { body },
+  );
+
+  if (error) throw error;
+
+  const result = data as { success: boolean; data?: { avatarUrl: string }; error?: string };
+  if (!result.success || !result.data?.avatarUrl) {
+    throw new Error(result.error ?? '이미지 생성에 실패했어요');
+  }
+  return result.data.avatarUrl;
+}
+
 async function generateFriendAvatar(
   gender: string,
   appearancePrompt: string,
@@ -688,24 +706,20 @@ async function generateFriendAvatar(
     throw new Error('Supabase client is not configured');
   }
 
-  const { data, error } = await supabase.functions.invoke(
-    'generate-friend-avatar',
-    {
-      body: { gender, appearancePrompt, name, stylePreset },
-    },
-  );
+  const body = { gender, appearancePrompt, name, stylePreset };
 
-  if (error) {
-    throw error;
+  try {
+    return await invokeAvatarFunction(body);
+  } catch (firstError) {
+    // 401 인증 실패 시 세션 갱신 후 1회 재시도
+    const msg = firstError instanceof Error ? firstError.message : '';
+    if (msg.includes('non-2xx') || msg.includes('401') || msg.includes('Unauthorized')) {
+      console.warn('[generateFriendAvatar] auth error, refreshing session and retrying');
+      await supabase.auth.refreshSession();
+      return await invokeAvatarFunction(body);
+    }
+    throw firstError;
   }
-
-  const result = data as { success: boolean; data?: { avatarUrl: string }; error?: string };
-
-  if (!result.success || !result.data?.avatarUrl) {
-    throw new Error(result.error ?? '이미지 생성에 실패했어요');
-  }
-
-  return result.data.avatarUrl;
 }
 
 export function FriendCreationAvatarScreen() {
@@ -722,6 +736,7 @@ export function FriendCreationAvatarScreen() {
   const [status, setStatus] = useState<AvatarGenerationStatus>('idle');
   const [promptText, setPromptText] = useState(draft.avatarPrompt);
   const [previewUrl, setPreviewUrl] = useState<string | null>(draft.avatarUrl);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isBasicComplete || !isPersonaComplete || !isStoryComplete) {
@@ -733,6 +748,7 @@ export function FriendCreationAvatarScreen() {
     if (!promptText.trim()) return;
 
     setStatus('generating');
+    setErrorMessage(null);
     try {
       const url = await generateFriendAvatar(
         draft.gender ?? 'other',
@@ -743,13 +759,17 @@ export function FriendCreationAvatarScreen() {
       setPreviewUrl(url);
       updateAvatar({ avatarPrompt: promptText.trim(), avatarUrl: url });
       setStatus('done');
-    } catch {
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : '알 수 없는 오류가 발생했어요';
+      console.error('[generateFriendAvatar] error:', msg);
+      setErrorMessage(msg);
       setStatus('error');
     }
   }
 
   function handleRegenerate() {
     setPreviewUrl(null);
+    setErrorMessage(null);
     setStatus('idle');
   }
 
@@ -843,6 +863,11 @@ export function FriendCreationAvatarScreen() {
             <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
               이미지 생성에 실패했어요. 다시 시도해주세요.
             </AppText>
+            {errorMessage ? (
+              <AppText variant="bodySmall" color={fortuneTheme.colors.textTertiary}>
+                {errorMessage}
+              </AppText>
+            ) : null}
           </View>
         </Card>
       ) : null}
@@ -887,11 +912,17 @@ export function FriendCreationCreatingScreen() {
     isStoryComplete,
     resetDraft,
     saveFriend,
+    createdFriends,
   } = useFriendCreation();
+  const { state: mobileAppState } = useMobileAppState();
   const params = useLocalSearchParams<{ returnTo?: string | string[] }>();
   const [status, setStatus] = useState<CreatingStatus>('saving');
   const returnTo = normalizeReturnTo(params.returnTo);
   const attemptedRef = useRef(false);
+
+  const FREE_CHARACTER_LIMIT = 1;
+  const isPremium = mobileAppState.premium.isUnlimited ||
+    (mobileAppState.premium.tokenBalance ?? 0) > 0;
 
   useEffect(() => {
     if (!isBasicComplete || !isPersonaComplete || !isStoryComplete) {
@@ -904,6 +935,20 @@ export function FriendCreationCreatingScreen() {
     }
 
     attemptedRef.current = true;
+
+    // 멀티 캐릭터 프리미엄 게이팅: 무료 1명, 프리미엄 무제한
+    if (!isPremium && createdFriends.length >= FREE_CHARACTER_LIMIT) {
+      Alert.alert(
+        '캐릭터 슬롯이 꽉 찼어요',
+        '무료 플랜은 캐릭터 1명까지 만들 수 있어요. 프리미엄으로 업그레이드하면 무제한으로 만들 수 있어요!',
+        [
+          { text: '돌아가기', onPress: () => router.back() },
+          { text: '프리미엄 보기', onPress: () => router.push('/premium') },
+        ],
+      );
+      setStatus('error');
+      return;
+    }
 
     async function createFriend() {
       try {

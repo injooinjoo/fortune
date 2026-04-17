@@ -215,6 +215,18 @@ DO NOT include: modern fonts, digital text, readable Chinese characters,
 Arabic numerals, gradients, shadows, glossy effects, western calligraphy.`;
 }
 
+const IMAGE_RETRY_DELAYS_MS = [0, 2_000, 6_000];
+
+function isTransientImageError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error ?? "");
+  if (!message) return false;
+  if (message.includes("OPENAI_API_KEY")) return false;
+  if (message.includes("LLM_ALLOW_HIGH_COST_MODELS")) return false;
+  if (/\b(408|409|425|429|500|502|503|504)\b/.test(message)) return true;
+  if (/timeout|timed out|fetch failed|ECONNRESET|ETIMEDOUT|socket/i.test(message)) return true;
+  return false;
+}
+
 async function generateImageWithOpenAI(
   prompt: string,
 ): Promise<string> {
@@ -222,26 +234,47 @@ async function generateImageWithOpenAI(
     throw new Error("OPENAI_API_KEY is missing");
   }
 
-  console.log("🎨 Generating talisman with OpenAI...");
-
   const provider = new OpenAIProvider({
     apiKey: OPENAI_API_KEY,
     model: TALISMAN_IMAGE_MODEL,
     featureName: "generate-talisman",
   });
 
-  const result = await provider.generateImage!(prompt, {
-    model: TALISMAN_IMAGE_MODEL,
-    size: "1024x1536",
-    quality: "medium",
-  });
+  let lastError: unknown;
+  for (let attempt = 0; attempt < IMAGE_RETRY_DELAYS_MS.length; attempt += 1) {
+    const delay = IMAGE_RETRY_DELAYS_MS[attempt];
+    if (delay > 0) {
+      console.warn(
+        `⏳ Retrying talisman image generation in ${delay}ms (attempt ${attempt + 1})`,
+      );
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
 
-  console.log(
-    `✅ Image generated successfully (${result.provider}/${result.model})`,
-  );
-  console.log(`⏱️ Generation time: ${result.latency}ms`);
+    try {
+      console.log(
+        `🎨 Generating talisman with OpenAI... (attempt ${attempt + 1})`,
+      );
+      const result = await provider.generateImage!(prompt, {
+        model: TALISMAN_IMAGE_MODEL,
+        size: "1024x1536",
+        quality: "medium",
+      });
+      console.log(
+        `✅ Image generated successfully (${result.provider}/${result.model})`,
+      );
+      console.log(`⏱️ Generation time: ${result.latency}ms`);
+      return result.imageBase64;
+    } catch (err) {
+      lastError = err;
+      if (!isTransientImageError(err)) {
+        throw err;
+      }
+    }
+  }
 
-  return result.imageBase64;
+  throw lastError instanceof Error
+    ? lastError
+    : new Error(`Image generation failed: ${String(lastError)}`);
 }
 
 function getErrorMessage(error: unknown): string {
@@ -487,6 +520,19 @@ async function saveGeneratedTalismanRecord(
 
   console.log("✅ Talisman record saved, id:", data.id);
   return data.id;
+}
+
+// Startup validation — fail fast if secrets are missing, rather than silently
+// falling back at image-generation time.
+if (!OPENAI_API_KEY) {
+  console.error(
+    "⛔ generate-talisman: OPENAI_API_KEY is not set. Premium AI image generation will be disabled.",
+  );
+}
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+  console.error(
+    "⛔ generate-talisman: SUPABASE credentials missing, storage + DB calls will fail.",
+  );
 }
 
 serve(async (req) => {

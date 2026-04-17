@@ -501,6 +501,31 @@ export function LuckyItemsResult(props: FortuneResultComponentProps) {
       )}
 
       {/* ============================================================ */}
+      {/*  Section 7.5: 소재/재질                                        */}
+      {/* ============================================================ */}
+      {hasRaw && materialItems.length > 0 && (
+        <SectionCard title="행운의 소재" description="오늘과 잘 맞는 재질">
+          <View style={{ gap: fortuneTheme.spacing.sm }}>
+            {materialDetail.length > 0
+              ? materialDetail.map((item, i) => {
+                  const d = obj(item);
+                  return (
+                    <ItemDetailCard
+                      key={`material-${i}`}
+                      emoji="🧶"
+                      name={str(d.item, materialItems[i] ?? '')}
+                      reason={str(d.reason)}
+                    />
+                  );
+                })
+              : materialItems.map((item, i) => (
+                  <ItemDetailCard key={`material-${i}`} emoji="🧶" name={item} reason="" />
+                ))}
+          </View>
+        </SectionCard>
+      )}
+
+      {/* ============================================================ */}
       {/*  Section 8: 방향 + 장소                                        */}
       {/* ============================================================ */}
       {hasRaw && (directionCompass || placesItems.length > 0) && (

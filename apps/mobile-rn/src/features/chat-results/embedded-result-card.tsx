@@ -11,6 +11,8 @@ import {
   MetricGrid,
   SectionCard,
 } from '../fortune-results/primitives';
+import { RenderFortuneResult } from '../fortune-results/registry';
+import { resolveResultKindFromFortuneType } from '../fortune-results/mapping';
 
 export function EmbeddedResultCard({
   message,
@@ -19,6 +21,24 @@ export function EmbeddedResultCard({
 }) {
   const { payload } = message;
 
+  // Try to use the dedicated result component if available
+  const resultKind = resolveResultKindFromFortuneType(message.fortuneType);
+  if (resultKind) {
+    return (
+      <View style={{ width: '100%' }}>
+        <Card>
+          <View style={{ gap: fortuneTheme.spacing.sm }}>
+            <RenderFortuneResult resultKind={resultKind} payload={payload} />
+            <AppText variant="caption" color={fortuneTheme.colors.textTertiary} style={{ textAlign: 'center', marginTop: 8 }}>
+              오락 목적의 AI 생성 콘텐츠입니다
+            </AppText>
+          </View>
+        </Card>
+      </View>
+    );
+  }
+
+  // Fallback: generic normalized rendering
   return (
     <View style={{ width: '100%' }}>
       <Card>

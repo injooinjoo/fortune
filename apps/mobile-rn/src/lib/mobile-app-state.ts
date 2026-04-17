@@ -40,11 +40,18 @@ export interface ChatSurfaceState {
   sentMessageCount: number;
 }
 
+export type AiMode = 'cloud' | 'on-device' | 'auto';
+
+export interface AppSettings {
+  aiMode: AiMode;
+}
+
 export interface MobileAppState {
   profile: MobileProfileState;
   notifications: NotificationPreferences;
   premium: PremiumState;
   chat: ChatSurfaceState;
+  settings: AppSettings;
   updatedAt: string | null;
 }
 
@@ -53,6 +60,7 @@ export interface MobileAppStatePatch {
   notifications?: Partial<NotificationPreferences>;
   premium?: Partial<PremiumState>;
   chat?: Partial<ChatSurfaceState>;
+  settings?: Partial<AppSettings>;
   updatedAt?: string | null;
 }
 
@@ -88,6 +96,9 @@ export const emptyMobileAppState: MobileAppState = {
     lastFortuneType: null,
     sentMessageCount: 0,
   },
+  settings: {
+    aiMode: 'on-device',
+  },
   updatedAt: null,
 };
 
@@ -111,11 +122,16 @@ function isFortuneTypeId(value: unknown): value is FortuneTypeId {
   return typeof value === 'string' && value in fortuneTypesById;
 }
 
+function isAiMode(value: unknown): value is AiMode {
+  return value === 'cloud' || value === 'on-device' || value === 'auto';
+}
+
 export function normalizeMobileAppState(raw: Record<string, unknown>): MobileAppState {
   const profile = (raw.profile ?? {}) as Record<string, unknown>;
   const notifications = (raw.notifications ?? {}) as Record<string, unknown>;
   const premium = (raw.premium ?? {}) as Record<string, unknown>;
   const chat = (raw.chat ?? {}) as Record<string, unknown>;
+  const settings = (raw.settings ?? {}) as Record<string, unknown>;
   const status = premium.status;
 
   return {
@@ -170,6 +186,9 @@ export function normalizeMobileAppState(raw: Record<string, unknown>): MobileApp
         : null,
       sentMessageCount: asNumber(chat.sentMessageCount, 0),
     },
+    settings: {
+      aiMode: isAiMode(settings.aiMode) ? settings.aiMode : emptyMobileAppState.settings.aiMode,
+    },
     updatedAt: asString(raw.updatedAt) || null,
   };
 }
@@ -203,6 +222,10 @@ export function mergeMobileAppState(
     chat: {
       ...current.chat,
       ...patch.chat,
+    },
+    settings: {
+      ...current.settings,
+      ...patch.settings,
     },
   });
 }

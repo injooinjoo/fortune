@@ -1,0 +1,32 @@
+# Flutter (legacy, not needed for RN build)
+/android
+/ios
+/lib
+/macos
+/windows
+/linux
+/test
+/build
+/.dart_tool
+/.flutter-plugins
+/.flutter-plugins-dependencies
+
+# Design & docs
+*.pen
+*.png
+!assets/*.png
+!assets/**/*.png
+/screenshots
+/export
+*.tar.gz
+
+# Dev tools
+.claude
+.git
+.vscode
+*.md
+!README.md
+
+# Large artifacts
+/fortune-transfer-bundle-*
+/pencil*

@@ -77,7 +77,7 @@ const dailyCalendarSurvey: ChatSurveyDefinition = {
 
 const newYearSurvey: ChatSurveyDefinition = {
   fortuneType: 'new-year',
-  title: '신년 운세',
+  title: '새해 인사이트',
   introReply: '신년 흐름으로 이어갈게요. 올해 가장 붙잡고 싶은 방향만 먼저 맞춰볼게요.',
   submitReply: '좋아요. 올해의 기운과 실행 포인트를 같은 채팅 안에 바로 정리해드릴게요.',
   steps: [
@@ -153,7 +153,7 @@ const compatibilitySurvey: ChatSurveyDefinition = {
 
 const blindDateSurvey: ChatSurveyDefinition = {
   fortuneType: 'blind-date',
-  title: '소개팅 운세',
+  title: '소개팅 분석',
   introReply: '소개팅 전에 준비할 게 있어요. 상대 정보를 알려주시면 더 정확해져요.',
   submitReply: '소개팅 분석을 준비하고 있어요. 오늘의 전략을 만들어드릴게요.',
   steps: [
@@ -223,7 +223,7 @@ const blindDateSurvey: ChatSurveyDefinition = {
 
 const exLoverSurvey: ChatSurveyDefinition = {
   fortuneType: 'ex-lover',
-  title: '재회 운세',
+  title: '재회 분석',
   introReply: '재회 흐름으로 볼게요. 지금 남아 있는 결만 먼저 맞춰볼게요.',
   submitReply: '좋아요. 재접점 가능성과 감정 포인트를 카드로 정리해드릴게요.',
   steps: [
@@ -416,7 +416,7 @@ const celebritySurvey: ChatSurveyDefinition = {
       inputKind: 'chips',
       options: [
         { id: 'compatibility', label: '나와의 궁합' },
-        { id: 'todayFortune', label: '이 연예인의 오늘 운세' },
+        { id: 'todayFortune', label: '이 연예인의 오늘 흐름' },
         { id: 'pastLife', label: '전생 인연' },
       ],
     },
@@ -960,7 +960,7 @@ const talentSurvey: ChatSurveyDefinition = {
 
 const exerciseSurvey: ChatSurveyDefinition = {
   fortuneType: 'exercise',
-  title: '운동 운세',
+  title: '운동 인사이트',
   introReply: '운동 흐름으로 바로 갈게요. 목적과 강도만 먼저 맞춰볼게요.',
   submitReply: '좋아요. 추천 루틴과 컨디션 포인트를 카드로 이어드릴게요.',
   steps: [
@@ -1127,7 +1127,7 @@ const ootdSurvey: ChatSurveyDefinition = {
 const bloodTypeSurvey: ChatSurveyDefinition = {
   fortuneType: 'blood-type',
   title: '혈액형',
-  introReply: '혈액형 운세를 볼게요.',
+  introReply: '혈액형 분석을 볼게요.',
   submitReply: '혈액형 분석을 준비하고 있어요.',
   steps: [
     {
@@ -1308,7 +1308,7 @@ const gameEnhanceSurvey: ChatSurveyDefinition = {
   fortuneType: 'game-enhance',
   title: '게임 컨디션',
   introReply: '오늘의 게임 운을 봐드릴게요.',
-  submitReply: '게임 운세를 분석하고 있어요. 오늘의 골든타임을 찾아볼게요.',
+  submitReply: '게임 컨디션을 분석하고 있어요. 오늘의 골든타임을 찾아볼게요.',
   steps: [
     {
       id: 'gameType',
@@ -1339,9 +1339,9 @@ const gameEnhanceSurvey: ChatSurveyDefinition = {
 
 const movingSurvey: ChatSurveyDefinition = {
   fortuneType: 'moving',
-  title: '이사운세',
+  title: '이사 인사이트',
   introReply: '이사 분석을 도와드릴게요. 현재 위치와 목적지를 알려주세요.',
-  submitReply: '이사 운세를 분석하고 있어요. 방위, 손없는 날, 풍수까지 봐드릴게요.',
+  submitReply: '이사 인사이트를 분석하고 있어요. 방위, 손없는 날, 풍수까지 봐드릴게요.',
   steps: [
     {
       id: 'currentArea',
@@ -1452,6 +1452,11 @@ function shouldShowStep(
   step: ChatSurveyStep,
   answers: Record<string, unknown>,
 ) {
+  // Skip steps that already have a pre-filled answer from the user's profile.
+  if (step.id in answers && answers[step.id] != null && answers[step.id] !== '') {
+    return false;
+  }
+
   if (!step.showWhen) {
     return true;
   }
@@ -1486,12 +1491,38 @@ export function getCurrentSurveyStep(session: ActiveChatSurvey) {
   return null;
 }
 
-export function startChatSurvey(definition: ChatSurveyDefinition): ActiveChatSurvey {
+/** Profile fields that can auto-fill survey steps. */
+interface SurveyProfilePrefill {
+  mbti?: string;
+  bloodType?: string;
+}
+
+/** Map profile fields to survey step ids. */
+const PROFILE_TO_STEP: Record<keyof SurveyProfilePrefill, string> = {
+  mbti: 'mbtiAxes',
+  bloodType: 'bloodType',
+};
+
+export function startChatSurvey(
+  definition: ChatSurveyDefinition,
+  profile?: SurveyProfilePrefill,
+): ActiveChatSurvey {
+  const prefilled: Record<string, unknown> = {};
+
+  if (profile) {
+    for (const [field, stepId] of Object.entries(PROFILE_TO_STEP)) {
+      const value = profile[field as keyof SurveyProfilePrefill];
+      if (value) {
+        prefilled[stepId] = value;
+      }
+    }
+  }
+
   return {
     fortuneType: definition.fortuneType,
     definition,
     currentStepIndex: 0,
-    answers: {},
+    answers: prefilled,
   };
 }
 

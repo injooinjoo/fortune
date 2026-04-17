@@ -1467,10 +1467,10 @@ function PersonalityDnaResult(props: FortuneResultComponentProps) {
       ) : null}
 
       {/* ============================================================ */}
-      {/*  8. 오늘의 운세 (dailyFortune)                                 */}
+      {/*  8. 오늘의 흐름 (dailyFortune)                                 */}
       {/* ============================================================ */}
       {(luckyColor || luckyNumber || energyLevel || recommendedActivity) ? (
-        <SectionCard title="오늘의 운세" description="오늘 하루를 위한 맞춤 가이드입니다.">
+        <SectionCard title="오늘의 흐름" description="오늘 하루를 위한 맞춤 가이드입니다.">
           <MetricGrid
             items={[
               ...(luckyColor ? [{ label: '행운의 색', value: luckyColor, note: '' }] : []),

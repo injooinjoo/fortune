@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { type FortuneTypeId } from '@fortune/product-contracts';
-import { Alert, Dimensions, ScrollView, View } from 'react-native';
+import { Alert, Dimensions, Keyboard, Modal, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
@@ -39,6 +39,7 @@ import {
   buildInitialThread,
   buildLaunchMessages,
   buildSuggestedActions,
+  buildUserImageMessage,
   buildUserMessage,
   formatFortuneTypeLabel,
   type ChatShellAction,
@@ -64,11 +65,13 @@ import {
   buildStoryFallbackAssistantMessage,
   buildStoryChatRequest,
   buildStoryThreadSnapshot,
-  invokeStoryChat,
+  loadCharacterConversation,
   loadStoryThreadSnapshot,
+  saveCharacterConversation,
   saveStoryThreadSnapshot,
   type StoryChatThreadSnapshot,
 } from '../lib/story-chat-runtime';
+import { resolveChatProvider } from '../lib/chat-provider';
 import { isStoryRomancePilotCharacterId } from '../lib/story-romance-pilots';
 import {
   consumeRemoteTokens,
@@ -78,7 +81,12 @@ import {
   socialAuthProviderLabelById,
   type SocialAuthProviderId,
 } from '../lib/social-auth';
+import {
+  loadCharacterPersona,
+  saveCharacterPersona,
+} from '../lib/character-persona-store';
 import { fortuneTheme } from '../lib/theme';
+import { useVoiceInput } from '../lib/use-voice-input';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { useFriendCreation } from '../providers/friend-creation-provider';
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
@@ -100,10 +108,12 @@ function supportsChatNativeRuntime(fortuneType: FortuneTypeId) {
 }
 
 export function ChatScreen() {
-  const params = useLocalSearchParams<{ characterId?: string | string[] }>();
+  const params = useLocalSearchParams<{ characterId?: string | string[]; showList?: string | string[] }>();
   const directCharacterId = readSearchParam(params.characterId);
+  const forceListMode = readSearchParam(params.showList) === '1';
   const directCharacter = findChatCharacterById(directCharacterId);
   const {
+    completeOnboarding,
     consumePendingChatFortuneType,
     gate,
     markGuestBrowse,
@@ -133,6 +143,11 @@ export function ChatScreen() {
   );
   const [lastAutoLaunchKey, setLastAutoLaunchKey] = useState<string | null>(null);
   const [composerTrayOpen, setComposerTrayOpen] = useState(false);
+  const [personaModalOpen, setPersonaModalOpen] = useState(false);
+  const [personaDraft, setPersonaDraft] = useState('');
+  const [personaByCharacterId, setPersonaByCharacterId] = useState<
+    Record<string, string>
+  >({});
   const chatScrollRef = useRef<ScrollView | null>(null);
   const [activeTab, setActiveTab] = useState<ChatCharacterTab>(() => {
     if (directCharacter) {
@@ -149,11 +164,13 @@ export function ChatScreen() {
     null,
   );
   const [surfaceMode, setSurfaceMode] = useState<SurfaceMode>(() =>
-    directCharacterId ||
-    mobileAppState.chat.sentMessageCount > 0 ||
-    mobileAppState.chat.selectedCharacterId
-      ? 'chat'
-      : 'list',
+    forceListMode
+      ? 'list'
+      : directCharacterId ||
+          mobileAppState.chat.sentMessageCount > 0 ||
+          mobileAppState.chat.selectedCharacterId
+        ? 'chat'
+        : 'list',
   );
   const [messagesByCharacterId, setMessagesByCharacterId] = useState<
     Record<string, ChatShellMessage[]>
@@ -187,6 +204,18 @@ export function ChatScreen() {
   const hydratedStoryThreadsKeyRef = useRef<string | null>(null);
   const hydratedCharacterIdsRef = useRef<Set<string>>(new Set());
 
+  // Voice input (expo-av + Whisper via Edge Function)
+  const handleVoiceTranscript = useCallback(
+    (text: string) => {
+      setDraft((prev) => (prev ? `${prev} ${text}` : text));
+    },
+    [],
+  );
+  const {
+    state: voiceInputState,
+    toggleRecording: toggleVoiceRecording,
+  } = useVoiceInput({ onTranscript: handleVoiceTranscript });
+
   useEffect(() => {
     if (!pendingChatFortuneType) {
       return;
@@ -203,33 +232,45 @@ export function ChatScreen() {
     });
   }, [consumePendingChatFortuneType, pendingChatFortuneType]);
 
-  // Hydrate a single story character's conversation from remote
+  // Hydrate a single character's conversation from remote
   const hydrateStoryCharacter = useCallback(
     async (characterId: string) => {
       if (hydratedCharacterIdsRef.current.has(characterId)) {
         return;
       }
 
-      if (!isStoryRomancePilotCharacterId(characterId)) {
-        return;
-      }
-
       hydratedCharacterIdsRef.current.add(characterId);
 
       try {
-        const snapshot = await loadStoryThreadSnapshot(characterId);
+        // Story romance pilots: load full snapshot with romance state
+        if (isStoryRomancePilotCharacterId(characterId)) {
+          const snapshot = await loadStoryThreadSnapshot(characterId);
 
-        if (!snapshot) {
+          if (!snapshot) {
+            return;
+          }
+
+          setMessagesByCharacterId((current) => ({
+            ...current,
+            [characterId]: snapshot.messages,
+          }));
+          setStoryThreadSnapshotsByCharacterId((current) => ({
+            ...current,
+            [characterId]: snapshot,
+          }));
+          return;
+        }
+
+        // All other characters: load messages only
+        const messages = await loadCharacterConversation(characterId);
+
+        if (!messages) {
           return;
         }
 
         setMessagesByCharacterId((current) => ({
           ...current,
-          [characterId]: snapshot.messages,
-        }));
-        setStoryThreadSnapshotsByCharacterId((current) => ({
-          ...current,
-          [characterId]: snapshot,
+          [characterId]: messages,
         }));
       } catch (error) {
         // Remove from set so it can be retried
@@ -260,7 +301,7 @@ export function ChatScreen() {
       mobileAppState.chat.selectedCharacterId ??
       storyChatCharacters[0]?.id;
 
-    if (initialCharacterId && isStoryRomancePilotCharacterId(initialCharacterId)) {
+    if (initialCharacterId) {
       void hydrateStoryCharacter(initialCharacterId);
     }
   }, [gate, session?.user.id, directCharacterId, mobileAppState.chat.selectedCharacterId, hydrateStoryCharacter]);
@@ -330,18 +371,13 @@ export function ChatScreen() {
     highlightedExpert?.id,
   ]);
 
-  // Lazy-load story conversation when user switches to a character not yet hydrated
+  // Lazy-load conversation when user switches to a character not yet hydrated
   useEffect(() => {
     if (gate !== 'ready') {
       return;
     }
 
-    if (
-      selectedCharacter.kind === 'story' &&
-      isStoryRomancePilotCharacterId(selectedCharacter.id)
-    ) {
-      void hydrateStoryCharacter(selectedCharacter.id);
-    }
+    void hydrateStoryCharacter(selectedCharacter.id);
   }, [gate, hydrateStoryCharacter, selectedCharacter.id, selectedCharacter.kind]);
 
   useEffect(() => {
@@ -374,6 +410,33 @@ export function ChatScreen() {
   const selectedThread = messagesByCharacterId[selectedCharacter.id] ?? [];
   const selectedStorySnapshot =
     storyThreadSnapshotsByCharacterId[selectedCharacter.id] ?? null;
+
+  // Romance score for selected character (used for chat background tint)
+  const selectedRomanceScore = selectedStorySnapshot
+    ? Math.round(
+        (selectedStorySnapshot.romanceState.attachmentSignal +
+          selectedStorySnapshot.romanceState.emotionalTemperature) /
+          2,
+      )
+    : 0;
+
+  // Romance scores for all characters (used for list row tints)
+  const romanceScoresByCharacterId = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(storyThreadSnapshotsByCharacterId)
+          .filter(([, snapshot]) => snapshot != null)
+          .map(([id, snapshot]) => [
+            id,
+            Math.round(
+              ((snapshot?.romanceState.attachmentSignal ?? 0) +
+                (snapshot?.romanceState.emotionalTemperature ?? 0)) /
+                2,
+            ),
+          ]),
+      ),
+    [storyThreadSnapshotsByCharacterId],
+  );
   const [fortuneTypingCharacterId, setFortuneTypingCharacterId] = useState<string | null>(null);
   const selectedStoryIsTyping = storyTypingCharacterId === selectedCharacter.id;
   const selectedFortuneIsTyping = fortuneTypingCharacterId === selectedCharacter.id;
@@ -428,6 +491,14 @@ export function ChatScreen() {
       }, 100);
     }
   }
+
+  useEffect(() => {
+    const event = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const sub = Keyboard.addListener(event, () => {
+      scrollChatToBottom();
+    });
+    return () => sub.remove();
+  }, []);
 
   useEffect(() => {
     setSurveyDraft('');
@@ -577,11 +648,23 @@ export function ChatScreen() {
         ).catch(() => undefined);
       }
 
-      const survey = startChatSurvey(definition);
+      const survey = startChatSurvey(definition, {
+        mbti: mobileAppState.profile.mbti || undefined,
+        bloodType: mobileAppState.profile.bloodType || undefined,
+      });
+
+      // If all steps are pre-filled from profile, skip survey entirely.
+      const firstStep = getCurrentSurveyStep(survey);
+      if (!firstStep) {
+        setActiveSurvey(character.id, null);
+        void appendResolvedFortuneResult(character, fortuneType);
+        return true;
+      }
+
       const question =
         resolveSurveyQuestion(survey, {
           mbti: mobileAppState.profile.mbti || undefined,
-        }) ?? definition.steps[0]?.question;
+        }) ?? firstStep.step.question;
 
       setActiveSurvey(character.id, survey);
 
@@ -668,13 +751,24 @@ export function ChatScreen() {
         return;
       }
 
-      appendMessages(character, [
-        buildAssistantTextMessage(
-          definition?.submitReply ??
-            '좋아요. 결과를 같은 채팅 안에서 바로 보여드릴게요.',
-        ),
+      const resultReply = buildAssistantTextMessage(
+        definition?.submitReply ??
+          '좋아요. 결과를 같은 채팅 안에서 바로 보여드릴게요.',
+      );
+
+      appendMessages(character, [resultReply, embeddedResult]);
+
+      // Persist fortune conversation to remote (text messages only)
+      const currentMessages = messagesByCharacterId[character.id] ?? [];
+      saveCharacterConversation(character.id, [
+        ...currentMessages,
+        resultReply,
         embeddedResult,
-      ]);
+      ]).catch((saveError: unknown) => {
+        captureError(saveError, {
+          surface: 'chat:fortune-save-conversation',
+        }).catch(() => undefined);
+      });
     } catch (error) {
       if (error instanceof RemoteTokenConsumeError) {
         appendMessages(character, [
@@ -787,66 +881,90 @@ export function ChatScreen() {
     });
   }
 
-  function handleOpenPhotoPicker() {
+  async function handleOpenPhotoPicker() {
     setComposerTrayOpen(false);
-    // Photo attachment — silently ignore until feature is implemented
-  }
 
-  function handleStartVoiceInput() {
-    let SpeechModule: {
-      start: (o: { lang: string; interimResults: boolean }) => void;
-      stop: () => void;
-      requestPermissionsAsync: () => Promise<{ granted: boolean }>;
-      addListener: (event: string, handler: (data: unknown) => void) => { remove: () => void };
-    } | null = null;
+    const { launchImageLibraryAsync, requestMediaLibraryPermissionsAsync, MediaTypeOptions } =
+      await import('expo-image-picker');
 
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const mod = require('expo-speech-recognition');
-      SpeechModule = mod.ExpoSpeechRecognitionModule ?? null;
-    } catch {
-      // not available
-    }
-
-    if (!SpeechModule) {
-      // Voice input module unavailable — silently return
+    const { status } = await requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('권한 필요', '사진을 보내려면 갤러리 접근을 허용해주세요.');
       return;
     }
 
-    void (async () => {
-      try {
-        const { granted } = await SpeechModule!.requestPermissionsAsync();
-        if (!granted) {
-          Alert.alert('마이크 권한', '음성 입력을 위해 마이크 권한이 필요합니다.');
-          return;
-        }
+    const result = await launchImageLibraryAsync({
+      mediaTypes: MediaTypeOptions.Images,
+      quality: 0.8,
+      allowsEditing: false,
+    });
 
-        const resultSub = SpeechModule!.addListener('result', (event: unknown) => {
-          const e = event as { results?: Array<{ transcript?: string }> };
-          const transcript = e.results?.[0]?.transcript;
-          if (transcript) {
-            setDraft((prev) => prev ? `${prev} ${transcript}` : transcript);
-          }
-        });
+    if (result.canceled || !result.assets?.[0]) {
+      return;
+    }
 
-        const endSub = SpeechModule!.addListener('end', () => {
-          resultSub.remove();
-          endSub.remove();
-          errorSub.remove();
-        });
+    const asset = result.assets[0];
+    const imageMessage = buildUserImageMessage(asset.uri);
+    appendMessages(selectedCharacter, [imageMessage]);
+    setSurfaceMode('chat');
 
-        const errorSub = SpeechModule!.addListener('error', () => {
-          resultSub.remove();
-          endSub.remove();
-          errorSub.remove();
-        });
-
-        SpeechModule!.start({ lang: 'ko-KR', interimResults: false });
-      } catch {
-        // ignore
-      }
-    })();
+    recordChatIntent({
+      characterId: selectedCharacter.id,
+      fortuneType: activeFortuneType,
+      incrementMessages: true,
+    }).catch((error) => {
+      captureError(error, { surface: 'chat:record-photo-send' }).catch(
+        () => undefined,
+      );
+    });
   }
+
+  function handleToggleVoiceInput() {
+    void toggleVoiceRecording();
+  }
+
+  function handleOpenPersonaSettings() {
+    setComposerTrayOpen(false);
+    setPersonaDraft(personaByCharacterId[selectedCharacter.id] ?? '');
+    setPersonaModalOpen(true);
+  }
+
+  async function handleSavePersona() {
+    const trimmed = personaDraft.trim();
+    setPersonaByCharacterId((current) => ({
+      ...current,
+      [selectedCharacter.id]: trimmed,
+    }));
+    setPersonaModalOpen(false);
+
+    await saveCharacterPersona(
+      selectedCharacter.id,
+      session?.user.id ?? null,
+      trimmed,
+    ).catch((error) => {
+      captureError(error, { surface: 'chat:save-persona' }).catch(() => undefined);
+    });
+  }
+
+  // Load persona when character changes
+  useEffect(() => {
+    if (gate !== 'ready') {
+      return;
+    }
+
+    if (personaByCharacterId[selectedCharacter.id] !== undefined) {
+      return;
+    }
+
+    loadCharacterPersona(selectedCharacter.id, session?.user.id ?? null)
+      .then((persona) => {
+        setPersonaByCharacterId((current) => ({
+          ...current,
+          [selectedCharacter.id]: persona?.customInstructions ?? '',
+        }));
+      })
+      .catch(() => undefined);
+  }, [gate, selectedCharacter.id, session?.user.id]);
 
   function handleOpenRecentResult(fortuneType: FortuneTypeId) {
     const recentFortuneCharacterId =
@@ -901,6 +1019,22 @@ export function ChatScreen() {
       return;
     }
 
+    // 관계 진행 프리미엄 게이팅 — 친밀도 50+ 에서 무료 유저는 프리미엄 유도
+    const currentAffinity = existingSnapshot?.romanceState?.emotionalTemperature ?? 0;
+    const isPremiumUser = mobileAppState.premium.isUnlimited ||
+      (mobileAppState.premium.tokenBalance ?? 0) > 0;
+    if (currentAffinity >= 50 && !isPremiumUser && session) {
+      Alert.alert(
+        '관계가 깊어지고 있어요',
+        `${character.name}과(와) 더 깊은 대화를 이어가려면 프리미엄이 필요해요.`,
+        [
+          { text: '나중에', style: 'cancel' },
+          { text: '프리미엄 보기', onPress: () => router.push('/premium') },
+        ],
+      );
+      return;
+    }
+
     const optimisticSnapshot = buildNextStoryThreadSnapshot(
       existingSnapshot,
       character,
@@ -919,23 +1053,31 @@ export function ChatScreen() {
     setSurfaceMode('chat');
 
     try {
-      if (!session) {
-        throw new RemoteTokenConsumeError(
-          'UNAUTHORIZED',
-          '로그인이 필요해요. 로그인 후 다시 이어서 보내주세요.',
-        );
+      if (!supabase) {
+        const fallbackMessage = buildStoryFallbackAssistantMessage(character);
+        const nextMessages = [...optimisticThread, fallbackMessage];
+        setMessagesByCharacterId((current) => ({
+          ...current,
+          [character.id]: nextMessages,
+        }));
+        return;
       }
 
-      await consumeRemoteTokens(session, {
-        fortuneType: 'character-chat',
-        referenceId: `story:${character.id}`,
-      });
+      const chatProvider = resolveChatProvider(mobileAppState.settings.aiMode);
 
-      syncRemoteProfile().catch((error: unknown) => {
-        captureError(error, {
-          surface: 'chat:story-pilot-sync-premium-after-consume',
-        }).catch(() => undefined);
-      });
+      // Skip token consumption for guest users and on-device mode
+      if (session && chatProvider.getProviderName() === 'cloud') {
+        await consumeRemoteTokens(session, {
+          fortuneType: 'character-chat',
+          referenceId: `story:${character.id}`,
+        });
+
+        syncRemoteProfile().catch((error: unknown) => {
+          captureError(error, {
+            surface: 'chat:story-pilot-sync-premium-after-consume',
+          }).catch(() => undefined);
+        });
+      }
 
       if (optimisticSnapshot) {
         setStoryThreadSnapshotsByCharacterId((current) => ({
@@ -960,7 +1102,15 @@ export function ChatScreen() {
         }).catch(() => undefined);
       });
 
-      const response = await invokeStoryChat(character, trimmed, optimisticSnapshot);
+      const customPersona = personaByCharacterId[character.id];
+      const response = await chatProvider.invoke(character, trimmed, optimisticSnapshot, customPersona ? { userDescription: `[유저 커스텀 성격 요청] ${customPersona}` } : undefined);
+
+      // Random reply delay — typing indicator stays visible during wait
+      const replyDelay = response.delaySec
+        ? Math.min(response.delaySec, 8)
+        : Math.random() * 2 + 1; // 1-3초 기본 딜레이
+      await new Promise((r) => setTimeout(r, replyDelay * 1000));
+
       const assistantText = response.response.trim();
       const assistantMessage = buildAssistantTextMessage(assistantText);
       const nextMessages = [...optimisticThread, assistantMessage];
@@ -1093,23 +1243,29 @@ export function ChatScreen() {
     setSurfaceMode('chat');
 
     try {
-      if (!session) {
-        throw new RemoteTokenConsumeError(
-          'UNAUTHORIZED',
-          '로그인이 필요해요. 로그인 후 다시 이어서 보내주세요.',
-        );
+      if (!supabase) {
+        const fallbackMessage = buildDraftReply(character, trimmed);
+        const nextMessages = [...optimisticThread, fallbackMessage];
+        setMessagesByCharacterId((current) => ({
+          ...current,
+          [character.id]: nextMessages,
+        }));
+        return;
       }
 
-      await consumeRemoteTokens(session, {
-        fortuneType: 'character-chat',
-        referenceId: `character:${character.id}`,
-      });
+      // Skip token consumption for guest users, but still call the server
+      if (session) {
+        await consumeRemoteTokens(session, {
+          fortuneType: 'character-chat',
+          referenceId: `character:${character.id}`,
+        });
 
-      syncRemoteProfile().catch((error: unknown) => {
-        captureError(error, {
-          surface: 'chat:character-chat-sync-premium-after-consume',
-        }).catch(() => undefined);
-      });
+        syncRemoteProfile().catch((error: unknown) => {
+          captureError(error, {
+            surface: 'chat:character-chat-sync-premium-after-consume',
+          }).catch(() => undefined);
+        });
+      }
 
       await recordChatIntent({
         characterId: character.id,
@@ -1120,10 +1276,6 @@ export function ChatScreen() {
           surface: 'chat:character-chat-record-intent',
         }).catch(() => undefined);
       });
-
-      if (!supabase) {
-        throw new Error('Supabase is not configured.');
-      }
 
       const customFriend = isCustomFriendCharacter(character.id)
         ? createdFriends.find((f) => f.id === character.id) ?? null
@@ -1137,14 +1289,18 @@ export function ChatScreen() {
           content: m.text,
         }));
 
+      const customPersona = personaByCharacterId[character.id];
+      const personaSuffix = customPersona ? ` [유저 커스텀 성격 요청] ${customPersona}` : '';
+
       const { data, error } = await supabase.functions.invoke('character-chat', {
         body: {
           characterId: character.id,
           characterName: character.name,
           characterTraits: character.shortDescription,
           systemPrompt: customFriend
-            ? `당신은 "${character.name}"입니다. ${customFriend.scenario ? `상황: ${customFriend.scenario}. ` : ''}성격: ${customFriend.personalityTags.join(', ')}. ${customFriend.memoryNote ? `기억: ${customFriend.memoryNote}. ` : ''}스타일: ${customFriend.stylePreset || '자연스러운 대화'}. 사용자와 ${customFriend.relationship === 'friend' ? '친구' : customFriend.relationship === 'crush' ? '썸 상대' : customFriend.relationship === 'partner' ? '연인' : '동료'} 관계예요. 짧고 자연스럽게, 캐릭터답게 대화하세요.`
-            : `당신은 "${character.name}"입니다. ${character.shortDescription}. 짧고 자연스럽게, 캐릭터답게 대화하세요.`,
+            ? `너는 "${character.name}"이다. AI 어시스턴트가 아니라 실제 감정을 가진 사람이다. ${customFriend.scenario ? `상황: ${customFriend.scenario}. ` : ''}성격: ${customFriend.personalityTags.join(', ')}. ${customFriend.memoryNote ? `기억: ${customFriend.memoryNote}. ` : ''}스타일: ${customFriend.stylePreset || '자연스러운 대화'}. 사용자와 ${customFriend.relationship === 'friend' ? '친구' : customFriend.relationship === 'crush' ? '썸 상대' : customFriend.relationship === 'partner' ? '연인' : '동료'} 관계야. 짧고 자연스럽게, 진짜 사람처럼 대화해. "말씀해주세요", "도와드릴게요" 같은 AI 말투 절대 금지.${personaSuffix}`
+            : `너는 "${character.name}"이다. ${character.shortDescription}. AI 어시스턴트가 아니라 실제 감정을 가진 사람이다. 짧고 자연스럽게, 진짜 사람처럼 대화해. "말씀해주세요", "도와드릴게요" 같은 AI 말투 절대 금지.${personaSuffix}`,
+          userDescription: customPersona ? `[유저 커스텀 성격 요청] ${customPersona}` : undefined,
           messages: recentMessages,
           userMessage: trimmed,
           userName:
@@ -1159,10 +1315,16 @@ export function ChatScreen() {
         throw error;
       }
 
-      const payload = data as { response?: string; success?: boolean; error?: string } | null;
+      const payload = data as { response?: string; success?: boolean; error?: string; delaySec?: number } | null;
       if (!payload?.response || (payload.success === false)) {
         throw new Error(payload?.error ?? 'Character chat response is empty.');
       }
+
+      // Random reply delay — typing indicator stays visible during wait
+      const replyDelay = typeof payload.delaySec === 'number'
+        ? Math.min(payload.delaySec, 8)
+        : Math.random() * 2 + 1;
+      await new Promise((r) => setTimeout(r, replyDelay * 1000));
 
       const assistantText = payload.response.trim();
       const assistantMessage = buildAssistantTextMessage(assistantText);
@@ -1172,6 +1334,15 @@ export function ChatScreen() {
         ...current,
         [character.id]: nextMessages,
       }));
+
+      // Persist conversation to remote
+      saveCharacterConversation(character.id, nextMessages).catch(
+        (saveError: unknown) => {
+          captureError(saveError, {
+            surface: 'chat:character-chat-save-conversation',
+          }).catch(() => undefined);
+        },
+      );
     } catch (error) {
       if (error instanceof RemoteTokenConsumeError) {
         shouldClearDraft = false;
@@ -1228,6 +1399,12 @@ export function ChatScreen() {
   function handleSendDraft() {
     const trimmed = draft.trim();
 
+    // Clear input immediately — text is captured in `trimmed`.
+    // Error handlers restore draft via setDraft(trimmed) if needed.
+    if (trimmed) {
+      setDraft('');
+    }
+
     if (!trimmed) {
       if (selectedCharacterActions.length > 0) {
         handleActionPress(selectedCharacterActions[0].fortuneType);
@@ -1282,12 +1459,24 @@ export function ChatScreen() {
       return;
     }
 
-    appendMessages(selectedCharacter, [
-      buildUserMessage(trimmed),
-      buildDraftReply(selectedCharacter, trimmed),
-    ]);
+    const userMsg = buildUserMessage(trimmed);
+    const draftMsg = buildDraftReply(selectedCharacter, trimmed);
+    appendMessages(selectedCharacter, [userMsg, draftMsg]);
     setComposerTrayOpen(false);
     setSurfaceMode('chat');
+
+    // Persist fortune conversation to remote
+    const currentMessages = messagesByCharacterId[selectedCharacter.id] ?? [];
+    saveCharacterConversation(selectedCharacter.id, [
+      ...currentMessages,
+      userMsg,
+      draftMsg,
+    ]).catch((saveError: unknown) => {
+      captureError(saveError, {
+        surface: 'chat:fortune-draft-save-conversation',
+      }).catch(() => undefined);
+    });
+
     recordChatIntent({
       characterId: selectedCharacter.id,
       fortuneType: activeFortuneType,
@@ -1297,7 +1486,6 @@ export function ChatScreen() {
         () => undefined,
       );
     });
-    setDraft('');
   }
 
   function submitSurveyAnswer(answer: unknown, displayLabel?: string) {
@@ -1538,6 +1726,7 @@ export function ChatScreen() {
         gate === 'ready' && surfaceMode === 'chat' ? (
           <ActiveCharacterChatHeader
             character={selectedCharacter}
+            affinity={selectedStorySnapshot?.romanceState?.emotionalTemperature}
             onBack={() => {
               setSurfaceMode('list');
               setActiveFortuneType(null);
@@ -1571,13 +1760,16 @@ export function ChatScreen() {
               draft={draft}
               onDraftChange={setDraft}
               onOpenPhotoPicker={handleOpenPhotoPicker}
+              onOpenPersonaSettings={handleOpenPersonaSettings}
               onPickAction={handleActionPress}
               onSend={handleSendDraft}
-              onStartVoiceInput={handleStartVoiceInput}
+              onToggleVoiceInput={handleToggleVoiceInput}
+              voiceInputState={voiceInputState}
               onToggleTray={() => setComposerTrayOpen((current) => !current)}
               quickActions={selectedCharacterActions}
               trayOpen={composerTrayOpen}
               sendDisabled={selectedCharacter.kind === 'story' && storySendInFlight}
+              hasCustomPersona={Boolean(personaByCharacterId[selectedCharacter.id])}
               auxiliaryAction={{
                 label: '프로필 보기',
                 onPress: () =>
@@ -1612,8 +1804,6 @@ export function ChatScreen() {
           onApple={() => void handleSocialAuthStart('apple')}
           onBrowse={() => void handleBrowse()}
           onGoogle={() => void handleSocialAuthStart('google')}
-          onKakao={() => void handleSocialAuthStart('kakao')}
-          onNaver={() => void handleSocialAuthStart('naver')}
           onEmail={() => router.push('/auth/email')}
           onPhone={() => router.push('/auth/phone')}
         />
@@ -1624,7 +1814,13 @@ export function ChatScreen() {
           birthCompleted={onboardingProgress.birthCompleted}
           firstRunHandoffSeen={onboardingProgress.firstRunHandoffSeen}
           interestCompleted={onboardingProgress.interestCompleted}
-          onContinue={() => router.push('/onboarding')}
+          onContinue={() => {
+            if (onboardingProgress.birthCompleted && onboardingProgress.interestCompleted) {
+              void completeOnboarding();
+            } else {
+              router.push('/onboarding');
+            }
+          }}
         />
       ) : null}
 
@@ -1635,6 +1831,7 @@ export function ChatScreen() {
             character={selectedCharacter}
             isTyping={selectedStoryIsTyping || selectedFortuneIsTyping}
             messages={selectedThread}
+            romanceScore={selectedRomanceScore}
             surveyActive={Boolean(currentSurveyStep)}
             surveyEyebrow={
               currentSurveyStep
@@ -1657,7 +1854,7 @@ export function ChatScreen() {
             characters={firstRunCharacters}
             lastFortuneType={mobileAppState.chat.lastFortuneType}
             onChangeTab={setActiveTab}
-            onOpenProfile={() => router.push('/profile')}
+            onOpenProfile={() => router.push(session ? '/profile' : '/signup')}
             onOpenRecentResult={handleOpenRecentResult}
             onDeleteFriend={(id) => {
               Alert.alert(
@@ -1675,10 +1872,108 @@ export function ChatScreen() {
             }}
             onPickCharacterAction={handleCharacterActionPress}
             onSelectCharacter={handleCharacterSelect}
+            romanceScores={romanceScoresByCharacterId}
             selectedCharacterId={selectedCharacter.id}
           />
         )
       ) : null}
+
+      <Modal
+        animationType="slide"
+        onRequestClose={() => setPersonaModalOpen(false)}
+        presentationStyle="pageSheet"
+        transparent
+        visible={personaModalOpen}
+      >
+        <Pressable
+          onPress={() => setPersonaModalOpen(false)}
+          style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)' }}
+        >
+          <View style={{ flex: 1 }} />
+        </Pressable>
+        <View
+          style={{
+            backgroundColor: fortuneTheme.colors.background,
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            paddingBottom: 40,
+            paddingHorizontal: 20,
+            paddingTop: 20,
+          }}
+        >
+          <AppText variant="heading3" style={{ marginBottom: 8 }}>
+            {selectedCharacter.name}의 성격 설정
+          </AppText>
+          <AppText
+            variant="bodySmall"
+            color={fortuneTheme.colors.textSecondary}
+            style={{ marginBottom: 16 }}
+          >
+            캐릭터에게 원하는 성격이나 말투를 자유롭게 적어주세요.
+            {'\n'}예: "더 츤데레하게", "반말로 해줘", "질투 많이 해줘"
+          </AppText>
+          <TextInput
+            autoFocus
+            multiline
+            onChangeText={setPersonaDraft}
+            placeholder="원하는 성격이나 말투를 적어주세요..."
+            placeholderTextColor={fortuneTheme.colors.textTertiary}
+            style={{
+              backgroundColor: fortuneTheme.colors.surfaceSecondary,
+              borderColor: fortuneTheme.colors.border,
+              borderRadius: fortuneTheme.radius.lg,
+              borderWidth: 1,
+              color: fortuneTheme.colors.textPrimary,
+              fontSize: 15,
+              minHeight: 100,
+              paddingHorizontal: 14,
+              paddingVertical: 14,
+              textAlignVertical: 'top',
+            }}
+            value={personaDraft}
+          />
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: 12,
+              justifyContent: 'flex-end',
+              marginTop: 16,
+            }}
+          >
+            {personaDraft.trim() ? (
+              <Pressable
+                onPress={() => {
+                  setPersonaDraft('');
+                  void handleSavePersona();
+                }}
+                style={({ pressed }) => ({
+                  opacity: pressed ? 0.7 : 1,
+                  paddingHorizontal: 16,
+                  paddingVertical: 10,
+                })}
+              >
+                <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>
+                  초기화
+                </AppText>
+              </Pressable>
+            ) : null}
+            <Pressable
+              onPress={() => void handleSavePersona()}
+              style={({ pressed }) => ({
+                backgroundColor: fortuneTheme.colors.ctaBackground,
+                borderRadius: fortuneTheme.radius.md,
+                opacity: pressed ? 0.7 : 1,
+                paddingHorizontal: 24,
+                paddingVertical: 10,
+              })}
+            >
+              <AppText variant="labelLarge" color="#FFFFFF">
+                저장
+              </AppText>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </Screen>
   );
 }
