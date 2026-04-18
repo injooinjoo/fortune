@@ -10,13 +10,20 @@ import { Modal, Pressable, TextInput, View } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
 import { AppText } from '../components/app-text';
+import { BloodPicker, type BloodType } from '../components/blood-picker';
 import { Card } from '../components/card';
+import {
+  DateInput,
+  type DateInputValue,
+} from '../components/date-input';
+import { MBTIPicker, type MbtiType } from '../components/mbti-picker';
 import { PrimaryButton } from '../components/primary-button';
 import {
   resolveBackDestinationLabel,
   RouteBackHeader,
 } from '../components/route-back-header';
 import { Screen } from '../components/screen';
+import { TimeInput, TIME_INPUT_UNKNOWN } from '../components/time-input';
 import { appEnv } from '../lib/env';
 import { captureError } from '../lib/error-reporting';
 import { pageSnap } from '../lib/haptics';
@@ -80,6 +87,65 @@ function normalizeInterestParam(value: string | undefined) {
 
 const DISCLAIMER_STORAGE_KEY = 'fortune.disclaimer-accepted.v1';
 
+// DateInput uses a `{y, m, d}` struct, but the profile stores birthDate as a
+// "YYYY-MM-DD" string. These adapters keep the profile contract stable while
+// giving the onboarding UI a real segmented date picker.
+function parseBirthDate(value: string): DateInputValue {
+  const match = value.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (!match) return { y: '', m: '', d: '' };
+  return { y: match[1], m: match[2].padStart(2, '0'), d: match[3].padStart(2, '0') };
+}
+
+function serializeBirthDate(value: DateInputValue): string {
+  const year = value.y.trim();
+  const month = value.m.trim();
+  const day = value.d.trim();
+  if (!year || !month || !day) return '';
+  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+}
+
+// Ondo TimeInput returns a 12-branch token like "자(23~1시)". The saju Edge
+// Function expects an HH:MM hour string, so we map each branch to the start
+// hour of its 2-hour window. "시간 모름" maps to an empty string so saju
+// treats it as unspecified rather than midnight.
+const BRANCH_TO_HOUR: Record<string, string> = {
+  '자(23~1시)': '23:00',
+  '축(1~3시)': '01:00',
+  '인(3~5시)': '03:00',
+  '묘(5~7시)': '05:00',
+  '진(7~9시)': '07:00',
+  '사(9~11시)': '09:00',
+  '오(11~13시)': '11:00',
+  '미(13~15시)': '13:00',
+  '신(15~17시)': '15:00',
+  '유(17~19시)': '19:00',
+  '술(19~21시)': '19:00',
+  '해(21~23시)': '21:00',
+  [TIME_INPUT_UNKNOWN]: '',
+};
+
+const HOUR_TO_BRANCH: Record<string, string> = Object.fromEntries(
+  Object.entries(BRANCH_TO_HOUR)
+    .filter(([, hour]) => hour !== '')
+    .map(([branch, hour]) => [hour, branch]),
+);
+
+function parseBirthTime(value: string): string | undefined {
+  if (!value) return undefined;
+  if (value === TIME_INPUT_UNKNOWN) return TIME_INPUT_UNKNOWN;
+  const trimmed = value.trim();
+  const match = HOUR_TO_BRANCH[trimmed];
+  if (match) return match;
+  const hourPart = trimmed.slice(0, 2);
+  return HOUR_TO_BRANCH[`${hourPart}:00`];
+}
+
+function serializeBirthTime(value: string | undefined): string {
+  if (!value) return '';
+  if (value === TIME_INPUT_UNKNOWN) return '';
+  return BRANCH_TO_HOUR[value] ?? '';
+}
+
 export function OnboardingScreen() {
   const [disclaimerVisible, setDisclaimerVisible] = useState(false);
 
@@ -131,6 +197,8 @@ export function OnboardingScreen() {
   const [displayName, setDisplayName] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [birthTime, setBirthTime] = useState('');
+  const [mbti, setMbti] = useState('');
+  const [bloodType, setBloodType] = useState('');
   const [selectedInterestIds, setSelectedInterestIds] = useState<string[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const [activeStepId, setActiveStepId] = useState<OnboardingStepId>('birth');
@@ -159,6 +227,8 @@ export function OnboardingScreen() {
     setDisplayName(nextDisplayName);
     setBirthDate(nextBirthDate);
     setBirthTime(nextBirthTime);
+    setMbti(state.profile.mbti?.trim() ?? '');
+    setBloodType(state.profile.bloodType?.trim() ?? '');
     setSelectedInterestIds(nextInterestIds);
     setActiveStepId(derivedStep);
     setHydrated(true);
@@ -173,8 +243,10 @@ export function OnboardingScreen() {
     onboardingProgress.interestCompleted,
     state.profile.birthDate,
     state.profile.birthTime,
+    state.profile.bloodType,
     state.profile.displayName,
     state.profile.interestIds,
+    state.profile.mbti,
     status,
   ]);
 
@@ -191,6 +263,8 @@ export function OnboardingScreen() {
         displayName: displayName.trim(),
         birthDate: birthDate.trim(),
         birthTime: birthTime.trim(),
+        mbti: mbti.trim(),
+        bloodType: bloodType.trim(),
       });
       await updateOnboardingProgress({
         birthCompleted: birthDate.trim().length > 0,
@@ -223,6 +297,8 @@ export function OnboardingScreen() {
         displayName: displayName.trim(),
         birthDate: birthDate.trim(),
         birthTime: birthTime.trim(),
+        mbti: mbti.trim(),
+        bloodType: bloodType.trim(),
         interestIds: selectedInterestIds,
       });
       await updateOnboardingProgress({
@@ -338,29 +414,73 @@ export function OnboardingScreen() {
         <Card>
           <AppText variant="heading4">기본 정보</AppText>
           <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
-            이름은 대화에서 불릴 방식이고, 생년월일은 더 잘 맞는 흐름을 찾는 데 사용돼요.
+            이름, 생년월일, 태어난 시간 그리고 MBTI / 혈액형까지 한 번에 확인해요.
+            대화와 운세 흐름을 맞추는 데 쓰입니다.
           </AppText>
+
           <Field
             label="표시 이름"
             placeholder="이름을 입력해 주세요"
             value={displayName}
             onChangeText={setDisplayName}
           />
-          <Field
-            label="생년월일"
-            placeholder="YYYY-MM-DD"
-            value={birthDate}
-            onChangeText={setBirthDate}
-          />
-          <Field
-            label="태어난 시간"
-            placeholder="HH:MM"
-            value={birthTime}
-            onChangeText={setBirthTime}
-          />
+
+          <View style={{ gap: fortuneTheme.spacing.xs }}>
+            <AppText
+              variant="labelSmall"
+              color={fortuneTheme.colors.textSecondary}
+            >
+              생년월일
+            </AppText>
+            <DateInput
+              value={parseBirthDate(birthDate)}
+              onChange={(next) => setBirthDate(serializeBirthDate(next))}
+            />
+          </View>
+
+          <View style={{ gap: fortuneTheme.spacing.xs }}>
+            <AppText
+              variant="labelSmall"
+              color={fortuneTheme.colors.textSecondary}
+            >
+              태어난 시간 (모르면 &quot;시간 모름&quot;)
+            </AppText>
+            <TimeInput
+              value={parseBirthTime(birthTime)}
+              onChange={(next) => setBirthTime(serializeBirthTime(next))}
+            />
+          </View>
+
+          <View style={{ gap: fortuneTheme.spacing.xs }}>
+            <AppText
+              variant="labelSmall"
+              color={fortuneTheme.colors.textSecondary}
+            >
+              MBTI (선택)
+            </AppText>
+            <MBTIPicker
+              value={mbti || undefined}
+              onChange={(next: MbtiType) => setMbti(next)}
+            />
+          </View>
+
+          <View style={{ gap: fortuneTheme.spacing.xs }}>
+            <AppText
+              variant="labelSmall"
+              color={fortuneTheme.colors.textSecondary}
+            >
+              혈액형 (선택)
+            </AppText>
+            <BloodPicker
+              value={bloodType || undefined}
+              onChange={(next: BloodType) => setBloodType(next)}
+            />
+          </View>
+
           <PrimaryButton
             disabled={!isBirthStepValid}
             onPress={() => void handleContinueFromBirth()}
+            fullWidth
           >
             관심사 선택으로 이동
           </PrimaryButton>
