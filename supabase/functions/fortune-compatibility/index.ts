@@ -31,6 +31,7 @@ import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import { parseAndValidateLLMResponse, v } from '../_shared/llm/validation.ts'
 import {
   extractCompatibilityCohort,
   generateCohortHash,
@@ -398,14 +399,16 @@ serve(async (req) => {
         throw new Error('LLM API 응답을 받을 수 없습니다.')
       }
 
-      // JSON 파싱
-      let parsedResponse: any
-      try {
-        parsedResponse = JSON.parse(response.content)
-      } catch (error) {
-        console.error('JSON parsing error:', error)
+      // JSON 파싱 — 코드펜스/프롬프트 앞뒤 문장을 허용하는 완화된 파서 + 스키마 통과 검증
+      const validation = parseAndValidateLLMResponse(
+        response.content,
+        v.passthrough<Record<string, unknown>>(),
+      )
+      if (!validation.ok) {
+        console.error('[fortune-compatibility] LLM response validation failed:', validation.error)
         throw new Error('API 응답 형식이 올바르지 않습니다.')
       }
+      const parsedResponse = validation.value as any
 
       // 조언 데이터 처리 (List → String 변환)
       const adviceData = parsedResponse.조언 || parsedResponse.advice || ['서로 배려', '대화 자주', '함께 시간']

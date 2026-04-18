@@ -32,6 +32,7 @@ import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import { parseAndValidateLLMResponse, v } from '../_shared/llm/validation.ts'
 import {
   extractHealthCohort,
   generateCohortHash,
@@ -775,7 +776,15 @@ ${elementAnalysis ? `- ${elementAnalysis.lacking} 오행 부족 → ${ELEMENT_OR
 
       if (!response.content) throw new Error('LLM API 응답을 받을 수 없습니다.')
 
-      const parsedResponse = JSON.parse(response.content)
+      const validation = parseAndValidateLLMResponse(
+        response.content,
+        v.passthrough<Record<string, unknown>>(),
+      )
+      if (!validation.ok) {
+        console.error('[fortune-health] LLM response validation failed:', validation.error)
+        throw new Error('API 응답 형식이 올바르지 않습니다.')
+      }
+      const parsedResponse = validation.value as any
 
       // ✅ 표준화된 필드명 사용
       const overallHealthText = parsedResponse.전반적인건강운 || parsedResponse.overall_health || '건강하십니다.'

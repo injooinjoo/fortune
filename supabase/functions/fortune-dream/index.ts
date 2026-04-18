@@ -30,6 +30,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import { parseAndValidateLLMResponse, v } from '../_shared/llm/validation.ts'
 import {
   extractDreamCohort,
   generateCohortHash,
@@ -609,7 +610,15 @@ serve(async (req) => {
         metadata: { dreamLength: dream.length, dreamType, inputType, isPremium }
       })
 
-      const parsedResponse = JSON.parse(llmResponse.content)
+      const validation = parseAndValidateLLMResponse(
+        llmResponse.content,
+        v.passthrough<Record<string, unknown>>(),
+      )
+      if (!validation.ok) {
+        console.error('[fortune-dream] LLM response validation failed:', validation.error)
+        throw new Error('API 응답 형식이 올바르지 않습니다.')
+      }
+      const parsedResponse = validation.value as any
       console.log('✅ [Step 10] Response parsed successfully')
 
       // 응답 데이터 구조화
