@@ -463,7 +463,16 @@ function MessageBubble({
               ? fortuneTheme.colors.backgroundTertiary
               : fortuneTheme.colors.surfaceSecondary,
           borderColor: fortuneTheme.colors.border,
+          // Ondo bubble shape: rounded on three corners, tight (6px) on the
+          // corner that points toward the speaker. Assistant/system bubbles
+          // tighten bottom-left (pointing into their avatar column); user
+          // bubbles tighten bottom-right (pointing into the user's side).
           borderRadius: fortuneTheme.radius.messageBubble,
+          borderBottomLeftRadius:
+            isAssistant || isSystem ? 6 : fortuneTheme.radius.messageBubble,
+          borderBottomRightRadius: isUser
+            ? 6
+            : fortuneTheme.radius.messageBubble,
           borderWidth: 1,
           maxWidth: isUser ? undefined : '84%',
           paddingHorizontal: 14,
