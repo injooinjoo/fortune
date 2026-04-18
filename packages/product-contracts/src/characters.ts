@@ -103,9 +103,3 @@ export const fortuneCharacters = [
     ],
   },
 ] as const satisfies readonly FortuneCharacterSpec[];
-
-export function findFortuneExpert(typeId: FortuneTypeId): FortuneCharacterSpec | undefined {
-  return fortuneCharacters.find((character) =>
-    (character.specialties as readonly FortuneTypeId[]).includes(typeId),
-  );
-}

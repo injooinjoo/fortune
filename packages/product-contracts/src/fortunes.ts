@@ -57,7 +57,7 @@ export interface FortuneTypeSpec {
   apiType?: string;
 }
 
-export const fortuneTypeSpecs = [
+const fortuneTypeSpecs = [
   { id: 'daily', labelKey: 'fortuneDaily', endpoint: '/fortune-daily' },
   {
     id: 'daily-calendar',
@@ -254,7 +254,7 @@ export interface FortuneAnswerBag {
   family_type?: string;
 }
 
-export function resolveFamilyApiType(answers: FortuneAnswerBag = {}): string {
+function resolveFamilyApiType(answers: FortuneAnswerBag = {}): string {
   const rawConcern = (answers.concern ?? answers.family_type ?? '').toLowerCase();
 
   if (rawConcern === 'wealth' || rawConcern === '재물' || rawConcern === '돈') {
