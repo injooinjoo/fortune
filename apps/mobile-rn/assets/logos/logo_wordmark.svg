@@ -1,0 +1,8 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60">
+  <rect width="200" height="60" rx="12" fill="#0B0B10"></rect>
+  <circle cx="30" cy="30" r="12" fill="none" stroke="#8B7BE8" stroke-width="2.5"></circle>
+  <circle cx="30" cy="30" r="4" fill="#8B7BE8"></circle>
+  <text x="54" y="38" font-family="&#39;Noto Sans KR&#39;, sans-serif" font-size="24" font-weight="800" fill="#F5F6FB" letter-spacing="-0.5">ondo</text>
+  <text x="120" y="38" font-family="&#39;Noto Sans KR&#39;, sans-serif" font-size="24" font-weight="800" fill="#9198AA" letter-spacing="-0.5">온도</text>
+</svg>

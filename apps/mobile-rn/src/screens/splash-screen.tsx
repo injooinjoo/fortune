@@ -1,34 +1,32 @@
 import { useEffect, useRef } from 'react';
 
 import { router, type Href } from 'expo-router';
-import { Image, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AppText } from '../components/app-text';
-import { Card } from '../components/card';
 import { PrimaryButton } from '../components/primary-button';
 import { Screen } from '../components/screen';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 
+/**
+ * Ondo splash — minimal "온도" serif wordmark + tagline, with the gate
+ * routing logic preserved. Auto-advances to the appropriate next step
+ * (auth, onboarding, or chat) once app bootstrap is ready. The manual
+ * PrimaryButtons are surfaced only if the user lingers on the splash
+ * longer than the auto-advance timer (e.g. slow network) so they can
+ * still move forward without tapping anywhere.
+ */
 export function SplashScreen() {
-  const { gate, onboardingProgress, session, status } = useAppBootstrap();
+  const { gate, session, status } = useAppBootstrap();
   const hasAutoNavigatedRef = useRef(false);
-  const nextStepLabel =
-    gate === 'auth-entry'
-      ? '로그인 안내'
-      : gate === 'profile-flow'
-        ? '처음 설정'
-        : '채팅';
+
   const nextRoute: Href =
     gate === 'auth-entry'
       ? '/signup'
       : gate === 'profile-flow'
         ? '/onboarding'
         : '/chat';
-  const readinessMessage =
-    status === 'ready'
-      ? '준비가 거의 끝나서 곧 다음 화면으로 넘어가요.'
-      : '저장된 정보와 연결 상태를 확인하고 있어요.';
 
   useEffect(() => {
     if (status !== 'ready' || hasAutoNavigatedRef.current) {
@@ -39,7 +37,7 @@ export function SplashScreen() {
 
     const timeoutId = setTimeout(() => {
       router.replace(nextRoute);
-    }, 450);
+    }, 1400);
 
     return () => {
       clearTimeout(timeoutId);
@@ -50,69 +48,81 @@ export function SplashScreen() {
     <Screen>
       <View
         style={{
+          flex: 1,
           alignItems: 'center',
-          gap: fortuneTheme.spacing.md,
-          paddingTop: fortuneTheme.spacing.xl,
+          justifyContent: 'center',
+          gap: fortuneTheme.spacing.lg,
         }}
       >
-        <Image
-          source={require('../../assets/splash-icon.png')}
+        <AppText
+          variant="oracleTitle"
+          color={fortuneTheme.colors.textPrimary}
           style={{
-            borderRadius: 36,
-            height: 164,
-            width: 164,
+            fontSize: 72,
+            lineHeight: 76,
+            letterSpacing: 8,
+            fontWeight: '700',
           }}
-        />
-        <View style={{ alignItems: 'center', gap: fortuneTheme.spacing.xs }}>
-          <AppText
-            variant="labelMedium"
-            color={fortuneTheme.colors.accentSecondary}
-          >
-            앱 시작
-          </AppText>
-          <AppText variant="displaySmall">온도</AppText>
-          <AppText
-            variant="bodyLarge"
-            color={fortuneTheme.colors.textSecondary}
-            style={{ textAlign: 'center' }}
-          >
-            대화와 인사이트 흐름을 이어 붙이기 전에 현재 상태를 먼저 정리하고 있어요.
-          </AppText>
-        </View>
+        >
+          온도
+        </AppText>
+        <AppText
+          variant="oracleBody"
+          color={fortuneTheme.colors.textSecondary}
+          style={{
+            textAlign: 'center',
+            fontSize: 17,
+            lineHeight: 28,
+            letterSpacing: 0.3,
+          }}
+        >
+          마음을 들여다보는{'\n'}가장 따뜻한 방법
+        </AppText>
       </View>
 
-      <Card>
-        <AppText variant="heading4">시작 준비</AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {readinessMessage}
+      <View
+        style={{
+          alignItems: 'center',
+          paddingVertical: fortuneTheme.spacing.lg,
+          gap: fortuneTheme.spacing.sm,
+        }}
+      >
+        <AppText
+          variant="caption"
+          color={fortuneTheme.colors.textTertiary}
+          style={{ letterSpacing: 2 }}
+        >
+          Ondo — 온도
         </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          다음으로는 {nextStepLabel} 화면이 열릴 예정이에요.
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {session
-            ? '로그인 정보가 확인되면 바로 이어서 사용할 수 있어요.'
-            : '게스트 상태여도 먼저 둘러볼 수 있어요.'}
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {onboardingProgress.birthCompleted
-            ? '기본 정보가 준비되어 있어 다음 단계로 더 빠르게 이어질 수 있어요.'
-            : '출생 정보와 관심사가 필요한지 함께 확인하고 있어요.'}
-        </AppText>
-        {gate === 'auth-entry' ? (
-          <PrimaryButton onPress={() => router.replace('/signup')}>
+
+        {status === 'ready' && gate === 'auth-entry' ? (
+          <PrimaryButton
+            variant="ghost"
+            size="md"
+            onPress={() => router.replace('/signup')}
+          >
             로그인 시작하기
           </PrimaryButton>
         ) : null}
-        {gate === 'profile-flow' ? (
-          <PrimaryButton onPress={() => router.replace('/onboarding')}>
+        {status === 'ready' && gate === 'profile-flow' ? (
+          <PrimaryButton
+            variant="ghost"
+            size="md"
+            onPress={() => router.replace('/onboarding')}
+          >
             설정 이어가기
           </PrimaryButton>
         ) : null}
-        <PrimaryButton onPress={() => router.replace('/chat')} tone="secondary">
-          채팅으로 이동
-        </PrimaryButton>
-      </Card>
+        {status === 'ready' && gate === 'ready' ? (
+          <PrimaryButton
+            variant="ghost"
+            size="md"
+            onPress={() => router.replace('/chat')}
+          >
+            {session ? '바로 시작' : '둘러보기'}
+          </PrimaryButton>
+        ) : null}
+      </View>
     </Screen>
   );
 }

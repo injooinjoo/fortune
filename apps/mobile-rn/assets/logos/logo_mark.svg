@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <defs>
+    <linearGradient id="ondoWarm" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#E0A76B"></stop>
+      <stop offset="0.5" stop-color="#C87FB8"></stop>
+      <stop offset="1" stop-color="#8B7BE8"></stop>
+    </linearGradient>
+    <radialGradient id="ondoGlow" cx="0.5" cy="0.62" r="0.55">
+      <stop offset="0" stop-color="#8B7BE8" stop-opacity="0.4"></stop>
+      <stop offset="1" stop-color="#8B7BE8" stop-opacity="0"></stop>
+    </radialGradient>
+  </defs>
+  
+  <rect width="80" height="80" rx="20" fill="#0B0B10"></rect>
+  
+  <circle cx="40" cy="48" r="30" fill="url(#ondoGlow)"></circle>
+  
+  <path d="M14 44 A 26 26 0 0 1 66 44" fill="none" stroke="rgba(245,246,251,0.18)" stroke-width="1.5" stroke-linecap="round"></path>
+  <path d="M14 44 A 26 26 0 0 1 52 24" fill="none" stroke="url(#ondoWarm)" stroke-width="3" stroke-linecap="round"></path>
+  
+  <circle cx="52" cy="24" r="3" fill="#E0A76B"></circle>
+  
+  <text x="40" y="58" text-anchor="middle" font-family="Georgia, &#39;ZEN Serif&#39;, serif" font-size="19" font-weight="500" fill="#F5F6FB" letter-spacing="0.02em">Ondo</text>
+  
+  <circle cx="60" cy="47" r="1.8" fill="none" stroke="#E0A76B" stroke-width="1.2"></circle>
+</svg>
