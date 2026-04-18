@@ -164,7 +164,7 @@ function CareerResult(props: FortuneResultComponentProps) {
             <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
               커리어 컨설팅 리포트
             </AppText>
-            <AppText variant="heading2">{meta.title}</AppText>
+            <AppText variant="oracleTitle">{meta.title}</AppText>
           </View>
         </View>
         <View style={{ alignItems: 'center', gap: fortuneTheme.spacing.sm }}>
@@ -195,7 +195,7 @@ function CareerResult(props: FortuneResultComponentProps) {
           </AppText>
         </View>
         <AppText
-          variant="bodyMedium"
+          variant="oracleBody"
           color={fortuneTheme.colors.textSecondary}
           style={{ textAlign: 'center' }}
         >
@@ -605,7 +605,7 @@ function CareerResult(props: FortuneResultComponentProps) {
             <AppText style={{ fontSize: 20, lineHeight: 26 }}>💡</AppText>
             <AppText variant="heading4">업계 인사이트</AppText>
           </View>
-          <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+          <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
             {rawIndustryInsights}
           </AppText>
         </Card>
@@ -1177,11 +1177,11 @@ function HealthResult(props: FortuneResultComponentProps) {
         }}
       >
         <AppText style={{ fontSize: 48, textAlign: 'center' }}>{'\uD83C\uDFE5'}</AppText>
-        <AppText variant="heading2" style={{ textAlign: 'center' }}>
+        <AppText variant="oracleTitle" style={{ textAlign: 'center' }}>
           건강 체크업 리포트
         </AppText>
         <AppText
-          variant="bodyMedium"
+          variant="oracleBody"
           color={fortuneTheme.colors.textSecondary}
           style={{ textAlign: 'center' }}
         >

@@ -180,7 +180,7 @@ export function BirthstoneResult(props: FortuneResultComponentProps) {
             {monthly.name} ({monthly.nameEn})
           </AppText>
           <AppText
-            variant="bodyMedium"
+            variant="oracleBody"
             color={fortuneTheme.colors.textSecondary}
             style={{ textAlign: 'center' }}
           >

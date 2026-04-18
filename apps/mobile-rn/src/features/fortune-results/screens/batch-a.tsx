@@ -186,13 +186,13 @@ function TraditionalSajuResult(props: FortuneResultComponentProps) {
       {/* Raw sections from API */}
       {analysis ? (
         <SectionCard title="사주 분석">
-          <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>{analysis}</AppText>
+          <AppText variant="oracleBody" color={fortuneTheme.colors.textPrimary}>{analysis}</AppText>
         </SectionCard>
       ) : null}
 
       {answer ? (
         <SectionCard title="질문 답변">
-          <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>{answer}</AppText>
+          <AppText variant="oracleBody" color={fortuneTheme.colors.textPrimary}>{answer}</AppText>
         </SectionCard>
       ) : null}
 
@@ -206,7 +206,7 @@ function TraditionalSajuResult(props: FortuneResultComponentProps) {
 
       {adviceText ? (
         <SectionCard title="조언">
-          <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>{adviceText}</AppText>
+          <AppText variant="oracleBody" color={fortuneTheme.colors.textPrimary}>{adviceText}</AppText>
         </SectionCard>
       ) : null}
 
@@ -947,7 +947,7 @@ function MbtiResult(props: FortuneResultComponentProps) {
       {/* 오늘의 흐름 */}
       {todayFortune ? (
         <SectionCard title="오늘의 흐름">
-          <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>{todayFortune}</AppText>
+          <AppText variant="oracleBody" color={fortuneTheme.colors.textPrimary}>{todayFortune}</AppText>
         </SectionCard>
       ) : null}
 
@@ -972,7 +972,7 @@ function MbtiResult(props: FortuneResultComponentProps) {
       {_str(catInsight.title) ? (
         <SectionCard title={_str(catInsight.title)}>
           {_str(catInsight.content) ? (
-            <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>{_str(catInsight.content)}</AppText>
+            <AppText variant="oracleBody" color={fortuneTheme.colors.textPrimary}>{_str(catInsight.content)}</AppText>
           ) : null}
           {catInsightTips.length > 0 ? (
             <BulletList items={catInsightTips} />
@@ -1041,7 +1041,7 @@ function MbtiResult(props: FortuneResultComponentProps) {
       {/* 조언 */}
       {advice ? (
         <SectionCard title="조언">
-          <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>{advice}</AppText>
+          <AppText variant="oracleBody" color={fortuneTheme.colors.textPrimary}>{advice}</AppText>
         </SectionCard>
       ) : null}
     </View>
@@ -1114,7 +1114,7 @@ function BloodTypeResult(props: FortuneResultComponentProps) {
       {/* 성격 분석 */}
       {coreTrait ? (
         <SectionCard title="성격 분석">
-          <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>
+          <AppText variant="oracleBody" color={fortuneTheme.colors.textPrimary}>
             {coreTrait}
           </AppText>
           {strengths.length > 0 ? (
@@ -1809,7 +1809,7 @@ function NewYearResult(props: FortuneResultComponentProps) {
       {hasGoalFortune ? (
         <SectionCard title="목표 인사이트" description={goalTitle || undefined}>
           {goalPrediction ? (
-            <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>
+            <AppText variant="oracleBody" color={fortuneTheme.colors.textPrimary}>
               {goalPrediction}
             </AppText>
           ) : null}

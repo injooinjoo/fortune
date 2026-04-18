@@ -289,7 +289,7 @@ export function CelebrityResult(props: FortuneResultComponentProps) {
       <Card style={{ gap: fortuneTheme.spacing.sm }}>
         <AppText variant="heading4">궁합 이야기</AppText>
         <AppText
-          variant="bodyLarge"
+          variant="oracleBody"
           color={fortuneTheme.colors.textSecondary}
           style={{ lineHeight: 28 }}
         >
@@ -446,7 +446,7 @@ export function CelebrityResult(props: FortuneResultComponentProps) {
             ) : null}
             {plStory ? (
               <AppText
-                variant="bodyMedium"
+                variant="oracleBody"
                 color={fortuneTheme.colors.textSecondary}
                 style={{ lineHeight: 26 }}
               >

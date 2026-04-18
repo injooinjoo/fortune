@@ -472,7 +472,7 @@ export function MovingResult(props: FortuneResultComponentProps) {
         }}
       >
         <AppText style={{ fontSize: 48 }}>🏠</AppText>
-        <AppText variant="heading2" style={{ textAlign: 'center' }}>
+        <AppText variant="oracleTitle" style={{ textAlign: 'center' }}>
           {title}
         </AppText>
 
@@ -488,7 +488,7 @@ export function MovingResult(props: FortuneResultComponentProps) {
 
         {oneLine ? (
           <AppText
-            variant="bodyMedium"
+            variant="oracleBody"
             color={fortuneTheme.colors.textSecondary}
             style={{ textAlign: 'center', paddingHorizontal: fortuneTheme.spacing.md }}
           >
@@ -504,7 +504,7 @@ export function MovingResult(props: FortuneResultComponentProps) {
         <Card style={{ gap: fortuneTheme.spacing.sm }}>
           <AppText variant="heading4">종합 분석</AppText>
           <AppText
-            variant="bodyLarge"
+            variant="oracleBody"
             color={fortuneTheme.colors.textSecondary}
             style={{ lineHeight: 28 }}
           >

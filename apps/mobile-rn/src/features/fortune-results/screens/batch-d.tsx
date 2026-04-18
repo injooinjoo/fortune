@@ -2076,10 +2076,10 @@ function GameEnhanceResult(props: FortuneResultComponentProps) {
             <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
               오늘의 캐릭터 시트
             </AppText>
-            <AppText variant="heading2">{meta.title}</AppText>
+            <AppText variant="oracleTitle">{meta.title}</AppText>
           </View>
         </View>
-        <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+        <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
           {summary}
         </AppText>
       </Card>

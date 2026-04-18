@@ -177,9 +177,9 @@ function FamilyResult(props: FortuneResultComponentProps) {
         <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
           {gaugeLabel}
         </AppText>
-        <AppText variant="heading2">{meta.title}</AppText>
+        <AppText variant="oracleTitle">{meta.title}</AppText>
         <AppText
-          variant="bodyMedium"
+          variant="oracleBody"
           color={fortuneTheme.colors.textSecondary}
           style={{ textAlign: 'center', paddingHorizontal: fortuneTheme.spacing.md }}
         >
@@ -382,7 +382,7 @@ function FamilyResult(props: FortuneResultComponentProps) {
                   조언 {index + 1}
                 </AppText>
               </View>
-              <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+              <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
                 {advice}
               </AppText>
             </View>
@@ -406,7 +406,7 @@ function FamilyResult(props: FortuneResultComponentProps) {
             <AppText style={{ fontSize: 22, lineHeight: 28 }}>🕐</AppText>
             <AppText variant="heading4">최적의 대화 시간</AppText>
           </View>
-          <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+          <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
             {rawConversationTiming || '늦은 밤보다 점심 전이나 저녁 초입이 대화 타이밍으로 좋습니다.'}
           </AppText>
         </Card>
@@ -756,7 +756,7 @@ function PastLifeResult(props: FortuneResultComponentProps) {
                     {chapterEmoji} {chapterTitle}
                   </AppText>
                   {chapterContent ? (
-                    <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+                    <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
                       {chapterContent}
                     </AppText>
                   ) : null}
@@ -767,7 +767,7 @@ function PastLifeResult(props: FortuneResultComponentProps) {
         </SectionCard>
       ) : story ? (
         <SectionCard title="전생 이야기" description="당신의 전생에서 펼쳐진 서사입니다.">
-          <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+          <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
             {story}
           </AppText>
         </SectionCard>
@@ -936,9 +936,9 @@ function WishResult(props: FortuneResultComponentProps) {
         <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
           소원 실현도
         </AppText>
-        <AppText variant="heading2">{meta.title}</AppText>
+        <AppText variant="oracleTitle">{meta.title}</AppText>
         <AppText
-          variant="bodyMedium"
+          variant="oracleBody"
           color={fortuneTheme.colors.textSecondary}
           style={{ textAlign: 'center', paddingHorizontal: fortuneTheme.spacing.md }}
         >
@@ -999,7 +999,7 @@ function WishResult(props: FortuneResultComponentProps) {
                 <AppText style={{ fontSize: 18, lineHeight: 22 }}>🕐</AppText>
                 <AppText variant="heading4">실현 타이밍</AppText>
               </View>
-              <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+              <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
                 {timingAdvice}
               </AppText>
             </Card>

@@ -506,7 +506,7 @@ export function NamingResult(props: FortuneResultComponentProps) {
       {/* ============================================================ */}
       {content ? (
         <SectionCard title="작명 리딩" description="사주 흐름을 기반으로 이름의 기운을 읽었습니다.">
-          <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+          <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
             {content}
           </AppText>
         </SectionCard>
@@ -639,7 +639,7 @@ export function NamingResult(props: FortuneResultComponentProps) {
               padding: fortuneTheme.spacing.md,
             }}
           >
-            <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>
+            <AppText variant="oracleBody" color={fortuneTheme.colors.textPrimary}>
               {advice}
             </AppText>
           </View>

@@ -167,10 +167,10 @@ function ExamResult(props: FortuneResultComponentProps) {
             <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
               오늘의 성적표
             </AppText>
-            <AppText variant="heading2">{meta.title}</AppText>
+            <AppText variant="oracleTitle">{meta.title}</AppText>
           </View>
         </View>
-        <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+        <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
           {summary}
         </AppText>
       </Card>
@@ -321,7 +321,7 @@ function ExamResult(props: FortuneResultComponentProps) {
           <AppText style={{ fontSize: 20, lineHeight: 26 }}>📋</AppText>
           <AppText variant="heading4">오늘의 전략</AppText>
         </View>
-        <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+        <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
           {strategyText}
         </AppText>
       </Card>
@@ -580,7 +580,7 @@ function CompatibilityResult(props: FortuneResultComponentProps) {
         }}
       >
         <AppText style={{ fontSize: 48, textAlign: 'center' }}>💕</AppText>
-        <AppText variant="heading2" style={{ textAlign: 'center' }}>
+        <AppText variant="oracleTitle" style={{ textAlign: 'center' }}>
           {meta.title}
         </AppText>
         <View style={{ alignItems: 'center', gap: fortuneTheme.spacing.sm }}>
@@ -619,7 +619,7 @@ function CompatibilityResult(props: FortuneResultComponentProps) {
           </View>
         </View>
         <AppText
-          variant="bodyMedium"
+          variant="oracleBody"
           color={fortuneTheme.colors.textSecondary}
           style={{ textAlign: 'center' }}
         >
@@ -1089,11 +1089,11 @@ function BlindDateResult(props: FortuneResultComponentProps) {
         }}
       >
         <AppText style={{ fontSize: 48, textAlign: 'center' }}>{'\uD83D\uDC98'}</AppText>
-        <AppText variant="heading2" style={{ textAlign: 'center' }}>
+        <AppText variant="oracleTitle" style={{ textAlign: 'center' }}>
           {meta.title}
         </AppText>
         <AppText
-          variant="bodyMedium"
+          variant="oracleBody"
           color={fortuneTheme.colors.textSecondary}
           style={{ textAlign: 'center' }}
         >
@@ -1552,9 +1552,9 @@ function AvoidPeopleResult(props: FortuneResultComponentProps) {
         <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
           방어력 지수
         </AppText>
-        <AppText variant="heading2">{meta.title}</AppText>
+        <AppText variant="oracleTitle">{meta.title}</AppText>
         <AppText
-          variant="bodyMedium"
+          variant="oracleBody"
           color={fortuneTheme.colors.textSecondary}
           style={{ textAlign: 'center', paddingHorizontal: fortuneTheme.spacing.md }}
         >
@@ -1783,7 +1783,7 @@ function AvoidPeopleResult(props: FortuneResultComponentProps) {
                   방어 {index + 1}
                 </AppText>
               </View>
-              <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+              <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
                 {strategy}
               </AppText>
             </Card>
@@ -1951,10 +1951,10 @@ function ExLoverResult(props: FortuneResultComponentProps) {
             <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
               감정 치유 리포트
             </AppText>
-            <AppText variant="heading2">{meta.title}</AppText>
+            <AppText variant="oracleTitle">{meta.title}</AppText>
           </View>
         </View>
-        <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+        <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
           {summary}
         </AppText>
       </Card>
@@ -2170,7 +2170,7 @@ function ExLoverResult(props: FortuneResultComponentProps) {
             <AppText style={{ fontSize: 22, lineHeight: 28 }}>💔</AppText>
             <AppText variant="heading4">핵심 이슈</AppText>
           </View>
-          <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+          <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
             {coreIssue}
           </AppText>
         </Card>
@@ -2449,9 +2449,9 @@ function YearlyEncounterResult(props: FortuneResultComponentProps) {
         <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
           인연 점수
         </AppText>
-        <AppText variant="heading2">{meta.title}</AppText>
+        <AppText variant="oracleTitle">{meta.title}</AppText>
         <AppText
-          variant="bodyMedium"
+          variant="oracleBody"
           color={fortuneTheme.colors.textSecondary}
           style={{ textAlign: 'center', paddingHorizontal: fortuneTheme.spacing.md }}
         >
@@ -2514,7 +2514,7 @@ function YearlyEncounterResult(props: FortuneResultComponentProps) {
           </View>
           {/* Description */}
           {partnerDesc ? (
-            <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+            <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
               {partnerDesc}
             </AppText>
           ) : null}
@@ -2833,7 +2833,7 @@ function DecisionResult(props: FortuneResultComponentProps) {
       {/* 추천 */}
       {recommendation ? (
         <SectionCard title="추천">
-          <AppText variant="bodyMedium" color={fortuneTheme.colors.textPrimary}>{recommendation}</AppText>
+          <AppText variant="oracleBody" color={fortuneTheme.colors.textPrimary}>{recommendation}</AppText>
         </SectionCard>
       ) : null}
 

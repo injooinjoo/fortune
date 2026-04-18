@@ -261,7 +261,7 @@ export function LuckyItemsResult(props: FortuneResultComponentProps) {
         }}
       >
         <AppText style={{ fontSize: 48 }}>🍀</AppText>
-        <AppText variant="heading2" style={{ textAlign: 'center' }}>
+        <AppText variant="oracleTitle" style={{ textAlign: 'center' }}>
           {title}
         </AppText>
 
@@ -287,7 +287,7 @@ export function LuckyItemsResult(props: FortuneResultComponentProps) {
         <Card style={{ gap: fortuneTheme.spacing.sm }}>
           <AppText variant="heading4">오행 분석</AppText>
           <AppText
-            variant="bodyLarge"
+            variant="oracleBody"
             color={fortuneTheme.colors.textSecondary}
             style={{ lineHeight: 28 }}
           >

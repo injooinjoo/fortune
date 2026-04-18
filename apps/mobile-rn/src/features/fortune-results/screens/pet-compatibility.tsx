@@ -508,7 +508,7 @@ export function PetCompatibilityResult(props: FortuneResultComponentProps) {
             </AppText>
             {heartfeltLetter ? (
               <AppText
-                variant="bodyLarge"
+                variant="oracleBody"
                 color={fortuneTheme.colors.textSecondary}
                 style={{ lineHeight: 28, textAlign: 'center', fontStyle: 'italic' }}
               >
