@@ -9,6 +9,16 @@ interface AppTextProps extends TextProps {
   color?: string;
 }
 
+// Variants that render in ZEN Serif for the oracle / fortune voice. Everything
+// else stays on the system sans (Noto Sans KR on Korean locales). See the
+// design spec in `packages/design-tokens/src/index.ts` for the rule.
+const ORACLE_VARIANTS = new Set<Variant>([
+  'oracleTitle',
+  'oracleBody',
+  'calligraphyTitle',
+  'calligraphyBody',
+]);
+
 export function AppText({
   variant = 'bodyMedium',
   color,
@@ -16,6 +26,7 @@ export function AppText({
   ...props
 }: AppTextProps) {
   const textStyle = fortuneTheme.typography[variant] as TextStyle;
+  const fontFamily = ORACLE_VARIANTS.has(variant) ? 'ZenSerif' : 'System';
 
   return (
     <Text
@@ -23,7 +34,7 @@ export function AppText({
       style={[
         {
           color: color ?? fortuneTheme.colors.textPrimary,
-          fontFamily: 'System',
+          fontFamily,
         },
         textStyle,
         style,

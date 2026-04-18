@@ -3,6 +3,7 @@ import 'react-native-gesture-handler';
 import { Stack } from 'expo-router';
 import { ThemeProvider } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
+import { useFonts } from 'expo-font';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { initCrashReporting } from '../src/lib/crash-reporting';
@@ -17,6 +18,15 @@ import { SocialAuthProvider } from '../src/providers/social-auth-provider';
 initCrashReporting();
 
 export default function RootLayout() {
+  // ZEN Serif is the ritual/oracle typeface used for fortune readings and
+  // character "oracle voice" messages. UI chrome stays on the system font;
+  // AppText switches to 'ZenSerif' only for variants that opt in.
+  // Loading is non-blocking — until the font is ready, serif variants render
+  // in the system serif fallback.
+  useFonts({
+    ZenSerif: require('../assets/fonts/ZenSerif-Regular.otf'),
+  });
+
   return (
     <SafeAreaProvider>
       <ThemeProvider value={navigationTheme}>

@@ -433,10 +433,22 @@ function CharacterListRow({
   );
 }
 
-function MessageBubble({ message }: { message: ChatShellTextMessage }) {
+function MessageBubble({
+  message,
+  useOracleVoice,
+}: {
+  message: ChatShellTextMessage;
+  /**
+   * When true, assistant messages render in ZEN Serif to match the Ondo
+   * oracle-voice rule. Reserved for fortune-teller characters (saju,
+   * tarot, etc.) — story characters keep sans for everyday chat.
+   */
+  useOracleVoice?: boolean;
+}) {
   const isAssistant = message.sender === 'assistant';
   const isSystem = message.sender === 'system';
   const isUser = message.sender === 'user';
+  const applyOracle = Boolean(useOracleVoice) && isAssistant;
 
   return (
     <View
@@ -459,7 +471,7 @@ function MessageBubble({ message }: { message: ChatShellTextMessage }) {
         }}
       >
         <AppText
-          variant="bodyMedium"
+          variant={applyOracle ? 'oracleBody' : 'bodyMedium'}
           color={
             isSystem
               ? fortuneTheme.colors.textSecondary
@@ -617,7 +629,10 @@ function ChatThreadMessage({
             ) : null}
           </View>
         ) : (
-          <MessageBubble message={message} />
+          <MessageBubble
+            message={message}
+            useOracleVoice={isFortuneChatCharacter(character)}
+          />
         )}
       </View>
     </View>

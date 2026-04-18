@@ -55,7 +55,7 @@ export function EmbeddedResultCard({
               <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
                 {payload.eyebrow}
               </AppText>
-              <AppText variant="heading4">{payload.title}</AppText>
+              <AppText variant="oracleTitle">{payload.title}</AppText>
               <AppText
                 variant="bodySmall"
                 color={fortuneTheme.colors.textSecondary}
@@ -85,7 +85,7 @@ export function EmbeddedResultCard({
             ) : null}
           </View>
 
-          <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+          <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
             {payload.summary}
           </AppText>
 

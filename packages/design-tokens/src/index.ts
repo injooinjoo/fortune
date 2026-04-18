@@ -122,6 +122,13 @@ export const fortuneTypography = {
   caption: { fontSize: 11, lineHeight: 15, fontWeight: '400' },
   calligraphyTitle: { fontSize: 24, lineHeight: 36, fontWeight: '700' },
   calligraphyBody: { fontSize: 17, lineHeight: 31, fontWeight: '400' },
+  // Oracle voice — ZEN Serif typeface, used ONLY for fortune-telling content
+  // (fortune result titles/bodies, character oracle messages). AppText routes
+  // these variants to the ZenSerif family; other variants stay on the system
+  // sans. Rule of thumb: if it's prose the character says as a seer, it's
+  // oracle*. If it's UI chrome, it's NOT oracle.
+  oracleTitle: { fontSize: 22, lineHeight: 30, fontWeight: '700' },
+  oracleBody: { fontSize: 16, lineHeight: 26, fontWeight: '400' },
 } as const;
 
 export const fortuneShadows = {
