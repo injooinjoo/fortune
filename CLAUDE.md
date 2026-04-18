@@ -1,6 +1,6 @@
-# Ondo Flutter App - Claude Code 가이드
+# Ondo RN App - Claude Code 가이드
 
-> 최종 업데이트: 2026.04.06
+> 최종 업데이트: 2026.04.18
 
 ## 스프린트 워크플로우 (Generator-Evaluator 패턴)
 
@@ -34,7 +34,7 @@ Anthropic "Harness Design for Long-Running Apps" 원칙 적용: 코드 작성자
     v
 [EVALUATOR] (Agent subagent, fresh context)
     ├─ contract.md + build-log.md 기반 평가
-    ├─ flutter analyze + 규칙 검증
+    ├─ npx tsc --noEmit + 규칙 검증
     └─ eval-report.md 작성 (PASS/FAIL)
     │
     v
@@ -48,7 +48,6 @@ Anthropic "Harness Design for Long-Running Apps" 원칙 적용: 코드 작성자
 |--------|------|
 | `/sc:sprint` | 3+ 파일 변경, 기능 추가, 버그 수정 |
 | `/sc:quick-fix` | 1-2 파일 단순 수정 (3-agent 세레모니 생략) |
-| `/sc:quality-check` | 품질 검증만 |
 
 **우선순위**: 사용자 명시적 요청 > 프로젝트 규칙 > 글로벌 SuperClaude
 
@@ -93,10 +92,11 @@ Anthropic "Harness Design for Long-Running Apps" 원칙 적용: 코드 작성자
 
 | 금지 | 이유 | 대안 |
 |------|------|------|
-| `flutter run` 직접 실행 | 로그 확인 불가 | 사용자에게 실행 요청 |
+| `expo start` / `eas build` 직접 실행 | 로그 확인 불가, 대화형 프롬프트 | 사용자에게 실행 요청 |
 | 일괄 수정 (for, sed -i) | 프로젝트 망가짐 | 한 파일씩 Edit |
-| @riverpod 어노테이션 | 프로젝트 패턴 위반 | StateNotifier 사용 |
-| 하드코딩 색상/폰트 | 디자인 시스템 위반 | DSColors, context.typography.* |
+| `any` 타입 남발 | 타입 안전성 파괴 | 정확한 타입 정의 or `unknown` |
+| 하드코딩 색상/폰트 | 디자인 시스템 위반 | `fortuneTheme.colors.*`, `AppText variant` |
+| OpenAI/Gemini 직접 호출 (Edge Function) | LLMFactory 패턴 위반 | `LLMFactory.createFromConfig(...)` |
 
 ---
 
@@ -112,12 +112,12 @@ Anthropic "Harness Design for Long-Running Apps" 원칙 적용: 코드 작성자
 | 해제 | WHY + WHERE ELSE + HOW 분석 완료 |
 
 **금지 패턴** (이런 코드 작성 시 즉시 차단):
-```dart
+```ts
 // ❌ 빈 catch 블록
-catch (e) { }
-catch (e) { print(e); }
+try { ... } catch (e) { }
+try { ... } catch (e) { console.log(e) }
 
-// ❌ 원인 분석 없이 null 체크만
+// ❌ 원인 분석 없이 null/undefined 가드만
 if (value != null) { ... }
 ```
 
@@ -127,7 +127,7 @@ if (value != null) { ... }
 ├─ 증상: [에러 메시지]
 ├─ WHY: 왜 발생? → [원인]
 ├─ WHERE: 어디서? → [파일:라인]
-├─ WHERE ELSE: grep 결과 → [동일 패턴 N개 발견]
+├─ WHERE ELSE: 탐색 결과 → [동일 패턴 N개 발견]
 ├─ HOW: 올바른 패턴 → [참조 파일:라인]
 └─ 수정 계획: [N개 파일 수정 예정]
 ```
@@ -139,16 +139,19 @@ if (value != null) { ... }
 | 차단 | 기존 코드 탐색 없이 새 코드 작성 시도 시 |
 | 해제 | 유사 코드 검색 + 재사용 결정 완료 |
 
-**필수 검색** (새 코드 작성 전):
-```bash
-# StateNotifier 생성 시
-grep -rn "extends StateNotifier" lib/
+**필수 검색** (새 코드 작성 전, Grep tool 사용):
+```
+# Provider/Context 생성 시
+pattern: "createContext|useContext"   path: apps/mobile-rn/src/providers
 
-# 위젯 생성 시
-find lib -name "*widget*.dart"
+# 컴포넌트 생성 시
+glob: apps/mobile-rn/src/components/**/*.tsx
 
-# 서비스 생성 시
-grep -rn "class.*Service" lib/
+# 채팅 메시지 타입 추가 시
+pattern: "ChatShell.*Message"         path: apps/mobile-rn/src/lib/chat-shell.ts
+
+# Edge Function 추가 시
+glob: supabase/functions/**/index.ts
 ```
 
 **필수 출력 (Discovery 보고서)**:
@@ -156,11 +159,11 @@ grep -rn "class.*Service" lib/
 📂 Discovery 보고서
 ├─ 목표: [무엇을 만들 것인지]
 ├─ 검색 결과: [N개 유사 파일 발견]
-│   ├─ [파일1.dart] - 재사용 가능 ✅
-│   ├─ [파일2.dart] - 패턴 참조
-│   └─ [파일3.dart] - 참고만
+│   ├─ [파일1.tsx] - 재사용 가능 ✅
+│   ├─ [파일2.ts]  - 패턴 참조
+│   └─ [파일3.tsx] - 참고만
 ├─ 재사용 결정:
-│   ├─ 재사용: [함수명] from [파일]
+│   ├─ 재사용: [함수/컴포넌트] from [파일]
 │   ├─ 참조: [패턴] from [파일]
 │   └─ 새로 작성: [꼭 필요한 부분만]
 └─ 중복 방지: [기존 X가 있으므로 새로 만들지 않음]
@@ -171,24 +174,25 @@ grep -rn "class.*Service" lib/
 | 트리거 | 모든 수정 작업 완료 시 |
 |--------|----------------------|
 | 차단 | 검증 미통과 시 "완료" 선언 불가 |
-| 해제 | flutter analyze 통과 + 사용자 테스트 확인 |
+| 해제 | `npx tsc --noEmit` 통과 + 사용자 테스트 확인 |
 
 **필수 검증 순서**:
 ```bash
-1. flutter analyze          # 에러 0 필수
-2. dart run build_runner build  # freezed 사용 시
-3. dart format .            # 포맷 확인
+# apps/mobile-rn 기준
+1. npx tsc --noEmit              # TypeScript 에러 0 필수
+2. npx expo lint                 # ESLint (설정돼 있을 때)
+3. (Edge Function 수정 시) cd supabase/functions && deno check ./<fn>/index.ts
 ```
 
 **필수 출력 (Verify 보고서)**:
 ```
 ✅ 검증 보고서
-├─ flutter analyze: ✅ 0 errors
-├─ build_runner: ✅ 성공 (또는 N/A)
-├─ dart format: ✅ 통과
+├─ tsc --noEmit: ✅ 0 errors
+├─ expo lint: ✅ 통과 (또는 N/A)
+├─ deno check: ✅ 통과 (또는 N/A)
 ├─ 수정된 파일:
-│   ├─ [파일1.dart]
-│   └─ [파일2.dart]
+│   ├─ [파일1.tsx]
+│   └─ [파일2.ts]
 └─ 🧪 테스트 요청:
     "아래 시나리오로 테스트해주세요:
     1. [단계1]
@@ -216,7 +220,7 @@ Generator (GENERATE 단계)
 
 Evaluator (EVALUATE 단계)
     ├─ 보고서 존재 + 실질성 검증
-    ├─ flutter analyze 실행
+    ├─ npx tsc --noEmit 실행
     ├─ 프로젝트 규칙 검증
     └─ FAIL이면 Generator 재실행
 
@@ -234,42 +238,53 @@ Evaluator (EVALUATE 단계)
 
 ## 핵심 패턴 (5가지)
 
-### 1. StateNotifier (Riverpod)
-```dart
-// ✅ StateNotifier 패턴 | ❌ @riverpod 금지
-class FortuneNotifier extends StateNotifier<FortuneState> { }
-```
-
-### 2. Typography
-```dart
-// ✅ context.typography.headlineMedium | ❌ 하드코딩 TextStyle 금지
-Text('제목', style: context.typography.headlineMedium)
-```
-
-### 3. Edge Function
-```typescript
-// ✅ LLMFactory | ❌ OpenAI/Gemini 직접 호출 금지
-const llm = LLMFactory.createFromConfig('fortune-type')
-```
-
-### 4. 채팅 상태 (Chat-First)
-```dart
-// ✅ ChatMessagesNotifier | ❌ 직접 setState 금지
-class ChatMessagesNotifier extends StateNotifier<ChatState> {
-  void addMessage(ChatMessage message) {
-    state = state.copyWith(messages: [...state.messages, message]);
-  }
+### 1. 상태 관리 (React Context + Hooks)
+RN 앱 전역 상태는 `apps/mobile-rn/src/providers/*-provider.tsx`에서 `createContext` + 커스텀 훅 조합으로 노출됩니다. 별도 전역 스토어(Redux/Zustand) 도입 금지.
+```tsx
+// ✅ Provider + useXxx 훅 패턴 | ❌ 새 전역 스토어 도입 금지
+// apps/mobile-rn/src/providers/mobile-app-state-provider.tsx
+const MobileAppStateContext = createContext<MobileAppStateContextValue | null>(null);
+export function useMobileAppState() {
+  const ctx = useContext(MobileAppStateContext);
+  if (!ctx) throw new Error('MobileAppStateProvider missing');
+  return ctx;
 }
 ```
 
-### 5. 추천 칩
-```dart
-// ✅ FortuneChipGrid | ❌ 하드코딩 칩 금지
-FortuneChipGrid(
-  chips: dynamicChips,
-  onChipTap: (chip) => _handleChipTap(chip),
-)
+### 2. Typography / 색상 (AppText + fortuneTheme)
+모든 텍스트는 `AppText` 컴포넌트를 통해 렌더링하고, 색상은 `fortuneTheme.colors.*`를 씁니다.
+```tsx
+// ✅ AppText + variant | ❌ <Text style={{ fontSize: 18, color: '#fff' }}> 금지
+import { AppText } from '@/components/app-text';
+import { fortuneTheme } from '@/lib/theme';
+
+<AppText variant="headlineMedium" color={fortuneTheme.colors.textPrimary}>
+  제목
+</AppText>
 ```
+
+### 3. Edge Function (LLMFactory)
+Supabase Edge Function에서 LLM 호출은 반드시 `LLMFactory`를 경유합니다.
+```typescript
+// ✅ LLMFactory | ❌ OpenAI/Gemini 직접 호출 금지
+const llm = LLMFactory.createFromConfig('fortune-type')
+const result = await llm.generate({ prompt, maxTokens: 2000 })
+```
+
+### 4. 채팅 상태 (chat-shell discriminated union)
+채팅 메시지는 `apps/mobile-rn/src/lib/chat-shell.ts`의 `ChatShellMessage` 유니언 타입으로만 추가합니다. 새 카드 종류는 `kind` 리터럴을 추가하고 `chat-surface.tsx`에서 분기 렌더.
+```ts
+// ✅ discriminated union 확장 | ❌ ad-hoc message shape 금지
+export type ChatShellMessage =
+  | ChatShellTextMessage
+  | ChatShellEmbeddedResultMessage
+  | ChatShellFortuneCookieMessage
+  | ChatShellSajuPreviewMessage
+  | ChatShellImageMessage;
+```
+
+### 5. 결과 카드 레지스트리 (fortune-results/registry)
+새 운세 결과 화면은 `apps/mobile-rn/src/features/fortune-results/registry.tsx`에 등록하고, 채팅 임베드용 매핑은 `mapping.ts`에서 `resolveResultKindFromFortuneType`로 연결합니다. 화면은 `screens/*.tsx`에 추가.
 
 ---
 
@@ -283,6 +298,8 @@ FortuneChipGrid(
 | 트렌드 | `/trend` | 트렌드 콘텐츠 |
 | 프로필 | `/profile` | 설정 + Premium |
 
+라우팅은 `expo-router` 기반 (`apps/mobile-rn/app/(tabs)/`).
+
 ---
 
 ## 문서 계층
@@ -290,7 +307,7 @@ FortuneChipGrid(
 | Tier | 문서 | 로드 조건 |
 |------|------|----------|
 | **1 (항상)** | 이 파일 (CLAUDE.md) | 모든 요청 |
-| **2 (키워드)** | 01-06, 18 | 개발 관련 키워드 시 |
+| **2 (키워드)** | 01-03, 05-06, 18 | 개발 관련 키워드 시 |
 | **3 (요청)** | 07-26 | 명시적 요청 시만 |
 
 ### 문서 참조
@@ -299,7 +316,6 @@ FortuneChipGrid(
 | [01-core-rules](.claude/docs/01-core-rules.md) | 에러, 버그, 금지, 규칙 |
 | [02-architecture](.claude/docs/02-architecture.md) | 아키텍처, Feature, 레이어 |
 | [03-ui-design-system](.claude/docs/03-ui-design-system.md) | UI, 색상, 폰트, 다크모드 |
-| [04-state-management](.claude/docs/04-state-management.md) | Provider, 상태, State |
 | [05-fortune-system](.claude/docs/05-fortune-system.md) | 인사이트, Fortune, 토큰 |
 | [06-llm-module](.claude/docs/06-llm-module.md) | Edge Function, LLM, API |
 | [18-chat-first-architecture](.claude/docs/18-chat-first-architecture.md) | 채팅, chat, 대화, 추천 칩, Home |
@@ -314,11 +330,12 @@ FortuneChipGrid(
 | 순위 | MCP | 역할 |
 |------|-----|------|
 | 1 | Supabase | Edge Function, DB |
-| 2 | Playwright | E2E 자동 QA |
-| 3 | Context7 | Flutter/Riverpod 문서 |
+| 2 | iOS Simulator / Playwright | E2E 자동 QA |
+| 3 | Context7 | React Native / Expo / expo-router 문서 |
 | 4 | Sequential | 복잡한 분석 |
 | 5 | JIRA | 티켓 관리 |
-| 6+ | Figma, GitHub, Brave | 선택적 |
+| 6 | Pencil | 공식 디자인 툴 (.pen 파일) |
+| 7+ | Figma, GitHub, Brave | 선택적 |
 
 ---
 
@@ -326,22 +343,37 @@ FortuneChipGrid(
 
 UI/페이지 수정 완료 시 자동으로 QA 제안:
 ```
-"수정 완료! QA 테스트할까요?" (localhost:3000 실행 중이면)
+"수정 완료! iOS 시뮬레이터에서 QA 테스트할까요?"
 ```
+주요 경로: iOS Simulator MCP (`mcp__ios-simulator__*`) 또는 Expo Dev Client.
 
 ---
 
 ## 프로젝트 구조
 
 ```
-lib/features/character/   # /chat, /character, /friends/new surface 조립층
-lib/features/chat/        # 채팅 카드/설문/메시지 보조 레이어
-lib/features/fortune/     # 카테고리/도메인 모델/인사이트 보조 레이어
-supabase/functions/       # Edge Functions (LLMFactory)
-artifacts/sprint/         # Generator-Evaluator 통신 디렉토리
-.claude/agents/           # active agents 5개 (generator/evaluator/playwright-qa/character-curator/character-importer)
-.claude/skills/           # core 4 + template 4 + utility 5
-.claude/docs/             # 상세 문서 (01-26) + supporting refs (fortune-specialist-reference, paper-artboard-map 등)
+apps/mobile-rn/                        # Expo SDK 54 / RN 0.81 / TypeScript
+  app/(tabs)/                          # expo-router 라우트 (chat/fortune/trend/profile)
+  src/components/                      # 공용 컴포넌트 (app-text, screen, chip, ...)
+  src/features/
+    chat-surface/                      # 통합 채팅 화면 조립
+    chat-survey/                       # 인라인 서베이/위젯 (tarot-draw 등)
+    chat-results/                      # 임베디드 결과 카드 어댑터
+    fortune-results/                   # 결과 화면 레지스트리 + screens/*
+    fortune-cookie/                    # 포춘쿠키 / 사주 프리뷰 카드
+  src/providers/                       # React Context providers
+                                       # (mobile-app-state, social-auth, friend-creation, app-bootstrap)
+  src/lib/                             # 도메인 로직 (chat-shell, theme, supabase, ...)
+
+packages/
+  product-contracts/                   # FortuneTypeId, ProductId 등 TS 컨트랙트
+  design-tokens/                       # fortuneTheme 소스 (createFortuneTheme)
+
+supabase/functions/                    # Edge Functions (Deno, LLMFactory)
+artifacts/sprint/                      # Generator-Evaluator 통신 디렉토리
+.claude/agents/                        # generator / evaluator / playwright-qa
+.claude/skills/                        # backend-service + /sc:* 코어 스킬
+.claude/docs/                          # 상세 문서 (01-26) + 참조 자료
 ```
 
 ---
@@ -351,9 +383,9 @@ artifacts/sprint/         # Generator-Evaluator 통신 디렉토리
 ### /sc:sprint (Planner 오케스트레이터)
 Generator-Evaluator 패턴 스프린트. Contract → Generate → Evaluate → Ship
 ```
-/sc:sprint 펫궁합 기능 추가
+/sc:sprint 펫궁합 결과 화면 추가
 /sc:sprint 타로 결과 로딩 버그 수정
-/sc:sprint 홈 화면 리디자인
+/sc:sprint 홈 채팅 리디자인
 ```
 
 ### /sc:quick-fix (경량 워크플로우)
@@ -371,16 +403,7 @@ Generator-Evaluator 패턴 스프린트. Contract → Generate → Evaluate → 
 | `/sc:generate` | Generator subagent 실행 | sprint에서 자동 / 직접 가능 |
 | `/sc:evaluate` | Evaluator subagent 실행 | sprint에서 자동 / 직접 가능 |
 | `/sc:quick-fix` | 1-2 파일 단순 수정 | 직접 |
-| `/sc:quality-check` | 품질 검증 (Evaluator 참조용 규칙) | 직접 |
-
-### 템플릿 스킬 (Generator가 참조)
-
-| Skill | 용도 |
-|-------|------|
-| `feature-fortune/` | 운세 기능 템플릿 |
-| `feature-chat/` | 채팅 기능 템플릿 |
-| `feature-ui/` | UI 변경 가이드 |
-| `backend-service/` | Edge Function 템플릿 |
+| `backend-service` | Edge Function 전용 생성/수정 (RN 변경 없이 Supabase만 건드릴 때) | 직접 |
 
 ### Artifact 통신 (`artifacts/sprint/`)
 

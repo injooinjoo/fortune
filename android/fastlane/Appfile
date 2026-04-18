@@ -1,8 +1,0 @@
-# Appfile for Android
-
-# Package name for your app
-package_name("com.beyond.fortune")
-
-# Path to the json secret file
-# Download from Google Play Console > Settings > API access > Service Accounts
-json_key_file("../play-store-credentials.json")

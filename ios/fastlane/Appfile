@@ -1,8 +1,0 @@
-# Appfile for iOS
-
-app_identifier("com.beyond.fortune")
-apple_id("ink595@g.harvard.edu")
-
-# Team ID
-team_id("5F7CN7Y54D")
-itc_team_id("5F7CN7Y54D")

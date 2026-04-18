@@ -1,9 +1,7 @@
 /**
- * Rich character detail data ported from Flutter.
- *
- * Source:
- *   - lib/features/character/data/default_characters.dart   (10 story)
- *   - lib/features/character/data/fortune_characters.dart    (10 fortune)
+ * Rich character detail data for the 20 built-in characters
+ * (10 story romance + 10 fortune counselors). Schema drives both the
+ * character profile screen and the chat surface metadata.
  */
 
 export interface CharacterDetail {

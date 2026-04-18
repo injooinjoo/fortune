@@ -37,14 +37,6 @@ export function isAuthCallbackUrl(url: URL): boolean {
     return true;
   }
 
-  if (url.protocol.replace(':', '') === 'io.supabase.flutter') {
-    return (
-      url.hostname.includes('callback') ||
-      url.pathname.includes('callback') ||
-      url.toString().includes('access_token')
-    );
-  }
-
   return false;
 }
 

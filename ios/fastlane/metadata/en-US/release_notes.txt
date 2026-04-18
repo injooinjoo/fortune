@@ -1,9 +1,0 @@
-Version 1.0.7
-
-[Improvements]
-• Improved login connection stability
-• Clarified in-app policy and account guidance
-• Cleaned up restore-purchase and settings entry points
-
-[Fixes]
-• General stability and usability improvements
