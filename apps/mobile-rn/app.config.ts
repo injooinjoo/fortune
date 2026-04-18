@@ -129,6 +129,7 @@ const config: ExpoConfig = {
         cameraPermission: '관상 분석을 위해 카메라 접근이 필요합니다.',
       },
     ],
+    '@sentry/react-native',
     './plugins/with-ios-prebuilt-react-native',
   ],
   updates: {

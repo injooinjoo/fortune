@@ -451,14 +451,18 @@ export function ChatScreen() {
   const scrollViewHeightRef = useRef(Dimensions.get('window').height * 0.7);
 
   function scrollChatToBottom(animated = true) {
+    // Single rAF is enough — the caller invokes this after React has scheduled
+    // the re-render, and rAF runs after layout. The previous setTimeout(100) +
+    // rAF double-wait caused visible jumps when two messages arrived within
+    // the debounce window (the first scrollToEnd would get cancelled and the
+    // user would briefly see the new message below the viewport).
     if (scrollTimerRef.current) {
       clearTimeout(scrollTimerRef.current);
+      scrollTimerRef.current = null;
     }
-    scrollTimerRef.current = setTimeout(() => {
-      requestAnimationFrame(() => {
-        chatScrollRef.current?.scrollToEnd({ animated });
-      });
-    }, 100);
+    requestAnimationFrame(() => {
+      chatScrollRef.current?.scrollToEnd({ animated });
+    });
   }
 
   function scrollChatOnContentGrow(contentHeight: number) {
@@ -473,22 +477,23 @@ export function ChatScreen() {
 
     if (scrollTimerRef.current) {
       clearTimeout(scrollTimerRef.current);
+      scrollTimerRef.current = null;
     }
 
     if (addedHeight > viewportHeight * 0.8) {
-      // Large content (fortune result card): scroll to show its top
+      // Large content (fortune result card): scroll to show its top. A tiny
+      // setTimeout is still helpful here so the card's internal layout has
+      // time to settle before we compute the target Y.
       scrollTimerRef.current = setTimeout(() => {
         requestAnimationFrame(() => {
           chatScrollRef.current?.scrollTo({ y: prevHeight - 80, animated: true });
         });
-      }, 120);
+      }, 60);
     } else {
-      // Small content (regular message): scroll to end
-      scrollTimerRef.current = setTimeout(() => {
-        requestAnimationFrame(() => {
-          chatScrollRef.current?.scrollToEnd({ animated: true });
-        });
-      }, 100);
+      // Small content (regular message): go to bottom immediately.
+      requestAnimationFrame(() => {
+        chatScrollRef.current?.scrollToEnd({ animated: true });
+      });
     }
   }
 
@@ -1304,8 +1309,8 @@ export function ChatScreen() {
           messages: recentMessages,
           userMessage: trimmed,
           userName:
-            (session.user.user_metadata.name as string | undefined) ||
-            (session.user.user_metadata.full_name as string | undefined) ||
+            (session?.user.user_metadata.name as string | undefined) ||
+            (session?.user.user_metadata.full_name as string | undefined) ||
             mobileAppState.profile.displayName ||
             'user',
         },

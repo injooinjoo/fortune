@@ -611,6 +611,18 @@ export const embeddedResultSeedByKind: Record<ResultKind, EmbeddedResultSeed> = 
     warnings: ['5월 전후로 과도한 일정에 주의하세요', '중요 결정은 감정이 차분할 때 내리세요'],
     specialTip: '새해 인사이트는 큰 방향을 잡는 데 유용합니다. 매달 흐름을 점검하면서 유연하게 조정하세요.',
   },
+  'match-insight': {
+    score: 78,
+    summary: '경기 흐름은 초반 페이스보다 중반 집중 타이밍이 결과를 좌우합니다. 작은 디테일에 집중할 때 승부의 틀이 유리해집니다.',
+    metrics: [
+      { label: '경기 집중도', value: '78', note: '중반 이후 집중력 상승' },
+      { label: '리듬 안정', value: '72%', note: '템포 유지가 관건' },
+    ],
+    highlights: ['초반 부담을 털어낸 뒤의 흐름이 핵심 분기점입니다', '집중 타이밍을 미리 정해두면 변수에 흔들리지 않습니다'],
+    recommendations: ['경기 전 루틴을 짧게 고정해보세요', '상대의 패턴보다 내 리듬을 먼저 맞추세요'],
+    warnings: ['점수 차에 휘둘리면 본인 템포를 잃기 쉽습니다'],
+    specialTip: '경기 인사이트는 방향 참고용입니다. 현장 판단은 언제나 본인의 감각이 우선입니다.',
+  },
 };
 
 export function buildFallbackEmbeddedResultPayload(

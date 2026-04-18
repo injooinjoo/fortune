@@ -6,11 +6,7 @@
  * @endpoint POST /fortune-birthstone
  */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { withEdgeFunction } from '../_shared/middleware.ts'
 
 interface BirthstoneRequest {
   userId?: string
@@ -212,82 +208,64 @@ function getBirthMonthLabel(month: number): string {
   return `${month}월`
 }
 
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
-  }
+serve((req) =>
+  withEdgeFunction<BirthstoneRequest, { success: boolean; data?: unknown; error?: string }>(req, {
+    functionName: 'fortune-birthstone',
+    timeoutMs: 10_000,
+    handler: async ({ body, requestId }) => {
+      const birthMonth = resolveBirthMonth(body)
 
-  try {
-    const request: BirthstoneRequest = await req.json()
-    const birthMonth = resolveBirthMonth(request)
-
-    if (!birthMonth) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: '생년월일 또는 생월이 필요합니다.',
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
+      if (!birthMonth) {
+        return {
           status: 400,
+          payload: {
+            success: false,
+            error: '생년월일 또는 생월이 필요합니다.',
+          },
         }
-      )
-    }
+      }
 
-    const entry = BIRTHSTONE_CATALOG[birthMonth] ?? BIRTHSTONE_CATALOG[1]
-    const content = `${getBirthMonthLabel(birthMonth)} 탄생석은 ${entry.stone}예요. ${entry.meaning}의 흐름이 강하게 들어오니, ${entry.summary}`
-    const timestamp = new Date().toISOString()
-    const score = 72 + ((birthMonth % 5) * 4)
+      const entry = BIRTHSTONE_CATALOG[birthMonth] ?? BIRTHSTONE_CATALOG[1]
+      const content = `${getBirthMonthLabel(birthMonth)} 탄생석은 ${entry.stone}예요. ${entry.meaning}의 흐름이 강하게 들어오니, ${entry.summary}`
+      const timestamp = new Date().toISOString()
+      const score = 72 + ((birthMonth % 5) * 4)
 
-    const data = {
-      fortuneType: 'birthstone' as const,
-      score,
-      content,
-      summary: entry.summary,
-      advice: entry.advice,
-      timestamp,
-      birthstone: entry.stone,
-      birthstoneEnglish: entry.english,
-      birthstoneMeaning: entry.meaning,
-      birthMonth,
-      birthMonthLabel: getBirthMonthLabel(birthMonth),
-      color: entry.color,
-      keywords: entry.keywords,
-      luckyItems: {
-        stone: entry.stone,
+      const data = {
+        fortuneType: 'birthstone' as const,
+        score,
+        content,
+        summary: entry.summary,
+        advice: entry.advice,
+        timestamp,
+        birthstone: entry.stone,
+        birthstoneEnglish: entry.english,
+        birthstoneMeaning: entry.meaning,
+        birthMonth,
+        birthMonthLabel: getBirthMonthLabel(birthMonth),
         color: entry.color,
-        metal: entry.metal,
-      },
-      compatibility: {
-        best: ['신뢰형', '실행형', '균형형'],
-        caution: ['충동형', '과열형'],
-      },
-      specialNote: entry.specialNote,
-      name: request.name ?? '회원님',
-      userId: request.userId ?? null,
-      isPremium: request.isPremium ?? false,
-    }
+        keywords: entry.keywords,
+        luckyItems: {
+          stone: entry.stone,
+          color: entry.color,
+          metal: entry.metal,
+        },
+        compatibility: {
+          best: ['신뢰형', '실행형', '균형형'],
+          caution: ['충동형', '과열형'],
+        },
+        specialNote: entry.specialNote,
+        name: body.name ?? '회원님',
+        userId: body.userId ?? null,
+        isPremium: body.isPremium ?? false,
+      }
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        data,
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
+      return {
+        status: 200,
+        payload: {
+          success: true,
+          data,
+        },
       }
-    )
-  } catch (error) {
-    console.error('Error in fortune-birthstone:', error)
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: '탄생석 가이드 생성 중 오류가 발생했습니다.',
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
-        status: 500,
-      }
-    )
-  }
-})
+    },
+  }),
+)
