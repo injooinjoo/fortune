@@ -135,9 +135,7 @@ const config: ExpoConfig = {
   updates: {
     url: 'https://u.expo.dev/f7a724ea-b46e-494a-b83c-94e7a6fec02a',
   },
-  runtimeVersion: {
-    policy: 'appVersion',
-  },
+  runtimeVersion: '1.0.9',
   experiments: {
     typedRoutes: true,
     autolinkingModuleResolution: true,
