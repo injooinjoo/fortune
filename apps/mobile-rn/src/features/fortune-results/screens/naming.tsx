@@ -446,7 +446,11 @@ export function NamingResult(props: FortuneResultComponentProps) {
   const content = str(raw.content);
   const advice = str(raw.advice);
 
-  const hasRaw = Object.keys(raw).length > 0 && recommendedNames.length > 0;
+  const hasOhaeng =
+    !!yongsin ||
+    missing.length > 0 ||
+    OHAENG_ELEMENTS.some((el) => num(distribution[el], 0) > 0);
+  const hasRecommendedNames = recommendedNames.length > 0;
 
   // Compute max value for distribution bar scaling
   const distValues = OHAENG_ELEMENTS.map((el) => num(distribution[el], 0));
@@ -457,7 +461,7 @@ export function NamingResult(props: FortuneResultComponentProps) {
     || result.summary
     || '사주 오행을 분석하여 아기에게 가장 어울리는 이름을 추천합니다.';
 
-  const topScore = hasRaw
+  const topScore = hasRecommendedNames
     ? num(obj(recommendedNames[0]).totalScore, result.score ?? 85)
     : result.score ?? 85;
 
@@ -515,7 +519,7 @@ export function NamingResult(props: FortuneResultComponentProps) {
       {/* ============================================================ */}
       {/*  Ohaeng Distribution                                          */}
       {/* ============================================================ */}
-      {hasRaw && (
+      {hasOhaeng && (
         <SectionCard
           title="오행 분석"
           description="사주에서 읽힌 오행의 분포입니다."
@@ -600,7 +604,7 @@ export function NamingResult(props: FortuneResultComponentProps) {
       {/* ============================================================ */}
       {/*  Recommended Names                                            */}
       {/* ============================================================ */}
-      {hasRaw && (
+      {hasRecommendedNames ? (
         <SectionCard
           title="추천 이름"
           description={`총 ${recommendedNames.length}개의 이름을 오행 균형에 맞춰 추천합니다.`}
@@ -612,6 +616,28 @@ export function NamingResult(props: FortuneResultComponentProps) {
                 data={obj(nameRaw)}
               />
             ))}
+          </View>
+        </SectionCard>
+      ) : (
+        <SectionCard
+          title="추천 이름"
+          description="아기 이름 후보는 사주 분석을 마친 뒤 제공됩니다."
+        >
+          <View
+            style={{
+              backgroundColor: fortuneTheme.colors.surfaceSecondary,
+              borderRadius: fortuneTheme.radius.md,
+              paddingVertical: fortuneTheme.spacing.md,
+              paddingHorizontal: fortuneTheme.spacing.md,
+              gap: fortuneTheme.spacing.xs,
+            }}
+          >
+            <AppText variant="labelLarge" color={fortuneTheme.colors.textPrimary}>
+              추천 이름을 불러오지 못했어요.
+            </AppText>
+            <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+              잠시 후 다시 시도하거나, 엄마 사주·출산 예정일 입력을 재확인해주세요.
+            </AppText>
           </View>
         </SectionCard>
       )}
@@ -676,15 +702,15 @@ export function NamingResult(props: FortuneResultComponentProps) {
       ) : null}
 
       {/* ============================================================ */}
-      {/*  Fallback when no raw API data                                */}
+      {/*  Fallback — 실응답(오행/추천 이름) 이 모두 없을 때만 노출      */}
       {/* ============================================================ */}
-      {!hasRaw && result.highlights.length > 0 && (
+      {!hasOhaeng && !hasRecommendedNames && result.highlights.length > 0 && (
         <SectionCard title="작명 포인트">
           <BulletList items={result.highlights} />
         </SectionCard>
       )}
 
-      {!hasRaw && result.recommendations.length > 0 && (
+      {!hasOhaeng && !hasRecommendedNames && result.recommendations.length > 0 && (
         <SectionCard title="추천 행동">
           <BulletList items={result.recommendations} />
         </SectionCard>

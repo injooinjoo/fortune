@@ -1,18 +1,51 @@
-import { View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Animated, Easing, Pressable, View, type ViewStyle } from 'react-native';
+import { router } from 'expo-router';
 
 import { AppText } from '../../components/app-text';
 import { Card } from '../../components/card';
 import { fortuneTheme } from '../../lib/theme';
 import type { ChatShellEmbeddedResultMessage } from '../../lib/chat-shell';
 import {
-  BulletList,
+  BulletList as LegacyBulletList,
   InsetQuote,
   KeywordPills,
   MetricGrid,
   SectionCard,
 } from '../fortune-results/primitives';
-import { RenderFortuneResult } from '../fortune-results/registry';
+import { ResultCardFrame } from '../fortune-results/primitives/result-card-frame';
+import {
+  HeroCalendar,
+  HeroCompat,
+  HeroHealth,
+  HeroLine,
+  HeroOrbs,
+  HeroRadar,
+  HeroSaju,
+  HeroTarot,
+} from '../fortune-results/heroes';
 import { resolveResultKindFromFortuneType } from '../fortune-results/mapping';
+import { RenderFortuneResult } from '../fortune-results/registry';
+import type { ResultKind } from '../fortune-results/types';
+
+// Result kinds that have a Phase 3b hero component. Everything else falls
+// back to the legacy registry rendering so no result type regresses while
+// the remaining 26 kinds are ported in a follow-up sprint.
+const HEROED_RESULT_KINDS: Partial<Record<ResultKind, React.ComponentType<any>>> = {
+  tarot: HeroTarot,
+  'traditional-saju': HeroSaju,
+  'daily-calendar': HeroCalendar,
+  wealth: HeroLine,
+  career: HeroLine,
+  'personality-dna': HeroRadar,
+  mbti: HeroRadar,
+  compatibility: HeroCompat,
+  health: HeroHealth,
+  love: HeroOrbs,
+};
+
+const REVEAL_DURATION_MS = 2400;
+const TAP_PROGRESS_THRESHOLD = 0.9;
 
 export function EmbeddedResultCard({
   message,
@@ -20,25 +53,35 @@ export function EmbeddedResultCard({
   message: ChatShellEmbeddedResultMessage;
 }) {
   const { payload } = message;
-
-  // Try to use the dedicated result component if available
   const resultKind = resolveResultKindFromFortuneType(message.fortuneType);
+  const Hero = resultKind ? HEROED_RESULT_KINDS[resultKind] : undefined;
+
+  if (resultKind && Hero) {
+    return (
+      <AnimatedResultCard
+        resultKind={resultKind}
+        payload={payload}
+        Hero={Hero}
+      />
+    );
+  }
+
+  // Fallback: dedicated result component via registry (legacy look).
   if (resultKind) {
     return (
       <View style={{ width: '100%' }}>
         <Card>
           <View style={{ gap: fortuneTheme.spacing.sm }}>
             <RenderFortuneResult resultKind={resultKind} payload={payload} />
-            <AppText variant="caption" color={fortuneTheme.colors.textTertiary} style={{ textAlign: 'center', marginTop: 8 }}>
-              오락 목적의 AI 생성 콘텐츠입니다
-            </AppText>
+            <EntertainmentFootnote />
           </View>
         </Card>
       </View>
     );
   }
 
-  // Fallback: generic normalized rendering
+  // Fallback-fallback: generic normalized rendering (older flows that don't
+  // have a dedicated component yet).
   return (
     <View style={{ width: '100%' }}>
       <Card>
@@ -56,10 +99,7 @@ export function EmbeddedResultCard({
                 {payload.eyebrow}
               </AppText>
               <AppText variant="oracleTitle">{payload.title}</AppText>
-              <AppText
-                variant="bodySmall"
-                color={fortuneTheme.colors.textSecondary}
-              >
+              <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
                 {payload.subtitle}
               </AppText>
             </View>
@@ -75,59 +115,105 @@ export function EmbeddedResultCard({
                 }}
               >
                 <AppText variant="labelLarge">{payload.score}</AppText>
-                <AppText
-                  variant="caption"
-                  color={fortuneTheme.colors.textTertiary}
-                >
+                <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
                   score
                 </AppText>
               </View>
             ) : null}
           </View>
-
           <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
             {payload.summary}
           </AppText>
-
           {message.fortuneType !== 'celebrity' && payload.contextTags?.length ? (
             <SectionCard title="입력된 맥락">
               <KeywordPills keywords={payload.contextTags} />
             </SectionCard>
           ) : null}
-
           {payload.metrics?.length ? <MetricGrid items={payload.metrics} /> : null}
-
           {payload.highlights?.length ? (
             <SectionCard title="핵심 포인트">
-              <BulletList items={payload.highlights} accent="핵심" />
+              <LegacyBulletList items={payload.highlights} accent="핵심" />
             </SectionCard>
           ) : null}
-
           {payload.recommendations?.length ? (
             <SectionCard title="추천 액션">
-              <BulletList items={payload.recommendations} accent="추천" />
+              <LegacyBulletList items={payload.recommendations} accent="추천" />
             </SectionCard>
           ) : null}
-
           {payload.warnings?.length ? (
             <SectionCard title="주의 포인트">
-              <BulletList items={payload.warnings} accent="주의" />
+              <LegacyBulletList items={payload.warnings} accent="주의" />
             </SectionCard>
           ) : null}
-
           {payload.luckyItems?.length ? (
             <SectionCard title="행운 포인트">
               <KeywordPills keywords={payload.luckyItems} />
             </SectionCard>
           ) : null}
-
           {payload.specialTip ? <InsetQuote text={payload.specialTip} /> : null}
-
-          <AppText variant="caption" color={fortuneTheme.colors.textTertiary} style={{ textAlign: 'center', marginTop: 8 }}>
-            오락 목적의 AI 생성 콘텐츠입니다
-          </AppText>
+          <EntertainmentFootnote />
         </View>
       </Card>
     </View>
+  );
+}
+
+function AnimatedResultCard({
+  resultKind,
+  payload,
+  Hero,
+}: {
+  resultKind: ResultKind;
+  payload: ChatShellEmbeddedResultMessage['payload'];
+  Hero: React.ComponentType<{ data: unknown; progress: number }>;
+}) {
+  // ResultCardFrame + heroes consume a plain numeric `progress`. We drive an
+  // Animated.Value internally and mirror it into a React state so downstream
+  // phase gates re-render smoothly. Listener detach on unmount.
+  const [progress, setProgress] = useState(0);
+  const animated = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const listener = animated.addListener(({ value }) => setProgress(value));
+    Animated.timing(animated, {
+      toValue: 1,
+      duration: REVEAL_DURATION_MS,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
+    return () => animated.removeListener(listener);
+  }, [animated]);
+
+  const handleTap = () => {
+    if (progress < TAP_PROGRESS_THRESHOLD) return;
+    router.push({
+      pathname: '/result/[resultKind]',
+      params: { resultKind },
+    });
+  };
+
+  const pressedStyle: ViewStyle = { opacity: 0.98, transform: [{ scale: 0.995 }] };
+
+  return (
+    <Pressable
+      onPress={handleTap}
+      style={({ pressed }) => [{ width: '100%' }, pressed ? pressedStyle : null]}
+    >
+      <ResultCardFrame kind={resultKind} data={payload} progress={progress}>
+        <Hero data={payload} progress={progress} />
+      </ResultCardFrame>
+    </Pressable>
+  );
+}
+
+function EntertainmentFootnote() {
+  return (
+    <AppText
+      variant="caption"
+      color={fortuneTheme.colors.textTertiary}
+      style={{ textAlign: 'center', marginTop: 8 }}
+    >
+      오락 목적의 AI 생성 콘텐츠입니다
+    </AppText>
   );
 }
