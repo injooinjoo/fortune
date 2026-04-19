@@ -42,6 +42,12 @@ export interface StoryChatRequest {
 export interface StoryChatResponse {
   success?: boolean;
   response: string;
+  /**
+   * 카톡식 멀티버블 분할. 서버가 [SPLIT] 토큰으로 나눈 텍스트 덩어리들.
+   * 항상 `[response]` 이상을 가짐 (단일 응답이면 길이 1).
+   * on-device 경로에서는 undefined 가능 → 소비자는 `[response]`로 폴백.
+   */
+  segments?: string[];
   emotionTag?: string;
   delaySec?: number;
   affinityDelta?: {
@@ -435,9 +441,21 @@ function normalizeStoryChatResponse(raw: unknown): StoryChatResponse {
     throw new Error('Story chat response text is missing.');
   }
 
+  const rawSegments = Array.isArray(candidate.segments)
+    ? candidate.segments.filter(
+        (segment): segment is string =>
+          typeof segment === 'string' && segment.trim().length > 0,
+      )
+    : null;
+  const segments =
+    rawSegments && rawSegments.length > 0
+      ? rawSegments
+      : [candidate.response.trim()];
+
   return {
     success: typeof candidate.success === 'boolean' ? candidate.success : true,
     response: candidate.response,
+    segments,
     emotionTag:
       typeof candidate.emotionTag === 'string' ? candidate.emotionTag : undefined,
     delaySec:

@@ -6,6 +6,10 @@ import {
 } from './story-chat-runtime';
 import { type AiMode } from './mobile-app-state';
 import { OnDeviceChatProvider } from './on-device-chat-provider';
+import { onDeviceLLMEngine } from './on-device-llm';
+
+export { OnDeviceNotReadyError } from './chat-provider-errors';
+import { OnDeviceNotReadyError } from './chat-provider-errors';
 
 export interface ChatProviderOptions {
   userDescription?: string;
@@ -58,12 +62,17 @@ const onDeviceProvider = new OnDeviceChatProvider();
 // ---------------------------------------------------------------------------
 
 export function resolveChatProvider(aiMode: AiMode): IChatProvider {
-  if (aiMode === 'on-device' && onDeviceProvider.isAvailable()) {
+  if (aiMode === 'on-device') {
+    // 엄격 모드: 유저가 명시적으로 온디바이스를 선택했다면 준비 안 됐을 때
+    // 은폐 클라우드 폴백 금지. 호출자가 준비 UX를 보여줘야 함.
+    if (!onDeviceProvider.isAvailable()) {
+      throw new OnDeviceNotReadyError(onDeviceLLMEngine.getStatus());
+    }
     return onDeviceProvider;
   }
   if (aiMode === 'auto' && onDeviceProvider.isAvailable()) {
     return onDeviceProvider;
   }
-  // cloud mode, or fallback when on-device is not available
+  // cloud mode, or explicit 'auto' fallback when on-device is not ready
   return cloudProvider;
 }

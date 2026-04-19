@@ -31,6 +31,7 @@ import { resolveChatCharacterAvatarSource } from '../../lib/chat-character-avata
 import { confirmAction } from '../../lib/haptics';
 import { fortuneTheme, romanceTintBackground } from '../../lib/theme';
 import { EmbeddedResultCard } from '../chat-results/embedded-result-card';
+import { StoryRevealMessage } from '../story-chat-animations';
 import { FortuneCookieCard } from '../fortune-cookie/fortune-cookie-card';
 import { SajuPreviewCard } from '../fortune-cookie/saju-preview-card';
 import type { ChatSurveyStep } from '../chat-survey/types';
@@ -424,7 +425,10 @@ function CharacterListRow({
       </Pressable>
       {/* Swipeable row */}
       <Animated.View
-        style={{ transform: [{ translateX: swipeX }] }}
+        style={{
+          backgroundColor: tintBg,
+          transform: [{ translateX: swipeX }],
+        }}
         {...(panResponder?.panHandlers ?? {})}
       >
         {cardContent}
@@ -449,6 +453,8 @@ function MessageBubble({
   const isSystem = message.sender === 'system';
   const isUser = message.sender === 'user';
   const applyOracle = Boolean(useOracleVoice) && isAssistant;
+  // 카톡식 "1" 읽음 배지: user 메시지가 아직 읽히지 않았을 때만 표시.
+  const showUnreadBadge = isUser && !message.readAt;
 
   return (
     <View
@@ -458,37 +464,54 @@ function MessageBubble({
     >
       <View
         style={{
-          backgroundColor:
-            isAssistant || isSystem
-              ? fortuneTheme.colors.backgroundTertiary
-              : fortuneTheme.colors.surfaceSecondary,
-          borderColor: fortuneTheme.colors.border,
-          // Ondo bubble shape: rounded on three corners, tight (6px) on the
-          // corner that points toward the speaker. Assistant/system bubbles
-          // tighten bottom-left (pointing into their avatar column); user
-          // bubbles tighten bottom-right (pointing into the user's side).
-          borderRadius: fortuneTheme.radius.messageBubble,
-          borderBottomLeftRadius:
-            isAssistant || isSystem ? 6 : fortuneTheme.radius.messageBubble,
-          borderBottomRightRadius: isUser
-            ? 6
-            : fortuneTheme.radius.messageBubble,
-          borderWidth: 1,
-          maxWidth: isUser ? undefined : '84%',
-          paddingHorizontal: 14,
-          paddingVertical: 10,
+          flexDirection: isUser ? 'row-reverse' : 'row',
+          alignItems: 'flex-end',
+          gap: 4,
         }}
       >
-        <AppText
-          variant={applyOracle ? 'oracleBody' : 'bodyMedium'}
-          color={
-            isSystem
-              ? fortuneTheme.colors.textSecondary
-              : fortuneTheme.colors.textPrimary
-          }
+        <View
+          style={{
+            backgroundColor:
+              isAssistant || isSystem
+                ? fortuneTheme.colors.backgroundTertiary
+                : fortuneTheme.colors.surfaceSecondary,
+            borderColor: fortuneTheme.colors.border,
+            // Ondo bubble shape: rounded on three corners, tight (6px) on the
+            // corner that points toward the speaker. Assistant/system bubbles
+            // tighten bottom-left (pointing into their avatar column); user
+            // bubbles tighten bottom-right (pointing into the user's side).
+            borderRadius: fortuneTheme.radius.messageBubble,
+            borderBottomLeftRadius:
+              isAssistant || isSystem ? 6 : fortuneTheme.radius.messageBubble,
+            borderBottomRightRadius: isUser
+              ? 6
+              : fortuneTheme.radius.messageBubble,
+            borderWidth: 1,
+            maxWidth: isUser ? undefined : '84%',
+            paddingHorizontal: 14,
+            paddingVertical: 10,
+          }}
         >
-          {message.text}
-        </AppText>
+          <AppText
+            variant={applyOracle ? 'oracleBody' : 'bodyMedium'}
+            color={
+              isSystem
+                ? fortuneTheme.colors.textSecondary
+                : fortuneTheme.colors.textPrimary
+            }
+          >
+            {message.text}
+          </AppText>
+        </View>
+        {showUnreadBadge ? (
+          <AppText
+            variant="caption"
+            color={fortuneTheme.colors.warning}
+            style={{ marginBottom: 2 }}
+          >
+            1
+          </AppText>
+        ) : null}
       </View>
     </View>
   );
@@ -578,7 +601,10 @@ function ChatThreadMessage({
 }) {
   const isUser = message.sender === 'user';
   const isFullWidth =
-    message.kind === 'embedded-result' || message.kind === 'fortune-cookie' || message.kind === 'saju-preview';
+    message.kind === 'embedded-result' ||
+    message.kind === 'fortune-cookie' ||
+    message.kind === 'saju-preview' ||
+    message.kind === 'story-reveal';
   const isImage = message.kind === 'image';
   const showAssistantAvatar = !isUser && !isFullWidth;
 
@@ -609,6 +635,8 @@ function ChatThreadMessage({
       >
         {message.kind === 'embedded-result' ? (
           <EmbeddedResultMessage message={message} />
+        ) : message.kind === 'story-reveal' ? (
+          <StoryRevealMessage message={message} characterId={character.id} />
         ) : message.kind === 'fortune-cookie' ? (
           <View style={{ width: '100%' }}>
             <FortuneCookieCard />
@@ -1748,6 +1776,7 @@ export function ActiveCharacterChatSurface({
   onPickAction,
   showHeader = true,
   romanceScore = 0,
+  presenceLine,
 }: {
   character: ChatCharacterSpec;
   actions: ChatShellAction[];
@@ -1760,13 +1789,21 @@ export function ActiveCharacterChatSurface({
   onPickAction: (fortuneType: FortuneTypeId) => void;
   showHeader?: boolean;
   romanceScore?: number;
+  /**
+   * 카톡식 프레전스 라인 ("커피 내리는 중", "네 생각 중..." 등).
+   * 비어있거나 undefined면 기존 `shortDescription`으로 폴백.
+   */
+  presenceLine?: string | null;
 }) {
   const isFortuneCharacter = isFortuneChatCharacter(character);
   const visibleMessages = messages;
   const promptActions = actions;
   const hasEmbeddedResult = visibleMessages.some(
     (message) =>
-      message.kind === 'embedded-result' || message.kind === 'fortune-cookie' || message.kind === 'saju-preview',
+      message.kind === 'embedded-result' ||
+      message.kind === 'fortune-cookie' ||
+      message.kind === 'saju-preview' ||
+      message.kind === 'story-reveal',
   );
   const previewMessages = visibleMessages.some((message) => message.sender === 'user')
     ? visibleMessages
@@ -1810,6 +1847,7 @@ export function ActiveCharacterChatSurface({
           character={character}
           onBack={onBack}
           onOpenProfile={onOpenProfile}
+          presenceLine={presenceLine ?? null}
         />
       ) : null}
 
@@ -1833,7 +1871,9 @@ export function ActiveCharacterChatSurface({
               color={fortuneTheme.colors.textSecondary}
               style={{ maxWidth: 230, textAlign: 'center' }}
             >
-              {character.shortDescription}
+              {presenceLine && presenceLine.length > 0
+                ? presenceLine
+                : character.shortDescription}
             </AppText>
           </View>
           <Pressable
@@ -1947,11 +1987,16 @@ export function ActiveCharacterChatHeader({
   affinity,
   onBack,
   onOpenProfile,
+  presenceLine,
 }: {
   character: ChatCharacterSpec;
   affinity?: number;
   onBack: () => void;
   onOpenProfile: () => void;
+  /**
+   * 카톡식 프레전스 라인. 값이 있으면 기본 역할 설명(caption)을 대체.
+   */
+  presenceLine?: string | null;
 }) {
   const isFortuneCharacter = isFortuneChatCharacter(character);
   const showAffinity = !isFortuneCharacter && typeof affinity === 'number' && affinity > 0;
@@ -2001,9 +2046,11 @@ export function ActiveCharacterChatHeader({
           <View style={{ alignItems: 'center', gap: 2 }}>
             <AppText variant="labelLarge">{character.name}</AppText>
             <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-              {isFortuneCharacter
-                ? 'AI 상담사 · 대화를 이어보세요'
-                : '스토리 캐릭터 · 관계를 이어보세요'}
+              {presenceLine && presenceLine.length > 0
+                ? presenceLine
+                : isFortuneCharacter
+                  ? 'AI 상담사 · 대화를 이어보세요'
+                  : '스토리 캐릭터 · 관계를 이어보세요'}
             </AppText>
           </View>
         </View>

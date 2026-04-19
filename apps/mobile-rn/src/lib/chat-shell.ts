@@ -14,6 +14,13 @@ export interface ChatShellTextMessage {
   kind: 'text';
   sender: 'assistant' | 'user' | 'system';
   text: string;
+  /**
+   * 카톡식 읽음 표시용. ISO8601.
+   * - `sender: 'user'`일 때만 의미: undefined → "1" 배지 표시, 값 있으면 배지 숨김.
+   * - 서버 응답 수신 또는 랜덤 지연 타이머 만료 시 현재 시각으로 세팅.
+   * - Phase 2에서 서버 저장으로 승격 (현재는 클라 로컬 전용).
+   */
+  readAt?: string;
 }
 
 export interface ChatShellEmbeddedResultMessage {
@@ -49,12 +56,59 @@ export interface ChatShellImageMessage {
   caption?: string;
 }
 
+// Story-reveal payloads — drive the 6 cinematic scenes ported from the Ondo
+// Design System's story_chat prototype. Each variant maps 1:1 to a component
+// in `features/story-chat-animations/`. The message itself is a normal chat
+// entry: persisted in the thread snapshot and re-rendered on reload.
+export type StoryRevealPayload =
+  | {
+      type: 'memory';
+      title?: string;
+      quote?: string;
+      daysAgo?: number;
+    }
+  | {
+      type: 'emotion';
+      scoreLabel: string;
+      percent: number;
+      tags: string[];
+    }
+  | {
+      type: 'poem';
+      lines: string[];
+    }
+  | {
+      type: 'pep';
+      items: [string, string, string];
+    }
+  | {
+      type: 'photo';
+      dateLabel: string;
+      caption: string;
+    }
+  | {
+      type: 'resonance';
+      percent: number;
+      userTag: string;
+      charTag: string;
+    };
+
+export interface ChatShellStoryRevealMessage {
+  id: string;
+  kind: 'story-reveal';
+  sender: 'assistant';
+  reveal: StoryRevealPayload;
+  /** Override the scene's character palette if different from thread head. */
+  characterId?: string;
+}
+
 export type ChatShellMessage =
   | ChatShellTextMessage
   | ChatShellEmbeddedResultMessage
   | ChatShellFortuneCookieMessage
   | ChatShellSajuPreviewMessage
-  | ChatShellImageMessage;
+  | ChatShellImageMessage
+  | ChatShellStoryRevealMessage;
 
 export interface ChatShellAction {
   id: string;

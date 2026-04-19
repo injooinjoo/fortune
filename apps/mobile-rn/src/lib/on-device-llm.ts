@@ -9,17 +9,14 @@ import { initLlama, type LlamaContext } from 'llama.rn';
 import * as FileSystem from 'expo-file-system/legacy';
 import { Platform } from 'react-native';
 
+import { OnDeviceNotReadyError } from './chat-provider-errors';
+import { type ModelStatus } from './on-device-llm-status';
+
+export { type ModelStatus } from './on-device-llm-status';
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
-
-export type ModelStatus =
-  | 'not-downloaded'
-  | 'downloading'
-  | 'ready'
-  | 'loading'
-  | 'error'
-  | 'unsupported';
 
 export interface ModelDownloadProgress {
   bytesDownloaded: number;
@@ -182,6 +179,17 @@ class LlamaOnDeviceLLMEngine implements OnDeviceLLMEngine {
       this.setStatus('ready');
       console.log('[OnDeviceLLM] Model loaded, GPU:', this.llamaContext.gpu);
     } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const isJsiInstallFailure =
+        message.includes("property 'install'") ||
+        message.includes('JSI bindings not installed');
+
+      if (isJsiInstallFailure) {
+        console.warn('[OnDeviceLLM] Native binding unavailable:', message);
+        this.setStatus('unsupported');
+        throw new OnDeviceNotReadyError('unsupported');
+      }
+
       console.error('[OnDeviceLLM] Model load failed:', error);
       this.setStatus('error');
       throw error;
