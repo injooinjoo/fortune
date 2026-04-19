@@ -17,9 +17,16 @@ supabase/.temp/
 
 # Audit / transfer artifacts
 artifacts/fortune-audit/
+artifacts/sprint/
 export/
 fortune-transfer-bundle*
 pencil-profile-export.png
+
+# Local design system reference (not app bundle)
+Ondo Design System/
+
+# Stray root expo stub (real config lives in apps/mobile-rn/app.config.ts)
+/app.json
 
 # MCP configuration (may contain API keys)
 .mcp.json

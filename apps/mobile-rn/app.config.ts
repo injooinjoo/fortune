@@ -86,7 +86,7 @@ loadWorkspaceEnvFiles();
 const config: ExpoConfig = {
   name: '온도',
   slug: 'ondo-mobile-rn',
-  version: '1.0.8',
+  version: '1.0.9',
   orientation: 'portrait',
   icon: './assets/icon.png',
   scheme: 'com.beyond.fortune',

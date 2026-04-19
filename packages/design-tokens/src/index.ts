@@ -34,6 +34,15 @@ export const fortuneColors = {
     chipPeach: '#FFE8D6',
     chipLavender: '#E8E0FF',
     chipText: '#122031',
+    accentPressed: '#D0D4E0',
+    accentSubtle: 'rgba(245,246,251,0.14)',
+    elemental: {
+      wood: '#5FA66B',
+      fire: '#E26464',
+      earth: '#D4A857',
+      metal: '#9FA4B0',
+      water: '#4A7AB8',
+    },
   },
   light: {
     accent: '#0B0B10',
@@ -68,6 +77,15 @@ export const fortuneColors = {
     chipPeach: '#FFE8D6',
     chipLavender: '#E8E0FF',
     chipText: '#122031',
+    accentPressed: '#1F1F24',
+    accentSubtle: 'rgba(11,11,16,0.08)',
+    elemental: {
+      wood: '#5FA66B',
+      fire: '#E26464',
+      earth: '#D4A857',
+      metal: '#9FA4B0',
+      water: '#4A7AB8',
+    },
   },
 } as const;
 
@@ -138,6 +156,13 @@ export const fortuneShadows = {
     shadowRadius: 16,
     shadowOffset: { width: 0, height: 8 },
     elevation: 8,
+  },
+  raised: {
+    shadowColor: '#000000',
+    shadowOpacity: 0.32,
+    shadowRadius: 32,
+    shadowOffset: { width: 0, height: 16 },
+    elevation: 10,
   },
 } as const;
 
