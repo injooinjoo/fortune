@@ -1,0 +1,75 @@
+# Monorepo .easignore — strips everything EAS Build doesn't need from the upload.
+# apps/mobile-rn also has its own .easignore for app-scoped excludes.
+
+# --- VCS / tooling ---
+.git
+.github
+.vscode
+.idea
+.claude
+.cursor
+
+# --- Legacy Flutter tree (root-level duplicates) ---
+/android
+/ios
+/lib
+/macos
+/windows
+/linux
+/test
+/.dart_tool
+/.flutter-plugins
+/.flutter-plugins-dependencies
+
+# --- Data dumps & large local assets ---
+namuwiki*.7z
+*.7z
+*.zip
+*.tar.gz
+/Ondo Design System
+/fortune-transfer-bundle-*
+pencil-profile-export.png
+upload-success.png
+
+# --- Generated / scratch artifacts ---
+/artifacts
+/export
+/screenshots
+/google_play_assets
+/dist
+/build
+/coverage
+/testsprite_tests
+
+# --- Docs (not bundled) ---
+/docs
+*.md
+!README.md
+
+# --- Past RN build outputs living in the monorepo ---
+apps/mobile-rn/build-*.ipa
+apps/mobile-rn/dist
+apps/mobile-rn/ios/Pods
+apps/mobile-rn/ios/build
+apps/mobile-rn/android/build
+apps/mobile-rn/android/.gradle
+apps/mobile-rn/android/app/build
+
+# --- Supabase local state (not needed on build server) ---
+supabase/.temp
+supabase/.branches
+
+# --- Node / Expo caches (EAS reinstalls) ---
+**/node_modules
+.expo
+.expo-shared
+.metro-cache
+
+# --- Env & secrets (EAS pulls from its own secrets) ---
+.env
+.env.*
+!.env.example
+*.pem
+*.p8
+*.p12
+*.mobileprovision
