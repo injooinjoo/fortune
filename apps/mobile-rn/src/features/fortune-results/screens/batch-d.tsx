@@ -2,7 +2,7 @@ import { View } from 'react-native';
 
 import { AppText } from '../../../components/app-text';
 import { Card } from '../../../components/card';
-import { fortuneTheme } from '../../../lib/theme';
+import { fortuneTheme, withAlpha } from '../../../lib/theme';
 import { resultMetadataByKind } from '../mapping';
 import {
   BulletList,
@@ -582,6 +582,10 @@ function TalentResult(props: FortuneResultComponentProps) {
 /*  3. ExerciseResult                                                  */
 /* ------------------------------------------------------------------ */
 
+// 운동 기분 팔레트 (domain-specific colors not in theme tokens)
+const EXERCISE_REST_COLOR = '#FF9500';
+const EXERCISE_HYDRATION_COLOR = '#2196F3';
+
 function ExerciseResult(props: FortuneResultComponentProps) {
   const meta = resultMetadataByKind.exercise;
   const result = useResultData(props.payload);
@@ -614,12 +618,12 @@ function ExerciseResult(props: FortuneResultComponentProps) {
   ) || (result.metrics.length > 0 ? num(result.metrics[0]?.value, 78) : 78);
   const scoreColor =
     exerciseScore >= 90
-      ? '#34C759'
+      ? fortuneTheme.colors.success
       : exerciseScore >= 70
-        ? '#8B7BE8'
+        ? fortuneTheme.colors.ctaBackground
         : exerciseScore >= 50
-          ? '#FFCC00'
-          : '#FF3B30';
+          ? fortuneTheme.colors.warning
+          : fortuneTheme.colors.error;
   const scoreLabel =
     exerciseScore >= 90
       ? '\uCD5C\uC0C1'
@@ -740,7 +744,7 @@ function ExerciseResult(props: FortuneResultComponentProps) {
               borderColor: scoreColor,
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: `${scoreColor}15`,
+              backgroundColor: withAlpha(scoreColor, 0.08),
             }}
           >
             <AppText style={{ fontSize: 44, fontWeight: '800', color: scoreColor }}>
@@ -816,14 +820,14 @@ function ExerciseResult(props: FortuneResultComponentProps) {
           <View
             style={{
               flex: 1,
-              backgroundColor: `${'#34C759'}15`,
+              backgroundColor: withAlpha(fortuneTheme.colors.success, 0.08),
               borderRadius: fortuneTheme.radius.md,
               padding: fortuneTheme.spacing.sm,
               alignItems: 'center',
               gap: 2,
             }}
           >
-            <AppText variant="caption" style={{ color: '#34C759', fontWeight: '700' }}>
+            <AppText variant="caption" style={{ color: fortuneTheme.colors.success, fontWeight: '700' }}>
               {'\uCD5C\uC801'}
             </AppText>
             <AppText variant="labelMedium" color={fortuneTheme.colors.textSecondary}>
@@ -833,14 +837,14 @@ function ExerciseResult(props: FortuneResultComponentProps) {
           <View
             style={{
               flex: 1,
-              backgroundColor: `${'#FF3B30'}15`,
+              backgroundColor: withAlpha(fortuneTheme.colors.error, 0.08),
               borderRadius: fortuneTheme.radius.md,
               padding: fortuneTheme.spacing.sm,
               alignItems: 'center',
               gap: 2,
             }}
           >
-            <AppText variant="caption" style={{ color: '#FF3B30', fontWeight: '700' }}>
+            <AppText variant="caption" style={{ color: fortuneTheme.colors.error, fontWeight: '700' }}>
               {'\uD53C\uD558\uAE30'}
             </AppText>
             <AppText variant="labelMedium" color={fortuneTheme.colors.textSecondary}>
@@ -854,9 +858,9 @@ function ExerciseResult(props: FortuneResultComponentProps) {
       {(() => {
         const routineData = exerciseRoutine.length > 0 ? exerciseRoutine : fallbackRoutine;
         const intensityColorMap: Record<string, string> = {
-          '\uB0AE\uC74C': '#34C759', low: '#34C759', '\uAC00\uBCBC\uC6C0': '#34C759',
-          '\uC911\uAC04': '#FFCC00', medium: '#FFCC00', '\uBCF4\uD1B5': '#FFCC00',
-          '\uB192\uC74C': '#FF3B30', high: '#FF3B30', '\uAC15\uD568': '#FF3B30',
+          '\uB0AE\uC74C': fortuneTheme.colors.success, low: fortuneTheme.colors.success, '\uAC00\uBCBC\uC6C0': fortuneTheme.colors.success,
+          '\uC911\uAC04': fortuneTheme.colors.warning, medium: fortuneTheme.colors.warning, '\uBCF4\uD1B5': fortuneTheme.colors.warning,
+          '\uB192\uC74C': fortuneTheme.colors.error, high: fortuneTheme.colors.error, '\uAC15\uD568': fortuneTheme.colors.error,
         };
 
         return (
@@ -960,7 +964,7 @@ function ExerciseResult(props: FortuneResultComponentProps) {
                 flex: 1,
                 alignItems: 'center',
                 gap: 4,
-                backgroundColor: d.isRest ? `${'#FF9500'}15` : fortuneTheme.colors.surfaceSecondary,
+                backgroundColor: d.isRest ? withAlpha(EXERCISE_REST_COLOR, 0.08) : fortuneTheme.colors.surfaceSecondary,
                 borderRadius: fortuneTheme.radius.md,
                 paddingVertical: fortuneTheme.spacing.sm,
               }}
@@ -971,7 +975,7 @@ function ExerciseResult(props: FortuneResultComponentProps) {
               <AppText style={{ fontSize: 20 }}>{d.icon}</AppText>
               <AppText
                 variant="caption"
-                color={d.isRest ? '#FF9500' : fortuneTheme.colors.textSecondary}
+                color={d.isRest ? EXERCISE_REST_COLOR : fortuneTheme.colors.textSecondary}
                 style={{ textAlign: 'center' }}
               >
                 {d.label}
@@ -1013,7 +1017,7 @@ function ExerciseResult(props: FortuneResultComponentProps) {
         {/* Hydration tracker */}
         <View
           style={{
-            backgroundColor: `${'#2196F3'}15`,
+            backgroundColor: withAlpha(EXERCISE_HYDRATION_COLOR, 0.08),
             borderRadius: fortuneTheme.radius.md,
             padding: fortuneTheme.spacing.md,
             flexDirection: 'row',
@@ -1023,7 +1027,7 @@ function ExerciseResult(props: FortuneResultComponentProps) {
         >
           <AppText style={{ fontSize: 24 }}>{'\uD83D\uDCA7'}</AppText>
           <View style={{ flex: 1 }}>
-            <AppText variant="labelMedium" style={{ color: '#2196F3', fontWeight: '700' }}>
+            <AppText variant="labelMedium" style={{ color: EXERCISE_HYDRATION_COLOR, fontWeight: '700' }}>
               {'\uC218\uBD84 \uBCF4\uCDA9'}
             </AppText>
             <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
@@ -1094,27 +1098,27 @@ function rpgBar(value: number, maxSegments = 10): string {
 }
 
 function rpgStatColor(value: number): string {
-  if (value >= 85) return '#34C759';
-  if (value >= 70) return '#8FB8FF';
-  if (value >= 50) return '#FFCC00';
-  return '#FF6B6B';
+  if (value >= 85) return fortuneTheme.colors.success;
+  if (value >= 70) return fortuneTheme.colors.accentSecondary;
+  if (value >= 50) return fortuneTheme.colors.warning;
+  return fortuneTheme.colors.error;
 }
 
 const GAME_ROLE_BADGES: Record<string, { emoji: string; color: string }> = {
-  '\uD0F1\uCEE4': { emoji: '\uD83D\uDEE1\uFE0F', color: '#8FB8FF' },
-  '\uB51C\uB7EC': { emoji: '\u2694\uFE0F', color: '#FF6B6B' },
-  '\uD798\uB7EC': { emoji: '\uD83D\uDC9A', color: '#34C759' },
-  '\uC11C\uD3EC\uD130': { emoji: '\uD83C\uDF1F', color: '#FFCC00' },
-  '\uC5B4\uC384\uC2E0': { emoji: '\uD83D\uDDE1\uFE0F', color: '#E0A76B' },
-  '\uAD81\uC218': { emoji: '\uD83C\uDFF9', color: '#8FB8FF' },
-  '\uB9C8\uBC95\uC0AC': { emoji: '\uD83D\uDD2E', color: '#E8E0FF' },
+  '\uD0F1\uCEE4': { emoji: '\uD83D\uDEE1\uFE0F', color: fortuneTheme.colors.accentSecondary },
+  '\uB51C\uB7EC': { emoji: '\u2694\uFE0F', color: fortuneTheme.colors.error },
+  '\uD798\uB7EC': { emoji: '\uD83D\uDC9A', color: fortuneTheme.colors.success },
+  '\uC11C\uD3EC\uD130': { emoji: '\uD83C\uDF1F', color: fortuneTheme.colors.warning },
+  '\uC5B4\uC384\uC2E0': { emoji: '\uD83D\uDDE1\uFE0F', color: fortuneTheme.colors.accentTertiary },
+  '\uAD81\uC218': { emoji: '\uD83C\uDFF9', color: fortuneTheme.colors.accentSecondary },
+  '\uB9C8\uBC95\uC0AC': { emoji: '\uD83D\uDD2E', color: fortuneTheme.colors.chipLavender },
 };
 
 function gameRoleBadge(role: string): { emoji: string; color: string } {
   for (const [key, val] of Object.entries(GAME_ROLE_BADGES)) {
     if (role.includes(key)) return val;
   }
-  return { emoji: '\uD83C\uDFAD', color: '#8FB8FF' };
+  return { emoji: '\uD83C\uDFAD', color: fortuneTheme.colors.accentSecondary };
 }
 
 /* ------------------------------------------------------------------ */
@@ -1307,19 +1311,19 @@ function GameEnhanceResult(props: FortuneResultComponentProps) {
           <View style={{ flex: 1 }}>
             <Card
               style={{
-                backgroundColor: 'rgba(52, 199, 89, 0.12)',
+                backgroundColor: withAlpha(fortuneTheme.colors.success, 0.12),
                 borderWidth: 1,
-                borderColor: 'rgba(52, 199, 89, 0.3)',
+                borderColor: withAlpha(fortuneTheme.colors.success, 0.3),
                 alignItems: 'center',
                 gap: fortuneTheme.spacing.xs,
                 paddingVertical: fortuneTheme.spacing.md,
               }}
             >
               <AppText style={{ fontSize: 24, lineHeight: 30 }}>✨</AppText>
-              <AppText variant="labelMedium" color="#34C759">
+              <AppText variant="labelMedium" color={fortuneTheme.colors.success}>
                 골든타임
               </AppText>
-              <AppText variant="heading4" style={{ color: '#34C759' }}>
+              <AppText variant="heading4" style={{ color: fortuneTheme.colors.success }}>
                 {displayGoldenTime}
               </AppText>
             </Card>
@@ -1329,19 +1333,19 @@ function GameEnhanceResult(props: FortuneResultComponentProps) {
           <View style={{ flex: 1 }}>
             <Card
               style={{
-                backgroundColor: 'rgba(255, 59, 48, 0.12)',
+                backgroundColor: withAlpha(fortuneTheme.colors.error, 0.12),
                 borderWidth: 1,
-                borderColor: 'rgba(255, 59, 48, 0.3)',
+                borderColor: withAlpha(fortuneTheme.colors.error, 0.3),
                 alignItems: 'center',
                 gap: fortuneTheme.spacing.xs,
                 paddingVertical: fortuneTheme.spacing.md,
               }}
             >
               <AppText style={{ fontSize: 24, lineHeight: 30 }}>💀</AppText>
-              <AppText variant="labelMedium" color="#FF3B30">
+              <AppText variant="labelMedium" color={fortuneTheme.colors.error}>
                 위험시간
               </AppText>
-              <AppText variant="heading4" style={{ color: '#FF3B30' }}>
+              <AppText variant="heading4" style={{ color: fortuneTheme.colors.error }}>
                 {displayDangerTime}
               </AppText>
             </Card>
@@ -1383,7 +1387,7 @@ function GameEnhanceResult(props: FortuneResultComponentProps) {
                 width: 48,
                 height: 48,
                 borderRadius: fortuneTheme.radius.full,
-                backgroundColor: 'rgba(139, 123, 232, 0.2)',
+                backgroundColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.2),
                 alignItems: 'center',
                 justifyContent: 'center',
               }}

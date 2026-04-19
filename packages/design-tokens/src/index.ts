@@ -138,6 +138,9 @@ export const fortuneTypography = {
   labelMedium: { fontSize: 13, lineHeight: 18, fontWeight: '400' },
   labelSmall: { fontSize: 12, lineHeight: 16, fontWeight: '500' },
   caption: { fontSize: 11, lineHeight: 15, fontWeight: '400' },
+  // Ondo signature — uppercase kicker label for section accents (10px, 1.8 letter-spacing, 700).
+  // Use for result-card kickers, section headers, or small eyebrow labels.
+  kicker: { fontSize: 10, lineHeight: 14, fontWeight: '700', letterSpacing: 1.8 },
   calligraphyTitle: { fontSize: 24, lineHeight: 36, fontWeight: '700' },
   calligraphyBody: { fontSize: 17, lineHeight: 31, fontWeight: '400' },
   // Oracle voice — ZEN Serif typeface, used ONLY for fortune-telling content

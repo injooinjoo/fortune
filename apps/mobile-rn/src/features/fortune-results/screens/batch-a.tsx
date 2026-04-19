@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { AppText } from '../../../components/app-text';
 import { Card } from '../../../components/card';
 import { calculateManseryeok } from '../../../lib/manseryeok-local';
-import { fortuneTheme } from '../../../lib/theme';
+import { fortuneTheme, withAlpha } from '../../../lib/theme';
 import { useMobileAppState } from '../../../providers/mobile-app-state-provider';
 import { ManseryeokCard } from '../manseryeok-card';
 import { resultMetadataByKind } from '../mapping';
@@ -153,6 +153,7 @@ function _strArr(val: unknown): string[] {
     .filter(Boolean);
 }
 
+// 혈액형 카테고리 팔레트
 /* Category display config */
 const CATEGORY_META: Record<string, { label: string; emoji: string; color: string }> = {
   love:   { label: '연애', emoji: '💕', color: '#F06292' },
@@ -365,11 +366,11 @@ function BloodTypeResult(props: FortuneResultComponentProps) {
 
 /** Element display color helper */
 const ELEMENT_COLORS: Record<string, string> = {
-  '목': '#4CAF50',
-  '화': '#F44336',
-  '토': '#FF9800',
-  '금': '#FFD700',
-  '수': '#2196F3',
+  '목': fortuneTheme.colors.elemental.wood,
+  '화': fortuneTheme.colors.elemental.fire,
+  '토': fortuneTheme.colors.elemental.earth,
+  '금': fortuneTheme.colors.elemental.metal,
+  '수': fortuneTheme.colors.elemental.water,
 };
 
 function elementColor(element: string): string {
@@ -555,7 +556,7 @@ function ZodiacAnimalResult(props: FortuneResultComponentProps) {
         </AppText>
         {overallScore > 0 ? (
           <View style={{
-            backgroundColor: fortuneTheme.colors.ctaBackground + '20',
+            backgroundColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.12),
             borderRadius: fortuneTheme.radius.full,
             paddingHorizontal: 16,
             paddingVertical: 6,
@@ -792,12 +793,18 @@ function elementEmoji(element: string): string {
 /** Score-to-color for monthly timeline */
 function monthScoreColor(score: number): string {
   if (score >= 85) return '#4CAF50';
-  if (score >= 70) return '#8FB8FF';
+  if (score >= 70) return fortuneTheme.colors.accentSecondary;
   if (score >= 55) return '#FFD54F';
   return '#FF8A65';
 }
 
 const QUARTER_LABELS = ['1분기 (1~3월)', '2분기 (4~6월)', '3분기 (7~9월)', '4분기 (10~12월)'];
+
+/** 새해 실행 계획 팔레트 — 즉시/단기/장기 구분용 */
+const NEW_YEAR_PALETTE = {
+  immediate: '#F06292',  // 즉시 (pink)
+  longTerm: '#CE93D8',   // 장기 (lavender)
+} as const;
 
 function NewYearResult(props: FortuneResultComponentProps) {
   const result = useResultData(props.payload);
@@ -922,7 +929,7 @@ function NewYearResult(props: FortuneResultComponentProps) {
                 borderColor: scoreColor,
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: `${scoreColor}15`,
+                backgroundColor: withAlpha(scoreColor, 0.08),
               }}
             >
               <AppText style={{ fontSize: 24, fontWeight: '800', color: scoreColor }}>
@@ -1125,7 +1132,7 @@ function NewYearResult(props: FortuneResultComponentProps) {
                   {/* Energy + recommended/avoid */}
                   <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 2 }}>
                     {m.energyLevel ? (
-                      <View style={{ backgroundColor: `${color}20`, borderRadius: fortuneTheme.radius.chip, paddingHorizontal: 8, paddingVertical: 2 }}>
+                      <View style={{ backgroundColor: withAlpha(color, 0.12), borderRadius: fortuneTheme.radius.chip, paddingHorizontal: 8, paddingVertical: 2 }}>
                         <AppText variant="caption" color={color}>{m.energyLevel}</AppText>
                       </View>
                     ) : null}
@@ -1173,7 +1180,7 @@ function NewYearResult(props: FortuneResultComponentProps) {
                     width: 36,
                     height: 36,
                     borderRadius: 18,
-                    backgroundColor: fortuneTheme.colors.ctaBackground + '25',
+                    backgroundColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.15),
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
@@ -1202,7 +1209,7 @@ function NewYearResult(props: FortuneResultComponentProps) {
         <SectionCard title="실행 계획">
           {immediateActions.length > 0 ? (
             <View style={{ marginBottom: fortuneTheme.spacing.sm }}>
-              <AppText variant="labelLarge" color="#F06292" style={{ marginBottom: 4 }}>
+              <AppText variant="labelLarge" color={NEW_YEAR_PALETTE.immediate} style={{ marginBottom: 4 }}>
                 즉시 실행
               </AppText>
               <BulletList items={immediateActions} />
@@ -1210,7 +1217,7 @@ function NewYearResult(props: FortuneResultComponentProps) {
           ) : null}
           {shortTermActions.length > 0 ? (
             <View style={{ marginBottom: fortuneTheme.spacing.sm }}>
-              <AppText variant="labelLarge" color="#8FB8FF" style={{ marginBottom: 4 }}>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.accentSecondary} style={{ marginBottom: 4 }}>
                 단기 계획
               </AppText>
               <BulletList items={shortTermActions} />
@@ -1218,7 +1225,7 @@ function NewYearResult(props: FortuneResultComponentProps) {
           ) : null}
           {longTermActions.length > 0 ? (
             <View>
-              <AppText variant="labelLarge" color="#CE93D8" style={{ marginBottom: 4 }}>
+              <AppText variant="labelLarge" color={NEW_YEAR_PALETTE.longTerm} style={{ marginBottom: 4 }}>
                 장기 계획
               </AppText>
               <BulletList items={longTermActions} />

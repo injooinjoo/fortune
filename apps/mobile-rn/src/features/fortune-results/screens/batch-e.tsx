@@ -2,7 +2,7 @@ import { View } from 'react-native';
 
 import { AppText } from '../../../components/app-text';
 import { Card } from '../../../components/card';
-import { fortuneTheme } from '../../../lib/theme';
+import { fortuneTheme, withAlpha } from '../../../lib/theme';
 import { resultMetadataByKind } from '../mapping';
 import {
   BulletList,
@@ -56,6 +56,19 @@ function strArr(val: unknown): string[] {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Emotion color palette (used by ExLoverResult + related screens)    */
+/* ------------------------------------------------------------------ */
+
+const EMOTION_PALETTE = {
+  obsession: '#FF6B9D', // 집착
+  avoidance: '#FF6B6B', // 회피
+  anxiety: '#8B7BE8',   // 불안
+  anger: '#FF3B30',     // 분노
+  sadness: '#8FB8FF',   // 슬픔
+  longing: '#E0A76B',   // 그리움
+} as const;
+
+/* ------------------------------------------------------------------ */
 /*  1. ExamResult                                                      */
 /* ------------------------------------------------------------------ */
 
@@ -64,19 +77,19 @@ function strArr(val: unknown): string[] {
 function gradeColor(grade: string): string {
   const g = grade.toUpperCase().replace(/\s/g, '');
   if (g.startsWith('A+')) return '#FFD700';
-  if (g.startsWith('A')) return '#34C759';
-  if (g.startsWith('B+')) return '#8FB8FF';
-  if (g.startsWith('B')) return '#8FB8FF';
-  if (g.startsWith('C+')) return '#FFCC00';
-  if (g.startsWith('C')) return '#FFCC00';
+  if (g.startsWith('A')) return fortuneTheme.colors.success;
+  if (g.startsWith('B+')) return fortuneTheme.colors.accentSecondary;
+  if (g.startsWith('B')) return fortuneTheme.colors.accentSecondary;
+  if (g.startsWith('C+')) return fortuneTheme.colors.warning;
+  if (g.startsWith('C')) return fortuneTheme.colors.warning;
   return fortuneTheme.colors.accentSecondary;
 }
 
 function gaugeColor(pct: number): string {
-  if (pct >= 80) return '#34C759';
-  if (pct >= 60) return '#8FB8FF';
-  if (pct >= 40) return '#FFCC00';
-  return '#FF3B30';
+  if (pct >= 80) return fortuneTheme.colors.success;
+  if (pct >= 60) return fortuneTheme.colors.accentSecondary;
+  if (pct >= 40) return fortuneTheme.colors.warning;
+  return fortuneTheme.colors.error;
 }
 
 function spiritAnimalEmoji(name: string): string {
@@ -260,9 +273,9 @@ function ExamResult(props: FortuneResultComponentProps) {
       <SectionCard title="시험 스탯 레이더" description="오늘의 시험 관련 에너지 수치입니다.">
         <View style={{ gap: fortuneTheme.spacing.md }}>
           {([
-            { icon: '🎯', label: '직감력', value: displayIntuition, color: '#FF6B6B', desc: '답이 보이는 감각' },
-            { icon: '🛡️', label: '정신방어', value: displayDefense, color: '#8FB8FF', desc: '압박 속 집중 유지력' },
-            { icon: '⚡', label: '기억가속', value: displayMemory, color: '#FFCC00', desc: '암기와 떠올림 속도' },
+            { icon: '🎯', label: '직감력', value: displayIntuition, color: EMOTION_PALETTE.avoidance, desc: '답이 보이는 감각' },
+            { icon: '🛡️', label: '정신방어', value: displayDefense, color: fortuneTheme.colors.accentSecondary, desc: '압박 속 집중 유지력' },
+            { icon: '⚡', label: '기억가속', value: displayMemory, color: fortuneTheme.colors.warning, desc: '암기와 떠올림 속도' },
           ] as const).map((stat) => {
             const clamped = Math.max(0, Math.min(100, stat.value));
             return (
@@ -398,9 +411,9 @@ function ExamResult(props: FortuneResultComponentProps) {
               style={{
                 color:
                   dDayNumber <= 0
-                    ? '#FF3B30'
+                    ? fortuneTheme.colors.error
                     : dDayNumber <= 3
-                      ? '#FFCC00'
+                      ? fortuneTheme.colors.warning
                       : fortuneTheme.colors.accentSecondary,
               }}
             >
@@ -503,12 +516,12 @@ function BlindDateResult(props: FortuneResultComponentProps) {
   // Score color + label
   const scoreColor =
     mainScore >= 90
-      ? '#34C759'
+      ? fortuneTheme.colors.success
       : mainScore >= 70
-        ? '#8B7BE8'
+        ? fortuneTheme.colors.ctaBackground
         : mainScore >= 50
-          ? '#FFCC00'
-          : '#FF3B30';
+          ? fortuneTheme.colors.warning
+          : fortuneTheme.colors.error;
   const scoreLabel =
     mainScore >= 90
       ? '완벽한 조건!'
@@ -640,7 +653,7 @@ function BlindDateResult(props: FortuneResultComponentProps) {
               borderColor: scoreColor,
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: `${scoreColor}15`,
+              backgroundColor: withAlpha(scoreColor, 0.08),
             }}
           >
             <AppText style={{ fontSize: 36, fontWeight: '800', color: scoreColor }}>
@@ -687,13 +700,13 @@ function BlindDateResult(props: FortuneResultComponentProps) {
                   alignItems: 'center',
                   gap: fortuneTheme.spacing.sm,
                   backgroundColor: [
-                    '#8B7BE820',
-                    '#34C75920',
-                    '#FFCC0020',
-                    '#8FB8FF20',
-                    '#E0A76B20',
-                    '#FF3B3020',
-                    '#8B7BE820',
+                    withAlpha(fortuneTheme.colors.ctaBackground, 0.12),
+                    withAlpha(fortuneTheme.colors.success, 0.12),
+                    withAlpha(fortuneTheme.colors.warning, 0.12),
+                    withAlpha(fortuneTheme.colors.accentSecondary, 0.12),
+                    withAlpha(fortuneTheme.colors.accentTertiary, 0.12),
+                    withAlpha(fortuneTheme.colors.error, 0.12),
+                    withAlpha(fortuneTheme.colors.ctaBackground, 0.12),
                   ][i % 7],
                   borderRadius: fortuneTheme.radius.md,
                   paddingVertical: fortuneTheme.spacing.sm,
@@ -732,7 +745,7 @@ function BlindDateResult(props: FortuneResultComponentProps) {
           {convoOpeners.length > 0 && (
             <View
               style={{
-                backgroundColor: '#8B7BE815',
+                backgroundColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.08),
                 borderRadius: fortuneTheme.radius.md,
                 padding: fortuneTheme.spacing.md,
                 gap: fortuneTheme.spacing.xs,
@@ -757,7 +770,7 @@ function BlindDateResult(props: FortuneResultComponentProps) {
           {convoTopics.length > 0 && (
             <View
               style={{
-                backgroundColor: '#34C75915',
+                backgroundColor: withAlpha(fortuneTheme.colors.success, 0.08),
                 borderRadius: fortuneTheme.radius.md,
                 padding: fortuneTheme.spacing.md,
                 gap: fortuneTheme.spacing.sm,
@@ -774,15 +787,15 @@ function BlindDateResult(props: FortuneResultComponentProps) {
           {convoAvoid.length > 0 && (
             <View
               style={{
-                backgroundColor: '#FF3B3015',
+                backgroundColor: withAlpha(fortuneTheme.colors.error, 0.08),
                 borderRadius: fortuneTheme.radius.md,
                 padding: fortuneTheme.spacing.md,
                 gap: fortuneTheme.spacing.xs,
                 borderLeftWidth: 3,
-                borderLeftColor: '#FF3B30',
+                borderLeftColor: fortuneTheme.colors.error,
               }}
             >
-              <AppText variant="labelLarge" style={{ color: '#FF3B30' }}>
+              <AppText variant="labelLarge" style={{ color: fortuneTheme.colors.error }}>
                 {'\uD83D\uDEAB \uD53C\uD574\uC57C \uD560 \uC8FC\uC81C'}
               </AppText>
               {convoAvoid.map((topic, i) => (
@@ -809,19 +822,19 @@ function BlindDateResult(props: FortuneResultComponentProps) {
             emoji: '\uD83D\uDE0A',
             label: '\uD638\uAC10\uB3C4',
             value: likability,
-            color: '#34C759',
+            color: fortuneTheme.colors.success,
           },
           {
             emoji: '\uD83E\uDD1D',
             label: '\uC2E0\uB8B0\uAC10',
             value: trust,
-            color: '#8B7BE8',
+            color: fortuneTheme.colors.ctaBackground,
           },
           {
             emoji: '\u2728',
             label: '\uB9E4\uB825\uB3C4',
             value: charm,
-            color: '#FFCC00',
+            color: fortuneTheme.colors.warning,
           },
         ].map((meter) => (
           <View key={meter.label} style={{ gap: fortuneTheme.spacing.xs }}>
@@ -864,12 +877,12 @@ function BlindDateResult(props: FortuneResultComponentProps) {
       {hasRedFlags && (
         <Card
           style={{
-            backgroundColor: '#FF3B3010',
-            borderColor: '#FF3B3030',
+            backgroundColor: withAlpha(fortuneTheme.colors.error, 0.06),
+            borderColor: withAlpha(fortuneTheme.colors.error, 0.18),
             gap: fortuneTheme.spacing.sm,
           }}
         >
-          <AppText variant="heading4" style={{ color: '#FF3B30' }}>
+          <AppText variant="heading4" style={{ color: fortuneTheme.colors.error }}>
             {'\u26A0\uFE0F \uC704\uD5D8 \uC2E0\uD638 \uCCB4\uD06C\uB9AC\uC2A4\uD2B8'}
           </AppText>
           {redFlagItems.map((flag, i) => (
@@ -879,7 +892,7 @@ function BlindDateResult(props: FortuneResultComponentProps) {
                 flexDirection: 'row',
                 alignItems: 'flex-start',
                 gap: fortuneTheme.spacing.sm,
-                backgroundColor: '#FF3B3015',
+                backgroundColor: withAlpha(fortuneTheme.colors.error, 0.08),
                 borderRadius: fortuneTheme.radius.md,
                 padding: fortuneTheme.spacing.sm,
               }}
@@ -1036,9 +1049,9 @@ function AvoidPeopleResult(props: FortuneResultComponentProps) {
     return '\uD83D\uDFE2';
   }
   function severityBorderColor(sev: number): string {
-    if (sev >= 80) return '#FF3B30';
-    if (sev >= 50) return '#FFCC00';
-    return '#34C759';
+    if (sev >= 80) return fortuneTheme.colors.error;
+    if (sev >= 50) return fortuneTheme.colors.warning;
+    return fortuneTheme.colors.success;
   }
 
   return (
@@ -1060,7 +1073,7 @@ function AvoidPeopleResult(props: FortuneResultComponentProps) {
             height: 120,
             borderRadius: fortuneTheme.radius.full,
             borderWidth: 5,
-            borderColor: '#8FB8FF',
+            borderColor: fortuneTheme.colors.accentSecondary,
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: 'rgba(143,184,255,0.10)',
@@ -1069,7 +1082,7 @@ function AvoidPeopleResult(props: FortuneResultComponentProps) {
           <AppText style={{ fontSize: 28, lineHeight: 36 }}>{'\uD83D\uDEE1\uFE0F'}</AppText>
           <AppText
             variant="heading2"
-            style={{ color: '#8FB8FF' }}
+            style={{ color: fortuneTheme.colors.accentSecondary }}
           >
             {shieldScore}
           </AppText>
@@ -1134,7 +1147,7 @@ function AvoidPeopleResult(props: FortuneResultComponentProps) {
                 {sig.category ? (
                   <View
                     style={{
-                      backgroundColor: `${severityBorderColor(sig.severity)}20`,
+                      backgroundColor: withAlpha(severityBorderColor(sig.severity), 0.12),
                       paddingHorizontal: fortuneTheme.spacing.sm,
                       paddingVertical: 2,
                       borderRadius: fortuneTheme.radius.full,
@@ -1173,7 +1186,7 @@ function AvoidPeopleResult(props: FortuneResultComponentProps) {
                 <AppText style={{ fontSize: 18, lineHeight: 22 }}>{'\uD83D\uDD0B'}</AppText>
                 <AppText variant="heading4">에너지 방어력</AppText>
               </View>
-              <AppText variant="labelLarge" color="#8FB8FF">
+              <AppText variant="labelLarge" color={fortuneTheme.colors.accentSecondary}>
                 {shieldScore}%
               </AppText>
             </View>
@@ -1187,7 +1200,7 @@ function AvoidPeopleResult(props: FortuneResultComponentProps) {
             >
               <View
                 style={{
-                  backgroundColor: shieldScore >= 70 ? '#34C759' : shieldScore >= 40 ? '#FFCC00' : '#FF3B30',
+                  backgroundColor: shieldScore >= 70 ? fortuneTheme.colors.success : shieldScore >= 40 ? fortuneTheme.colors.warning : fortuneTheme.colors.error,
                   borderRadius: fortuneTheme.radius.full,
                   height: '100%',
                   width: `${Math.min(100, shieldScore)}%`,
@@ -1238,14 +1251,14 @@ function AvoidPeopleResult(props: FortuneResultComponentProps) {
               style={{
                 backgroundColor: 'rgba(255,59,48,0.08)',
                 borderWidth: 1,
-                borderColor: '#FF3B30',
+                borderColor: fortuneTheme.colors.error,
                 alignItems: 'center',
                 gap: fortuneTheme.spacing.xs,
                 paddingVertical: fortuneTheme.spacing.md,
               }}
             >
               <AppText style={{ fontSize: 22, lineHeight: 28 }}>{'\uD83D\uDD34'}</AppText>
-              <AppText variant="heading3" color="#FF6B6B">
+              <AppText variant="heading3" color={EMOTION_PALETTE.avoidance}>
                 {peakRiskTime || '오후 4시'}
               </AppText>
               <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
@@ -1259,14 +1272,14 @@ function AvoidPeopleResult(props: FortuneResultComponentProps) {
               style={{
                 backgroundColor: 'rgba(52,199,89,0.08)',
                 borderWidth: 1,
-                borderColor: '#34C759',
+                borderColor: fortuneTheme.colors.success,
                 alignItems: 'center',
                 gap: fortuneTheme.spacing.xs,
                 paddingVertical: fortuneTheme.spacing.md,
               }}
             >
               <AppText style={{ fontSize: 22, lineHeight: 28 }}>{'\uD83D\uDFE2'}</AppText>
-              <AppText variant="heading3" color="#34C759">
+              <AppText variant="heading3" color={fortuneTheme.colors.success}>
                 {safeTime || '오전 10시'}
               </AppText>
               <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
@@ -1298,13 +1311,13 @@ function AvoidPeopleResult(props: FortuneResultComponentProps) {
               style={{
                 backgroundColor: fortuneTheme.colors.surfaceSecondary,
                 borderLeftWidth: 4,
-                borderLeftColor: '#8FB8FF',
+                borderLeftColor: fortuneTheme.colors.accentSecondary,
                 gap: fortuneTheme.spacing.xs,
               }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: fortuneTheme.spacing.xs }}>
                 <AppText style={{ fontSize: 16, lineHeight: 20 }}>{'\uD83D\uDEE1\uFE0F'}</AppText>
-                <AppText variant="labelLarge" color="#8FB8FF">
+                <AppText variant="labelLarge" color={fortuneTheme.colors.accentSecondary}>
                   방어 {index + 1}
                 </AppText>
               </View>
@@ -1424,12 +1437,12 @@ function ExLoverResult(props: FortuneResultComponentProps) {
     : (statItems[0]?.value ?? 68);
   const thermoColor =
     thermoScore >= 80
-      ? '#FF6B9D'
+      ? EMOTION_PALETTE.obsession
       : thermoScore >= 60
-        ? '#E0A76B'
+        ? fortuneTheme.colors.accentTertiary
         : thermoScore >= 40
-          ? '#FFCC00'
-          : '#8FB8FF';
+          ? fortuneTheme.colors.warning
+          : fortuneTheme.colors.accentSecondary;
   const thermoLabel =
     thermoScore >= 80
       ? '가능성 높음'
@@ -1443,19 +1456,19 @@ function ExLoverResult(props: FortuneResultComponentProps) {
   const patternTypeBadge = (type: string) => {
     const t = type.toLowerCase();
     if (t.includes('집착') || t.includes('obsess'))
-      return { label: '집착', color: '#FF3B30', bg: '#FF3B3020' };
+      return { label: '집착', color: fortuneTheme.colors.error, bg: withAlpha(fortuneTheme.colors.error, 0.12) };
     if (t.includes('회피') || t.includes('avoid'))
-      return { label: '회피', color: '#8FB8FF', bg: '#8FB8FF20' };
+      return { label: '회피', color: fortuneTheme.colors.accentSecondary, bg: withAlpha(fortuneTheme.colors.accentSecondary, 0.12) };
     if (t.includes('불안') || t.includes('anxi'))
-      return { label: '불안', color: '#FFCC00', bg: '#FFCC0020' };
+      return { label: '불안', color: fortuneTheme.colors.warning, bg: withAlpha(fortuneTheme.colors.warning, 0.12) };
     if (t.includes('분노') || t.includes('anger'))
-      return { label: '분노', color: '#FF6B6B', bg: '#FF6B6B20' };
+      return { label: '분노', color: EMOTION_PALETTE.avoidance, bg: withAlpha(EMOTION_PALETTE.avoidance, 0.12) };
     if (t.includes('슬픔') || t.includes('sad'))
-      return { label: '슬픔', color: '#8B7BE8', bg: '#8B7BE820' };
+      return { label: '슬픔', color: fortuneTheme.colors.ctaBackground, bg: withAlpha(fortuneTheme.colors.ctaBackground, 0.12) };
     if (t.includes('그리움') || t.includes('miss'))
-      return { label: '그리움', color: '#E0A76B', bg: '#E0A76B20' };
+      return { label: '그리움', color: fortuneTheme.colors.accentTertiary, bg: withAlpha(fortuneTheme.colors.accentTertiary, 0.12) };
     if (type)
-      return { label: type, color: '#8FB8FF', bg: '#8FB8FF20' };
+      return { label: type, color: fortuneTheme.colors.accentSecondary, bg: withAlpha(fortuneTheme.colors.accentSecondary, 0.12) };
     return null;
   };
 
@@ -1559,10 +1572,10 @@ function ExLoverResult(props: FortuneResultComponentProps) {
             {/* Scale labels */}
             <View style={{ gap: 2 }}>
               {[
-                { label: '80+', desc: '가능성 높음', color: '#FF6B9D' },
-                { label: '60-79', desc: '조정하면 가능', color: '#E0A76B' },
-                { label: '40-59', desc: '시간 필요', color: '#FFCC00' },
-                { label: '~39', desc: '거리 유지', color: '#8FB8FF' },
+                { label: '80+', desc: '가능성 높음', color: EMOTION_PALETTE.obsession },
+                { label: '60-79', desc: '조정하면 가능', color: fortuneTheme.colors.accentTertiary },
+                { label: '40-59', desc: '시간 필요', color: fortuneTheme.colors.warning },
+                { label: '~39', desc: '거리 유지', color: fortuneTheme.colors.accentSecondary },
               ].map((s) => (
                 <View key={s.label} style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                   <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: s.color }} />
@@ -1591,12 +1604,12 @@ function ExLoverResult(props: FortuneResultComponentProps) {
               const badge = patternTypeBadge(patType);
               const intensityColor =
                 patIntensity >= 80
-                  ? '#FF3B30'
+                  ? fortuneTheme.colors.error
                   : patIntensity >= 60
-                    ? '#E0A76B'
+                    ? fortuneTheme.colors.accentTertiary
                     : patIntensity >= 40
-                      ? '#FFCC00'
-                      : '#8FB8FF';
+                      ? fortuneTheme.colors.warning
+                      : fortuneTheme.colors.accentSecondary;
 
               return (
                 <Card
@@ -1685,9 +1698,9 @@ function ExLoverResult(props: FortuneResultComponentProps) {
       {coreIssue ? (
         <Card
           style={{
-            backgroundColor: '#FF3B3008',
+            backgroundColor: withAlpha(fortuneTheme.colors.error, 0.05),
             borderLeftWidth: 4,
-            borderLeftColor: '#FF6B9D',
+            borderLeftColor: EMOTION_PALETTE.obsession,
             gap: fortuneTheme.spacing.sm,
           }}
         >
@@ -1737,7 +1750,7 @@ function ExLoverResult(props: FortuneResultComponentProps) {
               }}
             >
               {commPatterns.map((pattern, i) => {
-                const pillColors = ['#8B7BE8', '#FF6B9D', '#E0A76B', '#8FB8FF', '#34C759', '#FFCC00'];
+                const pillColors = [fortuneTheme.colors.ctaBackground, EMOTION_PALETTE.obsession, fortuneTheme.colors.accentTertiary, fortuneTheme.colors.accentSecondary, fortuneTheme.colors.success, fortuneTheme.colors.warning];
                 const color = pillColors[i % pillColors.length]!;
                 return (
                   <View
@@ -1751,7 +1764,7 @@ function ExLoverResult(props: FortuneResultComponentProps) {
                       paddingHorizontal: fortuneTheme.spacing.md,
                       paddingVertical: fortuneTheme.spacing.xs,
                       borderWidth: 1,
-                      borderColor: `${color}35`,
+                      borderColor: withAlpha(color, 0.2),
                     }}
                   >
                     <AppText style={{ fontSize: 12 }}>💬</AppText>
@@ -1780,16 +1793,16 @@ function ExLoverResult(props: FortuneResultComponentProps) {
         <View style={{ minWidth: '47%', flexGrow: 1, flexBasis: '47%' }}>
           <Card
             style={{
-              backgroundColor: '#34C75910',
+              backgroundColor: withAlpha(fortuneTheme.colors.success, 0.06),
               borderWidth: 1,
-              borderColor: '#34C75925',
+              borderColor: withAlpha(fortuneTheme.colors.success, 0.15),
               gap: fortuneTheme.spacing.sm,
             }}
           >
-            <AppText variant="heading4" style={{ color: '#34C759' }}>추천 행동</AppText>
+            <AppText variant="heading4" style={{ color: fortuneTheme.colors.success }}>추천 행동</AppText>
             {highlights.map((item, i) => (
               <View key={`do-${i}`} style={{ flexDirection: 'row', gap: fortuneTheme.spacing.xs }}>
-                <AppText style={{ color: '#34C759', fontSize: 12 }}>{'●'}</AppText>
+                <AppText style={{ color: fortuneTheme.colors.success, fontSize: 12 }}>{'●'}</AppText>
                 <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary} style={{ flex: 1 }}>
                   {item}
                 </AppText>
@@ -1800,16 +1813,16 @@ function ExLoverResult(props: FortuneResultComponentProps) {
         <View style={{ minWidth: '47%', flexGrow: 1, flexBasis: '47%' }}>
           <Card
             style={{
-              backgroundColor: '#FF3B3010',
+              backgroundColor: withAlpha(fortuneTheme.colors.error, 0.06),
               borderWidth: 1,
-              borderColor: '#FF3B3025',
+              borderColor: withAlpha(fortuneTheme.colors.error, 0.15),
               gap: fortuneTheme.spacing.sm,
             }}
           >
-            <AppText variant="heading4" style={{ color: '#FF3B30' }}>주의 행동</AppText>
+            <AppText variant="heading4" style={{ color: fortuneTheme.colors.error }}>주의 행동</AppText>
             {warnings.map((item, i) => (
               <View key={`dont-${i}`} style={{ flexDirection: 'row', gap: fortuneTheme.spacing.xs }}>
-                <AppText style={{ color: '#FF3B30', fontSize: 12 }}>{'●'}</AppText>
+                <AppText style={{ color: fortuneTheme.colors.error, fontSize: 12 }}>{'●'}</AppText>
                 <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary} style={{ flex: 1 }}>
                   {item}
                 </AppText>
@@ -1832,11 +1845,11 @@ function ExLoverResult(props: FortuneResultComponentProps) {
                   flexDirection: 'row',
                   alignItems: 'flex-start',
                   gap: fortuneTheme.spacing.sm,
-                  backgroundColor: '#34C75910',
+                  backgroundColor: withAlpha(fortuneTheme.colors.success, 0.06),
                   borderRadius: fortuneTheme.radius.md,
                   padding: fortuneTheme.spacing.md,
                   borderWidth: 1,
-                  borderColor: '#34C75920',
+                  borderColor: withAlpha(fortuneTheme.colors.success, 0.12),
                 }}
               >
                 <AppText style={{ fontSize: 20, lineHeight: 26 }}>🌱</AppText>
@@ -2205,7 +2218,7 @@ function YearlyEncounterResult(props: FortuneResultComponentProps) {
               const compType = str(c.type ?? c.name ?? c.label, `유형 ${index + 1}`);
               const compScore = num(c.score ?? c.compatibility ?? c.level, 0);
               const compDesc = str(c.description ?? c.detail ?? c.note);
-              const barColor = compScore >= 80 ? '#E040FB' : compScore >= 60 ? '#8FB8FF' : '#FFCC00';
+              const barColor = compScore >= 80 ? '#E040FB' : compScore >= 60 ? fortuneTheme.colors.accentSecondary : fortuneTheme.colors.warning;
 
               return (
                 <Card

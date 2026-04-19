@@ -2,7 +2,7 @@ import { Image, View } from 'react-native';
 
 import { AppText } from '../../../components/app-text';
 import { Card } from '../../../components/card';
-import { fortuneTheme } from '../../../lib/theme';
+import { fortuneTheme, withAlpha } from '../../../lib/theme';
 import { resultMetadataByKind } from '../mapping';
 import {
   BulletList,
@@ -54,6 +54,22 @@ function strArr(val: unknown): string[] {
     .map((v) => str(v))
     .filter(Boolean);
 }
+
+/* ------------------------------------------------------------------ */
+/*  Module-level palettes (centralized)                                */
+/* ------------------------------------------------------------------ */
+
+// 가족 구성원 아바타 팔레트
+const FAMILY_MEMBER_COLORS = ['#FF8A80', '#82B1FF', '#B9F6CA', '#FFE57F', '#EA80FC', '#84FFFF'];
+
+// 소원(Wish) 골드 컬러 — 별/실현도/매니페스테이션 배지 전반에 사용
+const WISH_GOLD = '#FFD700';
+
+// 소원 행운 타일 배경/보더 팔레트
+const WISH_LUCKY_PALETTE = {
+  bg: ['#FFF8E1', '#E8F5E9', '#E3F2FD', '#FFF3E0'],
+  border: [WISH_GOLD, '#66BB6A', '#42A5F5', '#FF9800'],
+} as const;
 
 /* ------------------------------------------------------------------ */
 /*  1. FamilyResult                                                    */
@@ -140,9 +156,6 @@ function FamilyResult(props: FortuneResultComponentProps) {
   const gaugeScore = rawHarmonyScore > 0 ? rawHarmonyScore : (statItems[0]?.value ?? 80);
   const gaugeLabel = rawHarmonyScore > 0 ? '가족 화합 지수' : '가족 흐름';
 
-  /* ---- Member avatar color palette ---- */
-  const MEMBER_COLORS = ['#FF8A80', '#82B1FF', '#B9F6CA', '#FFE57F', '#EA80FC', '#84FFFF'];
-
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
       {/* ============================================================ */}
@@ -201,7 +214,7 @@ function FamilyResult(props: FortuneResultComponentProps) {
               const memberRelation = str(m.role, str(m.relation, str(m.relationship, '')));
               const memberScore = num(m.score ?? m.compatibility ?? m.harmony, 80);
               const memberNote = str(m.note, str(m.description, str(m.advice, '')));
-              const avatarColor = MEMBER_COLORS[index % MEMBER_COLORS.length];
+              const avatarColor = FAMILY_MEMBER_COLORS[index % FAMILY_MEMBER_COLORS.length];
 
               return (
                 <Card
@@ -233,7 +246,7 @@ function FamilyResult(props: FortuneResultComponentProps) {
                         {memberRelation ? (
                           <View
                             style={{
-                              backgroundColor: `${avatarColor}30`,
+                              backgroundColor: withAlpha(avatarColor, 0.18),
                               paddingHorizontal: fortuneTheme.spacing.sm,
                               paddingVertical: 2,
                               borderRadius: fortuneTheme.radius.full,
@@ -296,7 +309,7 @@ function FamilyResult(props: FortuneResultComponentProps) {
         <SectionCard title="가족 구성원" description="가까운 가족 관계의 흐름입니다.">
           <View style={{ gap: fortuneTheme.spacing.sm }}>
             {statItems.map((item, index) => {
-              const avatarColor = MEMBER_COLORS[index % MEMBER_COLORS.length];
+              const avatarColor = FAMILY_MEMBER_COLORS[index % FAMILY_MEMBER_COLORS.length];
               return (
                 <Card
                   key={`stat-member-${index}`}
@@ -921,16 +934,16 @@ function WishResult(props: FortuneResultComponentProps) {
             height: 120,
             borderRadius: fortuneTheme.radius.full,
             borderWidth: 5,
-            borderColor: '#FFD700',
+            borderColor: WISH_GOLD,
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: 'rgba(255,215,0,0.08)',
+            backgroundColor: withAlpha(WISH_GOLD, 0.08),
           }}
         >
           <AppText style={{ fontSize: 28, lineHeight: 36 }}>⭐</AppText>
           <AppText
             variant="heading2"
-            style={{ color: '#FFD700' }}
+            style={{ color: WISH_GOLD }}
           >
             {wishGaugeScore}
           </AppText>
@@ -962,7 +975,7 @@ function WishResult(props: FortuneResultComponentProps) {
           >
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <AppText variant="heading4">{heroTitle}</AppText>
-              <AppText variant="labelLarge" color="#FFD700">
+              <AppText variant="labelLarge" color={WISH_GOLD}>
                 {wishGaugeScore}%
               </AppText>
             </View>
@@ -976,7 +989,7 @@ function WishResult(props: FortuneResultComponentProps) {
             >
               <View
                 style={{
-                  backgroundColor: '#FFD700',
+                  backgroundColor: WISH_GOLD,
                   borderRadius: fortuneTheme.radius.full,
                   height: '100%',
                   width: `${Math.min(100, wishGaugeScore)}%`,
@@ -993,7 +1006,7 @@ function WishResult(props: FortuneResultComponentProps) {
               style={{
                 backgroundColor: fortuneTheme.colors.backgroundTertiary,
                 borderLeftWidth: 4,
-                borderLeftColor: '#FFD700',
+                borderLeftColor: WISH_GOLD,
                 gap: fortuneTheme.spacing.xs,
               }}
             >
@@ -1019,15 +1032,15 @@ function WishResult(props: FortuneResultComponentProps) {
               <Card
                 key={`obstacle-${index}`}
                 style={{
-                  backgroundColor: 'rgba(255,59,48,0.08)',
+                  backgroundColor: withAlpha(fortuneTheme.colors.error, 0.08),
                   borderLeftWidth: 4,
-                  borderLeftColor: '#FF3B30',
+                  borderLeftColor: fortuneTheme.colors.error,
                   gap: fortuneTheme.spacing.xs,
                 }}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: fortuneTheme.spacing.xs }}>
                   <AppText style={{ fontSize: 16, lineHeight: 20 }}>⚠️</AppText>
-                  <AppText variant="labelLarge" color="#FF6B6B">
+                  <AppText variant="labelLarge" color={fortuneTheme.colors.error}>
                     장애물 {index + 1}
                   </AppText>
                 </View>
@@ -1063,7 +1076,7 @@ function WishResult(props: FortuneResultComponentProps) {
                     width: 32,
                     height: 32,
                     borderRadius: fortuneTheme.radius.full,
-                    backgroundColor: '#FFD700',
+                    backgroundColor: WISH_GOLD,
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
@@ -1097,8 +1110,8 @@ function WishResult(props: FortuneResultComponentProps) {
                 { label: '행운 시간', value: '오후 3시' },
               ]
           ).map((tile, index) => {
-            const tileColors = ['#FFF8E1', '#E8F5E9', '#E3F2FD', '#FFF3E0'];
-            const tileBorderColors = ['#FFD700', '#66BB6A', '#42A5F5', '#FF9800'];
+            const tileColors = WISH_LUCKY_PALETTE.bg;
+            const tileBorderColors = WISH_LUCKY_PALETTE.border;
             return (
               <View
                 key={`lucky-${index}`}

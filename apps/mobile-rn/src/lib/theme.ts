@@ -16,6 +16,43 @@ export function romanceTintBackground(score: number): string {
   return `rgb(${r}, ${g}, ${b})`;
 }
 
+/**
+ * Convert a hex color (`#RRGGBB` or `#RGB`) to `rgba(r,g,b,a)`.
+ * Replaces inline tint hacks like `${color}15`, `${color}20` across result screens.
+ * Falls back to the input string if it's not a recognizable hex.
+ */
+export function withAlpha(color: string, opacity: number): string {
+  const alpha = Math.max(0, Math.min(1, opacity));
+  const trimmed = color.trim();
+
+  if (!trimmed.startsWith('#')) {
+    return color;
+  }
+
+  const hex = trimmed.slice(1);
+  const expanded =
+    hex.length === 3
+      ? hex
+          .split('')
+          .map((c) => c + c)
+          .join('')
+      : hex;
+
+  if (expanded.length !== 6) {
+    return color;
+  }
+
+  const r = Number.parseInt(expanded.slice(0, 2), 16);
+  const g = Number.parseInt(expanded.slice(2, 4), 16);
+  const b = Number.parseInt(expanded.slice(4, 6), 16);
+
+  if ([r, g, b].some((value) => Number.isNaN(value))) {
+    return color;
+  }
+
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 export const navigationTheme: Theme = {
   ...DarkTheme,
   dark: true,

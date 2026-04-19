@@ -2,7 +2,7 @@ import { View } from 'react-native';
 
 import { AppText } from '../../../components/app-text';
 import { Card } from '../../../components/card';
-import { fortuneTheme } from '../../../lib/theme';
+import { fortuneTheme, withAlpha } from '../../../lib/theme';
 import { resultMetadataByKind } from '../mapping';
 import {
   BulletList,
@@ -58,11 +58,11 @@ const OHAENG_META: Record<
   string,
   { label: string; labelKo: string; color: string }
 > = {
-  木: { label: '木', labelKo: '목', color: '#4CAF50' },
-  火: { label: '火', labelKo: '화', color: '#FF5722' },
-  土: { label: '土', labelKo: '토', color: '#FFC107' },
-  金: { label: '金', labelKo: '금', color: '#9E9E9E' },
-  水: { label: '水', labelKo: '수', color: '#2196F3' },
+  木: { label: '木', labelKo: '목', color: fortuneTheme.colors.elemental.wood },
+  火: { label: '火', labelKo: '화', color: fortuneTheme.colors.elemental.fire },
+  土: { label: '土', labelKo: '토', color: fortuneTheme.colors.elemental.earth },
+  金: { label: '金', labelKo: '금', color: fortuneTheme.colors.elemental.metal },
+  水: { label: '水', labelKo: '수', color: fortuneTheme.colors.elemental.water },
 };
 
 /* ------------------------------------------------------------------ */
@@ -141,9 +141,9 @@ function OhaengBar({
 /* ------------------------------------------------------------------ */
 
 const RANK_STYLES: Record<number, { bg: string; fg: string; emoji: string; glow: string }> = {
-  1: { bg: '#FFD700', fg: '#1A1200', emoji: '👑', glow: 'rgba(255,215,0,0.25)' },
-  2: { bg: '#C0C0C0', fg: '#1A1A1A', emoji: '🥈', glow: 'rgba(192,192,192,0.2)' },
-  3: { bg: '#CD7F32', fg: '#1A1200', emoji: '🥉', glow: 'rgba(205,127,50,0.2)' },
+  1: { bg: '#FFD700', fg: '#1A1200', emoji: '👑', glow: withAlpha('#FFD700', 0.25) },
+  2: { bg: '#C0C0C0', fg: '#1A1A1A', emoji: '🥈', glow: withAlpha('#C0C0C0', 0.2) },
+  3: { bg: '#CD7F32', fg: '#1A1200', emoji: '🥉', glow: withAlpha('#CD7F32', 0.2) },
 };
 
 function RankBadge({ rank }: { rank: number }) {
@@ -242,12 +242,12 @@ function CircleScore({ score }: { score: number }) {
   const clamped = Math.max(0, Math.min(100, score));
   const color =
     clamped >= 90
-      ? '#34C759'
+      ? fortuneTheme.colors.success
       : clamped >= 75
         ? fortuneTheme.colors.accentSecondary
         : clamped >= 60
-          ? '#FFCC00'
-          : '#FF6B6B';
+          ? fortuneTheme.colors.warning
+          : fortuneTheme.colors.error;
 
   return (
     <View

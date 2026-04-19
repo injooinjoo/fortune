@@ -59,14 +59,39 @@ export function FortuneResultLayout({
   );
 }
 
+/**
+ * Ondo signature kicker — uppercase 10px label with wide tracking. Use for
+ * eyebrows above section titles, hero cards, and card accents.
+ */
+export function Kicker({
+  children,
+  color,
+}: {
+  children: ReactNode;
+  color?: string;
+}) {
+  return (
+    <AppText
+      variant="kicker"
+      color={color ?? fortuneTheme.colors.accentTertiary}
+      style={{ textTransform: 'uppercase' }}
+    >
+      {children}
+    </AppText>
+  );
+}
+
 export function HeroCard({
   emoji,
+  kicker,
   title,
   description,
   chips = [],
   aside,
 }: {
   emoji: string;
+  /** Optional Ondo kicker label rendered above the title (uppercase 10px). */
+  kicker?: string;
   title: string;
   description: string;
   chips?: string[];
@@ -88,6 +113,7 @@ export function HeroCard({
       >
         <View style={{ flex: 1, gap: fortuneTheme.spacing.sm }}>
           <AppText variant="displaySmall">{emoji}</AppText>
+          {kicker ? <Kicker>{kicker}</Kicker> : null}
           <AppText variant="heading2">{title}</AppText>
           <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
             {description}
@@ -103,15 +129,41 @@ export function HeroCard({
 export function SectionCard({
   title,
   description,
+  accent,
   children,
 }: PropsWithChildren<{
   title: string;
   description?: string;
+  /** Accent bar color on the left of the title. Defaults to CTA purple. */
+  accent?: string;
 }>) {
+  const accentColor = accent ?? fortuneTheme.colors.ctaBackground;
   return (
     <Card>
       <View style={{ gap: fortuneTheme.spacing.xs }}>
-        <AppText variant="heading4">{title}</AppText>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: fortuneTheme.spacing.sm,
+          }}
+        >
+          <View
+            style={{
+              width: 4,
+              height: 14,
+              borderRadius: 2,
+              backgroundColor: accentColor,
+            }}
+          />
+          <AppText
+            variant="kicker"
+            color={fortuneTheme.colors.textSecondary}
+            style={{ textTransform: 'uppercase' }}
+          >
+            {title}
+          </AppText>
+        </View>
         {description ? (
           <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
             {description}
