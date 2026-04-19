@@ -18,6 +18,7 @@ import {
 import HeroCompat from '../heroes/hero-compat';
 import HeroDecision from '../heroes/hero-decision';
 import HeroDailyReview from '../heroes/hero-daily-review';
+import HeroEx from '../heroes/hero-ex';
 import HeroExam from '../heroes/hero-exam';
 import HeroYearlyEncounter from '../heroes/hero-yearly-encounter';
 import { ResultCardFrame } from '../primitives/result-card-frame';
@@ -1493,96 +1494,15 @@ function ExLoverResult(props: FortuneResultComponentProps) {
       </Card>
 
       {/* ============================================================ */}
-      {/*  1. Emotion Thermometer (vertical visual)                     */}
+      {/*  1. Emotion Thermometer (HeroEx)                              */}
       {/* ============================================================ */}
-      <Card
-        style={{
-          backgroundColor: fortuneTheme.colors.backgroundTertiary,
-          gap: fortuneTheme.spacing.md,
-        }}
-      >
-        <AppText variant="heading4">감정 온도계</AppText>
-        <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.lg, alignItems: 'flex-end' }}>
-          {/* Thermometer visual */}
-          <View style={{ alignItems: 'center', width: 48 }}>
-            {/* Top bulb label */}
-            <AppText variant="labelMedium" style={{ color: thermoColor, marginBottom: 4 }}>
-              {thermoScore}%
-            </AppText>
-            {/* Thermometer tube */}
-            <View
-              style={{
-                width: 28,
-                height: 140,
-                borderRadius: 14,
-                backgroundColor: fortuneTheme.colors.surfaceSecondary,
-                overflow: 'hidden',
-                justifyContent: 'flex-end',
-              }}
-            >
-              <View
-                style={{
-                  width: '100%',
-                  height: `${Math.max(10, Math.min(100, thermoScore))}%`,
-                  backgroundColor: thermoColor,
-                  borderRadius: 14,
-                }}
-              />
-            </View>
-            {/* Bottom bulb */}
-            <View
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: 22,
-                backgroundColor: thermoColor,
-                marginTop: -8,
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderWidth: 3,
-                borderColor: fortuneTheme.colors.backgroundTertiary,
-              }}
-            >
-              <AppText style={{ fontSize: 18 }}>🌡️</AppText>
-            </View>
-          </View>
-          {/* Right side info */}
-          <View style={{ flex: 1, gap: fortuneTheme.spacing.sm }}>
-            <View>
-              <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
-                재회 가능성
-              </AppText>
-              <AppText variant="heading3" style={{ color: thermoColor }}>
-                {thermoLabel}
-              </AppText>
-            </View>
-            {emotionalDistance ? (
-              <View>
-                <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
-                  감정 거리
-                </AppText>
-                <AppText variant="labelLarge">{emotionalDistance}</AppText>
-              </View>
-            ) : null}
-            {/* Scale labels */}
-            <View style={{ gap: 2 }}>
-              {[
-                { label: '80+', desc: '가능성 높음', color: EMOTION_PALETTE.obsession },
-                { label: '60-79', desc: '조정하면 가능', color: fortuneTheme.colors.accentTertiary },
-                { label: '40-59', desc: '시간 필요', color: fortuneTheme.colors.warning },
-                { label: '~39', desc: '거리 유지', color: fortuneTheme.colors.accentSecondary },
-              ].map((s) => (
-                <View key={s.label} style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                  <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: s.color }} />
-                  <AppText variant="bodySmall" color={fortuneTheme.colors.textTertiary}>
-                    {s.label}: {s.desc}
-                  </AppText>
-                </View>
-              ))}
-            </View>
-          </View>
-        </View>
-      </Card>
+      <HeroEx
+        emotionLabel={coreIssue || thermoLabel}
+        emotionalTemperature={thermoScore}
+        recoveryScore={thermoScore}
+        description={emotionalDistance || undefined}
+        emotionColor={thermoColor}
+      />
 
       {/* ============================================================ */}
       {/*  2. Emotional Pattern Cards (with intensity bar + type badge) */}

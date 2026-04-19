@@ -17,3 +17,4 @@ export { default as HeroDecision } from './hero-decision';
 export { default as HeroDailyReview } from './hero-daily-review';
 export { default as HeroExam } from './hero-exam';
 export { default as HeroYearlyEncounter } from './hero-yearly-encounter';
+export { default as HeroEx } from './hero-ex';

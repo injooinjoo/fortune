@@ -1,142 +1,241 @@
-// HeroTarot: port of result-cards.jsx HeroTarot (~107-142). RN can't do backface-visibility/Y-flip
-// cleanly, so we approximate with scale-in + slight rotateZ tilt (fanned layout) — fidelity loss accepted.
+// HeroTarot: 3D flip port of Ondo spec `HeroTarot` (result-cards.jsx L107-142).
+// Implements a staggered rotateY flip (180deg → 0deg) using Animated + interpolate,
+// with back/front absolute layers and `backfaceVisibility: 'hidden'` for card sides.
+//
+// Platform caveat: `backfaceVisibility` is reliable on iOS, and mostly behaves on
+// recent Android (RN >= 0.70) but can occasionally bleed the back face through during
+// mid-flip on older devices. We accept this minor fidelity loss — the animation still
+// reads as a reveal/flip. No Reanimated dep added.
 import { useEffect, useRef } from 'react';
-import { Animated, Text, View } from 'react-native';
+import { Animated, StyleSheet, Text, View } from 'react-native';
 
-import { fortuneTheme } from '../../../lib/theme';
-import type { EmbeddedResultPayload } from '../../chat-results/types';
+import { AppText } from '../../../components/app-text';
+import { fortuneTheme, withAlpha } from '../../../lib/theme';
+
+export interface HeroTarotCard {
+  name: string;
+  emoji?: string;
+}
 
 interface HeroTarotProps {
-  data: EmbeddedResultPayload;
-  progress: number;
+  cards: Array<HeroTarotCard>;
+  spreadLabel?: string;
+  description?: string;
 }
 
-interface SpreadCard {
-  name?: string;
-  suit?: string;
-  meaning?: string;
-  num?: string;
-  art?: string;
-  pos?: string;
-}
+const CARD_W = 72;
+const CARD_H = 108;
+const FLIP_DURATION_MS = 700;
+// Staggered windows on a shared 0→1 progress: card i flips during [i*0.18, i*0.18 + 0.55]
+const STAGGER_STEP = 0.18;
+const FLIP_WINDOW = 0.55;
+const MAX_CARDS = 3;
+const FALLBACK_EMOJI = '\u2728'; // ✨
 
-const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
-const stage = (p: number, from: number, to: number) =>
-  clamp01((p - from) / Math.max(0.0001, to - from));
-const easeInOut = (t: number) =>
-  t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-
-const AMBER = '#E0A76B';
-const PLACEHOLDERS: SpreadCard[] = [
-  { num: 'I', art: '☽', name: '과거', pos: 'Past' },
-  { num: 'II', art: '☀', name: '현재', pos: 'Present' },
-  { num: 'III', art: '✦', name: '미래', pos: 'Future' },
-];
-
-export default function HeroTarot({ data, progress }: HeroTarotProps) {
-  const raw = (data as unknown as { spread?: SpreadCard[] }).spread;
-  const spread: SpreadCard[] =
-    raw && raw.length > 0 ? raw.slice(0, 3) : PLACEHOLDERS;
-  const p = clamp01(progress);
-
-  const anims = useRef(spread.map(() => new Animated.Value(0))).current;
+export default function HeroTarot({
+  cards,
+  spreadLabel,
+  description,
+}: HeroTarotProps) {
+  const visible = cards.slice(0, MAX_CARDS);
+  const progress = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    spread.forEach((_, i) => {
-      const delay = i * 0.18;
-      const local = easeInOut(stage(p, delay, delay + 0.55));
-      Animated.timing(anims[i], {
-        toValue: local,
-        duration: 120,
-        useNativeDriver: true,
-      }).start();
-    });
-  }, [p, anims, spread]);
+    progress.setValue(0);
+    Animated.timing(progress, {
+      toValue: 1,
+      duration: FLIP_DURATION_MS,
+      useNativeDriver: true,
+    }).start();
+  }, [progress, visible.length]);
 
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        gap: 10,
-        paddingVertical: 18,
-      }}
-    >
-      {spread.map((c, i) => {
-        const tilt = (i - 1) * 8; // -8 / 0 / 8 deg fan
-        const scale = anims[i].interpolate({
-          inputRange: [0, 1],
-          outputRange: [0.5, 1],
-        });
-        const opacity = anims[i];
-        const rotate = anims[i].interpolate({
-          inputRange: [0, 1],
-          outputRange: ['0deg', `${tilt}deg`],
-        });
-        return (
-          <Animated.View
-            key={i}
-            style={{
-              width: 74,
-              height: 112,
-              borderRadius: 8,
-              borderWidth: 1,
-              borderColor: `${AMBER}55`,
-              backgroundColor: '#1A1028',
-              padding: 6,
-              alignItems: 'center',
-              justifyContent: 'center',
-              opacity,
-              transform: [{ scale }, { rotate }],
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 10,
-                lineHeight: 12,
-                color: AMBER,
-                letterSpacing: 1,
-              }}
+    <View style={styles.root}>
+      {spreadLabel ? (
+        <AppText
+          variant="labelSmall"
+          color={fortuneTheme.colors.textSecondary}
+          style={styles.spreadLabel}
+        >
+          {spreadLabel}
+        </AppText>
+      ) : null}
+
+      <View style={styles.row}>
+        {visible.map((card, i) => {
+          const start = i * STAGGER_STEP;
+          const end = start + FLIP_WINDOW;
+          // inputRange must be strictly ascending and span [0,1].
+          const rotateY = progress.interpolate({
+            inputRange: [0, start, end, 1],
+            outputRange: ['180deg', '180deg', '0deg', '0deg'],
+          });
+          const opacity = progress.interpolate({
+            inputRange: [0, start, end, 1],
+            outputRange: [0.25, 0.5, 1, 1],
+          });
+
+          return (
+            <Animated.View
+              key={`${card.name}-${i}`}
+              style={[
+                styles.cardRoot,
+                {
+                  opacity,
+                  transform: [{ perspective: 800 }, { rotateY }],
+                },
+              ]}
             >
-              {c.num ?? String(i + 1)}
-            </Text>
-            <Text
-              style={{
-                fontSize: 28,
-                lineHeight: 34,
-                color: AMBER,
-                marginVertical: 4,
-              }}
-            >
-              {c.art ?? '✦'}
-            </Text>
-            <Text
-              style={{
-                fontSize: 10,
-                lineHeight: 13,
-                color: fortuneTheme.colors.textSecondary,
-                textAlign: 'center',
-              }}
-              numberOfLines={1}
-            >
-              {c.name ?? c.suit ?? ''}
-            </Text>
-            <Text
-              style={{
-                fontSize: 9,
-                lineHeight: 12,
-                color: fortuneTheme.colors.textTertiary,
-                marginTop: 4,
-                textAlign: 'center',
-              }}
-              numberOfLines={1}
-            >
-              {c.pos ?? c.meaning ?? ''}
-            </Text>
-          </Animated.View>
-        );
-      })}
+              <CardBack />
+              <CardFront emoji={card.emoji ?? FALLBACK_EMOJI} name={card.name} />
+            </Animated.View>
+          );
+        })}
+      </View>
+
+      {description ? (
+        <AppText
+          variant="bodySmall"
+          color={fortuneTheme.colors.textSecondary}
+          style={styles.description}
+        >
+          {description}
+        </AppText>
+      ) : null}
     </View>
   );
 }
+
+function CardBack() {
+  // Subtle dashed-pattern using 3 stacked small bars — cheap stand-in for CSS
+  // `repeating-linear-gradient(45deg, …)` without pulling in svg/gradient deps.
+  const dashAlphas = [0.55, 0.35, 0.55];
+  return (
+    <View
+      style={[
+        styles.face,
+        {
+          backgroundColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.45),
+          borderColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.65),
+        },
+      ]}
+    >
+      <View style={styles.backPatternWrap} pointerEvents="none">
+        {dashAlphas.map((a, idx) => (
+          <View
+            key={idx}
+            style={[
+              styles.backDash,
+              { backgroundColor: withAlpha(fortuneTheme.colors.ctaBackground, a) },
+            ]}
+          />
+        ))}
+      </View>
+      <Text
+        style={[
+          styles.backGlyph,
+          { color: withAlpha(fortuneTheme.colors.accentTertiary, 0.9) },
+        ]}
+      >
+        {'\u2726'}
+      </Text>
+    </View>
+  );
+}
+
+function CardFront({ emoji, name }: { emoji: string; name: string }) {
+  return (
+    <View
+      style={[
+        styles.face,
+        styles.faceFront,
+        {
+          backgroundColor: withAlpha(fortuneTheme.colors.surfaceElevated, 0.95),
+          borderColor: withAlpha(fortuneTheme.colors.accentTertiary, 0.5),
+        },
+      ]}
+    >
+      <Text style={styles.frontEmoji}>{emoji}</Text>
+      <AppText
+        variant="labelSmall"
+        color={fortuneTheme.colors.textPrimary}
+        numberOfLines={1}
+        style={styles.frontName}
+      >
+        {name}
+      </AppText>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  root: {
+    alignItems: 'center',
+    paddingVertical: 18,
+  },
+  spreadLabel: {
+    marginBottom: 10,
+    letterSpacing: 1.4,
+    textTransform: 'uppercase',
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 12,
+  },
+  description: {
+    marginTop: 12,
+    textAlign: 'center',
+    paddingHorizontal: 12,
+  },
+  cardRoot: {
+    width: CARD_W,
+    height: CARD_H,
+    // Container holds two absolute faces; the Animated rotation drives the flip.
+  },
+  face: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    // `backfaceVisibility: 'hidden'` — reliable on iOS; mostly okay on recent Android.
+    backfaceVisibility: 'hidden',
+    overflow: 'hidden',
+  },
+  faceFront: {
+    // Front face is pre-rotated 180° so it becomes visible only after rotateY crosses 90°.
+    transform: [{ rotateY: '180deg' }],
+    padding: 6,
+  },
+  backPatternWrap: {
+    position: 'absolute',
+    top: 8,
+    bottom: 8,
+    left: 8,
+    right: 8,
+    justifyContent: 'space-between',
+  },
+  backDash: {
+    height: 2,
+    borderRadius: 1,
+    width: '100%',
+  },
+  backGlyph: {
+    fontSize: 22,
+    lineHeight: 26,
+  },
+  frontEmoji: {
+    fontSize: 28,
+    lineHeight: 34,
+    marginBottom: 4,
+  },
+  frontName: {
+    textAlign: 'center',
+  },
+});
