@@ -881,8 +881,8 @@ export function ChatScreen() {
   function handleCreateFriend() {
     resetDraft();
     router.push({
-      pathname: '/friends/new/basic',
-      params: { reset: '1', returnTo: '/chat' },
+      pathname: '/friends/new',
+      params: { returnTo: '/chat' },
     });
   }
 

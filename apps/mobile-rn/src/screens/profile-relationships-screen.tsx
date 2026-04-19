@@ -345,8 +345,8 @@ export function ProfileRelationshipsScreen() {
         accessibilityRole="button"
         onPress={() =>
           router.push({
-            pathname: "/friends/new/basic",
-            params: { reset: "1", returnTo: "/profile/relationships" },
+            pathname: "/friends/new",
+            params: { returnTo: "/profile/relationships" },
           })
         }
         style={({ pressed }) => ({

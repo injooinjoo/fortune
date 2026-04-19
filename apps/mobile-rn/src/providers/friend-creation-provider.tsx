@@ -54,6 +54,11 @@ export interface CreatedFriend {
   createdAt: string;
 }
 
+export interface FortuneFriendSeed {
+  name: string;
+  shortDescription: string;
+}
+
 interface FriendCreationContextValue {
   draft: FriendCreationDraft;
   createdFriends: readonly CreatedFriend[];
@@ -66,6 +71,7 @@ interface FriendCreationContextValue {
   updateAvatar: (patch: Partial<Pick<FriendCreationDraft, 'avatarPrompt' | 'avatarUrl'>>) => void;
   resetDraft: () => void;
   saveFriend: (draft: FriendCreationDraft) => Promise<CreatedFriend>;
+  addFortuneFriend: (seed: FortuneFriendSeed) => Promise<CreatedFriend>;
   removeFriend: (friendId: string) => Promise<void>;
 }
 
@@ -148,6 +154,7 @@ const FriendCreationContext = createContext<FriendCreationContextValue>({
   updateAvatar: () => undefined,
   resetDraft: () => undefined,
   saveFriend: () => Promise.reject(new Error('Provider not mounted')),
+  addFortuneFriend: () => Promise.reject(new Error('Provider not mounted')),
   removeFriend: () => Promise.reject(new Error('Provider not mounted')),
 });
 
@@ -185,6 +192,40 @@ export function FriendCreationProvider({ children }: PropsWithChildren) {
         memoryNote: draftToSave.memoryNote.trim(),
         timeMode: draftToSave.timeMode!,
         avatarUrl: draftToSave.avatarUrl ?? null,
+        createdAt: new Date().toISOString(),
+      };
+
+      const nextFriends = [...createdFriends, friend];
+      await persistCreatedFriends(nextFriends);
+      setCreatedFriends(nextFriends);
+
+      return friend;
+    },
+    [createdFriends],
+  );
+
+  const addFortuneFriend = useCallback(
+    async (seed: FortuneFriendSeed): Promise<CreatedFriend> => {
+      const trimmedName = seed.name.trim();
+      const existing = createdFriends.find(
+        (friend) => friend.name === trimmedName,
+      );
+      if (existing) {
+        return existing;
+      }
+
+      const friend: CreatedFriend = {
+        id: `custom_${Crypto.randomUUID()}`,
+        name: trimmedName,
+        gender: 'other',
+        relationship: 'friend',
+        stylePreset: 'warm',
+        personalityTags: [],
+        interestTags: [],
+        scenario: seed.shortDescription,
+        memoryNote: '',
+        timeMode: 'realTime',
+        avatarUrl: null,
         createdAt: new Date().toISOString(),
       };
 
@@ -251,9 +292,10 @@ export function FriendCreationProvider({ children }: PropsWithChildren) {
       updateAvatar,
       resetDraft,
       saveFriend,
+      addFortuneFriend,
       removeFriend,
     };
-  }, [createdFriends, draft, removeFriend, saveFriend, updateAvatar, updateBasic, updatePersona, updateStory, resetDraft]);
+  }, [addFortuneFriend, createdFriends, draft, removeFriend, saveFriend, updateAvatar, updateBasic, updatePersona, updateStory, resetDraft]);
 
   return (
     <FriendCreationContext.Provider value={value}>
