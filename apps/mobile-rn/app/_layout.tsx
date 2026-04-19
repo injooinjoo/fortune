@@ -7,10 +7,12 @@ import { useFonts } from 'expo-font';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { initCrashReporting } from '../src/lib/crash-reporting';
+import { OnDeviceAutoDownloader } from '../src/lib/on-device-auto-downloader';
 import { navigationTheme } from '../src/lib/theme';
 import { AppBootstrapProvider } from '../src/providers/app-bootstrap-provider';
 import { FriendCreationProvider } from '../src/providers/friend-creation-provider';
 import { MobileAppStateProvider } from '../src/providers/mobile-app-state-provider';
+import { OnboardingFlowProvider } from '../src/providers/onboarding-flow-provider';
 import { SocialAuthProvider } from '../src/providers/social-auth-provider';
 
 // Initialize Sentry at module load so early boot errors are also captured.
@@ -32,6 +34,8 @@ export default function RootLayout() {
       <ThemeProvider value={navigationTheme}>
         <AppBootstrapProvider>
           <MobileAppStateProvider>
+            <OnDeviceAutoDownloader />
+            <OnboardingFlowProvider>
             <FriendCreationProvider>
               <SocialAuthProvider>
                 <StatusBar style="light" />
@@ -48,6 +52,7 @@ export default function RootLayout() {
                 </Stack>
               </SocialAuthProvider>
             </FriendCreationProvider>
+            </OnboardingFlowProvider>
           </MobileAppStateProvider>
         </AppBootstrapProvider>
       </ThemeProvider>

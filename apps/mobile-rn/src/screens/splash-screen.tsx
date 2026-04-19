@@ -1,128 +1,207 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { router, type Href } from 'expo-router';
-import { View } from 'react-native';
+import { Animated, Easing, Pressable, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppText } from '../components/app-text';
-import { PrimaryButton } from '../components/primary-button';
-import { Screen } from '../components/screen';
-import { fortuneTheme } from '../lib/theme';
+import { readWelcomeSeen } from '../lib/welcome-state';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 
-/**
- * Ondo splash — minimal "온도" serif wordmark + tagline, with the gate
- * routing logic preserved. Auto-advances to the appropriate next step
- * (auth, onboarding, or chat) once app bootstrap is ready. The manual
- * PrimaryButtons are surfaced only if the user lingers on the splash
- * longer than the auto-advance timer (e.g. slow network) so they can
- * still move forward without tapping anywhere.
- */
-export function SplashScreen() {
-  const { gate, session, status } = useAppBootstrap();
-  const hasAutoNavigatedRef = useRef(false);
+// TODO(dev): Ondo 온보딩 개발 중 — 모든 실행에서 welcome carousel 강제.
+// 개발 완료 후 false 로 되돌려 gate + welcome-seen 로직 복원할 것.
+const FORCE_WELCOME_FOR_DEV = true;
 
-  const nextRoute: Href =
-    gate === 'auth-entry'
-      ? '/signup'
+// Auto-advance timing. The splash is intentionally brief — it exists so the
+// native launch image and the first JS-rendered screen share a common
+// background, not as a lingering brand moment.
+const AUTO_ADVANCE_MS = 800;
+const SLOW_NETWORK_ESCAPE_MS = 4000;
+
+const BG = '#0B0B10';
+const FG = '#F5F6FB';
+const FG_MUTED = '#9198AA';
+const FG_DIM = '#6B6F7D';
+const WARM_DOT = '#E8A268';
+
+export function SplashScreen() {
+  const { gate, status } = useAppBootstrap();
+  const hasAutoNavigatedRef = useRef(false);
+  const dotPulse = useRef(new Animated.Value(0)).current;
+
+  const [authEntryTarget, setAuthEntryTarget] = useState<
+    '/welcome' | '/signup' | null
+  >(null);
+  const [showEscape, setShowEscape] = useState(false);
+
+  // Warm-dot breathing pulse under the wordmark.
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(dotPulse, {
+          toValue: 1,
+          duration: 1200,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
+        Animated.timing(dotPulse, {
+          toValue: 0,
+          duration: 1200,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
+      ]),
+    ).start();
+  }, [dotPulse]);
+
+  useEffect(() => {
+    if (FORCE_WELCOME_FOR_DEV) {
+      setAuthEntryTarget('/welcome');
+      return;
+    }
+    if (gate !== 'auth-entry') {
+      setAuthEntryTarget(null);
+      return;
+    }
+    let cancelled = false;
+    void readWelcomeSeen().then((seen) => {
+      if (!cancelled) setAuthEntryTarget(seen ? '/signup' : '/welcome');
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [gate]);
+
+  const nextRoute: Href | null = FORCE_WELCOME_FOR_DEV
+    ? '/welcome'
+    : gate === 'auth-entry'
+      ? authEntryTarget
       : gate === 'profile-flow'
         ? '/onboarding'
         : '/chat';
 
   useEffect(() => {
-    if (status !== 'ready' || hasAutoNavigatedRef.current) {
-      return;
-    }
+    if (status !== 'ready' || hasAutoNavigatedRef.current) return;
+    if (nextRoute === null) return;
 
     hasAutoNavigatedRef.current = true;
-
-    const timeoutId = setTimeout(() => {
-      router.replace(nextRoute);
-    }, 1400);
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
+    const destination = nextRoute;
+    const t = setTimeout(() => router.replace(destination), AUTO_ADVANCE_MS);
+    return () => clearTimeout(t);
   }, [nextRoute, status]);
 
+  // Fallback escape tap only appears if bootstrap takes unreasonably long
+  // (network hiccup, Supabase timeout, etc.) so the user is never stuck.
+  useEffect(() => {
+    const t = setTimeout(() => setShowEscape(true), SLOW_NETWORK_ESCAPE_MS);
+    return () => clearTimeout(t);
+  }, []);
+
+  const dotOpacity = dotPulse.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.35, 1],
+  });
+  const dotScale = dotPulse.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.85, 1.1],
+  });
+
   return (
-    <Screen>
+    <SafeAreaView
+      edges={['top', 'bottom']}
+      style={{ flex: 1, backgroundColor: BG }}
+    >
       <View
         style={{
           flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
-          gap: fortuneTheme.spacing.lg,
+          paddingHorizontal: 24,
         }}
       >
-        <AppText
-          variant="oracleTitle"
-          color={fortuneTheme.colors.textPrimary}
+        <Text
+          // Serif wordmark — ZEN Serif loaded via _layout useFonts(). Generous
+          // lineHeight so the glyph isn't clipped against the variant default.
           style={{
-            fontSize: 72,
-            lineHeight: 76,
-            letterSpacing: 8,
-            fontWeight: '700',
+            fontFamily: 'ZenSerif',
+            fontSize: 68,
+            lineHeight: 84,
+            letterSpacing: 4,
+            color: FG,
+            textAlign: 'center',
           }}
         >
           온도
-        </AppText>
-        <AppText
-          variant="oracleBody"
-          color={fortuneTheme.colors.textSecondary}
+        </Text>
+
+        <Animated.View
           style={{
+            width: 6,
+            height: 6,
+            borderRadius: 3,
+            backgroundColor: WARM_DOT,
+            marginTop: 24,
+            opacity: dotOpacity,
+            transform: [{ scale: dotScale }],
+          }}
+        />
+
+        <Text
+          style={{
+            fontFamily: 'System',
+            fontSize: 15,
+            lineHeight: 24,
+            color: FG_MUTED,
             textAlign: 'center',
-            fontSize: 17,
-            lineHeight: 28,
-            letterSpacing: 0.3,
+            marginTop: 24,
+            letterSpacing: 0.2,
           }}
         >
           마음을 들여다보는{'\n'}가장 따뜻한 방법
-        </AppText>
+        </Text>
       </View>
 
       <View
         style={{
           alignItems: 'center',
-          paddingVertical: fortuneTheme.spacing.lg,
-          gap: fortuneTheme.spacing.sm,
+          paddingBottom: 36,
         }}
       >
-        <AppText
-          variant="caption"
-          color={fortuneTheme.colors.textTertiary}
-          style={{ letterSpacing: 2 }}
+        <Text
+          style={{
+            fontFamily: 'System',
+            fontSize: 11,
+            lineHeight: 16,
+            color: FG_DIM,
+            letterSpacing: 2.4,
+          }}
         >
-          Ondo — 온도
-        </AppText>
+          ONDO
+        </Text>
 
-        {status === 'ready' && gate === 'auth-entry' ? (
-          <PrimaryButton
-            variant="ghost"
-            size="md"
-            onPress={() => router.replace('/signup')}
+        {showEscape && status !== 'ready' ? (
+          <Pressable
+            onPress={() => router.replace(nextRoute ?? '/welcome')}
+            style={({ pressed }) => ({
+              marginTop: 16,
+              opacity: pressed ? 0.6 : 1,
+              paddingHorizontal: 20,
+              paddingVertical: 10,
+            })}
           >
-            로그인 시작하기
-          </PrimaryButton>
-        ) : null}
-        {status === 'ready' && gate === 'profile-flow' ? (
-          <PrimaryButton
-            variant="ghost"
-            size="md"
-            onPress={() => router.replace('/onboarding')}
-          >
-            설정 이어가기
-          </PrimaryButton>
-        ) : null}
-        {status === 'ready' && gate === 'ready' ? (
-          <PrimaryButton
-            variant="ghost"
-            size="md"
-            onPress={() => router.replace('/chat')}
-          >
-            {session ? '바로 시작' : '둘러보기'}
-          </PrimaryButton>
+            <Text
+              style={{
+                fontFamily: 'System',
+                fontSize: 13,
+                lineHeight: 18,
+                color: FG_MUTED,
+                fontWeight: '600',
+              }}
+            >
+              계속 →
+            </Text>
+          </Pressable>
         ) : null}
       </View>
-    </Screen>
+    </SafeAreaView>
   );
 }
