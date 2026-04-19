@@ -18,6 +18,8 @@ export interface DateInputValue {
 interface DateInputProps {
   value?: DateInputValue;
   onChange?: (v: DateInputValue) => void;
+  /** Auto-focus the year field on mount so the keypad comes up immediately. */
+  autoFocus?: boolean;
 }
 
 /**
@@ -28,7 +30,7 @@ interface DateInputProps {
  * dates (leap years, month ranges); the caller is responsible for validating
  * before submit so users can correct partial entries without scolding.
  */
-export function DateInput({ value, onChange }: DateInputProps) {
+export function DateInput({ value, onChange, autoFocus }: DateInputProps) {
   const [y, setY] = useState(value?.y ?? '');
   const [m, setM] = useState(value?.m ?? '');
   const [d, setD] = useState(value?.d ?? '');
@@ -49,6 +51,7 @@ export function DateInput({ value, onChange }: DateInputProps) {
         placeholder="YYYY"
         flex={1.4}
         maxLength={4}
+        autoFocus={autoFocus}
         onChange={(t) => {
           update(t, m, d);
           if (t.length === 4) mRef.current?.focus();
@@ -84,14 +87,14 @@ export function DateInput({ value, onChange }: DateInputProps) {
 }
 
 interface SegmentProps
-  extends Pick<TextInputProps, 'placeholder' | 'maxLength'> {
+  extends Pick<TextInputProps, 'placeholder' | 'maxLength' | 'autoFocus'> {
   value: string;
   flex: number;
   onChange: (t: string) => void;
 }
 
 const Segment = forwardRef<TextInput, SegmentProps>(function Segment(
-  { value, placeholder, flex, maxLength, onChange },
+  { value, placeholder, flex, maxLength, onChange, autoFocus },
   ref,
 ) {
   return (
@@ -103,6 +106,7 @@ const Segment = forwardRef<TextInput, SegmentProps>(function Segment(
       placeholderTextColor={fortuneTheme.colors.textTertiary}
       keyboardType="number-pad"
       maxLength={maxLength}
+      autoFocus={autoFocus}
       style={[styles.segment, { flex }]}
     />
   );

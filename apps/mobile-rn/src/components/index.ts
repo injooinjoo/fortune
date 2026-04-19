@@ -28,6 +28,11 @@ export { DateInput, type DateInputValue } from './date-input';
 export { TimeInput, TIME_INPUT_UNKNOWN } from './time-input';
 export { MBTIPicker, type MbtiType } from './mbti-picker';
 export { BloodPicker, type BloodType } from './blood-picker';
+export { ToneSlider } from './tone-slider';
+
+// --- Onboarding scaffolding ---
+export { OnboardingShell } from './onboarding-shell';
+export { RelationshipCard } from './relationship-card';
 
 // --- Chips ---
 // `Chip` is a non-interactive pastel label tag (existing).
@@ -38,6 +43,8 @@ export { SelectableChip } from './selectable-chip';
 // --- Surfaces / media ---
 export { Avatar } from './avatar';
 export { Card } from './card';
+export { CharacterCard, type CharacterCardProps } from './character-card';
+export { FortuneSummaryCard } from './fortune-summary-card';
 export { Screen } from './screen';
 
 // --- Chat / oracle ---

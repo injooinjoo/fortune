@@ -1,7 +1,6 @@
-import { Image, View, StyleSheet, type ViewStyle } from 'react-native';
+import { Image, Text, View, StyleSheet, type ViewStyle } from 'react-native';
 
 import { fortuneTheme } from '../lib/theme';
-import { AppText } from './app-text';
 
 interface AvatarProps {
   size?: number;
@@ -48,12 +47,21 @@ export function Avatar({
           style={{ width: size, height: size, borderRadius: size / 2 }}
         />
       ) : (
-        <AppText
-          color={fortuneTheme.colors.textPrimary}
-          style={{ fontSize: size * 0.38, fontWeight: '700' }}
+        // Raw <Text> so AppText's default `bodyMedium` lineHeight (23) doesn't
+        // clip large-font initials. Explicit lineHeight keeps 2-char Korean
+        // names centered inside the circle.
+        <Text
+          style={{
+            color: fortuneTheme.colors.textPrimary,
+            fontSize: size * 0.38,
+            lineHeight: size * 0.48,
+            fontWeight: '700',
+            textAlign: 'center',
+            includeFontPadding: false,
+          }}
         >
           {initials?.slice(0, 2) ?? ''}
-        </AppText>
+        </Text>
       )}
     </View>
   );

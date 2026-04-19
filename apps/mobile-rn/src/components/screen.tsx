@@ -13,6 +13,7 @@ interface ScreenProps extends PropsWithChildren {
   scrollViewRef?: RefObject<ScrollView | null>;
   onScrollContentSizeChange?: (width: number, height: number) => void;
   contentBottomInset?: number;
+  centerContent?: boolean;
 }
 
 export function Screen({
@@ -24,6 +25,7 @@ export function Screen({
   scrollViewRef,
   onScrollContentSizeChange,
   contentBottomInset = 0,
+  centerContent = false,
 }: ScreenProps) {
   const content = (
     <View style={{ flex: 1 }}>
@@ -53,6 +55,9 @@ export function Screen({
           maxWidth: 600,
           alignSelf: 'center',
           width: '100%',
+          ...(centerContent
+            ? { flexGrow: 1, justifyContent: 'center' }
+            : null),
         }}
         keyboardShouldPersistTaps="handled"
         onContentSizeChange={onScrollContentSizeChange}
