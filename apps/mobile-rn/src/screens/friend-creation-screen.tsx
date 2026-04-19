@@ -679,6 +679,21 @@ export function FriendCreationReviewScreen() {
 
 type AvatarGenerationStatus = 'idle' | 'generating' | 'done' | 'error';
 
+type AvatarFunctionErrorCode = 'safety_blocked' | 'unknown';
+
+class AvatarGenerationError extends Error {
+  code: AvatarFunctionErrorCode;
+  constructor(message: string, code: AvatarFunctionErrorCode) {
+    super(message);
+    this.name = 'AvatarGenerationError';
+    this.code = code;
+  }
+}
+
+const SAFETY_BLOCKED_MESSAGE =
+  '실명 연예인 등은 생성이 어려워요. 헤어스타일, 분위기, 스타일 같은 일반적인 특징으로 묘사해주세요.';
+const GENERIC_FAILURE_MESSAGE = '이미지 생성에 실패했어요. 다시 시도해주세요.';
+
 async function invokeAvatarFunction(
   body: { gender: string; appearancePrompt: string; name: string; stylePreset: string },
 ): Promise<string> {
@@ -687,11 +702,23 @@ async function invokeAvatarFunction(
     { body },
   );
 
+  const result = data as
+    | { success: boolean; data?: { avatarUrl: string }; error?: string; errorCode?: AvatarFunctionErrorCode }
+    | null;
+
+  // Safety 블록은 재시도 불가 — 즉시 타입드 에러로 변환
+  if (result?.errorCode === 'safety_blocked') {
+    throw new AvatarGenerationError(
+      result.error ?? SAFETY_BLOCKED_MESSAGE,
+      'safety_blocked',
+    );
+  }
+
+  // 401 등 재시도 대상 에러는 원본 error를 그대로 throw (상위 refreshSession 로직에서 처리)
   if (error) throw error;
 
-  const result = data as { success: boolean; data?: { avatarUrl: string }; error?: string };
-  if (!result.success || !result.data?.avatarUrl) {
-    throw new Error(result.error ?? '이미지 생성에 실패했어요');
+  if (!result?.success || !result.data?.avatarUrl) {
+    throw new Error(result?.error ?? GENERIC_FAILURE_MESSAGE);
   }
   return result.data.avatarUrl;
 }
@@ -711,6 +738,10 @@ async function generateFriendAvatar(
   try {
     return await invokeAvatarFunction(body);
   } catch (firstError) {
+    // Safety 블록은 재시도 의미 없음 → 즉시 전파
+    if (firstError instanceof AvatarGenerationError) {
+      throw firstError;
+    }
     // 401 인증 실패 시 세션 갱신 후 1회 재시도
     const msg = firstError instanceof Error ? firstError.message : '';
     if (msg.includes('non-2xx') || msg.includes('401') || msg.includes('Unauthorized')) {
@@ -760,9 +791,12 @@ export function FriendCreationAvatarScreen() {
       updateAvatar({ avatarPrompt: promptText.trim(), avatarUrl: url });
       setStatus('done');
     } catch (e) {
-      const msg = e instanceof Error ? e.message : '알 수 없는 오류가 발생했어요';
-      console.error('[generateFriendAvatar] error:', msg);
-      setErrorMessage(msg);
+      const rawMsg = e instanceof Error ? e.message : '';
+      console.error('[generateFriendAvatar] error:', rawMsg);
+      const userMessage = e instanceof AvatarGenerationError
+        ? e.message
+        : GENERIC_FAILURE_MESSAGE;
+      setErrorMessage(userMessage);
       setStatus('error');
     }
   }

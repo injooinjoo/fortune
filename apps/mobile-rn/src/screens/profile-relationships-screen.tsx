@@ -3,6 +3,7 @@ import { Pressable, View } from "react-native";
 
 import { AppText } from "../components/app-text";
 import { Card } from "../components/card";
+import { CharacterCard } from "../components/character-card";
 import { RouteBackHeader } from "../components/route-back-header";
 import { Screen } from "../components/screen";
 import {
@@ -100,114 +101,39 @@ function StatusChip({
 }
 
 /* ------------------------------------------------------------------ */
-/*  Character relationship card                                        */
+/*  Character relationship card — status chips footer                 */
 /* ------------------------------------------------------------------ */
 
-function CharacterRelationshipCard({
-  name,
-  description,
+function RelationshipStatusChips({
   isSelected,
   sentMessageCount,
-  onPress,
 }: {
-  name: string;
-  description: string;
   isSelected: boolean;
   sentMessageCount: number;
-  onPress: () => void;
 }) {
-  const avatarColor = getAvatarColor(name);
-  const initial = name.charAt(0);
-
   return (
-    <Pressable
-      accessibilityRole="button"
-      onPress={onPress}
-      style={({ pressed }) => ({
-        opacity: pressed ? 0.85 : 1,
-      })}
+    <View
+      style={{
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 6,
+      }}
     >
-      <View
-        style={{
-          backgroundColor: isSelected
-            ? fortuneTheme.colors.surfaceSecondary
-            : fortuneTheme.colors.surface,
-          borderWidth: 1,
-          borderColor: isSelected
-            ? fortuneTheme.colors.ctaBackground
-            : fortuneTheme.colors.border,
-          borderRadius: fortuneTheme.radius.card,
-          padding: fortuneTheme.spacing.cardPadding,
-          gap: fortuneTheme.spacing.sm,
-        }}
-      >
-        {/* Top row: avatar + name */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: fortuneTheme.spacing.sm,
-          }}
-        >
-          {/* Colored circle avatar */}
-          <View
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: 22,
-              backgroundColor: avatarColor,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <AppText
-              variant="heading4"
-              color="#FFFFFF"
-              style={{ textAlign: "center" }}
-            >
-              {initial}
-            </AppText>
-          </View>
-
-          {/* Name and description */}
-          <View style={{ flex: 1, gap: 2 }}>
-            <AppText variant="labelLarge">{name}</AppText>
-            <AppText
-              variant="bodySmall"
-              color={fortuneTheme.colors.textSecondary}
-              numberOfLines={1}
-            >
-              {description}
-            </AppText>
-          </View>
-        </View>
-
-        {/* Status chips row */}
-        <View
-          style={{
-            flexDirection: "row",
-            flexWrap: "wrap",
-            gap: 6,
-            marginTop: 4,
-          }}
-        >
-          {isSelected ? (
-            <StatusChip label="최근 대화" color="#3B9EA0" />
-          ) : (
-            <StatusChip
-              label="대화 가능"
-              color={fortuneTheme.colors.textSecondary}
-            />
-          )}
-          {isSelected && sentMessageCount > 0 ? (
-            <StatusChip
-              label={`메시지 ${sentMessageCount}개`}
-              color={fortuneTheme.colors.accentSecondary}
-            />
-          ) : null}
-        </View>
-      </View>
-    </Pressable>
+      {isSelected ? (
+        <StatusChip label="최근 대화" color="#3B9EA0" />
+      ) : (
+        <StatusChip
+          label="대화 가능"
+          color={fortuneTheme.colors.textSecondary}
+        />
+      )}
+      {isSelected && sentMessageCount > 0 ? (
+        <StatusChip
+          label={`메시지 ${sentMessageCount}개`}
+          color={fortuneTheme.colors.accentSecondary}
+        />
+      ) : null}
+    </View>
   );
 }
 
@@ -312,14 +238,23 @@ export function ProfileRelationshipsScreen() {
       <SectionHeader title="스토리 캐릭터" />
       {storyChars.map((character) => {
         const isSelected = selectedCharacter?.id === character.id;
+        const avatarColor = getAvatarColor(character.name);
         return (
-          <CharacterRelationshipCard
+          <CharacterCard
             key={character.id}
             name={character.name}
-            description={character.shortDescription}
-            isSelected={isSelected}
-            sentMessageCount={isSelected ? sentMessageCount : 0}
+            tagline={character.shortDescription}
+            initials={character.name.charAt(0)}
+            avatarSize={44}
+            gradient={[avatarColor, avatarColor] as const}
+            selected={isSelected}
             onPress={() => navigateToCharacter(character.id)}
+            footer={
+              <RelationshipStatusChips
+                isSelected={isSelected}
+                sentMessageCount={isSelected ? sentMessageCount : 0}
+              />
+            }
           />
         );
       })}
@@ -328,14 +263,23 @@ export function ProfileRelationshipsScreen() {
       <SectionHeader title="인사이트 캐릭터" />
       {fortuneChars.map((character) => {
         const isSelected = selectedCharacter?.id === character.id;
+        const avatarColor = getAvatarColor(character.name);
         return (
-          <CharacterRelationshipCard
+          <CharacterCard
             key={character.id}
             name={character.name}
-            description={character.shortDescription}
-            isSelected={isSelected}
-            sentMessageCount={isSelected ? sentMessageCount : 0}
+            tagline={character.shortDescription}
+            initials={character.name.charAt(0)}
+            avatarSize={44}
+            gradient={[avatarColor, avatarColor] as const}
+            selected={isSelected}
             onPress={() => navigateToCharacter(character.id)}
+            footer={
+              <RelationshipStatusChips
+                isSelected={isSelected}
+                sentMessageCount={isSelected ? sentMessageCount : 0}
+              />
+            }
           />
         );
       })}

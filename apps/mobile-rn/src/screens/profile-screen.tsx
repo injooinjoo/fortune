@@ -2,6 +2,7 @@ import { useMemo, useState, useCallback } from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
+import * as Updates from 'expo-updates';
 import { router, useFocusEffect } from 'expo-router';
 import { Alert, Linking, Platform, Pressable, View } from 'react-native';
 import type { Href } from 'expo-router';
@@ -11,13 +12,47 @@ import { Card } from '../components/card';
 import { PrimaryButton } from '../components/primary-button';
 import { Screen } from '../components/screen';
 import { captureError } from '../lib/error-reporting';
+import { deleteSecureItem } from '../lib/secure-store-storage';
 import { supabase } from '../lib/supabase';
+import { isTestAccountEmail } from '../lib/test-accounts';
+import { updateRemoteUserProfile } from '../lib/user-profile-remote';
 import { fortuneTheme } from '../lib/theme';
+import { WELCOME_SEEN_KEY } from '../lib/welcome-state';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { onDeviceLLMEngine, type ModelStatus } from '../lib/on-device-llm';
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
 
+const DISCLAIMER_STORAGE_KEY = 'fortune.disclaimer-accepted.v1';
+
 const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
+const RUNTIME_VERSION =
+  typeof Updates.runtimeVersion === 'string' ? Updates.runtimeVersion : null;
+const UPDATE_CHANNEL =
+  typeof Updates.channel === 'string' && Updates.channel.length > 0
+    ? Updates.channel
+    : null;
+const UPDATE_ID =
+  typeof Updates.updateId === 'string' && Updates.updateId.length > 0
+    ? Updates.updateId.slice(0, 8)
+    : null;
+const UPDATE_CREATED_AT =
+  Updates.createdAt instanceof Date
+    ? `${Updates.createdAt.getFullYear()}-${String(Updates.createdAt.getMonth() + 1).padStart(2, '0')}-${String(Updates.createdAt.getDate()).padStart(2, '0')}`
+    : null;
+const IS_EMBEDDED_LAUNCH = Updates.isEmbeddedLaunch === true;
+
+function formatBuildBadge(): string {
+  if (IS_EMBEDDED_LAUNCH) {
+    return UPDATE_CHANNEL
+      ? `embedded · ${UPDATE_CHANNEL}`
+      : '개발 빌드 (embedded)';
+  }
+  const parts: string[] = [];
+  if (UPDATE_CHANNEL) parts.push(UPDATE_CHANNEL);
+  if (UPDATE_ID) parts.push(`#${UPDATE_ID}`);
+  if (UPDATE_CREATED_AT) parts.push(UPDATE_CREATED_AT);
+  return parts.length > 0 ? `OTA · ${parts.join(' · ')}` : 'OTA';
+}
 
 const ZODIAC_ANIMALS = ['쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양', '원숭이', '닭', '개', '돼지'];
 const ZODIAC_EMOJI = ['🐭', '🐄', '🐯', '🐰', '🐉', '🐍', '🐴', '🐑', '🐵', '🐓', '🐶', '🐷'];
@@ -104,6 +139,124 @@ export function ProfileScreen() {
     : `${state.premium.tokenBalance}`;
 
   const initial = savedName.charAt(0).toUpperCase() || 'U';
+
+  const isTestAccount = isTestAccountEmail(email);
+
+  async function runResetSteps(): Promise<string[]> {
+    const failures: string[] = [];
+
+    async function step(label: string, fn: () => Promise<unknown>) {
+      try {
+        await fn();
+        console.log(`[reset-onboarding] ok: ${label}`);
+      } catch (error) {
+        console.warn(`[reset-onboarding] fail: ${label}`, error);
+        failures.push(label);
+        await captureError(error, {
+          surface: `profile:reset-onboarding:${label}`,
+        }).catch(() => undefined);
+      }
+    }
+
+    const userId = session?.user.id ?? null;
+
+    // 1. Wipe remote profile so re-login hydrates into empty state.
+    //    NOTE: `name` is NOT NULL in user_profiles — use empty string instead
+    //    of null, remoteProfileToPatch coalesces '' → '' so it reads as empty.
+    if (session) {
+      await step('clear-remote', () =>
+        updateRemoteUserProfile(session.user.id, {
+          name: '',
+          birth_date: null,
+          birth_time: null,
+          mbti: null,
+          blood_type: null,
+          fortune_preferences: { category_weights: {}, showPersonalized: true },
+          onboarding_completed: false,
+        }),
+      );
+    }
+
+    // 2. Sign out — clears Supabase auth tokens and makes session null on
+    //    next boot, which puts the app into the real first-launch flow.
+    await step('sign-out', async () => {
+      await supabase?.auth.signOut();
+    });
+
+    // 3. Nuke every local SecureStore key we know about so the next launch
+    //    looks exactly like a fresh install.
+    await step('clear-onboarding-progress', () =>
+      deleteSecureItem('unified_onboarding_progress_v1'),
+    );
+    await step('clear-welcome-seen', () => deleteSecureItem(WELCOME_SEEN_KEY));
+    await step('clear-disclaimer', () =>
+      deleteSecureItem(DISCLAIMER_STORAGE_KEY),
+    );
+    await step('clear-app-state-user', () =>
+      deleteSecureItem(
+        userId
+          ? `fortune.mobile-app-state.v1.${userId}`
+          : 'fortune.mobile-app-state.v1.guest',
+      ),
+    );
+    await step('clear-app-state-guest', () =>
+      deleteSecureItem('fortune.mobile-app-state.v1.guest'),
+    );
+    await step('clear-last-auth', () =>
+      deleteSecureItem('fortune.last-auth-user-id.v1'),
+    );
+    await step('clear-pending-deeplink', () =>
+      deleteSecureItem('pending_deep_link_fortune_type'),
+    );
+    await step('clear-created-friends', () =>
+      deleteSecureItem('fortune.created-friends.v1'),
+    );
+    await step('clear-favorite-celebrities', () =>
+      deleteSecureItem('fortune.favorite-celebrities.v1'),
+    );
+
+    return failures;
+  }
+
+  function handleResetOnboarding() {
+    Alert.alert(
+      '앱 초기화 (테스트)',
+      '서버 프로필, 로컬 캐시, 로그인 세션까지 모두 지우고 앱을 재시작합니다. 앱을 처음 설치한 상태로 돌아가며, 재시작 후 직접 다시 로그인해야 합니다. 프로필 데이터는 복구되지 않습니다.',
+      [
+        { text: '취소', style: 'cancel' },
+        {
+          text: '초기화 후 재시작',
+          style: 'destructive',
+          onPress: async () => {
+            const failures = await runResetSteps();
+            if (failures.length > 0) {
+              Alert.alert(
+                '일부 단계 실패',
+                `다음 단계에서 오류: ${failures.join(', ')}\n그래도 재시작을 진행합니다. Metro 콘솔에서 상세 에러를 확인하세요.`,
+                [
+                  {
+                    text: '확인',
+                    onPress: () => {
+                      void Updates.reloadAsync().catch(() =>
+                        router.replace('/onboarding'),
+                      );
+                    },
+                  },
+                ],
+              );
+              return;
+            }
+            try {
+              await Updates.reloadAsync();
+            } catch {
+              // dev builds may not support reloadAsync reliably → fallback
+              router.replace('/onboarding');
+            }
+          },
+        },
+      ],
+    );
+  }
 
   function handleSignOut() {
     Alert.alert('로그아웃', '정말 로그아웃 하시겠어요?', [
@@ -388,6 +541,36 @@ export function ProfileScreen() {
           </View>
         ) : null}
 
+        {/* 채팅 진동 (햅틱) */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Ionicons
+              name="pulse-outline"
+              size={18}
+              color={fortuneTheme.colors.textSecondary}
+            />
+            <AppText variant="bodyMedium">채팅 진동</AppText>
+          </View>
+          <View style={{ flexDirection: 'row', gap: 4 }}>
+            <ThemeChip
+              label="켜짐"
+              active={state.settings.chatHapticsEnabled}
+              onPress={() => saveSettings({ chatHapticsEnabled: true })}
+            />
+            <ThemeChip
+              label="꺼짐"
+              active={!state.settings.chatHapticsEnabled}
+              onPress={() => saveSettings({ chatHapticsEnabled: false })}
+            />
+          </View>
+        </View>
+
         {/* 계정 연결 */}
         {authProvider ? (
           <View
@@ -502,14 +685,40 @@ export function ProfileScreen() {
         </View>
       )}
 
-      {/* Version */}
-      <AppText
-        variant="caption"
-        color={fortuneTheme.colors.textTertiary}
-        style={{ textAlign: 'center', marginTop: 4 }}
-      >
-        v{APP_VERSION}
-      </AppText>
+      {isTestAccount ? (
+        <Card>
+          <AppText variant="heading4">테스트 도구</AppText>
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            테스트 계정에만 노출됩니다. 서버 프로필·로컬 캐시·로그인 세션까지 모두 지우고 앱을 재시작해, 처음 설치한 상태에서부터 온보딩을 다시 검증할 수 있어요.
+          </AppText>
+          <PrimaryButton
+            onPress={handleResetOnboarding}
+            tone="secondary"
+          >
+            앱 초기화 (Factory Reset)
+          </PrimaryButton>
+        </Card>
+      ) : null}
+
+      {/* Version / build identity — 테스트 중 어떤 빌드인지 판별용 */}
+      <View style={{ alignItems: 'center', gap: 2, marginTop: 4 }}>
+        <AppText
+          variant="caption"
+          color={fortuneTheme.colors.textTertiary}
+        >
+          v{APP_VERSION}
+          {RUNTIME_VERSION && RUNTIME_VERSION !== APP_VERSION
+            ? ` · rt ${RUNTIME_VERSION}`
+            : ''}
+        </AppText>
+        <AppText
+          variant="caption"
+          color={fortuneTheme.colors.textTertiary}
+          style={{ fontSize: 10, opacity: 0.7 }}
+        >
+          {formatBuildBadge()}
+        </AppText>
+      </View>
     </Screen>
   );
 }

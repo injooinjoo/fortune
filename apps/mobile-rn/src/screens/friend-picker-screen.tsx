@@ -1,6 +1,5 @@
 import { router, useLocalSearchParams, type Href } from 'expo-router';
-import { useState } from 'react';
-import { Alert, Pressable, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
@@ -25,7 +24,6 @@ const FORTUNE_AVATAR_PALETTE: Record<string, string> = {
 };
 
 const FALLBACK_AVATAR_COLOR = '#8B7BE8';
-const FREE_CHARACTER_LIMIT = 1;
 
 function getAvatarColor(name: string): string {
   return FORTUNE_AVATAR_PALETTE[name.charAt(0)] ?? FALLBACK_AVATAR_COLOR;
@@ -36,76 +34,20 @@ function normalizeReturnTo(value: string | string[] | undefined) {
   return nextValue && nextValue.startsWith('/') ? nextValue : '/chat';
 }
 
-function AddedChip() {
-  return (
-    <View
-      style={{
-        backgroundColor: `${fortuneTheme.colors.accentSecondary}1A`,
-        borderRadius: fortuneTheme.radius.chip,
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-      }}
-    >
-      <AppText
-        variant="caption"
-        color={fortuneTheme.colors.accentSecondary}
-      >
-        추가됨
-      </AppText>
-    </View>
-  );
-}
-
 export function FriendPickerScreen() {
   const params = useLocalSearchParams<{ returnTo?: string | string[] }>();
   const returnTo = normalizeReturnTo(params.returnTo);
 
-  const { createdFriends, addFortuneFriend, resetDraft } = useFriendCreation();
+  const { resetDraft } = useFriendCreation();
   const { state: mobileAppState, recordChatIntent } = useMobileAppState();
 
-  const [pendingId, setPendingId] = useState<string | null>(null);
-
-  const isPremium =
-    mobileAppState.premium.isUnlimited ||
-    (mobileAppState.premium.tokenBalance ?? 0) > 0;
-
-  const addedNames = new Set(createdFriends.map((friend) => friend.name));
+  const selectedCharacterId = mobileAppState.chat.selectedCharacterId;
 
   async function handleSelectFortune(
     character: (typeof fortuneChatCharacters)[number],
   ) {
-    if (addedNames.has(character.name)) {
-      return;
-    }
-
-    if (!isPremium && createdFriends.length >= FREE_CHARACTER_LIMIT) {
-      Alert.alert(
-        '캐릭터 슬롯이 꽉 찼어요',
-        '무료 플랜은 친구 1명까지 추가할 수 있어요. 프리미엄으로 업그레이드하면 무제한이에요!',
-        [
-          { text: '돌아가기', style: 'cancel' },
-          { text: '프리미엄 보기', onPress: () => router.push('/premium') },
-        ],
-      );
-      return;
-    }
-
-    try {
-      setPendingId(character.id);
-      const friend = await addFortuneFriend({
-        name: character.name,
-        shortDescription: character.shortDescription,
-      });
-      await recordChatIntent({ characterId: friend.id });
-      router.replace(returnTo as Href);
-    } catch (error) {
-      Alert.alert(
-        '추가 실패',
-        error instanceof Error ? error.message : '다시 시도해주세요.',
-      );
-    } finally {
-      setPendingId(null);
-    }
+    await recordChatIntent({ characterId: character.id });
+    router.replace(returnTo as Href);
   }
 
   function handleGoToCustom() {
@@ -128,7 +70,7 @@ export function FriendPickerScreen() {
           variant="bodyLarge"
           color={fortuneTheme.colors.textSecondary}
         >
-          운세 캐릭터를 친구로 추가하거나, 원하는 친구를 직접 만들 수 있어요.
+          운세 캐릭터 중에서 선택하거나, 원하는 친구를 직접 만들 수 있어요.
         </AppText>
       </View>
 
@@ -138,14 +80,13 @@ export function FriendPickerScreen() {
           variant="bodySmall"
           color={fortuneTheme.colors.textSecondary}
         >
-          탭하면 친구 목록에 추가돼요.
+          탭하면 해당 캐릭터와 바로 대화를 이어갈 수 있어요.
         </AppText>
       </View>
 
       {fortuneChatCharacters.map((character) => {
-        const isAdded = addedNames.has(character.name);
         const avatarColor = getAvatarColor(character.name);
-        const isPending = pendingId === character.id;
+        const isSelected = character.id === selectedCharacterId;
 
         return (
           <CharacterCard
@@ -155,26 +96,8 @@ export function FriendPickerScreen() {
             initials={character.name.charAt(0)}
             avatarSize={44}
             gradient={[avatarColor, avatarColor] as const}
-            selected={isAdded}
-            onPress={
-              isAdded || isPending
-                ? undefined
-                : () => void handleSelectFortune(character)
-            }
-            footer={
-              isAdded ? (
-                <View style={{ flexDirection: 'row', gap: 6 }}>
-                  <AddedChip />
-                </View>
-              ) : isPending ? (
-                <AppText
-                  variant="caption"
-                  color={fortuneTheme.colors.textSecondary}
-                >
-                  추가 중...
-                </AppText>
-              ) : null
-            }
+            selected={isSelected}
+            onPress={() => void handleSelectFortune(character)}
           />
         );
       })}
