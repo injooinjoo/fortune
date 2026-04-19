@@ -16,6 +16,10 @@ import {
   Timeline,
 } from '../primitives';
 import HeroCompat from '../heroes/hero-compat';
+import HeroDecision from '../heroes/hero-decision';
+import HeroDailyReview from '../heroes/hero-daily-review';
+import HeroExam from '../heroes/hero-exam';
+import HeroYearlyEncounter from '../heroes/hero-yearly-encounter';
 import { ResultCardFrame } from '../primitives/result-card-frame';
 import type { FortuneResultComponentProps } from '../types';
 import { useResultData } from '../use-result-data';
@@ -168,27 +172,18 @@ function ExamResult(props: FortuneResultComponentProps) {
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
       {/* ============================================================ */}
-      {/*  Hero: Report card header                                     */}
+      {/*  Hero: Exam fortune — pencil halo + luck dial + stat pills    */}
       {/* ============================================================ */}
-      <Card
-        style={{
-          backgroundColor: fortuneTheme.colors.backgroundTertiary,
-          gap: fortuneTheme.spacing.md,
-        }}
-      >
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: fortuneTheme.spacing.sm }}>
-          <AppText style={{ fontSize: 28, lineHeight: 36 }}>📝</AppText>
-          <View style={{ flex: 1 }}>
-            <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
-              오늘의 성적표
-            </AppText>
-            <AppText variant="oracleTitle">{meta.title}</AppText>
-          </View>
-        </View>
-        <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
-          {summary}
-        </AppText>
-      </Card>
+      <HeroExam
+        examLabel={meta.title}
+        luckScore={displayPossibility}
+        stats={[
+          { label: '직감력', value: displayIntuition },
+          { label: '정신방어', value: displayDefense },
+          { label: '기억가속', value: displayMemory },
+        ]}
+        description={summary}
+      />
 
       {/* ============================================================ */}
       {/*  1. Grade badge + Pass gauge side by side                     */}
@@ -1954,57 +1949,23 @@ function YearlyEncounterResult(props: FortuneResultComponentProps) {
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
       {/* ============================================================ */}
-      {/*  1. 인연 점수 게이지 — Heart + star theme                     */}
+      {/*  Hero: 12-month encounter ring with peak markers              */}
       {/* ============================================================ */}
-      <Card
-        style={{
-          backgroundColor: fortuneTheme.colors.backgroundTertiary,
-          alignItems: 'center',
-          gap: fortuneTheme.spacing.md,
-          paddingVertical: fortuneTheme.spacing.lg,
-        }}
-      >
-        <View
-          style={{
-            width: 120,
-            height: 120,
-            borderRadius: fortuneTheme.radius.full,
-            borderWidth: 5,
-            borderColor: '#E040FB',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(224,64,251,0.08)',
-          }}
-        >
-          <AppText style={{ fontSize: 28, lineHeight: 36 }}>{'\uD83D\uDCAB'}</AppText>
-          <AppText
-            variant="heading2"
-            style={{ color: '#E040FB' }}
-          >
-            {encounterGauge}
-          </AppText>
-        </View>
-        <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
-          인연 점수
-        </AppText>
-        <AppText variant="oracleTitle">{meta.title}</AppText>
+      <HeroYearlyEncounter
+        year={new Date().getFullYear()}
+        peakMonths={Array.from(highlightedMonths).sort((a, b) => a - b)}
+        encounterScore={encounterGauge}
+        description={summary}
+      />
+      {yearSummary ? (
         <AppText
-          variant="oracleBody"
-          color={fortuneTheme.colors.textSecondary}
-          style={{ textAlign: 'center', paddingHorizontal: fortuneTheme.spacing.md }}
+          variant="bodySmall"
+          color={fortuneTheme.colors.textTertiary}
+          style={{ textAlign: 'center', fontStyle: 'italic', paddingHorizontal: fortuneTheme.spacing.md }}
         >
-          {summary}
+          {yearSummary}
         </AppText>
-        {yearSummary ? (
-          <AppText
-            variant="bodySmall"
-            color={fortuneTheme.colors.textTertiary}
-            style={{ textAlign: 'center', fontStyle: 'italic', paddingHorizontal: fortuneTheme.spacing.md }}
-          >
-            {yearSummary}
-          </AppText>
-        ) : null}
-      </Card>
+      ) : null}
 
       {/* ============================================================ */}
       {/*  2. 이상형 프로필 카드 — Partner profile with traits pills     */}
@@ -2313,9 +2274,29 @@ function DecisionResult(props: FortuneResultComponentProps) {
   const summary = str(data.summary) || result.summary
     || '의사결정 인사이트는 정답을 찾기보다 기준을 선명하게 세우는 쪽에 반응합니다.';
 
+  // Derive hero props from recommendation string vs. option names.
+  const optionAlabel = str(rawOptions[0]?.option) || str(rawOptions[0]?.name) || '옵션 A';
+  const optionBlabel = str(rawOptions[1]?.option) || str(rawOptions[1]?.name) || '옵션 B';
+  const recLower = recommendation.toLowerCase();
+  const recSide: 'A' | 'B' | 'neutral' =
+    recLower.includes(optionAlabel.toLowerCase()) || recLower.startsWith('a')
+      ? 'A'
+      : recLower.includes(optionBlabel.toLowerCase()) || recLower.startsWith('b')
+        ? 'B'
+        : 'neutral';
+  const strengthScore = recSide === 'neutral' ? 60 : 82;
+  const heroQuestion = question || meta.title;
+
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
-      <HeroCard emoji="🤔" title={meta.title} description={summary} />
+      <HeroDecision
+        question={heroQuestion}
+        optionAlabel={optionAlabel}
+        optionBlabel={optionBlabel}
+        recommendation={recSide}
+        strengthScore={strengthScore}
+        description={summary}
+      />
 
       {/* 질문 표시 */}
       {question ? (
@@ -2453,7 +2434,12 @@ function DailyReviewResult(props: FortuneResultComponentProps) {
 
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
-      <HeroCard emoji="📋" title={meta.title} description={summary} chips={chips} />
+      <HeroDailyReview
+        dateLabel={new Date().toISOString().slice(0, 10)}
+        doneCount={highlights.length}
+        openCount={recommendations.length}
+        description={summary}
+      />
 
       <SectionCard title="오늘의 요약 지표">
         <MetricGrid items={metrics} />

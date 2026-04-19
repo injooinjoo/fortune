@@ -13,3 +13,7 @@ export { default as HeroFace } from './hero-face';
 export { default as HeroLucky } from './hero-lucky';
 export { default as HeroPet } from './hero-pet';
 export { default as HeroMoving } from './hero-moving';
+export { default as HeroDecision } from './hero-decision';
+export { default as HeroDailyReview } from './hero-daily-review';
+export { default as HeroExam } from './hero-exam';
+export { default as HeroYearlyEncounter } from './hero-yearly-encounter';
