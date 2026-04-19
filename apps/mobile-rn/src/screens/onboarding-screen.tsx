@@ -625,20 +625,13 @@ export function OnboardingScreen() {
         </Card>
       ) : null}
 
-      <Card>
-        <AppText variant="heading4">나가기</AppText>
-        <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
-          아직 마치지 않아도 언제든 다시 돌아와 이어서 입력할 수 있어요.
-        </AppText>
-        <PrimaryButton onPress={() => router.replace(returnTo as Href)} tone="secondary">
-          {returnTo === '/chat' ? '메시지로 이동' : '원래 화면으로 돌아가기'}
-        </PrimaryButton>
-        {__DEV__ && debugStep ? (
+      {__DEV__ && debugStep ? (
+        <Card>
           <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
             개발용 debug step: {debugStep}
           </AppText>
-        ) : null}
-      </Card>
+        </Card>
+      ) : null}
     </Screen>
   );
 }

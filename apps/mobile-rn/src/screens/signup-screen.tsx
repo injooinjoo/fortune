@@ -7,7 +7,6 @@ import { Pressable, View } from 'react-native';
 import { AppleAuthButton } from '../components/apple-auth-button';
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
-import { PrimaryButton } from '../components/primary-button';
 import {
   resolveBackDestinationLabel,
   RouteBackHeader,
@@ -67,11 +66,8 @@ export function SignupScreen() {
   const [activeProviderId, setActiveProviderId] =
     useState<SocialAuthProviderId | null>(null);
   const [authMessage, setAuthMessage] = useState<string | null>(null);
-  const {
-    markGuestBrowse,
-    session,
-    status: bootstrapStatus,
-  } = useAppBootstrap();
+  const [otherMethodsExpanded, setOtherMethodsExpanded] = useState(false);
+  const { session, status: bootstrapStatus } = useAppBootstrap();
   const { startSocialAuth } = useSocialAuth();
   const returnTo = normalizeReturnTo(readSearchParam(params.returnTo));
   const backDestinationLabel = resolveBackDestinationLabel(returnTo as Href);
@@ -112,6 +108,7 @@ export function SignupScreen() {
 
   return (
     <Screen
+      centerContent
       header={
         <RouteBackHeader
           fallbackHref={returnTo as Href}
@@ -182,131 +179,126 @@ export function SignupScreen() {
       </View>
 
       <Card>
-        <AppText variant="heading4">다른 방법으로 시작</AppText>
         <Pressable
-          accessibilityLabel="이메일로 시작"
+          accessibilityLabel="다른 방법으로 시작"
           accessibilityRole="button"
+          accessibilityState={{ expanded: otherMethodsExpanded }}
           onPress={() => {
             confirmAction();
-            router.push('/auth/email');
+            setOtherMethodsExpanded((prev) => !prev);
           }}
           style={({ pressed }) => ({
             alignItems: 'center',
-            backgroundColor: '#FFFFFF',
-            borderRadius: fortuneTheme.radius.full,
             flexDirection: 'row',
-            justifyContent: 'center',
-            minHeight: 52,
-            opacity: pressed ? 0.84 : 1,
-            paddingHorizontal: 16,
-            width: '100%',
+            justifyContent: 'space-between',
+            opacity: pressed ? 0.72 : 1,
           })}
         >
-          <View
-            style={{
-              alignItems: 'center',
-              flexDirection: 'row',
-              width: '100%',
-            }}
-          >
-            <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 24,
-              }}
-            >
-              <Ionicons color="#111111" name="mail-outline" size={18} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <AppText
-                variant="labelLarge"
-                color="#111111"
-                style={{ fontWeight: '700', textAlign: 'center' }}
-              >
-                이메일로 시작
-              </AppText>
-            </View>
-            <View style={{ width: 24 }} />
-          </View>
+          <AppText variant="heading4">다른 방법으로 시작</AppText>
+          <Ionicons
+            color={fortuneTheme.colors.textSecondary}
+            name={otherMethodsExpanded ? 'chevron-up' : 'chevron-down'}
+            size={20}
+          />
         </Pressable>
-        <Pressable
-          accessibilityLabel="전화번호로 시작"
-          accessibilityRole="button"
-          onPress={() => {
-            confirmAction();
-            router.push('/auth/phone');
-          }}
-          style={({ pressed }) => ({
-            alignItems: 'center',
-            backgroundColor: '#FFFFFF',
-            borderRadius: fortuneTheme.radius.full,
-            flexDirection: 'row',
-            justifyContent: 'center',
-            minHeight: 52,
-            opacity: pressed ? 0.84 : 1,
-            paddingHorizontal: 16,
-            width: '100%',
-          })}
-        >
-          <View
-            style={{
-              alignItems: 'center',
-              flexDirection: 'row',
-              width: '100%',
-            }}
-          >
-            <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 24,
+        {otherMethodsExpanded ? (
+          <>
+            <Pressable
+              accessibilityLabel="이메일로 시작"
+              accessibilityRole="button"
+              onPress={() => {
+                confirmAction();
+                router.push('/auth/email');
               }}
+              style={({ pressed }) => ({
+                alignItems: 'center',
+                backgroundColor: '#FFFFFF',
+                borderRadius: fortuneTheme.radius.full,
+                flexDirection: 'row',
+                justifyContent: 'center',
+                minHeight: 52,
+                opacity: pressed ? 0.84 : 1,
+                paddingHorizontal: 16,
+                width: '100%',
+              })}
             >
-              <Ionicons color="#111111" name="call-outline" size={18} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <AppText
-                variant="labelLarge"
-                color="#111111"
-                style={{ fontWeight: '700', textAlign: 'center' }}
+              <View
+                style={{
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  width: '100%',
+                }}
               >
-                전화번호로 시작
-              </AppText>
-            </View>
-            <View style={{ width: 24 }} />
-          </View>
-        </Pressable>
-      </Card>
-
-      <Card>
-        <AppText variant="heading4">로그인 없이 먼저 보기</AppText>
-        <PrimaryButton
-          onPress={() => {
-            markGuestBrowse()
-              .then(() => router.replace(returnTo as Href))
-              .catch(() => router.replace(returnTo as Href));
-          }}
-        >
-          로그인 없이 둘러보기
-        </PrimaryButton>
-        <PrimaryButton
-          onPress={() =>
-            router.push({
-              pathname: '/onboarding',
-              params: { returnTo },
-            })
-          }
-          tone="secondary"
-        >
-          정보 먼저 입력하기
-        </PrimaryButton>
-        <PrimaryButton
-          onPress={() => router.replace(returnTo as Href)}
-          tone="secondary"
-        >
-          {returnTo === '/chat' ? '채팅으로 돌아가기' : '이전 화면으로 돌아가기'}
-        </PrimaryButton>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 24,
+                  }}
+                >
+                  <Ionicons color="#111111" name="mail-outline" size={18} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <AppText
+                    variant="labelLarge"
+                    color="#111111"
+                    style={{ fontWeight: '700', textAlign: 'center' }}
+                  >
+                    이메일로 시작
+                  </AppText>
+                </View>
+                <View style={{ width: 24 }} />
+              </View>
+            </Pressable>
+            <Pressable
+              accessibilityLabel="전화번호로 시작"
+              accessibilityRole="button"
+              onPress={() => {
+                confirmAction();
+                router.push('/auth/phone');
+              }}
+              style={({ pressed }) => ({
+                alignItems: 'center',
+                backgroundColor: '#FFFFFF',
+                borderRadius: fortuneTheme.radius.full,
+                flexDirection: 'row',
+                justifyContent: 'center',
+                minHeight: 52,
+                opacity: pressed ? 0.84 : 1,
+                paddingHorizontal: 16,
+                width: '100%',
+              })}
+            >
+              <View
+                style={{
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  width: '100%',
+                }}
+              >
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 24,
+                  }}
+                >
+                  <Ionicons color="#111111" name="call-outline" size={18} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <AppText
+                    variant="labelLarge"
+                    color="#111111"
+                    style={{ fontWeight: '700', textAlign: 'center' }}
+                  >
+                    전화번호로 시작
+                  </AppText>
+                </View>
+                <View style={{ width: 24 }} />
+              </View>
+            </Pressable>
+          </>
+        ) : null}
       </Card>
     </Screen>
   );
