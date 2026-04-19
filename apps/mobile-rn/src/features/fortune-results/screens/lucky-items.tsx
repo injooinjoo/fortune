@@ -4,13 +4,13 @@ import { AppText } from '../../../components/app-text';
 import { Card } from '../../../components/card';
 import { Chip } from '../../../components/chip';
 import { fortuneTheme } from '../../../lib/theme';
+import { HeroLucky } from '../heroes';
 import { resultMetadataByKind } from '../mapping';
 import {
   BulletList,
   InsetQuote,
   KeywordPills,
   SectionCard,
-  StatRail,
   Timeline,
 } from '../primitives';
 import type { FortuneResultComponentProps } from '../types';
@@ -57,62 +57,6 @@ function numArr(val: unknown): number[] {
     .filter((n) => n >= 0);
 }
 
-/* ------------------------------------------------------------------ */
-/*  Score ring                                                         */
-/* ------------------------------------------------------------------ */
-
-function ScoreRing({ score, label }: { score: number; label: string }) {
-  const clamped = Math.max(0, Math.min(100, score));
-  return (
-    <View
-      style={{
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: fortuneTheme.colors.backgroundTertiary,
-        borderRadius: fortuneTheme.radius.full,
-        borderWidth: 3,
-        borderColor: fortuneTheme.colors.ctaBackground,
-        width: 88,
-        height: 88,
-      }}
-    >
-      <AppText variant="displaySmall" color={fortuneTheme.colors.ctaBackground}>
-        {clamped}
-      </AppText>
-      <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-        {label}
-      </AppText>
-    </View>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Power score bar (inline mini-bar)                                  */
-/* ------------------------------------------------------------------ */
-
-function PowerBar({ value, maxValue = 100 }: { value: number; maxValue?: number }) {
-  const pct = Math.max(0, Math.min(100, (value / maxValue) * 100));
-  return (
-    <View
-      style={{
-        backgroundColor: fortuneTheme.colors.surfaceSecondary,
-        borderRadius: fortuneTheme.radius.full,
-        height: 8,
-        overflow: 'hidden',
-        flex: 1,
-      }}
-    >
-      <View
-        style={{
-          backgroundColor: fortuneTheme.colors.ctaBackground,
-          borderRadius: fortuneTheme.radius.full,
-          height: '100%',
-          width: `${pct}%`,
-        }}
-      />
-    </View>
-  );
-}
 
 /* ------------------------------------------------------------------ */
 /*  Category emoji mapping                                             */
@@ -247,38 +191,43 @@ export function LuckyItemsResult(props: FortuneResultComponentProps) {
 
   const categoryEmoji = CATEGORY_EMOJI[selectedCategory] ?? '🍀';
 
+  // Build up to 6 hero tiles from the most compelling item categories.
+  const heroTiles: Array<{ emoji: string; label: string }> = [
+    ...(colorPrimary ? [{ emoji: '🎨', label: colorPrimary }] : []),
+    ...(fashionItems[0] ? [{ emoji: '👔', label: fashionItems[0] }] : []),
+    ...(foodItems[0] ? [{ emoji: '🍽️', label: foodItems[0] }] : []),
+    ...(numbers[0] !== undefined ? [{ emoji: '🔢', label: String(numbers[0]) }] : []),
+    ...(directionCompass ? [{ emoji: '🧭', label: directionCompass }] : []),
+    ...(jewelryItems[0] ? [{ emoji: '💎', label: jewelryItems[0] }] : []),
+    ...(placesItems[0] ? [{ emoji: '📍', label: placesItems[0] }] : []),
+    ...(materialItems[0] ? [{ emoji: '🧶', label: materialItems[0] }] : []),
+  ].slice(0, 6);
+
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
       {/* ============================================================ */}
-      {/*  Section 1: Hero — Overall luck score                         */}
+      {/*  Section 1: Hero — Signature 3x2 lucky-tile grid              */}
       {/* ============================================================ */}
-      <Card
-        style={{
-          backgroundColor: fortuneTheme.colors.backgroundTertiary,
-          gap: fortuneTheme.spacing.md,
-          alignItems: 'center',
-          paddingVertical: fortuneTheme.spacing.xl,
-        }}
-      >
-        <AppText style={{ fontSize: 48 }}>🍀</AppText>
-        <AppText variant="oracleTitle" style={{ textAlign: 'center' }}>
-          {title}
-        </AppText>
+      <HeroLucky
+        items={heroTiles}
+        luckyScore={score}
+        description={summary || title}
+      />
 
-        <ScoreRing score={score} label="행운 지수" />
-
-        {element ? (
-          <Chip label={`오행: ${element}`} tone="accent" />
-        ) : null}
-
-        {heroChips.length > 0 && (
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
-            {heroChips.map((chip) => (
-              <Chip key={chip} label={chip} />
-            ))}
-          </View>
-        )}
-      </Card>
+      {element || heroChips.length > 0 ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            gap: fortuneTheme.spacing.xs,
+          }}
+        >
+          {element ? <Chip label={`오행: ${element}`} tone="accent" /> : null}
+          {heroChips.map((chip) => (
+            <Chip key={chip} label={chip} />
+          ))}
+        </View>
+      ) : null}
 
       {/* ============================================================ */}
       {/*  Section 2: Content — Analysis narrative                      */}

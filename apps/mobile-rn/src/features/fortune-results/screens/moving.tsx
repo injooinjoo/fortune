@@ -4,6 +4,7 @@ import { AppText } from '../../../components/app-text';
 import { Card } from '../../../components/card';
 import { Chip } from '../../../components/chip';
 import { fortuneTheme } from '../../../lib/theme';
+import { HeroMoving } from '../heroes';
 import { resultMetadataByKind } from '../mapping';
 import {
   BulletList,
@@ -14,6 +15,26 @@ import {
 } from '../primitives';
 import type { FortuneResultComponentProps } from '../types';
 import { useResultData } from '../use-result-data';
+
+/* ------------------------------------------------------------------ */
+/*  Direction → compass degrees (0=N, 90=E, 180=S, 270=W)              */
+/* ------------------------------------------------------------------ */
+
+const DIRECTION_DEGREES: Record<string, number> = {
+  북: 0,
+  동북: 45,
+  동: 90,
+  동남: 135,
+  남: 180,
+  서남: 225,
+  서: 270,
+  서북: 315,
+};
+
+function directionToDegrees(direction: string): number {
+  const normalized = direction.replace(/쪽$/u, '').trim();
+  return DIRECTION_DEGREES[normalized] ?? 135;
+}
 
 /* ------------------------------------------------------------------ */
 /*  Type helpers for safe access to raw API response                   */
@@ -48,134 +69,6 @@ function strArr(val: unknown): string[] {
   return arr(val)
     .map((v) => str(v))
     .filter(Boolean);
-}
-
-/* ------------------------------------------------------------------ */
-/*  Score ring                                                         */
-/* ------------------------------------------------------------------ */
-
-function ScoreRing({ score, label, emoji }: { score: number; label: string; emoji?: string }) {
-  const clamped = Math.max(0, Math.min(100, score));
-  return (
-    <View
-      style={{
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: fortuneTheme.colors.backgroundTertiary,
-        borderRadius: fortuneTheme.radius.full,
-        borderWidth: 3,
-        borderColor: fortuneTheme.colors.ctaBackground,
-        width: 100,
-        height: 100,
-      }}
-    >
-      {emoji ? (
-        <AppText style={{ fontSize: 18, marginBottom: 2 }}>{emoji}</AppText>
-      ) : null}
-      <AppText variant="displaySmall" color={fortuneTheme.colors.ctaBackground}>
-        {clamped}
-      </AppText>
-      <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-        {label}
-      </AppText>
-    </View>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Direction compass display                                          */
-/* ------------------------------------------------------------------ */
-
-const DIRECTION_LABELS = ['북', '동북', '동', '동남', '남', '서남', '서', '서북'] as const;
-
-const DIRECTION_POSITIONS: Record<string, { top?: number; bottom?: number; left?: number; right?: number }> = {
-  '북': { top: 4, left: 72 },
-  '동북': { top: 22, right: 14 },
-  '동': { top: 72, right: 4 },
-  '동남': { bottom: 22, right: 14 },
-  '남': { bottom: 4, left: 72 },
-  '서남': { bottom: 22, left: 14 },
-  '서': { top: 72, left: 4 },
-  '서북': { top: 22, left: 14 },
-};
-
-function CompassDisplay({
-  activeDirection,
-  score,
-  isAuspicious,
-}: {
-  activeDirection: string;
-  score: number;
-  isAuspicious: boolean;
-}) {
-  return (
-    <View style={{ alignItems: 'center', gap: fortuneTheme.spacing.md }}>
-      <View
-        style={{
-          width: 180,
-          height: 180,
-          borderRadius: fortuneTheme.radius.full,
-          borderWidth: 2,
-          borderColor: fortuneTheme.colors.border,
-          backgroundColor: fortuneTheme.colors.backgroundTertiary,
-          position: 'relative',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        {/* Center compass emoji */}
-        <AppText style={{ fontSize: 32 }}>🧭</AppText>
-
-        {/* Direction labels around the circle */}
-        {DIRECTION_LABELS.map((dir) => {
-          const pos = DIRECTION_POSITIONS[dir] ?? {};
-          const isActive = dir === activeDirection;
-          return (
-            <View
-              key={dir}
-              style={{
-                position: 'absolute',
-                ...pos,
-                backgroundColor: isActive
-                  ? isAuspicious
-                    ? fortuneTheme.colors.ctaBackground
-                    : fortuneTheme.colors.error
-                  : 'transparent',
-                borderRadius: fortuneTheme.radius.full,
-                paddingHorizontal: 8,
-                paddingVertical: 4,
-              }}
-            >
-              <AppText
-                variant={isActive ? 'labelLarge' : 'caption'}
-                color={
-                  isActive
-                    ? fortuneTheme.colors.ctaForeground
-                    : fortuneTheme.colors.textTertiary
-                }
-              >
-                {dir}
-              </AppText>
-            </View>
-          );
-        })}
-      </View>
-
-      {/* Direction score and label */}
-      <View style={{ alignItems: 'center', gap: fortuneTheme.spacing.xs }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: fortuneTheme.spacing.sm }}>
-          <AppText variant="heading3">{activeDirection}쪽</AppText>
-          <Chip
-            label={isAuspicious ? '길' : '흉'}
-            tone={isAuspicious ? 'accent' : 'neutral'}
-          />
-        </View>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          방위 궁합 {score}점
-        </AppText>
-      </View>
-    </View>
-  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -461,41 +354,28 @@ export function MovingResult(props: FortuneResultComponentProps) {
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
       {/* ============================================================ */}
-      {/*  Section 1: Hero - Overall score gauge                        */}
+      {/*  Section 1: Hero — Signature compass rose                     */}
       {/* ============================================================ */}
-      <Card
-        style={{
-          backgroundColor: fortuneTheme.colors.backgroundTertiary,
-          gap: fortuneTheme.spacing.md,
-          alignItems: 'center',
-          paddingVertical: fortuneTheme.spacing.xl,
-        }}
-      >
-        <AppText style={{ fontSize: 48 }}>🏠</AppText>
-        <AppText variant="oracleTitle" style={{ textAlign: 'center' }}>
-          {title}
-        </AppText>
+      <HeroMoving
+        luckyDirection={`${direction}쪽`}
+        directionDegrees={directionToDegrees(direction)}
+        harmonyScore={dirCompatibility > 0 ? dirCompatibility : score}
+        description={oneLine || title}
+      />
 
-        <ScoreRing score={score} label="이사 점수" emoji="🏠" />
-
-        {keywords.length > 0 && (
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
-            {keywords.map((kw) => (
-              <Chip key={kw} label={kw} />
-            ))}
-          </View>
-        )}
-
-        {oneLine ? (
-          <AppText
-            variant="oracleBody"
-            color={fortuneTheme.colors.textSecondary}
-            style={{ textAlign: 'center', paddingHorizontal: fortuneTheme.spacing.md }}
-          >
-            {oneLine}
-          </AppText>
-        ) : null}
-      </Card>
+      {keywords.length > 0 && (
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            gap: fortuneTheme.spacing.xs,
+          }}
+        >
+          {keywords.map((kw) => (
+            <Chip key={kw} label={kw} />
+          ))}
+        </View>
+      )}
 
       {/* ============================================================ */}
       {/*  Section 1b: Overall fortune                                  */}
@@ -514,15 +394,26 @@ export function MovingResult(props: FortuneResultComponentProps) {
       ) : null}
 
       {/* ============================================================ */}
-      {/*  Section 2: Direction analysis - Compass display               */}
+      {/*  Section 2: Direction analysis - narrative + element details   */}
       {/* ============================================================ */}
       {hasRaw && direction ? (
         <SectionCard title="방위 분석" description="이사 방향의 풍수 길흉을 분석합니다.">
-          <CompassDisplay
-            activeDirection={direction}
-            score={dirCompatibility}
-            isAuspicious={dirIsAuspicious}
-          />
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: fortuneTheme.spacing.sm,
+            }}
+          >
+            <AppText variant="heading3">{direction}쪽</AppText>
+            <Chip
+              label={dirIsAuspicious ? '길' : '흉'}
+              tone={dirIsAuspicious ? 'accent' : 'neutral'}
+            />
+            <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+              방위 궁합 {dirCompatibility}점
+            </AppText>
+          </View>
 
           {directionMeaning ? (
             <Card

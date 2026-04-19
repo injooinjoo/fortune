@@ -4,6 +4,7 @@ import { AppText } from '../../../components/app-text';
 import { Card } from '../../../components/card';
 import { Chip } from '../../../components/chip';
 import { fortuneTheme } from '../../../lib/theme';
+import { HeroCelebrity } from '../heroes';
 import { resultMetadataByKind } from '../mapping';
 import {
   BulletList,
@@ -249,38 +250,22 @@ export function CelebrityResult(props: FortuneResultComponentProps) {
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
       {/* ============================================================ */}
-      {/*  1. Hero — Celebrity name + grade badge + overall score       */}
+      {/*  1. Hero — Ondo signature celebrity chemistry visual          */}
       {/* ============================================================ */}
       <Card
         style={{
           backgroundColor: fortuneTheme.colors.backgroundTertiary,
           gap: fortuneTheme.spacing.md,
-          alignItems: 'center',
-          paddingVertical: fortuneTheme.spacing.xl,
+          paddingVertical: fortuneTheme.spacing.lg,
         }}
       >
-        <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
-          나와 {celebrityName}의 사주 궁합
-        </AppText>
-
-        <ScoreDisplay score={overallScore} label="궁합 점수" />
-
-        <View
-          style={{
-            backgroundColor: gStyle.bg,
-            borderRadius: fortuneTheme.radius.chip,
-            paddingHorizontal: 16,
-            paddingVertical: 8,
-          }}
-        >
-          <AppText variant="labelLarge" color={gStyle.fg}>
-            {compatibilityGrade}
-          </AppText>
-        </View>
-
-        <AppText variant="heading2" style={{ textAlign: 'center' }}>
-          {celebrityName}
-        </AppText>
+        <HeroCelebrity
+          celebName={celebrityName}
+          userLabel="당신"
+          compatibilityScore={overallScore}
+          gradeLabel={compatibilityGrade}
+          description={mainMessage}
+        />
       </Card>
 
       {/* ============================================================ */}

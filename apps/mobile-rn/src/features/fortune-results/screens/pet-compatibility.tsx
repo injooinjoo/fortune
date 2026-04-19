@@ -4,9 +4,9 @@ import { AppText } from '../../../components/app-text';
 import { Card } from '../../../components/card';
 import { fortuneTheme } from '../../../lib/theme';
 import { resultMetadataByKind } from '../mapping';
+import { HeroPet } from '../heroes';
 import {
   BulletList,
-  HeroCard,
   InsetQuote,
   KeywordPills,
   MetricGrid,
@@ -45,35 +45,6 @@ function num(val: unknown, fallback = 0): number {
 function strArr(val: unknown): string[] {
   if (!Array.isArray(val)) return [];
   return val.map((v) => str(v)).filter(Boolean);
-}
-
-/* ------------------------------------------------------------------ */
-/*  Score display ring                                                 */
-/* ------------------------------------------------------------------ */
-
-function ScoreRing({ score, label }: { score: number; label: string }) {
-  const clamped = Math.max(0, Math.min(100, score));
-  return (
-    <View
-      style={{
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: fortuneTheme.colors.backgroundTertiary,
-        borderRadius: fortuneTheme.radius.full,
-        borderWidth: 3,
-        borderColor: fortuneTheme.colors.ctaBackground,
-        width: 88,
-        height: 88,
-      }}
-    >
-      <AppText variant="displaySmall" color={fortuneTheme.colors.ctaBackground}>
-        {clamped}
-      </AppText>
-      <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-        {label}
-      </AppText>
-    </View>
-  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -262,24 +233,16 @@ export function PetCompatibilityResult(props: FortuneResultComponentProps) {
 
   const petLabel = [petBreed, petSpecies].filter(Boolean).join(' ');
 
-  // Hero chips
-  const heroChips = result.contextTags.length > 0
-    ? result.contextTags
-    : [petName, petLabel, `유대감 ${bondScore}점`].filter(Boolean);
-
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
       {/* ============================================================ */}
-      {/*  Section 1: Hero — Pet emoji + name + bond score              */}
+      {/*  Section 1: Hero — Dual-circle owner/pet bond visual          */}
       {/* ============================================================ */}
-      <HeroCard
-        emoji="🐾"
-        title={`${petName}의 오늘`}
+      <HeroPet
+        petType={petSpecies || '반려동물'}
+        petEmoji={petTypeEmoji}
+        bondScore={bondScore}
         description={greeting || summary}
-        chips={heroChips}
-        aside={
-          <ScoreRing score={bondScore} label="유대감" />
-        }
       />
 
       {/* ============================================================ */}

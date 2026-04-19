@@ -3,10 +3,9 @@ import { View } from 'react-native';
 import { AppText } from '../../../components/app-text';
 import { Card } from '../../../components/card';
 import { fortuneTheme, withAlpha } from '../../../lib/theme';
-import { resultMetadataByKind } from '../mapping';
+import { HeroNaming } from '../heroes';
 import {
   BulletList,
-  HeroCard,
   InsetQuote,
   SectionCard,
 } from '../primitives';
@@ -430,7 +429,6 @@ function RecommendedNameCard({ data }: { data: R }) {
 /* ------------------------------------------------------------------ */
 
 export function NamingResult(props: FortuneResultComponentProps) {
-  const meta = resultMetadataByKind.naming;
   const result = useResultData(props.payload);
   const raw = props.payload?.rawApiResponse ?? {};
 
@@ -465,44 +463,23 @@ export function NamingResult(props: FortuneResultComponentProps) {
     ? num(obj(recommendedNames[0]).totalScore, result.score ?? 85)
     : result.score ?? 85;
 
-  const heroChips = result.contextTags.length > 0
-    ? result.contextTags
-    : [
-        yongsin ? `용신: ${yongsin}` : null,
-        missing.length > 0 ? `부족: ${missing.join(', ')}` : null,
-        '작명',
-      ].filter(Boolean) as string[];
-
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
       {/* ============================================================ */}
       {/*  Hero                                                         */}
       {/* ============================================================ */}
-      <HeroCard
-        emoji="👶"
-        title={meta.title}
+      <HeroNaming
+        topScore={topScore}
+        recommendedCount={recommendedNames.length}
+        distribution={{
+          木: num(distribution['木'], 0),
+          火: num(distribution['火'], 0),
+          土: num(distribution['土'], 0),
+          金: num(distribution['金'], 0),
+          水: num(distribution['水'], 0),
+        }}
+        missing={missing}
         description={heroDescription}
-        chips={heroChips}
-        aside={
-          <View
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: fortuneTheme.colors.surfaceSecondary,
-              borderRadius: fortuneTheme.radius.lg,
-              paddingVertical: fortuneTheme.spacing.sm,
-              paddingHorizontal: fortuneTheme.spacing.md,
-              minWidth: 80,
-            }}
-          >
-            <AppText variant="displaySmall" color={fortuneTheme.colors.accentSecondary}>
-              {topScore}
-            </AppText>
-            <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
-              최고점
-            </AppText>
-          </View>
-        }
       />
 
       {/* ============================================================ */}

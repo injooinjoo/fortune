@@ -9,10 +9,9 @@ import {
 } from '../../../lib/birthstone-data';
 import { fortuneTheme } from '../../../lib/theme';
 import { useMobileAppState } from '../../../providers/mobile-app-state-provider';
-import { resultMetadataByKind } from '../mapping';
+import { HeroBirthstone } from '../heroes';
 import {
   BulletList,
-  HeroCard,
   InsetQuote,
   KeywordPills,
   MetricGrid,
@@ -62,7 +61,6 @@ function strArr(val: unknown): string[] {
 /* ------------------------------------------------------------------ */
 
 export function BirthstoneResult(props: FortuneResultComponentProps) {
-  const meta = resultMetadataByKind['birthstone'];
   const result = useResultData(props.payload);
   const raw = props.payload?.rawApiResponse ?? {};
   const hasRaw = Object.keys(raw).length > 0;
@@ -109,11 +107,6 @@ export function BirthstoneResult(props: FortuneResultComponentProps) {
   const compatibleMonths = BIRTHSTONE_COMPATIBILITY[monthly.month] ?? [];
   const compatibleStones = compatibleMonths.map((m) => getMonthlyBirthstone(m));
 
-  // Hero chips
-  const heroChips = result.contextTags.length > 0
-    ? result.contextTags
-    : [monthly.name, monthly.nameEn, monthly.meaning].filter(Boolean);
-
   // Fallback metrics
   const fallbackMetrics = result.metrics.length > 0
     ? result.metrics
@@ -131,31 +124,12 @@ export function BirthstoneResult(props: FortuneResultComponentProps) {
       {/* ============================================================ */}
       {/*  Section 1: Hero - 큰 보석 이모지, 월 이름, 탄생석 이름           */}
       {/* ============================================================ */}
-      <HeroCard
-        emoji={monthly.emoji}
-        title={meta.title}
+      <HeroBirthstone
+        monthLabel={`${monthly.month}월`}
+        stoneName={`${monthly.name} (${monthly.nameEn})`}
         description={summary}
-        chips={heroChips}
-        aside={
-          <View
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: `${monthly.color}20`,
-              borderRadius: fortuneTheme.radius.lg,
-              paddingVertical: fortuneTheme.spacing.sm,
-              paddingHorizontal: fortuneTheme.spacing.md,
-              minWidth: 80,
-            }}
-          >
-            <AppText style={{ fontSize: 48, lineHeight: 56 }}>
-              {monthly.emoji}
-            </AppText>
-            <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
-              {monthly.month}월
-            </AppText>
-          </View>
-        }
+        resonanceScore={overallScore}
+        gemColor={monthly.color}
       />
 
       {/* ============================================================ */}

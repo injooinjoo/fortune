@@ -3,10 +3,10 @@ import { View } from 'react-native';
 import { AppText } from '../../../components/app-text';
 import { Card } from '../../../components/card';
 import { fortuneTheme } from '../../../lib/theme';
+import { HeroFace } from '../heroes';
 import { resultMetadataByKind } from '../mapping';
 import {
   BulletList,
-  HeroCard,
   InsetQuote,
   KeywordPills,
   MetricGrid,
@@ -233,7 +233,7 @@ const FORTUNE_LABELS: Record<string, { emoji: string; label: string }> = {
 /* ------------------------------------------------------------------ */
 
 export function FaceReadingResult(props: FortuneResultComponentProps) {
-  const meta = resultMetadataByKind['face-reading'];
+  const _meta = resultMetadataByKind['face-reading'];
   const result = useResultData(props.payload);
   const raw = props.payload?.rawApiResponse ?? {};
 
@@ -340,34 +340,26 @@ export function FaceReadingResult(props: FortuneResultComponentProps) {
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
       {/* ============================================================ */}
-      {/*  Section 1: Hero - 전체 복점수, 얼굴형, 첫인상 요약              */}
+      {/*  Section 1: Hero - Ondo signature face reading visual         */}
       {/* ============================================================ */}
-      <HeroCard
-        emoji="🔮"
-        title={meta.title}
-        description={heroFirstImpression}
-        chips={heroChips}
-        aside={
-          <View
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: fortuneTheme.colors.surfaceSecondary,
-              borderRadius: fortuneTheme.radius.lg,
-              paddingVertical: fortuneTheme.spacing.sm,
-              paddingHorizontal: fortuneTheme.spacing.md,
-              minWidth: 80,
-            }}
-          >
-            <AppText variant="displaySmall" color={fortuneTheme.colors.accentSecondary}>
-              {overallBlessingScore}
-            </AppText>
-            <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
-              복점수
-            </AppText>
-          </View>
-        }
-      />
+      <Card
+        style={{
+          backgroundColor: fortuneTheme.colors.backgroundTertiary,
+          gap: fortuneTheme.spacing.md,
+          paddingVertical: fortuneTheme.spacing.lg,
+        }}
+      >
+        <HeroFace
+          overallImpression={faceType && faceType !== '분석 중' ? faceType : '관상 분석'}
+          description={heroFirstImpression}
+          topScore={num(obj(samjeong.upper).score, overallBlessingScore)}
+          midScore={num(obj(samjeong.middle).score, overallBlessingScore)}
+          bottomScore={num(obj(samjeong.lower).score, overallBlessingScore)}
+        />
+        {heroChips.length > 0 ? (
+          <KeywordPills keywords={heroChips} />
+        ) : null}
+      </Card>
 
       {!hasRaw && (
         <SectionCard title="관상 요약">
