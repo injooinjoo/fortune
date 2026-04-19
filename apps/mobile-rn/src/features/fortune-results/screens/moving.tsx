@@ -103,7 +103,7 @@ function AuspiciousDateCard({ date, index }: { date: string; index: number }) {
         </AppText>
       </View>
       <AppText variant="bodyMedium" style={{ flex: 1 }}>{date}</AppText>
-      <AppText style={{ fontSize: 16 }}>✅</AppText>
+      <AppText variant="emojiInline">✅</AppText>
     </View>
   );
 }
@@ -127,7 +127,7 @@ function AvoidDateCard({ date }: { date: string }) {
         borderLeftColor: fortuneTheme.colors.error,
       }}
     >
-      <AppText style={{ fontSize: 16 }}>⛔</AppText>
+      <AppText variant="emojiInline">⛔</AppText>
       <AppText variant="bodyMedium" color={fortuneTheme.colors.error} style={{ flex: 1 }}>
         {date}
       </AppText>
@@ -156,7 +156,7 @@ function FengshuiTipCard({
       }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: fortuneTheme.spacing.sm }}>
-        <AppText style={{ fontSize: 20 }}>{emoji}</AppText>
+        <AppText variant="emojiInline">{emoji}</AppText>
         <AppText variant="labelLarge">{room}</AppText>
       </View>
       <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
@@ -183,7 +183,7 @@ function LuckyItemCard({ emoji, label }: { emoji: string; label: string }) {
         paddingVertical: fortuneTheme.spacing.sm,
       }}
     >
-      <AppText style={{ fontSize: 18 }}>{emoji}</AppText>
+      <AppText variant="emojiInline">{emoji}</AppText>
       <AppText variant="bodyMedium">{label}</AppText>
     </View>
   );
@@ -204,7 +204,7 @@ function WarningCard({ text }: { text: string }) {
       }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: fortuneTheme.spacing.sm }}>
-        <AppText style={{ fontSize: 16 }}>⚠️</AppText>
+        <AppText variant="emojiInline">⚠️</AppText>
         <AppText
           variant="bodySmall"
           color={fortuneTheme.colors.textSecondary}
@@ -238,7 +238,7 @@ function ChecklistItem({
       }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: fortuneTheme.spacing.sm }}>
-        <AppText style={{ fontSize: 18 }}>{emoji}</AppText>
+        <AppText variant="emojiInline">{emoji}</AppText>
         <AppText variant="labelLarge" style={{ flex: 1 }}>{task}</AppText>
       </View>
       {reason ? (
@@ -487,7 +487,7 @@ export function MovingResult(props: FortuneResultComponentProps) {
                 marginTop: fortuneTheme.spacing.sm,
               }}
             >
-              <AppText style={{ fontSize: 16 }}>⏰</AppText>
+              <AppText variant="emojiInline">⏰</AppText>
               <AppText variant="bodyMedium">추천 시간대: {bestTime}</AppText>
             </View>
           ) : null}
@@ -561,7 +561,7 @@ export function MovingResult(props: FortuneResultComponentProps) {
         <SectionCard title="지형 풍수 분석" description="이사 예정지의 지형 평가입니다.">
           {terrainType ? (
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: fortuneTheme.spacing.sm }}>
-              <AppText style={{ fontSize: 20 }}>⛰️</AppText>
+              <AppText variant="emojiInline">⛰️</AppText>
               <AppText variant="heading4">{terrainType}</AppText>
               {terrainScore > 0 ? (
                 <Chip label={`풍수 ${terrainScore}점`} tone="accent" />
@@ -612,7 +612,7 @@ export function MovingResult(props: FortuneResultComponentProps) {
               }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: fortuneTheme.spacing.sm }}>
-                <AppText style={{ fontSize: 20 }}>🏘️</AppText>
+                <AppText variant="emojiInline">🏘️</AppText>
                 <AppText variant="labelLarge">정착 용이도</AppText>
                 <Chip label={`${settlementScore}점`} tone="accent" />
               </View>
@@ -635,7 +635,7 @@ export function MovingResult(props: FortuneResultComponentProps) {
               }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: fortuneTheme.spacing.sm }}>
-                <AppText style={{ fontSize: 20 }}>🏙️</AppText>
+                <AppText variant="emojiInline">🏙️</AppText>
                 <AppText variant="labelLarge">동네 궁합</AppText>
                 <Chip label={`${neighborhoodScore}점`} tone="accent" />
               </View>

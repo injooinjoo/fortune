@@ -235,7 +235,7 @@ function BloodTypeResult(props: FortuneResultComponentProps) {
     <View style={{ gap: fortuneTheme.spacing.md }}>
       {/* Big Blood Type Identity Card */}
       <Card style={{ alignItems: 'center', paddingVertical: 24, backgroundColor: fortuneTheme.colors.backgroundTertiary }}>
-        <AppText style={{ fontSize: 64, lineHeight: 76 }}>🩸</AppText>
+        <AppText variant="emojiDisplay">🩸</AppText>
         <AppText variant="displaySmall" style={{ marginTop: 8 }}>{bloodTypeLabel}</AppText>
         {bloodTypeKeyword ? (
           <AppText variant="bodyMedium" color={fortuneTheme.colors.ctaBackground} style={{ marginTop: 4 }}>
@@ -547,7 +547,7 @@ function ZodiacAnimalResult(props: FortuneResultComponentProps) {
     <View style={{ gap: fortuneTheme.spacing.md }}>
       {/* Big Identity Hero */}
       <Card style={{ alignItems: 'center', paddingVertical: 28, backgroundColor: fortuneTheme.colors.backgroundTertiary }}>
-        <AppText style={{ fontSize: 72, lineHeight: 84 }}>{identityEmoji}</AppText>
+        <AppText variant="emojiDisplay">{identityEmoji}</AppText>
         <AppText variant="displaySmall" style={{ marginTop: 8, fontWeight: '800' }}>
           {identityPrefix}{identityName}
         </AppText>
@@ -588,7 +588,7 @@ function ZodiacAnimalResult(props: FortuneResultComponentProps) {
             gap: fortuneTheme.spacing.sm,
           }}
         >
-          <AppText style={{ fontSize: 60, lineHeight: 72 }}>{identityEmoji}</AppText>
+          <AppText variant="emojiDisplay">{identityEmoji}</AppText>
           <AppText variant="displaySmall">
             {identityPrefix}{identityName}
           </AppText>
@@ -681,7 +681,7 @@ function ZodiacAnimalResult(props: FortuneResultComponentProps) {
                       paddingVertical: fortuneTheme.spacing.sm,
                     }}
                   >
-                    <AppText style={{ fontSize: 24 }}>
+                    <AppText variant="emojiCard">
                       {isConstellation
                         ? (CONSTELLATIONS.find((c) => c.name === name)?.emoji ?? '')
                         : zodiacEmojiByName(name)}
@@ -712,7 +712,7 @@ function ZodiacAnimalResult(props: FortuneResultComponentProps) {
                       paddingVertical: fortuneTheme.spacing.sm,
                     }}
                   >
-                    <AppText style={{ fontSize: 24 }}>
+                    <AppText variant="emojiCard">
                       {isConstellation
                         ? (CONSTELLATIONS.find((c) => c.name === name)?.emoji ?? '')
                         : zodiacEmojiByName(name)}
@@ -946,7 +946,7 @@ function NewYearResult(props: FortuneResultComponentProps) {
       {/* Goal badge row */}
       {goalLabel ? (
         <Card style={{ backgroundColor: fortuneTheme.colors.backgroundTertiary, flexDirection: 'row', alignItems: 'center', gap: fortuneTheme.spacing.sm, paddingVertical: fortuneTheme.spacing.md }}>
-          <AppText style={{ fontSize: 36 }}>{goalEmoji}</AppText>
+          <AppText variant="emojiCard">{goalEmoji}</AppText>
           <View style={{ flex: 1 }}>
             <AppText variant="labelLarge" color={fortuneTheme.colors.textPrimary}>
               올해의 목표
@@ -1031,14 +1031,14 @@ function NewYearResult(props: FortuneResultComponentProps) {
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: fortuneTheme.spacing.sm }}>
             {dominantElement ? (
               <Card style={{ backgroundColor: fortuneTheme.colors.backgroundTertiary, alignItems: 'center', gap: 4, paddingVertical: fortuneTheme.spacing.md, minWidth: '45%', flexGrow: 1 }}>
-                <AppText style={{ fontSize: 28 }}>{elementEmoji(dominantElement)}</AppText>
+                <AppText variant="emojiCard">{elementEmoji(dominantElement)}</AppText>
                 <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>주도 원소</AppText>
                 <AppText variant="labelLarge" color={fortuneTheme.colors.textPrimary}>{dominantElement}</AppText>
               </Card>
             ) : null}
             {yearElement ? (
               <Card style={{ backgroundColor: fortuneTheme.colors.backgroundTertiary, alignItems: 'center', gap: 4, paddingVertical: fortuneTheme.spacing.md, minWidth: '45%', flexGrow: 1 }}>
-                <AppText style={{ fontSize: 28 }}>{elementEmoji(yearElement)}</AppText>
+                <AppText variant="emojiCard">{elementEmoji(yearElement)}</AppText>
                 <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>올해의 원소</AppText>
                 <AppText variant="labelLarge" color={fortuneTheme.colors.textPrimary}>{yearElement}</AppText>
               </Card>

@@ -46,9 +46,7 @@ function BondCircle({
         marginLeft: offsetLeft,
       }}
     >
-      {/* Emoji needs inline fontSize — AppText variants are tuned for text,
-          not for emoji glyph sizing. */}
-      <AppText style={{ fontSize: 48 }}>{emoji}</AppText>
+      <AppText variant="emojiHero">{emoji}</AppText>
     </View>
   );
 }

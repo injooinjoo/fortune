@@ -380,7 +380,7 @@ export function FaceReadingResult(props: FortuneResultComponentProps) {
               paddingVertical: fortuneTheme.spacing.lg,
             }}
           >
-            <AppText style={{ fontSize: 48, lineHeight: 56 }}>
+            <AppText variant="emojiHero">
               {primaryAnimal.includes('강아지') || primaryAnimal.includes('개')
                 ? '🐶'
                 : primaryAnimal.includes('고양이')

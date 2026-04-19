@@ -71,7 +71,7 @@ function EnergyBadge({ level }: { level: string }) {
         paddingVertical: 6,
       }}
     >
-      <AppText style={{ fontSize: 16 }}>{style.emoji}</AppText>
+      <AppText variant="emojiInline">{style.emoji}</AppText>
       <AppText variant="labelMedium" color={style.color}>
         {level === 'high' ? '높음' : level === 'low' ? '낮음' : '보통'}
       </AppText>
@@ -107,7 +107,7 @@ function LuckyTile({
         alignItems: 'center',
       }}
     >
-      <AppText style={{ fontSize: 28 }}>{emoji}</AppText>
+      <AppText variant="emojiCard">{emoji}</AppText>
       <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
         {label}
       </AppText>
@@ -299,7 +299,7 @@ export function PetCompatibilityResult(props: FortuneResultComponentProps) {
                 }}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: fortuneTheme.spacing.xs }}>
-                  <AppText style={{ fontSize: 16 }}>⚕️</AppText>
+                  <AppText variant="emojiInline">⚕️</AppText>
                   <AppText variant="labelLarge">건강 주의</AppText>
                 </View>
                 <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
@@ -318,7 +318,7 @@ export function PetCompatibilityResult(props: FortuneResultComponentProps) {
                 }}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: fortuneTheme.spacing.xs }}>
-                  <AppText style={{ fontSize: 16 }}>✨</AppText>
+                  <AppText variant="emojiInline">✨</AppText>
                   <AppText variant="labelLarge">그루밍 팁</AppText>
                 </View>
                 <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
@@ -417,7 +417,7 @@ export function PetCompatibilityResult(props: FortuneResultComponentProps) {
               paddingVertical: fortuneTheme.spacing.lg,
             }}
           >
-            <AppText style={{ fontSize: 40 }}>🎯</AppText>
+            <AppText variant="emojiHero">🎯</AppText>
             <AppText variant="heading3" style={{ textAlign: 'center' }}>
               {missionTitle}
             </AppText>
@@ -466,7 +466,7 @@ export function PetCompatibilityResult(props: FortuneResultComponentProps) {
               paddingVertical: fortuneTheme.spacing.lg,
             }}
           >
-            <AppText style={{ fontSize: 32, textAlign: 'center' }}>
+            <AppText variant="emojiCard" style={{ textAlign: 'center' }}>
               {petTypeEmoji}
             </AppText>
             {heartfeltLetter ? (

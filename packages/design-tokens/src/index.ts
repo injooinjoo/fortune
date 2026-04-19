@@ -141,6 +141,13 @@ export const fortuneTypography = {
   // Ondo signature — uppercase kicker label for section accents (10px, 1.8 letter-spacing, 700).
   // Use for result-card kickers, section headers, or small eyebrow labels.
   kicker: { fontSize: 10, lineHeight: 14, fontWeight: '700', letterSpacing: 1.8 },
+  // Emoji display scale — use AppText variant for emoji-only nodes instead of
+  // inline fontSize. Four tiers cover the common sizes across fortune results:
+  // inline chip (20), card avatar (32), hero accent (48), hero display (72).
+  emojiInline: { fontSize: 20, lineHeight: 24, fontWeight: '400' },
+  emojiCard: { fontSize: 32, lineHeight: 36, fontWeight: '400' },
+  emojiHero: { fontSize: 48, lineHeight: 52, fontWeight: '400' },
+  emojiDisplay: { fontSize: 72, lineHeight: 76, fontWeight: '400' },
   calligraphyTitle: { fontSize: 24, lineHeight: 36, fontWeight: '700' },
   calligraphyBody: { fontSize: 17, lineHeight: 31, fontWeight: '400' },
   // Oracle voice — ZEN Serif typeface, used ONLY for fortune-telling content

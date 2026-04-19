@@ -165,7 +165,7 @@ function RankBadge({ rank }: { rank: number }) {
           elevation: 4,
         }}
       >
-        <AppText style={{ fontSize: 18 }}>{style.emoji}</AppText>
+        <AppText variant="emojiInline">{style.emoji}</AppText>
       </View>
     );
   }

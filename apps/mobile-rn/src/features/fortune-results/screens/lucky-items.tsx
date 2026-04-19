@@ -95,7 +95,7 @@ function ItemDetailCard({
       }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: fortuneTheme.spacing.sm }}>
-        <AppText style={{ fontSize: 20 }}>{emoji}</AppText>
+        <AppText variant="emojiInline">{emoji}</AppText>
         <AppText variant="labelLarge">{name}</AppText>
       </View>
       {reason ? (
@@ -270,7 +270,7 @@ export function LuckyItemsResult(props: FortuneResultComponentProps) {
                   justifyContent: 'center',
                 }}
               >
-                <AppText style={{ fontSize: 20 }}>🎨</AppText>
+                <AppText variant="emojiInline">🎨</AppText>
               </View>
               <View style={{ gap: 2 }}>
                 <AppText variant="heading4">{colorPrimary}</AppText>
@@ -405,7 +405,7 @@ export function LuckyItemsResult(props: FortuneResultComponentProps) {
                       }}
                     >
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: fortuneTheme.spacing.sm }}>
-                        <AppText style={{ fontSize: 20 }}>🍽️</AppText>
+                        <AppText variant="emojiInline">🍽️</AppText>
                         <AppText variant="labelLarge">{str(d.item, foodItems[i] ?? '')}</AppText>
                         {timing ? <Chip label={timing} /> : null}
                       </View>
@@ -488,7 +488,7 @@ export function LuckyItemsResult(props: FortuneResultComponentProps) {
                 paddingVertical: fortuneTheme.spacing.lg,
               }}
             >
-              <AppText style={{ fontSize: 40 }}>🧭</AppText>
+              <AppText variant="emojiHero">🧭</AppText>
               <AppText variant="heading2">{directionCompass}</AppText>
               {directionReason ? (
                 <AppText
@@ -519,7 +519,7 @@ export function LuckyItemsResult(props: FortuneResultComponentProps) {
                     }}
                   >
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: fortuneTheme.spacing.sm }}>
-                      <AppText style={{ fontSize: 16 }}>📍</AppText>
+                      <AppText variant="emojiInline">📍</AppText>
                       <AppText variant="labelLarge">{placeName}</AppText>
                       {category ? <Chip label={category} /> : null}
                     </View>
