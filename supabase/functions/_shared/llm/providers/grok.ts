@@ -1,13 +1,16 @@
 // xAI Grok Provider 구현 (OpenAI 호환 API)
 
 import {
+  GenerateOptions,
   ILLMProvider,
+  ImageGenerateOptions,
+  ImageResponse,
   LLMMessage,
   LLMResponse,
-  GenerateOptions,
 } from '../types.ts'
 import { assertLlmRequestAllowed } from '../safety.ts'
 import { normalizeGenerateOptions } from '../generate-options.ts'
+import { GROK_IMAGE_MODEL } from '../models.ts'
 
 export class GrokProvider implements ILLMProvider {
   constructor(
@@ -75,6 +78,68 @@ export class GrokProvider implements ILLMProvider {
     }
   }
 
+  /**
+   * xAI Aurora 이미지 생성 (grok-2-image-1212 등)
+   * OpenAI /v1/images/generations 호환. 응답은 { data: [{ b64_json }] } 형식.
+   */
+  async generateImage(
+    prompt: string,
+    _options?: ImageGenerateOptions,
+  ): Promise<ImageResponse> {
+    const startTime = Date.now()
+
+    const imageModel = GROK_IMAGE_MODEL
+
+    await assertLlmRequestAllowed({
+      provider: 'grok',
+      model: imageModel,
+      featureName: this.config.featureName || 'shared-grok-provider',
+      mode: 'image',
+    })
+
+    console.log('🎨 [Grok] Generating image via Aurora...')
+    console.log('📝 [Grok] Prompt length:', prompt.length)
+
+    const response = await fetch('https://api.x.ai/v1/images/generations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.config.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: imageModel,
+        prompt,
+        n: 1,
+        response_format: 'b64_json',
+      }),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(
+        `Grok Image API error: ${response.status} - ${errorText}`,
+      )
+    }
+
+    const data = await response.json()
+    const first = data?.data?.[0]
+    const b64 = first?.b64_json as string | undefined
+    if (!b64) {
+      throw new Error('No image data in Grok response')
+    }
+
+    const latency = Date.now() - startTime
+    console.log(`✅ [Grok] Image generated in ${latency}ms`)
+
+    return {
+      imageBase64: b64,
+      revisedPrompt: first?.revised_prompt as string | undefined,
+      provider: 'grok',
+      model: imageModel,
+      latency,
+    }
+  }
+
   validateConfig(): boolean {
     return !!this.config.apiKey && !!this.config.model
   }
@@ -83,7 +148,7 @@ export class GrokProvider implements ILLMProvider {
     return {
       provider: 'grok',
       model: this.config.model,
-      capabilities: ['text', 'json', 'realtime-data'],
+      capabilities: ['text', 'json', 'realtime-data', 'image'],
     }
   }
 }

@@ -82,6 +82,10 @@ export const GEMINI_PREVIEW_TEXT_MODEL = resolveConfiguredModel(
   DEFAULT_PREVIEW_TEXT_MODEL,
 );
 
+const DEFAULT_GROK_IMAGE_MODEL = "grok-2-image-1212";
+export const GROK_IMAGE_MODEL =
+  Deno.env.get("GROK_IMAGE_MODEL")?.trim() || DEFAULT_GROK_IMAGE_MODEL;
+
 export function getGeminiModelPricing(model: string): ModelPricing | undefined {
   return GEMINI_MODEL_CATALOG[normalizeModelName(model)]?.pricing;
 }

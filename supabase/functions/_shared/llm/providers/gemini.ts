@@ -12,6 +12,21 @@ import { assertLlmRequestAllowed } from "../safety.ts";
 import { GEMINI_IMAGE_MODEL } from "../models.ts";
 import { normalizeGenerateOptions } from "../generate-options.ts";
 
+const SAFETY_BLOCK_FINISH_REASONS = new Set<string>([
+  "SAFETY",
+  "PROHIBITED_CONTENT",
+  "IMAGE_SAFETY",
+  "RECITATION",
+  "BLOCKLIST",
+  "SPII",
+]);
+
+function createSafetyBlockedError(message: string): Error {
+  const err = new Error(message);
+  err.name = "SafetyBlockedError";
+  return err;
+}
+
 export class GeminiProvider implements ILLMProvider {
   constructor(
     private config: { apiKey: string; model: string; featureName?: string },
@@ -263,8 +278,28 @@ export class GeminiProvider implements ILLMProvider {
 
       const data = await response.json();
 
+      // 프롬프트 단계에서 안전 필터가 전체 응답을 차단한 경우
+      const promptBlockReason = data.promptFeedback?.blockReason as
+        | string
+        | undefined;
+      if (promptBlockReason) {
+        throw createSafetyBlockedError(
+          `Gemini prompt blocked: ${promptBlockReason}`,
+        );
+      }
+
       if (!data.candidates || data.candidates.length === 0) {
         throw new Error("No candidates in Gemini Image response");
+      }
+
+      // candidate 단계에서 안전/저작권/이미지 안전 필터로 차단된 경우
+      const finishReason = data.candidates[0]?.finishReason as
+        | string
+        | undefined;
+      if (finishReason && SAFETY_BLOCK_FINISH_REASONS.has(finishReason)) {
+        throw createSafetyBlockedError(
+          `Gemini image blocked: ${finishReason}`,
+        );
       }
 
       // 이미지 데이터 추출
@@ -274,7 +309,11 @@ export class GeminiProvider implements ILLMProvider {
       );
 
       if (!imagePart || !imagePart.inlineData) {
-        throw new Error("No image data in Gemini response");
+        // 이미지가 없고 finishReason이 STOP인데도 이미지가 없으면
+        // 대부분 모델이 거부(텍스트만 반환)한 경우 → safety로 취급
+        throw createSafetyBlockedError(
+          `Gemini returned no image (finishReason=${finishReason ?? "unknown"})`,
+        );
       }
 
       const latency = Date.now() - startTime;
