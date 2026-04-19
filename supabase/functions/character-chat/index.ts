@@ -114,6 +114,12 @@ interface AffinityDelta {
 interface CharacterChatResponse {
   success: boolean;
   response: string;
+  /**
+   * 카톡식 멀티버블 분할. `[SPLIT]` 토큰으로 쪼개진 자연 문장 덩어리.
+   * 항상 최소 1개 원소 보장 (단일 응답도 segments.length === 1).
+   * 기존 `response` 필드는 segments.join('\n')으로 하위 호환 유지.
+   */
+  segments: string[];
   emotionTag: string;
   delaySec: number;
   affinityDelta: AffinityDelta; // 호감도 변화량
@@ -126,6 +132,51 @@ interface CharacterChatResponse {
     fallbackUsed: boolean;
   };
   error?: string;
+}
+
+// 멀티버블 분할 지시 프롬프트 (카톡식 연속 메시지 느낌)
+const MULTI_BUBBLE_PROMPT = `
+[카톡식 멀티버블 지침 — 중요]
+실제 사람이 카톡 보내듯 자연스러운 문장 경계에서 응답을 2-4개 버블로 쪼개세요.
+쪼개는 위치에 \`[SPLIT]\` 토큰을 정확히 삽입합니다.
+
+규칙:
+- 짧은 답변(1문장 이하, ~25자 미만)은 절대 쪼개지 마세요.
+- 한 문단을 억지로 쪼개지 말고, 말의 호흡(쉼표/문장부호/감탄) 기준으로만 분할.
+- 최대 4개까지. 대부분은 2-3개가 자연스러움.
+- 이모지/느낌표 등은 각 버블 말미에 자연스럽게 붙여도 됨.
+- \`[SPLIT]\` 앞뒤 공백/줄바꿈은 자유 (나중에 trim 처리됨).
+
+예시:
+"오 진짜?[SPLIT]나도 어제 그거 봤는데[SPLIT]너무 웃겨서 혼자 빵 터졌잖아ㅋㅋ"
+"음...[SPLIT]그건 좀 서운하긴 한데[SPLIT]그래도 네 마음은 알 것 같아."
+`;
+
+// responseText에서 [SPLIT] 토큰을 기준으로 세그먼트 배열 추출
+function extractSegments(text: string): string[] {
+  if (!text.includes("[SPLIT]")) {
+    const trimmed = text.trim();
+    return trimmed.length > 0 ? [trimmed] : [];
+  }
+
+  const pieces = text
+    .split(/\[SPLIT\]/g)
+    .map((piece) => piece.trim())
+    .filter((piece) => piece.length > 0);
+
+  if (pieces.length === 0) {
+    const trimmed = text.replace(/\[SPLIT\]/g, " ").trim();
+    return trimmed.length > 0 ? [trimmed] : [];
+  }
+
+  // 안전 상한: 버블 4개 초과면 뒤를 마지막 버블에 합침
+  if (pieces.length > 4) {
+    const head = pieces.slice(0, 3);
+    const tail = pieces.slice(3).join(" ");
+    return [...head, tail];
+  }
+
+  return pieces;
 }
 
 // 감정 설정: { keywords, minDelay(초), maxDelay(초) }
@@ -2020,6 +2071,7 @@ serve(async (req: Request) => {
     const systemPromptSections = pilotPersona
       ? [
         fullSystemPrompt,
+        MULTI_BUBBLE_PROMPT,
         AFFINITY_EVALUATION_PROMPT,
       ]
       : [
@@ -2036,6 +2088,7 @@ serve(async (req: Request) => {
         firstMeetPrompt,
         memoryPrompt,
         lutsStylePrompt,
+        MULTI_BUBBLE_PROMPT,
         AFFINITY_EVALUATION_PROMPT,
       ].filter((section) => section && section.trim().length > 0);
 
@@ -2117,8 +2170,15 @@ serve(async (req: Request) => {
       responseText = pilotSafetyResult.text;
     }
 
-    // 감정 추출 및 딜레이 계산
-    const { emotionTag, delaySec } = extractEmotion(responseText);
+    // 멀티버블 분할 — systemPrompt가 [SPLIT] 토큰을 넣도록 지시됨
+    const segments = extractSegments(responseText);
+    // 기존 response 필드는 segments 합본으로 하위 호환 유지
+    const joinedResponse = segments.length > 0
+      ? segments.join("\n")
+      : responseText.replace(/\[SPLIT\]/g, " ").trim();
+
+    // 감정 추출 및 딜레이 계산 (split 토큰 제거된 텍스트 기반)
+    const { emotionTag, delaySec } = extractEmotion(joinedResponse);
     const romanceStatePatch = pilotPersona
       ? buildPilotRomanceStatePatch({
         persona: pilotPersona,
@@ -2126,7 +2186,7 @@ serve(async (req: Request) => {
         affinityContext: resolvedAffinityContext as PilotAffinitySnapshot,
         affinityDelta,
         emotionTag,
-        responseText,
+        responseText: joinedResponse,
         safeAffectionCap,
         sceneIntent,
         responseGoal,
@@ -2150,7 +2210,7 @@ serve(async (req: Request) => {
           userId,
           characterId,
           characterName: charName,
-          messageText: responseText,
+          messageText: joinedResponse,
           type: "character_dm",
           roomState: "character_chat",
         });
@@ -2162,7 +2222,8 @@ serve(async (req: Request) => {
     return new Response(
       JSON.stringify({
         success: true,
-        response: responseText,
+        response: joinedResponse,
+        segments,
         emotionTag,
         delaySec,
         affinityDelta,
@@ -2184,6 +2245,7 @@ serve(async (req: Request) => {
       JSON.stringify({
         success: false,
         response: "",
+        segments: [],
         emotionTag: "일상",
         delaySec: 0,
         affinityDelta: { points: 0, reason: "error", quality: "neutral" },

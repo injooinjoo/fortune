@@ -4,6 +4,34 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { LLMFactory } from "../_shared/llm/factory.ts";
 import { authenticateUser } from "../_shared/auth.ts";
+import type { ImageResponse } from "../_shared/llm/types.ts";
+
+async function generateImageWithFallback(
+  prompt: string,
+): Promise<ImageResponse> {
+  const primary = LLMFactory.create("gemini", "gemini-2.5-flash-image");
+  if (!primary.generateImage) {
+    throw new Error("Gemini 이미지 생성 지원 불가");
+  }
+
+  try {
+    return await primary.generateImage(prompt);
+  } catch (primaryError) {
+    const isSafetyBlocked = primaryError instanceof Error &&
+      primaryError.name === "SafetyBlockedError";
+    if (!isSafetyBlocked) throw primaryError;
+
+    console.warn("[proactive-image] Gemini safety blocked → Grok 폴백 시도");
+    const fallback = LLMFactory.create("grok", "grok-2-image-1212");
+    if (!fallback.generateImage) throw primaryError;
+    try {
+      return await fallback.generateImage(prompt);
+    } catch (fallbackError) {
+      console.error("[proactive-image] Grok 폴백도 실패:", fallbackError);
+      throw primaryError;
+    }
+  }
+}
 
 type ProactiveImageCategory =
   | "meal"
@@ -23,6 +51,8 @@ interface GenerateCharacterProactiveImageRequest {
   locationHint?: string;
 }
 
+type GenerateCharacterProactiveImageErrorCode = "safety_blocked" | "unknown";
+
 interface GenerateCharacterProactiveImageResponse {
   success: boolean;
   imageUrl?: string;
@@ -32,6 +62,7 @@ interface GenerateCharacterProactiveImageResponse {
     latencyMs: number;
   };
   error?: string;
+  errorCode?: GenerateCharacterProactiveImageErrorCode;
 }
 
 const SUPPORTED_CHARACTER_IDS = new Set([
@@ -217,13 +248,8 @@ serve(async (req: Request) => {
       throw new Error("Supabase service role 환경변수가 설정되지 않았습니다");
     }
 
-    const llm = LLMFactory.create("gemini", "gemini-2.5-flash-image");
-    if (!llm.generateImage) {
-      throw new Error("선택된 모델이 이미지 생성을 지원하지 않습니다");
-    }
-
     const prompt = buildPrompt(request);
-    const imageResult = await llm.generateImage(prompt);
+    const imageResult = await generateImageWithFallback(prompt);
 
     const imageBytes = Uint8Array.from(
       atob(imageResult.imageBase64),
@@ -262,20 +288,27 @@ serve(async (req: Request) => {
       },
     );
   } catch (error) {
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-        meta: {
-          provider: "gemini",
-          model: "gemini-2.5-flash-image",
-          latencyMs: Date.now() - startedAt,
-        },
-      } as GenerateCharacterProactiveImageResponse),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 500,
+    const isSafetyBlocked = error instanceof Error &&
+      error.name === "SafetyBlockedError";
+
+    const body: GenerateCharacterProactiveImageResponse = {
+      success: false,
+      error: isSafetyBlocked
+        ? "안전 정책으로 인해 이미지 생성이 차단됐어요."
+        : error instanceof Error
+        ? error.message
+        : "Unknown error",
+      errorCode: isSafetyBlocked ? "safety_blocked" : "unknown",
+      meta: {
+        provider: "gemini",
+        model: "gemini-2.5-flash-image",
+        latencyMs: Date.now() - startedAt,
       },
-    );
+    };
+
+    return new Response(JSON.stringify(body), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: isSafetyBlocked ? 400 : 500,
+    });
   }
 });

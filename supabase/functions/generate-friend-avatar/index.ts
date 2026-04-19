@@ -4,6 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { LLMFactory } from "../_shared/llm/factory.ts";
 import { authenticateUser } from "../_shared/auth.ts";
+import type { ImageResponse } from "../_shared/llm/types.ts";
 
 interface GenerateFriendAvatarRequest {
   gender: string;
@@ -11,6 +12,8 @@ interface GenerateFriendAvatarRequest {
   name: string;
   stylePreset: string;
 }
+
+type GenerateFriendAvatarErrorCode = "safety_blocked" | "unknown";
 
 interface GenerateFriendAvatarResponse {
   success: boolean;
@@ -21,6 +24,7 @@ interface GenerateFriendAvatarResponse {
     latencyMs: number;
   };
   error?: string;
+  errorCode?: GenerateFriendAvatarErrorCode;
 }
 
 const BUCKET_NAME = "friend-avatars";
@@ -79,6 +83,40 @@ Requirements:
 `.trim();
 }
 
+/**
+ * Gemini 우선 시도 → safety 블록이면 Grok Aurora 자동 폴백.
+ * 둘 다 실패하면 마지막 에러를 throw (SafetyBlockedError 우선 보존).
+ */
+async function generateImageWithFallback(
+  prompt: string,
+): Promise<ImageResponse> {
+  const primary = LLMFactory.create("gemini", "gemini-2.5-flash-image");
+  if (!primary.generateImage) {
+    throw new Error("Gemini 이미지 생성 지원 불가");
+  }
+
+  try {
+    return await primary.generateImage(prompt);
+  } catch (primaryError) {
+    const isSafetyBlocked = primaryError instanceof Error &&
+      primaryError.name === "SafetyBlockedError";
+    if (!isSafetyBlocked) throw primaryError;
+
+    console.warn("[generate-friend-avatar] Gemini safety blocked → Grok 폴백 시도");
+    const fallback = LLMFactory.create("grok", "grok-2-image-1212");
+    if (!fallback.generateImage) {
+      throw primaryError;
+    }
+    try {
+      return await fallback.generateImage(prompt);
+    } catch (fallbackError) {
+      console.error("[generate-friend-avatar] Grok 폴백도 실패:", fallbackError);
+      // 두 엔진 모두 실패 → 원본 Safety 에러 유지 (사용자 메시지 일관성)
+      throw primaryError;
+    }
+  }
+}
+
 function buildStoragePath(name: string): string {
   const timestamp = Date.now();
   const uid = crypto.randomUUID().split("-")[0];
@@ -131,13 +169,8 @@ serve(async (req: Request) => {
       throw new Error("Supabase service role 환경변수가 설정되지 않았습니다");
     }
 
-    const llm = LLMFactory.create("gemini", "gemini-2.5-flash-image");
-    if (!llm.generateImage) {
-      throw new Error("선택된 모델이 이미지 생성을 지원하지 않습니다");
-    }
-
     const prompt = buildPrompt(request);
-    const imageResult = await llm.generateImage(prompt);
+    const imageResult = await generateImageWithFallback(prompt);
 
     const imageBytes = Uint8Array.from(
       atob(imageResult.imageBase64),
@@ -176,20 +209,27 @@ serve(async (req: Request) => {
       },
     );
   } catch (error) {
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-        meta: {
-          provider: "gemini",
-          model: "gemini-2.5-flash-image",
-          latencyMs: Date.now() - startedAt,
-        },
-      } as GenerateFriendAvatarResponse),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 500,
+    const isSafetyBlocked = error instanceof Error &&
+      error.name === "SafetyBlockedError";
+
+    const body: GenerateFriendAvatarResponse = {
+      success: false,
+      error: isSafetyBlocked
+        ? "실명 연예인 등은 생성이 어려워요. 헤어스타일, 분위기 같은 일반적인 특징으로 묘사해주세요."
+        : error instanceof Error
+        ? error.message
+        : "Unknown error",
+      errorCode: isSafetyBlocked ? "safety_blocked" : "unknown",
+      meta: {
+        provider: "gemini",
+        model: "gemini-2.5-flash-image",
+        latencyMs: Date.now() - startedAt,
       },
-    );
+    };
+
+    return new Response(JSON.stringify(body), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: isSafetyBlocked ? 400 : 500,
+    });
   }
 });
