@@ -1,13 +1,9 @@
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
-import { Card } from '../components/card';
 import { PrimaryButton } from '../components/primary-button';
-import {
-  resolveBackDestinationLabel,
-  RouteBackHeader,
-} from '../components/route-back-header';
 import { Screen } from '../components/screen';
 import { captureError } from '../lib/error-reporting';
 import { fortuneTheme } from '../lib/theme';
@@ -35,6 +31,7 @@ export function AuthCallbackScreen() {
   }>();
   const {
     markAuthComplete,
+    onboardingProgress,
     session,
     status: bootstrapStatus,
   } = useAppBootstrap();
@@ -109,9 +106,16 @@ export function AuthCallbackScreen() {
         }
 
         setHasHandled(true);
-        const destination = callbackMeta.returnTo === '/chat'
-          ? '/chat?showList=1'
-          : callbackMeta.returnTo;
+        // If the user hasn't completed the Ondo 7-step onboarding yet, drop
+        // them into it here instead of sending them to /chat (which would
+        // render the ProfileFlowGateCard). Returning users with a finished
+        // handoff go to their original returnTo target.
+        const needsOnboardingFlow = !onboardingProgress.firstRunHandoffSeen;
+        const destination = needsOnboardingFlow
+          ? '/onboarding/name'
+          : callbackMeta.returnTo === '/chat'
+            ? '/chat?showList=1'
+            : callbackMeta.returnTo;
         router.replace(destination as Href);
       } catch (error) {
         await captureError(error, { surface: 'auth-callback:finalize' });
@@ -126,50 +130,38 @@ export function AuthCallbackScreen() {
     callbackMeta.returnTo,
     hasHandled,
     markAuthComplete,
+    onboardingProgress.firstRunHandoffSeen,
     session,
     syncRemoteProfile,
   ]);
-  const backDestinationLabel = resolveBackDestinationLabel(
-    callbackMeta.returnTo as Href,
-  );
+  // Happy path — just a spinner until the useEffect above replaces the route.
+  // Error path — show a minimal retry affordance so users aren't stranded.
+  if (!callbackMeta.errorMessage) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: fortuneTheme.colors.background,
+        }}
+      >
+        <ActivityIndicator color={fortuneTheme.colors.textSecondary} />
+      </View>
+    );
+  }
 
   return (
-    <Screen
-      header={
-        <RouteBackHeader
-          fallbackHref={callbackMeta.returnTo as Href}
-          label={backDestinationLabel}
-        />
-      }
-    >
-      <AppText variant="displaySmall">잠시만 기다려 주세요</AppText>
-      <Card>
-        <AppText variant="bodyMedium">
-          로그인 정보를 확인하고 있어요. 잠시만 기다리면 이전 화면으로 돌아갑니다.
+    <Screen>
+      <View style={{ flex: 1, justifyContent: 'center', gap: 16 }}>
+        <AppText variant="displaySmall">로그인 실패</AppText>
+        <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+          로그인 연결에 문제가 생겼어요. 다시 시도해 주세요.
         </AppText>
-        {callbackMeta.errorMessage ? (
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            로그인 연결에 문제가 생겼어요. 다시 시도해 주세요.
-          </AppText>
-        ) : null}
-        <PrimaryButton onPress={() => router.replace(callbackMeta.returnTo as Href)}>
-          계속하기
+        <PrimaryButton onPress={() => router.replace('/signup')}>
+          다시 시도
         </PrimaryButton>
-        <PrimaryButton
-          onPress={() =>
-            router.replace(
-              callbackMeta.errorMessage ? '/signup' : (callbackMeta.returnTo as Href),
-            )
-          }
-          tone="secondary"
-        >
-          {callbackMeta.errorMessage
-            ? '로그인 다시 시도하기'
-            : callbackMeta.returnTo === '/chat'
-              ? '채팅으로 돌아가기'
-              : '이전 화면으로 돌아가기'}
-        </PrimaryButton>
-      </Card>
+      </View>
     </Screen>
   );
 }

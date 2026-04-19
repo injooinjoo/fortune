@@ -44,6 +44,11 @@ export type AiMode = 'cloud' | 'on-device' | 'auto';
 
 export interface AppSettings {
   aiMode: AiMode;
+  /**
+   * 채팅 도착 시 햅틱 피드백 ON/OFF. 기본 true.
+   * 캐릭터 메시지가 렌더될 때 tapLight / loveHeartbeat / scoreReveal 호출을 제어.
+   */
+  chatHapticsEnabled: boolean;
 }
 
 export interface MobileAppState {
@@ -98,6 +103,7 @@ export const emptyMobileAppState: MobileAppState = {
   },
   settings: {
     aiMode: 'on-device',
+    chatHapticsEnabled: true,
   },
   updatedAt: null,
 };
@@ -188,6 +194,10 @@ export function normalizeMobileAppState(raw: Record<string, unknown>): MobileApp
     },
     settings: {
       aiMode: isAiMode(settings.aiMode) ? settings.aiMode : emptyMobileAppState.settings.aiMode,
+      chatHapticsEnabled: asBoolean(
+        settings.chatHapticsEnabled,
+        emptyMobileAppState.settings.chatHapticsEnabled,
+      ),
     },
     updatedAt: asString(raw.updatedAt) || null,
   };
