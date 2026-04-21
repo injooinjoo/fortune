@@ -864,7 +864,7 @@ export async function invokeStoryChat(
   character: ChatCharacterSpec,
   userMessage: string,
   thread: StoryChatThreadSnapshot | null,
-  options?: { userDescription?: string },
+  options?: { userDescription?: string; imageBase64?: string },
 ): Promise<StoryChatResponse> {
   const request = buildStoryChatRequest(character, userMessage, thread);
 
@@ -876,9 +876,15 @@ export async function invokeStoryChat(
     throw new Error('Supabase is not configured.');
   }
 
-  const body = options?.userDescription
-    ? { ...request, userDescription: options.userDescription }
-    : request;
+  const baseBody = { ...request, conceptType: 'pilot_romance' as const };
+  const bodyWithDesc = options?.userDescription
+    ? { ...baseBody, userDescription: options.userDescription }
+    : baseBody;
+  // imageBase64 는 "data:image/jpeg;base64,XXXX" 또는 raw base64. 서버에서 두
+  // 경우 모두 받아 LLMFactory 에 image_url 멀티파트로 전달.
+  const body = options?.imageBase64
+    ? { ...bodyWithDesc, imageBase64: options.imageBase64 }
+    : bodyWithDesc;
 
   const { data, error } = await supabase.functions.invoke('character-chat', {
     body,

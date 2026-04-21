@@ -79,6 +79,9 @@ interface CharacterChatRequest {
   personaKey?: string;
   messages: ChatMessage[];
   userMessage: string;
+  /** "data:image/jpeg;base64,..." 또는 raw base64. 존재하면 마지막 user
+   * 메시지를 멀티파트로 변환해 vision-capable LLM 에 전달. */
+  imageBase64?: string;
   shouldSendPush?: boolean;
   modelPreference?: "default" | "grok-fast";
   userName?: string;
@@ -159,14 +162,33 @@ function extractSegments(text: string): string[] {
     return trimmed.length > 0 ? [trimmed] : [];
   }
 
-  const pieces = text
+  const rawPieces = text
     .split(/\[SPLIT\]/g)
     .map((piece) => piece.trim())
     .filter((piece) => piece.length > 0);
 
-  if (pieces.length === 0) {
+  if (rawPieces.length === 0) {
     const trimmed = text.replace(/\[SPLIT\]/g, " ").trim();
     return trimmed.length > 0 ? [trimmed] : [];
+  }
+
+  // 중복 제거 — flash-lite 같은 작은 모델이 같은 문장을 반복 출력하는
+  // 버그(루프) 대비. 정규화된 본문으로 키를 만들어 같은 내용의 버블이
+  // 여러 개 안 붙게 한다.
+  const seen = new Set<string>();
+  const pieces: string[] = [];
+  for (const piece of rawPieces) {
+    const normalized = piece
+      .toLowerCase()
+      .replace(/[^0-9a-z가-힣ぁ-んァ-ヶ一-龯]+/g, "");
+    if (!normalized || seen.has(normalized)) continue;
+    seen.add(normalized);
+    pieces.push(piece);
+  }
+
+  if (pieces.length === 0) {
+    // 전부 중복이었던 희귀 케이스 — 첫 버블만 사용.
+    return [rawPieces[0]];
   }
 
   // 안전 상한: 버블 4개 초과면 뒤를 마지막 버블에 합침
@@ -1840,6 +1862,7 @@ serve(async (req: Request) => {
       personaKey,
       messages,
       userMessage,
+      imageBase64,
       modelPreference,
       userName,
       userDescription,
@@ -2092,11 +2115,32 @@ serve(async (req: Request) => {
         AFFINITY_EVALUATION_PROMPT,
       ].filter((section) => section && section.trim().length > 0);
 
-    const chatMessages: ChatMessage[] = [
-      { role: "system", content: systemPromptSections.join("\n\n") },
+    // 이미지가 함께 온 경우 마지막 user 메시지를 멀티파트(text + image_url)로
+    // 변환. LLMFactory 는 string | ContentPart[] 유니언을 받아 Gemini/OpenAI 에서
+    // 각각 inline_data / image_url 포맷으로 매핑한다. ChatMessage 타입은 string 만
+    // 허용하므로 LLMFactory 경계에서 unknown 을 거쳐 캐스팅한다.
+    const lastUserMessage = imageBase64
+      ? {
+        role: "user" as const,
+        content: [
+          { type: "text" as const, text: enhancedUserMessage },
+          {
+            type: "image_url" as const,
+            image_url: {
+              url: imageBase64.startsWith("data:")
+                ? imageBase64
+                : `data:image/jpeg;base64,${imageBase64}`,
+            },
+          },
+        ],
+      }
+      : { role: "user" as const, content: enhancedUserMessage };
+
+    const chatMessages = [
+      { role: "system" as const, content: systemPromptSections.join("\n\n") },
       ...limitedHistory,
-      { role: "user", content: enhancedUserMessage },
-    ];
+      lastUserMessage,
+    ] as unknown as ChatMessage[];
 
     // 운세 요청 시 더 긴 응답을 위해 maxTokens 증가
     const fortuneMaxTokens = isFortuneRequest ? 4096 : 2048;
@@ -2129,12 +2173,39 @@ serve(async (req: Request) => {
         });
       }
     } else {
-      // 기본 경로: DB 기반 character-chat 설정 사용
-      const llm = await LLMFactory.createFromConfigAsync("character-chat");
-      llmResponse = await llm.generate(chatMessages, {
-        temperature: 0.6,
-        maxTokens: fortuneMaxTokens,
-      });
+      // 기본 경로: DB 기반 character-chat 설정 사용 (현재 gemini-2.5-flash-lite).
+      // 쿼터 소진(429)/일시 장애 시 gemini-2.0-flash-lite → grok-3-mini-fast
+      // 순서로 자동 폴백. OpenAI 는 safety guard 에서 차단되어 있으므로 제외.
+      try {
+        const llm = await LLMFactory.createFromConfigAsync("character-chat");
+        llmResponse = await llm.generate(chatMessages, {
+          temperature: 0.6,
+          maxTokens: fortuneMaxTokens,
+        });
+      } catch (primaryError) {
+        fallbackUsed = true;
+        console.warn(
+          "[character-chat] primary LLM failed, trying gemini-2.0-flash-lite:",
+          primaryError,
+        );
+        try {
+          const liteLlm = LLMFactory.create("gemini", "gemini-2.0-flash-lite");
+          llmResponse = await liteLlm.generate(chatMessages, {
+            temperature: 0.6,
+            maxTokens: fortuneMaxTokens,
+          });
+        } catch (liteError) {
+          console.warn(
+            "[character-chat] flash-lite also failed, trying Grok:",
+            liteError,
+          );
+          const grokLlm = LLMFactory.create("grok", "grok-3-mini-fast");
+          llmResponse = await grokLlm.generate(chatMessages, {
+            temperature: 0.6,
+            maxTokens: fortuneMaxTokens,
+          });
+        }
+      }
     }
 
     const latencyMs = Date.now() - startTime;

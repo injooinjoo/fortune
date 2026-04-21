@@ -43,7 +43,10 @@ class CloudChatProvider implements IChatProvider {
     thread: StoryChatThreadSnapshot | null,
     options?: ChatProviderOptions,
   ): Promise<StoryChatResponse> {
-    return invokeStoryChat(character, userMessage, thread, options);
+    return invokeStoryChat(character, userMessage, thread, {
+      userDescription: options?.userDescription,
+      imageBase64: options?.imageBase64,
+    });
   }
 
   getProviderName(): 'cloud' {
