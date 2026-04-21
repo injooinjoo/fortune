@@ -30,6 +30,11 @@ import {
 } from './on-device-model-registry';
 import { type ModelStatus } from './on-device-llm-status';
 import {
+  getConverter,
+  type MultimodalMessage,
+  type PlainMessage,
+} from './on-device-prompt-converters';
+import {
   deleteSecureItem,
   getSecureItem,
   setSecureItem,
@@ -108,12 +113,17 @@ type StatusListener = (status: ModelStatus) => void;
 // 엔진 내부 `modelPath()` / `mmprojPath()` getter 가 계산한다.
 const MODEL_DIR = `${FileSystem.documentDirectory}models/`;
 
+// 모든 모델 공통 안전 stop 토큰. jinja 템플릿이 모델별 EOS 를 자동 처리하지만
+// 간혹 특수 문자열이 본문에 섞여 나오는 경우 safeguard 로 함께 넘긴다.
+// Gemma: <end_of_turn>, Phi-4: <|end|>, Qwen/Llama3: <|im_end|>/<|eot_id|>.
 const STOP_WORDS = [
   '</s>',
   '<end_of_turn>',
   '<eos>',
   '<|im_end|>',
   '<|eot_id|>',
+  '<|end|>',
+  '<|endoftext|>',
 ];
 
 // base64 → 임시 파일로 쓸 때의 디렉토리.
@@ -640,35 +650,36 @@ class LlamaOnDeviceLLMEngine implements OnDeviceLLMEngine {
     messages: OnDeviceMessage[],
     options?: OnDeviceGenerateOptions,
   ): Promise<string> {
-    // Gemma raw prompt 포맷.
-    const parts: string[] = [];
-    let firstUserSeen = false;
-    for (const m of messages) {
-      const turnRole = m.role === 'user' ? 'user' : 'model';
-      const rawContent = typeof m.content === 'string'
-        ? m.content
-        : flattenContentToText(m.content);
-      const content = !firstUserSeen && m.role === 'user'
-        ? `${systemPrompt}\n\n---\n\n${rawContent}`
-        : rawContent;
-      if (m.role === 'user') firstUserSeen = true;
-      parts.push(`<start_of_turn>${turnRole}\n${content}<end_of_turn>`);
-    }
-    if (!firstUserSeen) {
-      parts.unshift(`<start_of_turn>user\n${systemPrompt}<end_of_turn>`);
-    }
-    parts.push('<start_of_turn>model\n');
-    const prompt = parts.join('\n');
-
     if (!this.llamaContext) throw new Error('no llama context');
+
+    // 모델 계열별 포맷 차이는 PromptConverter 가 흡수.
+    // 엔진은 변환 결과를 그대로 llama.rn 에 전달.
+    const family = this.variant?.promptFamily ?? 'default';
+    const converter = getConverter(family);
+
+    const plainMessages: PlainMessage[] = messages.map((m) => ({
+      role: m.role === 'assistant' ? 'assistant' : 'user',
+      content:
+        typeof m.content === 'string'
+          ? m.content
+          : flattenContentToText(m.content),
+    }));
+
+    const converted = converter.convertText(systemPrompt, plainMessages);
+    const stops = [...STOP_WORDS, ...(converted.extraStop ?? [])];
+
     const result = await this.llamaContext.completion({
-      prompt,
+      messages: converted.messages as unknown as Array<{
+        role: 'system' | 'user' | 'assistant';
+        content: string;
+      }>,
+      jinja: converted.jinja,
       n_predict: options?.maxTokens ?? 256,
       temperature: options?.temperature ?? 0.7,
       top_k: 40,
       top_p: 0.9,
       min_p: 0.05,
-      stop: [...STOP_WORDS, '<start_of_turn>', '<end_of_turn>'],
+      stop: stops,
       penalty_repeat: 1.15,
       penalty_last_n: 256,
     });
@@ -684,67 +695,53 @@ class LlamaOnDeviceLLMEngine implements OnDeviceLLMEngine {
 
     // 이미지가 들어간 메시지들을 llama.rn `messages` API 형태로 변환.
     // base64 는 임시 파일로 내려쓰고, media_paths 배열에 file URI 를 모은다.
-    const rnMessages: Array<{
-      role: string;
-      content: Array<{
-        type: 'text' | 'image_url';
-        text?: string;
-        image_url?: { url: string };
-      }>;
-    }> = [];
     const mediaPaths: string[] = [];
 
-    // 첫 user 메시지에 system prompt 를 prepend.
-    let systemPrepended = false;
-
+    // 내부 메시지를 PromptConverter 용 ContentPart 모양으로 정규화하면서
+    // 이미지 URL 은 파일 경로로 resolve (mmproj 는 로컬 파일 기반).
+    const preConverted: MultimodalMessage[] = [];
     for (const m of messages) {
       const parts: OnDeviceContentPart[] = Array.isArray(m.content)
         ? m.content
         : [{ type: 'text', text: m.content }];
-      const rnParts: Array<{
-        type: 'text' | 'image_url';
-        text?: string;
-        image_url?: { url: string };
-      }> = [];
+      const convertedParts: MultimodalMessage['content'] = [];
       for (const p of parts) {
         if (p.type === 'text') {
-          let text = p.text;
-          if (!systemPrepended && m.role === 'user') {
-            text = `${systemPrompt}\n\n---\n\n${text}`;
-            systemPrepended = true;
-          }
-          rnParts.push({ type: 'text', text });
+          convertedParts.push({ type: 'text', text: p.text });
         } else if (p.type === 'image_url') {
           const resolved = await this.resolveImageUrl(p.image_url.url);
           mediaPaths.push(resolved);
-          rnParts.push({ type: 'image_url', image_url: { url: resolved } });
+          convertedParts.push({
+            type: 'image_url',
+            image_url: { url: resolved },
+          });
         }
       }
-      rnMessages.push({
-        role: m.role === 'user' ? 'user' : m.role === 'assistant' ? 'assistant' : 'user',
-        content: rnParts,
+      preConverted.push({
+        role: m.role === 'assistant' ? 'assistant' : 'user',
+        content: convertedParts,
       });
     }
 
-    if (!systemPrepended) {
-      rnMessages.unshift({
-        role: 'user',
-        content: [{ type: 'text', text: systemPrompt }],
-      });
-    }
+    // 모델 계열별 변환 — 엔진은 포맷 차이에 관여하지 않음.
+    const family = this.variant?.promptFamily ?? 'default';
+    const converter = getConverter(family);
+    const converted = converter.convertMultimodal(systemPrompt, preConverted);
+    const stops = [...STOP_WORDS, ...(converted.extraStop ?? [])];
 
     const result = await this.llamaContext.completion({
-      // llama.rn 의 OAI 호환 messages + media_paths 조합.
-      // 타입 정의에 'system' 이 강하게 제한돼 있지 않아 as any 로 우회.
+      // llama.rn 의 OAI 호환 messages + media_paths 조합 + jinja 템플릿 엔진.
+      // 타입 정의가 엄격해 as any 로 우회.
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      messages: rnMessages as any,
+      messages: converted.messages as any,
+      jinja: converted.jinja,
       media_paths: mediaPaths,
       n_predict: options?.maxTokens ?? 512,
       temperature: options?.temperature ?? 0.7,
       top_k: 40,
       top_p: 0.9,
       min_p: 0.05,
-      stop: [...STOP_WORDS],
+      stop: stops,
       penalty_repeat: 1.15,
       penalty_last_n: 256,
     });

@@ -7,6 +7,7 @@
  */
 
 import { type DeviceTier } from './device-tier';
+import { type PromptFamily } from './on-device-prompt-converters';
 
 export type ModelVariantId =
   | 'gemma-4-e4b-q4km'
@@ -26,6 +27,8 @@ export interface ModelVariant {
   id: ModelVariantId;
   /** UI 에 표시할 짧은 라벨. */
   displayName: string;
+  /** 프롬프트 계열 — `on-device-prompt-converters.ts` 의 변환기 선택용. */
+  promptFamily: PromptFamily;
   modelFilename: string;
   modelUrl: string;
   approxModelBytes: number;
@@ -42,6 +45,7 @@ export const MODEL_REGISTRY: Record<DeviceTier, ModelVariant | null> = {
   flagship: {
     id: 'gemma-4-e4b-q4km',
     displayName: 'Gemma 4 E4B',
+    promptFamily: 'gemma',
     modelFilename: 'gemma-4-E4B-it-Q4_K_M.gguf',
     modelUrl:
       'https://huggingface.co/unsloth/gemma-4-E4B-it-GGUF/resolve/main/gemma-4-E4B-it-Q4_K_M.gguf',
@@ -60,19 +64,22 @@ export const MODEL_REGISTRY: Record<DeviceTier, ModelVariant | null> = {
   high: {
     id: 'phi-4-mini-q4km',
     displayName: 'Phi-4 mini',
+    promptFamily: 'phi',
     modelFilename: 'Phi-4-mini-instruct-Q4_K_M.gguf',
     modelUrl:
       'https://huggingface.co/unsloth/Phi-4-mini-instruct-GGUF/resolve/main/Phi-4-mini-instruct-Q4_K_M.gguf',
     approxModelBytes: 2_490_000_000,
     minModelBytes: 800_000_000,
     mmproj: null,
-    nCtx: 1024,
+    // 텍스트 전용 — mmproj RAM 경쟁 없어 2048 로 확장 (시스템 프롬프트 + 대화 여유).
+    nCtx: 2048,
     nGpuLayersIOS: 99,
     nGpuLayersAndroid: 32,
   },
   mid: {
     id: 'gemma-4-e2b-q4km',
     displayName: 'Gemma 4 E2B',
+    promptFamily: 'gemma',
     modelFilename: 'gemma-4-E2B-it-Q4_K_M.gguf',
     modelUrl:
       'https://huggingface.co/unsloth/gemma-4-E2B-it-GGUF/resolve/main/gemma-4-E2B-it-Q4_K_M.gguf',
@@ -91,13 +98,15 @@ export const MODEL_REGISTRY: Record<DeviceTier, ModelVariant | null> = {
   ultra: {
     id: 'qwen3-0_6b-q4km',
     displayName: 'Qwen3 0.6B',
+    promptFamily: 'qwen',
     modelFilename: 'Qwen3-0.6B-Q4_K_M.gguf',
     modelUrl:
       'https://huggingface.co/unsloth/Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q4_K_M.gguf',
     approxModelBytes: 430_000_000,
     minModelBytes: 150_000_000,
     mmproj: null,
-    nCtx: 1024,
+    // 작은 모델 + 텍스트 전용 → 2048 충분히 허용.
+    nCtx: 2048,
     nGpuLayersIOS: 99,
     nGpuLayersAndroid: 24,
   },
