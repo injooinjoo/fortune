@@ -9,10 +9,15 @@ import { OnDeviceChatProvider } from './on-device-chat-provider';
 import { onDeviceLLMEngine } from './on-device-llm';
 
 export { OnDeviceNotReadyError } from './chat-provider-errors';
-import { OnDeviceNotReadyError } from './chat-provider-errors';
 
 export interface ChatProviderOptions {
   userDescription?: string;
+  /**
+   * 사용자 메시지와 함께 보낼 이미지. base64 data URL 또는 raw base64.
+   * On-device 에서만 의미 있음 — cloud 경로에선 무시 (이미지 fortune 은 별도
+   * Edge Function 경로로 감).
+   */
+  imageBase64?: string;
 }
 
 export interface IChatProvider {
@@ -57,22 +62,36 @@ class CloudChatProvider implements IChatProvider {
 const cloudProvider = new CloudChatProvider();
 const onDeviceProvider = new OnDeviceChatProvider();
 
+/**
+ * 온디바이스 실패 시 같은 메시지를 즉시 클라우드로 재시도할 때 쓰는 강제 클라우드 핸들.
+ */
+export const cloudChatProvider: IChatProvider = cloudProvider;
+
 // ---------------------------------------------------------------------------
 // Routing — picks the best available provider for the requested mode
 // ---------------------------------------------------------------------------
 
-export function resolveChatProvider(aiMode: AiMode): IChatProvider {
-  if (aiMode === 'on-device') {
-    // 엄격 모드: 유저가 명시적으로 온디바이스를 선택했다면 준비 안 됐을 때
-    // 은폐 클라우드 폴백 금지. 호출자가 준비 UX를 보여줘야 함.
-    if (!onDeviceProvider.isAvailable()) {
-      throw new OnDeviceNotReadyError(onDeviceLLMEngine.getStatus());
+export interface ResolveChatProviderOptions {
+  /** 이 호출이 이미지 입력을 포함하는가. 온디바이스 variant 가 mmproj 를
+   * 가지지 않으면 자동으로 cloud 로 라우팅한다. */
+  requiresImageInput?: boolean;
+}
+
+export function resolveChatProvider(
+  aiMode: AiMode,
+  options?: ResolveChatProviderOptions,
+): IChatProvider {
+  if (aiMode !== 'cloud' && onDeviceProvider.isAvailable()) {
+    if (options?.requiresImageInput) {
+      // 텍스트 전용 variant (mmproj null) 은 이미지 처리 불가 → cloud.
+      const variant = onDeviceLLMEngine.getActiveVariant();
+      if (!variant?.mmproj) {
+        return cloudProvider;
+      }
     }
     return onDeviceProvider;
   }
-  if (aiMode === 'auto' && onDeviceProvider.isAvailable()) {
-    return onDeviceProvider;
-  }
-  // cloud mode, or explicit 'auto' fallback when on-device is not ready
+  // cloud mode, or on-device/auto 선택됐지만 모델이 아직 준비 안 된 경우
+  // → 조용히 클라우드로 폴백 (백그라운드 다운로드는 OnDeviceAutoDownloader가 처리)
   return cloudProvider;
 }

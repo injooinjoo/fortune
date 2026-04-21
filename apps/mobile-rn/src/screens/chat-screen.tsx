@@ -2,10 +2,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { type FortuneTypeId } from '@fortune/product-contracts';
-import { Alert, Dimensions, Keyboard, Modal, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { Alert, Dimensions, Keyboard, Modal, Pressable, ScrollView, TextInput, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
+import { OnDeviceTransitionToast } from '../components/on-device-transition-toast';
 import { Screen } from '../components/screen';
 import {
   ActiveChatComposer,
@@ -16,6 +17,8 @@ import {
   ChatSoftGate,
   FloatingCreateButton,
   ProfileFlowGateCard,
+  buildCharacterListMeta,
+  type CharacterListRowMeta,
 } from '../features/chat-surface/chat-surface';
 import {
   applySurveyAnswer,
@@ -59,6 +62,11 @@ import {
   type ChatCharacterSpec,
   type ChatCharacterTab,
 } from '../lib/chat-characters';
+import {
+  getChatLastSeenByCharacterId,
+  setChatLastSeenForCharacter,
+} from '../lib/storage';
+import { getSecureItem, setSecureItem } from '../lib/secure-store-storage';
 import { supabase } from '../lib/supabase';
 import {
   buildNextStoryThreadSnapshot,
@@ -73,6 +81,7 @@ import {
 } from '../lib/story-chat-runtime';
 import {
   OnDeviceNotReadyError,
+  cloudChatProvider,
   resolveChatProvider,
 } from '../lib/chat-provider';
 import { onDeviceLLMEngine } from '../lib/on-device-llm';
@@ -113,30 +122,29 @@ function supportsChatNativeRuntime(fortuneType: FortuneTypeId) {
   );
 }
 
+const PENDING_SENDS_STORAGE_KEY = 'fortune.pending-sends.v1';
+
 /**
- * 가장 최근의 user kind='text' 메시지에 `readAt`을 도장찍어 돌려준다.
- * 이미 readAt 있거나 user 메시지가 없으면 원본 그대로 반환.
+ * 미읽음 user kind='text' 메시지 전부에 `readAt`을 도장찍어 돌려준다.
+ * AI 응답 시점에 호출되므로, 그 전까지 쌓인 모든 유저 메시지를 한꺼번에
+ * 읽음 처리 (연속으로 보낸 경우에도 "1" 배지가 남지 않도록).
  */
 function markLatestUserMessageAsRead(
   messages: ChatShellMessage[],
   readAt: string = new Date().toISOString(),
 ): ChatShellMessage[] {
   let patched = false;
-  const next: ChatShellMessage[] = [];
-  for (let index = messages.length - 1; index >= 0; index -= 1) {
-    const message = messages[index];
+  const next = messages.map((message) => {
     if (
-      !patched &&
       message.kind === 'text' &&
       message.sender === 'user' &&
       !message.readAt
     ) {
-      next.unshift({ ...message, readAt });
       patched = true;
-    } else {
-      next.unshift(message);
+      return { ...message, readAt };
     }
-  }
+    return message;
+  });
   return patched ? next : messages;
 }
 
@@ -156,10 +164,12 @@ export function ChatScreen() {
   const {
     completeOnboarding,
     consumePendingChatFortuneType,
+    consumePendingMySajuContext,
     gate,
     markGuestBrowse,
     onboardingProgress,
     pendingChatFortuneType,
+    pendingMySajuContext,
     session,
     status,
   } = useAppBootstrap();
@@ -227,6 +237,19 @@ export function ChatScreen() {
       }),
     ),
   );
+  const [lastSeenByCharacterId, setLastSeenByCharacterId] = useState<
+    Record<string, string>
+  >({});
+
+  useEffect(() => {
+    let mounted = true;
+    void getChatLastSeenByCharacterId().then((loaded) => {
+      if (mounted) setLastSeenByCharacterId(loaded);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
   const [storyThreadSnapshotsByCharacterId, setStoryThreadSnapshotsByCharacterId] =
     useState<Record<string, StoryChatThreadSnapshot | null>>(() =>
       Object.fromEntries(
@@ -236,9 +259,18 @@ export function ChatScreen() {
         ]),
       ),
     );
-  const [storyTypingCharacterId, setStoryTypingCharacterId] = useState<
-    string | null
-  >(null);
+  const [storyTypingByCharacterId, setStoryTypingByCharacterId] = useState<
+    Record<string, boolean>
+  >({});
+  // 모델 응답 대기 중에도 입력은 항상 가능. 같은 캐릭터에 도착한 다음 메시지들은
+  // 여기 큐에 쌓이고, 현재 응답이 끝난 직후 하나씩 순차 발송된다.
+  // 비동기 finally/타이머에서 최신값을 참조해야 해서 state 대신 ref로 관리.
+  const pendingSendsRef = useRef<
+    Record<string, { text: string; userMessageId: string }[]>
+  >({});
+  // UI 노출용 큐 카운트 (typing indicator "대기 +N"). ref 변경마다 동기 업데이트.
+  const [pendingSendCountByCharacterId, setPendingSendCountByCharacterId] =
+    useState<Record<string, number>>({});
   const [activeSurveysByCharacterId, setActiveSurveysByCharacterId] = useState<
     Record<string, ActiveChatSurvey | null>
   >({});
@@ -272,6 +304,55 @@ export function ChatScreen() {
       );
     });
   }, [consumePendingChatFortuneType, pendingChatFortuneType]);
+
+  // "사주로 대화하기" entry: inject the user's manseryeok snapshot as a system
+  // card at the top of the currently-selected fortune character's thread.
+  // Picks the first fortune character when no selection exists yet so the
+  // message lands somewhere the user will actually see after nav push.
+  useEffect(() => {
+    if (!pendingMySajuContext) {
+      return;
+    }
+
+    const message = consumePendingMySajuContext();
+    if (!message) {
+      return;
+    }
+
+    const targetCharacterId =
+      selectedCharacterId ??
+      mobileAppState.chat.selectedCharacterId ??
+      fortuneChatCharacters[0]?.id ??
+      chatCharacters[0]?.id ??
+      null;
+
+    if (!targetCharacterId) {
+      return;
+    }
+
+    setActiveTab('fortune');
+    setSurfaceMode('chat');
+    if (selectedCharacterId == null) {
+      setSelectedCharacterId(targetCharacterId);
+    }
+
+    setMessagesByCharacterId((current) => {
+      const existing = current[targetCharacterId] ?? [];
+      // Dedupe by id in case the same message somehow lands twice.
+      if (existing.some((m) => m.id === message.id)) {
+        return current;
+      }
+      return {
+        ...current,
+        [targetCharacterId]: [message, ...existing],
+      };
+    });
+  }, [
+    consumePendingMySajuContext,
+    mobileAppState.chat.selectedCharacterId,
+    pendingMySajuContext,
+    selectedCharacterId,
+  ]);
 
   // Hydrate a single character's conversation from remote
   const hydrateStoryCharacter = useCallback(
@@ -324,7 +405,11 @@ export function ChatScreen() {
     [],
   );
 
-  // On gate ready: only hydrate the currently selected character (not all)
+  // On gate ready: hydrate the initially-selected character immediately, then
+  // opportunistically hydrate every character visible in the list so that the
+  // last-message preview shows up on first load (before the user enters a
+  // conversation). `hydrateStoryCharacter` is deduped via its internal Set, so
+  // repeated calls are safe.
   useEffect(() => {
     if (gate !== 'ready') {
       return;
@@ -336,7 +421,6 @@ export function ChatScreen() {
       hydratedCharacterIdsRef.current = new Set();
     }
 
-    // Resolve which character is initially selected
     const initialCharacterId =
       directCharacterId ??
       mobileAppState.chat.selectedCharacterId ??
@@ -344,6 +428,12 @@ export function ChatScreen() {
 
     if (initialCharacterId) {
       void hydrateStoryCharacter(initialCharacterId);
+    }
+
+    for (const character of chatCharacters) {
+      if (character.id !== initialCharacterId) {
+        void hydrateStoryCharacter(character.id);
+      }
     }
   }, [gate, session?.user.id, directCharacterId, mobileAppState.chat.selectedCharacterId, hydrateStoryCharacter]);
 
@@ -479,9 +569,9 @@ export function ChatScreen() {
     [storyThreadSnapshotsByCharacterId],
   );
   const [fortuneTypingCharacterId, setFortuneTypingCharacterId] = useState<string | null>(null);
-  const selectedStoryIsTyping = storyTypingCharacterId === selectedCharacter.id;
+  const selectedStoryIsTyping =
+    storyTypingByCharacterId[selectedCharacter.id] === true;
   const selectedFortuneIsTyping = fortuneTypingCharacterId === selectedCharacter.id;
-  const storySendInFlight = storyTypingCharacterId !== null;
 
   // ---------------------------------------------------------------------------
   // F2 — 읽음 표시 타이머 (유저가 메시지 보내고 N초 뒤 "1" 배지 제거)
@@ -539,6 +629,44 @@ export function ChatScreen() {
       timersRef.current.clear();
     };
   }, []);
+
+  // 부팅 시 큐 복원 — 앱 강제 종료되어도 대기 중이던 유저 메시지를 이어서 처리.
+  useEffect(() => {
+    void (async () => {
+      const raw = await getSecureItem(PENDING_SENDS_STORAGE_KEY);
+      if (!raw) return;
+      try {
+        const parsed = JSON.parse(raw) as typeof pendingSendsRef.current;
+        if (!parsed || typeof parsed !== 'object') return;
+        pendingSendsRef.current = parsed;
+        const counts: Record<string, number> = {};
+        for (const [cid, queue] of Object.entries(parsed)) {
+          counts[cid] = Array.isArray(queue) ? queue.length : 0;
+        }
+        setPendingSendCountByCharacterId(counts);
+      } catch {
+        // 파싱 실패 시 무시 — 다음 저장이 덮어쓴다.
+      }
+    })();
+  }, []);
+
+  // gate=ready가 되면 복원된 큐를 자동으로 drain. 캐릭터별 1회만 트리거하고,
+  // 이후 chain은 각 send 함수의 finally → drainNextPendingSend가 이어 받는다.
+  const didInitialDrainRef = useRef(false);
+  useEffect(() => {
+    if (gate !== 'ready' || didInitialDrainRef.current) return;
+    const entries = Object.entries(pendingSendsRef.current);
+    if (entries.length === 0) return;
+    didInitialDrainRef.current = true;
+    for (const [cid, queue] of entries) {
+      if (!Array.isArray(queue) || queue.length === 0) continue;
+      if (storyTypingByCharacterId[cid]) continue;
+      const character = findChatCharacterById(cid, createdFriends);
+      if (!character) continue;
+      drainNextPendingSend(character);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gate, createdFriends]);
 
   // ---------------------------------------------------------------------------
   // F3 — 햅틱 토글 (chatHapticsEnabled 설정)
@@ -602,14 +730,11 @@ export function ChatScreen() {
       characterId: string;
       segments: string[];
       emotionTag?: string;
-      baseThread: ChatShellMessage[];
     }) => {
-      const { characterId, segments, emotionTag, baseThread } = options;
-      if (segments.length === 0) {
-        return baseThread;
-      }
-
-      let accumulator: ChatShellMessage[] = baseThread;
+      const { characterId, segments, emotionTag } = options;
+      // 응답 append는 항상 현재 state 위에 쌓는다. 큐잉된 유저 메시지(응답 대기 중
+      // 사용자가 추가로 보낸 것)를 덮어쓰지 않도록 functional setter로만 처리.
+      let latestThread: ChatShellMessage[] = [];
 
       for (let index = 0; index < segments.length; index += 1) {
         const text = segments[index]?.trim() ?? '';
@@ -625,19 +750,19 @@ export function ChatScreen() {
           await sleep(betweenBubbles);
         }
 
-        const bubble = buildAssistantTextMessage(text);
-        accumulator = [...accumulator, bubble];
-        const snapshotForSet = accumulator;
-        setMessagesByCharacterId((current) => ({
-          ...current,
-          [characterId]: snapshotForSet,
-        }));
+        const bubble = buildAssistantTextMessage(text, { animate: true });
+        setMessagesByCharacterId((current) => {
+          const thread = current[characterId] ?? [];
+          const updated = [...thread, bubble];
+          latestThread = updated;
+          return { ...current, [characterId]: updated };
+        });
 
         // 햅틱 — 첫 버블에서만 울리거나 전부 울리거나. 카톡도 각 메시지마다 울리므로 전부.
         triggerAssistantHaptic(emotionTag);
       }
 
-      return accumulator;
+      return latestThread;
     },
     [triggerAssistantHaptic],
   );
@@ -673,6 +798,9 @@ export function ChatScreen() {
   const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevContentHeightRef = useRef(0);
   const scrollViewHeightRef = useRef(Dimensions.get('window').height * 0.7);
+  // 카드 상단 스크롤은 메시지 하나 당 한 번만 — 이후 카드 내부 애니메이션 등
+  // 진행 중 재호출되는 onContentSizeChange 에서 다시 스크롤이 튀지 않도록.
+  const cardTopScrolledMessageIdRef = useRef<string | null>(null);
 
   function scrollChatToBottom(animated = true) {
     // Single rAF is enough — the caller invokes this after React has scheduled
@@ -694,7 +822,13 @@ export function ChatScreen() {
     const viewportHeight = scrollViewHeightRef.current;
     prevContentHeightRef.current = contentHeight;
 
-    if (prevHeight <= 0) return;
+    // 입장 후 첫 hydration 완료 시점 — 마지막 메시지 종류 관계없이 무조건 바닥.
+    if (prevHeight <= 0) {
+      requestAnimationFrame(() => {
+        chatScrollRef.current?.scrollToEnd({ animated: false });
+      });
+      return;
+    }
 
     const addedHeight = contentHeight - prevHeight;
     if (addedHeight <= 0) return;
@@ -704,17 +838,36 @@ export function ChatScreen() {
       scrollTimerRef.current = null;
     }
 
-    if (addedHeight > viewportHeight * 0.8) {
-      // Large content (fortune result card): scroll to show its top. A tiny
-      // setTimeout is still helpful here so the card's internal layout has
-      // time to settle before we compute the target Y.
+    // 최근 메시지가 운세 결과 카드면 카드 상단이 화면 최상단에 보이게 스크롤.
+    const latestThread =
+      messagesByCharacterId[selectedCharacter.id] ?? [];
+    const latestMessage = latestThread[latestThread.length - 1];
+    const isResultCardArriving =
+      latestMessage?.kind === 'embedded-result' ||
+      latestMessage?.kind === 'fortune-cookie' ||
+      latestMessage?.kind === 'saju-preview';
+
+    if (isResultCardArriving) {
+      // 같은 카드에 대해서 이미 한 번 상단 스크롤을 했으면, 이후 카드
+      // 내부 애니메이션으로 content height가 또 늘어나도 추가 스크롤 금지.
+      if (cardTopScrolledMessageIdRef.current === latestMessage.id) {
+        return;
+      }
+      cardTopScrolledMessageIdRef.current = latestMessage.id;
+      // 카드 상단이 뷰포트 상단에 딱 오도록. prevHeight가 카드 시작 y.
       scrollTimerRef.current = setTimeout(() => {
         requestAnimationFrame(() => {
-          chatScrollRef.current?.scrollTo({ y: prevHeight - 80, animated: true });
+          chatScrollRef.current?.scrollTo({ y: Math.max(0, prevHeight - 8), animated: true });
         });
-      }, 60);
+      }, 80);
+    } else if (addedHeight > viewportHeight * 0.5) {
+      scrollTimerRef.current = setTimeout(() => {
+        requestAnimationFrame(() => {
+          chatScrollRef.current?.scrollTo({ y: Math.max(0, prevHeight - 8), animated: true });
+        });
+      }, 80);
     } else {
-      // Small content (regular message): go to bottom immediately.
+      // 일반 메시지: 바닥으로.
       requestAnimationFrame(() => {
         chatScrollRef.current?.scrollToEnd({ animated: true });
       });
@@ -722,8 +875,7 @@ export function ChatScreen() {
   }
 
   useEffect(() => {
-    const event = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
-    const sub = Keyboard.addListener(event, () => {
+    const sub = Keyboard.addListener('keyboardDidShow', () => {
       scrollChatToBottom();
     });
     return () => sub.remove();
@@ -747,19 +899,52 @@ export function ChatScreen() {
   );
   const firstRunCharacters = tabCharacters;
 
+  const characterListMetaById = useMemo(() => {
+    const result: Record<string, CharacterListRowMeta> = {};
+    for (const character of firstRunCharacters) {
+      result[character.id] = buildCharacterListMeta(
+        messagesByCharacterId[character.id],
+        lastSeenByCharacterId[character.id],
+      );
+    }
+    return result;
+  }, [firstRunCharacters, messagesByCharacterId, lastSeenByCharacterId]);
+
+  // 입장(캐릭터 진입) 시에는 항상 맨 아래로.
+  // 결과 카드가 마지막이더라도, 진입 시점에서 사용자가 기대하는 위치는
+  // 대화의 최하단이므로 카드 상단 스크롤 로직은 여기서 적용하지 않는다.
   useEffect(() => {
     if (gate !== 'ready' || surfaceMode !== 'chat') {
       return;
     }
-
-    scrollChatToBottom(selectedThread.length > 2);
+    // hydration 후 첫 content grow 에서 다시 바닥으로 가도록 ref 리셋.
+    prevContentHeightRef.current = 0;
+    cardTopScrolledMessageIdRef.current = null;
+    scrollChatToBottom(false);
   }, [
     gate,
     surfaceMode,
     selectedCharacter.id,
-    selectedThread.length,
     currentSurveyStep?.step.id,
   ]);
+
+  // 같은 방에 있는 동안 새 메시지가 도착하면 아래로 스크롤.
+  // 단, 마지막 메시지가 결과 카드면 scrollChatOnContentGrow 가 카드 상단을
+  // 뷰포트 상단에 고정하므로 여기선 스킵.
+  useEffect(() => {
+    if (gate !== 'ready' || surfaceMode !== 'chat') {
+      return;
+    }
+    const latestMessage = selectedThread[selectedThread.length - 1];
+    const latestIsResultCard =
+      latestMessage?.kind === 'embedded-result' ||
+      latestMessage?.kind === 'fortune-cookie' ||
+      latestMessage?.kind === 'saju-preview';
+    if (latestIsResultCard) {
+      return;
+    }
+    scrollChatToBottom(true);
+  }, [gate, surfaceMode, selectedThread.length]);
   useEffect(() => {
     if (launchOrigin !== 'deeplink' || !activeFortuneType) {
       return;
@@ -792,10 +977,22 @@ export function ChatScreen() {
     character: ChatCharacterSpec,
     nextMessages: ChatShellMessage[],
   ) {
-    setMessagesByCharacterId((current) => ({
-      ...current,
-      [character.id]: [...(current[character.id] ?? []), ...nextMessages],
-    }));
+    // 새로 붙는 메시지 중 assistant/system 이 섞여 있으면, 그 시점에 미읽음
+    // 상태인 user 메시지는 모두 읽음 처리. (운세 설문/액션/일반 채팅 등
+    // 모든 경로를 한 곳에서 커버해서 "1" 배지가 남는 현상 방지)
+    const hasNonUserMessage = nextMessages.some(
+      (m) => m.sender === 'assistant' || m.sender === 'system',
+    );
+    setMessagesByCharacterId((current) => {
+      const existing = current[character.id] ?? [];
+      const base = hasNonUserMessage
+        ? markLatestUserMessageAsRead(existing)
+        : existing;
+      return {
+        ...current,
+        [character.id]: [...base, ...nextMessages],
+      };
+    });
   }
 
   function setActiveSurvey(
@@ -1044,6 +1241,19 @@ export function ChatScreen() {
     setSelectedCharacterId(characterId);
     setActiveTab(character?.kind ?? 'story');
     setSurfaceMode('chat');
+
+    const thread = messagesByCharacterId[characterId] ?? [];
+    const lastMessage = thread[thread.length - 1];
+    if (lastMessage) {
+      setLastSeenByCharacterId((current) => ({
+        ...current,
+        [characterId]: lastMessage.id,
+      }));
+      void setChatLastSeenForCharacter(characterId, lastMessage.id).catch(
+        () => undefined,
+      );
+    }
+
     recordChatIntent({
       characterId,
       fortuneType: activeFortuneType,
@@ -1124,8 +1334,9 @@ export function ChatScreen() {
 
     const result = await launchImageLibraryAsync({
       mediaTypes: MediaTypeOptions.Images,
-      quality: 0.8,
+      quality: 0.7,
       allowsEditing: false,
+      base64: true,
     });
 
     if (result.canceled || !result.assets?.[0]) {
@@ -1146,6 +1357,22 @@ export function ChatScreen() {
         () => undefined,
       );
     });
+
+    // 멀티모달 스토리 파일럿이면 사진을 즉시 AI 에 전달.
+    // 온디바이스 ready + multimodalReady 면 Gemma 4 E2B 가 로컬에서 분석,
+    // 아니면 cloud 로 폴백 (이미지 드롭 + 텍스트만).
+    if (
+      asset.base64 &&
+      isStoryRomancePilotCharacterId(selectedCharacter.id)
+    ) {
+      const caption = draft.trim() || '이 사진 어때?';
+      if (draft.trim().length > 0) {
+        setDraft('');
+      }
+      void sendStoryPilotMessage(selectedCharacter, caption, {
+        imageBase64: `data:${asset.mimeType ?? 'image/jpeg'};base64,${asset.base64}`,
+      });
+    }
   }
 
   function handleToggleVoiceInput() {
@@ -1217,15 +1444,131 @@ export function ChatScreen() {
     }
   }
 
+  // 큐 전체를 비우고 해당 유저 메시지들을 thread에서 제거. 프리미엄 게이트
+  // 같은 블로킹 조건이 걸렸을 때 "유저 메시지는 남아있는데 응답은 영영 안 옴"
+  // 상태를 방지한다.
+  function flushPendingQueue(characterId: string) {
+    const queue = pendingSendsRef.current[characterId] ?? [];
+    if (queue.length === 0) return;
+    pendingSendsRef.current = {
+      ...pendingSendsRef.current,
+      [characterId]: [],
+    };
+    syncPendingCount(characterId);
+    const idsToRemove = new Set(queue.map((item) => item.userMessageId));
+    setMessagesByCharacterId((current) => {
+      const thread = current[characterId] ?? [];
+      return {
+        ...current,
+        [characterId]: thread.filter((m) => !idsToRemove.has(m.id)),
+      };
+    });
+  }
+
+  // 실패한 전송의 유저 메시지만 thread에서 제거. 뒤늦게 큐잉된 다른 메시지는
+  // 건드리지 않는다. id가 없으면 가장 최근 user 메시지 하나를 pop.
+  function rollbackUserMessage(characterId: string, userMessageId?: string) {
+    setMessagesByCharacterId((current) => {
+      const thread = current[characterId] ?? [];
+      if (userMessageId) {
+        return {
+          ...current,
+          [characterId]: thread.filter((m) => m.id !== userMessageId),
+        };
+      }
+      const lastUserIndex = thread.findLastIndex((m) => m.sender === 'user');
+      if (lastUserIndex < 0) return current;
+      return {
+        ...current,
+        [characterId]: [
+          ...thread.slice(0, lastUserIndex),
+          ...thread.slice(lastUserIndex + 1),
+        ],
+      };
+    });
+  }
+
+  // pendingSendsRef가 바뀔 때마다 UI 카운트 동기 업데이트 + 디스크 영속화.
+  function syncPendingCount(characterId: string) {
+    setPendingSendCountByCharacterId((current) => ({
+      ...current,
+      [characterId]: pendingSendsRef.current[characterId]?.length ?? 0,
+    }));
+    void setSecureItem(
+      PENDING_SENDS_STORAGE_KEY,
+      JSON.stringify(pendingSendsRef.current),
+    ).catch(() => undefined);
+  }
+
+  // 응답 대기 중 사용자 입력을 큐에 적재. 유저 메시지는 즉시 thread에 보여
+  // 전송 피드백을 준다. drain은 현재 응답 finally에서 처리.
+  function enqueueStorySend(character: ChatCharacterSpec, text: string) {
+    const queuedUserMessage = buildUserMessage(text);
+    setMessagesByCharacterId((current) => ({
+      ...current,
+      [character.id]: [
+        ...(current[character.id] ?? []),
+        queuedUserMessage,
+      ],
+    }));
+    pendingSendsRef.current = {
+      ...pendingSendsRef.current,
+      [character.id]: [
+        ...(pendingSendsRef.current[character.id] ?? []),
+        { text, userMessageId: queuedUserMessage.id },
+      ],
+    };
+    syncPendingCount(character.id);
+    setComposerTrayOpen(false);
+    setSurfaceMode('chat');
+  }
+
+  function drainNextPendingSend(character: ChatCharacterSpec) {
+    const queue = pendingSendsRef.current[character.id] ?? [];
+    if (queue.length === 0) {
+      return;
+    }
+    const [next, ...rest] = queue;
+    pendingSendsRef.current = {
+      ...pendingSendsRef.current,
+      [character.id]: rest,
+    };
+    syncPendingCount(character.id);
+
+    if (isStoryRomancePilotCharacterId(character.id)) {
+      void sendStoryPilotMessage(character, next.text, {
+        skipOptimisticUserMessage: true,
+        userMessageId: next.userMessageId,
+      });
+      return;
+    }
+
+    if (character.kind === 'story') {
+      void sendCharacterChatMessage(character, next.text, {
+        skipOptimisticUserMessage: true,
+        userMessageId: next.userMessageId,
+      });
+    }
+  }
+
   async function sendStoryPilotMessage(
     character: ChatCharacterSpec,
     text: string,
+    sendOptions?: {
+      skipOptimisticUserMessage?: boolean;
+      userMessageId?: string;
+      imageBase64?: string;
+    },
   ) {
     const trimmed = text.trim();
 
-    if (!trimmed) {
+    // 이미지만 있고 텍스트가 비어있는 케이스(사진만 보내기)를 허용하기 위해
+    // trimmed 가 비어 있어도 imageBase64 가 있으면 진행.
+    if (!trimmed && !sendOptions?.imageBase64) {
       return;
     }
+
+    const skipOptimistic = sendOptions?.skipOptimisticUserMessage === true;
 
     const existingSnapshot =
       storyThreadSnapshotsByCharacterId[character.id] ??
@@ -1234,10 +1577,11 @@ export function ChatScreen() {
       messagesByCharacterId[character.id] ??
       existingSnapshot?.messages ??
       buildInitialThread(character);
-    const optimisticThread = [
-      ...existingThread,
-      buildUserMessage(trimmed),
-    ];
+    // 큐에서 drain되어 재진입한 경우, 유저 메시지는 이미 thread에 들어있다.
+    const userMessage = skipOptimistic ? null : buildUserMessage(trimmed);
+    const optimisticThread = userMessage
+      ? [...existingThread, userMessage]
+      : existingThread;
     const storyRequest = buildStoryChatRequest(
       character,
       trimmed,
@@ -1261,6 +1605,12 @@ export function ChatScreen() {
           { text: '프리미엄 보기', onPress: () => router.push('/premium') },
         ],
       );
+      // 큐잉된 메시지가 있으면 모두 thread에서 제거하고 큐 비움 — 안 그러면
+      // 유저 메시지만 남고 응답이 영영 오지 않는 스턱 상태가 된다.
+      if (skipOptimistic && sendOptions?.userMessageId) {
+        rollbackUserMessage(character.id, sendOptions.userMessageId);
+      }
+      flushPendingQueue(character.id);
       return;
     }
 
@@ -1271,13 +1621,19 @@ export function ChatScreen() {
       null,
       storyRequest,
     );
-    let shouldClearDraft = true;
+    let shouldClearDraft = !skipOptimistic;
+    const effectiveUserMessageId = userMessage?.id ?? sendOptions?.userMessageId;
 
-    setMessagesByCharacterId((current) => ({
+    if (userMessage) {
+      setMessagesByCharacterId((current) => ({
+        ...current,
+        [character.id]: [...(current[character.id] ?? []), userMessage],
+      }));
+    }
+    setStoryTypingByCharacterId((current) => ({
       ...current,
-      [character.id]: optimisticThread,
+      [character.id]: true,
     }));
-    setStoryTypingCharacterId(character.id);
     // F2 — 읽음 표시 랜덤 지연 타이머 시작 (서버 응답 먼저 오면 즉시 제거)
     scheduleReadReceipt(character.id);
     setComposerTrayOpen(false);
@@ -1286,19 +1642,23 @@ export function ChatScreen() {
     try {
       if (!supabase) {
         const fallbackMessage = buildStoryFallbackAssistantMessage(character);
-        const nextMessages = markLatestUserMessageAsRead([
-          ...optimisticThread,
-          fallbackMessage,
-        ]);
         clearReadReceiptTimer(character.id);
-        setMessagesByCharacterId((current) => ({
-          ...current,
-          [character.id]: nextMessages,
-        }));
+        setMessagesByCharacterId((current) => {
+          const thread = current[character.id] ?? [];
+          return {
+            ...current,
+            [character.id]: [
+              ...markLatestUserMessageAsRead(thread),
+              fallbackMessage,
+            ],
+          };
+        });
         return;
       }
 
-      const chatProvider = resolveChatProvider(mobileAppState.settings.aiMode);
+      const chatProvider = resolveChatProvider(mobileAppState.settings.aiMode, {
+        requiresImageInput: !!sendOptions?.imageBase64,
+      });
 
       // Skip token consumption for guest users and on-device mode
       if (session && chatProvider.getProviderName() === 'cloud') {
@@ -1338,7 +1698,69 @@ export function ChatScreen() {
       });
 
       const customPersona = personaByCharacterId[character.id];
-      const response = await chatProvider.invoke(character, trimmed, optimisticSnapshot, customPersona ? { userDescription: `[유저 커스텀 성격 요청] ${customPersona}` } : undefined);
+      const invokeOptions: import('../lib/chat-provider').ChatProviderOptions = {};
+      if (customPersona) {
+        invokeOptions.userDescription = `[유저 커스텀 성격 요청] ${customPersona}`;
+      }
+      if (sendOptions?.imageBase64) {
+        invokeOptions.imageBase64 = sendOptions.imageBase64;
+      }
+
+      const invokeWithRetry = async () => {
+        let lastError: unknown;
+        for (let attempt = 0; attempt < 2; attempt += 1) {
+          try {
+            return await chatProvider.invoke(
+              character,
+              trimmed,
+              optimisticSnapshot,
+              invokeOptions,
+            );
+          } catch (err) {
+            lastError = err;
+            // OnDevice 미준비 / 토큰 부족 같은 구조적 에러는 재시도 의미 없음.
+            if (
+              err instanceof OnDeviceNotReadyError ||
+              err instanceof RemoteTokenConsumeError
+            ) {
+              throw err;
+            }
+            if (attempt < 1) {
+              await new Promise((r) => setTimeout(r, 900));
+            }
+          }
+        }
+        throw lastError;
+      };
+
+      let response;
+      try {
+        response = await invokeWithRetry();
+      } catch (providerError) {
+        if (
+          providerError instanceof OnDeviceNotReadyError &&
+          chatProvider.getProviderName() === 'on-device'
+        ) {
+          if (providerError.status === 'not-downloaded') {
+            onDeviceLLMEngine.startDownload().catch(() => undefined);
+          }
+          // 온디바이스 실패 → 같은 메시지 그대로 클라우드 재시도 (롤백 없음)
+          if (session) {
+            await consumeRemoteTokens(session, {
+              fortuneType: 'character-chat',
+              referenceId: `story:${character.id}`,
+            }).catch(() => undefined);
+          }
+          response = await cloudChatProvider.invoke(
+            character,
+            trimmed,
+            optimisticSnapshot,
+            invokeOptions,
+          );
+        } else {
+          throw providerError;
+        }
+      }
 
       // F2 — 서버 응답 도착. 랜덤 지연 타이머보다 먼저 오면 읽음 즉시 처리.
       markUserMessageReadImmediately(character.id);
@@ -1354,15 +1776,20 @@ export function ChatScreen() {
         : Math.random() * 2 + 1; // 1-3초 기본 딜레이
       await new Promise((r) => setTimeout(r, replyDelay * 1000));
 
-      // optimisticThread 를 읽음 처리된 버전으로 재계산 (readAt 도장)
-      const readOptimisticThread = markLatestUserMessageAsRead(optimisticThread);
+      // 최신 유저 메시지 읽음 처리 — 현재 state 기준으로 찍어야 큐잉된 다음
+      // 메시지들을 덮어쓰지 않는다.
+      setMessagesByCharacterId((current) => ({
+        ...current,
+        [character.id]: markLatestUserMessageAsRead(
+          current[character.id] ?? [],
+        ),
+      }));
       // F1 — segments 순차 enqueue. 단일 세그먼트는 하위 호환 동일 동작.
       const segments = response.segments ?? [response.response.trim()];
       const nextMessages = await enqueueAssistantSegments({
         characterId: character.id,
         segments,
         emotionTag: response.emotionTag,
-        baseThread: readOptimisticThread,
       });
       const nextSnapshot = buildNextStoryThreadSnapshot(
         optimisticSnapshot,
@@ -1386,43 +1813,26 @@ export function ChatScreen() {
       }
     } catch (error) {
       if (error instanceof OnDeviceNotReadyError) {
+        // 온디바이스 미준비 시: 팝업 없이 백그라운드 다운로드만 트리거.
+        // 유저가 다시 보내면 클라우드 폴백으로 정상 동작함.
+        if (error.status === 'not-downloaded') {
+          onDeviceLLMEngine.startDownload().catch(() => undefined);
+        }
         shouldClearDraft = false;
         setDraft(trimmed);
         clearReadReceiptTimer(character.id);
-        setMessagesByCharacterId((current) => ({
-          ...current,
-          [character.id]: existingThread,
-        }));
+        rollbackUserMessage(character.id, effectiveUserMessageId);
         setStoryThreadSnapshotsByCharacterId((current) => ({
           ...current,
           [character.id]: existingSnapshot,
         }));
-
-        if (error.status === 'not-downloaded') {
-          onDeviceLLMEngine.startDownload().catch(() => undefined);
-        }
-
-        const preparingMessage =
-          error.status === 'downloading'
-            ? 'AI 모델을 다운로드 중입니다. 완료되면 다시 보내주세요.'
-            : error.status === 'loading'
-              ? 'AI 모델을 로드하고 있어요. 잠시 후 다시 보내주세요.'
-              : 'AI 모델을 준비하고 있어요. 프로필에서 진행 상태를 확인할 수 있습니다.';
-
-        Alert.alert('온디바이스 AI 준비 중', preparingMessage, [
-          { text: '확인', style: 'cancel' },
-          { text: '설정 열기', onPress: () => router.push('/profile') },
-        ]);
         return;
       }
 
       if (error instanceof RemoteTokenConsumeError) {
         shouldClearDraft = false;
         setDraft(trimmed);
-        setMessagesByCharacterId((current) => ({
-          ...current,
-          [character.id]: existingThread,
-        }));
+        rollbackUserMessage(character.id, effectiveUserMessageId);
         setStoryThreadSnapshotsByCharacterId((current) => ({
           ...current,
           [character.id]: existingSnapshot,
@@ -1458,8 +1868,16 @@ export function ChatScreen() {
       // 에러 폴백에서도 읽음 처리 (더는 기다릴 필요 없음)
       markUserMessageReadImmediately(character.id);
       const fallbackMessage = buildStoryFallbackAssistantMessage(character);
-      const readThread = markLatestUserMessageAsRead(optimisticThread);
-      const nextMessages = [...readThread, fallbackMessage];
+      let nextMessages: ChatShellMessage[] = [];
+      setMessagesByCharacterId((current) => {
+        const thread = current[character.id] ?? [];
+        const merged = [
+          ...markLatestUserMessageAsRead(thread),
+          fallbackMessage,
+        ];
+        nextMessages = merged;
+        return { ...current, [character.id]: merged };
+      });
       const nextSnapshot = buildNextStoryThreadSnapshot(
         optimisticSnapshot,
         character,
@@ -1467,11 +1885,6 @@ export function ChatScreen() {
         null,
         storyRequest,
       );
-
-      setMessagesByCharacterId((current) => ({
-        ...current,
-        [character.id]: nextMessages,
-      }));
 
       if (nextSnapshot) {
         setStoryThreadSnapshotsByCharacterId((current) => ({
@@ -1486,18 +1899,22 @@ export function ChatScreen() {
         });
       }
     } finally {
-      setStoryTypingCharacterId((current) =>
-        current === character.id ? null : current,
+      setStoryTypingByCharacterId((current) =>
+        current[character.id]
+          ? { ...current, [character.id]: false }
+          : current,
       );
       if (shouldClearDraft) {
         setDraft('');
       }
+      drainNextPendingSend(character);
     }
   }
 
   async function sendCharacterChatMessage(
     character: ChatCharacterSpec,
     text: string,
+    sendOptions?: { skipOptimisticUserMessage?: boolean; userMessageId?: string },
   ) {
     const trimmed = text.trim();
 
@@ -1505,19 +1922,27 @@ export function ChatScreen() {
       return;
     }
 
+    const skipOptimistic = sendOptions?.skipOptimisticUserMessage === true;
+
     const existingThread =
       messagesByCharacterId[character.id] ?? buildInitialThread(character);
-    const optimisticThread = [
-      ...existingThread,
-      buildUserMessage(trimmed),
-    ];
-    let shouldClearDraft = true;
+    const userMessage = skipOptimistic ? null : buildUserMessage(trimmed);
+    const optimisticThread = userMessage
+      ? [...existingThread, userMessage]
+      : existingThread;
+    let shouldClearDraft = !skipOptimistic;
 
-    setMessagesByCharacterId((current) => ({
+    const effectiveUserMessageId = userMessage?.id ?? sendOptions?.userMessageId;
+    if (userMessage) {
+      setMessagesByCharacterId((current) => ({
+        ...current,
+        [character.id]: [...(current[character.id] ?? []), userMessage],
+      }));
+    }
+    setStoryTypingByCharacterId((current) => ({
       ...current,
-      [character.id]: optimisticThread,
+      [character.id]: true,
     }));
-    setStoryTypingCharacterId(character.id);
     scheduleReadReceipt(character.id);
     setComposerTrayOpen(false);
     setSurfaceMode('chat');
@@ -1526,59 +1951,75 @@ export function ChatScreen() {
       if (!supabase) {
         const fallbackMessage = buildDraftReply(character, trimmed);
         clearReadReceiptTimer(character.id);
-        const nextMessages = markLatestUserMessageAsRead([
-          ...optimisticThread,
-          fallbackMessage,
-        ]);
-        setMessagesByCharacterId((current) => ({
-          ...current,
-          [character.id]: nextMessages,
-        }));
+        setMessagesByCharacterId((current) => {
+          const thread = current[character.id] ?? [];
+          return {
+            ...current,
+            [character.id]: [
+              ...markLatestUserMessageAsRead(thread),
+              fallbackMessage,
+            ],
+          };
+        });
         return;
       }
 
-      // 온디바이스/자동 모드에서는 로컬 provider로 라우팅. 엄격 on-device는
-      // 미준비 시 아래 catch의 OnDeviceNotReadyError 핸들러로 빠짐.
+      // 온디바이스/자동 모드에서는 로컬 provider로 시도. 실패 시 같은 메시지를
+      // 롤백 없이 그대로 클라우드 경로로 재전송 (아래로 자연 폴백).
       const aiMode = mobileAppState.settings.aiMode;
       if (aiMode !== 'cloud') {
         const chatProvider = resolveChatProvider(aiMode);
         if (chatProvider.getProviderName() === 'on-device') {
           const customPersona = personaByCharacterId[character.id];
-          const response = await chatProvider.invoke(
-            character,
-            trimmed,
-            null,
-            customPersona
-              ? { userDescription: `[유저 커스텀 성격 요청] ${customPersona}` }
-              : undefined,
-          );
+          try {
+            const response = await chatProvider.invoke(
+              character,
+              trimmed,
+              null,
+              customPersona
+                ? { userDescription: `[유저 커스텀 성격 요청] ${customPersona}` }
+                : undefined,
+            );
 
-          markUserMessageReadImmediately(character.id);
-          if (response.emotionTag) {
-            lastAssistantEmotionTagRef.current = response.emotionTag;
+            markUserMessageReadImmediately(character.id);
+            if (response.emotionTag) {
+              lastAssistantEmotionTagRef.current = response.emotionTag;
+            }
+
+            const replyDelay = response.delaySec
+              ? Math.min(response.delaySec, 8)
+              : Math.random() * 2 + 1;
+            await new Promise((r) => setTimeout(r, replyDelay * 1000));
+
+            setMessagesByCharacterId((current) => ({
+              ...current,
+              [character.id]: markLatestUserMessageAsRead(
+                current[character.id] ?? [],
+              ),
+            }));
+            const segments = response.segments ?? [response.response.trim()];
+            const nextMessages = await enqueueAssistantSegments({
+              characterId: character.id,
+              segments,
+              emotionTag: response.emotionTag,
+            });
+            saveCharacterConversation(character.id, nextMessages).catch(
+              (saveError: unknown) => {
+                captureError(saveError, {
+                  surface: 'chat:character-chat-save-conversation',
+                }).catch(() => undefined);
+              },
+            );
+            return;
+          } catch (onDeviceError) {
+            if (!(onDeviceError instanceof OnDeviceNotReadyError)) {
+              throw onDeviceError;
+            }
+            if (onDeviceError.status === 'not-downloaded') {
+              onDeviceLLMEngine.startDownload().catch(() => undefined);
+            }
+            // 아래 cloud 경로로 fall-through → 같은 메시지 자동 재전송
           }
-
-          const replyDelay = response.delaySec
-            ? Math.min(response.delaySec, 8)
-            : Math.random() * 2 + 1;
-          await new Promise((r) => setTimeout(r, replyDelay * 1000));
-
-          const readOptimisticThread = markLatestUserMessageAsRead(optimisticThread);
-          const segments = response.segments ?? [response.response.trim()];
-          const nextMessages = await enqueueAssistantSegments({
-            characterId: character.id,
-            segments,
-            emotionTag: response.emotionTag,
-            baseThread: readOptimisticThread,
-          });
-          saveCharacterConversation(character.id, nextMessages).catch(
-            (saveError: unknown) => {
-              captureError(saveError, {
-                surface: 'chat:character-chat-save-conversation',
-              }).catch(() => undefined);
-            },
-          );
-          return;
         }
         // aiMode==='auto' + 온디바이스 미준비 → 아래 cloud 경로로 자연 폴백
       }
@@ -1622,14 +2063,25 @@ export function ChatScreen() {
       const customPersona = personaByCharacterId[character.id];
       const personaSuffix = customPersona ? ` [유저 커스텀 성격 요청] ${customPersona}` : '';
 
+      const conceptType = customFriend
+        ? customFriend.relationship === 'crush'
+          ? 'crush'
+          : customFriend.relationship === 'partner'
+            ? 'partner'
+            : customFriend.relationship === 'colleague'
+              ? 'colleague'
+              : 'friend'
+        : 'friend';
+
       const { data, error } = await supabase.functions.invoke('character-chat', {
         body: {
           characterId: character.id,
           characterName: character.name,
           characterTraits: character.shortDescription,
+          conceptType,
           systemPrompt: customFriend
-            ? `너는 "${character.name}"이다. AI 어시스턴트가 아니라 실제 감정을 가진 사람이다. ${customFriend.scenario ? `상황: ${customFriend.scenario}. ` : ''}성격: ${customFriend.personalityTags.join(', ')}. ${customFriend.memoryNote ? `기억: ${customFriend.memoryNote}. ` : ''}스타일: ${customFriend.stylePreset || '자연스러운 대화'}. 사용자와 ${customFriend.relationship === 'friend' ? '친구' : customFriend.relationship === 'crush' ? '썸 상대' : customFriend.relationship === 'partner' ? '연인' : '동료'} 관계야. 짧고 자연스럽게, 진짜 사람처럼 대화해. "말씀해주세요", "도와드릴게요" 같은 AI 말투 절대 금지.${personaSuffix}`
-            : `너는 "${character.name}"이다. ${character.shortDescription}. AI 어시스턴트가 아니라 실제 감정을 가진 사람이다. 짧고 자연스럽게, 진짜 사람처럼 대화해. "말씀해주세요", "도와드릴게요" 같은 AI 말투 절대 금지.${personaSuffix}`,
+            ? `너는 "${character.name}"이다. AI 어시스턴트가 아니라 실제 감정을 가진 사람이다. ${customFriend.scenario ? `상황: ${customFriend.scenario}. ` : ''}성격: ${customFriend.personalityTags.join(', ')}. ${customFriend.memoryNote ? `기억: ${customFriend.memoryNote}. ` : ''}스타일: ${customFriend.stylePreset || '자연스러운 대화'}. 사용자와 ${customFriend.relationship === 'friend' ? '친구' : customFriend.relationship === 'crush' ? '썸 상대' : customFriend.relationship === 'partner' ? '연인' : '동료'} 관계야.${personaSuffix}`
+            : `너는 "${character.name}"이다. ${character.shortDescription}.${personaSuffix}`,
           userDescription: customPersona ? `[유저 커스텀 성격 요청] ${customPersona}` : undefined,
           messages: recentMessages,
           userMessage: trimmed,
@@ -1669,7 +2121,12 @@ export function ChatScreen() {
         : Math.random() * 2 + 1;
       await new Promise((r) => setTimeout(r, replyDelay * 1000));
 
-      const readOptimisticThread = markLatestUserMessageAsRead(optimisticThread);
+      setMessagesByCharacterId((current) => ({
+        ...current,
+        [character.id]: markLatestUserMessageAsRead(
+          current[character.id] ?? [],
+        ),
+      }));
       // F1 — segments 파싱 (없으면 단일 세그먼트로 폴백)
       const rawSegments = Array.isArray(payload.segments)
         ? payload.segments.filter(
@@ -1683,7 +2140,6 @@ export function ChatScreen() {
         characterId: character.id,
         segments,
         emotionTag: payload.emotionTag,
-        baseThread: readOptimisticThread,
       });
 
       // Persist conversation to remote
@@ -1696,6 +2152,10 @@ export function ChatScreen() {
       );
     } catch (error) {
       if (error instanceof OnDeviceNotReadyError) {
+        // 온디바이스 미준비 시: 팝업 없이 백그라운드 다운로드만 트리거.
+        if (error.status === 'not-downloaded') {
+          onDeviceLLMEngine.startDownload().catch(() => undefined);
+        }
         shouldClearDraft = false;
         setDraft(trimmed);
         clearReadReceiptTimer(character.id);
@@ -1703,22 +2163,6 @@ export function ChatScreen() {
           ...current,
           [character.id]: existingThread,
         }));
-
-        if (error.status === 'not-downloaded') {
-          onDeviceLLMEngine.startDownload().catch(() => undefined);
-        }
-
-        const preparingMessage =
-          error.status === 'downloading'
-            ? 'AI 모델을 다운로드 중입니다. 완료되면 다시 보내주세요.'
-            : error.status === 'loading'
-              ? 'AI 모델을 로드하고 있어요. 잠시 후 다시 보내주세요.'
-              : 'AI 모델을 준비하고 있어요. 프로필에서 진행 상태를 확인할 수 있습니다.';
-
-        Alert.alert('온디바이스 AI 준비 중', preparingMessage, [
-          { text: '확인', style: 'cancel' },
-          { text: '설정 열기', onPress: () => router.push('/profile') },
-        ]);
         return;
       }
 
@@ -1726,10 +2170,7 @@ export function ChatScreen() {
         shouldClearDraft = false;
         setDraft(trimmed);
         clearReadReceiptTimer(character.id);
-        setMessagesByCharacterId((current) => ({
-          ...current,
-          [character.id]: existingThread,
-        }));
+        rollbackUserMessage(character.id, effectiveUserMessageId);
 
         await syncRemoteProfile().catch((syncError: unknown) => {
           captureError(syncError, {
@@ -1760,20 +2201,27 @@ export function ChatScreen() {
 
       markUserMessageReadImmediately(character.id);
       const fallbackMessage = buildDraftReply(character, trimmed);
-      const readThread = markLatestUserMessageAsRead(optimisticThread);
-      const nextMessages = [...readThread, fallbackMessage];
 
-      setMessagesByCharacterId((current) => ({
-        ...current,
-        [character.id]: nextMessages,
-      }));
+      setMessagesByCharacterId((current) => {
+        const thread = current[character.id] ?? [];
+        return {
+          ...current,
+          [character.id]: [
+            ...markLatestUserMessageAsRead(thread),
+            fallbackMessage,
+          ],
+        };
+      });
     } finally {
-      setStoryTypingCharacterId((current) =>
-        current === character.id ? null : current,
+      setStoryTypingByCharacterId((current) =>
+        current[character.id]
+          ? { ...current, [character.id]: false }
+          : current,
       );
       if (shouldClearDraft) {
         setDraft('');
       }
+      drainNextPendingSend(character);
     }
   }
 
@@ -1784,6 +2232,22 @@ export function ChatScreen() {
     // Error handlers restore draft via setDraft(trimmed) if needed.
     if (trimmed) {
       setDraft('');
+    }
+
+    const isStoryCharacter = selectedCharacter.kind === 'story';
+    const isBusy =
+      isStoryCharacter &&
+      storyTypingByCharacterId[selectedCharacter.id] === true;
+
+    // 응답 대기 중에 빈 전송은 중복 트리거 방지를 위해 무시.
+    if (isBusy && !trimmed) {
+      return;
+    }
+
+    // 응답 대기 중 타이핑 → 큐 적재. 유저 메시지는 즉시 thread에 표시.
+    if (isBusy && trimmed) {
+      enqueueStorySend(selectedCharacter, trimmed);
+      return;
     }
 
     if (!trimmed) {
@@ -1892,8 +2356,12 @@ export function ChatScreen() {
         appendMessages(selectedCharacter, [
           buildAssistantTextMessage(nextQuestion),
         ]);
+        // 설문 답변 직후 AI 다음 질문이 붙는 순간, 방금 보낸 유저 답변은
+        // 읽음 처리되어야 함 ("1" 배지 제거).
+        markUserMessageReadImmediately(selectedCharacter.id);
       }
     } else if (completed) {
+      markUserMessageReadImmediately(selectedCharacter.id);
       void completeSurvey(selectedCharacter, completed);
     }
 
@@ -2004,6 +2472,7 @@ export function ChatScreen() {
         context,
         {
           userId: session?.user.id ?? null,
+          aiMode: mobileAppState.settings.aiMode,
         },
       );
 
@@ -2150,7 +2619,6 @@ export function ChatScreen() {
               onToggleTray={() => setComposerTrayOpen((current) => !current)}
               quickActions={selectedCharacterActions}
               trayOpen={composerTrayOpen}
-              sendDisabled={selectedCharacter.kind === 'story' && storySendInFlight}
               hasCustomPersona={Boolean(personaByCharacterId[selectedCharacter.id])}
               auxiliaryAction={{
                 label: '프로필 보기',
@@ -2206,12 +2674,17 @@ export function ChatScreen() {
         />
       ) : null}
 
+      <OnDeviceTransitionToast />
+
       {gate === 'ready' ? (
         surfaceMode === 'chat' ? (
           <ActiveCharacterChatSurface
             actions={selectedCharacterActions}
             character={selectedCharacter}
             isTyping={selectedStoryIsTyping || selectedFortuneIsTyping}
+            pendingQueueCount={
+              pendingSendCountByCharacterId[selectedCharacter.id] ?? 0
+            }
             messages={selectedThread}
             presenceLine={presenceLine}
             romanceScore={selectedRomanceScore}
@@ -2257,6 +2730,7 @@ export function ChatScreen() {
             onSelectCharacter={handleCharacterSelect}
             romanceScores={romanceScoresByCharacterId}
             selectedCharacterId={selectedCharacter.id}
+            metaByCharacterId={characterListMetaById}
           />
         )
       ) : null}
@@ -2264,7 +2738,6 @@ export function ChatScreen() {
       <Modal
         animationType="slide"
         onRequestClose={() => setPersonaModalOpen(false)}
-        presentationStyle="pageSheet"
         transparent
         visible={personaModalOpen}
       >

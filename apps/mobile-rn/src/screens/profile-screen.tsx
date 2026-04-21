@@ -20,6 +20,10 @@ import { fortuneTheme } from '../lib/theme';
 import { WELCOME_SEEN_KEY } from '../lib/welcome-state';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { onDeviceLLMEngine, type ModelStatus } from '../lib/on-device-llm';
+import {
+  getDeviceDescriptor,
+  type DeviceTier,
+} from '../lib/device-tier';
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
 
 const DISCLAIMER_STORAGE_KEY = 'fortune.disclaimer-accepted.v1';
@@ -40,6 +44,26 @@ const UPDATE_CREATED_AT =
     ? `${Updates.createdAt.getFullYear()}-${String(Updates.createdAt.getMonth() + 1).padStart(2, '0')}-${String(Updates.createdAt.getDate()).padStart(2, '0')}`
     : null;
 const IS_EMBEDDED_LAUNCH = Updates.isEmbeddedLaunch === true;
+
+function formatBytesLabel(bytes: number): string {
+  if (bytes <= 0) return '';
+  const gb = bytes / 1_000_000_000;
+  if (gb >= 1) {
+    // 1.0 이상이면 소수점 한 자리 표기 (e.g. "약 2.5GB").
+    const rounded = Math.round(gb * 10) / 10;
+    return `약 ${rounded}GB`;
+  }
+  const mb = Math.round(bytes / 1_000_000);
+  return `약 ${mb}MB`;
+}
+
+const TIER_LABEL: Record<DeviceTier, string> = {
+  flagship: '최고사양',
+  high: '상위',
+  mid: '중급',
+  ultra: '경량',
+  off: '미지원',
+};
 
 function formatBuildBadge(): string {
   if (IS_EMBEDDED_LAUNCH) {
@@ -94,6 +118,17 @@ export function ProfileScreen() {
   const [themeMode, setThemeMode] = useState<'system' | 'light' | 'dark'>('system');
   const [modelStatus, setModelStatus] = useState<ModelStatus>(onDeviceLLMEngine.getStatus());
   const [downloadPct, setDownloadPct] = useState(0);
+  const [deviceTier, setDeviceTier] = useState<DeviceTier | null>(
+    onDeviceLLMEngine.getDeviceTier(),
+  );
+  const activeVariant = onDeviceLLMEngine.getActiveVariant();
+  const deviceDescriptor = useMemo(() => getDeviceDescriptor(), []);
+  const downloadSizeLabel = useMemo(() => {
+    if (!activeVariant) return '';
+    const total =
+      activeVariant.approxModelBytes + (activeVariant.mmproj?.approxBytes ?? 0);
+    return formatBytesLabel(total);
+  }, [activeVariant]);
   const { session } = useAppBootstrap();
   const { refreshLocalState, restorePurchases, saveSettings, state, syncRemoteProfile } = useMobileAppState();
 
@@ -106,13 +141,34 @@ export function ProfileScreen() {
       refreshLocalState().catch(() => undefined);
       syncRemoteProfile().catch(() => undefined);
       setModelStatus(onDeviceLLMEngine.getStatus());
+      // Tier 가 아직 미해석이면 비동기로 해석 — UI 는 준비되면 갱신.
+      onDeviceLLMEngine
+        .ensureTierResolved()
+        .then((tier) => setDeviceTier(tier))
+        .catch(() => undefined);
+
+      const refreshProgress = () => {
+        const progress = onDeviceLLMEngine.getDownloadProgress();
+        if (progress) {
+          setDownloadPct(progress.percentage);
+        }
+      };
 
       const unsub = (onDeviceLLMEngine as any).onStatusChange?.((s: ModelStatus) => {
         setModelStatus(s);
-        const progress = onDeviceLLMEngine.getDownloadProgress();
-        if (progress) setDownloadPct(progress.percentage);
+        refreshProgress();
       });
-      return () => unsub?.();
+      // downloading 상태에선 0.5s 주기로 pct/stage 갱신.
+      const timer = setInterval(() => {
+        if (onDeviceLLMEngine.getStatus() === 'downloading') {
+          refreshProgress();
+        }
+      }, 500);
+      refreshProgress();
+      return () => {
+        unsub?.();
+        clearInterval(timer);
+      };
     }, [refreshLocalState, syncRemoteProfile]),
   );
 
@@ -372,8 +428,8 @@ export function ProfileScreen() {
       <SectionLabel>나의 온도</SectionLabel>
       <Card style={{ paddingHorizontal: 0, paddingVertical: 0, overflow: 'hidden' }}>
         <IconMenuTile
-          icon="ellipse-outline"
-          title="사주 요약"
+          icon="calendar-outline"
+          title="내 만세력"
           onPress={() => router.push('/profile/saju-summary')}
         />
         <IconMenuTile
@@ -462,7 +518,31 @@ export function ProfileScreen() {
         {/* 온디바이스 모델 상태 */}
         {state.settings.aiMode !== 'cloud' ? (
           <View style={{ gap: 6 }}>
-            {modelStatus === 'not-downloaded' ? (
+            {/* 기기 tier/variant 뱃지 */}
+            {deviceTier && deviceTier !== 'off' && activeVariant ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Ionicons
+                  name="phone-portrait-outline"
+                  size={12}
+                  color={fortuneTheme.colors.textTertiary}
+                />
+                <AppText
+                  variant="caption"
+                  color={fortuneTheme.colors.textTertiary}
+                >
+                  {`${deviceDescriptor.modelName ?? '이 기기'} · ${activeVariant.displayName} (${TIER_LABEL[deviceTier]})`}
+                </AppText>
+              </View>
+            ) : null}
+
+            {deviceTier === 'off' ? (
+              <AppText
+                variant="bodySmall"
+                color={fortuneTheme.colors.textSecondary}
+              >
+                이 기기는 온디바이스 AI 를 지원하지 않아요. 클라우드로 대화해요.
+              </AppText>
+            ) : modelStatus === 'not-downloaded' ? (
               <Pressable
                 onPress={() => {
                   onDeviceLLMEngine.startDownload().catch(() => setModelStatus('error'));
@@ -479,7 +559,9 @@ export function ProfileScreen() {
               >
                 <Ionicons name="cloud-download-outline" size={16} color={fortuneTheme.colors.ctaBackground} />
                 <AppText variant="bodySmall" color={fortuneTheme.colors.ctaBackground}>
-                  AI 모델 다운로드 (~1.5GB)
+                  {downloadSizeLabel
+                    ? `AI 모델 다운로드 (${downloadSizeLabel})`
+                    : 'AI 모델 다운로드'}
                 </AppText>
               </Pressable>
             ) : modelStatus === 'downloading' ? (
@@ -492,7 +574,7 @@ export function ProfileScreen() {
                   }}
                 >
                   <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-                    다운로드 중... {downloadPct}%
+                    {`다운로드 중... ${downloadPct}%`}
                   </AppText>
                   <Pressable onPress={() => onDeviceLLMEngine.cancelDownload()}>
                     <AppText variant="bodySmall" color={fortuneTheme.colors.textTertiary}>취소</AppText>
@@ -528,16 +610,48 @@ export function ProfileScreen() {
                 모델 로딩 중...
               </AppText>
             ) : modelStatus === 'error' ? (
-              <Pressable
-                onPress={() => {
-                  onDeviceLLMEngine.startDownload().catch(() => undefined);
-                }}
-              >
+              <View style={{ gap: 4 }}>
+                <Pressable
+                  onPress={() => {
+                    onDeviceLLMEngine.startDownload().catch(() => undefined);
+                  }}
+                >
+                  <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+                    오류 발생 — 탭하여 재시도 (클라우드로 대체 사용 중)
+                  </AppText>
+                </Pressable>
+                {onDeviceLLMEngine.getLastLoadError?.() ? (
+                  <AppText variant="caption" color={fortuneTheme.colors.textTertiary} style={{ fontFamily: 'Menlo' }}>
+                    {onDeviceLLMEngine.getLastLoadError()}
+                  </AppText>
+                ) : null}
+              </View>
+            ) : modelStatus === 'unsupported' ? (
+              <View style={{ gap: 4 }}>
                 <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-                  오류 발생 — 탭하여 재시도
+                  이 기기에선 온디바이스 AI 사용 불가 — 클라우드로 대체 사용 중
                 </AppText>
-              </Pressable>
-            ) : null}
+                {onDeviceLLMEngine.getLastLoadError?.() ? (
+                  <AppText variant="caption" color={fortuneTheme.colors.textTertiary} style={{ fontFamily: 'Menlo' }}>
+                    {onDeviceLLMEngine.getLastLoadError()}
+                  </AppText>
+                ) : null}
+                <Pressable
+                  onPress={() => {
+                    onDeviceLLMEngine.loadModel().catch(() => undefined);
+                  }}
+                  style={{ marginTop: 4 }}
+                >
+                  <AppText variant="caption" color={fortuneTheme.colors.ctaBackground}>
+                    재시도
+                  </AppText>
+                </Pressable>
+              </View>
+            ) : (
+              <AppText variant="bodySmall" color={fortuneTheme.colors.textTertiary}>
+                상태: {modelStatus}
+              </AppText>
+            )}
           </View>
         ) : null}
 
