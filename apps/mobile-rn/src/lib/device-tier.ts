@@ -14,7 +14,8 @@ import { getSecureItem, setSecureItem } from './secure-store-storage';
 
 export type DeviceTier = 'flagship' | 'high' | 'mid' | 'ultra' | 'off';
 
-const TIER_CACHE_KEY = 'ondo.device-tier.v1';
+// v2 — modelId 매핑 버그 수정 (iPhone 16 Pro 등) 반영하려고 이전 캐시 무효화.
+const TIER_CACHE_KEY = 'ondo.device-tier.v2';
 const VALID_TIERS: ReadonlyArray<DeviceTier> = [
   'flagship',
   'high',
