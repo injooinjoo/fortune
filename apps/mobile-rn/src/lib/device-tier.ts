@@ -74,24 +74,47 @@ function decideIosTier(): DeviceTier {
   const modelId = (Device.modelId as string | null) ?? '';
   const major = parseIosMajor(modelId);
   const osMajor = parseOsMajor(Device.osVersion);
+  const ramBytes = Device.totalMemory ?? 0;
+  const ramGB = ramBytes / 1_000_000_000;
 
   // iOS 14 이하는 llama.rn/Metal 최신 기능 신뢰 불가.
   if (osMajor > 0 && osMajor < 15) return 'off';
 
-  // 시뮬레이터 또는 modelId 추출 실패 — 보수적으로 mid (기존 기본).
+  // 시뮬레이터 또는 modelId 추출 실패 — 보수적으로 mid.
   if (!major) {
     if (!Device.isDevice) return 'mid';
     return 'off';
   }
 
-  // iPhone17 계열 이상 (A19 Pro, 12GB RAM) — 2025 후반 출시 예상.
-  if (major >= 17) return 'flagship';
-  // iPhone15 Pro / iPhone16 계열 (A17 Pro / A18, 8GB RAM).
-  if (major >= 15) return 'high';
-  // iPhone13 / iPhone14 계열 (A15 / A16, 6GB RAM).
-  if (major >= 13) return 'mid';
-  // iPhone11 / iPhone12 계열 (A13 / A14, 4~6GB RAM).
-  if (major >= 11) return 'ultra';
+  // 주의: iPhone 마케팅 이름과 하드웨어 modelId 는 한 세대씩 엇갈려 있다.
+  //   iPhone 16 Pro  = iPhone17,x  (A18, 8GB)
+  //   iPhone 15 Pro  = iPhone16,x  (A17 Pro, 8GB)
+  //   iPhone 14 Pro  = iPhone15,x  (A16, 6GB)
+  //   iPhone 13 Pro  = iPhone14,x  (A15, 6GB — 일반 13/13 mini 는 4GB)
+  //   iPhone 12 Pro  = iPhone13,x  (A14, 6GB — 일반 12/12 mini 는 4GB)
+  //   iPhone 11 Pro  = iPhone12,x  (A13, 4GB)
+  // major 만으로는 6GB/4GB 혼재(iPhone13/14 세대)가 구분 안 되어 RAM 으로 세분화.
+
+  // iPhone 17 Pro 이상 (A19 Pro, 12GB+) → flagship.
+  if (major >= 18) return 'flagship';
+
+  // iPhone 15 Pro / iPhone 16 전 라인 (A17 Pro / A18, 8GB) → high.
+  if (major >= 16) return 'high';
+
+  // iPhone 14 Pro / iPhone 15 전 라인 (A16, 6GB) → mid.
+  if (major >= 15) return 'mid';
+
+  // iPhone 13 (major=14) / iPhone 12 (major=13) 세대 — 6GB 와 4GB 혼재.
+  // 6GB(Pro 계열, 14/14 Plus) 이상만 mid, 나머지는 ultra.
+  if (major >= 13) {
+    if (ramGB >= 5.5) return 'mid';
+    return 'ultra';
+  }
+
+  // iPhone 11 계열 (major=12, A13, 4GB).
+  if (major >= 12) return 'ultra';
+
+  // iPhone X/XR/XS 및 그 이전 — 지원 안 함.
   return 'off';
 }
 

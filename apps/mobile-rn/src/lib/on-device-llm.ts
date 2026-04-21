@@ -29,6 +29,11 @@ import {
   type ModelVariantId,
 } from './on-device-model-registry';
 import { type ModelStatus } from './on-device-llm-status';
+import {
+  deleteSecureItem,
+  getSecureItem,
+  setSecureItem,
+} from './secure-store-storage';
 
 export { type ModelStatus } from './on-device-llm-status';
 
@@ -164,10 +169,24 @@ class LlamaOnDeviceLLMEngine implements OnDeviceLLMEngine {
   }
 
   constructor() {
-    // 부팅 시: tier 해석 + 파일 존재 체크만. 자동 loadModel 은 제거
-    // (앱 시작 시 3GB 로드로 인한 렉 완화). 실제 로드는 generate() 에서 lazy.
+    // 부팅 흐름:
+    //  1) tier 해석 (+ variant 결정)
+    //  2) 디스크에 모델 있는지 체크
+    //  3) 없으면 즉시 백그라운드 다운로드 시작 (유저 탭 없이 자동)
+    //  4) 로드는 generate() 호출 시 lazy — 부팅 시 3GB 즉시 로드로 인한 렉 회피
     this.ensureTierResolved()
-      .then(() => this.checkModelExists())
+      .then(async () => {
+        await this.checkModelExists();
+        if (
+          this.tier &&
+          this.tier !== 'off' &&
+          this.status === 'not-downloaded'
+        ) {
+          this.startDownload().catch((e) => {
+            console.warn('[OnDeviceLLM] boot auto-download failed:', e);
+          });
+        }
+      })
       .catch(() => undefined);
   }
 
@@ -280,6 +299,9 @@ class LlamaOnDeviceLLMEngine implements OnDeviceLLMEngine {
       this.downloadResumable = null;
       this.downloadProgress = null;
       this.setStatus('not-downloaded');
+      // 유저가 명시적으로 취소하면 중단점도 폐기 — 다음 시도는 처음부터.
+      this.clearSavedResumeState('model').catch(() => undefined);
+      this.clearSavedResumeState('mmproj').catch(() => undefined);
     }
   }
 
@@ -527,26 +549,90 @@ class LlamaOnDeviceLLMEngine implements OnDeviceLLMEngine {
       currentStage,
       totalStages,
     };
+
+    // 옵션: iOS 에서 앱이 백그라운드로 내려가도 NSURLSession 으로 계속 다운로드.
+    // Android 는 기본이 백그라운드라 옵션 무시됨.
+    const options: FileSystem.DownloadOptions = {
+      sessionType: FileSystem.FileSystemSessionType.BACKGROUND,
+    };
+
+    // 저장된 중단점 상태가 있으면 이어받기, 없으면 신규 다운로드.
+    const savedState = await this.readSavedResumeState(stage);
+    let lastPersistedBytes = 0;
+    const maybePersist = (bytesWritten: number) => {
+      // 10MB 마다 savable() 저장 — SecureStore thrashing 방지.
+      if (bytesWritten - lastPersistedBytes < 10_000_000) return;
+      lastPersistedBytes = bytesWritten;
+      const resumable = this.downloadResumable;
+      if (!resumable) return;
+      try {
+        const savable = resumable.savable();
+        setSecureItem(
+          this.resumeStateKey(stage),
+          JSON.stringify(savable),
+        ).catch(() => undefined);
+      } catch {
+        // no-op
+      }
+    };
+
+    const onProgress = (progress: FileSystem.DownloadProgressData) => {
+      this.downloadProgress = {
+        bytesDownloaded: progress.totalBytesWritten,
+        totalBytes: progress.totalBytesExpectedToWrite,
+        percentage: computeOverallPercentage(progress.totalBytesWritten),
+        stage,
+        currentStage,
+        totalStages,
+      };
+      maybePersist(progress.totalBytesWritten);
+    };
+
     this.downloadResumable = FileSystem.createDownloadResumable(
-      url,
-      destination,
-      {},
-      (progress) => {
-        this.downloadProgress = {
-          bytesDownloaded: progress.totalBytesWritten,
-          totalBytes: progress.totalBytesExpectedToWrite,
-          percentage: computeOverallPercentage(progress.totalBytesWritten),
-          stage,
-          currentStage,
-          totalStages,
-        };
-      },
+      savedState?.url ?? url,
+      savedState?.fileUri ?? destination,
+      savedState?.options ?? options,
+      onProgress,
+      savedState?.resumeData,
     );
-    const result = await this.downloadResumable.downloadAsync();
+
+    const result = savedState
+      ? await this.downloadResumable.resumeAsync()
+      : await this.downloadResumable.downloadAsync();
+
     if (!result?.uri) {
       throw new Error(`Download did not complete: ${stage}`);
     }
+    // 성공 → 저장된 중단점 제거.
+    await this.clearSavedResumeState(stage).catch(() => undefined);
     console.log(`[OnDeviceLLM] ${stage} downloaded to:`, result.uri);
+  }
+
+  private resumeStateKey(stage: DownloadStage): string {
+    const variantId = this.variant?.id ?? 'unknown';
+    return `ondo.dl-resume.${variantId}.${stage}.v1`;
+  }
+
+  private async readSavedResumeState(
+    stage: DownloadStage,
+  ): Promise<FileSystem.DownloadPauseState | null> {
+    try {
+      const raw = await getSecureItem(this.resumeStateKey(stage));
+      if (!raw) return null;
+      const parsed = JSON.parse(raw) as FileSystem.DownloadPauseState;
+      if (!parsed?.url || !parsed?.fileUri) return null;
+      return parsed;
+    } catch {
+      return null;
+    }
+  }
+
+  private async clearSavedResumeState(stage: DownloadStage): Promise<void> {
+    try {
+      await deleteSecureItem(this.resumeStateKey(stage));
+    } catch {
+      // no-op
+    }
   }
 
   private async generateTextOnly(
