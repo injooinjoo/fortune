@@ -75,7 +75,7 @@ class AuthHelper {
       window.FLUTTER_TEST_MODE = true;
       window.TEST_MODE = true;
       window.BYPASS_AUTH = true;
-      window.TEST_ACCOUNT_EMAIL = 'test@zpzg.com';
+      window.TEST_ACCOUNT_EMAIL = 'ink595@g.harvard.edu';
       window.TEST_USER_ID = 'test-user-id-12345';
     });
 
