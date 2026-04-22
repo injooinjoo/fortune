@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { router, useLocalSearchParams, type Href } from 'expo-router';
+import {
+  router,
+  useFocusEffect,
+  useLocalSearchParams,
+  type Href,
+} from 'expo-router';
 import { type FortuneTypeId } from '@fortune/product-contracts';
 import { Alert, Dimensions, Keyboard, Modal, Pressable, ScrollView, TextInput, View } from 'react-native';
 
@@ -383,10 +388,13 @@ export function ChatScreen() {
     selectedCharacterId,
   ]);
 
-  // Hydrate a single character's conversation from remote
+  // Hydrate a single character's conversation from remote.
+  // `force=true` 면 dedup 캐시를 무시하고 재로드 — 리스트 focus 시 호출해서
+  // 백엔드(프로액티브 메시지, 다른 디바이스에서 보낸 메시지 등) 변경을
+  // 리스트 프리뷰에 즉시 반영한다.
   const hydrateStoryCharacter = useCallback(
-    async (characterId: string) => {
-      if (hydratedCharacterIdsRef.current.has(characterId)) {
+    async (characterId: string, options?: { force?: boolean }) => {
+      if (!options?.force && hydratedCharacterIdsRef.current.has(characterId)) {
         return;
       }
 
@@ -465,6 +473,31 @@ export function ChatScreen() {
       }
     }
   }, [gate, session?.user.id, directCharacterId, mobileAppState.chat.selectedCharacterId, hydrateStoryCharacter]);
+
+  // 리스트 화면이 (재)포커스되면 전 캐릭터를 강제 재하이드레이션 —
+  // 프로액티브 메시지 / 다른 디바이스에서의 변경을 리스트 프리뷰에 즉시 반영.
+  // 메신저앱에서 리스트로 돌아올 때 최신 상태가 보이는 동작을 맞춤.
+  //
+  // surfaceMode 가 'list' 로 전환될 때, 그리고 expo-router focus 가 들어올 때
+  // 모두 트리거. 빈번해 보이지만 force=true 경로도 내부에서 아이디별로 직렬
+  // 호출되고, 로컬 SecureStore 는 빠르며 remote 는 edge function 한 번이라
+  // 실전 체감 부하는 낮다.
+  useFocusEffect(
+    useCallback(() => {
+      if (gate !== 'ready') return;
+      for (const character of chatCharacters) {
+        void hydrateStoryCharacter(character.id, { force: true });
+      }
+    }, [gate, hydrateStoryCharacter]),
+  );
+
+  useEffect(() => {
+    if (gate !== 'ready') return;
+    if (surfaceMode !== 'list') return;
+    for (const character of chatCharacters) {
+      void hydrateStoryCharacter(character.id, { force: true });
+    }
+  }, [gate, surfaceMode, hydrateStoryCharacter]);
 
   const allStoryCharacters = useMemo(
     () => buildStoryCharactersWithCustomFriends(createdFriends),
