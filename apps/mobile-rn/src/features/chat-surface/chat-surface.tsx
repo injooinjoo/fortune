@@ -314,6 +314,9 @@ function EntryActionRow({
 
 export interface CharacterListRowMeta {
   lastMessagePreview: string | null;
+  /** 안 읽은 assistant/system 메시지 개수. 0 이면 닷/배지 모두 표시 안함. */
+  unreadCount: number;
+  /** 편의 플래그 — `unreadCount > 0`. 기존 소비자 호환용. */
   unread: boolean;
 }
 
@@ -341,31 +344,31 @@ export function buildCharacterListMeta(
   lastSeenMessageId: string | undefined,
 ): CharacterListRowMeta {
   if (!messages || messages.length === 0) {
-    return { lastMessagePreview: null, unread: false };
+    return { lastMessagePreview: null, unreadCount: 0, unread: false };
   }
   const last = messages[messages.length - 1];
   const preview = extractMessagePreview(last);
 
   // Unread 판정 (일반 메신저 표준):
-  //   "lastSeen 이후로 도착한 메시지 중 assistant(또는 system) 메시지가 1개
-  //    이상 있으면 unread=true".
+  //   "lastSeen 이후로 도착한 assistant/system 메시지 개수" 를 센다. 0 이면
+  //   읽음 상태. 배지에 카운트를 띄우려고 boolean 대신 count 를 보관.
   // 과거 구현은 "마지막 메시지가 assistant 인지"만 봐서, AI 가 여러 번 연속
   // 보내고 유저가 짧게 답하면 마지막이 user → 안 읽힌 AI 메시지가 있어도
   // 닷이 사라지는 버그가 있었다.
   const lastSeenIndex = lastSeenMessageId
     ? messages.findIndex((m) => m.id === lastSeenMessageId)
     : -1;
-  let unread = false;
+  let unreadCount = 0;
   for (let i = lastSeenIndex + 1; i < messages.length; i += 1) {
     const m = messages[i];
     if (m.sender === 'assistant' || m.sender === 'system') {
-      unread = true;
-      break;
+      unreadCount += 1;
     }
   }
   return {
     lastMessagePreview: preview.length > 0 ? preview : null,
-    unread,
+    unreadCount,
+    unread: unreadCount > 0,
   };
 }
 
@@ -435,20 +438,31 @@ function CharacterListRow({
     >
       <View>
         <CharacterAvatar characterId={character.id} name={character.name} size={60} />
-        {meta?.unread ? (
+        {meta && meta.unreadCount > 0 ? (
           <View
             style={{
               position: 'absolute',
-              top: 0,
-              right: 0,
-              width: 12,
-              height: 12,
-              borderRadius: 6,
+              top: -2,
+              right: -4,
+              minWidth: 18,
+              height: 18,
+              paddingHorizontal: 5,
+              borderRadius: 9,
               backgroundColor: '#FF3B30',
               borderWidth: 2,
               borderColor: fortuneTheme.colors.background,
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
-          />
+          >
+            <AppText
+              variant="caption"
+              color="#FFFFFF"
+              style={{ fontSize: 10, lineHeight: 12, fontWeight: '700' }}
+            >
+              {meta.unreadCount > 99 ? '99+' : String(meta.unreadCount)}
+            </AppText>
+          </View>
         ) : null}
       </View>
       <View style={{ flex: 1, gap: 4 }}>

@@ -24,6 +24,10 @@ import { exchangeAuthCodeFromUrl, isAuthCallbackUrl } from '../lib/auth-session'
 import { appEnv } from '../lib/env';
 import { captureError } from '../lib/error-reporting';
 import {
+  installPushNotificationHandlers,
+  registerPushTokenForSignedInUser,
+} from '../lib/push-notifications';
+import {
   getPendingChatFortuneType,
   getLastAuthenticatedUserId,
   getUnifiedOnboardingProgress,
@@ -33,6 +37,7 @@ import {
   setPendingChatFortuneType,
 } from '../lib/storage';
 import { supabase, type SupabaseSession } from '../lib/supabase';
+import type { ChatShellMySajuContextMessage } from '../lib/chat-shell';
 
 type BootstrapStatus = 'loading' | 'ready';
 
@@ -43,6 +48,7 @@ interface BootstrapContextValue {
   gate: ChatOnboardingGate;
   onboardingProgress: UnifiedOnboardingProgress;
   pendingChatFortuneType: FortuneTypeId | null;
+  pendingMySajuContext: ChatShellMySajuContextMessage | null;
   markGuestBrowse: () => Promise<void>;
   markAuthComplete: () => Promise<void>;
   updateOnboardingProgress: (
@@ -50,6 +56,8 @@ interface BootstrapContextValue {
   ) => Promise<void>;
   completeOnboarding: () => Promise<void>;
   consumePendingChatFortuneType: () => Promise<FortuneTypeId | null>;
+  setPendingMySajuContext: (message: ChatShellMySajuContextMessage) => void;
+  consumePendingMySajuContext: () => ChatShellMySajuContextMessage | null;
 }
 
 const BootstrapContext = createContext<BootstrapContextValue>({
@@ -59,11 +67,14 @@ const BootstrapContext = createContext<BootstrapContextValue>({
   gate: 'auth-entry',
   onboardingProgress: emptyUnifiedOnboardingProgress,
   pendingChatFortuneType: null,
+  pendingMySajuContext: null,
   markGuestBrowse: async () => undefined,
   markAuthComplete: async () => undefined,
   updateOnboardingProgress: async () => undefined,
   completeOnboarding: async () => undefined,
   consumePendingChatFortuneType: async () => null,
+  setPendingMySajuContext: () => undefined,
+  consumePendingMySajuContext: () => null,
 });
 
 export function AppBootstrapProvider({ children }: PropsWithChildren) {
@@ -74,6 +85,8 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
   );
   const [pendingChatFortuneType, setPendingChatFortuneTypeState] =
     useState<FortuneTypeId | null>(null);
+  const [pendingMySajuContext, setPendingMySajuContextState] =
+    useState<ChatShellMySajuContextMessage | null>(null);
   const lastAuthenticatedUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -219,6 +232,10 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
                     softGateCompleted: true,
                   },
             );
+            // 앱 재시작 시에도 토큰 갱신 요청 — rotate 된 경우 서버 업데이트.
+            registerPushTokenForSignedInUser().catch((error) => {
+              console.warn('[bootstrap] push token 등록 실패:', error);
+            });
           } else if (storedProgress.authCompleted) {
             await syncProgress({
               authCompleted: false,
@@ -274,6 +291,11 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
                   surface: 'bootstrap:onAuthStateChange',
                 }).catch(() => undefined);
               });
+            // Expo push token 등록 — Supabase 에 업로드해서 서버가 Character DM
+            // 푸시를 보낼 수 있게 한다. 권한 미허용/시뮬레이터에선 silent skip.
+            registerPushTokenForSignedInUser().catch((error) => {
+              console.warn('[bootstrap] push token 등록 실패:', error);
+            });
           } else {
             syncProgress({
               authCompleted: false,
@@ -285,6 +307,28 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
           }
         }).data.subscription
       : null;
+
+    // Push 알림 리스너 설치 — 탭 시 해당 캐릭터 채팅 스크린으로 라우팅.
+    // 앱 콜드 스타트 시 getLastNotificationResponseAsync 가 내부에서 fallback
+    // 으로 한 번 더 호출되므로 종료 상태에서 탭으로 열린 경우도 커버.
+    const removePushHandlers = installPushNotificationHandlers({
+      onTap: (payload) => {
+        const target = payload.route
+          ? payload.route
+          : payload.characterId
+            ? `/chat?characterId=${encodeURIComponent(payload.characterId)}`
+            : null;
+        if (!target) return;
+        // 초기 라우팅이 아직 안 끝났을 수 있어 약간 지연 후 replace.
+        setTimeout(() => {
+          try {
+            router.push(target as Href);
+          } catch (e) {
+            console.warn('[bootstrap] push route 실패:', e);
+          }
+        }, 300);
+      },
+    });
 
     const linkSubscription = Linking.addEventListener('url', (event) => {
       const targetUrl = event.url;
@@ -311,6 +355,7 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       mounted = false;
       authSubscription?.unsubscribe();
       linkSubscription.remove();
+      removePushHandlers();
     };
   }, []);
 
@@ -355,6 +400,16 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
     return current;
   }
 
+  function setPendingMySajuContext(message: ChatShellMySajuContextMessage) {
+    setPendingMySajuContextState(message);
+  }
+
+  function consumePendingMySajuContext() {
+    const current = pendingMySajuContext;
+    setPendingMySajuContextState(null);
+    return current;
+  }
+
   const gate = resolveChatOnboardingGate({
     hasAuthenticatedUser: Boolean(session),
     progress: onboardingProgress,
@@ -368,21 +423,27 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       gate,
       onboardingProgress,
       pendingChatFortuneType,
+      pendingMySajuContext,
       markGuestBrowse,
       markAuthComplete,
       updateOnboardingProgress,
       completeOnboarding,
       consumePendingChatFortuneType,
+      setPendingMySajuContext,
+      consumePendingMySajuContext,
     }),
     [
       completeOnboarding,
       consumePendingChatFortuneType,
+      consumePendingMySajuContext,
       gate,
       markAuthComplete,
       markGuestBrowse,
       onboardingProgress,
       pendingChatFortuneType,
+      pendingMySajuContext,
       session,
+      setPendingMySajuContext,
       status,
       updateOnboardingProgress,
     ],

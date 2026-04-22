@@ -85,6 +85,7 @@ import {
   resolveChatProvider,
 } from '../lib/chat-provider';
 import { onDeviceLLMEngine } from '../lib/on-device-llm';
+import { setAppIconBadgeCount } from '../lib/push-notifications';
 import { isStoryRomancePilotCharacterId } from '../lib/story-romance-pilots';
 import {
   consumeRemoteTokens,
@@ -937,6 +938,21 @@ export function ChatScreen() {
     }
     return result;
   }, [firstRunCharacters, messagesByCharacterId, lastSeenByCharacterId]);
+
+  // 앱 아이콘 배지 = 전 캐릭터 unread 합산. messagesByCharacterId /
+  // lastSeenByCharacterId 가 바뀔 때마다 재계산해 OS 배지와 동기화.
+  // 메신저 앱 표준 — iMessage / WhatsApp / KakaoTalk 모두 홈스크린에 숫자.
+  useEffect(() => {
+    let total = 0;
+    for (const characterId of Object.keys(messagesByCharacterId)) {
+      const meta = buildCharacterListMeta(
+        messagesByCharacterId[characterId],
+        lastSeenByCharacterId[characterId],
+      );
+      total += meta.unreadCount;
+    }
+    void setAppIconBadgeCount(total);
+  }, [messagesByCharacterId, lastSeenByCharacterId]);
 
   // 입장(캐릭터 진입) 시에는 항상 맨 아래로.
   // 결과 카드가 마지막이더라도, 진입 시점에서 사용자가 기대하는 위치는
