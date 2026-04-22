@@ -31,9 +31,10 @@ import { resolveChatCharacterAvatarSource } from '../../lib/chat-character-avata
 import { confirmAction } from '../../lib/haptics';
 import { fortuneTheme, romanceTintBackground } from '../../lib/theme';
 import { EmbeddedResultCard } from '../chat-results/embedded-result-card';
-import { StoryRevealMessage } from '../story-chat-animations';
+import { FadeUpWords, StoryRevealMessage } from '../story-chat-animations';
 import { FortuneCookieCard } from '../fortune-cookie/fortune-cookie-card';
 import { SajuPreviewCard } from '../fortune-cookie/saju-preview-card';
+import { MySajuContextCard } from './my-saju-context-card';
 import type { ChatSurveyStep } from '../chat-survey/types';
 import { TarotDrawWidget } from '../chat-survey/tarot-draw-widget';
 
@@ -311,6 +312,63 @@ function EntryActionRow({
   );
 }
 
+export interface CharacterListRowMeta {
+  lastMessagePreview: string | null;
+  unread: boolean;
+}
+
+function extractMessagePreview(message: ChatShellMessage): string {
+  switch (message.kind) {
+    case 'text':
+      return message.text.replace(/\s+/g, ' ').trim();
+    case 'image':
+      return message.caption?.trim() ? `📷 ${message.caption}` : '📷 사진';
+    case 'embedded-result':
+      return `📌 ${message.title ?? '결과 카드'}`;
+    case 'fortune-cookie':
+      return '🥠 포춘쿠키';
+    case 'saju-preview':
+      return '📜 사주 요약';
+    case 'story-reveal':
+      return '✨ 새 장면';
+    default:
+      return '';
+  }
+}
+
+export function buildCharacterListMeta(
+  messages: readonly ChatShellMessage[] | undefined,
+  lastSeenMessageId: string | undefined,
+): CharacterListRowMeta {
+  if (!messages || messages.length === 0) {
+    return { lastMessagePreview: null, unread: false };
+  }
+  const last = messages[messages.length - 1];
+  const preview = extractMessagePreview(last);
+
+  // Unread 판정 (일반 메신저 표준):
+  //   "lastSeen 이후로 도착한 메시지 중 assistant(또는 system) 메시지가 1개
+  //    이상 있으면 unread=true".
+  // 과거 구현은 "마지막 메시지가 assistant 인지"만 봐서, AI 가 여러 번 연속
+  // 보내고 유저가 짧게 답하면 마지막이 user → 안 읽힌 AI 메시지가 있어도
+  // 닷이 사라지는 버그가 있었다.
+  const lastSeenIndex = lastSeenMessageId
+    ? messages.findIndex((m) => m.id === lastSeenMessageId)
+    : -1;
+  let unread = false;
+  for (let i = lastSeenIndex + 1; i < messages.length; i += 1) {
+    const m = messages[i];
+    if (m.sender === 'assistant' || m.sender === 'system') {
+      unread = true;
+      break;
+    }
+  }
+  return {
+    lastMessagePreview: preview.length > 0 ? preview : null,
+    unread,
+  };
+}
+
 function CharacterListRow({
   character,
   badge,
@@ -320,6 +378,7 @@ function CharacterListRow({
   optionActions = [],
   selected = false,
   romanceScore = 0,
+  meta,
 }: {
   character: ChatCharacterSpec;
   badge?: string;
@@ -329,6 +388,7 @@ function CharacterListRow({
   optionActions?: readonly ChatShellAction[];
   selected?: boolean;
   romanceScore?: number;
+  meta?: CharacterListRowMeta;
 }) {
   const swipeX = useRef(new Animated.Value(0)).current;
   const DELETE_WIDTH = 80;
@@ -373,7 +433,24 @@ function CharacterListRow({
         paddingVertical: 16,
       })}
     >
-      <CharacterAvatar characterId={character.id} name={character.name} size={60} />
+      <View>
+        <CharacterAvatar characterId={character.id} name={character.name} size={60} />
+        {meta?.unread ? (
+          <View
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              width: 12,
+              height: 12,
+              borderRadius: 6,
+              backgroundColor: '#FF3B30',
+              borderWidth: 2,
+              borderColor: fortuneTheme.colors.background,
+            }}
+          />
+        ) : null}
+      </View>
       <View style={{ flex: 1, gap: 4 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <AppText variant="labelLarge" style={{ flex: 1 }}>{character.name}</AppText>
@@ -386,9 +463,14 @@ function CharacterListRow({
         <AppText
           numberOfLines={1}
           variant="bodySmall"
-          color={fortuneTheme.colors.textSecondary}
+          color={
+            meta?.unread
+              ? fortuneTheme.colors.textPrimary
+              : fortuneTheme.colors.textSecondary
+          }
+          style={meta?.unread ? { fontWeight: '600' } : undefined}
         >
-          {character.shortDescription}
+          {meta?.lastMessagePreview ?? character.shortDescription}
         </AppText>
       </View>
     </Pressable>
@@ -449,123 +531,191 @@ function MessageBubble({
    */
   useOracleVoice?: boolean;
 }) {
+  // ondo design system (Ondo Design System/project/story_chat/story-chat-player.jsx):
+  //   - AIBlock: 말풍선 없음. 본문 그대로. maxWidth 86%, fontSize 15, lineHeight 1.7, color ST.fg
+  //   - UserBubble: background ST.borderOpaque(#2C2C2E), borderRadius 20,
+  //                 borderBottomRightRadius 6, padding 11/15, fontSize 15, lineHeight 1.5
+  //   - SysNote: 중앙 정렬 small 텍스트, color ST.fg3, ✦ 마커 (color prop)
   const isAssistant = message.sender === 'assistant';
   const isSystem = message.sender === 'system';
   const isUser = message.sender === 'user';
   const applyOracle = Boolean(useOracleVoice) && isAssistant;
-  // 카톡식 "1" 읽음 배지: user 메시지가 아직 읽히지 않았을 때만 표시.
   const showUnreadBadge = isUser && !message.readAt;
 
-  return (
-    <View
-      style={{
-        alignItems: isAssistant || isSystem ? 'flex-start' : 'flex-end',
-      }}
-    >
+  // 새로 도착한 어시스턴트 메시지만 단어 단위 fadeUp 애니메이션.
+  const shouldAnimate = isAssistant && message.animate === true;
+
+  if (isSystem) {
+    return (
       <View
         style={{
-          flexDirection: isUser ? 'row-reverse' : 'row',
-          alignItems: 'flex-end',
-          gap: 4,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 6,
+          marginVertical: 4,
         }}
       >
-        <View
-          style={{
-            backgroundColor:
-              isAssistant || isSystem
-                ? fortuneTheme.colors.backgroundTertiary
-                : fortuneTheme.colors.surfaceSecondary,
-            borderColor: fortuneTheme.colors.border,
-            // Ondo bubble shape: rounded on three corners, tight (6px) on the
-            // corner that points toward the speaker. Assistant/system bubbles
-            // tighten bottom-left (pointing into their avatar column); user
-            // bubbles tighten bottom-right (pointing into the user's side).
-            borderRadius: fortuneTheme.radius.messageBubble,
-            borderBottomLeftRadius:
-              isAssistant || isSystem ? 6 : fortuneTheme.radius.messageBubble,
-            borderBottomRightRadius: isUser
-              ? 6
-              : fortuneTheme.radius.messageBubble,
-            borderWidth: 1,
-            maxWidth: isUser ? undefined : '84%',
-            paddingHorizontal: 14,
-            paddingVertical: 10,
-          }}
+        <AppText
+          variant="labelSmall"
+          color={fortuneTheme.colors.accentTertiary}
         >
+          ✦
+        </AppText>
+        <AppText variant="labelSmall" color={fortuneTheme.colors.textTertiary}>
+          {message.text}
+        </AppText>
+      </View>
+    );
+  }
+
+  if (isAssistant) {
+    // ondo AIBlock — 말풍선 없음
+    const textColor = fortuneTheme.colors.textPrimary;
+    return (
+      <View style={{ maxWidth: '86%', alignSelf: 'flex-start' }}>
+        {shouldAnimate ? (
+          <FadeUpWords
+            text={message.text}
+            variant={applyOracle ? 'oracleBody' : 'bodyMedium'}
+            color={textColor}
+          />
+        ) : (
           <AppText
             variant={applyOracle ? 'oracleBody' : 'bodyMedium'}
-            color={
-              isSystem
-                ? fortuneTheme.colors.textSecondary
-                : fortuneTheme.colors.textPrimary
-            }
+            color={textColor}
+            style={{ lineHeight: 25.5 }}
           >
             {message.text}
           </AppText>
-        </View>
-        {showUnreadBadge ? (
-          <AppText
-            variant="caption"
-            color={fortuneTheme.colors.warning}
-            style={{ marginBottom: 2 }}
-          >
-            1
-          </AppText>
-        ) : null}
+        )}
       </View>
-    </View>
-  );
-}
+    );
+  }
 
-function TypingIndicatorBubble({ character }: { character: ChatCharacterSpec }) {
+  // UserBubble — AIBlock 과 동일 패턴: 자기 자신이 alignSelf + maxWidth 로
+  // 위치/너비 관리. 부모에 위임하지 않음 (부모 위임 시 Yoga 가 중첩 flex
+  // 경로에서 text intrinsic width 를 과소 계산해 짧은 한글이 중간에서 잘림).
   return (
     <View
       style={{
-        alignItems: 'flex-start',
+        alignSelf: 'flex-end',
+        maxWidth: '94%',
         flexDirection: 'row',
-        gap: 8,
+        alignItems: 'flex-end',
+        gap: 4,
       }}
     >
-      <View style={{ marginTop: 6 }}>
-        <CharacterAvatar
-          characterId={character.id}
-          name={character.name}
-          size={24}
-        />
-      </View>
+      {showUnreadBadge ? (
+        <AppText
+          variant="caption"
+          color={fortuneTheme.colors.warning}
+          style={{ marginBottom: 2 }}
+        >
+          1
+        </AppText>
+      ) : null}
       <View
         style={{
-          backgroundColor: fortuneTheme.colors.backgroundTertiary,
-          borderColor: fortuneTheme.colors.border,
-          borderRadius: fortuneTheme.radius.messageBubble,
-          borderWidth: 1,
-          paddingHorizontal: 14,
-          paddingVertical: 12,
+          backgroundColor: '#2C2C2E',
+          borderRadius: 20,
+          borderBottomRightRadius: 6,
+          paddingHorizontal: 15,
+          paddingVertical: 11,
+          flexShrink: 1,
         }}
       >
-        <View style={{ flexDirection: 'row', gap: 5 }}>
-          <PulseDot delay={0} />
-          <PulseDot delay={200} />
-          <PulseDot delay={400} />
-        </View>
+        <AppText
+          variant="bodyMedium"
+          color={fortuneTheme.colors.textPrimary}
+          style={{ lineHeight: 22.5 }}
+        >
+          {message.text}
+        </AppText>
       </View>
     </View>
   );
 }
 
-function PulseDot({ delay }: { delay: number }) {
-  const opacity = useRef(new Animated.Value(0.25)).current;
+function TypingIndicatorBubble({
+  queuedCount = 0,
+}: {
+  character: ChatCharacterSpec;
+  queuedCount?: number;
+}) {
+  // ondo story-chat-player `Typing` 원본: 말풍선 없음. 3점만.
+  //   padding: '6px 0', gap 4, dots 7×7, background ST.fg2
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        paddingVertical: 6,
+        alignSelf: 'flex-start',
+      }}
+    >
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+        <WaveDot delay={0} />
+        <WaveDot delay={150} />
+        <WaveDot delay={300} />
+      </View>
+      {queuedCount > 0 ? (
+        <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+          대기 +{queuedCount}
+        </AppText>
+      ) : null}
+    </View>
+  );
+}
+
+/**
+ * ondo-design-system story-chat-player `Typing` 포트.
+ *   @keyframes typing {
+ *     0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+ *     30%           { opacity: 1;   transform: translateY(-3px); }
+ *   }
+ *   animation: `typing 1.2s infinite ${i * 0.15}s`
+ */
+function WaveDot({ delay }: { delay: number }) {
+  const translate = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(0.3)).current;
 
   useEffect(() => {
+    // 1200ms 사이클: 0%→30% 상승(360ms), 30%→60% 하강(360ms), 60%→100% 정지(480ms)
     const animation = Animated.loop(
       Animated.sequence([
-        Animated.timing(opacity, { toValue: 1, duration: 500, delay, useNativeDriver: true }),
-        Animated.timing(opacity, { toValue: 0.25, duration: 500, useNativeDriver: true }),
+        Animated.delay(delay),
+        Animated.parallel([
+          Animated.timing(translate, {
+            toValue: -3,
+            duration: 360,
+            useNativeDriver: true,
+          }),
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 360,
+            useNativeDriver: true,
+          }),
+        ]),
+        Animated.parallel([
+          Animated.timing(translate, {
+            toValue: 0,
+            duration: 360,
+            useNativeDriver: true,
+          }),
+          Animated.timing(opacity, {
+            toValue: 0.3,
+            duration: 360,
+            useNativeDriver: true,
+          }),
+        ]),
+        Animated.delay(480),
       ]),
     );
     animation.start();
     return () => animation.stop();
-  }, [delay, opacity]);
+  }, [delay, opacity, translate]);
 
   return (
     <Animated.View
@@ -573,7 +723,8 @@ function PulseDot({ delay }: { delay: number }) {
         width: 7,
         height: 7,
         borderRadius: 999,
-        backgroundColor: fortuneTheme.colors.ctaBackground,
+        backgroundColor: fortuneTheme.colors.textSecondary,
+        transform: [{ translateY: translate }],
         opacity,
       }}
     />
@@ -604,32 +755,14 @@ function ChatThreadMessage({
     message.kind === 'embedded-result' ||
     message.kind === 'fortune-cookie' ||
     message.kind === 'saju-preview' ||
-    message.kind === 'story-reveal';
+    message.kind === 'story-reveal' ||
+    message.kind === 'my-saju-context';
   const isImage = message.kind === 'image';
-  const showAssistantAvatar = !isUser && !isFullWidth;
 
   return (
-    <View
-      style={{
-        alignItems: isUser ? 'flex-end' : 'flex-start',
-        flexDirection: isUser ? 'row-reverse' : 'row',
-        gap: showAssistantAvatar ? 8 : 0,
-      }}
-    >
-      {showAssistantAvatar ? (
-        <View style={{ marginTop: 6 }}>
-          <CharacterAvatar
-            characterId={character.id}
-            name={character.name}
-            size={24}
-          />
-        </View>
-      ) : null}
+    <View style={{ width: '100%' }}>
       <View
         style={{
-          flex: isUser ? undefined : isFullWidth ? undefined : 1,
-          flexShrink: isUser ? 1 : isFullWidth ? 0 : undefined,
-          maxWidth: isUser ? '84%' : '100%',
           width: isFullWidth ? '100%' : undefined,
         }}
       >
@@ -647,6 +780,10 @@ function ChatThreadMessage({
               data={message.sajuData as import('../../lib/saju-remote').SajuData}
               userName={message.userName}
             />
+          </View>
+        ) : message.kind === 'my-saju-context' ? (
+          <View style={{ width: '100%' }}>
+            <MySajuContextCard message={message} />
           </View>
         ) : isImage ? (
           <View style={{ gap: 4 }}>
@@ -896,6 +1033,7 @@ export function ChatFirstRunSurface({
   onPickCharacterAction,
   onDeleteFriend,
   romanceScores,
+  metaByCharacterId,
 }: {
   activeTab: ChatCharacterTab;
   characters: readonly ChatCharacterSpec[];
@@ -908,6 +1046,7 @@ export function ChatFirstRunSurface({
   onPickCharacterAction: (characterId: string, fortuneType: FortuneTypeId) => void;
   onDeleteFriend?: (characterId: string) => void;
   romanceScores?: Record<string, number>;
+  metaByCharacterId?: Record<string, CharacterListRowMeta>;
 }) {
   const safeCharacters = Array.isArray(characters) ? characters : [];
   const orderedCharacters = [
@@ -943,6 +1082,7 @@ export function ChatFirstRunSurface({
               key={character.id}
               badge={character.id.startsWith('custom_') ? '내 친구' : '스토리'}
               character={character}
+              meta={metaByCharacterId?.[character.id]}
               onDelete={
                 character.id.startsWith('custom_') && onDeleteFriend
                   ? () => onDeleteFriend(character.id)
@@ -970,6 +1110,7 @@ export function ChatFirstRunSurface({
               key={character.id}
               badge={`${character.specialties.length}개 인사이트`}
               character={character}
+              meta={metaByCharacterId?.[character.id]}
               onPress={() => onSelectCharacter(character.id)}
               selected={character.id === selectedCharacterId}
             />
@@ -1771,6 +1912,7 @@ export function ActiveCharacterChatSurface({
   surveyEyebrow,
   surveyActive,
   isTyping = false,
+  pendingQueueCount = 0,
   onBack,
   onOpenProfile,
   onPickAction,
@@ -1784,6 +1926,8 @@ export function ActiveCharacterChatSurface({
   surveyEyebrow?: string | null;
   surveyActive?: boolean;
   isTyping?: boolean;
+  /** 응답 대기 중 추가로 쌓인 큐 메시지 수 ("대기 +N" 표시용). */
+  pendingQueueCount?: number;
   onBack: () => void;
   onOpenProfile: () => void;
   onPickAction: (fortuneType: FortuneTypeId) => void;
@@ -1925,7 +2069,12 @@ export function ActiveCharacterChatSurface({
             message={message}
           />
         ))}
-        {isTyping ? <TypingIndicatorBubble character={character} /> : null}
+        {isTyping ? (
+          <TypingIndicatorBubble
+            character={character}
+            queuedCount={pendingQueueCount}
+          />
+        ) : null}
       </View>
 
       {!surveyActive && promptActions.length > 0 ? (

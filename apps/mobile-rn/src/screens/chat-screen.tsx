@@ -250,6 +250,34 @@ export function ChatScreen() {
       mounted = false;
     };
   }, []);
+
+  // 스레드 체류 중 새 AI/system 메시지 도착 → 즉시 읽음 처리.
+  // 일반 메신저(iMessage/WhatsApp/KakaoTalk) 와 동일한 동작: 유저가 해당
+  // 스레드를 보고 있는 동안 상대 메시지가 오면 수신과 동시에 "읽음".
+  // handleCharacterSelect 가 진입 시점에 1회 lastSeen 을 찍지만, 그 이후에
+  // 도착하는 메시지는 여기서 follow-up 으로 갱신해야 리스트 닷이 안 생김.
+  useEffect(() => {
+    if (surfaceMode !== 'chat') return;
+    const charId = selectedCharacterId;
+    if (!charId) return;
+    const thread = messagesByCharacterId[charId];
+    if (!thread || thread.length === 0) return;
+    const latest = thread[thread.length - 1];
+    // user 가 보낸 메시지면 굳이 갱신 필요 없음 (본인이 방금 보낸 것).
+    if (latest.sender !== 'assistant' && latest.sender !== 'system') return;
+    const currentSeen = lastSeenByCharacterId[charId];
+    if (currentSeen === latest.id) return;
+    setLastSeenByCharacterId((current) => ({
+      ...current,
+      [charId]: latest.id,
+    }));
+    void setChatLastSeenForCharacter(charId, latest.id).catch(() => undefined);
+  }, [
+    surfaceMode,
+    selectedCharacterId,
+    messagesByCharacterId,
+    lastSeenByCharacterId,
+  ]);
   const [storyThreadSnapshotsByCharacterId, setStoryThreadSnapshotsByCharacterId] =
     useState<Record<string, StoryChatThreadSnapshot | null>>(() =>
       Object.fromEntries(
