@@ -116,6 +116,12 @@ const config: ExpoConfig = {
     // 면제받아 portrait만 남길 수 있다. (W6 보완)
     requireFullScreen: true,
     bundleIdentifier: 'com.beyond.fortune',
+    // @bacons/apple-targets (Widget extension) 은 App Group + 코드 서명 시
+    // Apple Team ID 가 필요. Missing 시 "[bacons/apple-targets] Expo config
+    // is missing required ios.appleTeamId property" 경고 + extension이 프로젝트
+    // 에 추가되지 않아 TestFlight에서 홈 위젯이 안 보인다. ink595@g.harvard.edu
+    // 의 Apple Developer 팀 ID 는 eas build 로그상 5F7CN7Y54D.
+    appleTeamId: '5F7CN7Y54D',
     usesAppleSignIn: true,
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
