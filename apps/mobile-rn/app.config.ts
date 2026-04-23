@@ -89,13 +89,16 @@ const config: ExpoConfig = {
   version: '1.0.9',
   orientation: 'portrait',
   icon: './assets/icon.png',
-  // Top-level `scheme` intentionally omitted on iOS: Expo's ios Scheme plugin
-  // appends `ios.bundleIdentifier` unconditionally, and declaring the same
-  // value at the top level produced a duplicate CFBundleURLSchemes entry.
-  // iOS still exposes `com.beyond.fortune://` via the bundleId fallback.
-  // Android's scheme plugin has NO bundleId fallback, so `android.scheme`
-  // below is required. Deep-link consumers use `deepLinkConfig.scheme` from
-  // @fortune/product-contracts, hardcoded to 'com.beyond.fortune'.
+  // expo-router + expo-linking 가 standalone production 빌드에서 deep link
+  // URL을 구성할 때 `Constants.expoConfig.scheme` 을 직접 참조한다. 이 값이
+  // 없으면 ContextNavigator mount 시 "Cannot make a deep link into a
+  // standalone app with no custom scheme defined" 예외로 JS 번들이 초기화
+  // 단계에서 throw 되어 expo-updates ErrorRecovery 가 StartupProcedure
+  // .throwException 을 호출하며 앱이 crash 한다 (build 27 사례, 기기 로그로
+  // 확인). 이전 P3-B9 commit 에서 Info.plist 중복 CFBundleURLSchemes 엔트리
+  // 를 없애려 이 값을 제거했는데, Linking 붕괴가 훨씬 심각하므로 되돌림.
+  // 중복 엔트리는 기능적으로 무해하며 App Store 심사 사유가 아니다.
+  scheme: 'com.beyond.fortune',
   // Ondo 브랜드 정체성상 다크 전용. theme.ts / _layout StatusBar 모두 다크
   // 고정이므로 manifest도 'dark'로 일치시켜 HIG 4.5 불일치 방지.
   userInterfaceStyle: 'dark',
@@ -128,6 +131,14 @@ const config: ExpoConfig = {
     },
     entitlements: {
       'aps-environment': 'production',
+      // Sprint W1 — iOS 홈 화면 위젯 브릿지. 메인 앱과 위젯 extension이
+      // 동일 App Group을 공유해야 UserDefaults(suiteName:)로 위젯 데이터를
+      // 주고받을 수 있음. 위젯 extension 쪽 entitlement는
+      // @bacons/apple-targets 가 expo-target.config.json → entitlements 로
+      // 자동 주입.
+      'com.apple.security.application-groups': [
+        'group.com.beyond.fortune.widgets',
+      ],
     },
     // ios/app/PrivacyInfo.xcprivacy는 gitignored로 prebuild 시 재생성.
     // NSPrivacyAccessedAPITypes 블록도 여기에서 공급해야 Accessed API 카테고리
@@ -287,6 +298,11 @@ const config: ExpoConfig = {
     ],
     '@sentry/react-native',
     './plugins/with-ios-prebuilt-react-native',
+    // Sprint W1 — iOS 홈 화면 위젯 extension 타겟(@main)을
+    // apps/mobile-rn/targets/widgets/ 에서 선언된 expo-target.config.json
+    // 을 읽어 prebuild 시점에 ios/ 프로젝트에 자동 주입. 수동 Xcode 편집 없이
+    // Widget Extension 타겟 + entitlements + SwiftUI 소스까지 관리.
+    '@bacons/apple-targets',
     // llama.rn config plugin — Expo 환경에서 JSI 바인딩이 제대로 설치되려면
     // entitlements + C++20 + OpenCL 옵션이 필요. plugin 없이 설치만 하면
     // initLlama 호출 시 "property 'install'" JSI 에러로 'unsupported' 상태.
