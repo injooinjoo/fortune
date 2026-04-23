@@ -1,7 +1,7 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 
 import { fortuneTheme } from '../lib/theme';
 import { AppText } from './app-text';
@@ -9,6 +9,11 @@ import { AppText } from './app-text';
 const DAY_LABELS = ['일', '월', '화', '수', '목', '금', '토'] as const;
 const CELL_SIZE = 36;
 const GAP = 4;
+// 연도 그리드 범위 — 생년월일 입력 커버용. 오늘 기준 과거 120년 ~ 미래 10년.
+const YEAR_RANGE_PAST = 120;
+const YEAR_RANGE_FUTURE = 10;
+const YEAR_GRID_COLS = 4;
+const YEAR_CELL_HEIGHT = 44;
 
 interface InlineCalendarProps {
   selectedDate: Date | null;
@@ -74,8 +79,23 @@ export function InlineCalendar({
   const [viewMonth, setViewMonth] = useState(
     selectedDate ? selectedDate.getMonth() : today.getMonth(),
   );
+  // 생년월일 같이 연도를 크게 점프해야 할 때 레이블 탭으로 연도 그리드 진입.
+  const [mode, setMode] = useState<'month' | 'year'>('month');
+  const yearScrollRef = useRef<ScrollView | null>(null);
 
   const cells = useMemo(() => buildMonthGrid(viewYear, viewMonth), [viewYear, viewMonth]);
+
+  const years = useMemo(() => {
+    const currentYear = today.getFullYear();
+    const start = currentYear - YEAR_RANGE_PAST;
+    const end = currentYear + YEAR_RANGE_FUTURE;
+    const out: number[] = [];
+    // 최신 연도가 위에 오도록 내림차순 — 생년월일 스크롤 시 현재부터 과거로 탐색.
+    for (let y = end; y >= start; y -= 1) {
+      out.push(y);
+    }
+    return out;
+  }, [today]);
 
   const goToPrevMonth = useCallback(() => {
     setViewMonth((m) => {
@@ -97,6 +117,27 @@ export function InlineCalendar({
     });
   }, []);
 
+  const handleToggleMode = useCallback(() => {
+    setMode((current) => (current === 'month' ? 'year' : 'month'));
+  }, []);
+
+  const handlePickYear = useCallback((year: number) => {
+    setViewYear(year);
+    setMode('month');
+  }, []);
+
+  // year 모드 진입 시 현재 보고 있는 연도가 화면 중앙에 보이도록 자동 스크롤.
+  useEffect(() => {
+    if (mode !== 'year') return;
+    const idx = years.indexOf(viewYear);
+    if (idx < 0) return;
+    const rowIndex = Math.floor(idx / YEAR_GRID_COLS);
+    const offsetY = Math.max(0, rowIndex * YEAR_CELL_HEIGHT - YEAR_CELL_HEIGHT * 2);
+    requestAnimationFrame(() => {
+      yearScrollRef.current?.scrollTo({ y: offsetY, animated: false });
+    });
+  }, [mode, years, viewYear]);
+
   const monthLabel = `${viewYear}년 ${viewMonth + 1}월`;
 
   return (
@@ -107,7 +148,7 @@ export function InlineCalendar({
         padding: 12,
       }}
     >
-      {/* Month / Year header with nav arrows */}
+      {/* Month / Year header — 레이블 탭하면 연도 그리드로 전환 (iOS 캘린더와 동일) */}
       <View
         style={{
           alignItems: 'center',
@@ -120,9 +161,12 @@ export function InlineCalendar({
         <Pressable
           accessibilityLabel="이전 달"
           accessibilityRole="button"
+          disabled={mode === 'year'}
           hitSlop={12}
           onPress={goToPrevMonth}
-          style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
+          style={({ pressed }) => ({
+            opacity: mode === 'year' ? 0.3 : pressed ? 0.5 : 1,
+          })}
         >
           <Ionicons
             color={fortuneTheme.colors.textSecondary}
@@ -131,14 +175,35 @@ export function InlineCalendar({
           />
         </Pressable>
 
-        <AppText variant="heading4">{monthLabel}</AppText>
+        <Pressable
+          accessibilityLabel={mode === 'month' ? '연도 선택 열기' : '월 보기로 돌아가기'}
+          accessibilityRole="button"
+          hitSlop={8}
+          onPress={handleToggleMode}
+          style={({ pressed }) => ({
+            alignItems: 'center',
+            flexDirection: 'row',
+            gap: 4,
+            opacity: pressed ? 0.6 : 1,
+          })}
+        >
+          <AppText variant="heading4">{monthLabel}</AppText>
+          <Ionicons
+            color={fortuneTheme.colors.textSecondary}
+            name={mode === 'month' ? 'chevron-down' : 'chevron-up'}
+            size={16}
+          />
+        </Pressable>
 
         <Pressable
           accessibilityLabel="다음 달"
           accessibilityRole="button"
+          disabled={mode === 'year'}
           hitSlop={12}
           onPress={goToNextMonth}
-          style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
+          style={({ pressed }) => ({
+            opacity: mode === 'year' ? 0.3 : pressed ? 0.5 : 1,
+          })}
         >
           <Ionicons
             color={fortuneTheme.colors.textSecondary}
@@ -148,6 +213,74 @@ export function InlineCalendar({
         </Pressable>
       </View>
 
+      {mode === 'year' ? (
+        <ScrollView
+          ref={yearScrollRef}
+          style={{ maxHeight: YEAR_CELL_HEIGHT * 6 }}
+          showsVerticalScrollIndicator={false}
+        >
+          <View
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              paddingVertical: 4,
+            }}
+          >
+            {years.map((year) => {
+              const isSelected = year === viewYear;
+              const isCurrent = year === today.getFullYear();
+              return (
+                <View
+                  key={year}
+                  style={{
+                    alignItems: 'center',
+                    height: YEAR_CELL_HEIGHT,
+                    justifyContent: 'center',
+                    width: `${100 / YEAR_GRID_COLS}%`,
+                  }}
+                >
+                  <Pressable
+                    accessibilityLabel={`${year}년`}
+                    accessibilityRole="button"
+                    onPress={() => handlePickYear(year)}
+                    // HIG 44pt 확보. (W11)
+                    hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+                    style={({ pressed }) => ({
+                      alignItems: 'center',
+                      backgroundColor: isSelected
+                        ? fortuneTheme.colors.ctaBackground
+                        : 'transparent',
+                      borderColor:
+                        isCurrent && !isSelected
+                          ? fortuneTheme.colors.ctaBackground
+                          : 'transparent',
+                      borderRadius: 999,
+                      borderWidth: isCurrent && !isSelected ? 1 : 0,
+                      height: 36,
+                      justifyContent: 'center',
+                      opacity: pressed ? 0.6 : 1,
+                      paddingHorizontal: 10,
+                      minWidth: 64,
+                    })}
+                  >
+                    <AppText
+                      variant="bodySmall"
+                      color={
+                        isSelected
+                          ? fortuneTheme.colors.ctaForeground
+                          : fortuneTheme.colors.textPrimary
+                      }
+                    >
+                      {year}
+                    </AppText>
+                  </Pressable>
+                </View>
+              );
+            })}
+          </View>
+        </ScrollView>
+      ) : (
+        <>
       {/* Day-of-week headers */}
       <View style={{ flexDirection: 'row', marginBottom: 4 }}>
         {DAY_LABELS.map((label, idx) => {
@@ -224,6 +357,8 @@ export function InlineCalendar({
                 accessibilityRole="button"
                 disabled={disabled}
                 onPress={() => onSelectDate(date)}
+                // HIG 44pt 확보 — 셀 시각 36×36 유지, hitSlop 4. (W11)
+                hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
                 style={({ pressed }) => ({
                   alignItems: 'center',
                   backgroundColor: isSelected
@@ -248,6 +383,8 @@ export function InlineCalendar({
           );
         })}
       </View>
+        </>
+      )}
     </View>
   );
 }

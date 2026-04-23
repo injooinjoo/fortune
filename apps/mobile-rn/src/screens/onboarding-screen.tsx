@@ -328,6 +328,9 @@ export function OnboardingScreen() {
           label={backDestinationLabel}
         />
       }
+      // 이름 TextInput 포커스 시 키보드가 CTA를 가리지 않도록 키보드 회피 활성화.
+      // (W16 audit finding)
+      keyboardAvoiding
     >
       <Modal
         animationType="fade"
