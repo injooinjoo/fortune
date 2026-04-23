@@ -117,4 +117,12 @@ export interface EmbeddedResultPayload {
   compat?: CompatData;
   /** HeroHealth — regional zone scores. */
   zones?: HealthZone[];
+
+  /**
+   * 카드 하단에 추가 고지 문구. health 등 의료·금융·법률 주제는 5.1.2
+   * compliance 위해 서버가 이 필드에 domain-specific disclaimer를 내려보낸다
+   * (예: "본 건강 조언은 참고·오락 목적... 의료 전문가와 상담하세요").
+   * ResultCardFrame이 기본 엔터테인먼트 고지 위에 이 문구를 추가 렌더.
+   */
+  disclaimer?: string;
 }

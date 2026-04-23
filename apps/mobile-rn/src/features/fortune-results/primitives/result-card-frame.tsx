@@ -1,7 +1,14 @@
 // ResultCardFrame: port of result-cards.jsx:920-1011 + chat-player.jsx:147-199 shimmer sweep.
 // Orchestrates the 4-phase reveal (hero / head / body / sections) driven by a single `progress` 0-1
 // prop. Shimmer sweep overlays the card while progress < 0.95, fading out at 0.95.
-import { useEffect, useRef, type ReactNode } from 'react';
+import {
+  Children,
+  cloneElement,
+  isValidElement,
+  useEffect,
+  useRef,
+  type ReactNode,
+} from 'react';
 import { Animated, Pressable, Text, View } from 'react-native';
 
 import { fortuneTheme } from '../../../lib/theme';
@@ -11,11 +18,15 @@ import { BulletList } from './bullet-list';
 import { Pill } from './pill';
 import { ScoreDial } from './score-dial';
 import { Section } from './section';
+import { useRevealProgress } from './use-reveal-progress';
 
 interface ResultCardFrameProps {
   kind: string;
   data: EmbeddedResultPayload;
-  progress: number;
+  /**
+   * 0~1 수동 제어. 생략하면 마운트 시 0→1로 자동 리빌 (ondo 원본 동작).
+   */
+  progress?: number;
   onPress?: () => void;
   children?: ReactNode;
 }
@@ -32,7 +43,8 @@ export function ResultCardFrame({
   onPress,
   children,
 }: ResultCardFrameProps) {
-  const p = clamp01(progress);
+  const autoProgress = useRevealProgress();
+  const p = clamp01(progress ?? autoProgress);
   const pKicker = stage(p, 0, 0.1);
   const pHero = stage(p, 0, 0.3);
   const pHead = stage(p, 0.22, 0.5);
@@ -147,7 +159,8 @@ export function ResultCardFrame({
         </Text>
       </Animated.View>
 
-      {/* Hero slot */}
+      {/* Hero slot — progress prop is overridden with frame's animated p so
+         callers don't need to thread it manually. */}
       <View
         style={{
           minHeight: 180,
@@ -155,7 +168,11 @@ export function ResultCardFrame({
           marginTop: 4,
         }}
       >
-        {children}
+        {Children.map(children, (child) =>
+          isValidElement(child)
+            ? cloneElement(child as React.ReactElement<{ progress?: number }>, { progress: pHero })
+            : child,
+        )}
       </View>
 
       {/* Title + score */}
@@ -356,7 +373,7 @@ export function ResultCardFrame({
         </Animated.View>
       ) : null}
 
-      {/* Footer */}
+      {/* Footer — 공통 엔터테인먼트 고지 */}
       <Text
         style={{
           textAlign: 'center',
@@ -368,6 +385,30 @@ export function ResultCardFrame({
       >
         오락 목적의 AI 생성 콘텐츠입니다
       </Text>
+
+      {/* Domain-specific disclaimer (예: health 카드의 의료 면책) — 서버가
+          `data.disclaimer` 필드에 문구를 실어주는 경우에만 노출. 강조를 위해
+          공통 고지 아래에 테두리를 둔 블록으로 렌더. */}
+      {data.disclaimer ? (
+        <Text
+          style={{
+            textAlign: 'center',
+            marginTop: 8,
+            marginHorizontal: 6,
+            paddingVertical: 8,
+            paddingHorizontal: 10,
+            borderRadius: 10,
+            borderWidth: 1,
+            borderColor: fortuneTheme.colors.border,
+            backgroundColor: 'rgba(224,167,107,0.06)',
+            fontSize: 10,
+            lineHeight: 15,
+            color: fortuneTheme.colors.textSecondary,
+          }}
+        >
+          {data.disclaimer}
+        </Text>
+      ) : null}
 
       {/* Shimmer sweep */}
       <Animated.View

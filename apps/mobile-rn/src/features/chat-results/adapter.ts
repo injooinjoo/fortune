@@ -188,6 +188,13 @@ export function buildEmbeddedResultPayloadFromNormalizedResult(
       extractSpecialTip(fortuneType, payload) ??
       normalizedResult.summary ??
       fallback.specialTip,
+    // Domain-specific 고지 (health 등). 서버가 root-level `disclaimer`로
+    // 내려준 경우에만 채운다. ResultCardFrame 이 공통 엔터테인먼트 고지 아래에
+    // 추가로 렌더한다.
+    disclaimer:
+      typeof payload.disclaimer === 'string' && payload.disclaimer.length > 0
+        ? payload.disclaimer
+        : undefined,
   };
 
   // Attach local manseryeok data for daily-calendar fortune type

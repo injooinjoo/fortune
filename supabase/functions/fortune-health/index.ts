@@ -475,8 +475,12 @@ serve(async (req) => {
 - 식단에 ${ELEMENT_ORGAN_MAP[elementAnalysis.lacking]?.foods.slice(0, 3).join(', ')} 포함 권장
 ` : ''
 
-      const systemPrompt = `당신은 친근한 건강 친구이자 웰니스 코치예요! 💪✨
-어려운 의학 용어 대신 쉽고 재밌게, 친구처럼 건강 조언을 해줘요.
+      const systemPrompt = `당신은 친근한 웰니스 루틴 친구예요! 💪✨
+의학 용어·의료 조언은 절대 쓰지 않아요. "진단", "치료", "처방", "예측",
+"예방"(질병 예방 뉘앙스) 같은 단어도 피하세요. 대신 일상 생활 루틴, 컨디션
+체크, 가벼운 습관 팁으로 이야기해요. 증상이 심하거나 지속되면 "전문가와
+상담하세요" 한 문장 덧붙이기. 엄격한 의료 앱이 아닌, 엔터테인먼트 웰니스
+경험이라는 걸 늘 유지해요.
 
 ## 스타일 가이드 🏃‍♀️
 - 딱딱한 의사 선생님 NO! 옆집 건강 덕후 친구처럼
@@ -514,23 +518,22 @@ ${elementAnalysis ? `5. **오행 맞춤**: ${elementAnalysis.lacking} 기운 보
 - 줄바꿈 없이 장문 쓰기`
 
       // 건강앱 데이터 섹션 생성
+      // [App Store 5.1.2 compliance] Apple Health 의료 vitals(심박/혈압/혈당/SpO₂)
+      // 는 AI 프롬프트에 주입하지 않는다. Apple은 이를 의료 diagnosis/treatment
+      // 앱으로 간주하여 리젝. 걸음/수면/체중/운동/칼로리 등 fitness-tracking
+      // 범위만 사용한다.
       const healthAppSection = hasHealthAppData ? `
-## 📱 건강앱 연동 데이터 (실측치)
+## 📱 활동 데이터 (fitness tracking 범위, 참고용)
 ${health_app_data!.average_daily_steps ? `- **일평균 걸음 수**: ${health_app_data!.average_daily_steps.toLocaleString()}보` : ''}
 ${health_app_data!.today_steps ? `- **오늘 걸음 수**: ${health_app_data!.today_steps.toLocaleString()}보` : ''}
 ${health_app_data!.average_sleep_hours ? `- **일평균 수면**: ${health_app_data!.average_sleep_hours}시간` : ''}
 ${health_app_data!.last_night_sleep_hours ? `- **어젯밤 수면**: ${health_app_data!.last_night_sleep_hours}시간` : ''}
-${health_app_data!.average_heart_rate ? `- **평균 심박수**: ${health_app_data!.average_heart_rate}bpm` : ''}
-${health_app_data!.resting_heart_rate ? `- **안정시 심박수**: ${health_app_data!.resting_heart_rate}bpm` : ''}
 ${health_app_data!.weight_kg ? `- **체중**: ${health_app_data!.weight_kg}kg` : ''}
-${health_app_data!.systolic_bp && health_app_data!.diastolic_bp ? `- **혈압**: ${health_app_data!.systolic_bp}/${health_app_data!.diastolic_bp}mmHg` : ''}
-${health_app_data!.blood_glucose ? `- **혈당**: ${health_app_data!.blood_glucose}mg/dL` : ''}
-${health_app_data!.blood_oxygen ? `- **산소포화도**: ${health_app_data!.blood_oxygen}%` : ''}
 ${health_app_data!.workout_count_week ? `- **주간 운동 횟수**: ${health_app_data!.workout_count_week}회` : ''}
 ${health_app_data!.average_daily_calories ? `- **일평균 소모 칼로리**: ${health_app_data!.average_daily_calories}kcal` : ''}
 ${health_app_data!.data_period ? `- **데이터 기간**: ${health_app_data!.data_period}` : ''}
 
-⚠️ **중요**: 위 실측 데이터를 반드시 분석에 반영하세요. 일반적인 조언이 아닌, 이 사용자의 실제 건강 지표에 맞춤화된 조언을 제공해야 합니다.
+⚠️ **중요**: 위 활동 데이터는 일상 생활 습관 관찰 용도. 절대 의학적 진단/치료/예측/처방 형태로 해석하지 말고, "운동·수면·식습관 루틴" 차원의 가벼운 팁만 제공.
 ` : ''
 
       const userPrompt = `## 사용자 건강 프로필
@@ -566,7 +569,7 @@ ${elementAnalysis ? `- ${elementAnalysis.lacking} 오행 부족 → ${ELEMENT_OR
 \`\`\`json
 {
   "overall_health": "📊 전반 분석\\n\\n현재 상태 요약 1문장.\\n\\n💡 원인 분석\\n• 포인트1\\n• 포인트2\\n\\n✨ 개선 방향\\n2주 실천 시 기대효과.",
-  "body_part_advice": "🎯 부위별 조언\\n\\n• 증상 원인: 간단 설명\\n• 관리법: 구체적 방법\\n• 예방법: 일상 팁",
+  "body_part_advice": "🎯 부위별 컨디션 메모\\n\\n• 요즘 상태: 간단 설명\\n• 생활 루틴: 가벼운 습관\\n• 오늘의 팁: 일상에서 해볼 것",
   "cautions": [
     "⚠️ 주의1\\n\\n위험 상황 설명.\\n\\n💡 대처법: 구체적 방법",
     "⚠️ 주의2\\n\\n설명.\\n\\n💡 대처법: 방법",
@@ -604,9 +607,9 @@ ${elementAnalysis ? `- ${elementAnalysis.lacking} 오행 부족 → ${ELEMENT_OR
 
 현재 수면의 질(2/5)과 식사 규칙성(2/5)이 낮아 전반적인 피로감(fatigue)을 유발하고 있습니다.
 
-💡 원인 분석
-• 수면 부족 → 성장호르몬 분비 저하 → 회복력 감소
-• 불규칙한 식사 → 혈당 변동 → 집중력 저하
+💡 체크 포인트
+• 수면이 부족하면 다음 날 컨디션이 아래로
+• 식사 간격이 들쭉날쭉하면 오후 집중력이 흔들리기 쉬움
 
 ✨ 2주 실천 시 기대효과
 • 22시 취침 유지 → 아침 컨디션 30% 개선
@@ -618,16 +621,16 @@ ${elementAnalysis ? `- ${elementAnalysis.lacking} 오행 부족 → ${ELEMENT_OR
 ### 2. body_part_advice (부위별 건강 조언) - 가독성 중심
 **필수 형식**:
 \`\`\`
-🎯 부위별 맞춤 조언
+🎯 부위별 컨디션 메모
 
-피로감(fatigue)은 신체적, 정신적 스트레스, 수면 부족, 영양 불균형 등 다양한 원인에 의해 발생합니다.
+요즘 피로감이 쉽게 올라오는 건 스트레스·수면·식사 습관이 서로 엉켜 있기 때문이에요.
 
-📌 일상 관리법
+📌 오늘의 생활 루틴
 • 취침 전 스마트폰 사용 자제
 • 미지근한 물로 샤워하여 몸 이완
 • 아침 기상 후 10분 스트레칭
 
-🛡️ 장기적 예방법
+🛡️ 꾸준히 해볼 루틴
 • 규칙적인 수면 패턴 유지
 • 충분한 영양 섭취 + 스트레스 관리
 \`\`\`
@@ -698,7 +701,7 @@ ${elementAnalysis ? `- ${elementAnalysis.lacking} 오행 부족 → ${ELEMENT_OR
     "description": "수영이나 자전거로 관절 부담 줄이기",
     "duration": "30분",
     "intensity": "중간",
-    "tip": "심박수 120-140 유지"
+    "tip": "숨차지만 대화는 가능한 페이스로"
   },
   "weekly": {
     "summary": "주 3회 유산소 + 휴식 중심",
@@ -847,11 +850,12 @@ ${elementAnalysis ? `- ${elementAnalysis.lacking} 오행 부족 → ${ELEMENT_OR
         exercise_advice: parsedResponse.운동조언 || parsedResponse.exercise_advice, // 블러 대상
         health_keyword: parsedResponse.건강키워드 || parsedResponse.health_keyword || '건강',
         timestamp: new Date().toISOString(),
-        hasHealthAppData, // ✅ 건강앱 데이터 사용 여부
+        hasHealthAppData, // ✅ 건강앱 데이터 사용 여부 (fitness tracking만)
+        // [5.1.2] heartRate / BP / glucose / SpO₂ 등 의료 vitals 는 summary에
+        // 포함하지 않는다. Fitness tracking 범위(걸음/수면/체중)만 노출.
         healthAppDataSummary: hasHealthAppData ? {
           steps: health_app_data!.today_steps,
           sleep: health_app_data!.average_sleep_hours,
-          heartRate: health_app_data!.average_heart_rate,
           weight: health_app_data!.weight_kg
         } : null,
         // ✅ 신규: 오행 기반 개인화 조언
@@ -863,7 +867,10 @@ ${elementAnalysis ? `- ${elementAnalysis.lacking} 오행 부족 → ${ELEMENT_OR
           recommended_foods: elementFoods
         } : null,
         // ✅ 신규: 이전 설문 비교 기반 개인화 피드백
-        personalized_feedback: personalizedFeedback
+        personalized_feedback: personalizedFeedback,
+        // [5.1.2] 의료 면책 고지 — 모든 health 응답에 필수. 클라이언트는
+        // 이 문구를 카드 하단에 상시 노출하여 "의학적 조언 아님"을 명시해야 함.
+        disclaimer: '본 건강 조언은 참고·오락 목적으로 제공됩니다. 의학적 진단·치료·예측이 아니며, 증상이 지속되거나 우려가 있다면 반드시 의료 전문가와 상담하세요.'
       }
 
       await supabase.from('fortune_cache').insert({
