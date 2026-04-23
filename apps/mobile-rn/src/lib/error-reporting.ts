@@ -81,7 +81,31 @@ export async function captureError(
 
   if (registeredCrashReporter && !isExpectedEdgeFunctionError(error)) {
     try {
-      registeredCrashReporter(error, context);
+      // Sentry.captureException 은 Error 인스턴스를 기대한다. Supabase
+      // PostgrestError 같은 `{code,details,hint,message}` plain 객체를 그대로
+      // 넘기면 Sentry 가 자체적으로 "Object captured as exception with keys..."
+      // 예외를 던지고, 그 예외가 다시 crash reporter로 들어와 cascade 된다
+      // (bootstrap 단계에서 `initCrashReporting` 자체가 반복 crash 로 올라오는
+      // 실제 사례 확인됨). Error 인스턴스가 아니면 wrap 해서 원본을 cause 로
+      // 보존한다.
+      const normalized =
+        error instanceof Error
+          ? error
+          : Object.assign(new Error(stringifyErrorMessage(error)), {
+              cause: error,
+              name:
+                error &&
+                typeof error === 'object' &&
+                typeof (error as { code?: unknown }).code === 'string'
+                  ? `SupabaseError(${(error as { code: string }).code})`
+                  : 'NonErrorException',
+            });
+      registeredCrashReporter(normalized, {
+        ...context,
+        ...(error && typeof error === 'object' && !(error instanceof Error)
+          ? { originalErrorKeys: Object.keys(error as object).join(',') }
+          : null),
+      });
     } catch (reportingFailure) {
       console.warn('[error-reporting] crash reporter threw', reportingFailure);
     }

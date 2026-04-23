@@ -41,7 +41,10 @@ export function AppleAuthButton({
           }
           cornerRadius={8}
           style={{ height: 50, width: '100%' }}
-          onPress={disabled ? undefined : onPress}
+          onPress={() => {
+            if (disabled) return;
+            onPress?.();
+          }}
         />
       </View>
     );
