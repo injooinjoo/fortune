@@ -2177,6 +2177,9 @@ async function generatePortraitWithGemini(
     });
 
     console.log("🔄 [PastLife] Calling Gemini Image Generation API...");
+    // LLM-FACTORY-BYPASS: Gemini image generation. factory 경로 존재하나 반환
+    // 타입 파싱 downstream 재작성 필요. FU3-1 참조
+    // (artifacts/sprint-fixes/FU3-llmfactory-bypass/analysis.md).
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:generateContent?key=${GEMINI_API_KEY}`,
       {

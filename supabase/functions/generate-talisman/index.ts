@@ -234,6 +234,8 @@ async function generateImageWithOpenAI(
     throw new Error("OPENAI_API_KEY is missing");
   }
 
+  // LLM-FACTORY-BYPASS: OpenAIProvider 직접 인스턴스화. Factory 경유로 교체
+  // 가능 (GeminiProvider/OpenAIProvider 둘 다 generateImage 구현). FU3-4 참조.
   const provider = new OpenAIProvider({
     apiKey: OPENAI_API_KEY,
     model: TALISMAN_IMAGE_MODEL,

@@ -13,6 +13,12 @@ import { supabase } from '../../lib/supabase';
 import {
   buildEmbeddedResultPayloadFromNormalizedResult,
 } from './adapter';
+import {
+  isOnDeviceFortuneSupported,
+  resolveOnDeviceFortunePayload,
+} from './on-device-fortune';
+import { onDeviceLLMEngine } from '../../lib/on-device-llm';
+import type { AiMode } from '../../lib/mobile-app-state';
 import type {
   EmbeddedResultBuildContext,
   EmbeddedResultPayload,
@@ -62,12 +68,9 @@ export async function fetchEmbeddedEdgeResultPayload(
   context: EmbeddedResultBuildContext = {},
   options: {
     userId?: string | null;
+    aiMode?: AiMode;
   } = {},
 ): Promise<EmbeddedResultPayload | null> {
-  if (!supabase) {
-    return null;
-  }
-
   const resultKind = resolveResultKindFromFortuneType(fortuneType);
   if (!resultKind) {
     return null;
@@ -81,6 +84,38 @@ export async function fetchEmbeddedEdgeResultPayload(
       console.log(`[fortune-cache] HIT: ${fortuneType} (skipping Edge Function)`);
     }
     return cached;
+  }
+
+  // On-device 라우팅 — aiMode='on-device' 이거나 'auto' 이고 모델이 ready 면
+  // 먼저 로컬에서 시도. 실패하면 cloud 로 자동 폴백.
+  const preferOnDevice =
+    options.aiMode !== 'cloud' &&
+    onDeviceLLMEngine.getStatus() === 'ready' &&
+    isOnDeviceFortuneSupported(fortuneType);
+  if (preferOnDevice) {
+    try {
+      const onDevicePayload = await resolveOnDeviceFortunePayload(
+        fortuneType,
+        context,
+      );
+      setCachedResult(cacheKey, onDevicePayload);
+      if (__DEV__) {
+        console.log(`[fortune-on-device] SUCCESS: ${fortuneType}`);
+      }
+      return onDevicePayload;
+    } catch (e) {
+      if (__DEV__) {
+        console.warn(
+          `[fortune-on-device] failed for ${fortuneType}, falling back to cloud:`,
+          e,
+        );
+      }
+      // fall through to cloud path.
+    }
+  }
+
+  if (!supabase) {
+    return null;
   }
 
   const body = buildFortuneRequestBody(fortuneType, context, options.userId);
@@ -97,9 +132,29 @@ export async function fetchEmbeddedEdgeResultPayload(
   }
 
   const functionName = endpoint.replace(/^\//u, '');
-  const { data, error } = await supabase.functions.invoke(functionName, {
-    body,
-  });
+  // W10: 30s hard timeout. AbortController 로 오프라인/hanging 응답 단절.
+  // 실제 edge function timeout 은 서버측 25~30s 이므로 클라 35s 여유.
+  const controller = new AbortController();
+  const timeoutHandle = setTimeout(() => controller.abort(), 35_000);
+  let data: unknown;
+  let error: unknown;
+  try {
+    const invoke = await supabase.functions.invoke(functionName, {
+      body,
+      // supabase-js v2 는 signal 옵션을 fetch 에 pass-through 한다.
+      // 타입 선언은 signal 을 아직 안 가지고 있어 캐스트.
+      ...({ signal: controller.signal } as { signal?: AbortSignal }),
+    });
+    data = invoke.data;
+    error = invoke.error;
+  } catch (err) {
+    if ((err as { name?: string })?.name === 'AbortError') {
+      throw new Error('edge-runtime timeout (35s)');
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeoutHandle);
+  }
 
   if (error) {
     throw error;
@@ -339,6 +394,24 @@ function buildFortuneRequestBody(
       }
 
       payload.userName = profile.displayName || 'user';
+      break;
+    }
+    case 'past-life': {
+      // Survey answers — curiosity / eraVibe / feeling passed through generic loop.
+      // Face image must be mapped to the Edge Function's `faceImageBase64` field.
+      const imageData = readString(answers.faceImage);
+      if (imageData) {
+        payload.faceImageBase64 = imageData;
+        // Remove the raw `faceImage` field (duplicated by the generic loop above)
+        // so we don't ship a huge base64 string twice.
+        delete payload.faceImage;
+      }
+      // Ensure gender + name are present for the Edge Function.
+      if (profile.displayName) {
+        payload.name = profile.displayName;
+      }
+      // The Edge Function expects `gender` at top level (current gender of user).
+      // Fall back to profile if survey didn't collect it.
       break;
     }
     case 'mbti': {

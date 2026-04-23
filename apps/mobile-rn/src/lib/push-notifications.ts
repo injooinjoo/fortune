@@ -192,10 +192,14 @@ async function ensureAndroidChannel(
 
 async function requestPermission(
   Notifications: NotificationsModule,
+  options?: { promptIfNotGranted?: boolean },
 ): Promise<boolean> {
   const current = await Notifications.getPermissionsAsync();
   if (current.granted) return true;
   if (!current.canAskAgain) return false;
+  // JIT 정책(W9): 사용자가 명시적으로 푸시 켜기를 선택한 순간에만 OS 프롬프트
+  // 노출. cold-start 자동 호출에서는 프롬프트 띄우지 않고 silent skip.
+  if (!options?.promptIfNotGranted) return false;
 
   const next = await Notifications.requestPermissionsAsync({
     ios: {
@@ -214,7 +218,19 @@ function getProjectId(): string | undefined {
   return easProjectId;
 }
 
-export async function registerPushTokenForSignedInUser(): Promise<
+export interface RegisterPushTokenOptions {
+  /**
+   * true — iOS 푸시 권한이 아직 허용되지 않았다면 OS 프롬프트를 띄운다.
+   *   사용자가 "알림 받기" 토글 같은 명시적 action 에서 호출할 때만 사용.
+   * false (default) — 권한이 이미 허용된 경우에만 token 등록. 미허용 상태는
+   *   `{ skipped: true, reason: 'permission denied' }` 반환 (JIT 정책).
+   */
+  promptIfNotGranted?: boolean;
+}
+
+export async function registerPushTokenForSignedInUser(
+  options?: RegisterPushTokenOptions,
+): Promise<
   { token: string } | { skipped: true; reason: string }
 > {
   const Notifications = loadNotifications();
@@ -240,7 +256,9 @@ export async function registerPushTokenForSignedInUser(): Promise<
 
   ensureNotificationHandler(Notifications);
 
-  const granted = await requestPermission(Notifications);
+  const granted = await requestPermission(Notifications, {
+    promptIfNotGranted: options?.promptIfNotGranted ?? false,
+  });
   if (!granted) {
     return { skipped: true, reason: 'permission denied' };
   }

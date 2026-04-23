@@ -580,6 +580,8 @@ Example: ["#무쌍_강아지상", "#셔츠가잘어울리는", "#너드미"]`;
       },
     });
 
+    // LLM-FACTORY-BYPASS: 텍스트 호출이라 migratable 하지만 커스텀 telemetry
+    // (requestId/UsageLogger/extractUsageMetadata) 보존 위해 현 상태 유지. FU3-2 참조.
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_TEXT_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
       {
@@ -689,6 +691,7 @@ async function generateImageWithGemini(
     },
   });
 
+  // LLM-FACTORY-BYPASS: Gemini image generation 재시도 loop. FU3-2 참조.
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_IMAGE_MODEL_NAME}:generateContent?key=${GEMINI_API_KEY}`,
     {

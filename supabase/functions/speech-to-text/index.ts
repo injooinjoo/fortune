@@ -6,10 +6,11 @@
  */
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { encodeBase64 } from "https://deno.land/std@0.224.0/encoding/base64.ts";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") ?? "";
-const GEMINI_MODEL = "gemini-2.0-flash-lite";
+const GEMINI_MODEL = "gemini-2.0-flash";
 
 serve(async (req: Request) => {
   const corsResponse = handleCors(req);
@@ -43,14 +44,17 @@ serve(async (req: Request) => {
 
     const language = incomingFormData.get("language")?.toString() ?? "ko";
 
-    // Convert audio file to base64
+    // Convert audio file to base64 (chunk-safe via std encoder)
     const audioBytes = new Uint8Array(await audioFile.arrayBuffer());
-    const base64Audio = btoa(String.fromCharCode(...audioBytes));
+    const base64Audio = encodeBase64(audioBytes);
 
     // Determine MIME type
     const mimeType = audioFile.type || "audio/mp4";
+    console.log(`[speech-to-text] received file size=${audioBytes.byteLength} mime=${mimeType} lang=${language}`);
 
-    // Call Gemini with audio for transcription
+    // LLM-FACTORY-BYPASS: Audio transcription (multimodal inline_data).
+    // LLMFactory 가 아직 `transcribeAudio` 인터페이스를 제공하지 않음.
+    // FU3-3 참조 (artifacts/sprint-fixes/FU3-llmfactory-bypass/analysis.md).
     const geminiResponse = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
       {
@@ -98,9 +102,10 @@ serve(async (req: Request) => {
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (err) {
-    console.error("[speech-to-text] Unexpected error:", err);
+    const detail = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    console.error("[speech-to-text] Unexpected error:", detail, err instanceof Error ? err.stack : undefined);
     return new Response(
-      JSON.stringify({ error: "Internal server error" }),
+      JSON.stringify({ error: "Internal server error", detail }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
