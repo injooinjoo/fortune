@@ -8,6 +8,7 @@
  */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { deriveUserIdFromJwt } from '../_shared/auth.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
@@ -416,12 +417,9 @@ serve(async (req: Request) => {
     console.log('📥 받은 요청 body 키:', Object.keys(body))
 
     const tarotSelection = body.answers?.tarotSelection || body.tarotSelection || {}
-    const userId =
-      body.userId ||
-      body.user_id ||
-      body.answers?.userId ||
-      body.answers?.user_id ||
-      'anonymous'
+    // SECURITY: body에서 userId를 받지 않음. JWT만 신뢰.
+    // 인증 안 된 게스트는 'anonymous' 로 집계 (토큰 사용량/코호트에 개인 PII 없음).
+    const userId = (await deriveUserIdFromJwt(req)) ?? 'anonymous'
     const purpose = body.purpose || body.answers?.purpose
     const question = normalizeQuestion(
       body.question || tarotSelection.question || body.questionText || body.answers?.questionText,

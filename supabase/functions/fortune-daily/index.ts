@@ -30,6 +30,7 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { deriveUserIdFromJwt } from '../_shared/auth.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile } from '../_shared/percentile/calculator.ts'
@@ -347,7 +348,6 @@ serve(async (req) => {
     )
 
     const {
-      userId,
       name: rawName,
       birthDate,
       birthTime,
@@ -362,6 +362,10 @@ serve(async (req) => {
       date,      // 클라이언트에서 전달받은 날짜
       isPremium = false // ✅ 프리미엄 사용자 여부
     } = requestData
+    // SECURITY: body.userId 무시. JWT 에서만 파생. 게스트는 'anonymous'.
+    // 이 함수는 widget_fortune_cache에 user_id 키로 row를 insert하므로 JWT
+    // 강제가 데이터 격리의 핵심.
+    const userId = (await deriveUserIdFromJwt(req)) ?? 'anonymous'
 
     // ✅ name 유효성 검사 - "undefined", "null", 빈 문자열 등 처리
     const invalidNames = ['undefined', 'null', 'Unknown', ''];

@@ -20,6 +20,7 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { deriveUserIdFromJwt } from '../_shared/auth.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
@@ -105,7 +106,9 @@ serve(async (req) => {
 
     const requestData: AvoidPeopleRequest = await req.json()
     const { environment, importantSchedule, moodLevel, stressLevel, socialFatigue,
-            hasImportantDecision, hasSensitiveConversation, hasTeamProject, userId, isPremium = false } = requestData
+            hasImportantDecision, hasSensitiveConversation, hasTeamProject, isPremium = false } = requestData
+    // SECURITY: body.userId 무시. JWT 에서만 파생. 게스트는 'anonymous'.
+    const userId = (await deriveUserIdFromJwt(req)) ?? 'anonymous'
 
     console.log('💎 [AvoidPeople] Premium 상태:', isPremium)
 

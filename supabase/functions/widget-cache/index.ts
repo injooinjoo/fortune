@@ -6,8 +6,11 @@
  *
  * @endpoint POST /widget-cache
  *
- * @requestBody
- * - userId: string - 사용자 ID
+ * @auth
+ * - Authorization: Bearer <supabase_access_token> (필수)
+ *   body에서 userId를 받지 않는다. JWT의 user.id만 신뢰.
+ *   iOS Widget extension이 호출할 때 App Group / Shared Keychain에서
+ *   session access token을 꺼내 헤더로 첨부해야 한다.
  *
  * @response
  * - today: WidgetCacheData | null - 오늘 캐시 데이터
@@ -16,6 +19,7 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { authenticateUser } from '../_shared/auth.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -46,14 +50,17 @@ serve(async (req: Request) => {
   }
 
   try {
-    const { userId } = await req.json()
-
-    if (!userId) {
-      return new Response(
-        JSON.stringify({ error: 'userId is required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    // SECURITY: JWT 필수. body.userId 절대 신뢰하지 않음. iOS 위젯 extension이
+    // 호출할 때도 Authorization: Bearer <session_access_token> 반드시 포함할 것.
+    // (위젯 extension이 App Group / Shared Keychain 에서 access token 로드 필요)
+    const { user, error: authError } = await authenticateUser(req)
+    if (authError || !user) {
+      return authError ?? new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
+    const userId = user.id
 
     // Service Role 클라이언트 생성 (백그라운드 접근용)
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''

@@ -22,6 +22,7 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { deriveUserIdFromJwt } from '../_shared/auth.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
@@ -277,7 +278,8 @@ serve(async (req) => {
     const chatContent = requestData.chatContent || requestData.chat_content
     const chatPlatform = requestData.chatPlatform || requestData.chat_platform
     const photoAnalysis = requestData.photoAnalysis || requestData.photo_analysis
-    const userId = requestData.userId || requestData.user_id
+    // SECURITY: body.userId / body.user_id 무시. JWT 에서만 파생.
+    const userId = (await deriveUserIdFromJwt(req)) ?? 'anonymous'
     const isPremium = requestData.isPremium ?? requestData.is_premium ?? false
     const instagramUsername = requestData.instagramUsername || requestData.instagram_username
 

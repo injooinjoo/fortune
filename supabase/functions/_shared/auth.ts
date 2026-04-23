@@ -1,6 +1,33 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from './cors.ts'
 
+/**
+ * JWT에서만 userId를 파생. 헤더가 없거나 토큰이 유효하지 않으면 null.
+ *
+ * Guest 사용을 허용하는 엔드포인트(로그인 전 운세)에서 사용.
+ * 인증 필수 엔드포인트는 `authenticateUser`로 401을 반환받을 것.
+ *
+ * body.userId / body.user_id 류 클라이언트가 주는 식별자를 절대 신뢰하지 말 것.
+ */
+export async function deriveUserIdFromJwt(req: Request): Promise<string | null> {
+  const authHeader = req.headers.get('Authorization')
+  if (!authHeader) return null
+
+  const token = authHeader.replace('Bearer ', '')
+  if (!token) return null
+
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_ANON_KEY')!,
+    {
+      global: { headers: { Authorization: authHeader } },
+    }
+  )
+
+  const { data: { user } } = await supabase.auth.getUser(token)
+  return user?.id ?? null
+}
+
 export async function authenticateUser(req: Request) {
   const authHeader = req.headers.get('Authorization')
   if (!authHeader) {

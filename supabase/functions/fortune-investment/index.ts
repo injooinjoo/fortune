@@ -30,6 +30,7 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { deriveUserIdFromJwt } from '../_shared/auth.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
@@ -220,7 +221,9 @@ serve(async (req) => {
       throw new Error(`요청 body 파싱 실패: ${parseErr}`)
     }
 
-    const { ticker, userId, isPremium = false, sajuData } = requestData
+    const { ticker, isPremium = false, sajuData } = requestData
+    // SECURITY: body.userId 무시. JWT 에서만 파생. 게스트는 'anonymous'.
+    const userId = (await deriveUserIdFromJwt(req)) ?? 'anonymous'
 
     if (!ticker || !ticker.symbol || !ticker.name || !ticker.category) {
       console.error('💎 [Step 1] ticker 검증 실패:', JSON.stringify(ticker))

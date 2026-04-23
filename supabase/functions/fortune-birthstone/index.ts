@@ -6,9 +6,12 @@
  * @endpoint POST /fortune-birthstone
  */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { deriveUserIdFromJwt } from '../_shared/auth.ts'
 import { withEdgeFunction } from '../_shared/middleware.ts'
 
 interface BirthstoneRequest {
+  // NOTE: userId 필드는 이전 버전 호환을 위해 타입만 남겨두되, 실제로 body에서
+  // 절대 읽지 않는다. 항상 JWT에서 파생. body.userId는 무시됨.
   userId?: string
   name?: string
   birthDate?: string
@@ -212,7 +215,7 @@ serve((req) =>
   withEdgeFunction<BirthstoneRequest, { success: boolean; data?: unknown; error?: string }>(req, {
     functionName: 'fortune-birthstone',
     timeoutMs: 10_000,
-    handler: async ({ body, requestId }) => {
+    handler: async ({ body, req, requestId }) => {
       const birthMonth = resolveBirthMonth(body)
 
       if (!birthMonth) {
@@ -224,6 +227,9 @@ serve((req) =>
           },
         }
       }
+
+      // SECURITY: body.userId 무시. JWT에서만 파생. 게스트는 null.
+      const userId = await deriveUserIdFromJwt(req)
 
       const entry = BIRTHSTONE_CATALOG[birthMonth] ?? BIRTHSTONE_CATALOG[1]
       const content = `${getBirthMonthLabel(birthMonth)} 탄생석은 ${entry.stone}예요. ${entry.meaning}의 흐름이 강하게 들어오니, ${entry.summary}`
@@ -255,7 +261,7 @@ serve((req) =>
         },
         specialNote: entry.specialNote,
         name: body.name ?? '회원님',
-        userId: body.userId ?? null,
+        userId,
         isPremium: body.isPremium ?? false,
       }
 
