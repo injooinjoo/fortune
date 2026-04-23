@@ -1,5 +1,6 @@
 const TEST_ACCOUNT_EMAILS: ReadonlySet<string> = new Set([
   'ink595@g.harvard.edu',
+  'test@zpzg.com',
 ]);
 
 export function isTestAccountEmail(
