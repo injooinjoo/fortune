@@ -631,21 +631,31 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
     setStoreStatus('loading');
     setStoreError(null);
 
-    try {
-      await initConnection();
+    // QA-B: storeStatus === 'loading' 에 무한 대기 없게 15s hard timeout.
+    // initConnection / fetchStoreProducts 가 Apple 서버 이슈로 hang 될 때
+    // 결제 화면이 영원히 스피너만 보이는 UX 를 방지.
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error('store-products timeout (15s)')), 15_000);
+    });
 
-      const [inAppProducts, subscriptionProducts] = await Promise.all([
-        fetchStoreProducts({
-          skus: [
-            ...storefrontConsumableProductIds,
-            ...storefrontNonConsumableProductIds,
-          ],
-          type: 'in-app',
-        }),
-        fetchStoreProducts({
-          skus: [...storefrontSubscriptionProductIds],
-          type: 'subs',
-        }),
+    try {
+      await Promise.race([initConnection(), timeoutPromise]);
+
+      const [inAppProducts, subscriptionProducts] = await Promise.race([
+        Promise.all([
+          fetchStoreProducts({
+            skus: [
+              ...storefrontConsumableProductIds,
+              ...storefrontNonConsumableProductIds,
+            ],
+            type: 'in-app',
+          }),
+          fetchStoreProducts({
+            skus: [...storefrontSubscriptionProductIds],
+            type: 'subs',
+          }),
+        ]),
+        timeoutPromise,
       ]);
 
       const nextStoreProducts = buildStoreProductSnapshotMap([

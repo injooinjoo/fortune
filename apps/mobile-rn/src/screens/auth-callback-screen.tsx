@@ -37,6 +37,9 @@ export function AuthCallbackScreen() {
   } = useAppBootstrap();
   const { status: appStateStatus, syncRemoteProfile } = useMobileAppState();
   const [hasHandled, setHasHandled] = useState(false);
+  // 세션이 정해진 시간 안에 회수되지 않으면 무한 스피너에 갇히지 않도록
+  // 사용자에게 재시도 UI를 보여준다. (QA-A F1)
+  const [timedOut, setTimedOut] = useState(false);
   const authCallbackUrl = readSearchParam(params.authCallbackUrl);
   const decodedCallbackUrl = authCallbackUrl
     ? decodeURIComponent(authCallbackUrl)
@@ -134,9 +137,17 @@ export function AuthCallbackScreen() {
     session,
     syncRemoteProfile,
   ]);
+
+  useEffect(() => {
+    if (hasHandled || callbackMeta.errorMessage) return;
+    const handle = setTimeout(() => setTimedOut(true), 30_000);
+    return () => clearTimeout(handle);
+  }, [hasHandled, callbackMeta.errorMessage]);
+
   // Happy path — just a spinner until the useEffect above replaces the route.
+  // Timeout path — 30s 이후에도 세션/auth-state 가 수신 안 되면 재시도 UI.
   // Error path — show a minimal retry affordance so users aren't stranded.
-  if (!callbackMeta.errorMessage) {
+  if (!callbackMeta.errorMessage && !timedOut) {
     return (
       <View
         style={{
@@ -151,12 +162,18 @@ export function AuthCallbackScreen() {
     );
   }
 
+  const isTimeoutOnly = timedOut && !callbackMeta.errorMessage;
+
   return (
     <Screen>
       <View style={{ flex: 1, justifyContent: 'center', gap: 16 }}>
-        <AppText variant="displaySmall">로그인 실패</AppText>
+        <AppText variant="displaySmall">
+          {isTimeoutOnly ? '연결이 오래 걸려요' : '로그인 실패'}
+        </AppText>
         <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
-          로그인 연결에 문제가 생겼어요. 다시 시도해 주세요.
+          {isTimeoutOnly
+            ? '로그인 완료 신호를 받지 못했어요. 네트워크 상태를 확인하고 다시 시도해 주세요.'
+            : '로그인 연결에 문제가 생겼어요. 다시 시도해 주세요.'}
         </AppText>
         <PrimaryButton onPress={() => router.replace('/signup')}>
           다시 시도

@@ -25,6 +25,7 @@ export function AccountDeletionScreen() {
   const [confirmText, setConfirmText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedReason, setSelectedReason] = useState<string | null>(null);
 
   const isConfirmed = confirmText.trim() === CONFIRMATION_KEYWORD;
 
@@ -40,7 +41,22 @@ export function AccountDeletionScreen() {
         return;
       }
 
-      const { error } = await supabase.functions.invoke('delete-account');
+      // QA-E: edge function hang 방지 60s hard timeout. delete-account 은
+      // 25+ 테이블 + storage purge + auth.admin.deleteUser 까지 수행하므로
+      // 일반 edge function 보다 오래 걸릴 수 있음 — 넉넉히 60s.
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(
+          () => reject(new Error('delete-account timeout (60s)')),
+          60_000,
+        );
+      });
+
+      const invokePromise = supabase.functions.invoke('delete-account', {
+        body: {
+          reason: selectedReason,
+        },
+      });
+      const { error } = await Promise.race([invokePromise, timeoutPromise]);
 
       if (error) {
         setErrorMessage('계정 삭제에 실패했어요. 잠시 후 다시 시도해 주세요.');
@@ -51,7 +67,11 @@ export function AccountDeletionScreen() {
       await supabase.auth.signOut();
       router.replace('/chat');
     } catch (error) {
-      setErrorMessage('알 수 없는 오류가 발생했어요. 잠시 후 다시 시도해 주세요.');
+      const message =
+        error instanceof Error && error.message.includes('timeout')
+          ? '시간이 너무 오래 걸려 중단됐어요. 네트워크를 확인하고 다시 시도해 주세요.'
+          : '알 수 없는 오류가 발생했어요. 잠시 후 다시 시도해 주세요.';
+      setErrorMessage(message);
       await captureError(error, { surface: 'account-deletion' });
     } finally {
       setIsDeleting(false);
@@ -72,14 +92,36 @@ export function AccountDeletionScreen() {
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
           프로필 정보, 구매 내역, 채팅 기록은 삭제 요청이 완료되면 함께 정리될 수 있어요.
         </AppText>
-        {deletionReasons.map((reason) => (
-          <Card
-            key={reason}
-            style={{ backgroundColor: fortuneTheme.colors.surfaceSecondary }}
-          >
-            <AppText variant="bodyMedium">{reason}</AppText>
-          </Card>
-        ))}
+        {/* 삭제 사유 선택 (선택 사항). 선택 시 delete-account 요청 body 에
+            포함되어 운영팀 피드백 데이터로 활용. 기본은 미선택. */}
+        {deletionReasons.map((reason) => {
+          const isSelected = selectedReason === reason;
+          return (
+            <Pressable
+              key={reason}
+              onPress={() =>
+                setSelectedReason(isSelected ? null : reason)
+              }
+              disabled={isDeleting}
+              accessibilityRole="radio"
+              accessibilityState={{ selected: isSelected }}
+            >
+              <Card
+                style={{
+                  backgroundColor: isSelected
+                    ? fortuneTheme.colors.accentLight
+                    : fortuneTheme.colors.surfaceSecondary,
+                  borderWidth: 1,
+                  borderColor: isSelected
+                    ? fortuneTheme.colors.ctaBackground
+                    : 'transparent',
+                }}
+              >
+                <AppText variant="bodyMedium">{reason}</AppText>
+              </Card>
+            </Pressable>
+          );
+        })}
       </Card>
 
       {/* Confirmation input */}

@@ -1,14 +1,21 @@
-// HeroLine: port of result-cards.jsx HeroLine (~327-350). RN has no SVG dasharray reveal —
-// approximated as a row of value-height bars (growing width + height) connected by visual gap.
-import { useEffect, useRef } from 'react';
-import { Animated, Text, View } from 'react-native';
+/**
+ * HeroLine — `result-cards.jsx:HeroLine` (328-350). View-only 근사 (SVG 재적용은 다음 빌드).
+ *
+ * 점 시리즈를 stage 애니메이션으로 순차 노출.
+ */
+import { View } from 'react-native';
 
-import { fortuneTheme } from '../../../lib/theme';
 import type { EmbeddedResultPayload } from '../../chat-results/types';
+
+const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+const stage = (p: number, from: number, to: number) =>
+  clamp01((p - from) / Math.max(0.0001, to - from));
 
 interface HeroLineProps {
   data: EmbeddedResultPayload;
-  progress: number;
+  progress?: number;
+  color?: string;
+  height?: number;
 }
 
 interface TimelinePoint {
@@ -16,106 +23,81 @@ interface TimelinePoint {
   value?: number;
 }
 
-const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
-const stage = (p: number, from: number, to: number) =>
-  clamp01((p - from) / Math.max(0.0001, to - from));
-
-const PLACEHOLDER: TimelinePoint[] = [
-  { label: '1', value: 40 },
-  { label: '2', value: 55 },
-  { label: '3', value: 48 },
-  { label: '4', value: 70 },
-  { label: '5', value: 82 },
-  { label: '6', value: 78 },
-  { label: '7', value: 92 },
+const DEFAULT_SERIES: TimelinePoint[] = [
+  { value: 40 },
+  { value: 55 },
+  { value: 48 },
+  { value: 70 },
+  { value: 82 },
+  { value: 78 },
+  { value: 92 },
 ];
 
-const CHART_H = 72;
-
-export default function HeroLine({ data, progress }: HeroLineProps) {
-  const raw = (data as unknown as { timeline?: TimelinePoint[] }).timeline;
+export default function HeroLine({
+  data,
+  progress = 1,
+  color = '#8FB8FF',
+  height = 72,
+}: HeroLineProps) {
+  // Defensive: data/null safe 접근.
+  const raw =
+    data && typeof data === 'object'
+      ? (data as unknown as { timeline?: TimelinePoint[] }).timeline
+      : undefined;
   const series: TimelinePoint[] =
-    raw && raw.length > 0 ? raw.slice(0, 12) : PLACEHOLDER;
-  const color = '#8FB8FF';
+    raw && raw.length > 1 ? raw.slice(0, 12) : DEFAULT_SERIES;
   const p = clamp01(progress);
 
-  const anims = useRef(series.map(() => new Animated.Value(0))).current;
-
-  useEffect(() => {
-    series.forEach((_, i) => {
-      const local = stage(p, 0.1 + i * 0.06, 0.3 + i * 0.06);
-      Animated.timing(anims[i], {
-        toValue: local,
-        duration: 100,
-        useNativeDriver: false,
-      }).start();
-    });
-  }, [p, anims, series]);
-
-  const maxV = Math.max(...series.map((s) => s.value ?? 0), 1);
-
   return (
-    <View style={{ paddingVertical: 14, paddingHorizontal: 10 }}>
+    <View style={{ paddingTop: 14, paddingHorizontal: 10, paddingBottom: 6 }}>
       <View
         style={{
-          height: CHART_H,
+          width: '100%',
+          height,
           flexDirection: 'row',
           alignItems: 'flex-end',
-          gap: 4,
+          justifyContent: 'space-between',
         }}
       >
         {series.map((pt, i) => {
-          const target = ((pt.value ?? 0) / maxV) * (CHART_H - 6);
-          const heightAnim = anims[i].interpolate({
-            inputRange: [0, 1],
-            outputRange: [2, Math.max(2, target)],
-          });
+          const v = pt.value ?? 0;
+          const dotOpacity = stage(p, 0.4 + i * 0.08, 0.6 + i * 0.08);
+          const barOpacity = Math.min(dotOpacity, 0.25);
+          const h = (v / 100) * (height - 6);
           const isLast = i === series.length - 1;
+          const r = isLast ? 3.5 : 2;
           return (
             <View
-              key={i}
+              key={`lp-${i}`}
               style={{
-                flex: 1,
                 alignItems: 'center',
                 justifyContent: 'flex-end',
+                height,
               }}
             >
-              <Animated.View
+              <View
                 style={{
-                  width: isLast ? 7 : 4,
-                  height: heightAnim,
-                  borderRadius: 2,
+                  width: 2,
+                  height: h,
                   backgroundColor: color,
-                  opacity: anims[i],
+                  opacity: barOpacity,
+                  borderRadius: 1,
+                }}
+              />
+              <View
+                style={{
+                  position: 'absolute',
+                  bottom: h - r,
+                  width: r * 2,
+                  height: r * 2,
+                  borderRadius: r,
+                  backgroundColor: color,
+                  opacity: dotOpacity,
                 }}
               />
             </View>
           );
         })}
-      </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          gap: 4,
-          marginTop: 6,
-        }}
-      >
-        {series.map((pt, i) => (
-          <Animated.Text
-            key={i}
-            style={{
-              flex: 1,
-              textAlign: 'center',
-              fontSize: 9,
-              lineHeight: 12,
-              color: fortuneTheme.colors.textTertiary,
-              opacity: anims[i],
-            }}
-            numberOfLines={1}
-          >
-            {pt.label ?? i + 1}
-          </Animated.Text>
-        ))}
       </View>
     </View>
   );

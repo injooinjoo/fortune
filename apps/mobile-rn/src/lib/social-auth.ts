@@ -16,6 +16,33 @@ function isIpad(): boolean {
   return Math.min(width, height) >= 768;
 }
 
+// Supabase auth 가 반환하는 영어 에러 메시지를 한국어 UX 문구로 정규화.
+// 원문을 그대로 노출하면 한국 앱 UI 에 영문이 섞여 나옴 (QA-A F2). 대표적인
+// 케이스만 매핑하고, 나머지는 generic 문구로 폴백.
+export function mapAuthErrorMessage(raw: string | null | undefined): string {
+  if (!raw) return '로그인에 실패했어요. 잠시 후 다시 시도해 주세요.';
+  const lower = raw.toLowerCase();
+  if (lower.includes('invalid login credentials') || lower.includes('invalid_grant')) {
+    return '이메일 또는 비밀번호가 올바르지 않아요.';
+  }
+  if (lower.includes('email not confirmed')) {
+    return '이메일 인증이 아직 완료되지 않았어요. 받은 메일의 링크를 확인해 주세요.';
+  }
+  if (lower.includes('otp') && lower.includes('expired')) {
+    return '인증 코드가 만료됐어요. 새 코드를 요청해 주세요.';
+  }
+  if (lower.includes('network') || lower.includes('fetch') || lower.includes('timeout')) {
+    return '네트워크 상태를 확인하고 다시 시도해 주세요.';
+  }
+  if (lower.includes('rate limit') || lower.includes('too many')) {
+    return '요청이 너무 많아요. 잠시 후 다시 시도해 주세요.';
+  }
+  if (lower.includes('user already registered')) {
+    return '이미 가입된 이메일이에요. 로그인으로 진행해 주세요.';
+  }
+  return '로그인 처리 중 문제가 발생했어요. 잠시 후 다시 시도해 주세요.';
+}
+
 import { deepLinkConfig } from '@fortune/product-contracts';
 
 import { exchangeAuthCodeFromUrl } from './auth-session';
@@ -108,7 +135,7 @@ async function startAppleNativeAuth(
         provider,
         status: 'failed',
         redirectTo,
-        errorMessage: response.error.message,
+        errorMessage: mapAuthErrorMessage(response.error.message),
       };
     }
 
@@ -344,7 +371,7 @@ export async function startSocialAuth(
         provider,
         status: 'failed',
         redirectTo,
-        errorMessage: response.error.message,
+        errorMessage: mapAuthErrorMessage(response.error.message),
       };
     }
 
