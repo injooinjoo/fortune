@@ -21,6 +21,9 @@ import {
 
 import { trackEvent } from '../lib/analytics';
 import { exchangeAuthCodeFromUrl, isAuthCallbackUrl } from '../lib/auth-session';
+import { chatCharacters } from '../lib/chat-characters';
+import type { ChatShellMessage } from '../lib/chat-shell';
+import { loadCachedCharacterMessagesBatch } from '../lib/character-conversation-cache';
 import { appEnv } from '../lib/env';
 import { captureError } from '../lib/error-reporting';
 import {
@@ -49,6 +52,12 @@ interface BootstrapContextValue {
   onboardingProgress: UnifiedOnboardingProgress;
   pendingChatFortuneType: FortuneTypeId | null;
   pendingMySajuContext: ChatShellMySajuContextMessage | null;
+  /**
+   * 앱 부트스트랩 시점에 SecureStore에서 사전 로드한 캐릭터별 최신 대화.
+   * chat-screen이 `useState` 초기값으로 사용하여 하드코딩 인트로 → 원격 로드
+   * 간의 플래시를 제거한다. 키는 캐릭터 id, 값은 최신 메시지 배열.
+   */
+  cachedCharacterConversations: Record<string, ChatShellMessage[]>;
   markGuestBrowse: () => Promise<void>;
   markAuthComplete: () => Promise<void>;
   updateOnboardingProgress: (
@@ -68,6 +77,7 @@ const BootstrapContext = createContext<BootstrapContextValue>({
   onboardingProgress: emptyUnifiedOnboardingProgress,
   pendingChatFortuneType: null,
   pendingMySajuContext: null,
+  cachedCharacterConversations: {},
   markGuestBrowse: async () => undefined,
   markAuthComplete: async () => undefined,
   updateOnboardingProgress: async () => undefined,
@@ -87,10 +97,32 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
     useState<FortuneTypeId | null>(null);
   const [pendingMySajuContext, setPendingMySajuContextState] =
     useState<ChatShellMySajuContextMessage | null>(null);
+  const [cachedCharacterConversations, setCachedCharacterConversations] =
+    useState<Record<string, ChatShellMessage[]>>({});
   const lastAuthenticatedUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
+
+    // iPad Sign in with Apple fallback 등 드물게 iOS가 동일 OAuth 콜백 URL을
+    // getInitialURL() + 'url' 이벤트로 이중 전달하는 케이스가 있다. PKCE 코드는
+    // 단회용이라 두 번째 교환은 반드시 실패(invalid_grant)한다. 기능상 문제는
+    // 없지만 Sentry noise 제거 + 불필요 네트워크 호출 방지를 위해 URL 단위 dedup.
+    const exchangedAuthUrls = new Set<string>();
+
+    async function exchangeOnce(url: string) {
+      if (exchangedAuthUrls.has(url)) {
+        return;
+      }
+      exchangedAuthUrls.add(url);
+      try {
+        await exchangeAuthCodeFromUrl(url);
+      } catch (error) {
+        await captureError(error, {
+          surface: 'bootstrap:auth-code-exchange',
+        }).catch(() => undefined);
+      }
+    }
 
     trackEvent('app_open').catch(() => undefined);
 
@@ -177,12 +209,22 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
 
     async function bootstrap() {
       try {
-        const [storedProgress, queuedFortuneType, lastAuthenticatedUserId] =
-          await Promise.all([
-            getUnifiedOnboardingProgress(),
-            getPendingChatFortuneType(),
-            getLastAuthenticatedUserId(),
-          ]);
+        const characterIds = chatCharacters.map((c) => c.id);
+        const [
+          storedProgress,
+          queuedFortuneType,
+          lastAuthenticatedUserId,
+          cachedConversations,
+        ] = await Promise.all([
+          getUnifiedOnboardingProgress(),
+          getPendingChatFortuneType(),
+          getLastAuthenticatedUserId(),
+          loadCachedCharacterMessagesBatch(characterIds),
+        ]);
+
+        if (mounted) {
+          setCachedCharacterConversations(cachedConversations);
+        }
 
         if (!mounted) {
           return;
@@ -195,11 +237,7 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
         const initialUrl = await Linking.getInitialURL();
 
         if (initialUrl && isAuthCallbackUrl(initialUrl)) {
-          await exchangeAuthCodeFromUrl(initialUrl).catch((error) => {
-            captureError(error, { surface: 'bootstrap:auth-code-exchange' }).catch(
-              () => undefined,
-            );
-          });
+          await exchangeOnce(initialUrl);
         }
 
         if (supabase) {
@@ -254,6 +292,27 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
         }
       }
     }
+
+    // Deep-link URL listener는 bootstrap 시작보다 먼저 부착한다.
+    // iPad Sign in with Apple이 OAuth fallback으로 전환될 때 콜백 URL이
+    // cold-start 직후 도착하면, listener가 async bootstrap 뒤에 붙어 있을
+    // 경우 이벤트가 누락돼 silent fail로 이어진다 (이전 2.1 리젝 사유).
+    // 함수 선언(handleDeepLink 등)은 useEffect 내 hoisted되어 여기서 참조 가능.
+    const linkSubscription = Linking.addEventListener('url', (event) => {
+      const targetUrl = event.url;
+
+      const maybeExchange = isAuthCallbackUrl(targetUrl)
+        ? exchangeOnce(targetUrl)
+        : Promise.resolve();
+
+      maybeExchange
+        .then(() => handleDeepLink(targetUrl))
+        .catch((error) => {
+          captureError(error, { surface: 'bootstrap:deep-link' }).catch(
+            () => undefined,
+          );
+        });
+    });
 
     void bootstrap();
 
@@ -330,27 +389,6 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       },
     });
 
-    const linkSubscription = Linking.addEventListener('url', (event) => {
-      const targetUrl = event.url;
-
-      const maybeExchange = isAuthCallbackUrl(targetUrl)
-        ? exchangeAuthCodeFromUrl(targetUrl).catch((error) => {
-            captureError(error, { surface: 'bootstrap:auth-code-exchange' }).catch(
-              () => undefined,
-            );
-            return null;
-          })
-        : Promise.resolve(null);
-
-      maybeExchange
-        .then(() => handleDeepLink(targetUrl))
-        .catch((error) => {
-          captureError(error, { surface: 'bootstrap:deep-link' }).catch(
-            () => undefined,
-          );
-        });
-    });
-
     return () => {
       mounted = false;
       authSubscription?.unsubscribe();
@@ -424,6 +462,7 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       onboardingProgress,
       pendingChatFortuneType,
       pendingMySajuContext,
+      cachedCharacterConversations,
       markGuestBrowse,
       markAuthComplete,
       updateOnboardingProgress,
@@ -433,6 +472,7 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       consumePendingMySajuContext,
     }),
     [
+      cachedCharacterConversations,
       completeOnboarding,
       consumePendingChatFortuneType,
       consumePendingMySajuContext,
