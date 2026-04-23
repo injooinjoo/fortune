@@ -793,8 +793,17 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
         });
       });
 
+      // Lazy StoreKit init — cold-start 시 initConnection / fetchStoreProducts
+      // 호출하면 iOS 가 App Store (실제 계정) 또는 Sandbox Apple ID 재인증을
+      // 요구해 "Sign in to Apple Account" prompt 가 반복 노출된다. 앱 부팅 경로
+      // 에서는 이 연결을 열지 않고, 프리미엄 화면이 열릴 때 `refreshStoreProducts`
+      // 가 호출되는 시점에 처음 연결을 연다.
+      //
+      // Listener 2개는 여기서 먼저 부착한다. 이전 세션에서 pending 이던 트랜잭션이
+      // iOS StoreKit 내부에서 emit 될 수 있어, 누락 방지 위해 조기 등록.
+      // shouldEndConnection 은 여전히 true — refreshStoreProducts 가 호출되어
+      // 연결이 열린 후 provider 가 unmount 되면 cleanup 이 endConnection 호출.
       shouldEndConnection = true;
-      void refreshStoreProducts();
     } catch (error) {
       setStoreStatus('error');
       setIsStoreRuntimeAvailable(false);
