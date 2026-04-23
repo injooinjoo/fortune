@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { Pressable, Switch, View } from "react-native";
+import { Alert, Pressable, Switch, View } from "react-native";
 
 import { AppText } from "../components/app-text";
 import { Card } from "../components/card";
@@ -8,6 +8,7 @@ import { PrimaryButton } from "../components/primary-button";
 import { RouteBackHeader } from "../components/route-back-header";
 import { Screen } from "../components/screen";
 import { formSubmit, toggleSelect } from "../lib/haptics";
+import { registerPushTokenForSignedInUser } from "../lib/push-notifications";
 import { fortuneTheme } from "../lib/theme";
 import { useAppBootstrap } from "../providers/app-bootstrap-provider";
 import { useMobileAppState } from "../providers/mobile-app-state-provider";
@@ -109,6 +110,25 @@ export function ProfileNotificationsScreen() {
   ]);
 
   async function handleSave() {
+    // W9 완성형: push 토글이 ON 이면 실제 iOS 알림 권한 요청 + 푸시 토큰을
+    // Supabase에 등록해야 푸시가 실제로 동작함. 이전 구현은 저장만 했고
+    // OS 권한이 OFF 상태면 토큰이 영영 등록되지 않았다.
+    if (preferences.push) {
+      const result = await registerPushTokenForSignedInUser({
+        promptIfNotGranted: true,
+      });
+      if ('skipped' in result && result.reason === 'permission denied') {
+        // 사용자가 iOS 권한 시트에서 거부한 경우: 설정에서 수동으로 켜도록 안내
+        // 하고 앱 내 prefs 는 OFF 로 되돌려 UI와 실제 동작을 일치시킨다.
+        Alert.alert(
+          '알림 권한이 꺼져 있어요',
+          '설정 → 온도 → 알림에서 허용하시면 매일 인사이트 알림을 받을 수 있어요.',
+        );
+        setPreferences((current) => ({ ...current, push: false }));
+        await saveNotifications({ ...preferences, push: false });
+        return;
+      }
+    }
     await saveNotifications(preferences);
   }
 

@@ -37,6 +37,29 @@ const stage = (p: number, from: number, to: number) =>
 
 const AMBER = '#E0A76B';
 
+/**
+ * Fortune 유형별 domain-specific disclaimer 폴백. 서버가 응답에 `disclaimer`
+ * 필드를 생략했을 때도 클라이언트에서 보장 노출 — 5.1.2 (의료), 금융/법률
+ * 오역 가능성 있는 카테고리에 대해 최소한의 면책 확보.
+ *
+ * data.disclaimer 가 비어있을 때만 fallback 사용. 서버가 더 맥락 맞는 문구를
+ * 내려주면 그대로 우선.
+ */
+const DOMAIN_DISCLAIMER_FALLBACKS: Partial<Record<string, string>> = {
+  health:
+    '본 건강 조언은 참고·오락 목적입니다. 의학적 진단·치료·예측이 아니며 증상이 지속되면 의료 전문가와 상담하세요.',
+  biorhythm:
+    '본 바이오리듬 분석은 참고·오락 목적이며, 의학적 조언이 아닙니다.',
+  wealth:
+    '본 재물/투자 콘텐츠는 참고·오락 목적이며, 투자 자문이나 수익 보장 정보가 아닙니다.',
+  investment:
+    '본 투자 해석은 참고·오락 목적이며, 금융 자문이 아닙니다. 투자 결정은 본인 판단으로 하세요.',
+  lotto:
+    '본 로또 번호는 무작위 + 운세 기반 추천으로, 당첨을 보장하지 않습니다.',
+  decision:
+    '본 결정 가이드는 참고·오락 목적이며, 법률/재정/의학 전문가의 자문을 대체하지 않습니다.',
+};
+
 export function ResultCardFrame({
   data,
   progress,
@@ -386,29 +409,38 @@ export function ResultCardFrame({
         오락 목적의 AI 생성 콘텐츠입니다
       </Text>
 
-      {/* Domain-specific disclaimer (예: health 카드의 의료 면책) — 서버가
-          `data.disclaimer` 필드에 문구를 실어주는 경우에만 노출. 강조를 위해
-          공통 고지 아래에 테두리를 둔 블록으로 렌더. */}
-      {data.disclaimer ? (
-        <Text
-          style={{
-            textAlign: 'center',
-            marginTop: 8,
-            marginHorizontal: 6,
-            paddingVertical: 8,
-            paddingHorizontal: 10,
-            borderRadius: 10,
-            borderWidth: 1,
-            borderColor: fortuneTheme.colors.border,
-            backgroundColor: 'rgba(224,167,107,0.06)',
-            fontSize: 10,
-            lineHeight: 15,
-            color: fortuneTheme.colors.textSecondary,
-          }}
-        >
-          {data.disclaimer}
-        </Text>
-      ) : null}
+      {/* Domain-specific disclaimer (예: health 카드의 의료 면책).
+          우선순위: 서버 `data.disclaimer` → fortuneType 기반 클라 폴백.
+          fortuneType 이 health/wealth/investment/lotto/decision 등 오역
+          리스크 카테고리라면 서버가 생략해도 강제 노출하여 5.1.2 등 리젝
+          리스크 차단. */}
+      {(() => {
+        const text =
+          data.disclaimer ??
+          DOMAIN_DISCLAIMER_FALLBACKS[data.fortuneType] ??
+          null;
+        if (!text) return null;
+        return (
+          <Text
+            style={{
+              textAlign: 'center',
+              marginTop: 8,
+              marginHorizontal: 6,
+              paddingVertical: 8,
+              paddingHorizontal: 10,
+              borderRadius: 10,
+              borderWidth: 1,
+              borderColor: fortuneTheme.colors.border,
+              backgroundColor: 'rgba(224,167,107,0.06)',
+              fontSize: 10,
+              lineHeight: 15,
+              color: fortuneTheme.colors.textSecondary,
+            }}
+          >
+            {text}
+          </Text>
+        );
+      })()}
 
       {/* Shimmer sweep */}
       <Animated.View

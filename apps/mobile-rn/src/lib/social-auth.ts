@@ -3,7 +3,18 @@ import * as Crypto from 'expo-crypto';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 import { type Provider } from '@supabase/supabase-js';
-import { Platform } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
+
+// React Native 의 Platform 객체에는 iOS/Android 이외 하위 구분을 공식 제공하지
+// 않는다. `(Platform as any).isPad` 는 undefined 라 이전 P7-B1 fix 가 iPad
+// 경로에서 활성화되지 않았음. 화면 최단축 768pt 이상이면 iPad 로 간주.
+// (expo-device 의 `Device.deviceType === TABLET` 이 더 정확하지만 이미
+// 플러그인 사용 중이고 import 순환 방지 위해 Dimensions 로 충분.)
+function isIpad(): boolean {
+  if (Platform.OS !== 'ios') return false;
+  const { width, height } = Dimensions.get('window');
+  return Math.min(width, height) >= 768;
+}
 
 import { deepLinkConfig } from '@fortune/product-contracts';
 
@@ -74,9 +85,7 @@ async function startAppleNativeAuth(
         AppleAuthentication.AppleAuthenticationScope.EMAIL,
         AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
       ],
-      ...(((Platform as { isPad?: boolean }).isPad ?? false)
-        ? { state: 'apple-auth' }
-        : {}),
+      ...(isIpad() ? { state: 'apple-auth' } : {}),
     });
 
     if (!credential.identityToken) {
@@ -171,7 +180,7 @@ async function completeInAppAuthSession(
       redirectTo,
       {
         preferEphemeralSession: true,
-        ...(((Platform as { isPad?: boolean }).isPad ?? false)
+        ...(isIpad()
           ? { presentationStyle: WebBrowser.WebBrowserPresentationStyle.FULL_SCREEN }
           : {}),
       },
