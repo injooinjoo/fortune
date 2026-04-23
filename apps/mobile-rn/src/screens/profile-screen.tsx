@@ -1,7 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
-import Constants from 'expo-constants';
 import * as Updates from 'expo-updates';
 import { router, useFocusEffect } from 'expo-router';
 import { Alert, Linking, Platform, Pressable, View } from 'react-native';
@@ -11,6 +10,11 @@ import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { PrimaryButton } from '../components/primary-button';
 import { Screen } from '../components/screen';
+import {
+  APP_VERSION,
+  RUNTIME_VERSION,
+  formatBuildBadge,
+} from '../lib/build-identity';
 import { captureError } from '../lib/error-reporting';
 import { deleteSecureItem } from '../lib/secure-store-storage';
 import { supabase } from '../lib/supabase';
@@ -27,23 +31,6 @@ import {
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
 
 const DISCLAIMER_STORAGE_KEY = 'fortune.disclaimer-accepted.v1';
-
-const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
-const RUNTIME_VERSION =
-  typeof Updates.runtimeVersion === 'string' ? Updates.runtimeVersion : null;
-const UPDATE_CHANNEL =
-  typeof Updates.channel === 'string' && Updates.channel.length > 0
-    ? Updates.channel
-    : null;
-const UPDATE_ID =
-  typeof Updates.updateId === 'string' && Updates.updateId.length > 0
-    ? Updates.updateId.slice(0, 8)
-    : null;
-const UPDATE_CREATED_AT =
-  Updates.createdAt instanceof Date
-    ? `${Updates.createdAt.getFullYear()}-${String(Updates.createdAt.getMonth() + 1).padStart(2, '0')}-${String(Updates.createdAt.getDate()).padStart(2, '0')}`
-    : null;
-const IS_EMBEDDED_LAUNCH = Updates.isEmbeddedLaunch === true;
 
 function formatBytesLabel(bytes: number): string {
   if (bytes <= 0) return '';
@@ -64,19 +51,6 @@ const TIER_LABEL: Record<DeviceTier, string> = {
   ultra: '경량',
   off: '미지원',
 };
-
-function formatBuildBadge(): string {
-  if (IS_EMBEDDED_LAUNCH) {
-    return UPDATE_CHANNEL
-      ? `embedded · ${UPDATE_CHANNEL}`
-      : '개발 빌드 (embedded)';
-  }
-  const parts: string[] = [];
-  if (UPDATE_CHANNEL) parts.push(UPDATE_CHANNEL);
-  if (UPDATE_ID) parts.push(`#${UPDATE_ID}`);
-  if (UPDATE_CREATED_AT) parts.push(UPDATE_CREATED_AT);
-  return parts.length > 0 ? `OTA · ${parts.join(' · ')}` : 'OTA';
-}
 
 const ZODIAC_ANIMALS = ['쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양', '원숭이', '닭', '개', '돼지'];
 const ZODIAC_EMOJI = ['🐭', '🐄', '🐯', '🐰', '🐉', '🐍', '🐴', '🐑', '🐵', '🐓', '🐶', '🐷'];
@@ -441,6 +415,11 @@ export function ProfileScreen() {
           icon="notifications-outline"
           title="알림 설정"
           onPress={() => router.push('/profile/notifications')}
+        />
+        <IconMenuTile
+          icon="phone-portrait-outline"
+          title="Ondo 위젯 미리보기"
+          onPress={() => router.push('/widgets')}
           showDivider={false}
         />
       </Card>
@@ -725,7 +704,7 @@ export function ProfileScreen() {
         ) : null}
       </Card>
 
-      {/* 정보 */}
+      {/* 정보 / 법적 고지 */}
       <SectionLabel>정보</SectionLabel>
       <Card style={{ paddingHorizontal: 0, paddingVertical: 0, overflow: 'hidden' }}>
         <IconMenuTile
@@ -739,11 +718,25 @@ export function ProfileScreen() {
           onPress={() => router.push('/terms-of-service')}
         />
         <IconMenuTile
+          icon="shield-checkmark-outline"
+          title="사용자 라이선스 (EULA)"
+          onPress={() => router.push('/eula')}
+        />
+        <IconMenuTile
           icon="alert-circle-outline"
           title="면책 조항"
           onPress={() => router.push('/disclaimer')}
+        />
+        <IconMenuTile
+          icon="code-slash-outline"
+          title="오픈소스 라이선스"
+          onPress={() => router.push('/open-source-licenses')}
           showDivider={false}
         />
+        {/* 사업자 정보 는 전자상거래법 제13조 공시 의무로 접근 경로가 필요하되
+            개인 신상·주소가 상시 노출되는 건 부담스러워 화면 하단 version row
+            옆에 최소 크기 텍스트 링크로 이동. 법적 접근성은 유지되고 시각
+            우선순위는 낮춘다. */}
       </Card>
 
       {/* 로그인 / 계정 */}
@@ -814,7 +807,8 @@ export function ProfileScreen() {
         </Card>
       ) : null}
 
-      {/* Version / build identity — 테스트 중 어떤 빌드인지 판별용 */}
+      {/* Version / build identity — 테스트 중 어떤 빌드인지 판별용.
+          사업자 정보 는 법적 공시 의무 유지하되 최소 타이포로 배치. */}
       <View style={{ alignItems: 'center', gap: 2, marginTop: 4 }}>
         <AppText
           variant="caption"
@@ -832,6 +826,21 @@ export function ProfileScreen() {
         >
           {formatBuildBadge()}
         </AppText>
+        <Pressable
+          onPress={() => router.push('/business-info')}
+          hitSlop={8}
+          style={({ pressed }) => ({ opacity: pressed ? 0.6 : 0.55, marginTop: 2 })}
+          accessibilityRole="button"
+          accessibilityLabel="사업자 정보"
+        >
+          <AppText
+            variant="caption"
+            color={fortuneTheme.colors.textTertiary}
+            style={{ fontSize: 9, textDecorationLine: 'underline' }}
+          >
+            사업자 정보
+          </AppText>
+        </Pressable>
       </View>
     </Screen>
   );
