@@ -30,6 +30,8 @@ import { buildSuggestedActions, formatFortuneTypeLabel } from '../../lib/chat-sh
 import { resolveChatCharacterAvatarSource } from '../../lib/chat-character-avatar';
 import { confirmAction } from '../../lib/haptics';
 import { fortuneTheme, romanceTintBackground } from '../../lib/theme';
+
+import { MessageReportSheet } from './message-report-sheet';
 import { EmbeddedResultCard } from '../chat-results/embedded-result-card';
 import { FadeUpWords, StoryRevealMessage } from '../story-chat-animations';
 import { FortuneCookieCard } from '../fortune-cookie/fortune-cookie-card';
@@ -103,6 +105,9 @@ function HeaderActionButton({
       accessibilityRole="button"
       accessibilityLabel={label}
       onPress={onPress}
+      // Apple HIG 최소 44pt 터치 타겟. 시각 크기는 36×36 유지하고 hitSlop 4
+      // 으로 실 터치 영역을 44×44 로 확장. (W11 audit finding)
+      hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
       style={({ pressed }) => ({
         alignItems: 'center',
         backgroundColor: fortuneTheme.colors.surfaceSecondary,
@@ -773,56 +778,95 @@ function ChatThreadMessage({
     message.kind === 'my-saju-context';
   const isImage = message.kind === 'image';
 
+  // Apple 5.2.3 — assistant 텍스트 메시지 long-press로 신고 시트 오픈.
+  // text 이외 타입(결과 카드/서베이/사주 프리뷰 등)은 시스템-생성 혹은 위젯이라
+  // 신고 대상이 아님. 사용자 본인의 발화도 신고 불필요.
+  const reportable =
+    message.kind === 'text' &&
+    message.sender === 'assistant' &&
+    message.text?.trim().length > 0;
+  const [reportOpen, setReportOpen] = useState(false);
+
+  const bubble = (() => {
+    if (message.kind === 'embedded-result')
+      return <EmbeddedResultMessage message={message} />;
+    if (message.kind === 'story-reveal')
+      return <StoryRevealMessage message={message} characterId={character.id} />;
+    if (message.kind === 'fortune-cookie')
+      return (
+        <View style={{ width: '100%' }}>
+          <FortuneCookieCard />
+        </View>
+      );
+    if (message.kind === 'saju-preview')
+      return (
+        <View style={{ width: '100%' }}>
+          <SajuPreviewCard
+            data={message.sajuData as import('../../lib/saju-remote').SajuData}
+            userName={message.userName}
+          />
+        </View>
+      );
+    if (message.kind === 'my-saju-context')
+      return (
+        <View style={{ width: '100%' }}>
+          <MySajuContextCard message={message} />
+        </View>
+      );
+    if (isImage)
+      return (
+        <View style={{ gap: 4 }}>
+          <Image
+            source={{ uri: message.imageUrl }}
+            style={{
+              width: 200,
+              height: 200,
+              borderRadius: fortuneTheme.radius.card,
+            }}
+            resizeMode="cover"
+          />
+          {message.caption ? (
+            <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+              {message.caption}
+            </AppText>
+          ) : null}
+        </View>
+      );
+    return (
+      <MessageBubble
+        message={message}
+        useOracleVoice={isFortuneChatCharacter(character)}
+      />
+    );
+  })();
+
   return (
     <View style={{ width: '100%' }}>
-      <View
-        style={{
-          width: isFullWidth ? '100%' : undefined,
-        }}
-      >
-        {message.kind === 'embedded-result' ? (
-          <EmbeddedResultMessage message={message} />
-        ) : message.kind === 'story-reveal' ? (
-          <StoryRevealMessage message={message} characterId={character.id} />
-        ) : message.kind === 'fortune-cookie' ? (
-          <View style={{ width: '100%' }}>
-            <FortuneCookieCard />
-          </View>
-        ) : message.kind === 'saju-preview' ? (
-          <View style={{ width: '100%' }}>
-            <SajuPreviewCard
-              data={message.sajuData as import('../../lib/saju-remote').SajuData}
-              userName={message.userName}
-            />
-          </View>
-        ) : message.kind === 'my-saju-context' ? (
-          <View style={{ width: '100%' }}>
-            <MySajuContextCard message={message} />
-          </View>
-        ) : isImage ? (
-          <View style={{ gap: 4 }}>
-            <Image
-              source={{ uri: message.imageUrl }}
-              style={{
-                width: 200,
-                height: 200,
-                borderRadius: fortuneTheme.radius.card,
-              }}
-              resizeMode="cover"
-            />
-            {message.caption ? (
-              <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-                {message.caption}
-              </AppText>
-            ) : null}
-          </View>
+      <View style={{ width: isFullWidth ? '100%' : undefined }}>
+        {reportable ? (
+          <Pressable
+            onLongPress={() => setReportOpen(true)}
+            // delayLongPress 기본 500ms — 스크롤 오작동 최소화
+            android_ripple={null}
+            accessibilityRole="button"
+            accessibilityLabel="메시지 길게 눌러 신고"
+          >
+            {bubble}
+          </Pressable>
         ) : (
-          <MessageBubble
-            message={message}
-            useOracleVoice={isFortuneChatCharacter(character)}
-          />
+          bubble
         )}
       </View>
+
+      {reportable ? (
+        <MessageReportSheet
+          visible={reportOpen}
+          characterId={character.id}
+          messageText={(message as ChatShellTextMessage).text}
+          messageId={(message as { id?: string }).id ?? null}
+          onClose={() => setReportOpen(false)}
+        />
+      ) : null}
     </View>
   );
 }
@@ -1151,6 +1195,8 @@ export function ActiveChatComposer({
   auxiliaryAction,
   sendDisabled = false,
   hasCustomPersona = false,
+  pendingImageUri,
+  onRemovePendingImage,
 }: {
   draft: string;
   onDraftChange: (value: string) => void;
@@ -1169,8 +1215,13 @@ export function ActiveChatComposer({
   };
   sendDisabled?: boolean;
   hasCustomPersona?: boolean;
+  pendingImageUri?: string;
+  onRemovePendingImage?: () => void;
 }) {
   const composerHasDraft = draft.trim().length > 0;
+  const hasPendingImage = Boolean(pendingImageUri);
+  // 텍스트가 비어도 이미지가 첨부돼 있으면 전송 버튼이 활성화된다.
+  const canSend = composerHasDraft || hasPendingImage;
   const safeQuickActions = Array.isArray(quickActions) ? quickActions : [];
   const trayActions = safeQuickActions.slice(0, 12);
   const voiceRecording = voiceInputState === 'recording';
@@ -1341,6 +1392,57 @@ export function ActiveChatComposer({
           </View>
         </View>
       ) : null}
+      {hasPendingImage && pendingImageUri ? (
+        <View
+          style={{
+            paddingBottom: 8,
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+          }}
+        >
+          <View
+            style={{
+              position: 'relative',
+            }}
+          >
+            <Image
+              source={{ uri: pendingImageUri }}
+              style={{
+                width: 72,
+                height: 72,
+                borderRadius: 12,
+                backgroundColor: fortuneTheme.colors.surfaceElevated,
+              }}
+            />
+            <Pressable
+              accessibilityLabel="첨부 사진 취소"
+              accessibilityRole="button"
+              onPress={onRemovePendingImage}
+              hitSlop={8}
+              style={({ pressed }) => ({
+                position: 'absolute',
+                top: -6,
+                right: -6,
+                width: 22,
+                height: 22,
+                borderRadius: 11,
+                backgroundColor: 'rgba(20, 20, 26, 0.92)',
+                borderWidth: 1,
+                borderColor: fortuneTheme.colors.border,
+                alignItems: 'center',
+                justifyContent: 'center',
+                opacity: pressed ? 0.7 : 1,
+              })}
+            >
+              <Ionicons
+                color={fortuneTheme.colors.textPrimary}
+                name="close"
+                size={14}
+              />
+            </Pressable>
+          </View>
+        </View>
+      ) : null}
       <View
         style={{
           alignItems: 'center',
@@ -1352,6 +1454,8 @@ export function ActiveChatComposer({
           accessibilityLabel="composer plus actions"
           accessibilityRole="button"
           onPress={onToggleTray}
+          // HIG 최소 44pt 터치. 시각 32×32 유지 + hitSlop 6. (W11)
+          hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
           style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
         >
           <View
@@ -1414,7 +1518,7 @@ export function ActiveChatComposer({
         </View>
         <Pressable
           accessibilityLabel={
-            composerHasDraft && !voiceActive
+            canSend && !voiceActive
               ? 'send message'
               : voiceRecording
                 ? '녹음 중지'
@@ -1428,13 +1532,15 @@ export function ActiveChatComposer({
           onPress={
             sendDisabled && !voiceActive
               ? undefined
-              : composerHasDraft && !voiceActive
+              : canSend && !voiceActive
                 ? onSend
                 : onToggleVoiceInput
           }
+          // HIG 최소 44pt 터치. 시각 32×32 유지 + hitSlop 6. (W11)
+          hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
           style={{
             alignItems: 'center',
-            backgroundColor: composerHasDraft && !voiceActive
+            backgroundColor: canSend && !voiceActive
               ? sendDisabled
                 ? fortuneTheme.colors.surfaceElevated
                 : fortuneTheme.colors.ctaBackground
@@ -1445,11 +1551,11 @@ export function ActiveChatComposer({
             height: 32,
             justifyContent: 'center',
             minWidth: 32,
-            paddingHorizontal: composerHasDraft && !voiceActive ? 10 : 0,
+            paddingHorizontal: canSend && !voiceActive ? 10 : 0,
             opacity: sendDisabled && !voiceActive ? 0.72 : 1,
           }}
         >
-          {composerHasDraft && !voiceActive ? (
+          {canSend && !voiceActive ? (
             <AppText
               variant="labelLarge"
               color={
@@ -1763,6 +1869,28 @@ function SurveyImagePicker({
 
   return (
     <View style={{ gap: fortuneTheme.spacing.sm }}>
+      {/* 개인정보 처리 사전 고지 — 카메라/갤러리 권한 요청 전에 보이도록. (W14) */}
+      <View
+        style={{
+          borderRadius: fortuneTheme.radius.md,
+          borderWidth: 1,
+          borderColor: fortuneTheme.colors.border,
+          backgroundColor: 'rgba(224,167,107,0.06)',
+          paddingVertical: 8,
+          paddingHorizontal: 12,
+        }}
+      >
+        <AppText
+          variant="bodySmall"
+          color={fortuneTheme.colors.textSecondary}
+          style={{ lineHeight: 18 }}
+        >
+          선택한 사진은 관상 분석을 위해 안전한 서버로 전송되며, 응답 생성 후
+          서버에 저장되지 않아요. 타인의 사진을 본인 동의 없이 업로드하지 말아
+          주세요.
+        </AppText>
+      </View>
+
       <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.sm }}>
         <View style={{ flex: 1 }}>
           <PrimaryButton

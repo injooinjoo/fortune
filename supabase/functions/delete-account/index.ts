@@ -41,8 +41,49 @@ const DELETE_TARGETS: Array<{ table: string; column?: string }> = [
   { table: 'token_balance' },
   { table: 'subscriptions' },
   { table: 'user_statistics' },
+  // 채팅/대화 상태 (CASCADE 는 이미 걸려 있지만 audit-row count 확보 위해 명시)
+  { table: 'chat_conversations' },
+  { table: 'character_conversations' },
+  // 푸시 토큰 + 알림 설정 (W12)
+  { table: 'fcm_tokens' },
+  { table: 'user_notification_preferences' },
+  // LLM usage logs — user_id FK 없음, CASCADE 의존 불가. 명시 삭제 필수 (W12).
+  { table: 'llm_usage_logs' },
+  // UGC moderation 데이터 — 사용자가 신고한 내역 + 차단한 캐릭터는
+  // 본인 데이터이므로 계정 삭제 시 함께 제거 (5.1.1(v) + GDPR 삭제권).
+  { table: 'message_reports', column: 'reporter_id' },
+  { table: 'character_blocks' },
   { table: 'user_profiles', column: 'id' },
 ]
+
+// Storage 버킷에서 사용자 개인정보(프로필 이미지) 일괄 purge.
+// `profile-images` 버킷은 public 이며 경로 prefix 가 `<userId>/`.
+// supabase.storage API 로 userId 로 시작하는 객체 목록 수집 후 remove. (W8)
+async function purgeUserStorage(
+  supabase: ReturnType<typeof createClient>,
+  userId: string,
+): Promise<{ bucket: string; removed: number; error?: string }> {
+  const bucket = 'profile-images'
+  try {
+    const { data: listed, error: listError } = await supabase.storage
+      .from(bucket)
+      .list(userId, { limit: 1000 })
+    if (listError) {
+      return { bucket, removed: 0, error: listError.message }
+    }
+    if (!listed || listed.length === 0) {
+      return { bucket, removed: 0 }
+    }
+    const paths = listed.map((f) => `${userId}/${f.name}`)
+    const { error: removeError } = await supabase.storage.from(bucket).remove(paths)
+    if (removeError) {
+      return { bucket, removed: 0, error: removeError.message }
+    }
+    return { bucket, removed: paths.length }
+  } catch (e) {
+    return { bucket, removed: 0, error: e instanceof Error ? e.message : String(e) }
+  }
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -122,6 +163,29 @@ serve(async (req) => {
         },
       )
     }
+
+    // Storage 버킷 purge — 테이블 삭제와 동일하게 실패 시 auth.users 삭제를
+    // 중단하고 재시도 가능하게 한다.
+    const storageResult = await purgeUserStorage(supabase, userId)
+    if (storageResult.error) {
+      console.error(
+        `[delete-account] HARD_FAIL storage/${storageResult.bucket}: ${storageResult.error}`,
+      )
+      return new Response(
+        JSON.stringify({
+          error: 'Some user storage could not be purged. Please retry shortly.',
+          failedStorage: storageResult.bucket,
+          audit,
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        },
+      )
+    }
+    console.log(
+      `[delete-account] purged ${storageResult.removed} from storage/${storageResult.bucket}`,
+    )
 
     const { error: deleteAuthError } = await supabase.auth.admin.deleteUser(userId)
     if (deleteAuthError) {

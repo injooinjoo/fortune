@@ -23,6 +23,11 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { LLMFactory } from "../_shared/llm/factory.ts";
+import {
+  MODEL_OUTPUT_BLOCK_FALLBACK_RESPONSE,
+  moderateText,
+  SAFETY_BLOCK_FALLBACK_RESPONSE,
+} from "../_shared/moderation.ts";
 import type { LLMResponse } from "../_shared/llm/types.ts";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -1955,6 +1960,39 @@ serve(async (req: Request) => {
       }
     }
 
+    // [5.2.3 Moderation] 사용자 입력 선필터 — LLM 호출 전에 fail-open으로
+    // OpenAI moderation 호출. flagged 시 즉시 safe 응답으로 short-circuit.
+    const userModeration = await moderateText({
+      text: userMessage,
+      userId,
+      characterId,
+      source: "user_input",
+    });
+    if (userModeration.flagged) {
+      const fallbackSegments = [SAFETY_BLOCK_FALLBACK_RESPONSE];
+      return new Response(
+        JSON.stringify({
+          success: true,
+          response: SAFETY_BLOCK_FALLBACK_RESPONSE,
+          segments: fallbackSegments,
+          emotionTag: "neutral",
+          delaySec: 1,
+          affinityDelta: { points: -3, reason: "safety_blocked", quality: "negative" },
+          romanceStatePatch: null,
+          followUpHint: null,
+          meta: {
+            provider: "moderation",
+            model: "omni-moderation-latest",
+            latencyMs: 0,
+            fallbackUsed: true,
+            safetyBlocked: true,
+            safetyReason: userModeration.reason ?? null,
+          },
+        } as CharacterChatResponse),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
     // 인증 사용자는 DB 기반 관계/메모리 컨텍스트 우선
     if (userId && supabase) {
       try {
@@ -2214,6 +2252,19 @@ serve(async (req: Request) => {
     const { cleanedText: textWithoutAffinity, affinityDelta } =
       extractAffinityDelta(llmResponse.content.trim());
     let responseText = removeOocBlock(textWithoutAffinity);
+
+    // [5.2.3 Moderation] 모델 응답 후필터. flagged 시 textual payload를 safe
+    // fallback 으로 교체. affinityDelta/segments 등 구조는 유지해 클라이언트
+    // 파이프라인이 안전 메시지로 그대로 흐르도록 함.
+    const outputModeration = await moderateText({
+      text: responseText,
+      userId,
+      characterId,
+      source: "model_output",
+    });
+    if (outputModeration.flagged) {
+      responseText = MODEL_OUTPUT_BLOCK_FALLBACK_RESPONSE;
+    }
     responseText = validateEmojiUsage(
       responseText,
       emojiFrequency,

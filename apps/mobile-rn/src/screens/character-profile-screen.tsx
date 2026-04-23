@@ -1,4 +1,4 @@
-import { Image, View } from 'react-native';
+import { Alert, Image, View } from 'react-native';
 
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 
@@ -11,6 +11,7 @@ import {
   RouteBackHeader,
 } from '../components/route-back-header';
 import { Screen } from '../components/screen';
+import { blockCharacter } from '../lib/character-blocks';
 import { resolveChatCharacterAvatarSource } from '../lib/chat-character-avatar';
 import { getCharacterDetail } from '../lib/character-details';
 import { findChatCharacterById, isFortuneChatCharacter } from '../lib/chat-characters';
@@ -289,6 +290,55 @@ export function CharacterProfileScreen() {
               />
             ))}
           </View>
+        </Card>
+      ) : null}
+
+      {/* -----------------------------------------------------------------
+          Safety: 캐릭터 차단 (Apple 5.2.3 — 사용자 제어권 보장).
+          차단 시 채팅/리스트에서 즉시 숨김. 설정에서 해제 가능.
+          Fortune 캐릭터(운세 모듈) 는 시스템 기본 제공이라 차단 숨김 처리
+          하지 않고 일반 페르소나만 노출.
+          ----------------------------------------------------------------- */}
+      {!isFortune ? (
+        <Card>
+          <AppText variant="heading4">안전 도구</AppText>
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            불편한 대화가 이어진다면 이 캐릭터를 차단할 수 있어요. 차단된 캐릭터는
+            채팅 목록에서 숨겨지고, 대화가 더 이상 나타나지 않아요.
+          </AppText>
+          <PrimaryButton
+            tone="secondary"
+            onPress={() => {
+              Alert.alert(
+                `${character.name ?? '이 캐릭터'} 차단`,
+                '차단하면 채팅 목록과 대화에서 숨겨져요. 나중에 설정에서 다시 해제할 수 있어요.',
+                [
+                  { text: '취소', style: 'cancel' },
+                  {
+                    text: '차단하기',
+                    style: 'destructive',
+                    onPress: async () => {
+                      try {
+                        await blockCharacter(character.id);
+                        Alert.alert(
+                          '차단됨',
+                          '채팅 목록에서 숨겨졌어요.',
+                          [{ text: '확인', onPress: () => router.replace('/chat') }],
+                        );
+                      } catch {
+                        Alert.alert(
+                          '차단 실패',
+                          '일시적 오류로 차단하지 못했어요. 잠시 후 다시 시도해 주세요.',
+                        );
+                      }
+                    },
+                  },
+                ],
+              );
+            }}
+          >
+            이 캐릭터 차단하기
+          </PrimaryButton>
         </Card>
       ) : null}
     </Screen>

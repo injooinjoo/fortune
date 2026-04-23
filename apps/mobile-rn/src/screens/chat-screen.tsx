@@ -91,6 +91,7 @@ import {
 } from '../lib/chat-provider';
 import { onDeviceLLMEngine } from '../lib/on-device-llm';
 import { setAppIconBadgeCount } from '../lib/push-notifications';
+import { useBlockedCharacterIds } from '../lib/character-blocks';
 import { isStoryRomancePilotCharacterId } from '../lib/story-romance-pilots';
 import {
   consumeRemoteTokens,
@@ -162,12 +163,58 @@ function randomInRange(minMs: number, maxMs: number): number {
   return minMs + Math.floor(Math.random() * Math.max(1, maxMs - minMs + 1));
 }
 
+/**
+ * 두 메시지 리스트가 id 기준으로 같은지 얕은 비교. hydrate 결과가 캐시와
+ * 동일할 때 불필요한 re-render(= old→new 플래시)를 막기 위해 사용.
+ */
+function isSameMessageList(
+  a: ChatShellMessage[] | undefined,
+  b: ChatShellMessage[] | undefined,
+): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i]?.id !== b[i]?.id) return false;
+  }
+  return true;
+}
+
+/**
+ * 원격 hydrate 결과를 로컬 state에 적용할지 판단.
+ *
+ * 핵심 원칙: **원격이 더 짧으면 덮어쓰지 않는다**.
+ *   → 유저가 방금 보낸 메시지가 remote save 전파되기 전에 focus 재하이드레이션이
+ *     트리거되면 remote는 "이전 상태"를 반환한다. 이를 그대로 set하면 방금 보낸
+ *     메시지가 사라진다. 즉 truncate race를 방지.
+ *
+ * 규칙:
+ *   - 로컬 없음 → 원격 적용
+ *   - 원격 비어있음 → 로컬 유지
+ *   - 원격이 로컬보다 짧음 → 로컬 유지 (in-flight 로컬 쓰기 보존)
+ *   - 길이 같음 → 마지막 메시지 id 다르면 원격 적용 (server authority)
+ *   - 원격이 길면 적용 (서버가 proactive message 등 추가)
+ */
+function shouldAcceptRemoteMessages(
+  local: ChatShellMessage[] | undefined,
+  remote: ChatShellMessage[],
+): boolean {
+  if (!local || local.length === 0) return remote.length > 0;
+  if (remote.length === 0) return false;
+  if (remote.length < local.length) return false;
+  if (remote.length === local.length) {
+    return local[local.length - 1]?.id !== remote[remote.length - 1]?.id;
+  }
+  return true;
+}
+
 export function ChatScreen() {
   const params = useLocalSearchParams<{ characterId?: string | string[]; showList?: string | string[] }>();
   const directCharacterId = readSearchParam(params.characterId);
   const forceListMode = readSearchParam(params.showList) === '1';
   const directCharacter = findChatCharacterById(directCharacterId);
   const {
+    cachedCharacterConversations,
     completeOnboarding,
     consumePendingChatFortuneType,
     consumePendingMySajuContext,
@@ -200,6 +247,11 @@ export function ChatScreen() {
   );
   const [lastAutoLaunchKey, setLastAutoLaunchKey] = useState<string | null>(null);
   const [composerTrayOpen, setComposerTrayOpen] = useState(false);
+  // 사진 첨부 미리보기 — 사용자가 "보내기"를 누를 때까지 대기. 캐릭터별로 관리.
+  // 값이 있으면 composer 상단에 썸네일이 보이고 X로 취소 가능.
+  const [pendingImageByCharacterId, setPendingImageByCharacterId] = useState<
+    Record<string, { uri: string; base64?: string; mimeType?: string }>
+  >({});
   const [personaModalOpen, setPersonaModalOpen] = useState(false);
   const [personaDraft, setPersonaDraft] = useState('');
   const [personaByCharacterId, setPersonaByCharacterId] = useState<
@@ -229,13 +281,21 @@ export function ChatScreen() {
         ? 'chat'
         : 'list',
   );
+  // 초기값 우선순위:
+  //   1) bootstrap이 SecureStore에서 preload한 "마지막으로 본 상태" (가장 최신)
+  //   2) 로컬 story snapshot (romance pilot 캐릭터)
+  //   3) 하드코딩 인트로 — 대화 한 번도 없는 신규 캐릭터만 해당
+  // 이 순서를 지켜야 앱 재진입 시 "old → new 플래시"가 사라진다.
   const [messagesByCharacterId, setMessagesByCharacterId] = useState<
     Record<string, ChatShellMessage[]>
   >(() =>
     Object.fromEntries(
       chatCharacters.map((character) => {
+        const cached = cachedCharacterConversations[character.id];
+        if (cached && cached.length > 0) {
+          return [character.id, cached];
+        }
         const storySnapshot = buildStoryThreadSnapshot(character);
-
         return [
           character.id,
           storySnapshot?.messages ?? buildInitialThread(character),
@@ -409,10 +469,16 @@ export function ChatScreen() {
             return;
           }
 
-          setMessagesByCharacterId((current) => ({
-            ...current,
-            [characterId]: snapshot.messages,
-          }));
+          setMessagesByCharacterId((current) => {
+            const cur = current[characterId];
+            if (!shouldAcceptRemoteMessages(cur, snapshot.messages)) {
+              return current;
+            }
+            if (isSameMessageList(cur, snapshot.messages)) {
+              return current;
+            }
+            return { ...current, [characterId]: snapshot.messages };
+          });
           setStoryThreadSnapshotsByCharacterId((current) => ({
             ...current,
             [characterId]: snapshot,
@@ -427,10 +493,16 @@ export function ChatScreen() {
           return;
         }
 
-        setMessagesByCharacterId((current) => ({
-          ...current,
-          [characterId]: messages,
-        }));
+        setMessagesByCharacterId((current) => {
+          const cur = current[characterId];
+          if (!shouldAcceptRemoteMessages(cur, messages)) {
+            return current;
+          }
+          if (isSameMessageList(cur, messages)) {
+            return current;
+          }
+          return { ...current, [characterId]: messages };
+        });
       } catch (error) {
         // Remove from set so it can be retried
         hydratedCharacterIdsRef.current.delete(characterId);
@@ -847,7 +919,10 @@ export function ChatScreen() {
 
   useEffect(() => {
     refreshPresenceLine();
-    const interval = setInterval(refreshPresenceLine, 30_000);
+    // 30초 → 5분. 30초 주기는 대화 중 헤더 라인이 계속 바뀌어서 유저가
+    // "실제 메시지가 사라진다" 고 오인하는 혼란의 주원인이었다. presence 는
+    // 어차피 "지금 뭐해" 정도의 ambient 라벨이라 5분 정도는 안정적.
+    const interval = setInterval(refreshPresenceLine, 300_000);
     return () => {
       clearInterval(interval);
     };
@@ -959,7 +1034,16 @@ export function ChatScreen() {
         : [],
     [selectedCharacter],
   );
-  const firstRunCharacters = tabCharacters;
+  // Apple 5.2.3 — 사용자가 차단한 캐릭터는 리스트에서 숨긴다. 운세 캐릭터는
+  // 시스템 기본 제공이라 차단 대상 아님 → 필터 영향 없음.
+  const blockedCharacterIds = useBlockedCharacterIds();
+  const firstRunCharacters = useMemo(
+    () =>
+      blockedCharacterIds.size === 0
+        ? tabCharacters
+        : tabCharacters.filter((c) => !blockedCharacterIds.has(c.id)),
+    [tabCharacters, blockedCharacterIds],
+  );
 
   const characterListMetaById = useMemo(() => {
     const result: Record<string, CharacterListRowMeta> = {};
@@ -1421,35 +1505,26 @@ export function ChatScreen() {
     }
 
     const asset = result.assets[0];
-    const imageMessage = buildUserImageMessage(asset.uri);
-    appendMessages(selectedCharacter, [imageMessage]);
+    // 즉시 전송하지 않고 composer 미리보기에 적재. 유저가 캡션을 쓰고 "보내기"를
+    // 눌렀을 때 handleSendDraft 에서 실제 전송이 일어난다. X 누르면 취소.
+    setPendingImageByCharacterId((current) => ({
+      ...current,
+      [selectedCharacter.id]: {
+        uri: asset.uri,
+        base64: asset.base64 ?? undefined,
+        mimeType: asset.mimeType ?? undefined,
+      },
+    }));
     setSurfaceMode('chat');
+  }
 
-    recordChatIntent({
-      characterId: selectedCharacter.id,
-      fortuneType: activeFortuneType,
-      incrementMessages: true,
-    }).catch((error) => {
-      captureError(error, { surface: 'chat:record-photo-send' }).catch(
-        () => undefined,
-      );
+  function handleClearPendingImage() {
+    setPendingImageByCharacterId((current) => {
+      if (!(selectedCharacter.id in current)) return current;
+      const next = { ...current };
+      delete next[selectedCharacter.id];
+      return next;
     });
-
-    // 멀티모달 스토리 파일럿이면 사진을 즉시 AI 에 전달.
-    // 온디바이스 ready + multimodalReady 면 Gemma 4 E2B 가 로컬에서 분석,
-    // 아니면 cloud 로 폴백 (이미지 드롭 + 텍스트만).
-    if (
-      asset.base64 &&
-      isStoryRomancePilotCharacterId(selectedCharacter.id)
-    ) {
-      const caption = draft.trim() || '이 사진 어때?';
-      if (draft.trim().length > 0) {
-        setDraft('');
-      }
-      void sendStoryPilotMessage(selectedCharacter, caption, {
-        imageBase64: `data:${asset.mimeType ?? 'image/jpeg'};base64,${asset.base64}`,
-      });
-    }
   }
 
   function handleToggleVoiceInput() {
@@ -2304,6 +2379,46 @@ export function ChatScreen() {
 
   function handleSendDraft() {
     const trimmed = draft.trim();
+    const pendingImage = pendingImageByCharacterId[selectedCharacter.id];
+
+    // 이미지 첨부가 있으면 여기서 먼저 처리. 사진 + 캡션(있으면) 을 한 번에 보낸다.
+    // - 스토리 파일럿 캐릭터: 멀티모달 AI 경로로 imageBase64 전달
+    // - 그 외 캐릭터: thread 에 이미지 메시지만 추가 (AI 전달 없음, 기존 동작과 동일)
+    if (pendingImage) {
+      const imageMessage = buildUserImageMessage(
+        pendingImage.uri,
+        trimmed || undefined,
+      );
+      appendMessages(selectedCharacter, [imageMessage]);
+      setSurfaceMode('chat');
+      setComposerTrayOpen(false);
+      if (trimmed) setDraft('');
+      handleClearPendingImage();
+
+      recordChatIntent({
+        characterId: selectedCharacter.id,
+        fortuneType: activeFortuneType,
+        incrementMessages: true,
+      }).catch((error) => {
+        captureError(error, { surface: 'chat:record-photo-send' }).catch(
+          () => undefined,
+        );
+      });
+
+      if (
+        pendingImage.base64 &&
+        isStoryRomancePilotCharacterId(selectedCharacter.id)
+      ) {
+        const mimeType = pendingImage.mimeType ?? 'image/jpeg';
+        const dataUrl = pendingImage.base64.startsWith('data:')
+          ? pendingImage.base64
+          : `data:${mimeType};base64,${pendingImage.base64}`;
+        void sendStoryPilotMessage(selectedCharacter, trimmed, {
+          imageBase64: dataUrl,
+        });
+      }
+      return;
+    }
 
     // Clear input immediately — text is captured in `trimmed`.
     // Error handlers restore draft via setDraft(trimmed) if needed.
@@ -2415,11 +2530,27 @@ export function ChatScreen() {
       return;
     }
 
+    const step = currentSurveyStep.step;
     const answerLabel =
-      displayLabel ??
-      formatSurveyAnswerLabel(currentSurveyStep.step, answer);
+      displayLabel ?? formatSurveyAnswerLabel(step, answer);
 
-    appendMessages(selectedCharacter, [buildUserMessage(answerLabel)]);
+    // 이미지 스텝(관상 등): 썸네일이 보이도록 image 메시지로 전송.
+    // answer는 SurveyImagePicker에서 넘어온 raw base64. data URI로 감싸서 <Image source={{uri}}>에 바로 사용.
+    // 캡션은 기존 라벨("사진을 보냈어요")을 그대로 유지 — 시각+텍스트 둘 다 보이게.
+    if (
+      step.inputKind === 'image' &&
+      typeof answer === 'string' &&
+      answer.length > 0
+    ) {
+      const dataUri = answer.startsWith('data:')
+        ? answer
+        : `data:image/jpeg;base64,${answer}`;
+      appendMessages(selectedCharacter, [
+        buildUserImageMessage(dataUri, answerLabel),
+      ]);
+    } else {
+      appendMessages(selectedCharacter, [buildUserMessage(answerLabel)]);
+    }
 
     const { nextSurvey, completed } = applySurveyAnswer(activeSurvey, answer);
 
@@ -2697,6 +2828,10 @@ export function ChatScreen() {
               quickActions={selectedCharacterActions}
               trayOpen={composerTrayOpen}
               hasCustomPersona={Boolean(personaByCharacterId[selectedCharacter.id])}
+              pendingImageUri={
+                pendingImageByCharacterId[selectedCharacter.id]?.uri
+              }
+              onRemovePendingImage={handleClearPendingImage}
               auxiliaryAction={{
                 label: '프로필 보기',
                 onPress: () =>
