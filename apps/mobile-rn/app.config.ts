@@ -107,6 +107,11 @@ const config: ExpoConfig = {
   },
   ios: {
     supportsTablet: true,
+    // iPad multitasking(Split View/Slide Over)을 포기하는 대신 portrait 잠금
+    // 허용. Expo prebuild 기본값은 `supportsTablet: true` 시 iPad에 landscape
+    // 4방향을 강제하는데, `requireFullScreen: true` 로 multitasking 요구사항을
+    // 면제받아 portrait만 남길 수 있다. (W6 보완)
+    requireFullScreen: true,
     bundleIdentifier: 'com.beyond.fortune',
     usesAppleSignIn: true,
     infoPlist: {
