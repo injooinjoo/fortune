@@ -324,10 +324,11 @@ const config: ExpoConfig = {
   ],
   updates: {
     url: 'https://u.expo.dev/f7a724ea-b46e-494a-b83c-94e7a6fec02a',
-    // 시작 시 OTA 다운로드 대기 화면("Downloading X%...") 차단 방지.
-    // 캐시된 번들로 즉시 실행하고, 새 번들은 _layout.tsx useEffect 에서
-    // 백그라운드로 받아 다음 launch 또는 reloadAsync 로 적용.
-    checkAutomatically: 'NEVER',
+    // 네이티브가 매 실행 시 새 번들 체크. `fallbackToCacheTimeout: 0` 이라
+    // 다운로드 대기 없이 캐시된 번들로 즉시 실행되고, 새 번들은 백그라운드로
+    // 받아 다음 런치에 적용됨. `_layout.tsx` 의 수동 체크도 이중 안전장치로
+    // 계속 돌아감 (slow network 에 한해 한 번의 세션 내 reloadAsync).
+    checkAutomatically: 'ON_LOAD',
     fallbackToCacheTimeout: 0,
   },
   runtimeVersion: '1.0.9',

@@ -273,13 +273,7 @@ export function ChatScreen() {
     null,
   );
   const [surfaceMode, setSurfaceMode] = useState<SurfaceMode>(() =>
-    forceListMode
-      ? 'list'
-      : directCharacterId ||
-          mobileAppState.chat.sentMessageCount > 0 ||
-          mobileAppState.chat.selectedCharacterId
-        ? 'chat'
-        : 'list',
+    !forceListMode && directCharacterId ? 'chat' : 'list',
   );
   // 초기값 우선순위:
   //   1) bootstrap이 SecureStore에서 preload한 "마지막으로 본 상태" (가장 최신)
