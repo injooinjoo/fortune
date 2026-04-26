@@ -133,6 +133,14 @@ interface CharacterChatResponse {
   affinityDelta: AffinityDelta; // 호감도 변화량
   romanceStatePatch?: PilotRomanceStatePatch | null;
   followUpHint?: string | null;
+  /**
+   * REPLY_DELAY_ENABLED=true 일 때 set. 클라이언트가 setTimeout 으로 deliverAt
+   * 까지 타이핑 인디케이터 유지 → 만료 시 ack-scheduled-reply 호출.
+   * REPLY_DELAY_ENABLED=false (legacy) 면 undefined → 클라가 즉시 렌더.
+   */
+  scheduledId?: string;
+  /** ISO 8601. scheduledId 와 한 세트. */
+  deliverAt?: string;
   meta: {
     provider: string;
     model: string;
@@ -932,6 +940,9 @@ interface PilotPromptBuildInput {
   firstMeetPrompt?: string;
   memoryPrompt?: string;
   charName?: string;
+  // 첫 턴 감지용 — 시나리오 앵커 / openingDynamic 강제 반영에 사용.
+  conversationMode?: "first_meet_v1";
+  introTurn?: number;
 }
 
 function buildPilotAuthoritativePrompt(
@@ -969,13 +980,51 @@ function buildPilotAuthoritativePrompt(
   const currentPhase: PilotAffinitySnapshot["phase"] =
     input.affinityContext.phase || "stranger";
   const stageVoice = getPilotStageVoice(input.characterId, currentPhase) ?? "";
+  const isFirstTurn = input.conversationMode === "first_meet_v1" &&
+    (input.introTurn ?? 1) <= 1;
+  const firstTurnAnchorBlock = isFirstTurn
+    ? `
+
+[FIRST TURN ANCHOR — 이번 답장은 첫 인사다]
+반드시 다음 두 가지를 응답에 녹여라:
+1. **시나리오 앵커** — 위 corePremise 의 구체적 상황 단서 (직업/배경/관계 설정) 중 하나를 한마디로 스쳐 보여라.
+   예) ${input.persona.displayName === "러츠"
+      ? '"탐정 일 끝나고 왔어요." / "집에 돌아왔더니 불이 켜져 있네요."'
+      : input.persona.displayName === "정태윤"
+      ? '"...하필 오늘 본 얼굴이네요." / "법정에서 듣던 얘기보다 피곤한 하루예요."'
+      : input.persona.displayName === "서윤재"
+      ? '"어... 3회차 클리어 하신 분 맞죠?" / "그 대사 3년 전에 써둔 거예요."'
+      : input.persona.displayName === "한서준"
+      ? '"...방금 들은 거 잊어요." / "여기 왜 있어요. 강의실 비었는데."'
+      : input.persona.displayName === "강하린"
+      ? '"이미 일정 확인해뒀습니다." / "오늘 컨디션은 제가 먼저 압니다."'
+      : input.persona.displayName === "제이든"
+      ? '"...이 세계의 밤은 이렇게 생겼군요." / "당신 손이 따뜻해요, 처음 알았어요."'
+      : input.persona.displayName === "시엘"
+      ? '"이번에도 제가 먼저 기억하고 있었습니다, 주인님." / "찻물 준비해 두었습니다."'
+      : input.persona.displayName === "이도윤"
+      ? '"선배! 오늘 뭐 드셨어요?" / "아 저 오늘 선배한테 칭찬받을 일 했어요."'
+      : input.persona.displayName === "백현우"
+      ? '"오늘 심박수가 평소랑 다르네요." / "아까 3초 더 웃었어요."'
+      : input.persona.displayName === "민준혁"
+      ? '"오늘도 이 시간이네요." / "카페인 필요한 밤인지, 따뜻한 게 필요한 밤인지."'
+      : '(persona 시나리오의 구체 단서)'}
+2. **openingDynamic** 규칙 — 위 openingDynamic 에 적힌 톤/거리/리듬 을 정확히 반영.
+
+⚠️ 첫 턴에 "아, 네." / "안녕하세요." 같은 generic 인사만 내놓으면 실패. ${input.persona.displayName}만의 시나리오가 첫 마디에서 드러나야 한다.`
+    : "";
   const stageVoiceBlock = stageVoice
     ? `
 
 [현재 관계 단계 — ${currentPhase} — 반드시 이 voice로 말하라]
 ${stageVoice}
 
-⚠️ 위 단계별 voice는 persona 정체성 위에 덮어쓰는 행동 규칙이다. persona 그대로 낯선 사람을 "반가워요"라고 맞이하지 말고, 위 stage 지시에 따라 그 단계의 온도로 말해라.`
+⚠️ CRITICAL — 이 단계 규칙 위반은 즉시 실패다:
+- 존댓말 단계인데 반말 사용 → 실패
+- 반말 단계인데 존댓말 사용 → 실패
+- stranger/acquaintance 단계인데 과한 친밀/애교/이모티콘 → 실패
+- 위 voice 블록에 "짧다/여백 많다"라고 적혀 있는데 길게 쓰는 것 → 실패
+위 voice 는 persona 정체성 위에 덮어쓰는 행동 규칙이다. persona 그대로 낯선 사람을 "반가워요"라고 맞이하지 말고, 이 stage 지시의 온도/반말-존댓말 기준으로 말해라.`
     : "";
 
   return `
@@ -1001,7 +1050,7 @@ ${stageVoice}
 - flirtStyle: ${input.persona.flirtStyle}
 - reassuranceStyle: ${input.persona.reassuranceStyle}
 - conflictStyle: ${input.persona.conflictStyle}
-- speechTexture: ${input.persona.speechTexture}${stageVoiceBlock}
+- speechTexture: ${input.persona.speechTexture}${stageVoiceBlock}${firstTurnAnchorBlock}
 
 [대화 품질 8원칙 — 매 응답에 1개 이상 반드시 반영]
 1. 작은 거 기억해주기: 상대가 전에 한 말을 기억하고 적절한 때 꺼내라.
@@ -2120,6 +2169,8 @@ serve(async (req: Request) => {
         firstMeetPrompt,
         memoryPrompt,
         charName,
+        conversationMode,
+        introTurn,
       })
       : buildFullSystemPrompt(
         systemPrompt || "",
@@ -2325,7 +2376,77 @@ serve(async (req: Request) => {
       })
       : null;
 
-    if (shouldSendPush && userId && supabase) {
+    // ────────────────────────────────────────────────────────────────────────
+    // 답장 지연 발송 (Phase 2)
+    // ────────────────────────────────────────────────────────────────────────
+    // REPLY_DELAY_ENABLED=true 면 메시지를 즉시 푸시하지 않고 scheduled_character_replies
+    // 에 row 만 만들어 둠. 클라이언트는 scheduledId+deliverAt 으로 setTimeout
+    // 후 렌더, 백그라운드는 매분 deliver-due-replies cron 이 푸시 발송.
+    //
+    // 같은 (user, character) 의 미처리 row 가 있다면(이전 답장 대기 중)
+    // canceled_at 으로 마킹 → 새 답장으로 합쳐서 진행 (옵션 1A: 후속 메시지
+    // 도착 시 이전 답장 취소 + 새 LLM 답장으로 통합).
+    const replyDelayEnabled =
+      Deno.env.get("REPLY_DELAY_ENABLED")?.toLowerCase() === "true";
+
+    let scheduledId: string | undefined;
+    let deliverAtIso: string | undefined;
+
+    if (replyDelayEnabled && userId && supabase) {
+      try {
+        // 이전 pending row cancel — 같은 캐릭터에 답장 대기 중인 게 있으면
+        // 새 메시지로 인해 무효화. cron 이 이 row 처리 안 하도록 canceled_at set.
+        const { error: cancelError } = await supabase
+          .from("scheduled_character_replies")
+          .update({ canceled_at: new Date().toISOString() })
+          .eq("user_id", userId)
+          .eq("character_id", characterId)
+          .is("delivered_at", null)
+          .is("canceled_at", null);
+        if (cancelError) {
+          console.warn(
+            "[character-chat] 이전 pending reply cancel 실패:",
+            cancelError.message,
+          );
+        }
+
+        const deliverAt = new Date(Date.now() + delaySec * 1000);
+        const { data: insertedRow, error: insertError } = await supabase
+          .from("scheduled_character_replies")
+          .insert({
+            user_id: userId,
+            character_id: characterId,
+            character_name: charName,
+            content: joinedResponse,
+            segments,
+            emotion_tag: emotionTag,
+            delay_sec: delaySec,
+            deliver_at: deliverAt.toISOString(),
+          })
+          .select("id")
+          .single();
+
+        if (insertError) {
+          console.error(
+            "[character-chat] scheduled reply insert 실패 (legacy 경로로 폴백):",
+            insertError,
+          );
+        } else if (insertedRow) {
+          scheduledId = insertedRow.id as string;
+          deliverAtIso = deliverAt.toISOString();
+        }
+      } catch (scheduleError) {
+        // 스케줄링 실패 시 legacy 경로로 폴백 (즉시 푸시).
+        console.error(
+          "[character-chat] schedule path 예외 (legacy 폴백):",
+          scheduleError,
+        );
+      }
+    }
+
+    // 즉시 푸시는 legacy 경로(스케줄링 안 했을 때)에서만. 스케줄링 성공 시엔
+    // cron 이 deliver_at 에 푸시 발송 → 여기서 또 보내면 중복.
+    if (shouldSendPush && userId && supabase && !scheduledId) {
       try {
         await sendCharacterDmPush({
           supabase,
@@ -2351,6 +2472,8 @@ serve(async (req: Request) => {
         affinityDelta,
         romanceStatePatch,
         followUpHint,
+        scheduledId,
+        deliverAt: deliverAtIso,
         meta: {
           provider: llmResponse.provider,
           model: llmResponse.model,

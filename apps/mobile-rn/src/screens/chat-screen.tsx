@@ -2428,6 +2428,8 @@ export function ChatScreen() {
         delaySec?: number;
         emotionTag?: string;
         segments?: unknown;
+        scheduledId?: string;
+        deliverAt?: string;
       } | null;
       if (!payload?.response || (payload.success === false)) {
         throw new Error(payload?.error ?? 'Character chat response is empty.');
@@ -2439,11 +2441,22 @@ export function ChatScreen() {
         lastAssistantEmotionTagRef.current = payload.emotionTag;
       }
 
-      // Random reply delay — typing indicator stays visible during wait (첫 버블 전)
-      const replyDelay = typeof payload.delaySec === 'number'
-        ? Math.min(payload.delaySec, 8)
-        : Math.random() * 2 + 1;
-      await new Promise((r) => setTimeout(r, replyDelay * 1000));
+      // Phase 2 — 답장 지연 발송: 서버가 scheduledId+deliverAt 을 리턴했으면
+      // 그 시각까지 타이핑 인디케이터 유지하다가 렌더 + ack. 8초 cap 제거.
+      // legacy 경로(서버 REPLY_DELAY_ENABLED=false)면 scheduledId undefined →
+      // 기존 처럼 짧은 랜덤 딜레이 후 즉시 렌더.
+      let replyDelayMs: number;
+      const scheduledId = payload.scheduledId;
+      if (scheduledId && payload.deliverAt) {
+        const deliverAtMs = Date.parse(payload.deliverAt);
+        replyDelayMs = Math.max(0, deliverAtMs - Date.now());
+      } else {
+        const fallbackSec = typeof payload.delaySec === 'number'
+          ? Math.min(payload.delaySec, 8)
+          : Math.random() * 2 + 1;
+        replyDelayMs = fallbackSec * 1000;
+      }
+      await new Promise((r) => setTimeout(r, replyDelayMs));
 
       setMessagesByCharacterId((current) => ({
         ...current,
@@ -2474,6 +2487,20 @@ export function ChatScreen() {
           }).catch(() => undefined);
         },
       );
+
+      // Phase 2 — foreground 렌더 완료 ACK. 백엔드 cron 이 같은 메시지를
+      // 푸시로 다시 보내지 않도록 client_acked_at 마킹. 실패해도 사용자
+      // 가시 영향은 없음 — 푸시 1회 중복 노이즈만 발생할 수 있음 (backend
+      // 가 20초 grace window 로 race 완화).
+      if (scheduledId && supabase) {
+        supabase.functions
+          .invoke('ack-scheduled-reply', {
+            body: { scheduledId },
+          })
+          .catch((ackError: unknown) => {
+            console.warn('[chat] ack-scheduled-reply 실패:', ackError);
+          });
+      }
     } catch (error) {
       if (error instanceof OnDeviceNotReadyError) {
         // 온디바이스 미준비 시: 팝업 없이 백그라운드 다운로드만 트리거.
