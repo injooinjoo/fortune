@@ -10,6 +10,7 @@ import {
 
 import * as Linking from 'expo-linking';
 import { router, type Href } from 'expo-router';
+import { AppState, type AppStateStatus } from 'react-native';
 import {
   emptyUnifiedOnboardingProgress,
   resolveChatOnboardingGate,
@@ -381,6 +382,25 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
         }).data.subscription
       : null;
 
+    // 앱이 background → active 로 돌아올 때 푸시 토큰을 재동기화한다. 시나리오:
+    //   1. 사용자가 시스템 설정에서 알림 권한을 켰을 때 → 새 등록 시도.
+    //   2. 이전 sync 호출이 네트워크 오류로 실패해 SecureStore 에 pending
+    //      토큰이 남아 있을 때 → 자동 retry.
+    //   3. Expo / FCM 가 백그라운드에서 토큰을 회전시킨 경우 → 새 토큰 등록.
+    // 권한이 없으면 registerPushTokenForSignedInUser 가 silent skip 하므로
+    // 추가 가드 불필요.
+    const appStateSubscription = AppState.addEventListener(
+      'change',
+      (nextState: AppStateStatus) => {
+        if (nextState !== 'active') return;
+        if (!supabase) return;
+        // 세션이 없으면 등록할 user 도 없음 → 함수 내부에서 silent skip.
+        registerPushTokenForSignedInUser().catch((error) => {
+          console.warn('[bootstrap] push token resume sync 실패:', error);
+        });
+      },
+    );
+
     // Push 알림 리스너 설치 — 탭 시 해당 캐릭터 채팅 스크린으로 라우팅.
     // 앱 콜드 스타트 시 getLastNotificationResponseAsync 가 내부에서 fallback
     // 으로 한 번 더 호출되므로 종료 상태에서 탭으로 열린 경우도 커버.
@@ -408,6 +428,7 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       authSubscription?.unsubscribe();
       linkSubscription.remove();
       removePushHandlers();
+      appStateSubscription.remove();
     };
   }, []);
 

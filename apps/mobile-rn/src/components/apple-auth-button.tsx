@@ -1,60 +1,32 @@
-import { Platform, View } from 'react-native';
-import * as AppleAuthentication from 'expo-apple-authentication';
-
 import { SocialAuthPillButton } from './social-auth-pill-button';
 
 /**
  * Apple Sign-In 버튼.
  *
- * iOS 에서는 Apple 공식 `AppleAuthenticationButton` 을 사용 — Apple HIG +
- * App Store Guideline 4.8 ("Sign in with Apple 버튼은 Apple 공식 버튼 또는
- * 가이드라인을 따르는 동등 디자인이어야 함") 준수. 이전 구현은 커스텀
- * Pressable 로 4.8 / 2.5.1 리젝 리스크가 있었다.
+ * 모든 플랫폼 (iOS / Android / Web) 에서 공통 디자인 — 흰 배경 pill +
+ * 공식 Apple 로고 + 공식 한국어 라벨 ("Apple로 로그인"). 옆에 놓이는 구글
+ * pill 과 시각 무게/형태를 통일해 사용자 인지 부담을 줄인다.
  *
- * iOS 외 플랫폼(Android/Web) 에서는 기존 pill 디자인 유지 — 브랜드 일관성
- * 확보 + Apple 공식 버튼은 iOS 전용.
+ * App Store Guideline 4.8 / Apple HIG 컴플라이언스:
+ *   - 공식 `AppleAuthenticationButton` 컴포넌트 OR
+ *   - 공식 로고 + 공식 라벨 ("Sign in with Apple", "Apple로 로그인" 등) +
+ *     허용 색상 조합 (흰 배경 + 검정 텍스트, 검정 배경 + 흰 텍스트, 외곽선)
+ *     을 만족하는 커스텀 버튼
+ * 둘 다 허용. 이 구현은 후자 (커스텀이지만 가이드 만족).
  *
- * 버튼 높이/모서리는 Apple 권장 기준 (44 x cornerRadius 8). 라벨은
- * `SIGN_IN` (로그인) / `CONTINUE` (계속) 중 호출부가 전달한 label 에 따라 결정.
+ * 이전 구현은 BLACK 변종 공식 버튼이었지만, 다크 테마 BG 와 시각 충돌 +
+ * 옆 구글 pill 과 모양 차이로 사용자가 "버튼 디자인이 깨졌다" 인지하는
+ * 회귀가 있어 통일된 pill 로 복귀.
  */
 export function AppleAuthButton({
   disabled = false,
-  label = '애플 로그인',
+  label = 'Apple로 로그인',
   onPress,
 }: {
   disabled?: boolean;
   label?: string;
   onPress?: () => void;
 }) {
-  if (Platform.OS === 'ios') {
-    const buttonType =
-      label.includes('계속')
-        ? AppleAuthentication.AppleAuthenticationButtonType.CONTINUE
-        : AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN;
-
-    return (
-      <View style={{ opacity: disabled ? 0.4 : 1 }}>
-        <AppleAuthentication.AppleAuthenticationButton
-          buttonType={buttonType}
-          // 다크 테마 (#0B0B10) 위에서 WHITE 변종은 disabled 시 회색 패치
-          // 처럼 보여 컴포넌트가 깨진 듯한 인상을 준다. BLACK 변종 (검은
-          // 배경 + 흰 글씨/로고) 이 다크 BG 와 자연스럽게 어울리고 옆 구글
-          // pill 과 시각 무게가 맞는다. App Store 4.8 은 BLACK / WHITE /
-          // WHITE_OUTLINE 모두 허용하므로 컴플라이언스에 영향 없음.
-          buttonStyle={
-            AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
-          }
-          cornerRadius={999}
-          style={{ height: 52, width: '100%' }}
-          onPress={() => {
-            if (disabled) return;
-            onPress?.();
-          }}
-        />
-      </View>
-    );
-  }
-
   return (
     <SocialAuthPillButton
       disabled={disabled}
