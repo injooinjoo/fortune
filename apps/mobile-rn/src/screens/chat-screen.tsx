@@ -471,6 +471,24 @@ export function ChatScreen() {
           const snapshot = await loadStoryThreadSnapshot(characterId);
 
           if (!snapshot) {
+            // story snapshot 이 비어있어도 (`fortune.mobile-rn.story-chat-thread.v1`
+            // 미스 OR JSON 손상 OR 원격도 빈 응답) bootstrap 이 preload 한 텍스트
+            // 메시지 캐시(`fortune.chat.msgs.v1.*`) 에 과거 대화가 남아 있을 수
+            // 있다. 인트로만 보여주는 회귀를 막기 위해 캐시된 메시지가 있으면
+            // 그걸로 messagesByCharacterId 를 보강한다 (romance state 는 누락).
+            const cachedMessages = cachedCharacterConversations[characterId];
+            if (cachedMessages && cachedMessages.length > 0) {
+              setMessagesByCharacterId((current) => {
+                const cur = current[characterId];
+                if (!shouldAcceptRemoteMessages(cur, cachedMessages)) {
+                  return current;
+                }
+                if (isSameMessageList(cur, cachedMessages)) {
+                  return current;
+                }
+                return { ...current, [characterId]: cachedMessages };
+              });
+            }
             return;
           }
 
@@ -516,7 +534,10 @@ export function ChatScreen() {
         }).catch(() => undefined);
       }
     },
-    [],
+    // bootstrap 이 채워주는 텍스트 메시지 캐시를 fallback 분기에서 참조하므로
+    // 의존성에 포함. 다운스트림 useEffect 들은 이 콜백을 dep 으로 갖지만
+    // 호출은 hydratedCharacterIdsRef 로 dedupe 되어 중복 작업이 발생하지 않는다.
+    [cachedCharacterConversations],
   );
 
   // On gate ready: hydrate the initially-selected character immediately, then

@@ -1,10 +1,12 @@
 import { type Session } from '@supabase/supabase-js';
 
 import { type ChatCharacterSpec } from './chat-characters';
+import { saveCachedCharacterMessages } from './character-conversation-cache';
 import {
   type ChatShellMessage,
   type ChatShellTextMessage,
 } from './chat-shell';
+import { captureError } from './error-reporting';
 import { getSecureItem, setSecureItem } from './secure-store-storage';
 import { supabase } from './supabase';
 import {
@@ -83,6 +85,12 @@ interface PersistedStoryMessage {
   type: 'user' | 'character' | 'system' | 'narration';
   content: string;
   timestamp: string;
+  /**
+   * 카톡식 "1" 읽음 배지 ISO 타임스탬프. `type: 'user'` 메시지에서만 의미.
+   * 빠진 채로 저장된 과거 데이터는 `fromPersistedStoryMessages` 로드 단계에서
+   * "뒤에 AI/system 응답이 있으면 그 시점에 읽혔다"로 추론 보강된다.
+   */
+  readAt?: string;
 }
 
 interface PersistedStoryRuntimeState {
@@ -164,23 +172,42 @@ function createTimestampFromMessageId(messageId: string, fallback: string) {
   return Number.isNaN(timestamp.getTime()) ? fallback : timestamp.toISOString();
 }
 
+// 원격 저장 메시지 수 상한. 50 에서 200 으로 상향 — 활성 유저는 세션 몇 개만에도
+// 100+ 메시지가 쌓이고, 그러면 load 때마다 원격이 잘린 상태로 돌아와 focus
+// 재하이드레이션 시 shouldAcceptRemoteMessages 가 reject 하더라도 로컬 SecureStore
+// (P1 가드 전까지) 가 손상되던 원인이었다. 200 은 gemini 컨텍스트 / edge row
+// 크기 모두 여유.
+const REMOTE_PERSIST_MESSAGE_CAP = 200;
+
 function toPersistedStoryMessages(
   messages: ChatShellMessage[],
 ): PersistedStoryMessage[] {
   return messages
     .filter(isTextMessage)
-    .slice(-50)
-    .map((message) => ({
-      id: message.id,
-      type:
-        message.sender === 'assistant'
-          ? 'character'
-          : message.sender === 'system'
-            ? 'system'
-            : 'user',
-      content: message.text,
-      timestamp: createTimestampFromMessageId(message.id, new Date().toISOString()),
-    }));
+    .slice(-REMOTE_PERSIST_MESSAGE_CAP)
+    .map((message) => {
+      const textMessage = message as ChatShellTextMessage;
+      const base: PersistedStoryMessage = {
+        id: textMessage.id,
+        type:
+          textMessage.sender === 'assistant'
+            ? 'character'
+            : textMessage.sender === 'system'
+              ? 'system'
+              : 'user',
+        content: textMessage.text,
+        timestamp: createTimestampFromMessageId(
+          textMessage.id,
+          new Date().toISOString(),
+        ),
+      };
+      // "1" 배지 안 사라지는 버그의 근본 원인: readAt 이 로컬 전용이었음.
+      // 서버에 함께 저장해야 재진입 시 force-rehydrate 해도 보존된다.
+      if (textMessage.sender === 'user' && textMessage.readAt) {
+        base.readAt = textMessage.readAt;
+      }
+      return base;
+    });
 }
 
 function fromPersistedStoryMessages(
@@ -208,22 +235,53 @@ function fromPersistedStoryMessages(
         return null;
       }
 
-      return {
+      const sender: ChatShellTextMessage['sender'] =
+        candidate.type === 'user'
+          ? 'user'
+          : candidate.type === 'system'
+            ? 'system'
+            : 'assistant';
+
+      const message: ChatShellTextMessage = {
         id: candidate.id,
         kind: 'text' as const,
-        sender:
-          candidate.type === 'user'
-            ? 'user'
-            : candidate.type === 'system'
-              ? 'system'
-              : 'assistant',
+        sender,
         text: candidate.content,
       };
+
+      if (sender === 'user' && typeof candidate.readAt === 'string') {
+        message.readAt = candidate.readAt;
+      }
+
+      return message;
     });
 
-  return normalizedMessages.filter(
+  const filtered = normalizedMessages.filter(
     (message): message is ChatShellTextMessage => message !== null,
   );
+
+  // 레거시 데이터 보강: 서버에 readAt 필드 없이 저장된 과거 메시지 대응.
+  // "뒤에 assistant/system 응답이 하나라도 있으면 그 user 메시지는 읽힌 것"
+  // 으로 간주한다. AI가 답을 했다 = 읽었다는 사용자 멘탈 모델과 일치.
+  // 한 번이라도 이 경로로 통과한 메시지는 다음 save 때 readAt이 서버에 함께
+  // 저장되므로, 이 보강은 사실상 1회성 마이그레이션 역할.
+  for (let i = 0; i < filtered.length; i += 1) {
+    const current = filtered[i];
+    if (current.sender !== 'user' || current.readAt) continue;
+    for (let j = i + 1; j < filtered.length; j += 1) {
+      const later = filtered[j];
+      if (later.sender === 'assistant' || later.sender === 'system') {
+        const fallbackTimestamp = createTimestampFromMessageId(
+          later.id,
+          new Date().toISOString(),
+        );
+        current.readAt = fallbackTimestamp;
+        break;
+      }
+    }
+  }
+
+  return filtered;
 }
 
 function clampMetric(value: unknown, fallback: number) {
@@ -584,7 +642,12 @@ async function loadLocalStoryThreadSnapshot(
           ? parsed.updatedAt
           : new Date().toISOString(),
     };
-  } catch {
+  } catch (error) {
+    // 손상된 snapshot — 무음으로 삼키면 cold start 직후 인트로만 보이는
+    // 회귀가 디버깅 불가능해진다. 보고 후 null 로 빠져 fallback 분기 진입.
+    captureError(error, {
+      surface: 'story-chat:load-local-snapshot-parse',
+    }).catch(() => undefined);
     return null;
   }
 }
@@ -840,8 +903,22 @@ export async function loadStoryThreadSnapshot(
     );
 
     if (remoteSnapshot) {
-      await saveLocalStoryThreadSnapshot(remoteSnapshot);
-      return remoteSnapshot;
+      // Local-corruption 연쇄 방어: 원격이 로컬보다 짧으면 로컬을 덮어쓰지 않는다.
+      // 배경 — 서버 스키마(character-conversation-save)가 텍스트 전용 +
+      // slice(-200) 제한이라, 비-텍스트 카드(포춘쿠키/사주/이미지/임베디드 결과)
+      // 또는 최근 200개 초과 히스토리는 원격에 누락된다. 이 상태에서 무조건
+      // saveLocalStoryThreadSnapshot(remoteSnapshot) 을 호출하면, load 때마다
+      // 로컬 SecureStore 가 stripped 버전으로 덮어써져 비-텍스트 카드가 영구 소실.
+      // 메모리 쪽은 shouldAcceptRemoteMessages 가이드로 보호되지만 디스크는 매번
+      // 손상되던 치명 버그. 이제 원격이 로컬 이상 길이일 때만 로컬 갱신.
+      const localLen = localSnapshot?.messages.length ?? 0;
+      const remoteLen = remoteSnapshot.messages.length;
+      if (remoteLen >= localLen) {
+        await saveLocalStoryThreadSnapshot(remoteSnapshot);
+        return remoteSnapshot;
+      }
+      // 원격이 짧음 → 로컬이 더 최신/완전한 상태. 로컬 유지.
+      return localSnapshot;
     }
   } catch (error) {
     if (!localSnapshot) {
@@ -855,8 +932,29 @@ export async function loadStoryThreadSnapshot(
 export async function saveStoryThreadSnapshot(
   snapshot: StoryChatThreadSnapshot,
 ): Promise<StoryChatThreadSnapshot> {
-  await saveLocalStoryThreadSnapshot(snapshot);
-  await saveRemoteStoryThreadSnapshot(snapshot);
+  // 로컬 메시지 캐시 — chat-screen 재진입 시 즉시 최신 상태 노출용.
+  // story snapshot 과 별개의 SecureStore 키 (`fortune.chat.msgs.v1.*`) 라
+  // 한 쪽이 실패해도 다른 쪽은 성공할 수 있다. 무음 fail 로 두면 cold start
+  // 직후 인트로만 보이는 회귀의 직접 원인이 되므로 각 단계 실패를 개별 surface
+  // 로 보고하고 다른 저장은 계속 시도한다.
+  await saveCachedCharacterMessages(
+    snapshot.characterId,
+    snapshot.messages,
+  ).catch((error: unknown) => {
+    captureError(error, {
+      surface: 'story-chat:save-cached-messages',
+    }).catch(() => undefined);
+  });
+  await saveLocalStoryThreadSnapshot(snapshot).catch((error: unknown) => {
+    captureError(error, {
+      surface: 'story-chat:save-local-snapshot',
+    }).catch(() => undefined);
+  });
+  await saveRemoteStoryThreadSnapshot(snapshot).catch((error: unknown) => {
+    captureError(error, {
+      surface: 'story-chat:save-remote-snapshot',
+    }).catch(() => undefined);
+  });
   return snapshot;
 }
 
@@ -1048,6 +1146,9 @@ export async function saveCharacterConversation(
   characterId: string,
   messages: ChatShellMessage[],
 ): Promise<void> {
+  // 로컬 캐시는 네트워크/세션 독립적으로 항상 저장 — 재진입 시 플래시 방지.
+  void saveCachedCharacterMessages(characterId, messages);
+
   if (!supabase) {
     return;
   }
