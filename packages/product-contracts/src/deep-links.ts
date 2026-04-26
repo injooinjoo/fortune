@@ -5,12 +5,14 @@ export const deepLinkConfig = {
   authCallbackHost: 'auth-callback',
   screenParam: 'screen',
   fortuneTypeParam: 'fortuneType',
+  characterIdParam: 'characterId',
   pendingFortuneTypeStorageKey: 'pending_deep_link_fortune_type',
 } as const;
 
 export interface DeepLinkResolution {
   route: string;
   fortuneType?: FortuneTypeId;
+  characterId?: string;
   authCallbackUrl?: string;
 }
 
@@ -54,11 +56,19 @@ export function resolveDeepLink(target: string): DeepLinkResolution {
   const fortuneType = normalizeFortuneTypeForChat(
     url.searchParams.get(deepLinkConfig.fortuneTypeParam),
   );
+  const characterIdRaw = url.searchParams
+    .get(deepLinkConfig.characterIdParam)
+    ?.trim();
+  const characterId = characterIdRaw ? characterIdRaw : undefined;
 
-  if (screen === 'chat' && fortuneType) {
+  if (screen === 'chat') {
+    const route = characterId
+      ? `/chat?characterId=${encodeURIComponent(characterId)}`
+      : '/chat';
     return {
-      route: '/chat',
-      fortuneType,
+      route,
+      fortuneType: fortuneType ?? undefined,
+      characterId,
     };
   }
 
@@ -66,12 +76,16 @@ export function resolveDeepLink(target: string): DeepLinkResolution {
     return {
       route: `/${screen}`,
       fortuneType: fortuneType ?? undefined,
+      characterId,
     };
   }
 
   return {
-    route: '/chat',
+    route: characterId
+      ? `/chat?characterId=${encodeURIComponent(characterId)}`
+      : '/chat',
     fortuneType: fortuneType ?? undefined,
+    characterId,
   };
 }
 

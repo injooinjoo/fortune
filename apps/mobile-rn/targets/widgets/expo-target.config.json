@@ -1,0 +1,17 @@
+{
+  "$schema": "https://unpkg.com/@bacons/apple-targets@0.3.0/schema.json",
+  "type": "widget",
+  "name": "OndoWidgets",
+  "bundleIdentifier": "com.beyond.fortune.widgets",
+  "deploymentTarget": "17.0",
+  "appGroup": "group.com.beyond.fortune.widgets",
+  "entitlements": {
+    "com.apple.security.application-groups": [
+      "group.com.beyond.fortune.widgets"
+    ]
+  },
+  "colors": {
+    "$accent": "#8B7BE8",
+    "$widgetBackground": "#0B0B10"
+  }
+}

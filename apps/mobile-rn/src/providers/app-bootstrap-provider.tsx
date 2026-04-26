@@ -214,9 +214,11 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
         }
       }
 
-      if (resolution.route !== '/chat') {
-        router.replace(resolution.route as Href);
-      }
+      // 위젯 / 외부 URL이 매칭되지 않는 path (예: ondo://daily-fortune,
+      // com.beyond.fortune://widget?...) 로 들어오면 expo-router가 +not-found
+      // 를 먼저 그려버리므로 route 가 /chat 일 때도 항상 replace 해서 의도한
+      // 화면으로 끌어와야 한다 (그렇지 않으면 안내 화면에 멈춰버림).
+      router.replace(resolution.route as Href);
     }
 
     async function bootstrap() {

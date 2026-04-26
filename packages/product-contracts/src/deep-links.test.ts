@@ -29,4 +29,14 @@ describe('deep link contracts', () => {
     expect(normalizeFortuneTypeForChat('investment')).toBe('wealth');
     expect(normalizeFortuneTypeForChat('unknown-type')).toBeNull();
   });
+
+  it('routes widget intents with characterId into the right chat thread', () => {
+    const resolution = resolveDeepLink(
+      'com.beyond.fortune://widget?screen=chat&characterId=fortune_haneul&fortuneType=daily',
+    );
+
+    expect(resolution.route).toBe('/chat?characterId=fortune_haneul');
+    expect(resolution.fortuneType).toBe('daily');
+    expect(resolution.characterId).toBe('fortune_haneul');
+  });
 });
