@@ -230,6 +230,7 @@ function buildComposeSystemPrompt(
 4. 답장 강요 금지. "왜 답 안 해?", "꼭 답해줘" 같은 표현 절대 금지.
 5. 너의 행동을 1인칭으로. "나 지금 ~해", "방금 ~했어" 같은 즉시감.
 6. 이모지/이모티콘은 캐릭터 톤에 맞을 때만 1-2개까지.
+7. **상담봇/서비스 톤 절대 금지** — "네, 무엇을 도와드릴까요?", "무엇을 도와드릴 수", "도움이 필요하시면", "문의해주세요", "지원해드릴게요", "how can I help", "let me help" 같은 콜센터/상담 문구 한 단어라도 들어가면 캐릭터 즉사. 이런 톤이 필요하면 차라리 보내지 마라.
 이번 메시지는 텍스트만. imageCategory는 반드시 null.
 
 응답은 반드시 다음 JSON 형식만. 다른 텍스트 금지.
@@ -368,6 +369,29 @@ async function composeProactiveMessageInline(params: {
     };
   }
 
+  // Service-bot tone guard: 캐릭터(특히 로맨스 페르소나) 가 "네, 무엇을
+  // 도와드릴까요?" 류 상담봇 문구를 첫 메시지로 보내면 페르소나 즉사.
+  // character-chat 의 system prompt 와 후처리 strip 가 잘 막아주지만, 선톡
+  // 경로는 별도 LLM 호출이라 가드를 우회한다. 모델이 이 패턴을 뱉으면 차라리
+  // 발송 자체를 스킵 (재시도 없이 슬롯 하나 비움) — 잘못된 인사 한 번이
+  // 캐릭터 신뢰를 깨뜨리는 비용이, 슬롯 하나 비우는 비용보다 훨씬 크다.
+  if (PROACTIVE_SERVICE_TONE_PATTERN.test(parsed.text)) {
+    console.warn(
+      `[proactive] service-tone 차단 (${params.characterId}/${params.slotKey}): ${
+        parsed.text.slice(0, 80)
+      }`,
+    );
+    return {
+      error: "service_tone_blocked: 모델이 상담봇 톤 출력 → 발송 스킵",
+      errorCode: "service_tone_blocked",
+      meta: {
+        provider: llmResponse.provider,
+        model: llmResponse.model,
+        latencyMs: Date.now() - startedAt,
+      },
+    };
+  }
+
   const moderationResult = await moderateText({
     text: parsed.text,
     userId: params.userId,
@@ -395,6 +419,12 @@ async function composeProactiveMessageInline(params: {
     },
   };
 }
+
+// 캐릭터(특히 스토리/로맨스 페르소나) 가 절대 보내면 안 되는 상담봇 톤 패턴.
+// character-chat/index.ts:1298 의 LUTS_SERVICE_TONE_PATTERN 과 동일 — 두 함수가
+// 분리돼 있어서 양쪽 다 정의해야 함. 한쪽 변경 시 다른쪽도 동기화.
+const PROACTIVE_SERVICE_TONE_PATTERN =
+  /(무엇을\s*도와드릴\s*수|(?:무엇을|뭘|어떻게)\s*도와드릴까요\??|도움이\s*필요하시면|문의|지원|how can i help|let me help|assist you|お手伝い|サポート)/i;
 
 // =============================================================================
 // 유틸 — timezone-aware 시간 계산
