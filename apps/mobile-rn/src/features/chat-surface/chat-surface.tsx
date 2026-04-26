@@ -2095,7 +2095,6 @@ export function ActiveCharacterChatSurface({
    */
   presenceLine?: string | null;
 }) {
-  const isFortuneCharacter = isFortuneChatCharacter(character);
   const visibleMessages = messages;
   const promptActions = actions;
   const hasEmbeddedResult = visibleMessages.some(
@@ -2105,38 +2104,17 @@ export function ActiveCharacterChatSurface({
       message.kind === 'saju-preview' ||
       message.kind === 'story-reveal',
   );
-  const previewMessages = visibleMessages.some((message) => message.sender === 'user')
-    ? visibleMessages
-    : [
-        visibleMessages[0] ?? {
-          id: `${character.id}-assistant-preview-1`,
-          kind: 'text' as const,
-          sender: 'assistant' as const,
-          text: isFortuneCharacter
-            ? `안녕하세요! 오늘 ${character.name}의 흐름으로 먼저 볼까요?`
-            : `안녕하세요! ${character.name}과 오늘의 이야기를 먼저 열어볼까요?`,
-        },
-        {
-          id: `${character.id}-user-preview`,
-          kind: 'text' as const,
-          sender: 'user' as const,
-          text:
-            promptActions[0]?.prompt ??
-            (isFortuneCharacter
-              ? `오늘 ${character.name}에게 가장 먼저 물어보면 좋을 흐름이 있을까요?`
-              : `오늘 ${character.name}과 가장 먼저 꺼내면 좋을 이야기가 있을까요?`),
-        },
-        visibleMessages[1] ?? {
-          id: `${character.id}-assistant-preview-2`,
-          kind: 'text' as const,
-          sender: 'assistant' as const,
-          text:
-            promptActions[0]?.reply ??
-            (isFortuneCharacter
-              ? `${character.shortDescription} 흐름으로 먼저 풀어드릴게요.`
-              : `${character.shortDescription} 분위기로 먼저 대화를 이어가 볼게요.`),
-        },
-      ];
+  // 진짜 메시지만 렌더 (placeholder 안 만든다).
+  // 이전엔 user 메시지가 하나도 없을 때 3개의 가짜 메시지(가상 인트로 + 가상
+  // 유저 프롬프트 + 가상 AI 응답)를 그려 "이미 대화 중인 듯" 한 느낌을 줬는데,
+  // 사용자가 실제 메시지 한 통이라도 보내는 순간 이 placeholder 들이 통째로
+  // 사라지고 진짜 메시지만 남으면서 "방금 보였던 기존 메시지가 사라졌다" 는
+  // 체감 회귀를 일으켰다 (실제로는 placeholder 였음). 카톡/iMessage 같은
+  // 메신저들도 이런 placeholder 를 쓰지 않으니 동일하게 진짜 메시지만 표시.
+  // 빈 상태에서도 chat-screen useState 초기화에서 캐릭터 인트로 1개 (story
+  // 캐릭터의 경우 buildPilotStoryInitialThread) 가 들어 있어 화면이 비지
+  // 않는다.
+  const previewMessages = visibleMessages;
 
   const chatTintBg = romanceScore > 5 ? romanceTintBackground(romanceScore) : undefined;
 
