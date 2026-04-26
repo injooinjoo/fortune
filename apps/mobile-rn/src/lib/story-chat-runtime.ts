@@ -1147,7 +1147,16 @@ export async function saveCharacterConversation(
   messages: ChatShellMessage[],
 ): Promise<void> {
   // 로컬 캐시는 네트워크/세션 독립적으로 항상 저장 — 재진입 시 플래시 방지.
-  void saveCachedCharacterMessages(characterId, messages);
+  // saveCachedCharacterMessages 가 throw 할 수 있게 바뀌었으므로 await + catch
+  // 로 잡아 surface. 이전에 `void ...` 였던 자리는 unhandled rejection 위험 +
+  // 무음 디스크 쓰기 실패 라는 두 가지 문제를 동시에 갖고 있었다.
+  await saveCachedCharacterMessages(characterId, messages).catch(
+    (error: unknown) => {
+      captureError(error, {
+        surface: 'chat:save-cached-conversation',
+      }).catch(() => undefined);
+    },
+  );
 
   if (!supabase) {
     return;
@@ -1165,7 +1174,12 @@ export async function saveCharacterConversation(
         messages: toPersistedStoryMessages(messages),
       },
     });
-  } catch {
-    // Soft-fail: don't disrupt the user experience
+  } catch (error) {
+    // 원격 저장은 네트워크/세션 의존적이라 일시 실패는 정상. 다만 silent
+    // 처리 시 "내 메시지가 다른 디바이스에 안 떠요" 류의 회귀를 디버그 못하므로
+    // 로컬 cache 와 별개로 surface 만 해둔다 (UX 차단 X).
+    captureError(error, {
+      surface: 'chat:remote-character-conversation-save',
+    }).catch(() => undefined);
   }
 }
