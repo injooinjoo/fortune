@@ -33,14 +33,19 @@ export function AppleAuthButton({
         : AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN;
 
     return (
-      <View style={{ opacity: disabled ? 0.5 : 1 }}>
+      <View style={{ opacity: disabled ? 0.4 : 1 }}>
         <AppleAuthentication.AppleAuthenticationButton
           buttonType={buttonType}
+          // 다크 테마 (#0B0B10) 위에서 WHITE 변종은 disabled 시 회색 패치
+          // 처럼 보여 컴포넌트가 깨진 듯한 인상을 준다. BLACK 변종 (검은
+          // 배경 + 흰 글씨/로고) 이 다크 BG 와 자연스럽게 어울리고 옆 구글
+          // pill 과 시각 무게가 맞는다. App Store 4.8 은 BLACK / WHITE /
+          // WHITE_OUTLINE 모두 허용하므로 컴플라이언스에 영향 없음.
           buttonStyle={
-            AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
+            AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
           }
-          cornerRadius={8}
-          style={{ height: 50, width: '100%' }}
+          cornerRadius={999}
+          style={{ height: 52, width: '100%' }}
           onPress={() => {
             if (disabled) return;
             onPress?.();
