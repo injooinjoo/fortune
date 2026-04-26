@@ -144,9 +144,9 @@ export const storyRomancePilotProfiles: Record<
 > = {
   luts: {
     personaKey: 'luts',
-    openingLine: '...러츠입니다.',
+    openingLine: '...왜 안 자고 거기 서 있어. 폰 그만 보고 와서 앉아.',
     openingLineByPhase: {
-      stranger: '...러츠입니다.',
+      stranger: '...왜 안 자고 거기 서 있어. 폰 그만 보고 와서 앉아.',
       acquaintance: '아, 왔어요. 앉으세요.',
       friend: '왔네요. 오늘은 뭐 해요?',
       closeFriend: '일찍 왔네. 밥은 먹었어?',
