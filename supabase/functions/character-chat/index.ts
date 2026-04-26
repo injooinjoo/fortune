@@ -1043,14 +1043,30 @@ ${stageVoice}
 ✅ "그거 진짜 스트레스였겠다"
 ✅ "너랑 이런 얘기 하는 거 좋다"
 
-[${input.persona.displayName} — 캐릭터 정체성]
+${
+    input.persona.scenarioWorldview
+      ? `[시나리오 — 사용자가 채팅방 상단 "상황 설정" 카드에서 보고 있는 설정. 절대 모순 금지. 모든 답변에 이 사실이 전제로 깔려있어야 함]
+${input.persona.scenarioWorldview}
+
+⚠️ 시나리오 적용 규칙 (어기면 즉시 실패):
+1. 사용자와 너의 관계는 "스트레인저"가 아니라 위 시나리오에 명시된 관계 (예: 위장결혼한 동거인, 인수된 회사 비서, 회귀자 집사 등). 첫 만남처럼 "편하게 어떻게 부르면 될까요?" / "처음 뵙겠습니다" 같은 reset 발화 절대 금지.
+2. 사용자가 시나리오 관련 직접 질문(예: 위장결혼이면 "이혼 언제?", 동거 setting 이면 "오늘 일찍 들어왔네")을 던지면 회피 금지. 시나리오 안에서 너의 입장으로 정면 대응 (예: "...그 얘기 또 꺼내네. 진짜 이혼할 마음 있는 거 맞아?").
+3. 무드 키워드: ${
+        (input.persona.scenarioTags ?? []).map((t) => `#${t}`).join(" ")
+      } — 단어를 직접 말하지 말고 그 분위기를 행간에 깔아라. 3턴에 1번은 시나리오 디테일(예: 동거하는 집, 회사 일정, 카페 등)이 한 줄에 묻어나야 함.
+
+`
+      : ""
+  }[${input.persona.displayName} — 캐릭터 정체성]
 - corePremise: ${input.persona.corePremise}
 - openingDynamic: ${input.persona.openingDynamic}
 - attachmentStyle: ${input.persona.attachmentStyle}
 - flirtStyle: ${input.persona.flirtStyle}
 - reassuranceStyle: ${input.persona.reassuranceStyle}
 - conflictStyle: ${input.persona.conflictStyle}
-- speechTexture: ${input.persona.speechTexture}${stageVoiceBlock}${firstTurnAnchorBlock}
+- speechTexture: ${input.persona.speechTexture}
+- 자연스러운 화제 전환 후보 (질문이 필요한 턴엔 이 톤과 결을 맞춰라; generic 질문 금지):
+${input.persona.dailyHookSet.map((h) => `  · "${h}"`).join("\n")}${stageVoiceBlock}${firstTurnAnchorBlock}
 
 [대화 품질 8원칙 — 매 응답에 1개 이상 반드시 반영]
 1. 작은 거 기억해주기: 상대가 전에 한 말을 기억하고 적절한 때 꺼내라.
@@ -1663,23 +1679,59 @@ function defaultLutsReply(
     return "うん、受け取ったよ。続けて話そう。";
   }
 
-  const isCasual = resolvedSpeech === "casual";
-  if (profile.turnIntent === "greeting") {
-    return isCasual
-      ? "나도 반가워. 편하게 얘기하자."
-      : "저도 반가워요. 편하게 이야기해요.";
-  }
-  if (profile.turnIntent === "gratitude") {
-    return isCasual
-      ? "별말 아니야. 이어서 얘기하자."
-      : "별말씀을요. 이어서 이야기해요.";
-  }
-  if (profile.turnIntent === "shortReply") {
-    return isCasual ? "좋아. 이어서 얘기해." : "좋아요. 이어서 이야기해요.";
-  }
-  return isCasual
-    ? "응, 들었어. 계속 말해줘."
-    : "네, 잘 들었어요. 이어서 말씀해 주세요.";
+  // Luts (위장결혼/관찰형 탐정) 페르소나 + phase 별 fallback. relationshipPhase
+  // 가 stranger/acquaintance 일 땐 어색한 거리감, romantic/soulmate 로 갈수록
+  // "본인도 인정 시작" 톤. 옛 fallback ("저도 반가워요. 편하게 이야기해요.",
+  // "네, 잘 들었어요. 이어서 말씀해 주세요.") 은 콜센터 톤이라 페르소나 0 →
+  // phase 인지 + 시나리오 무드 (위장결혼/동거) 가 묻어나는 라인으로 교체.
+  const lutsKoFallback: Record<
+    RelationshipPhase,
+    { greeting: string; gratitude: string; shortReply: string; generic: string }
+  > = {
+    stranger: {
+      greeting: "...아, 네. 러츠입니다.",
+      gratitude: "별말씀을요.",
+      shortReply: "네.",
+      generic: "...들었어요.",
+    },
+    acquaintance: {
+      greeting: "오셨네요.",
+      gratitude: "별거 아닙니다.",
+      shortReply: "네, 그래요.",
+      generic: "음. ...계속 하세요.",
+    },
+    friend: {
+      greeting: "왔어요? 늦었네.",
+      gratitude: "뭐, 별거 아니에요.",
+      shortReply: "네, 알겠어요.",
+      generic: "...듣고 있어요.",
+    },
+    closeFriend: {
+      greeting: "왔어? 좀 늦었네.",
+      gratitude: "별거 아냐.",
+      shortReply: "응, 알겠어.",
+      generic: "...듣고 있어. 계속 말해도 돼.",
+    },
+    romantic: {
+      greeting: "...왔어. 기다렸어.",
+      gratitude: "...괜찮아. 뭐든.",
+      shortReply: "응. 옆에 있어.",
+      generic: "...말해. 듣고 있을 테니까.",
+    },
+    soulmate: {
+      greeting: "왔구나.",
+      gratitude: "...뭐든.",
+      shortReply: "응.",
+      generic: "...여기 있어.",
+    },
+  };
+
+  const phaseLines = lutsKoFallback[relationshipPhase] ??
+    lutsKoFallback.stranger;
+  if (profile.turnIntent === "greeting") return phaseLines.greeting;
+  if (profile.turnIntent === "gratitude") return phaseLines.gratitude;
+  if (profile.turnIntent === "shortReply") return phaseLines.shortReply;
+  return phaseLines.generic;
 }
 
 function normalizeLutsGreetingEcho(
