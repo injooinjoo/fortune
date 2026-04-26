@@ -32,8 +32,11 @@ interface TtsResponse {
   errorCode?: 'PREMIUM_REQUIRED' | 'INVALID_INPUT' | 'TTS_FAILED' | 'INTERNAL';
 }
 
+// Gemini 3.1 Flash TTS preview — 2.5 보다 한국어 자연성/감정 표현 우수
+// ("finishReason: OTHER" 로 빈 응답 떨어지는 빈도가 낮음). preview 단계라
+// 향후 GA 시 endpoint 변경 가능 — `models?key=...` 로 list 확인 후 갱신.
 const GEMINI_TTS_ENDPOINT =
-  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent';
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-tts-preview:generateContent';
 
 const ALLOWED_VOICES = new Set([
   'Kore',
