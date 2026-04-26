@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback, type PropsWithChildren, type 
 
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { ActivityIndicator, Animated, Easing, Image, PanResponder, Pressable, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Animated, Easing, Image, PanResponder, Pressable, TextInput, View } from 'react-native';
 
 import type { VoiceInputState } from '../../lib/use-voice-input';
 
@@ -779,9 +779,12 @@ function EmbeddedResultMessage({
 function ChatThreadMessage({
   character,
   message,
+  onDeleteUserMessage,
 }: {
   character: ChatCharacterSpec;
   message: ChatShellMessage;
+  /** 본인이 보낸 텍스트 메시지를 길게 눌러 삭제할 수 있게 하는 핸들러. */
+  onDeleteUserMessage?: (messageId: string) => void;
 }) {
   const isUser = message.sender === 'user';
   const isFullWidth =
@@ -799,7 +802,29 @@ function ChatThreadMessage({
     message.kind === 'text' &&
     message.sender === 'assistant' &&
     message.text?.trim().length > 0;
+  // 본인이 보낸 텍스트 메시지는 길게 눌러 삭제 옵션 노출.
+  const userDeletable =
+    message.kind === 'text' &&
+    message.sender === 'user' &&
+    typeof onDeleteUserMessage === 'function';
   const [reportOpen, setReportOpen] = useState(false);
+
+  const handleUserLongPress = () => {
+    if (!userDeletable) return;
+    Alert.alert(
+      '메시지',
+      '이 메시지를 삭제할까요?',
+      [
+        { text: '취소', style: 'cancel' },
+        {
+          text: '삭제',
+          style: 'destructive',
+          onPress: () => onDeleteUserMessage?.(message.id),
+        },
+      ],
+      { cancelable: true },
+    );
+  };
 
   const bubble = (() => {
     if (message.kind === 'embedded-result')
@@ -864,6 +889,15 @@ function ChatThreadMessage({
             android_ripple={null}
             accessibilityRole="button"
             accessibilityLabel="메시지 길게 눌러 신고"
+          >
+            {bubble}
+          </Pressable>
+        ) : userDeletable ? (
+          <Pressable
+            onLongPress={handleUserLongPress}
+            android_ripple={null}
+            accessibilityRole="button"
+            accessibilityLabel="메시지 길게 눌러 삭제"
           >
             {bubble}
           </Pressable>
@@ -2072,6 +2106,7 @@ export function ActiveCharacterChatSurface({
   onBack,
   onOpenProfile,
   onPickAction,
+  onDeleteUserMessage,
   showHeader = true,
   romanceScore = 0,
   presenceLine,
@@ -2087,6 +2122,11 @@ export function ActiveCharacterChatSurface({
   onBack: () => void;
   onOpenProfile: () => void;
   onPickAction: (fortuneType: FortuneTypeId) => void;
+  /**
+   * 본인 텍스트 메시지를 길게 눌러 삭제하는 핸들러. 미지정이면 길게 눌러도
+   * 메뉴가 안 뜬다 (chat-screen 외 다른 surface 에선 의도적으로 비활성).
+   */
+  onDeleteUserMessage?: (messageId: string) => void;
   showHeader?: boolean;
   romanceScore?: number;
   /**
@@ -2201,6 +2241,7 @@ export function ActiveCharacterChatSurface({
             key={message.id}
             character={character}
             message={message}
+            onDeleteUserMessage={onDeleteUserMessage}
           />
         ))}
         {isTyping ? (

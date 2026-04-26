@@ -1552,6 +1552,52 @@ export function ChatScreen() {
     handleCharacterActionPress(selectedCharacter.id, fortuneType);
   }
 
+  // 본인이 보낸 텍스트 메시지 길게 누르기 → 삭제 컨펌. messagesByCharacterId
+  // 에서 빼고 디스크 + 원격 양쪽 갱신. story romance pilot 은 snapshot 통째로
+  // 다시 저장해야 romance state / scene intent 보존됨. 자동 재개 ref 에서도
+  // 같이 정리해서 같은 메시지가 다음 진입 시 fantom 트리거 되지 않도록.
+  async function handleDeleteUserMessage(messageId: string) {
+    const characterId = selectedCharacter.id;
+    const currentThread = messagesByCharacterId[characterId];
+    if (!currentThread) return;
+    const nextThread = currentThread.filter((m) => m.id !== messageId);
+    if (nextThread.length === currentThread.length) return;
+    setMessagesByCharacterId((current) => ({
+      ...current,
+      [characterId]: nextThread,
+    }));
+    autoResumedUserMessageIdsRef.current.delete(messageId);
+
+    if (isStoryRomancePilotCharacterId(characterId)) {
+      const currentSnapshot = storyThreadSnapshotsByCharacterId[characterId];
+      if (currentSnapshot) {
+        const nextSnapshot = {
+          ...currentSnapshot,
+          messages: nextThread,
+          updatedAt: new Date().toISOString(),
+        };
+        setStoryThreadSnapshotsByCharacterId((cur) => ({
+          ...cur,
+          [characterId]: nextSnapshot,
+        }));
+        await saveStoryThreadSnapshot(nextSnapshot).catch((error: unknown) => {
+          captureError(error, {
+            surface: 'chat:delete-user-message-snapshot',
+          }).catch(() => undefined);
+        });
+        return;
+      }
+    }
+
+    await saveCharacterConversation(characterId, nextThread).catch(
+      (error: unknown) => {
+        captureError(error, {
+          surface: 'chat:delete-user-message-conversation',
+        }).catch(() => undefined);
+      },
+    );
+  }
+
   function handleCreateFriend() {
     resetDraft();
     router.push({
@@ -2994,6 +3040,7 @@ export function ChatScreen() {
               router.push(`/character/${selectedCharacter.id}` as Href)
             }
             onPickAction={handleActionPress}
+            onDeleteUserMessage={handleDeleteUserMessage}
           />
         ) : (
           <ChatFirstRunSurface
