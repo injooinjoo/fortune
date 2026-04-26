@@ -87,7 +87,11 @@ import {
   resolveChatProvider,
 } from '../lib/chat-provider';
 import { onDeviceLLMEngine } from '../lib/on-device-llm';
-import { setAppIconBadgeCount } from '../lib/push-notifications';
+import {
+  clearActiveChatCharacterId,
+  setActiveChatCharacterId,
+  setAppIconBadgeCount,
+} from '../lib/push-notifications';
 import { useBlockedCharacterIds } from '../lib/character-blocks';
 import { isStoryRomancePilotCharacterId } from '../lib/story-romance-pilots';
 import {
@@ -350,6 +354,22 @@ export function ChatScreen() {
     messagesByCharacterId,
     lastSeenByCharacterId,
   ]);
+
+  // 활성 채팅창에 있을 때 같은 캐릭터 OS push alert 차단.
+  // chat surface 진입 = banner/sound noise 제거 (메시지 자체는 채팅에 정상 표시).
+  // expo-notifications handleNotification 은 foreground 일 때만 호출되므로
+  // background 시점은 별도 clear 불필요 — 그땐 OS 가 알림 표시하는 게 정상.
+  useEffect(() => {
+    if (surfaceMode === 'chat' && selectedCharacterId) {
+      setActiveChatCharacterId(selectedCharacterId);
+      return () => {
+        clearActiveChatCharacterId();
+      };
+    }
+    clearActiveChatCharacterId();
+    return undefined;
+  }, [surfaceMode, selectedCharacterId]);
+
   const [storyThreadSnapshotsByCharacterId, setStoryThreadSnapshotsByCharacterId] =
     useState<Record<string, StoryChatThreadSnapshot | null>>(() =>
       Object.fromEntries(

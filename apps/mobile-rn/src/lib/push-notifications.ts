@@ -1,7 +1,18 @@
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 
+import {
+  deleteSecureItem,
+  getSecureItem,
+  setSecureItem,
+} from './secure-store-storage';
 import { supabase } from './supabase';
+
+// sync-notification-device 호출이 네트워크/서버 오류로 실패한 경우, 다음
+// 부트스트랩이나 앱 resume 시점에 동일 토큰으로 재시도할 수 있도록 SecureStore
+// 에 마지막으로 발급받은 토큰을 보관한다. lastRegisteredToken in-memory dedup
+// 만으로는 cold-start 후 동일 토큰을 받았을 때 retry 가 발생하지 않는다.
+const PENDING_PUSH_TOKEN_KEY = 'fortune.push.pending-token.v1';
 
 let lastRegisteredToken: string | null = null;
 let handlerInstalled = false;
@@ -29,19 +40,69 @@ function loadDevice(): DeviceModule | null {
   }
 }
 
+/**
+ * 사용자가 현재 보고 있는 캐릭터 채팅 ID. 같은 캐릭터 push 가 들어오면 OS
+ * banner/sound 를 차단해 채팅창 안에서의 노이즈를 제거한다. 채팅창 진입 시
+ * `setActiveChatCharacterId(id)`, 이탈/blur 시 `clearActiveChatCharacterId()`.
+ *
+ * 메시지 자체는 채팅 surface 가 hydrate 해서 정상 표시되므로 사용자 가치 손실
+ * 없음. shouldShowList 는 true 로 둬서 다른 캐릭터 알림센터 진입 시 history
+ * 는 보존 (현재 차단 대상이 같은 캐릭터일 뿐).
+ */
+let activeChatCharacterId: string | null = null;
+
+export function setActiveChatCharacterId(characterId: string | null): void {
+  activeChatCharacterId = characterId;
+}
+
+export function clearActiveChatCharacterId(): void {
+  activeChatCharacterId = null;
+}
+
+function shouldSuppressForActiveChat(
+  data: Record<string, unknown> | null | undefined,
+): boolean {
+  if (!activeChatCharacterId) return false;
+  if (!data) return false;
+  const incomingCharacterId =
+    (data.character_id as string | undefined) ??
+    (data.characterId as string | undefined);
+  return Boolean(incomingCharacterId) &&
+    incomingCharacterId === activeChatCharacterId;
+}
+
 function ensureNotificationHandler(Notifications: NotificationsModule): void {
   if (handlerInstalled) return;
   handlerInstalled = true;
   Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldShowBanner: true,
-      shouldShowList: true,
-      shouldPlaySound: true,
-      // 수신 시 OS 가 배지를 자동 가산. 앱 내부 lastSeen 변화에 맞춰
-      // setAppIconBadgeCount 로 재동기화되므로 overcount 위험은 없음.
-      shouldSetBadge: true,
-    }),
+    handleNotification: async (notification) => {
+      const data = notification.request.content.data as
+        | Record<string, unknown>
+        | null
+        | undefined;
+      const suppress = shouldSuppressForActiveChat(data);
+      // 같은 캐릭터 채팅창 안에 있으면 banner/sound/배지 모두 차단.
+      // shouldShowList 만 true 로 두어 알림센터 history 는 유지 (사용자가
+      // 나중에 보고 싶을 수 있고, 채팅창에서 이미 보고 있어 중복 카운트 위험 X).
+      if (suppress) {
+        return {
+          shouldShowAlert: false,
+          shouldShowBanner: false,
+          shouldShowList: true,
+          shouldPlaySound: false,
+          shouldSetBadge: false,
+        };
+      }
+      return {
+        shouldShowAlert: true,
+        shouldShowBanner: true,
+        shouldShowList: true,
+        shouldPlaySound: true,
+        // 수신 시 OS 가 배지를 자동 가산. 앱 내부 lastSeen 변화에 맞춰
+        // setAppIconBadgeCount 로 재동기화되므로 overcount 위험은 없음.
+        shouldSetBadge: true,
+      };
+    },
   });
 }
 
@@ -275,7 +336,13 @@ export async function registerPushTokenForSignedInUser(
     return { skipped: true, reason: 'no token returned' };
   }
 
-  if (token === lastRegisteredToken) {
+  // 메모리 dedup: 같은 세션 내 토큰 변동 없으면 즉시 반환. 단 SecureStore 에
+  // pending 토큰이 남아 있다면 (이전 sync 실패) 다시 시도해야 하므로 memory hit
+  // 만으로 short-circuit 하지 않는다.
+  const pendingToken = await getSecureItem(PENDING_PUSH_TOKEN_KEY).catch(
+    () => null,
+  );
+  if (token === lastRegisteredToken && !pendingToken) {
     return { token };
   }
 
@@ -297,18 +364,100 @@ export async function registerPushTokenForSignedInUser(
 
   if (error) {
     console.warn('[push] sync-notification-device 실패:', error.message ?? error);
+    // 다음 resume/bootstrap 에서 재시도하도록 토큰을 보관. memory dedup 도
+    // 풀어 same-token retry path 가 동작하도록 한다.
+    lastRegisteredToken = null;
+    await setSecureItem(PENDING_PUSH_TOKEN_KEY, token).catch(() => undefined);
     return { skipped: true, reason: 'sync failed' };
   }
 
   lastRegisteredToken = token;
+  await deleteSecureItem(PENDING_PUSH_TOKEN_KEY).catch(() => undefined);
   return { token };
 }
 
+export interface SyncNotificationPreferencesPayload {
+  /** 전역 알림 ON/OFF — false 면 모든 푸시 차단. */
+  enabled?: boolean;
+  /** 일일 인사이트(아침 알림). */
+  dailyFortune?: boolean;
+  /** 토큰 부족 알림. */
+  tokenAlert?: boolean;
+  /** 이벤트/프로모션. */
+  promotion?: boolean;
+  /** 캐릭터 DM (리액티브 — 캐릭터가 답장한 경우). */
+  characterDm?: boolean;
+  /** "HH:mm" 형식 일일 인사이트 알림 시각. */
+  dailyFortuneTime?: string | null;
+}
+
+/**
+ * 알림 선호도(토글)를 백엔드 user_notification_preferences 테이블에 동기화.
+ * profile-notifications-screen 등에서 토글 저장 직후 호출하면 다음 푸시 발송
+ * 이 새 선호도를 반영한다. (이전엔 로컬 SecureStore 만 업데이트 → 백엔드는
+ * stale → proactive 디스패처가 잘못된 토글 값 참조하던 문제 해결.)
+ */
+export async function syncNotificationPreferencesForSignedInUser(
+  preferences: SyncNotificationPreferencesPayload,
+): Promise<{ ok: true } | { ok: false; reason: string }> {
+  if (!supabase) {
+    return { ok: false, reason: 'supabase not configured' };
+  }
+  const { data: sessionData } = await supabase.auth.getSession();
+  if (!sessionData.session?.user?.id) {
+    return { ok: false, reason: 'no signed-in user' };
+  }
+  // 백엔드 sync-notification-device 는 token + platform 필수. 토큰이 없는
+  // 사용자(권한 미허용/시뮬레이터)도 선호도는 저장돼야 하므로 lastRegistered/
+  // pending 토큰을 fallback 으로 사용. 둘 다 없으면 푸시 발송 자체가 불가능
+  // 하므로 skip.
+  const fallbackToken =
+    lastRegisteredToken ??
+    (await getSecureItem(PENDING_PUSH_TOKEN_KEY).catch(() => null));
+  if (!fallbackToken) {
+    return { ok: false, reason: 'no token registered yet' };
+  }
+  const platform: 'ios' | 'android' | 'web' =
+    Platform.OS === 'ios'
+      ? 'ios'
+      : Platform.OS === 'android'
+        ? 'android'
+        : 'web';
+
+  const { error } = await supabase.functions.invoke(
+    'sync-notification-device',
+    {
+      body: {
+        token: fallbackToken,
+        platform,
+        preferences,
+      },
+    },
+  );
+  if (error) {
+    console.warn('[push] 선호도 동기화 실패:', error.message ?? error);
+    return { ok: false, reason: 'sync failed' };
+  }
+  return { ok: true };
+}
+
 export async function deactivateCurrentPushToken(): Promise<void> {
-  if (!supabase || !lastRegisteredToken) return;
+  // SecureStore pending 토큰도 비활성화 대상. 로그아웃 시점에 sync 실패 잔재
+  // 가 남아 있으면 다른 계정으로 로그인했을 때 그대로 활성화될 수 있다.
+  const tokenToDeactivate =
+    lastRegisteredToken ??
+    (await getSecureItem(PENDING_PUSH_TOKEN_KEY).catch(() => null));
+
+  if (!supabase || !tokenToDeactivate) {
+    // 토큰이 없어도 캐시는 정리해야 안전.
+    lastRegisteredToken = null;
+    await deleteSecureItem(PENDING_PUSH_TOKEN_KEY).catch(() => undefined);
+    return;
+  }
+
   const { error } = await supabase.functions.invoke('sync-notification-device', {
     body: {
-      token: lastRegisteredToken,
+      token: tokenToDeactivate,
       platform:
         Platform.OS === 'ios' ? 'ios' : Platform.OS === 'android' ? 'android' : 'web',
       deactivateToken: true,
@@ -316,7 +465,8 @@ export async function deactivateCurrentPushToken(): Promise<void> {
   });
   if (error) {
     console.warn('[push] 토큰 비활성화 실패:', error.message ?? error);
-    return;
+    // 실패해도 클라이언트 캐시는 비워서 다음 사용자/세션에 누설 안 되도록.
   }
   lastRegisteredToken = null;
+  await deleteSecureItem(PENDING_PUSH_TOKEN_KEY).catch(() => undefined);
 }
