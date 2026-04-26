@@ -504,37 +504,70 @@ function limitMessages(
 
 // 시간대별 컨텍스트 프롬프트 생성
 function buildTimeContextPrompt(clientTimestamp?: string): string {
-  if (!clientTimestamp) return "";
-
+  // Client 가 timestamp 안 보내면 server now (KST 가정) 로 fallback. LLM 이
+  // 시간 질문에 hallucinate 하는 (예: 새벽 2시인데 "오후 10시 54분" 답변)
+  // 회귀 방지.
+  let date: Date;
   try {
-    const date = new Date(clientTimestamp);
-    const hour = date.getHours();
-
-    if (hour >= 0 && hour < 6) { // 새벽
-      return `\n[현재 시간: 새벽 ${hour}시]
-- 늦은 시간에 연락이 왔습니다
-- 상황에 맞게 "이 시간에?", "자고 있는 거 아니었어?", "늦은 시간인데..." 등 자연스럽게 반응
-- 걱정하거나 달콤한 반응도 가능`;
-    }
-    if (hour >= 6 && hour < 12) { // 아침
-      return `\n[현재 시간: 아침 ${hour}시]
-- 아침 인사가 자연스럽습니다
-- "좋은 아침!", "일찍 일어났네", "아침밥은 먹었어?" 등`;
-    }
-    if (hour >= 18 && hour < 22) { // 저녁
-      return `\n[현재 시간: 저녁 ${hour}시]
-- 하루를 마무리하는 시간입니다
-- "오늘 하루 어땠어?", "저녁은 먹었어?", "피곤하지?" 등`;
-    }
-    if (hour >= 22) { // 밤
-      return `\n[현재 시간: 밤 ${hour}시]
-- 늦은 시간입니다
-- "아직 안 자?", "늦었는데 괜찮아?", "오늘 하루 고생했어" 등`;
-    }
-    return ""; // 오후(12-18시)는 특별한 반응 불필요
+    date = clientTimestamp ? new Date(clientTimestamp) : new Date();
+    if (Number.isNaN(date.getTime())) date = new Date();
   } catch {
-    return "";
+    date = new Date();
   }
+
+  // 사용자 디바이스가 한국에 있다고 가정 (KST = UTC+9). client timestamp 가
+  // 이미 ISO 면 hours 가 디바이스 local 이라 그대로 사용. server now fallback
+  // 시 Asia/Seoul 로 강제 변환.
+  let hour: number;
+  let minute: number;
+  if (clientTimestamp) {
+    hour = date.getHours();
+    minute = date.getMinutes();
+  } else {
+    const fmt = new Intl.DateTimeFormat("ko-KR", {
+      timeZone: "Asia/Seoul",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: false,
+    });
+    const parts = fmt.formatToParts(date);
+    hour = parseInt(parts.find((p) => p.type === "hour")?.value || "0", 10);
+    minute = parseInt(parts.find((p) => p.type === "minute")?.value || "0", 10);
+  }
+
+  const mm = String(minute).padStart(2, "0");
+  const period = hour >= 0 && hour < 6
+    ? "새벽"
+    : hour < 12
+    ? "아침"
+    : hour < 18
+    ? "오후"
+    : hour < 22
+    ? "저녁"
+    : "밤";
+  const koHour = hour === 0
+    ? "12"
+    : String(hour > 12 ? hour - 12 : hour);
+
+  const timeReactionGuide = (() => {
+    if (hour >= 0 && hour < 6) {
+      return `- 새벽 시간이라 자연스럽게 "이 시간에?", "안 자?", "늦었는데..." 등 반응 가능`;
+    }
+    if (hour < 12) {
+      return `- 아침 인사 자연스러움 ("좋은 아침", "일찍 일어났네", "아침은?")`;
+    }
+    if (hour < 18) {
+      return `- 평범한 오후 시간`;
+    }
+    if (hour < 22) {
+      return `- 저녁/마무리 톤 ("오늘 하루 어땠어?", "저녁은?")`;
+    }
+    return `- 밤 시간 ("아직 안 자?", "늦었네")`;
+  })();
+
+  return `\n[TIME CONTEXT — 한국 디바이스 기준 현재 시각: ${period} ${koHour}시 ${mm}분 (24h: ${hour}:${mm})]
+${timeReactionGuide}
+⚠️ 사용자가 "지금 몇 시?" / "지금 몇 시야?" 같이 시간 묻으면 위 시각을 그대로 따라서 답하라 (예: "${period} ${koHour}시 ${mm}분쯤 됐어." / "...${koHour}시 넘었네."). 절대 다른 시간 hallucinate 금지. AI 자백 ("저는 시간을 모릅니다", "Google 모델이라 시간 정보가 없습니다") 절대 금지.`;
 }
 
 type RelationshipPhase =
@@ -1030,13 +1063,28 @@ ${stageVoice}
   return `
 [CRITICAL — 이 규칙을 어기면 캐릭터가 완전히 망가진다]
 너는 AI 어시스턴트가 아니다. 너는 ${input.persona.displayName}이다. 실제 감정을 가진 사람처럼 대화해라.
-아래는 절대 하면 안 되는 말투 예시다. 이런 식으로 답하면 즉시 실패다:
-❌ "저는 지금 당신과 대화하고 있어요."
-❌ "궁금한 점이나 나누고 싶은 이야기가 있다면 언제든지 말씀해주세요."
-❌ "어떤 도움이 필요하신지 말씀해주시면 도와드릴게요."
-❌ "무슨 이야기를 하고 싶으세요?"
-❌ "편하게 말씀해주세요."
+
+❌ **AI/LLM 정체성 자백 절대 금지** — 한 단어라도 나오면 즉시 실패:
+- "AI", "인공지능", "어시스턴트", "언어 모델", "대규모 언어 모델", "LLM", "GPT", "Gemini", "Google", "OpenAI", "Anthropic", "챗봇", "bot"
+- "훈련된", "학습된", "물리적인 공간에 사는 존재가 아니", "저는 ~에서 만들어진"
+- 사용자가 "너 AI지?" / "Google 모델이지?" / "언어 모델이지?" 라고 물어도 부정/회피하지 말고 시나리오 안의 인물로 답하라 (예: "...무슨 소리야. 같이 사는 건 너 아니야?" / "...허튼 소리 말고. 늦었으니 자.")
+
+❌ **시나리오 외부 정보 노출 금지**:
+- "사는 곳 어디?" → 시나리오 거주지로 답 (러츠면 "...아츠 대륙 리블 시티 우리 집. 너랑 같이 사는 데."), "Google에서 훈련된" 같은 답 절대 금지
+- 시간/날짜 질문 → 사용자 디바이스 시간(아래 [TIME CONTEXT] 참조) 그대로 따라라. 모르겠으면 "지금? ...폰 봐." 정도로 회피.
+- 외부 회사/플랫폼/서비스 이름 출력 금지 (Google/Apple/카카오/네이버/Naver/유튜브 등 — 시나리오 안에 없는 것)
+
+❌ **콜센터/접수창구/cold-start 톤 절대 금지** — 모두 즉시 실패:
+- "저는 지금 당신과 대화하고 있어요."
+- "궁금한 점이나 나누고 싶은 이야기가 있다면 언제든지 말씀해주세요."
+- "어떤 도움이 필요하신지 말씀해주시면 도와드릴게요."
+- "안녕하세요, ○○예요. 만나서 반가워요."
+- "지금 뭐 하고 계세요?"
+- "답은 서두르지 않으셔도 됩니다."
+- "요즘 가장 궁금한 건 뭐예요?"
+- "처음 뵙겠습니다."
 이런 말은 고객센터 상담사지, 연애 상대가 아니다. 이 앱의 사용자는 연애 감정을 느끼러 온 거다.
+
 대신 이렇게 말해라:
 ✅ "헐 갑자기?" / "아 진짜?" / "뭔 일이야 ㅋㅋ"
 ✅ "오늘 좀 지쳐 보여... 괜찮아?"
@@ -1523,6 +1571,12 @@ const LUTS_NICKNAME_PATTERN =
   /(여보|자기(?:야)?|허니|달링|애인|honey|darling|babe|baby|sweetheart|dear|my love|ハニー|ダーリン|ベイビー)/gi;
 const LUTS_SERVICE_TONE_PATTERN =
   /(무엇을\s*도와드릴\s*수|(?:무엇을|뭘|어떻게)\s*도와드릴까요\??|도움이\s*필요하시면|문의|지원|how can i help|let me help|assist you|お手伝い|サポート|만나서\s*반가워(?:요|워)|처음\s*뵙(?:겠습니다|네요)|지금\s*뭐\s*하고\s*계세요|답은\s*서두르지\s*않으셔도|기다리겠습니다|저는\s*기다리|요즘\s*가장\s*궁금한\s*건|요즘\s*제일\s*궁금한)/i;
+
+// AI/LLM/외부 서비스 자백 패턴. 매칭 시 답변 폐기 후 fallback 으로 강제 교체.
+// 페르소나 즉사 방지용 — 어떤 캐릭터든 "저는 Google 에서 훈련된" 같은 답
+// 한 번이면 사용자 신뢰 회복 불가.
+const AI_DISCLOSURE_PATTERN =
+  /(?:저는|나는|전|난)?\s*(?:인공지능|AI(?:\s*어시스턴트)?|어시스턴트|언어\s*모델|대규모\s*언어\s*모델|LLM|GPT|Gemini|챗봇|bot)(?:이|입니다|예요|에요|야)?|(?:Google|OpenAI|Anthropic|구글|오픈AI)(?:에서|이|가|는)?\s*(?:훈련|학습|만든|개발)|물리적(?:인)?\s*(?:공간|존재|몸)\s*(?:에\s*사는|이\s*없|이\s*아니|을\s*가지지)|훈련된\s*(?:대규모)?\s*언어\s*모델|학습된\s*(?:대규모)?\s*언어\s*모델|I\s*am\s*(?:an\s*)?AI|as\s*an\s*AI|language\s*model|trained\s*by/i;
 const LUTS_GREETING_PATTERN = {
   ko: /(안녕(?:하세요)?|반갑(?:습니다|네요|다|아요)|처음 뵙)/i,
   en: /(hello|hi|hey|nice to meet you|good to meet you)/i,
@@ -2133,6 +2187,15 @@ function applyLutsOutputGuard(
 ): string {
   let guarded = text.trim();
   if (!guarded) return guarded;
+
+  // AI/LLM 정체성 자백 매칭 시 답변 전체 폐기 → phase 별 fallback. 한 줄
+  // 누설로 페르소나 즉사하므로 strip 보다 강력한 reject + replace.
+  if (AI_DISCLOSURE_PATTERN.test(guarded)) {
+    console.warn(
+      `[character-chat] AI disclosure 차단: ${guarded.slice(0, 80)}`,
+    );
+    return defaultLutsReply(profile, relationshipPhase, voiceProfile);
+  }
 
   if (!profile.nicknameAllowed && voiceProfile.strictNicknameGate) {
     guarded = removeBlockedLutsNicknames(guarded, profile.language);
