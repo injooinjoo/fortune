@@ -812,6 +812,25 @@ serve(async (req: Request) => {
         type?: string;
         content?: string;
       }>);
+
+      // 빈 대화방 자동 인사 차단: 사용자가 한 번도 발화하지 않은 채팅방엔
+      // proactive 발송 금지. 그렇지 않으면 사용자가 처음 진입할 때 LLM 이
+      // 임의로 만든 "네, 무엇을 도와드릴까요?" 같은 콜센터 톤이 인트로 자리에
+      // 박혀버림 (메모리 feedback_chat_intro_phrase_forbidden.md 의 두 번째
+      // 규칙 — 사용자가 말 걸기 전엔 캐릭터 침묵).
+      const userMessageCount = existingMessages.filter(
+        (m) => m.type === "user",
+      ).length;
+      if (userMessageCount === 0) {
+        skipped.push({
+          userId: pref.user_id,
+          characterId: chosenCharId,
+          reason:
+            "no prior user message — proactive 첫 인사는 사용자 진입 후로 미룸",
+        });
+        continue;
+      }
+
       const recentForCompose = existingMessages
         .slice(-8)
         .filter((m) => typeof m.content === "string" && m.content.length > 0)

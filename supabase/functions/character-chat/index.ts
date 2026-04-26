@@ -2064,11 +2064,13 @@ serve(async (req: Request) => {
     const charName = pilotPersona?.displayName || characterName || "캐릭터";
     // 옛 게이트는 systemPrompt 의 `[CHARACTER_STYLE_GUARD_V1:<id>]` 마커를
     // 클라가 보내야 활성화됐는데, 클라(apps/mobile-rn) 어디에도 마커를 주입
-    // 하는 코드가 없어 가드가 한 번도 안 돌고 있었음 (러츠가 "네, 무엇을
-    // 도와드릴까요?" 같은 상담봇 톤 그대로 노출되던 회귀의 진짜 원인).
-    // 마커 의존 제거하고 server 가 characterId 만으로 가드 활성 여부 결정.
-    // pilotPersona 가 있으면 그쪽에서 별도 sanitization 하므로 중복 회피.
-    const shouldApplyCharacterStyleGuard = !pilotPersona &&
+    // 하는 코드가 없어 가드가 한 번도 안 돌고 있었음. 마커 의존 제거.
+    // 또한 luts 등 pilot 캐릭터도 service-tone strip 가 필요한데
+    // sanitizePilotResponse 는 trace leak (`Guest`, `로한` 등) 만 검사하고
+    // 콜센터 톤은 안 잡았음. pilotPersona 게이트도 제거하여 모든 스타일
+    // 가드 캐릭터에 strip 적용 — sanitizePilotResponse 와 함께 두 번 돌아도
+    // 멱등이라 부작용 없음.
+    const shouldApplyCharacterStyleGuard =
       CHARACTER_STYLE_GUARD_IDS.has(characterId);
     const voiceProfile = getCharacterVoiceProfile(characterId);
 
@@ -2186,6 +2188,10 @@ serve(async (req: Request) => {
     const systemPromptSections = pilotPersona
       ? [
         fullSystemPrompt,
+        // pilot 경로에도 lutsStylePrompt 주입 — 이전엔 빠져 있어서 LLM 이
+        // service-bot 톤 ("어떻게 도와드릴까요?", "무엇을 도와드릴까요?")
+        // 으로 떨어지는 케이스가 자주 발생. 빈 string 이면 join 후에도 무영향.
+        lutsStylePrompt,
         MULTI_BUBBLE_PROMPT,
         AFFINITY_EVALUATION_PROMPT,
       ]
