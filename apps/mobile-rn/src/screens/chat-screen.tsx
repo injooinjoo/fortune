@@ -734,6 +734,55 @@ export function ChatScreen() {
   const selectedFortuneIsTyping = fortuneTypingCharacterId === selectedCharacter.id;
 
   // ---------------------------------------------------------------------------
+  // 자동 답장 재개 — 채팅방 진입 시 마지막 메시지가 user 면 AI 응답 트리거
+  // ---------------------------------------------------------------------------
+  // 시나리오: 사용자가 메시지 보낸 직후 앱이 강제 종료/네트워크 끊김 → 다음
+  // 진입 시 thread 마지막이 user 메시지인 채로 멈춰 있음. 카톡/iMessage 처럼
+  // "내가 마지막인 채로 멈춘 자리에서 자연스럽게 답장이 이어져야" 하므로
+  // 진입 시 한 번만 자동으로 send 핸들러를 호출 (skipOptimistic=true 로
+  // user 메시지 중복 추가 방지).
+  const autoResumedUserMessageIdsRef = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    if (gate !== 'ready') return;
+    if (surfaceMode !== 'chat') return;
+    if (!selectedCharacter) return;
+    // 타이핑 중이면 이미 응답 진행 중 — 중복 트리거 금지.
+    if (selectedStoryIsTyping || selectedFortuneIsTyping) return;
+
+    const thread = messagesByCharacterId[selectedCharacter.id];
+    if (!thread || thread.length === 0) return;
+
+    const last = thread[thread.length - 1];
+    if (last.kind !== 'text' || last.sender !== 'user') return;
+
+    if (autoResumedUserMessageIdsRef.current.has(last.id)) return;
+    autoResumedUserMessageIdsRef.current.add(last.id);
+
+    // story romance pilot vs 일반 story 캐릭터 분기 — 기존 send 핸들러
+    // 시그니처 그대로 재사용.
+    if (isStoryRomancePilotCharacterId(selectedCharacter.id)) {
+      void sendStoryPilotMessage(selectedCharacter, last.text, {
+        skipOptimisticUserMessage: true,
+        userMessageId: last.id,
+      });
+    } else if (selectedCharacter.kind === 'story') {
+      void sendCharacterChatMessage(selectedCharacter, last.text, {
+        skipOptimisticUserMessage: true,
+        userMessageId: last.id,
+      });
+    }
+    // fortune 캐릭터는 transactional (질문→결과 카드) 패턴이라 자동 재개
+    // 의미가 약함 — 의도적으로 스킵.
+  }, [
+    gate,
+    surfaceMode,
+    selectedCharacter,
+    messagesByCharacterId,
+    selectedStoryIsTyping,
+    selectedFortuneIsTyping,
+  ]);
+
+  // ---------------------------------------------------------------------------
   // F2 — 읽음 표시 타이머 (유저가 메시지 보내고 N초 뒤 "1" 배지 제거)
   // ---------------------------------------------------------------------------
   const readReceiptTimersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(
