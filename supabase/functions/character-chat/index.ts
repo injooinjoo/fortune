@@ -2062,11 +2062,14 @@ serve(async (req: Request) => {
     // 메시지 히스토리 준비
     const limitedHistory = limitMessages(messages || []);
     const charName = pilotPersona?.displayName || characterName || "캐릭터";
-    const styleGuardId = extractCharacterStyleGuardId(systemPrompt || "");
+    // 옛 게이트는 systemPrompt 의 `[CHARACTER_STYLE_GUARD_V1:<id>]` 마커를
+    // 클라가 보내야 활성화됐는데, 클라(apps/mobile-rn) 어디에도 마커를 주입
+    // 하는 코드가 없어 가드가 한 번도 안 돌고 있었음 (러츠가 "네, 무엇을
+    // 도와드릴까요?" 같은 상담봇 톤 그대로 노출되던 회귀의 진짜 원인).
+    // 마커 의존 제거하고 server 가 characterId 만으로 가드 활성 여부 결정.
+    // pilotPersona 가 있으면 그쪽에서 별도 sanitization 하므로 중복 회피.
     const shouldApplyCharacterStyleGuard = !pilotPersona &&
-      styleGuardId === characterId &&
-      styleGuardId !== null &&
-      CHARACTER_STYLE_GUARD_IDS.has(styleGuardId);
+      CHARACTER_STYLE_GUARD_IDS.has(characterId);
     const voiceProfile = getCharacterVoiceProfile(characterId);
 
     const lutsToneProfile = shouldApplyCharacterStyleGuard
