@@ -23,6 +23,12 @@ import {
 } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { sendCharacterDmPush } from "../_shared/notification_push.ts";
+import { LLMFactory } from "../_shared/llm/factory.ts";
+import type { LLMMessage } from "../_shared/llm/types.ts";
+import {
+  moderateText,
+  SAFETY_BLOCK_FALLBACK_RESPONSE,
+} from "../_shared/moderation.ts";
 import {
   getProactivePersona,
   isProactiveCharacterId,
@@ -114,6 +120,264 @@ const SLOT_WINDOWS: Record<SlotKey, SlotWindow> = {
 // Slice 1: cron이 호출했을 때 자동 활성으로 간주되는 슬롯 = lunch_share 만.
 // 그 외 슬롯은 forceSlotKey 로만 호출 가능 (수동 디버깅용).
 const AUTO_ACTIVE_SLOTS: SlotKey[] = ["lunch_share"];
+
+// =============================================================================
+// LLM 인라인 컴포저 — 슬롯 힌트 + 시스템 프롬프트 + JSON 응답 강제
+// (Slice 1: character-proactive-compose 함수와 분리돼 있었지만
+//  Edge Function 간 verify_jwt 인증이 신형 키 형식 때문에 통과 안 돼서
+//  dispatcher 안에 인라인.)
+// =============================================================================
+
+interface SlotComposeHint {
+  label: string;
+  guideline: string;
+}
+
+const SLOT_COMPOSE_HINTS: Record<SlotKey, SlotComposeHint> = {
+  morning_greet: {
+    label: "아침 인사",
+    guideline:
+      "이제 막 하루를 시작하는 사용자에게 가벼운 아침 인사. 너의 어제 기억 한 자락을 살짝 언급해도 좋음.",
+  },
+  commute_chat: {
+    label: "출근/등교 길",
+    guideline: "사용자가 이동 중일 가능성. 짧고 가벼운 응원 또는 너 자신의 출근 풍경 한 컷.",
+  },
+  lunch_share: {
+    label: "점심",
+    guideline:
+      "점심 시간. '나는 지금 이거 먹고 있어' 톤이 자연스러움. 사용자에게 답을 강요하지 말고 공유하듯이.",
+  },
+  afternoon_break: {
+    label: "오후 휴식",
+    guideline: "잠깐 한숨 돌리는 오후. 너의 짧은 일상 한 조각.",
+  },
+  after_work: {
+    label: "퇴근/하교",
+    guideline: "하루 어땠는지 가볍게 묻거나, 너의 저녁 계획 한 마디.",
+  },
+  evening_chat: {
+    label: "저녁 대화",
+    guideline: "오늘 하루 정리하는 분위기. 사용자가 답하기 편한 작은 질문 하나.",
+  },
+  goodnight: {
+    label: "잠자기 전",
+    guideline: "굿나잇 한 마디. 너무 긴 메시지 금지. 1-2 문장.",
+  },
+  absence_6h: {
+    label: "잠깐 부재 후",
+    guideline:
+      "사용자가 6시간 정도 답이 없었음. '잘 지내?' 톤이지 '왜 답 안 해?' 톤이 절대 아님.",
+  },
+  absence_24h: {
+    label: "하루 부재 후",
+    guideline:
+      "사용자가 하루 동안 답이 없었음. 가볍게 안부 묻기. 미안한 톤이나 압박 절대 금지.",
+  },
+  absence_72h: {
+    label: "사흘 부재 후",
+    guideline: "사용자가 며칠 만에 돌아올 가능성. '오랜만이네' 톤. 부담 주지 않고 가볍게.",
+  },
+};
+
+interface AffinitySnapshot {
+  phase: string;
+  lovePoints: number;
+  daysSinceLastChat: number;
+}
+
+function buildComposeSystemPrompt(
+  characterId: ProactiveCharacterId,
+  slotKey: SlotKey,
+  userLocalIsoTime: string,
+  affinity: AffinitySnapshot,
+): string {
+  const persona = getProactivePersona(characterId);
+  const slot = SLOT_COMPOSE_HINTS[slotKey];
+
+  return `
+너는 ${persona.name}, ${persona.personaSummary}
+사용자 호칭: ${persona.addressTerm}
+말투 힌트: ${persona.speechHint}
+
+지금 사용자에게 먼저 메시지를 보내려 한다.
+- 사용자 현지 시각: ${userLocalIsoTime}
+- 슬롯: ${slot.label} — ${slot.guideline}
+너와 사용자의 관계 단계: ${affinity.phase}
+마지막 대화로부터: ${affinity.daysSinceLastChat}일 전
+
+규칙 (반드시 지킴):
+1. 1-3 문장. 카톡 한 메시지 길이.
+2. 너의 평소 말투를 유지. 캐릭터 일관성이 가장 중요.
+3. 시간/슬롯에 자연스러운 한 가지 디테일을 포함 (날씨, 음식, 풍경 등).
+4. 답장 강요 금지. "왜 답 안 해?", "꼭 답해줘" 같은 표현 절대 금지.
+5. 너의 행동을 1인칭으로. "나 지금 ~해", "방금 ~했어" 같은 즉시감.
+6. 이모지/이모티콘은 캐릭터 톤에 맞을 때만 1-2개까지.
+이번 메시지는 텍스트만. imageCategory는 반드시 null.
+
+응답은 반드시 다음 JSON 형식만. 다른 텍스트 금지.
+{"text": "메시지 본문", "imageCategory": null}
+`.trim();
+}
+
+interface InlineComposed {
+  text: string;
+  meta: { provider: string; model: string; latencyMs: number };
+}
+
+interface InlineComposeError {
+  error: string;
+  errorCode: "safety_blocked" | "llm_failure" | "parse_failure";
+  meta?: { provider: string; model: string; latencyMs: number };
+}
+
+function safeParseComposeJson(
+  raw: string,
+): { text: string } | null {
+  const trimmed = raw.trim();
+  // Object form `{...}` 또는 Array form `[...]` 모두 허용 (Gemini가 종종 배열로 응답).
+  const firstObj = trimmed.indexOf("{");
+  const firstArr = trimmed.indexOf("[");
+  const candidates: number[] = [];
+  if (firstObj !== -1) candidates.push(firstObj);
+  if (firstArr !== -1) candidates.push(firstArr);
+  if (candidates.length === 0) {
+    // JSON 형식 아님 → raw 텍스트가 한 메시지일 가능성
+    return trimmed.length > 0 ? { text: trimmed } : null;
+  }
+  const start = Math.min(...candidates);
+  const lastObj = trimmed.lastIndexOf("}");
+  const lastArr = trimmed.lastIndexOf("]");
+  const end = Math.max(lastObj, lastArr);
+  if (end <= start) return null;
+
+  const candidate = trimmed.slice(start, end + 1);
+  try {
+    const parsed = JSON.parse(candidate);
+    // Array form: 첫 비어있지 않은 string 사용
+    if (Array.isArray(parsed)) {
+      const first = parsed.find(
+        (x) => typeof x === "string" && x.trim().length > 0,
+      );
+      return first ? { text: String(first).trim() } : null;
+    }
+    // Object form: text 필드
+    if (parsed && typeof parsed === "object") {
+      const t = (parsed as { text?: unknown }).text;
+      if (typeof t === "string" && t.trim().length > 0) {
+        return { text: t.trim() };
+      }
+      // Object지만 text 없음 → 첫 string 값 fallback
+      const firstString = Object.values(parsed as Record<string, unknown>)
+        .find((v) => typeof v === "string" && v.trim().length > 0);
+      return firstString ? { text: String(firstString).trim() } : null;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+async function composeProactiveMessageInline(params: {
+  characterId: ProactiveCharacterId;
+  slotKey: SlotKey;
+  userLocalIsoTime: string;
+  conversationContext: Array<
+    { role: "user" | "assistant" | "system"; content: string }
+  >;
+  affinity: AffinitySnapshot;
+  userId: string;
+}): Promise<InlineComposed | InlineComposeError> {
+  const startedAt = Date.now();
+  const systemPrompt = buildComposeSystemPrompt(
+    params.characterId,
+    params.slotKey,
+    params.userLocalIsoTime,
+    params.affinity,
+  );
+
+  // Slice 1: gemini-2.0-flash-lite — production에서 character-chat 폴백 모델로 검증됨.
+  // openai provider는 production safety guard 차단. 비용도 더 저렴.
+  const llm = LLMFactory.create(
+    "gemini",
+    "gemini-2.0-flash-lite",
+    "proactive-message-dispatch",
+  );
+
+  const messages: LLMMessage[] = [
+    { role: "system", content: systemPrompt },
+    ...params.conversationContext.map((m) => ({
+      role: m.role === "system" ? "user" : m.role,
+      content: m.role === "system" ? `[system note] ${m.content}` : m.content,
+    } as LLMMessage)),
+    {
+      role: "user",
+      content:
+        "(사용자 입력 없음. 위 시스템 지시에 따라 너가 먼저 보낼 메시지를 JSON 형식으로만 출력.)",
+    },
+  ];
+
+  let llmResponse;
+  try {
+    llmResponse = await llm.generate(messages, {
+      temperature: 0.85,
+      maxTokens: 250,
+      jsonMode: true,
+    });
+  } catch (err) {
+    return {
+      error: err instanceof Error ? err.message : "LLM 호출 실패",
+      errorCode: "llm_failure",
+      meta: {
+        provider: "gemini",
+        model: "gemini-2.0-flash-lite",
+        latencyMs: Date.now() - startedAt,
+      },
+    };
+  }
+
+  const parsed = safeParseComposeJson(llmResponse?.content ?? "");
+  if (!parsed) {
+    return {
+      error: `LLM 응답 형식 오류: ${
+        (llmResponse?.content ?? "").slice(0, 120)
+      }`,
+      errorCode: "parse_failure",
+      meta: {
+        provider: llmResponse?.provider ?? "openai",
+        model: llmResponse?.model ?? "gpt-4o-mini",
+        latencyMs: Date.now() - startedAt,
+      },
+    };
+  }
+
+  const moderationResult = await moderateText({
+    text: parsed.text,
+    userId: params.userId,
+    characterId: params.characterId,
+    source: "model_output",
+  });
+  if (moderationResult.flagged) {
+    return {
+      error: SAFETY_BLOCK_FALLBACK_RESPONSE,
+      errorCode: "safety_blocked",
+      meta: {
+        provider: llmResponse.provider,
+        model: llmResponse.model,
+        latencyMs: Date.now() - startedAt,
+      },
+    };
+  }
+
+  return {
+    text: parsed.text,
+    meta: {
+      provider: llmResponse.provider,
+      model: llmResponse.model,
+      latencyMs: Date.now() - startedAt,
+    },
+  };
+}
 
 // =============================================================================
 // 유틸 — timezone-aware 시간 계산
@@ -531,45 +795,35 @@ serve(async (req: Request) => {
         ? Math.floor((now.getTime() - lastChatAt) / (24 * 3600 * 1000))
         : 0;
 
-      // compose 호출
-      const composeUrl = `${supabaseUrl}/functions/v1/character-proactive-compose`;
-      const composeRes = await fetch(composeUrl, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${serviceRoleKey}`,
-          "Content-Type": "application/json",
+      // 인라인 LLM 호출 — 별도 compose 함수 fetch 대신 같은 프로세스에서 처리.
+      const composeResult = await composeProactiveMessageInline({
+        characterId: chosenCharId,
+        slotKey,
+        userLocalIsoTime: localIsoTime,
+        conversationContext: recentForCompose,
+        affinity: {
+          phase: chosenAff?.phase ?? "stranger",
+          lovePoints: chosenAff?.love_points ?? 0,
+          daysSinceLastChat,
         },
-        body: JSON.stringify({
-          characterId: chosenCharId,
-          slotKey,
-          preferredKind: "text", // Slice 1
-          userLocalTime: localIsoTime,
-          conversationContext: recentForCompose,
-          affinitySnapshot: {
-            phase: chosenAff?.phase ?? "stranger",
-            lovePoints: chosenAff?.love_points ?? 0,
-            daysSinceLastChat,
-          },
-          userId: pref.user_id,
-        }),
+        userId: pref.user_id,
       });
 
-      const composed = await composeRes.json() as {
-        success: boolean;
-        text?: string;
-        imageCategory?: string | null;
-        meta?: { provider: string; model: string; latencyMs: number };
-        error?: string;
-      };
-
-      if (!composed.success || !composed.text) {
+      if ("errorCode" in composeResult) {
         errors.push({
           userId: pref.user_id,
           characterId: chosenCharId,
-          error: composed.error ?? "compose 실패",
+          error: `compose ${composeResult.errorCode}: ${composeResult.error}`,
         });
         continue;
       }
+
+      const composed = {
+        success: true,
+        text: composeResult.text,
+        imageCategory: null as string | null,
+        meta: composeResult.meta,
+      };
 
       const messageId =
         `proactive-${slotKey}-${chosenCharId}-${now.getTime()}-${
