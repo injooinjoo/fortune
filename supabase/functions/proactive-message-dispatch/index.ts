@@ -67,6 +67,7 @@ interface DispatchSkipped {
 interface DispatchSent {
   userId: string;
   characterId: string;
+  slotKey: string;
   messageId: string;
   pushSentCount: number;
   dryRun?: boolean;
@@ -117,9 +118,25 @@ const SLOT_WINDOWS: Record<SlotKey, SlotWindow> = {
   absence_72h: { startHour: 0, endHour: 24 },
 };
 
-// Slice 1: cron이 호출했을 때 자동 활성으로 간주되는 슬롯 = lunch_share 만.
-// 그 외 슬롯은 forceSlotKey 로만 호출 가능 (수동 디버깅용).
-const AUTO_ACTIVE_SLOTS: SlotKey[] = ["lunch_share"];
+// 자동 활성화 슬롯 (cron 호출 시 dispatcher 가 사용자별 local time 으로 결정).
+// 부재 트리거(absence_*) 는 시간 무관이라 별도 경로(forceSlotKey) 로만 호출.
+const AUTO_ACTIVE_SLOTS: SlotKey[] = [
+  "morning_greet",
+  "commute_chat",
+  "lunch_share",
+  "afternoon_break",
+  "after_work",
+  "evening_chat",
+  "goodnight",
+];
+
+function determineSlotForLocalHour(localHour: number): SlotKey | null {
+  for (const slotKey of AUTO_ACTIVE_SLOTS) {
+    const w = SLOT_WINDOWS[slotKey];
+    if (localHour >= w.startHour && localHour < w.endHour) return slotKey;
+  }
+  return null;
+}
 
 // =============================================================================
 // LLM 인라인 컴포저 — 슬롯 힌트 + 시스템 프롬프트 + JSON 응답 강제
@@ -488,18 +505,8 @@ function pickWeightedCharacter(
 }
 
 // =============================================================================
-// 활성 슬롯 결정 (Slice 1: lunch_share 만 자동)
+// 활성 슬롯 결정 — 사용자별 local time 으로 결정 (메인 루프 안에서 수행).
 // =============================================================================
-
-function determineAutoActiveSlot(
-  preferences: PreferenceRow[],
-): SlotKey | null {
-  // 사용자별 timezone 이 다르므로 "지금 활성"은 사용자별로 다름.
-  // 디스패처 한 호출 = 한 슬롯 키이므로, 자동 활성은 후보가 가장 많은 슬롯 또는
-  // 단순히 AUTO_ACTIVE_SLOTS 의 첫 번째를 시도. Slice 1은 lunch_share 만 있으니 단순 반환.
-  const _ = preferences; // 다음 슬라이스에서 활용
-  return AUTO_ACTIVE_SLOTS[0] ?? null;
-}
 
 // =============================================================================
 // 핸들러
@@ -621,24 +628,8 @@ serve(async (req: Request) => {
     });
   }
 
-  // 2. 활성 슬롯 결정
-  const slotKey: SlotKey | null = request.forceSlotKey ??
-    determineAutoActiveSlot(preferences);
-
-  if (!slotKey) {
-    return jsonResponse({
-      success: true,
-      slotKey: null,
-      candidatesEvaluated: preferences.length,
-      messagesSent: 0,
-      sent: [],
-      skipped: preferences.map((p) => ({
-        userId: p.user_id,
-        reason: "no active slot",
-      })),
-      errors: [],
-    });
-  }
+  // 2. 활성 슬롯 결정 — forceSlotKey 면 모든 사용자에게 동일 슬롯, 아니면 사용자별 local time으로 결정.
+  const forcedSlot: SlotKey | null = request.forceSlotKey ?? null;
 
   const sent: DispatchSent[] = [];
   const skipped: DispatchSkipped[] = [];
@@ -648,15 +639,30 @@ serve(async (req: Request) => {
   // 3. 후보 사용자 순회
   for (const pref of preferences) {
     try {
-      // 슬롯 비활성 체크
-      if (pref.disabled_slot_keys.includes(slotKey)) {
-        skipped.push({ userId: pref.user_id, reason: "slot disabled by user" });
-        continue;
-      }
-
       const localHour = computeLocalHour(pref.timezone, now);
       const localDate = computeLocalDate(pref.timezone, now);
       const localIsoTime = computeLocalIsoTime(pref.timezone, now);
+
+      // 사용자별 슬롯 결정 — forcedSlot 있으면 그것, 없으면 local hour 로 자동 결정
+      const slotKey: SlotKey | null = forcedSlot ??
+        determineSlotForLocalHour(localHour);
+
+      if (!slotKey) {
+        skipped.push({
+          userId: pref.user_id,
+          reason: `no active slot for local hour=${localHour}`,
+        });
+        continue;
+      }
+
+      // 슬롯 비활성 체크
+      if (pref.disabled_slot_keys.includes(slotKey)) {
+        skipped.push({
+          userId: pref.user_id,
+          reason: `slot disabled by user (${slotKey})`,
+        });
+        continue;
+      }
 
       // quiet hours 체크
       if (
@@ -666,11 +672,11 @@ serve(async (req: Request) => {
         continue;
       }
 
-      // 슬롯 윈도우 체크
-      if (!withinSlotWindow(localHour, slotKey)) {
+      // 슬롯 윈도우 체크 (forcedSlot 가 윈도우 밖일 때만 의미)
+      if (forcedSlot && !withinSlotWindow(localHour, slotKey)) {
         skipped.push({
           userId: pref.user_id,
-          reason: `outside slot window (local hour=${localHour})`,
+          reason: `outside slot window for forced slot ${slotKey} (local hour=${localHour})`,
         });
         continue;
       }
@@ -835,6 +841,7 @@ serve(async (req: Request) => {
         sent.push({
           userId: pref.user_id,
           characterId: chosenCharId,
+          slotKey,
           messageId,
           pushSentCount: 0,
           dryRun: true,
@@ -958,6 +965,7 @@ serve(async (req: Request) => {
       sent.push({
         userId: pref.user_id,
         characterId: chosenCharId,
+        slotKey,
         messageId,
         pushSentCount,
       });
@@ -972,7 +980,7 @@ serve(async (req: Request) => {
 
   return jsonResponse({
     success: true,
-    slotKey,
+    slotKey: forcedSlot, // 자동 모드면 null. 사용자별 슬롯은 sent[].slotKey 참조.
     candidatesEvaluated: preferences.length,
     messagesSent: sent.length,
     sent,
