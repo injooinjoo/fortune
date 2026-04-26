@@ -102,7 +102,12 @@ export const emptyMobileAppState: MobileAppState = {
     sentMessageCount: 0,
   },
   settings: {
-    aiMode: 'on-device',
+    // 한국어 응답 품질이 중요한 페르소나 채팅이 핵심 기능이라 cloud (Claude
+    // 계열 LLM) 를 디폴트로 둔다. 온디바이스 (Gemma 4 E2B 2B 파라미터) 는
+    // 한국어 생성 품질이 눈에 띄게 떨어져 ("밥을 먹으러 간다. 너는 무슨 필요로
+    // 있어?" 같은 어색한 번역체) 사용자 체감 회귀를 일으킨다. 데이터 절약/
+    // 오프라인 사용을 원하는 사용자는 프로필 설정에서 명시적으로 전환 가능.
+    aiMode: 'cloud',
     chatHapticsEnabled: true,
   },
   updatedAt: null,
