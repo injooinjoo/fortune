@@ -49,6 +49,15 @@ export interface AppSettings {
    * 캐릭터 메시지가 렌더될 때 tapLight / loveHeartbeat / scoreReveal 호출을 제어.
    */
   chatHapticsEnabled: boolean;
+  /**
+   * 1회성 마이그레이션 플래그 — 디폴트 aiMode 가 'on-device' → 'cloud' 로
+   * 바뀌면서 (2026-04-26 / commit c9d5e8d2) 기존 디바이스에 저장돼 있던 'on-device'
+   * 값이 사용자 명시 선택인지 옛 디폴트인지 구분 불가능하다. hydration 시 이 플래그
+   * 가 false 이고 aiMode 가 'on-device' 면 1회만 'cloud' 로 플립 + 플래그 true.
+   * 이후 사용자가 다시 명시적으로 'on-device' 로 토글해도 플래그 true 유지 — 재
+   * 마이그레이션 안 됨 (사용자 의도 보존).
+   */
+  aiModeMigratedV1?: boolean;
 }
 
 export interface MobileAppState {
@@ -197,13 +206,25 @@ export function normalizeMobileAppState(raw: Record<string, unknown>): MobileApp
         : null,
       sentMessageCount: asNumber(chat.sentMessageCount, 0),
     },
-    settings: {
-      aiMode: isAiMode(settings.aiMode) ? settings.aiMode : emptyMobileAppState.settings.aiMode,
-      chatHapticsEnabled: asBoolean(
-        settings.chatHapticsEnabled,
-        emptyMobileAppState.settings.chatHapticsEnabled,
-      ),
-    },
+    settings: (() => {
+      const persistedAiMode = isAiMode(settings.aiMode)
+        ? settings.aiMode
+        : emptyMobileAppState.settings.aiMode;
+      const migrated = asBoolean(settings.aiModeMigratedV1, false);
+      // 1회 마이그레이션: 옛 디폴트 'on-device' 가 그대로 남아있는 디바이스를
+      // 새 디폴트 'cloud' 로 자동 플립. migrated 플래그가 false 이고 현재 값
+      // 이 'on-device' 일 때만 동작 — 사용자가 명시적으로 'on-device' 를 다시
+      // 골라도 플래그 true 유지되어 재플립 안 됨.
+      const shouldMigrate = !migrated && persistedAiMode === 'on-device';
+      return {
+        aiMode: shouldMigrate ? 'cloud' : persistedAiMode,
+        chatHapticsEnabled: asBoolean(
+          settings.chatHapticsEnabled,
+          emptyMobileAppState.settings.chatHapticsEnabled,
+        ),
+        aiModeMigratedV1: true,
+      };
+    })(),
     updatedAt: asString(raw.updatedAt) || null,
   };
 }
