@@ -67,10 +67,7 @@ import {
   type ChatCharacterSpec,
   type ChatCharacterTab,
 } from '../lib/chat-characters';
-import {
-  getChatLastSeenByCharacterId,
-  setChatLastSeenForCharacter,
-} from '../lib/storage';
+import { setChatLastSeenForCharacter } from '../lib/storage';
 import { getSecureItem, setSecureItem } from '../lib/secure-store-storage';
 import { supabase } from '../lib/supabase';
 import {
@@ -208,6 +205,22 @@ function shouldAcceptRemoteMessages(
   return true;
 }
 
+/**
+ * 채팅 영속/읽음 정책 (2026-04-26 정비):
+ *  1) 메시지: SecureStore `fortune.chat.msgs.v1.*` — bootstrap preload
+ *     (`app-bootstrap-provider.cachedCharacterConversations`), 메시지 추가
+ *     직후 즉시 flush. 텍스트 메시지만 원격 동기화 (Edge soft-fail).
+ *  2) 스토리 스냅샷: SecureStore
+ *     `fortune.mobile-rn.story-chat-thread.v1.{userId}.{characterId}` —
+ *     character open 시 lazy hydrate. romance state 포함 전체 snapshot.
+ *  3) 읽음 상태: SecureStore `fortune.chat-last-seen.v1` — bootstrap preload
+ *     (`cachedLastSeenByCharacterId`) 로 race 방지. 직렬화 큐로 concurrent
+ *     write merge 보장 (`storage.ts:setChatLastSeenForCharacter`).
+ *  4) Unread 계산: `chat-surface.buildCharacterListMeta`. lastSeen ID 가
+ *     현재 메시지 배열에 없으면 "이미 다 읽음" 으로 보수적 fallback (시스템
+ *     사정으로 ID 가 사라진 케이스에서 전체 unread 회귀 방지).
+ *  5) 디버그: 프로필 화면 하단 `formatBuildBadge()` 에서 OTA 적용 여부 확인.
+ */
 export function ChatScreen() {
   const params = useLocalSearchParams<{ characterId?: string | string[]; showList?: string | string[] }>();
   const directCharacterId = readSearchParam(params.characterId);
@@ -215,6 +228,7 @@ export function ChatScreen() {
   const directCharacter = findChatCharacterById(directCharacterId);
   const {
     cachedCharacterConversations,
+    cachedLastSeenByCharacterId,
     completeOnboarding,
     consumePendingChatFortuneType,
     consumePendingMySajuContext,
@@ -297,19 +311,12 @@ export function ChatScreen() {
       }),
     ),
   );
+  // bootstrap 이 SecureStore 에서 미리 로드한 lastSeen 으로 초기화. mount
+  // 후 비동기 hydrate 로 미루면 첫 렌더링 동안 빈 객체로 unread 가 계산되어
+  // cold-start 직후 모든 캐릭터에 unread 닷이 일시적으로 깜빡인다 (race).
   const [lastSeenByCharacterId, setLastSeenByCharacterId] = useState<
     Record<string, string>
-  >({});
-
-  useEffect(() => {
-    let mounted = true;
-    void getChatLastSeenByCharacterId().then((loaded) => {
-      if (mounted) setLastSeenByCharacterId(loaded);
-    });
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  >(cachedLastSeenByCharacterId);
 
   // 스레드 체류 중 새 AI/system 메시지 도착 → 즉시 읽음 처리.
   // 일반 메신저(iMessage/WhatsApp/KakaoTalk) 와 동일한 동작: 유저가 해당
@@ -331,7 +338,11 @@ export function ChatScreen() {
       ...current,
       [charId]: latest.id,
     }));
-    void setChatLastSeenForCharacter(charId, latest.id).catch(() => undefined);
+    setChatLastSeenForCharacter(charId, latest.id).catch((error) => {
+      captureError(error, { surface: 'chat:last-seen-flush' }).catch(
+        () => undefined,
+      );
+    });
   }, [
     surfaceMode,
     selectedCharacterId,
@@ -1404,8 +1415,12 @@ export function ChatScreen() {
         ...current,
         [characterId]: lastMessage.id,
       }));
-      void setChatLastSeenForCharacter(characterId, lastMessage.id).catch(
-        () => undefined,
+      setChatLastSeenForCharacter(characterId, lastMessage.id).catch(
+        (error) => {
+          captureError(error, { surface: 'chat:last-seen-flush' }).catch(
+            () => undefined,
+          );
+        },
       );
     }
 

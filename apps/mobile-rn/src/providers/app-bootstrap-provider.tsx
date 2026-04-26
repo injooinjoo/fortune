@@ -31,6 +31,7 @@ import {
   registerPushTokenForSignedInUser,
 } from '../lib/push-notifications';
 import {
+  getChatLastSeenByCharacterId,
   getPendingChatFortuneType,
   getLastAuthenticatedUserId,
   getUnifiedOnboardingProgress,
@@ -58,6 +59,13 @@ interface BootstrapContextValue {
    * 간의 플래시를 제거한다. 키는 캐릭터 id, 값은 최신 메시지 배열.
    */
   cachedCharacterConversations: Record<string, ChatShellMessage[]>;
+  /**
+   * 캐릭터별 "마지막으로 본 메시지 id" 의 부트스트랩 사전 로드본.
+   * 비동기 SecureStore 읽기를 chat-screen mount 후로 미루면 첫 렌더링 시
+   * 빈 객체로 unread 가 계산되어 cold-start 직후 모든 캐릭터가 unread 닷
+   * 상태로 깜빡인다. 메시지 캐시와 동일한 시점에 preload 하여 race 제거.
+   */
+  cachedLastSeenByCharacterId: Record<string, string>;
   markGuestBrowse: () => Promise<void>;
   markAuthComplete: () => Promise<void>;
   updateOnboardingProgress: (
@@ -78,6 +86,7 @@ const BootstrapContext = createContext<BootstrapContextValue>({
   pendingChatFortuneType: null,
   pendingMySajuContext: null,
   cachedCharacterConversations: {},
+  cachedLastSeenByCharacterId: {},
   markGuestBrowse: async () => undefined,
   markAuthComplete: async () => undefined,
   updateOnboardingProgress: async () => undefined,
@@ -99,6 +108,8 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
     useState<ChatShellMySajuContextMessage | null>(null);
   const [cachedCharacterConversations, setCachedCharacterConversations] =
     useState<Record<string, ChatShellMessage[]>>({});
+  const [cachedLastSeenByCharacterId, setCachedLastSeenByCharacterId] =
+    useState<Record<string, string>>({});
   const lastAuthenticatedUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -215,15 +226,18 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
           queuedFortuneType,
           lastAuthenticatedUserId,
           cachedConversations,
+          cachedLastSeen,
         ] = await Promise.all([
           getUnifiedOnboardingProgress(),
           getPendingChatFortuneType(),
           getLastAuthenticatedUserId(),
           loadCachedCharacterMessagesBatch(characterIds),
+          getChatLastSeenByCharacterId(),
         ]);
 
         if (mounted) {
           setCachedCharacterConversations(cachedConversations);
+          setCachedLastSeenByCharacterId(cachedLastSeen);
         }
 
         if (!mounted) {
@@ -463,6 +477,7 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       pendingChatFortuneType,
       pendingMySajuContext,
       cachedCharacterConversations,
+      cachedLastSeenByCharacterId,
       markGuestBrowse,
       markAuthComplete,
       updateOnboardingProgress,
@@ -473,6 +488,7 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
     }),
     [
       cachedCharacterConversations,
+      cachedLastSeenByCharacterId,
       completeOnboarding,
       consumePendingChatFortuneType,
       consumePendingMySajuContext,

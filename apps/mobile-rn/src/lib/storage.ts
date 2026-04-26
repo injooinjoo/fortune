@@ -157,3 +157,63 @@ export async function getLastAuthenticatedUserId() {
 export async function saveLastAuthenticatedUserId(userId: string) {
   await setSecureItem(lastAuthenticatedUserIdStorageKey, userId);
 }
+
+const chatLastSeenStorageKey = 'fortune.chat-last-seen.v1';
+
+/**
+ * 각 캐릭터 채팅에서 "유저가 마지막으로 본 메시지 id"를 기록. 목록 화면의
+ * unread 판단용.
+ */
+export async function getChatLastSeenByCharacterId(): Promise<
+  Record<string, string>
+> {
+  const raw = await getSecureItem(chatLastSeenStorageKey);
+  if (!raw) return {};
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      const result: Record<string, string> = {};
+      for (const [key, value] of Object.entries(parsed)) {
+        if (typeof value === 'string') result[key] = value;
+      }
+      return result;
+    }
+  } catch {
+    // invalid JSON - reset
+  }
+  return {};
+}
+
+// 단일 SecureStore 키에 read-modify-write 하므로 빠르게 연속 호출되면
+// (예: AI 멀티 세그먼트 도착 + 캐릭터 진입 동시 발생) 마지막 write 가 이전
+// write 의 stale snapshot 위에 덮어쓰여 일부 캐릭터 의 lastSeen 이 사라질
+// 수 있다. 모듈 레벨 큐로 직렬화해서 last-write-wins 가 아닌 sequential
+// merge 를 보장.
+let chatLastSeenWriteQueue: Promise<Record<string, string>> = Promise.resolve(
+  {},
+);
+
+export async function setChatLastSeenForCharacter(
+  characterId: string,
+  messageId: string,
+): Promise<Record<string, string>> {
+  // 이전 write 가 끝난 뒤에만 새 read-modify-write 를 시작한다.
+  // 이전 write 가 reject 됐어도 다음 write 는 진행해야 하므로 catch 로 흡수.
+  const next = chatLastSeenWriteQueue.then(
+    async () => {
+      const current = await getChatLastSeenByCharacterId();
+      const merged = { ...current, [characterId]: messageId };
+      await setSecureItem(chatLastSeenStorageKey, JSON.stringify(merged));
+      return merged;
+    },
+    async () => {
+      // 이전 큐가 실패했더라도 새 write 는 fresh read 로 시작.
+      const current = await getChatLastSeenByCharacterId();
+      const merged = { ...current, [characterId]: messageId };
+      await setSecureItem(chatLastSeenStorageKey, JSON.stringify(merged));
+      return merged;
+    },
+  );
+  chatLastSeenWriteQueue = next;
+  return next;
+}

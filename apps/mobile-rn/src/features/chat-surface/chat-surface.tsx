@@ -360,11 +360,25 @@ export function buildCharacterListMeta(
   // 과거 구현은 "마지막 메시지가 assistant 인지"만 봐서, AI 가 여러 번 연속
   // 보내고 유저가 짧게 답하면 마지막이 user → 안 읽힌 AI 메시지가 있어도
   // 닷이 사라지는 버그가 있었다.
-  const lastSeenIndex = lastSeenMessageId
-    ? messages.findIndex((m) => m.id === lastSeenMessageId)
-    : -1;
+  let startIndex: number;
+  if (!lastSeenMessageId) {
+    // 한 번도 안 본 캐릭터 — 전체 메시지를 unread 로 카운트.
+    startIndex = 0;
+  } else {
+    const found = messages.findIndex((m) => m.id === lastSeenMessageId);
+    if (found === -1) {
+      // 저장된 lastSeen ID 가 현재 메시지 배열에 없음 — 원격 재동기화로 ID
+      // 가 바뀌었거나 메시지 prune 등 시스템 사정. lastSeen 이 존재한다는
+      // 사실 자체가 "한 번 이상 채팅방을 열었다" 는 증거이므로, 모르는 ID
+      // 를 만났을 때 "전부 안 읽음" 으로 해석하면 사용자 체감 회귀가 크다.
+      // 보수적으로 "이미 다 읽음" (startIndex = 끝) 으로 처리.
+      startIndex = messages.length;
+    } else {
+      startIndex = found + 1;
+    }
+  }
   let unreadCount = 0;
-  for (let i = lastSeenIndex + 1; i < messages.length; i += 1) {
+  for (let i = startIndex; i < messages.length; i += 1) {
     const m = messages[i];
     if (m.sender === 'assistant' || m.sender === 'system') {
       unreadCount += 1;
