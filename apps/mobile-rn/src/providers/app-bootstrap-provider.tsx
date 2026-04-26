@@ -218,7 +218,19 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       // com.beyond.fortune://widget?...) 로 들어오면 expo-router가 +not-found
       // 를 먼저 그려버리므로 route 가 /chat 일 때도 항상 replace 해서 의도한
       // 화면으로 끌어와야 한다 (그렇지 않으면 안내 화면에 멈춰버림).
-      router.replace(resolution.route as Href);
+      // 콜드 스타트에서는 bootstrap async chain 끝난 시점이라 expo-router 가
+      // +not-found 를 막 settling 중일 수 있어 replace 가 race 로 무시되는
+      // 케이스가 있다. push 핸들러와 같은 방식으로 한 틱 늦춰서 보장한다.
+      const replaceTarget = resolution.route as Href;
+      setTimeout(() => {
+        try {
+          router.replace(replaceTarget);
+        } catch (error) {
+          captureError(error, { surface: 'bootstrap:deep-link-replace' }).catch(
+            () => undefined,
+          );
+        }
+      }, 300);
     }
 
     async function bootstrap() {
