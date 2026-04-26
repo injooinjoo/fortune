@@ -2508,8 +2508,18 @@ export function ActiveCharacterChatHeader({
       >
         <Pressable
           accessibilityRole="button"
+          accessibilityLabel="뒤로 가기"
           onPress={onBack}
-          style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
+          // 22pt 아이콘을 raw 로 감싸면 터치 영역이 22x22 라 백버튼이 잘 안
+          // 눌린다는 보고 다수. Apple HIG 최소 44x44pt 보장 위해 hitSlop +
+          // padding 으로 터치 박스 확장. padding 은 시각적 위치 변화를 막기
+          // 위해 음수 margin 으로 offset 처리하지 않고, 헤더가 row 컨테이너라
+          // 자연스럽게 옆으로만 살짝 늘어나도록 둔다.
+          hitSlop={{ top: 16, bottom: 16, left: 16, right: 16 }}
+          style={({ pressed }) => ({
+            opacity: pressed ? 0.6 : 1,
+            padding: 8,
+          })}
         >
           <Ionicons
             color={fortuneTheme.colors.textPrimary}
@@ -2540,8 +2550,13 @@ export function ActiveCharacterChatHeader({
         </View>
         <Pressable
           accessibilityRole="button"
+          accessibilityLabel="캐릭터 프로필 보기"
           onPress={onOpenProfile}
-          style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
+          hitSlop={{ top: 16, bottom: 16, left: 16, right: 16 }}
+          style={({ pressed }) => ({
+            opacity: pressed ? 0.6 : 1,
+            padding: 8,
+          })}
         >
           <Ionicons
             color={fortuneTheme.colors.textPrimary}

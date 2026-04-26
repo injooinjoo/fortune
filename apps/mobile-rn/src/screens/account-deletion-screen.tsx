@@ -8,6 +8,7 @@ import { Card } from '../components/card';
 import { RouteBackHeader } from '../components/route-back-header';
 import { Screen } from '../components/screen';
 import { captureError } from '../lib/error-reporting';
+import { deactivateCurrentPushToken } from '../lib/push-notifications';
 import { supabase } from '../lib/supabase';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
@@ -64,6 +65,12 @@ export function AccountDeletionScreen() {
         return;
       }
 
+      // delete-account CASCADE 가 fcm_tokens 행을 정리하지만, 클라이언트
+      // SecureStore 에 남은 pending push token / lastRegistered 캐시도
+      // 비워야 동일 디바이스로 다른 계정 로그인 시 토큰이 누설되지 않는다.
+      await deactivateCurrentPushToken().catch((err) =>
+        captureError(err, { surface: 'account-deletion:push' }),
+      );
       await supabase.auth.signOut();
       router.replace('/chat');
     } catch (error) {

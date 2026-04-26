@@ -16,6 +16,7 @@ import {
   formatBuildBadge,
 } from '../lib/build-identity';
 import { captureError } from '../lib/error-reporting';
+import { deactivateCurrentPushToken } from '../lib/push-notifications';
 import { deleteSecureItem } from '../lib/secure-store-storage';
 import { supabase } from '../lib/supabase';
 import { isTestAccountEmail } from '../lib/test-accounts';
@@ -209,6 +210,9 @@ export function ProfileScreen() {
 
     // 2. Sign out — clears Supabase auth tokens and makes session null on
     //    next boot, which puts the app into the real first-launch flow.
+    //    푸시 토큰은 sign-out 전에 비활성화해야 한다. signOut 이후엔 Supabase
+    //    invoke 가 401 로 떨어져 fcm_tokens 행을 정리할 수 없게 된다.
+    await step('deactivate-push-token', () => deactivateCurrentPushToken());
     await step('sign-out', async () => {
       await supabase?.auth.signOut();
     });
@@ -296,6 +300,12 @@ export function ProfileScreen() {
         style: 'destructive',
         onPress: async () => {
           try {
+            // signOut 전에 푸시 토큰 비활성화. 다른 계정으로 재로그인했을 때
+            // 이전 토큰이 active 로 남아 있으면 잘못된 사용자에게 푸시가 갈
+            // 수 있다.
+            await deactivateCurrentPushToken().catch((error) =>
+              captureError(error, { surface: 'profile:sign-out:push' }),
+            );
             await supabase?.auth.signOut();
             router.replace({ pathname: '/chat', params: { showList: '1' } });
           } catch (error) {

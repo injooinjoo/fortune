@@ -8,7 +8,10 @@ import { PrimaryButton } from "../components/primary-button";
 import { RouteBackHeader } from "../components/route-back-header";
 import { Screen } from "../components/screen";
 import { formSubmit, toggleSelect } from "../lib/haptics";
-import { registerPushTokenForSignedInUser } from "../lib/push-notifications";
+import {
+  registerPushTokenForSignedInUser,
+  syncNotificationPreferencesForSignedInUser,
+} from "../lib/push-notifications";
 import { fortuneTheme } from "../lib/theme";
 import { useAppBootstrap } from "../providers/app-bootstrap-provider";
 import { useMobileAppState } from "../providers/mobile-app-state-provider";
@@ -126,10 +129,40 @@ export function ProfileNotificationsScreen() {
         );
         setPreferences((current) => ({ ...current, push: false }));
         await saveNotifications({ ...preferences, push: false });
+        await pushPreferencesToBackend({ ...preferences, push: false });
         return;
       }
     }
     await saveNotifications(preferences);
+    await pushPreferencesToBackend(preferences);
+  }
+
+  // 로컬 SecureStore 만 업데이트하면 proactive 디스패처/푸시 발송 함수가
+  // user_notification_preferences 테이블에서 stale 값을 읽는다. 토글 저장
+  // 직후 백엔드 컬럼도 함께 갱신해서 다음 푸시 발송이 사용자 의도를 반영
+  // 하도록 한다.
+  // 매핑:
+  //   push          → enabled (글로벌) + dailyFortune (아침 인사이트)
+  //   chatReminders → characterDm (캐릭터가 답장한 경우)
+  //   weeklyDigest  → promotion
+  //   marketing     → tokenAlert
+  // (UI 라벨과 컬럼명이 1:1 로 맞지 않는 부분은 기존 ProfileNotifications
+  // 라벨을 백엔드 의도에 맞춰 매핑한 것. 향후 UI 리네이밍 시 함께 정리.)
+  async function pushPreferencesToBackend(
+    next: Record<NotificationPreferenceKey, boolean>,
+  ) {
+    const result = await syncNotificationPreferencesForSignedInUser({
+      enabled: next.push,
+      dailyFortune: next.push,
+      characterDm: next.chatReminders,
+      promotion: next.weeklyDigest,
+      tokenAlert: next.marketing,
+    });
+    if (!result.ok && result.reason !== 'no token registered yet') {
+      // 토큰 미등록(권한 거부/시뮬레이터)은 정상 케이스라 알림 노이즈 X.
+      // 그 외(네트워크/서버 오류)는 사용자가 알아채야 다음 시도 가능.
+      console.warn('[notifications] preferences 백엔드 동기화 실패:', result.reason);
+    }
   }
 
   return (
