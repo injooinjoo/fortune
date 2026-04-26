@@ -515,25 +515,27 @@ function buildTimeContextPrompt(clientTimestamp?: string): string {
     date = new Date();
   }
 
-  // 사용자 디바이스가 한국에 있다고 가정 (KST = UTC+9). client timestamp 가
-  // 이미 ISO 면 hours 가 디바이스 local 이라 그대로 사용. server now fallback
-  // 시 Asia/Seoul 로 강제 변환.
-  let hour: number;
-  let minute: number;
-  if (clientTimestamp) {
-    hour = date.getHours();
-    minute = date.getMinutes();
-  } else {
-    const fmt = new Intl.DateTimeFormat("ko-KR", {
-      timeZone: "Asia/Seoul",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: false,
-    });
-    const parts = fmt.formatToParts(date);
-    hour = parseInt(parts.find((p) => p.type === "hour")?.value || "0", 10);
-    minute = parseInt(parts.find((p) => p.type === "minute")?.value || "0", 10);
-  }
+  // Edge Function 은 Deno + UTC server 라 date.getHours() 가 UTC hour 를
+  // 반환 (Asia/Seoul 디바이스 시각이 아님). 옛 코드가 그대로 getHours() 쓰면
+  // 한국 사용자 KST 02:44 호출 → ISO "17:44Z" → 응답 "오후 5시 44분"
+  // 9시간 오차 회귀 (2026-04-27 보고). client timestamp 든 server now 든
+  // 모든 경우에 Intl.DateTimeFormat + Asia/Seoul 로 강제 변환해서 한국
+  // wall-clock 시각을 추출.
+  const fmt = new Intl.DateTimeFormat("ko-KR", {
+    timeZone: "Asia/Seoul",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: false,
+  });
+  const parts = fmt.formatToParts(date);
+  const hour = parseInt(
+    parts.find((p) => p.type === "hour")?.value || "0",
+    10,
+  ) % 24;
+  const minute = parseInt(
+    parts.find((p) => p.type === "minute")?.value || "0",
+    10,
+  );
 
   const mm = String(minute).padStart(2, "0");
   const period = hour >= 0 && hour < 6
