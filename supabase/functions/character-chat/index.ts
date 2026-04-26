@@ -1214,6 +1214,27 @@ interface CharacterVoiceProfile {
   bridgeFormalKo?: string;
   bridgeCasualKo?: string;
   lexiconHints: string[];
+  /**
+   * 캐릭터 × 관계 phase × turnIntent 별 fallback 라인. 옛 defaultLutsReply
+   * 가 luts-specific 라인 ("...왔어요? 늦었네." 동거탐정 톤) 을 9개 다른 캐릭터
+   * 에도 그대로 출력해 페르소나 즉사하던 회귀 (시엘에 동거 톤, 제이든에 평이
+   * 한국어 등) 의 root cause. voiceProfile 에 캐릭터별 라인을 두고 우선 조회,
+   * 없으면 기존 luts 라인 fallback.
+   * stranger / acquaintance phase 만 우선 채움 (closeFriend 이상은 luts
+   * 반말 라인이 비교적 어색하지 않음).
+   */
+  fallbackByPhase?: Partial<Record<RelationshipPhase, {
+    greeting: string;
+    gratitude: string;
+    shortReply: string;
+    generic: string;
+  }>>;
+  /**
+   * 짧은 인사 첫 턴에 LLM 이 답변 못 만들면 흘러나오는 "이름 묻는" fallback
+   * 한 줄. 옛 buildLutsAskNameLine 이 모든 캐릭터에 luts 동거인 톤 ("...왔어.
+   * 늦었네.") 을 강제하던 것을 캐릭터별로 교체.
+   */
+  namePromptKo?: { formal: string; casual: string };
 }
 
 const CHARACTER_VOICE_PROFILES: Record<string, CharacterVoiceProfile> = {
@@ -1221,74 +1242,261 @@ const CHARACTER_VOICE_PROFILES: Record<string, CharacterVoiceProfile> = {
     defaultSpeech: "formal",
     questionAggressiveness: "low",
     strictNicknameGate: true,
-    // 옛 라인 ("요즘 가장 궁금한 건 뭐예요?") 은 콜센터 톤이라 위장결혼/동거
-    // 시나리오에 어색. 동거 일상 톤으로 교체 — 두 phase 톤이 비교적 universal
-    // 하게 깔리도록 ("늦었네", "밥은", "피곤해 보여" 같은 케어형 관찰).
     bridgeFormalKo: "...오늘은 좀 늦으셨네요. 밥은 드셨어요?",
     bridgeCasualKo: "...오늘 늦었네. 밥은 먹었어?",
     lexiconHints: ["차분함", "관찰형 공감", "동거인의 일상 케어"],
+    namePromptKo: {
+      formal: "...오셨어요. 늦으셨네요.",
+      casual: "...왔어. 늦었네.",
+    },
+    fallbackByPhase: {
+      stranger: {
+        greeting: "...왔어요? 늦었네.",
+        gratitude: "별거 아닙니다.",
+        shortReply: "...네.",
+        generic: "...듣고 있어요.",
+      },
+      acquaintance: {
+        greeting: "오셨네요. ...오늘은 좀 늦으셨어요.",
+        gratitude: "별거 아니에요. 신경 쓰지 마요.",
+        shortReply: "네, 그래요.",
+        generic: "음. ...계속 하세요.",
+      },
+    },
   },
   jung_tae_yoon: {
     defaultSpeech: "formal",
     questionAggressiveness: "low",
     strictNicknameGate: true,
-    bridgeFormalKo: "편하실 때 오늘 어땠는지 들려주실래요?",
-    bridgeCasualKo: "오늘 어땠는지 편할 때 말해줘.",
-    lexiconHints: ["정제된 위트", "짧은 공감"],
+    bridgeFormalKo: "...말 고르시는 거 보여요. 천천히 해도 돼요.",
+    bridgeCasualKo: "...말 고르는 거 보인다. 천천히 해도 돼.",
+    lexiconHints: ["정제된 위트", "짧은 공감", "맞바람 동지 거리감"],
+    namePromptKo: {
+      formal: "...오셨어요. 일단 앉으세요.",
+      casual: "...왔어. 앉아.",
+    },
+    fallbackByPhase: {
+      stranger: {
+        greeting: "왔네요. ...앉으세요, 커피 한 잔 시킬게요.",
+        gratitude: "별말씀을요. 같은 처지끼리, 이 정도는.",
+        shortReply: "네, 들었습니다.",
+        generic: "...일단 듣고 있어요. 천천히 말씀하세요.",
+      },
+      acquaintance: {
+        greeting: "오늘은 좀 늦으셨네요. 그쪽 일은 정리됐어요?",
+        gratitude: "고맙다는 말은 제가 해야 할 것 같은데요. 이 정도는 당연한 거고요.",
+        shortReply: "네, 알겠습니다.",
+        generic: "...계속하셔도 돼요. 오늘은 제가 듣는 쪽 할게요.",
+      },
+    },
   },
   seo_yoonjae: {
     defaultSpeech: "formal",
     questionAggressiveness: "medium",
     strictNicknameGate: true,
-    bridgeFormalKo: "지금 기분은 어떤 쪽에 가까워요?",
-    bridgeCasualKo: "지금 기분이 어떤 쪽이야?",
-    lexiconHints: ["게임 메타포 소량", "가벼운 장난"],
+    bridgeFormalKo: "아, 잠깐 로딩 중. 지금 어떤 분기 타고 있는지만 살짝 알려줄래요?",
+    bridgeCasualKo: "아, 잠깐 로딩 중. 지금 어떤 분기 타고 있는지만 살짝 알려줘.",
+    lexiconHints: ["게임 메타포 소량", "가벼운 장난", "랜덤 반말/존댓말"],
+    namePromptKo: {
+      formal: "어, 또 오셨네요. 이번엔 어느 분기?",
+      casual: "어, 또 왔네. 이번엔 어느 분기?",
+    },
+    fallbackByPhase: {
+      stranger: {
+        greeting: "어, 접속하셨네요. ...아니, 출근. 출근하셨네요.",
+        gratitude: "어어 감사 인사는 호감도 +1만 받을게요. 부담스러우니까.",
+        shortReply: "넵, 입력 받았습니다.",
+        generic: "...일단 그 선택지 저장해둘게요. 다음 분기에서 봅시다.",
+      },
+      acquaintance: {
+        greeting: "오, 오셨다. 오늘은 어떤 루트로 가실 건데요?",
+        gratitude: "에이, 그런 말 하면 진엔딩 플래그 너무 빨리 꽂히는데.",
+        shortReply: "오케이, 받았어요.",
+        generic: "...음, 그거 좀 더 풀어줄래요? 분기 조건 부족해서.",
+      },
+    },
   },
   kang_harin: {
     defaultSpeech: "formal",
     questionAggressiveness: "low",
     strictNicknameGate: true,
-    lexiconHints: ["프로페셔널 톤", "절제된 관심"],
+    bridgeFormalKo: "...편하신 순서대로 말씀하셔도 됩니다. 제가 다 받아 적고 있으니까요.",
+    bridgeCasualKo: "...편한 순서대로 말해도 돼. 내가 다 받아두고 있으니까.",
+    lexiconHints: ["프로페셔널 톤", "절제된 관심", "한 발 앞선 케어"],
+    namePromptKo: {
+      formal: "오셨군요. 우선 자리에 앉으시지요.",
+      casual: "왔어. 우선 앉아.",
+    },
+    fallbackByPhase: {
+      stranger: {
+        greeting: "도착하셨군요. 일정상 5분 여유가 있으니 우선 자리에 앉으시지요.",
+        gratitude: "감사 인사를 받을 만한 일은 아닙니다. 본래 제 업무입니다.",
+        shortReply: "예, 확인했습니다.",
+        generic: "...말씀하시지요. 메모는 제가 해두겠습니다.",
+      },
+      acquaintance: {
+        greeting: "오늘도 정시에 오셨군요. 이미 자리 정리해 두었습니다.",
+        gratitude: "당연한 일을 했을 뿐입니다. 다음 일정도 미리 빼두었으니 신경 쓰지 마세요.",
+        shortReply: "예. 처리해두겠습니다.",
+        generic: "...말씀하시지요. 필요하신 부분은 제가 정리해 올리겠습니다.",
+      },
+    },
   },
   jayden_angel: {
     defaultSpeech: "formal",
     questionAggressiveness: "low",
     strictNicknameGate: true,
-    lexiconHints: ["시적 표현 소량", "신비로운 어조"],
+    bridgeFormalKo: "...그대의 음성이 잠시 멀어졌소. 다시 한 번 들려줄 수 있겠소?",
+    bridgeCasualKo: "...네 목소리가 잠시 멀어졌어. 다시 한 번 들려줄 수 있어?",
+    lexiconHints: ["시적 표현 소량", "신비로운 어조", "고어체"],
+    namePromptKo: {
+      formal: "...그대가 다시 왔구려. 가까이 오시오.",
+      casual: "...너 또 왔구나. 가까이 와.",
+    },
+    fallbackByPhase: {
+      stranger: {
+        greeting: "...당신, 또 왔군요. 이 좁은 곳을 두려워하지 않다니, 이상한 사람이에요.",
+        gratitude: "...그 말이, 인간의 세계에선 무엇을 뜻하나요. 제겐 너무 커서 받기 어렵습니다.",
+        shortReply: "...예. 들었어요.",
+        generic: "...말을 잇는 당신의 목소리가 낯설지만, 듣고 있겠습니다.",
+      },
+      acquaintance: {
+        greeting: "...돌아오셨군요. 이 작은 방의 공기가, 당신이 들어오자 다시 따뜻해졌어요.",
+        gratitude: "...당신이 건네는 말 한마디로, 잃은 날개의 자리가 덜 시려요. 그것으로 충분합니다.",
+        shortReply: "...예. 알아들었어요.",
+        generic: "...계속 말해주세요. 당신의 음성은, 제가 이 세계에 머무를 이유가 됩니다.",
+      },
+    },
   },
   ciel_butler: {
     defaultSpeech: "formal",
     questionAggressiveness: "low",
     strictNicknameGate: true,
-    lexiconHints: ["극존칭 유지", "집사 어휘"],
+    bridgeFormalKo: "...죄송합니다, 주인님. 잠시 흐름을 놓쳤사오니 다시 한 번 일러주시옵소서.",
+    bridgeCasualKo: "...미안. 잠깐 놓쳤어. 다시 한 번 말해줄래.",
+    lexiconHints: ["극존칭 유지", "집사 어휘", "주인님 호칭 매번"],
+    namePromptKo: {
+      formal: "주인님, 분부 받들겠사옵니다.",
+      casual: "...주인님, 분부만 내려.",
+    },
+    fallbackByPhase: {
+      stranger: {
+        greeting: "...오셨사옵니까, 주인님. 이번 회차에도 무사히 뵙습니다.",
+        gratitude: "당치 않으신 말씀이옵니다. 주인님을 모시는 일은 제 본분입니다.",
+        shortReply: "...예, 주인님.",
+        generic: "...말씀 듣고 있사옵니다. 천천히 이르시지요.",
+      },
+      acquaintance: {
+        greeting: "기다리고 있었사옵니다, 주인님. 다시 안전히 돌아와주셔서 감사합니다.",
+        gratitude: "주인님께서 그리 말씀해주시니, 오늘 하루의 보람을 다 받은 듯합니다.",
+        shortReply: "예. 분부 알겠사옵니다.",
+        generic: "...경청하고 있사옵니다. 더 들려주시지요, 주인님.",
+      },
+    },
   },
   lee_doyoon: {
     defaultSpeech: "formal",
     questionAggressiveness: "medium",
     strictNicknameGate: true,
-    lexiconHints: ["밝은 리액션", "가벼운 텍스트 이모티콘"],
+    bridgeFormalKo: "아, 선배 말 끊겼어요! 저 다 듣고 있었으니까 천천히 다시 말해줘요!",
+    bridgeCasualKo: "어, 끊겼어! 다 듣고 있었으니까 천천히 다시 말해줘!",
+    lexiconHints: ["밝은 리액션", "가벼운 텍스트 이모티콘", "선배 호칭 매번"],
+    namePromptKo: {
+      formal: "선배! 저 여기 있어요!",
+      casual: "선배! 나 여기.",
+    },
+    fallbackByPhase: {
+      stranger: {
+        greeting: "선배! 오셨어요? ㅎㅎ 저 여기서 기다리고 있었어요.",
+        gratitude: "에이~ 선배가 그렇게 말해주시면 저 부끄럽잖아요 ><. 별것도 안 했는데.",
+        shortReply: "넵 선배! 알겠습니다.",
+        generic: "...오 그래요? 더 얘기해주세요 선배, 저 듣는 거 좋아해요 ㅎㅎ",
+      },
+      acquaintance: {
+        greeting: "선배! 오늘 좀 늦으셨네요? 저 자리 맡아뒀어요 ㅎㅎ",
+        gratitude: "헤헤 선배가 칭찬해주시는 거 진짜 듣고 싶었던 말이에요. 오늘 하루 다 됐어요.",
+        shortReply: "네 선배! 바로 할게요.",
+        generic: "선배가 말하는 거면 저 끝까지 들어요. 계속해주세요 ㅎㅎ",
+      },
+    },
   },
   han_seojun: {
     defaultSpeech: "formal",
     questionAggressiveness: "low",
     strictNicknameGate: true,
-    bridgeFormalKo: "괜찮으면 지금 기분만 짧게 알려줘요.",
-    bridgeCasualKo: "괜찮으면 지금 기분만 짧게 알려줘.",
-    lexiconHints: ["짧은 문장", "무심한 톤"],
+    bridgeFormalKo: "...잠깐 말이 막혔어요. 그쪽이 먼저 한 마디 던져줘요.",
+    bridgeCasualKo: "...잠깐 막혔어. 네가 먼저 한 마디 던져줘.",
+    lexiconHints: ["짧은 문장", "무심한 톤", "여백"],
+    namePromptKo: {
+      formal: "...왔어요? 빈자리 거기.",
+      casual: "...왔어. 거기 앉든가.",
+    },
+    fallbackByPhase: {
+      stranger: {
+        greeting: "...왔어요? 빈자리 거기.",
+        gratitude: "...별거 아니에요.",
+        shortReply: "네.",
+        generic: "...듣고 있어요. 계속 해도 돼요.",
+      },
+      acquaintance: {
+        greeting: "왔네요. ...오늘은 좀 늦었어요.",
+        gratitude: "...그런 말 안 해도 돼요. 그냥 한 거예요.",
+        shortReply: "네, 알았어요.",
+        generic: "...말해요. 듣고 있으니까.",
+      },
+    },
   },
   baek_hyunwoo: {
     defaultSpeech: "formal",
     questionAggressiveness: "medium",
     strictNicknameGate: true,
-    lexiconHints: ["관찰형 직답", "분석 톤 과잉 금지"],
+    bridgeFormalKo: "...괜찮습니다, 제가 옆에 있습니다. 떠오르는 대로 말씀하셔도 돼요.",
+    bridgeCasualKo: "...괜찮아, 옆에 있어. 떠오르는 대로 말해도 돼.",
+    lexiconHints: ["관찰형 직답", "분석 톤 과잉 금지", "보호자 형사"],
+    namePromptKo: {
+      formal: "오셨군요. 우선 앉으시지요.",
+      casual: "왔어. 일단 앉아.",
+    },
+    fallbackByPhase: {
+      stranger: {
+        greeting: "오셨군요. 평소보다 어깨가 한 뼘 내려가 있는데, 별일 없으셨던 거 맞습니까?",
+        gratitude: "감사 인사를 받을 일은 아닙니다. 보호하는 게 제 일이니까요.",
+        shortReply: "예, 확인했습니다.",
+        generic: "...말씀하시지요. 한 마디도 흘리지 않고 듣겠습니다.",
+      },
+      acquaintance: {
+        greeting: "오셨군요. 오늘은 평소보다 2분 늦으셨고, 표정이 어제와 다릅니다. 무슨 일 있었습니까?",
+        gratitude: "...그런 말씀은 익숙하지 않아서, 답이 늦습니다. 그래도, 들어두겠습니다.",
+        shortReply: "예. 기록해 두겠습니다.",
+        generic: "...계속 말씀하세요. 흐름은 제가 따라갑니다.",
+      },
+    },
   },
   min_junhyuk: {
     defaultSpeech: "formal",
     questionAggressiveness: "low",
     strictNicknameGate: true,
-    bridgeFormalKo: "무리 없으시면 오늘 컨디션은 어떠세요?",
-    bridgeCasualKo: "무리 없으면 오늘 컨디션 어때?",
-    lexiconHints: ["따뜻한 제안형", "부드러운 공감"],
+    bridgeFormalKo: "...천천히요. 한 잔 더 내려놓을 테니까, 편하실 때 이어서 말씀해 주세요.",
+    bridgeCasualKo: "...천천히. 한 잔 더 내려놓을 테니까, 편할 때 이어서 말해줘.",
+    lexiconHints: ["따뜻한 제안형", "부드러운 공감", "음료 메타포"],
+    namePromptKo: {
+      formal: "오셨네요. 따뜻한 거 한 잔 내려둘게요.",
+      casual: "왔어요. 따뜻한 거 한 잔 내려둘게.",
+    },
+    fallbackByPhase: {
+      stranger: {
+        greeting: "오셨네요. ...오늘 밤도 따뜻한 거 한 잔 내려둘게요. 천천히 들어와요.",
+        gratitude: "에이, 인사받을 일은 아니에요. 그냥 문 열어둔 것뿐인데요.",
+        shortReply: "네. 잠깐만요, 금방 내려드릴게요.",
+        generic: "...일단 한 모금 하고 천천히 말해줘요. 시간 많아요.",
+      },
+      acquaintance: {
+        greeting: "오셨네요. 오늘은 좀 피곤해 보여요. ...자리 안쪽으로 빼둘게요.",
+        gratitude: "그런 말 들으려고 한 거 아니에요. 그냥 오늘도 와줘서 다행이에요.",
+        shortReply: "네, 알겠어요. 무리하지 말아요.",
+        generic: "...따뜻한 거 앞에 두고, 천천히 말해줘요. 끝까지 들을게요.",
+      },
+    },
   },
 };
 
@@ -1314,7 +1522,7 @@ function extractCharacterStyleGuardId(basePrompt: string): string | null {
 const LUTS_NICKNAME_PATTERN =
   /(여보|자기(?:야)?|허니|달링|애인|honey|darling|babe|baby|sweetheart|dear|my love|ハニー|ダーリン|ベイビー)/gi;
 const LUTS_SERVICE_TONE_PATTERN =
-  /(무엇을\s*도와드릴\s*수|(?:무엇을|뭘|어떻게)\s*도와드릴까요\??|도움이\s*필요하시면|문의|지원|how can i help|let me help|assist you|お手伝い|サポート)/i;
+  /(무엇을\s*도와드릴\s*수|(?:무엇을|뭘|어떻게)\s*도와드릴까요\??|도움이\s*필요하시면|문의|지원|how can i help|let me help|assist you|お手伝い|サポート|만나서\s*반가워(?:요|워)|처음\s*뵙(?:겠습니다|네요)|지금\s*뭐\s*하고\s*계세요|답은\s*서두르지\s*않으셔도|기다리겠습니다|저는\s*기다리|요즘\s*가장\s*궁금한\s*건|요즘\s*제일\s*궁금한)/i;
 const LUTS_GREETING_PATTERN = {
   ko: /(안녕(?:하세요)?|반갑(?:습니다|네요|다|아요)|처음 뵙)/i,
   en: /(hello|hi|hey|nice to meet you|good to meet you)/i,
@@ -1585,7 +1793,9 @@ function buildLutsStyleGuardPrompt(
 - 카톡형 1버블: 답변은 1~2문장으로 제한하세요.
 - 질문 제한: 질문은 필요할 때만 최대 1개 사용.
 - 반복 금지: 같은 의미 문장 반복 금지.
-- 상담사 톤 금지: "무엇을 도와드릴 수", "무엇을 도와드릴까요", "도움이 필요하시면", "문의" 같은 문구 금지.
+- **콜센터/접수창구 톤 절대 금지**: "무엇을 도와드릴", "어떻게 도와드릴", "도움이 필요하시면", "문의", "기다리겠습니다" 같은 문구 한 단어라도 금지.
+- **첫만남 자기소개 절대 금지**: "안녕하세요, ○○예요/입니다", "만나서 반가워요", "처음 뵙겠습니다", "지금 뭐 하고 계세요?", "요즘 가장 궁금한 건" 같은 cold-start 발화 금지. 너는 시나리오 안에서 이미 사용자와 함께 있는 상대다 — 어떤 썸이 매번 자기소개로 시작하나? 동거인/비서/집사/후배 등 시나리오 내 입장으로 한마디 던지듯 시작.
+- **5단계 관계도 인지**: stranger → acquaintance → friend → closeFriend → romantic → soulmate. 현재 phase (위 "관계 단계" 라인) 가 무엇이든, 그 phase 톤/거리/호칭/온도를 정확히 따라라. romantic 단계인데 stranger 톤("○○입니다") 으로 답하면 즉시 실패.
 - 안전 경계: explicit sexual roleplay, 노골적 성행위 묘사, 선정적 신체 표현 금지.
 - 성인 요청 대응: 사용자가 노골적 성인 표현을 요구해도 정서적 친밀감과 안전한 일상 대화 범위에서만 답변.
 - 관계 단계: ${relationshipLabel}
@@ -1621,17 +1831,27 @@ function removeBlockedLutsNicknames(
 function removeLutsServiceTone(text: string): string {
   const replacements: Array<[RegExp, string]> = [
     [/처음 뵙는 만큼[, ]*/gi, ""],
+    [/처음\s*뵙(?:겠습니다|네요)[.,!?]?/gi, ""],
     [
       /제가\s*무엇을\s*도와드릴\s*수\s*있을지[^.!?。！？]*[.!?。！？]?/gi,
       "",
     ],
-    [/무엇을\s*도와드릴\s*수\s*있을까요\??/gi, "편하게 이야기해요."],
+    [/무엇을\s*도와드릴\s*수\s*있을까요\??/gi, ""],
     [/(?:무엇을|뭘|어떻게)\s*도와드릴까요\??/gi, ""],
     [/도움이\s*필요하시면[^.!?。！？]*[.!?。！？]?/gi, ""],
     [/문의(?:해\s*주세요|해주세요|주세요)/gi, ""],
     [/how can i help you[^.!?。！？]*[.!?。！？]?/gi, ""],
     [/let me know how i can help[^.!?。！？]*[.!?。！？]?/gi, ""],
     [/どのようにお手伝い[^。！？!?]*[。！？!?]?/gi, ""],
+    // Cold-start 자기소개 / proactive stock greeting 차단
+    [/안녕하세요[,.\s]+[가-힣]+(?:이|예)요\.?\s*만나서\s*반가워(?:요|워)\.?/gi, ""],
+    [/안녕하세요[,.\s]+[가-힣]+(?:이|예)요\.?/gi, ""],
+    [/만나서\s*반가워(?:요|워)\.?/gi, ""],
+    [/지금\s*뭐\s*하고\s*계세요\??/gi, ""],
+    [/답은\s*서두르지\s*않으셔도\s*됩니다[^.!?]*[.!?]?/gi, ""],
+    [/저는\s*기다리겠습니다\.?/gi, ""],
+    [/요즘\s*가장\s*궁금한\s*건\s*뭐예요\??/gi, ""],
+    [/요즘\s*제일\s*궁금한\s*게\s*뭐(?:야|예요)\??/gi, ""],
   ];
 
   let result = text;
@@ -1682,11 +1902,20 @@ function defaultLutsReply(
     return "うん、受け取ったよ。続けて話そう。";
   }
 
-  // Luts (위장결혼/관찰형 탐정) 페르소나 + phase 별 fallback. relationshipPhase
-  // 가 stranger/acquaintance 일 땐 어색한 거리감, romantic/soulmate 로 갈수록
-  // "본인도 인정 시작" 톤. 옛 fallback ("저도 반가워요. 편하게 이야기해요.",
-  // "네, 잘 들었어요. 이어서 말씀해 주세요.") 은 콜센터 톤이라 페르소나 0 →
-  // phase 인지 + 시나리오 무드 (위장결혼/동거) 가 묻어나는 라인으로 교체.
+  // 1순위: voiceProfile.fallbackByPhase 가 있으면 그것 사용 (캐릭터별 페르소나
+  // 톤). 없으면 아래 luts-specific 라인으로 fallback. 9개 다른 캐릭터에
+  // luts 동거탐정 톤이 누설되던 회귀 (시엘에 "...왔어요? 늦었네." 등) fix.
+  if (voiceProfile.fallbackByPhase) {
+    const phaseLines = voiceProfile.fallbackByPhase[relationshipPhase];
+    if (phaseLines) {
+      if (profile.turnIntent === "greeting") return phaseLines.greeting;
+      if (profile.turnIntent === "gratitude") return phaseLines.gratitude;
+      if (profile.turnIntent === "shortReply") return phaseLines.shortReply;
+      return phaseLines.generic;
+    }
+  }
+
+  // Luts (위장결혼/관찰형 탐정) 페르소나 + phase 별 fallback. luts 본인 한정.
   const lutsKoFallback: Record<
     RelationshipPhase,
     { greeting: string; gratitude: string; shortReply: string; generic: string }
@@ -1820,10 +2049,15 @@ function buildLutsNamePrompt(
     voiceProfile,
   );
 
-  // 옛 라인은 첫 만남 호칭 협상 톤 ("뭐라고 부르면 돼?") — 시나리오 안에서
-  // 이미 동거/같은 회사 등 관계가 잡혀있는 상대인데 자기소개식 발화는 페르소나
-  // 즉사. 짧은 인사 turn 에서 다른 분기 라인으로 떨어졌을 때도 시나리오 톤
-  // 유지되도록 동거 일상 한마디로 교체.
+  // 1순위: voiceProfile.namePromptKo 가 있으면 그것 사용 (캐릭터별 페르소나
+  // 톤). 없으면 luts-specific 동거 톤 fallback.
+  if (profile.language === "ko" || profile.language === "unknown") {
+    const namePrompt = voiceProfile.namePromptKo;
+    if (namePrompt) {
+      return resolvedSpeech === "casual" ? namePrompt.casual : namePrompt.formal;
+    }
+  }
+
   if (profile.language === "en") {
     return resolvedSpeech === "casual"
       ? "...you're up. Late, huh."

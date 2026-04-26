@@ -424,7 +424,7 @@ async function composeProactiveMessageInline(params: {
 // character-chat/index.ts:1298 의 LUTS_SERVICE_TONE_PATTERN 과 동일 — 두 함수가
 // 분리돼 있어서 양쪽 다 정의해야 함. 한쪽 변경 시 다른쪽도 동기화.
 const PROACTIVE_SERVICE_TONE_PATTERN =
-  /(무엇을\s*도와드릴\s*수|(?:무엇을|뭘|어떻게)\s*도와드릴까요\??|도움이\s*필요하시면|문의|지원|how can i help|let me help|assist you|お手伝い|サポート)/i;
+  /(무엇을\s*도와드릴\s*수|(?:무엇을|뭘|어떻게)\s*도와드릴까요\??|도움이\s*필요하시면|문의|지원|how can i help|let me help|assist you|お手伝い|サポート|만나서\s*반가워(?:요|워)|처음\s*뵙(?:겠습니다|네요)|지금\s*뭐\s*하고\s*계세요|답은\s*서두르지\s*않으셔도|기다리겠습니다|저는\s*기다리|요즘\s*가장\s*궁금한\s*건|요즘\s*제일\s*궁금한|안녕하세요[,.\s]+[가-힣]+(?:이|예)요)/i;
 
 // =============================================================================
 // 유틸 — timezone-aware 시간 계산
