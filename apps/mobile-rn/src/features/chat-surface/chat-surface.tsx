@@ -17,6 +17,7 @@ import { PrimaryButton } from '../../components/primary-button';
 import { SpeakerButton } from '../../components/speaker-button';
 import { SurveyComposer } from '../../components/survey-composer';
 import { SocialAuthPillButton } from '../../components/social-auth-pill-button';
+import { characterDetails } from '../../lib/character-details';
 import {
   isFortuneChatCharacter,
   type ChatCharacterSpec,
@@ -2131,6 +2132,111 @@ export function ActiveSurveyFooter({
   );
 }
 
+/**
+ * Story 캐릭터의 상황극(worldview) 설정을 채팅방 진입 시점에 사용자에게 노출.
+ *
+ * 이전엔 worldview 가 `프로필 보기` 안쪽에만 있어서, 사용자가 인트로
+ * 메시지("...러츠입니다.") 만 보고 들어와 LLM 답변에 당황 ("아츠와의
+ * 결혼은..." 같은 헛소리에 "이게 뭐지?"). 채팅방 상단에 항상 표시되는
+ * 상황 카드로 사용자가 들어가는 세계 + 자신의 역할 + 톤 (태그) 을 한눈에
+ * 파악하게 한다.
+ *
+ * Fortune 캐릭터는 상황극 없이 점성/사주 카운슬링이라 worldview 가 비어
+ * 있는데, 그 경우 카드 자체를 안 그린다.
+ */
+function ScenarioCard({ character }: { character: ChatCharacterSpec }) {
+  const [expanded, setExpanded] = useState(true);
+  const detail = characterDetails[character.id];
+  if (!detail || !detail.worldview || detail.worldview.trim().length === 0) {
+    return null;
+  }
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={
+        expanded ? '상황 설명 접기' : '상황 설명 펼치기'
+      }
+      onPress={() => setExpanded((v) => !v)}
+      style={({ pressed }) => ({
+        backgroundColor: fortuneTheme.colors.surfaceSecondary,
+        borderColor: fortuneTheme.colors.border,
+        borderRadius: fortuneTheme.radius.card,
+        borderWidth: 1,
+        opacity: pressed ? 0.85 : 1,
+        paddingHorizontal: 14,
+        paddingVertical: 12,
+      })}
+    >
+      <View
+        style={{
+          alignItems: 'center',
+          flexDirection: 'row',
+          gap: 6,
+          marginBottom: expanded ? 8 : 0,
+        }}
+      >
+        <Ionicons
+          color={fortuneTheme.colors.textSecondary}
+          name="book-outline"
+          size={14}
+        />
+        <AppText
+          variant="caption"
+          color={fortuneTheme.colors.textSecondary}
+          style={{ fontWeight: '700', flex: 1 }}
+        >
+          상황 설정
+        </AppText>
+        <Ionicons
+          color={fortuneTheme.colors.textTertiary}
+          name={expanded ? 'chevron-up' : 'chevron-down'}
+          size={14}
+        />
+      </View>
+      {expanded ? (
+        <>
+          <AppText
+            variant="bodySmall"
+            color={fortuneTheme.colors.textSecondary}
+            style={{ lineHeight: 20 }}
+          >
+            {detail.worldview}
+          </AppText>
+          {detail.tags.length > 0 ? (
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                gap: 6,
+                marginTop: 10,
+              }}
+            >
+              {detail.tags.map((tag) => (
+                <View
+                  key={tag}
+                  style={{
+                    backgroundColor: fortuneTheme.colors.accentSubtle,
+                    borderRadius: 999,
+                    paddingHorizontal: 8,
+                    paddingVertical: 3,
+                  }}
+                >
+                  <AppText
+                    variant="caption"
+                    color={fortuneTheme.colors.textTertiary}
+                  >
+                    #{tag}
+                  </AppText>
+                </View>
+              ))}
+            </View>
+          ) : null}
+        </>
+      ) : null}
+    </Pressable>
+  );
+}
+
 export function ActiveCharacterChatSurface({
   character,
   actions,
@@ -2281,6 +2387,8 @@ export function ActiveCharacterChatSurface({
           <Chip label={surveyEyebrow} tone="accent" />
         ) : null}
       </View>
+
+      <ScenarioCard character={character} />
 
       <View style={{ gap: fortuneTheme.spacing.sm }}>
         {previewMessages.map((message) => (
