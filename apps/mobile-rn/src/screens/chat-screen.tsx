@@ -94,6 +94,7 @@ import {
   consumeRemoteTokens,
   RemoteTokenConsumeError,
 } from '../lib/premium-remote';
+import { useTextToSpeech } from '../lib/use-text-to-speech';
 import {
   socialAuthProviderLabelById,
   type SocialAuthProviderId,
@@ -733,6 +734,26 @@ export function ChatScreen() {
     storyTypingByCharacterId[selectedCharacter.id] === true;
   const selectedFortuneIsTyping = fortuneTypingCharacterId === selectedCharacter.id;
 
+  // 캐릭터 음성 재생 (Gemini TTS) controller — 화면 전체에 1개 인스턴스.
+  // 각 SpeakerButton 은 자기 messageId 가 controller.activeMessageId 와 같을
+  // 때만 'playing'/'loading' 상태로 표시. 새 재생이 시작되면 직전 사운드는
+  // 자동 unload — 동시 재생 없음 (자연스러운 메신저 UX).
+  const tts = useTextToSpeech();
+  const handlePlayTts = useCallback(
+    (args: { messageId: string; text: string; emotion?: string }) => {
+      void tts.play({
+        messageId: args.messageId,
+        text: args.text,
+        characterId: selectedCharacter.id,
+        emotion: args.emotion,
+      });
+    },
+    [selectedCharacter.id, tts],
+  );
+  const handleStopTts = useCallback(() => {
+    void tts.stop();
+  }, [tts]);
+
   // ---------------------------------------------------------------------------
   // 자동 답장 재개 — 채팅방 진입 시 마지막 메시지가 user 면 AI 응답 트리거
   // ---------------------------------------------------------------------------
@@ -959,7 +980,10 @@ export function ChatScreen() {
           await sleep(betweenBubbles);
         }
 
-        const bubble = buildAssistantTextMessage(text, { animate: true });
+        const bubble = buildAssistantTextMessage(text, {
+          animate: true,
+          emotionTag,
+        });
         setMessagesByCharacterId((current) => {
           const thread = current[characterId] ?? [];
           const updated = [...thread, bubble];
@@ -1567,6 +1591,9 @@ export function ChatScreen() {
       [characterId]: nextThread,
     }));
     autoResumedUserMessageIdsRef.current.delete(messageId);
+    // 디스크에 TTS 캐시가 있으면 정리. user 메시지는 캐시 없으므로 no-op이지만
+    // 안전하게 호출 (idempotent).
+    void tts.clearCache(messageId);
 
     if (isStoryRomancePilotCharacterId(characterId)) {
       const currentSnapshot = storyThreadSnapshotsByCharacterId[characterId];
@@ -3041,6 +3068,11 @@ export function ChatScreen() {
             }
             onPickAction={handleActionPress}
             onDeleteUserMessage={handleDeleteUserMessage}
+            ttsControllerStatus={tts.state.status}
+            ttsActiveMessageId={tts.state.activeMessageId}
+            ttsError={tts.state.error}
+            onPlayTts={handlePlayTts}
+            onStopTts={handleStopTts}
           />
         ) : (
           <ChatFirstRunSurface

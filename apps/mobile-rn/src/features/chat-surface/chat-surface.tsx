@@ -14,6 +14,7 @@ import { Card } from '../../components/card';
 import { Chip } from '../../components/chip';
 import { InlineCalendar } from '../../components/inline-calendar';
 import { PrimaryButton } from '../../components/primary-button';
+import { SpeakerButton } from '../../components/speaker-button';
 import { SurveyComposer } from '../../components/survey-composer';
 import { SocialAuthPillButton } from '../../components/social-auth-pill-button';
 import {
@@ -780,11 +781,22 @@ function ChatThreadMessage({
   character,
   message,
   onDeleteUserMessage,
+  ttsControllerStatus,
+  ttsActiveMessageId,
+  ttsError,
+  onPlayTts,
+  onStopTts,
 }: {
   character: ChatCharacterSpec;
   message: ChatShellMessage;
   /** 본인이 보낸 텍스트 메시지를 길게 눌러 삭제할 수 있게 하는 핸들러. */
   onDeleteUserMessage?: (messageId: string) => void;
+  /** TTS controller 상태 — assistant text 메시지 아래 SpeakerButton 표시용. */
+  ttsControllerStatus?: import('../../lib/use-text-to-speech').TtsStatus;
+  ttsActiveMessageId?: string | null;
+  ttsError?: import('../../lib/use-text-to-speech').TtsErrorState | null;
+  onPlayTts?: (args: { messageId: string; text: string; emotion?: string }) => void;
+  onStopTts?: () => void;
 }) {
   const isUser = message.sender === 'user';
   const isFullWidth =
@@ -802,6 +814,13 @@ function ChatThreadMessage({
     message.kind === 'text' &&
     message.sender === 'assistant' &&
     message.text?.trim().length > 0;
+  // assistant 텍스트 응답은 음성 재생 가능. 카드/이미지/사주 프리뷰 등은 제외.
+  const ttsPlayable =
+    message.kind === 'text' &&
+    message.sender === 'assistant' &&
+    message.text?.trim().length > 0 &&
+    typeof onPlayTts === 'function' &&
+    typeof onStopTts === 'function';
   // 본인이 보낸 텍스트 메시지는 길게 눌러 삭제 옵션 노출.
   const userDeletable =
     message.kind === 'text' &&
@@ -905,6 +924,23 @@ function ChatThreadMessage({
           bubble
         )}
       </View>
+
+      {ttsPlayable ? (
+        <SpeakerButton
+          messageId={message.id}
+          controllerStatus={ttsControllerStatus ?? 'idle'}
+          controllerActiveMessageId={ttsActiveMessageId ?? null}
+          controllerError={ttsError ?? null}
+          onPress={() =>
+            onPlayTts?.({
+              messageId: message.id,
+              text: (message as ChatShellTextMessage).text,
+              emotion: (message as ChatShellTextMessage).emotionTag,
+            })
+          }
+          onStop={() => onStopTts?.()}
+        />
+      ) : null}
 
       {reportable ? (
         <MessageReportSheet
@@ -2107,6 +2143,11 @@ export function ActiveCharacterChatSurface({
   onOpenProfile,
   onPickAction,
   onDeleteUserMessage,
+  ttsControllerStatus,
+  ttsActiveMessageId,
+  ttsError,
+  onPlayTts,
+  onStopTts,
   showHeader = true,
   romanceScore = 0,
   presenceLine,
@@ -2127,6 +2168,12 @@ export function ActiveCharacterChatSurface({
    * 메뉴가 안 뜬다 (chat-screen 외 다른 surface 에선 의도적으로 비활성).
    */
   onDeleteUserMessage?: (messageId: string) => void;
+  /** TTS controller — assistant text 메시지 아래 SpeakerButton 표시 + 재생/정지. */
+  ttsControllerStatus?: import('../../lib/use-text-to-speech').TtsStatus;
+  ttsActiveMessageId?: string | null;
+  ttsError?: import('../../lib/use-text-to-speech').TtsErrorState | null;
+  onPlayTts?: (args: { messageId: string; text: string; emotion?: string }) => void;
+  onStopTts?: () => void;
   showHeader?: boolean;
   romanceScore?: number;
   /**
@@ -2242,6 +2289,11 @@ export function ActiveCharacterChatSurface({
             character={character}
             message={message}
             onDeleteUserMessage={onDeleteUserMessage}
+            ttsControllerStatus={ttsControllerStatus}
+            ttsActiveMessageId={ttsActiveMessageId}
+            ttsError={ttsError}
+            onPlayTts={onPlayTts}
+            onStopTts={onStopTts}
           />
         ))}
         {isTyping ? (

@@ -1,4 +1,5 @@
 import { type FortuneTypeId } from '@fortune/product-contracts';
+import type { SajuResult } from '@fortune/saju-engine';
 
 import { buildEmbeddedResultPayload } from '../features/chat-results/adapter';
 import {
@@ -21,6 +22,37 @@ export interface ChatShellTextMessage {
    * - Phase 2에서 서버 저장으로 승격 (현재는 클라 로컬 전용).
    */
   readAt?: string;
+  /**
+   * 새로 도착한 메시지일 때 true — MessageBubble이 한 글자씩 타이핑 애니메이션.
+   * storage에서 재로드된 과거 메시지는 undefined/false여서 즉시 전체 표시.
+   */
+  animate?: boolean;
+  /**
+   * 캐릭터가 먼저 보낸 선톡(proactive)이면 채워짐. 일반 응답이면 undefined.
+   * 채팅 리스트 미리보기에 작은 라벨, LLM 컨텍스트에 "방금 내가 보낸 선톡임" 인지용.
+   * 설계 문서: docs/features/PROACTIVE_MESSAGING_PLAN.md (4.3)
+   */
+  proactive?: ProactiveMessageMeta;
+  /**
+   * `character-chat` Edge Function 응답의 emotionTag (일상/애정/기쁨/고민/분노/당황).
+   * TTS 재생 시 inline style instruction (`[warmly, softly]` 등) 으로 변환되어
+   * Gemini TTS API 에 전달된다. assistant 메시지에만 의미 있고, 한 메시지당
+   * 1개의 감정만 가진다 (멀티-세그먼트 응답이어도 같은 감정 공유).
+   */
+  emotionTag?: string;
+}
+
+/**
+ * 선톡(proactive) 메시지 메타. assistant가 사용자 입력 없이 먼저 보낸 메시지에만 붙음.
+ *
+ * - `slotKey`: 트리거 슬롯 (lunch_share, morning_greet, absence_6h, ...)
+ * - `category`: 콘텐츠 카테고리 (greeting, meal, cafe, ...) — UI 라벨용
+ * - `generatedAt`: 서버에서 LLM이 생성한 시점 (ISO8601). 발송 시각이 아니라 생성 시각.
+ */
+export interface ProactiveMessageMeta {
+  slotKey: string;
+  category: string;
+  generatedAt: string;
 }
 
 export interface ChatShellEmbeddedResultMessage {
@@ -54,6 +86,8 @@ export interface ChatShellImageMessage {
   sender: 'assistant' | 'user';
   imageUrl: string;
   caption?: string;
+  /** 캐릭터가 먼저 보낸 사진 메시지면 채워짐. ChatShellTextMessage.proactive 와 동일 의미. */
+  proactive?: ProactiveMessageMeta;
 }
 
 // Story-reveal payloads — drive the 6 cinematic scenes ported from the Ondo
@@ -102,13 +136,44 @@ export interface ChatShellStoryRevealMessage {
   characterId?: string;
 }
 
+/**
+ * System-role card that pins the user's own Saju context into the chat.
+ * Injected when user taps "사주로 대화하기" on the Manseryeok screen — acts as
+ * a visual reminder that the following conversation is grounded in this chart.
+ * (Prompt-level injection is deferred; this is UI-only for now.)
+ */
+export interface ChatShellMySajuContextMessage {
+  id: string;
+  kind: 'my-saju-context';
+  sender: 'system';
+  sajuSummary: {
+    pillars: {
+      year: string;
+      month: string;
+      day: string;
+      hour: string;
+    };
+    dayMaster: string;
+    elements: {
+      wood: number;
+      fire: number;
+      earth: number;
+      metal: number;
+      water: number;
+    };
+    dominantTenGods: string[];
+  };
+  timestamp: number;
+}
+
 export type ChatShellMessage =
   | ChatShellTextMessage
   | ChatShellEmbeddedResultMessage
   | ChatShellFortuneCookieMessage
   | ChatShellSajuPreviewMessage
   | ChatShellImageMessage
-  | ChatShellStoryRevealMessage;
+  | ChatShellStoryRevealMessage
+  | ChatShellMySajuContextMessage;
 
 export interface ChatShellAction {
   id: string;
@@ -173,6 +238,12 @@ export function formatFortuneTypeLabel(type: FortuneTypeId): string {
   return fortuneTypeLabels[type] ?? type;
 }
 
+// 신규 캐릭터 초기 thread — greeting 한 줄만.
+// 과거에는 fake user + fake assistant 페어를 하드코딩했지만, 이로 인해
+// 1) 대화한 적 없는 캐릭터가 리스트 preview 에 "마지막 메시지 있음" 으로 보였고
+// 2) 메시지 싱크 비교 (shouldAcceptRemoteMessages) 에서 로컬 fake 3개가 실서버
+//    메시지 1~2개보다 길어 "원격이 짧음 → reject" 규칙이 잘못 작동해 원격
+//    실데이터 반영을 막는 부작용이 있었다. greeting 한 줄만 남겨서 두 문제 모두 해소.
 export function buildInitialThread(
   character: ChatCharacterSpec,
 ): ChatShellMessage[] {
@@ -184,22 +255,8 @@ export function buildInitialThread(
         sender: 'assistant',
         text: `안녕하세요! ${character.name}예요. 오늘은 어떤 이야기부터 나눠볼까요?`,
       },
-      {
-        id: createMessageId('user'),
-        kind: 'text',
-        sender: 'user',
-        text: '오늘 하루가 좀 길었어요. 가볍게 이야기부터 시작하고 싶어요.',
-      },
-      {
-        id: createMessageId('assistant'),
-        kind: 'text',
-        sender: 'assistant',
-        text: `${character.shortDescription} 흐름으로 먼저 편하게 대화를 이어가 볼게요.`,
-      },
     ];
   }
-
-  const leadFortuneType = character.specialties[0];
 
   return [
     {
@@ -209,24 +266,10 @@ export function buildInitialThread(
       text: `안녕하세요! ${character.name}예요. 오늘은 어떤 흐름이 가장 궁금하세요?`,
     },
     {
-      id: createMessageId('user'),
-      kind: 'text',
-      sender: 'user',
-      text: '오늘 좀 피곤했어요. 지금 흐름부터 가볍게 보고 싶어요.',
-    },
-    {
       id: createMessageId('assistant'),
       kind: 'text',
       sender: 'assistant',
-      text: leadFortuneType
-        ? `${character.shortDescription} 우선 지금 궁금한 흐름부터 몸과 마음의 결을 가볍게 읽어드릴게요.`
-        : `${character.shortDescription} 우선 흐름부터 몸과 마음의 결을 가볍게 읽어드릴게요.`,
-    },
-    {
-      id: createMessageId('assistant'),
-      kind: 'text',
-      sender: 'assistant',
-      text: '아래 주제 중에서 지금 바로 이어갈 흐름을 골라주시면 대화처럼 자연스럽게 풀어볼게요.',
+      text: '아래 주제 중에서 편하게 골라주시면 그 결로 바로 이어갈게요.',
     },
   ];
 }
@@ -358,12 +401,47 @@ export function buildUserMessage(text: string): ChatShellMessage {
   };
 }
 
-export function buildAssistantTextMessage(text: string): ChatShellMessage {
+export function buildAssistantTextMessage(
+  text: string,
+  options?: { animate?: boolean; emotionTag?: string },
+): ChatShellTextMessage {
   return {
     id: createMessageId('assistant'),
     kind: 'text',
     sender: 'assistant',
     text,
+    animate: options?.animate ?? false,
+    ...(options?.emotionTag ? { emotionTag: options.emotionTag } : {}),
+  };
+}
+
+export function buildProactiveAssistantTextMessage(
+  text: string,
+  meta: ProactiveMessageMeta,
+  options?: { animate?: boolean },
+): ChatShellTextMessage {
+  return {
+    id: createMessageId('assistant'),
+    kind: 'text',
+    sender: 'assistant',
+    text,
+    animate: options?.animate ?? false,
+    proactive: meta,
+  };
+}
+
+export function buildProactiveAssistantImageMessage(
+  imageUrl: string,
+  meta: ProactiveMessageMeta,
+  caption?: string,
+): ChatShellImageMessage {
+  return {
+    id: createMessageId('assistant'),
+    kind: 'image',
+    sender: 'assistant',
+    imageUrl,
+    caption,
+    proactive: meta,
   };
 }
 
@@ -420,6 +498,61 @@ export function buildSajuPreviewMessage(
     sender: 'assistant',
     userName,
     sajuData,
+  };
+}
+
+/**
+ * Build the "my-saju-context" card payload from an engine SajuResult.
+ * - `pillars.*.korean` is already a combined string like "계해" → reuse directly.
+ * - `dominantTenGods`: top 2 frequencies across 7 positions (stems year/month/hour
+ *   + branches year/month/day/hour); day-stem is "일간" by definition so skipped.
+ */
+export function buildMySajuContextMessage(
+  saju: SajuResult,
+): ChatShellMySajuContextMessage {
+  const allGods: string[] = [
+    saju.tenGods.year.stem,
+    saju.tenGods.month.stem,
+    saju.tenGods.hour.stem,
+    saju.tenGods.year.branch,
+    saju.tenGods.month.branch,
+    saju.tenGods.day.branch,
+    saju.tenGods.hour.branch,
+  ];
+
+  const counts: Record<string, number> = {};
+  for (const god of allGods) {
+    if (god === '일간') continue;
+    counts[god] = (counts[god] ?? 0) + 1;
+  }
+
+  const dominantTenGods = Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 2)
+    .map(([god]) => god);
+
+  return {
+    id: createMessageId('my-saju-context'),
+    kind: 'my-saju-context',
+    sender: 'system',
+    sajuSummary: {
+      pillars: {
+        year: saju.pillars.year.korean,
+        month: saju.pillars.month.korean,
+        day: saju.pillars.day.korean,
+        hour: saju.pillars.hour.korean,
+      },
+      dayMaster: saju.dayMaster.korean,
+      elements: {
+        wood: saju.elements.wood,
+        fire: saju.elements.fire,
+        earth: saju.elements.earth,
+        metal: saju.elements.metal,
+        water: saju.elements.water,
+      },
+      dominantTenGods,
+    },
+    timestamp: Date.now(),
   };
 }
 
