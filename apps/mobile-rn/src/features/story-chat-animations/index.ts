@@ -1,6 +1,7 @@
 export { useStages } from './use-stages';
 export { useCount } from './use-count';
 export { useTyped } from './use-typed';
+export { FadeUpWords } from './fade-up-words';
 export {
   getStoryCharacterPalette,
   storyCharacterPalettes,

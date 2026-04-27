@@ -712,6 +712,11 @@ const pastLifeSurvey: ChatSurveyDefinition = {
         { id: 'artist', label: '표현 욕구가 큼' },
       ],
     },
+    {
+      id: 'faceImage',
+      question: '지금 얼굴 사진 한 장만 올려주세요. 전생 초상화를 그려드릴게요.',
+      inputKind: 'image',
+    },
   ],
 };
 

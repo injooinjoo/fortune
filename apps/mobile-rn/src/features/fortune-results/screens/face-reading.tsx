@@ -349,13 +349,7 @@ export function FaceReadingResult(props: FortuneResultComponentProps) {
           paddingVertical: fortuneTheme.spacing.lg,
         }}
       >
-        <HeroFace
-          overallImpression={faceType && faceType !== '분석 중' ? faceType : '관상 분석'}
-          description={heroFirstImpression}
-          topScore={num(obj(samjeong.upper).score, overallBlessingScore)}
-          midScore={num(obj(samjeong.middle).score, overallBlessingScore)}
-          bottomScore={num(obj(samjeong.lower).score, overallBlessingScore)}
-        />
+        <HeroFace />
         {heroChips.length > 0 ? (
           <KeywordPills keywords={heroChips} />
         ) : null}

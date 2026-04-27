@@ -2544,7 +2544,7 @@ export function ActiveCharacterChatHeader({
                 ? presenceLine
                 : isFortuneCharacter
                   ? 'AI 상담사 · 대화를 이어보세요'
-                  : '스토리 캐릭터 · 관계를 이어보세요'}
+                  : 'AI 스토리 캐릭터 · 관계를 이어보세요'}
             </AppText>
           </View>
         </View>

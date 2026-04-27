@@ -1,0 +1,10 @@
+export { IPhoneFrame } from './iphone-frame';
+export type { IPhoneFrameProps } from './iphone-frame';
+export { Wallpaper } from './wallpaper';
+export type { WallpaperProps, WallpaperVariant } from './wallpaper';
+export { Dock, AppIcon } from './dock';
+export type { DockProps, AppIconProps } from './dock';
+export { HomeScreenA } from './home-screen-a';
+export { HomeScreenB } from './home-screen-b';
+export { LockScreen } from './lock-screen';
+export { GalleryGrid } from './gallery-grid';

@@ -1,7 +1,7 @@
 {
-  "name": "ondo-flutter-tests",
+  "name": "fortune-monorepo",
   "version": "1.0.0",
-  "description": "E2E testing for Ondo Flutter App",
+  "description": "Ondo (온도) — AI fortune & companion chat app monorepo",
   "private": true,
   "workspaces": [
     "apps/*",
@@ -35,7 +35,9 @@
     "rn:test": "npm run test --workspace @fortune/product-contracts",
     "lighthouse": "lhci autorun",
     "serve:build": "npx serve build/web -l 3000 --single",
-    "paper:guard": "node scripts/design/paper_sync_guard.js"
+    "paper:guard": "node scripts/design/paper_sync_guard.js",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0",
@@ -51,6 +53,9 @@
     "expo-font": "14.0.11"
   },
   "dependencies": {
-    "@anthropic-ai/claude-agent-sdk": "^0.1.1"
+    "@anthropic-ai/claude-agent-sdk": "^0.1.1",
+    "expo": "~54.0.33",
+    "react": "19.1.0",
+    "react-native": "0.81.5"
   }
 }

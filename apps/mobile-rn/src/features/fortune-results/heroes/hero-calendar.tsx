@@ -47,7 +47,14 @@ export default function HeroCalendar({ data, progress }: HeroCalendarProps) {
   });
 
   return (
-    <View style={{ paddingVertical: 14, alignItems: 'center' }}>
+    <View
+      style={{
+        paddingTop: 16,
+        paddingHorizontal: 4,
+        paddingBottom: 4,
+        alignItems: 'center',
+      }}
+    >
       <Animated.View
         style={{
           width: 200,
@@ -55,12 +62,24 @@ export default function HeroCalendar({ data, progress }: HeroCalendarProps) {
           borderRadius: 14,
           borderWidth: 1,
           borderColor: fortuneTheme.colors.border,
-          backgroundColor: '#14141A',
+          // linear-gradient(180deg, #1A1A1A, #111118) 근사: 상단 레이어 + 하단 레이어
+          backgroundColor: '#1A1A1A',
           overflow: 'hidden',
           opacity: anim,
-          transform: [{ rotateX }],
+          transform: [{ perspective: 700 }, { rotateX }],
         }}
       >
+        {/* 하단 레이어 (gradient 근사) */}
+        <View
+          style={{
+            position: 'absolute',
+            top: 60,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: '#111118',
+          }}
+        />
         <Text
           style={{
             position: 'absolute',
@@ -85,7 +104,9 @@ export default function HeroCalendar({ data, progress }: HeroCalendarProps) {
             textAlign: 'center',
             fontSize: 48,
             lineHeight: 56,
+            fontFamily: 'ZenSerif',
             color: fortuneTheme.colors.textPrimary,
+            letterSpacing: 0.96,
           }}
         >
           {dayWord}

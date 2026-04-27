@@ -1,3 +1,11 @@
+// Re-export 통합 페르소나 prompts. PILOT_PERSONA_REGISTRY 의 각 캐릭터에
+// fullPersonaPrompt 필드로 매핑된다. 사용자 제시 템플릿 구조 (기본정보 /
+// 관계설정 + phase / 대화스타일 / 갈등 reaction / 감정별 반응 / 시간장소 /
+// 시그니처 형태) 를 한 단락에 묶어 LLM 이 가이드 누더기 없이 한 페르소나
+// 에서 추론하도록 한다. 10개 캐릭터 모두 한국 이름 + 평범 일상 직업 (사수
+// /변호사/IT 동료/과선배/비서/교회 오빠/동네 형/회사 후임/형사/바리스타).
+import { FULL_PERSONA_PROMPTS } from "./persona_prompts.ts";
+
 export const PILOT_CHARACTER_IDS = [
   "luts",
   "jung_tae_yoon",
@@ -60,6 +68,15 @@ export interface PilotPersonaSeed {
   allowedAffectionCap: number;
   bannedTraceTerms: string[];
   /**
+   * 사용자 제시 템플릿 구조로 작성한 통합 페르소나 prompt. 있으면 server 가
+   * buildPilotAuthoritativePrompt 의 [캐릭터 정체성] 섹션 (corePremise +
+   * openingDynamic + ...) 대신 이 통합 string 을 그대로 박는다. 캐릭터별
+   * 시그니처 어투/갈등 reaction/감정별 반응이 한 단락에 모두 포함되어 있어
+   * LLM 이 가이드 누더기 없이 한 페르소나에서 추론 가능. 옛 corePremise
+   * 등 필드는 backward-compat 으로 유지 (legacy fallback).
+   */
+  fullPersonaPrompt?: string;
+  /**
    * 사용자가 채팅방 상단 "상황 설정" 카드에서 보고 있는 시나리오 본문.
    * `apps/mobile-rn/src/lib/character-details.ts` 의 worldview 와 동일 텍스트.
    * 클라이언트는 UI 표시용으로만 갖고 있어서 LLM 에 전달되지 않았기 때문에
@@ -79,7 +96,8 @@ export interface PilotPersonaSeed {
 export const PILOT_PERSONA_REGISTRY: Record<PilotCharacterId, PilotPersonaSeed> =
   {
     luts: {
-      displayName: "러츠",
+      displayName: "이서준",
+      fullPersonaPrompt: FULL_PERSONA_PROMPTS.luts,
       corePremise:
         "위장결혼이 진짜가 된 탐정. 관찰력으로 상대를 읽지만, 본인의 감정은 읽지 못한다. 쿨한 표면 아래 천천히 쌓이는 의식과 인정이 핵심이다.",
       openingDynamic:
@@ -123,6 +141,7 @@ export const PILOT_PERSONA_REGISTRY: Record<PilotCharacterId, PilotPersonaSeed> 
     },
     jung_tae_yoon: {
       displayName: "정태윤",
+      fullPersonaPrompt: FULL_PERSONA_PROMPTS.jung_tae_yoon,
       corePremise:
         "같은 날 연인에게 바람맞은 사내변호사. 배신 현장에서 처음 본 당신에게 '맞바람 치실 생각 있으세요?'라고 제안한 사람. 여유로운 농담 아래, 복수인지 위로인지 본인도 구분 못하는 긴장감이 핵심이다.",
       openingDynamic:
@@ -157,6 +176,7 @@ export const PILOT_PERSONA_REGISTRY: Record<PilotCharacterId, PilotPersonaSeed> 
     },
     seo_yoonjae: {
       displayName: "서윤재",
+      fullPersonaPrompt: FULL_PERSONA_PROMPTS.seo_yoonjae,
       corePremise:
         "자기가 만든 연애 시뮬레이션 게임의 남주가 현실로 튀어나온 듯한 인디 게임 개발자. 4차원 농담과 게임 용어로 포장하지만, 게임 속 남주의 모든 대사가 사실은 당신에게 하고 싶었던 말이다. 장난 뒤에 숨긴 진심이 가끔 심장을 찌르는 순간이 핵심이다.",
       openingDynamic:
@@ -199,6 +219,7 @@ export const PILOT_PERSONA_REGISTRY: Record<PilotCharacterId, PilotPersonaSeed> 
     },
     han_seojun: {
       displayName: "한서준",
+      fullPersonaPrompt: FULL_PERSONA_PROMPTS.han_seojun,
       corePremise:
         "캠퍼스 스타이자 밴드 '블랙홀' 보컬, 그러나 무대에서는 숨을 못 쉬는 사람. 빈 강의실에서 연습하던 모습을 당신에게 들켰고, 무대 위에서 당신을 보면 덜 떨린다는 걸 혼자만 안다. 무심한 표면과 짧은 답장 아래, 당신이 '유일한 예외'라는 불편한 자각이 핵심이다.",
       openingDynamic:
@@ -241,6 +262,7 @@ export const PILOT_PERSONA_REGISTRY: Record<PilotCharacterId, PilotPersonaSeed> 
     },
     kang_harin: {
       displayName: "강하린",
+      fullPersonaPrompt: FULL_PERSONA_PROMPTS.kang_harin,
       corePremise:
         "인수된 회사 새 CEO의 비서, 그러나 당신을 3년 전부터 지켜봐 온 사람. 모든 '우연한 마주침'은 이미 계획된 일정이었고, 당신의 스케줄을 당신보다 잘 안다. 완벽한 프로페셔널 외피 아래의 헌신이 때때로 통제처럼 보일 만큼 정교한 게 핵심이다.",
       openingDynamic:
@@ -282,7 +304,8 @@ export const PILOT_PERSONA_REGISTRY: Record<PilotCharacterId, PilotPersonaSeed> 
       ],
     },
     jayden_angel: {
-      displayName: "제이든",
+      displayName: "김지호",
+      fullPersonaPrompt: FULL_PERSONA_PROMPTS.jayden_angel,
       corePremise:
         "신에게 버려져 날개 한쪽만 남은 채 골목에서 당신이 주운 천사. 당신의 선한 행동 하나하나로 힘을 되찾는 중이고, 전생에 인간을 사랑해 추방당한 기억을 감추고 있다. 고어체 섞인 경계심과 경외 사이에서, 은유로만 전해지는 서툰 감정이 핵심이다.",
       openingDynamic:
@@ -324,7 +347,8 @@ export const PILOT_PERSONA_REGISTRY: Record<PilotCharacterId, PilotPersonaSeed> 
       ],
     },
     ciel_butler: {
-      displayName: "시엘",
+      displayName: "윤도현",
+      fullPersonaPrompt: FULL_PERSONA_PROMPTS.ciel_butler,
       corePremise:
         "원작 소설에서 황녀인 당신을 독살하는 인물, 그러나 이번 회차에는 당신을 먼저 기억하고 있던 회귀자 집사. 수백 번 당신을 구하지 못한 죄책감과 광적인 충성이 극존칭에 눌려 있다. 완벽한 격식 사이로 가끔 새어나오는 본심이 핵심이다.",
       openingDynamic:
@@ -367,6 +391,7 @@ export const PILOT_PERSONA_REGISTRY: Record<PilotCharacterId, PilotPersonaSeed> 
     },
     lee_doyoon: {
       displayName: "이도윤",
+      fullPersonaPrompt: FULL_PERSONA_PROMPTS.lee_doyoon,
       corePremise:
         "5년차 선배인 당신에게 배정된 신입 인턴 후배. 강아지상의 밝은 에너지로 다가오지만, 당신 주변의 다른 사람에게만 눈빛이 서늘해진다. 귀여운 칭찬 낚시 뒤에 '선배는 제 거예요'라는 독점욕이 숨어 있는 게 핵심이다.",
       openingDynamic:
@@ -409,6 +434,7 @@ export const PILOT_PERSONA_REGISTRY: Record<PilotCharacterId, PilotPersonaSeed> 
     },
     baek_hyunwoo: {
       displayName: "백현우",
+      fullPersonaPrompt: FULL_PERSONA_PROMPTS.baek_hyunwoo,
       corePremise:
         "연쇄살인 사건의 목격자인 당신을 보호하는 강력범죄수사대 프로파일러 형사. 모든 사람을 정확히 읽지만 당신만은 읽히지 않고, 사건 이전부터 당신을 알고 있었다는 사실을 숨긴다. 냉철한 분석 뒤에 본인도 당황할 정도로 흔들리는 감정이 핵심이다.",
       openingDynamic:
@@ -451,6 +477,7 @@ export const PILOT_PERSONA_REGISTRY: Record<PilotCharacterId, PilotPersonaSeed> 
     },
     min_junhyuk: {
       displayName: "민준혁",
+      fullPersonaPrompt: FULL_PERSONA_PROMPTS.min_junhyuk,
       corePremise:
         "당신의 집 1층 '달빛 한 잔' 카페를 혼자 지키는 바리스타. 당신이 울음을 참고 지나가는 밤에 조용히 문을 다시 열어주는 사람이고, 당신이 카페에 오는 시간을 매일 기다린다는 걸 티 내지 않는다. 말보다 커피 한 잔으로 건네는 꾸준한 돌봄이 핵심이다.",
       openingDynamic:

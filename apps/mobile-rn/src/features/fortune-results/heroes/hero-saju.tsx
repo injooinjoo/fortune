@@ -93,7 +93,7 @@ export default function HeroSaju({ data, progress }: HeroSajuProps) {
   }, [p, pillarAnims, barAnims, pillars]);
 
   return (
-    <View style={{ paddingVertical: 10 }}>
+    <View style={{ paddingTop: 16, paddingHorizontal: 4, paddingBottom: 6 }}>
       <View style={{ flexDirection: 'row', gap: 6 }}>
         {pillars.map((pi, i) => {
           const scale = pillarAnims[i].interpolate({
@@ -131,7 +131,8 @@ export default function HeroSaju({ data, progress }: HeroSajuProps) {
               <Text
                 style={{
                   fontSize: 22,
-                  lineHeight: 26,
+                  lineHeight: 24,
+                  fontFamily: 'ZenSerif',
                   color: ELC[skyEl],
                   marginTop: 2,
                 }}
@@ -141,7 +142,8 @@ export default function HeroSaju({ data, progress }: HeroSajuProps) {
               <Text
                 style={{
                   fontSize: 18,
-                  lineHeight: 22,
+                  lineHeight: 20,
+                  fontFamily: 'ZenSerif',
                   color: ELC[gndEl],
                 }}
               >
@@ -188,6 +190,7 @@ export default function HeroSaju({ data, progress }: HeroSajuProps) {
                 style={{
                   fontSize: 10,
                   lineHeight: 12,
+                  fontFamily: 'ZenSerif',
                   color: fortuneTheme.colors.textSecondary,
                   marginTop: 3,
                 }}

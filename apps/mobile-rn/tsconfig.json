@@ -3,6 +3,8 @@
   "compilerOptions": {
     "strict": true,
     "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "types": [
       "expo-router/types",
       "node"

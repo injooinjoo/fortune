@@ -238,12 +238,7 @@ export function PetCompatibilityResult(props: FortuneResultComponentProps) {
       {/* ============================================================ */}
       {/*  Section 1: Hero — Dual-circle owner/pet bond visual          */}
       {/* ============================================================ */}
-      <HeroPet
-        petType={petSpecies || '반려동물'}
-        petEmoji={petTypeEmoji}
-        bondScore={bondScore}
-        description={greeting || summary}
-      />
+      <HeroPet />
 
       {/* ============================================================ */}
       {/*  Section 2: 오늘의 이야기 — Story chapters                      */}

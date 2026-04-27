@@ -204,6 +204,48 @@ export function investmentCoin() {
   });
 }
 
+/**
+ * Fortune result reveal — 운세 결과 카드/풀뷰가 사용자 앞에 "등장"하는 순간.
+ *
+ * 라우팅:
+ *   - love / match-insight / compatibility  → 하트비트
+ *   - tarot                                 → 카드 드로우 3-phase
+ *   - wealth / investment                   → 동전 drop
+ *   - score 있으면                           → scoreReveal(score)
+ *   - 기본                                   → confirmAction (Medium)
+ *
+ * fortuneType 은 자유 문자열이라 매칭 실패 시 soft fallback.
+ */
+export function resultReveal(fortuneType?: string, score?: number) {
+  const type = (fortuneType ?? '').toLowerCase();
+
+  if (
+    type.includes('love') ||
+    type.includes('match') ||
+    type === 'compatibility'
+  ) {
+    loveHeartbeat();
+    return;
+  }
+
+  if (type.includes('tarot')) {
+    tarotReveal();
+    return;
+  }
+
+  if (type.includes('wealth') || type.includes('invest')) {
+    investmentCoin();
+    return;
+  }
+
+  if (typeof score === 'number' && Number.isFinite(score)) {
+    scoreReveal(score);
+    return;
+  }
+
+  confirmAction();
+}
+
 /** Streak celebration — scales with streak length */
 export function streak(days: number) {
   safe(async () => {

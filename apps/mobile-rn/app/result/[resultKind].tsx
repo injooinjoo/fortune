@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 
 import { Card } from '../../src/components/card';
@@ -6,10 +7,21 @@ import { FortuneResultLayout } from '../../src/features/fortune-results/primitiv
 import { resultMetadataByKind } from '../../src/features/fortune-results/mapping';
 import { RenderFortuneResult } from '../../src/features/fortune-results/registry';
 import { isResultKind } from '../../src/features/fortune-results/types';
+import { resultReveal } from '../../src/lib/haptics';
+import { useMobileAppState } from '../../src/providers/mobile-app-state-provider';
 
 export default function ResultRoute() {
   const params = useLocalSearchParams<{ resultKind?: string }>();
   const resultKind = params.resultKind;
+  const { state } = useMobileAppState();
+  const hapticsEnabled = state.settings.chatHapticsEnabled;
+
+  // 풀뷰 결과 화면 마운트 시 1회 햅틱. resultKind 별 적절한 패턴 자동 매핑.
+  useEffect(() => {
+    if (!hapticsEnabled) return;
+    if (!resultKind) return;
+    resultReveal(resultKind);
+  }, [hapticsEnabled, resultKind]);
 
   if (!resultKind || !isResultKind(resultKind)) {
     return (

@@ -1,151 +1,172 @@
 /**
- * Shared hook for voice input using expo-av recording + Whisper API
- * via the speech-to-text Supabase Edge Function.
+ * Shared hook for voice input using `expo-speech-recognition` (iOS Speech
+ * framework / Android SpeechRecognizer). On-device, realtime, offline-capable.
  *
- * Works in Expo Go — no native modules required beyond expo-av.
+ * 이전에는 expo-av + Whisper 엣지 함수를 썼는데 iOS에서
+ * `Audio.Recording.prepareToRecordAsync()`가 간헐적으로 실패해
+ * "녹음을 시작할 수 없습니다" 에러로 멈추는 문제가 있었다.
+ * expo-speech-recognition은 app.config.ts에 이미 플러그인이 등록돼 있고
+ * 네트워크 왕복 없이 디바이스 내장 엔진으로 변환한다.
  */
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-native';
-import { Audio } from 'expo-av';
 
-import { supabase } from './supabase';
+// Native module은 dev build에만 링크됨. JS 패키지 자체 import가 top-level에서
+// throw하면 chat 탭 전체가 죽으므로 require로 감싸 런타임에 안전하게 로드한다.
+type SpeechRecognitionNative = {
+  ExpoSpeechRecognitionModule: {
+    isRecognitionAvailable: () => boolean;
+    requestPermissionsAsync: () => Promise<{ granted: boolean }>;
+    start: (opts: { lang: string; interimResults: boolean; continuous: boolean }) => void;
+    stop: () => void;
+  };
+  useSpeechRecognitionEvent: (event: string, cb: (e: { results?: { transcript: string }[]; isFinal?: boolean; error?: string; message?: string }) => void) => void;
+};
+
+let nativeSpeech: SpeechRecognitionNative | null = null;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  nativeSpeech = require('expo-speech-recognition') as SpeechRecognitionNative;
+} catch {
+  nativeSpeech = null;
+}
+
+const NOOP_EVENT = (_event: string, _cb: unknown) => {};
+const ExpoSpeechRecognitionModule = nativeSpeech?.ExpoSpeechRecognitionModule ?? {
+  isRecognitionAvailable: () => false,
+  requestPermissionsAsync: async () => ({ granted: false }),
+  start: () => {},
+  stop: () => {},
+};
+const useSpeechRecognitionEvent = nativeSpeech?.useSpeechRecognitionEvent ?? NOOP_EVENT;
 
 export type VoiceInputState = 'idle' | 'recording' | 'transcribing';
 
 interface UseVoiceInputOptions {
-  /** Called when a transcript is successfully received */
+  /** Called when a final transcript is received. */
   onTranscript: (text: string) => void;
-  /** Language code for Whisper (default: 'ko') */
+  /** BCP-47 language tag. Default 'ko-KR'. */
   language?: string;
 }
 
-export function useVoiceInput({ onTranscript, language = 'ko' }: UseVoiceInputOptions) {
+export function useVoiceInput({
+  onTranscript,
+  language = 'ko-KR',
+}: UseVoiceInputOptions) {
   const [state, setState] = useState<VoiceInputState>('idle');
-  const recordingRef = useRef<Audio.Recording | null>(null);
+  // 마지막에 받은 final 텍스트. end 이벤트 시점에 onTranscript로 flush.
+  const lastTranscriptRef = useRef<string>('');
+  // stop()을 명시적으로 호출했는지 추적 — end 이벤트에서 사용자 의도로 중단된
+  // 것인지 에러로 끊긴 것인지 구분.
+  const stopRequestedRef = useRef<boolean>(false);
 
   const isRecording = state === 'recording';
   const isTranscribing = state === 'transcribing';
   const isActive = state !== 'idle';
 
+  useSpeechRecognitionEvent('result', (event) => {
+    const latest = event.results?.[0]?.transcript ?? '';
+    if (latest) {
+      lastTranscriptRef.current = latest;
+    }
+    // isFinal이 true면 그 자리에서 바로 flush (continuous=false 기준 1회성).
+    if (event.isFinal && latest) {
+      onTranscript(latest);
+      lastTranscriptRef.current = '';
+    }
+  });
+
+  useSpeechRecognitionEvent('error', (event) => {
+    // no-speech / aborted는 조용히 무시, 나머지는 Alert.
+    const silent = event.error === 'no-speech' || event.error === 'aborted';
+    if (!silent) {
+      console.warn('[useVoiceInput] Recognition error:', event.error, event.message);
+      Alert.alert(
+        '음성 인식 실패',
+        event.message || '음성을 인식하지 못했습니다. 다시 시도해 주세요.',
+      );
+    }
+    stopRequestedRef.current = false;
+    lastTranscriptRef.current = '';
+    setState('idle');
+  });
+
+  useSpeechRecognitionEvent('end', () => {
+    // end는 stop() 후 또는 침묵으로 타임아웃됐을 때 호출된다. result 이벤트에서
+    // isFinal이 못 오고 남은 interim 텍스트가 있으면 여기서 flush.
+    const pending = lastTranscriptRef.current;
+    lastTranscriptRef.current = '';
+    stopRequestedRef.current = false;
+    if (pending) {
+      onTranscript(pending);
+    }
+    setState('idle');
+  });
+
+  // 언마운트 시 활성 세션 정리.
+  useEffect(() => {
+    return () => {
+      try {
+        ExpoSpeechRecognitionModule.stop();
+      } catch {
+        // 이미 중단된 상태면 무시
+      }
+    };
+  }, []);
+
   const startRecording = useCallback(async () => {
     try {
-      // Request microphone permission
-      const permission = await Audio.requestPermissionsAsync();
+      // Expo Go 또는 플러그인이 아직 네이티브에 링크되지 않은 빌드에서는
+      // 미리 차단 — start()가 크래시/무응답 대신 명확한 안내 표시.
+      if (!ExpoSpeechRecognitionModule.isRecognitionAvailable()) {
+        Alert.alert(
+          '음성 입력 미지원',
+          '이 빌드에서는 음성 인식을 사용할 수 없습니다. 최신 dev 빌드를 설치한 뒤 다시 시도해 주세요.',
+        );
+        return;
+      }
+
+      const permission = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
       if (!permission.granted) {
         Alert.alert(
           '마이크 권한',
-          '음성 입력을 위해 마이크 권한이 필요합니다. 설정에서 마이크 권한을 허용해 주세요.',
+          '음성 입력을 위해 마이크 권한이 필요합니다. 설정에서 허용해 주세요.',
         );
         return;
       }
 
-      // Configure audio mode for recording
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
+      lastTranscriptRef.current = '';
+      stopRequestedRef.current = false;
+
+      ExpoSpeechRecognitionModule.start({
+        lang: language,
+        interimResults: true,
+        continuous: false,
       });
 
-      // Start recording
-      const recording = new Audio.Recording();
-      await recording.prepareToRecordAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY,
-      );
-      await recording.startAsync();
-      recordingRef.current = recording;
       setState('recording');
     } catch (error) {
-      console.warn('[useVoiceInput] Failed to start recording:', error);
-      Alert.alert('음성 입력', '녹음을 시작할 수 없습니다. 다시 시도해 주세요.');
+      console.warn('[useVoiceInput] Failed to start recognition:', error);
+      Alert.alert(
+        '음성 입력',
+        '녹음을 시작할 수 없습니다. 다시 시도해 주세요.',
+      );
+      setState('idle');
+    }
+  }, [language]);
+
+  const stopAndTranscribe = useCallback(async () => {
+    try {
+      stopRequestedRef.current = true;
+      setState('transcribing');
+      ExpoSpeechRecognitionModule.stop();
+      // 실제 완료는 end/result 이벤트에서 state=idle로 되돌린다.
+    } catch (error) {
+      console.warn('[useVoiceInput] Failed to stop recognition:', error);
       setState('idle');
     }
   }, []);
-
-  const stopAndTranscribe = useCallback(async () => {
-    const recording = recordingRef.current;
-    if (!recording) {
-      setState('idle');
-      return;
-    }
-
-    try {
-      setState('transcribing');
-
-      // Stop recording
-      await recording.stopAndUnloadAsync();
-
-      // Reset audio mode so playback works normally
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: false,
-        playsInSilentModeIOS: true,
-      });
-
-      const uri = recording.getURI();
-      recordingRef.current = null;
-
-      if (!uri) {
-        Alert.alert('음성 입력', '녹음 파일을 찾을 수 없습니다.');
-        setState('idle');
-        return;
-      }
-
-      if (!supabase) {
-        Alert.alert('음성 입력', '서버 연결이 설정되지 않았습니다.');
-        setState('idle');
-        return;
-      }
-
-      // Build FormData for the edge function
-      const formData = new FormData();
-      formData.append('file', {
-        uri,
-        type: 'audio/m4a',
-        name: 'recording.m4a',
-      } as unknown as Blob);
-      formData.append('language', language);
-
-      // Call our Supabase Edge Function which proxies to Whisper
-      const { data, error } = await supabase.functions.invoke(
-        'speech-to-text',
-        { body: formData },
-      );
-
-      if (error) {
-        console.warn('[useVoiceInput] Edge function error:', error);
-        Alert.alert(
-          '음성 인식 실패',
-          '음성을 텍스트로 변환하지 못했습니다. 다시 시도해 주세요.',
-        );
-        setState('idle');
-        return;
-      }
-
-      const payload = data as { success?: boolean; text?: string; error?: string } | null;
-
-      if (!payload?.success || !payload.text) {
-        const reason = payload?.error ?? '음성이 인식되지 않았습니다.';
-        // If text is simply empty (silence), don't show an alert — just return
-        if (!payload?.text && payload?.success) {
-          setState('idle');
-          return;
-        }
-        Alert.alert('음성 인식', reason);
-        setState('idle');
-        return;
-      }
-
-      onTranscript(payload.text);
-      setState('idle');
-    } catch (error) {
-      console.warn('[useVoiceInput] Transcription error:', error);
-      recordingRef.current = null;
-      Alert.alert(
-        '음성 입력',
-        '오류가 발생했습니다. 다시 시도해 주세요.',
-      );
-      setState('idle');
-    }
-  }, [language, onTranscript]);
 
   const toggleRecording = useCallback(async () => {
     if (state === 'recording') {
@@ -153,38 +174,26 @@ export function useVoiceInput({ onTranscript, language = 'ko' }: UseVoiceInputOp
     } else if (state === 'idle') {
       await startRecording();
     }
-    // If 'transcribing', ignore tap — wait for it to finish
+    // 'transcribing'이면 무시 — 결과 대기 중
   }, [state, startRecording, stopAndTranscribe]);
 
   const cancelRecording = useCallback(async () => {
-    const recording = recordingRef.current;
-    if (recording) {
-      try {
-        await recording.stopAndUnloadAsync();
-      } catch {
-        // Already stopped
-      }
-      recordingRef.current = null;
+    try {
+      ExpoSpeechRecognitionModule.stop();
+    } catch {
+      // already stopped
     }
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-      playsInSilentModeIOS: true,
-    }).catch(() => undefined);
+    lastTranscriptRef.current = '';
+    stopRequestedRef.current = false;
     setState('idle');
   }, []);
 
   return {
-    /** Current voice input state */
     state,
-    /** Whether currently recording audio */
     isRecording,
-    /** Whether currently transcribing audio */
     isTranscribing,
-    /** Whether recording or transcribing (not idle) */
     isActive,
-    /** Toggle recording: start if idle, stop+transcribe if recording */
     toggleRecording,
-    /** Cancel an in-progress recording without transcribing */
     cancelRecording,
   };
 }

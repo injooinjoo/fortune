@@ -468,19 +468,7 @@ export function NamingResult(props: FortuneResultComponentProps) {
       {/* ============================================================ */}
       {/*  Hero                                                         */}
       {/* ============================================================ */}
-      <HeroNaming
-        topScore={topScore}
-        recommendedCount={recommendedNames.length}
-        distribution={{
-          木: num(distribution['木'], 0),
-          火: num(distribution['火'], 0),
-          土: num(distribution['土'], 0),
-          金: num(distribution['金'], 0),
-          水: num(distribution['水'], 0),
-        }}
-        missing={missing}
-        description={heroDescription}
-      />
+      <HeroNaming />
 
       {/* ============================================================ */}
       {/*  Content — main narrative from API                            */}

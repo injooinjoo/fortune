@@ -993,12 +993,19 @@ function extractSpecialTip(
   }
 }
 
+/**
+ * 각 항목 최대 ITEM_CHAR_LIMIT 자. 이전 140자는 전생 챕터 등 긴 내러티브를
+ * "…"로 잘라 가독성을 망가뜨려서 450자로 상향. 카드 UI 안에서도 자연스럽게
+ * 2~4줄 내에 읽힘. 필요하면 fortune type별로 오버라이드 가능.
+ */
+const ITEM_CHAR_LIMIT = 450;
+
 function collectTextItems(...values: unknown[]) {
   return values
     .flatMap((value) => toTextItems(value))
     .map((item) => item.trim())
     .filter(Boolean)
-    .slice(0, 5);
+    .slice(0, 6);
 }
 
 function toTextItems(value: unknown): string[] {
@@ -1007,7 +1014,7 @@ function toTextItems(value: unknown): string[] {
   }
 
   if (typeof value === 'string') {
-    return value.trim() ? [trimParagraph(value, 140)] : [];
+    return value.trim() ? [trimParagraph(value, ITEM_CHAR_LIMIT)] : [];
   }
 
   if (typeof value === 'number' || typeof value === 'boolean') {
@@ -1074,7 +1081,7 @@ function trimParagraph(value: string, limit: number) {
 function firstText(...values: unknown[]) {
   for (const value of values) {
     if (typeof value === 'string' && value.trim()) {
-      return trimParagraph(value, 140);
+      return trimParagraph(value, ITEM_CHAR_LIMIT);
     }
   }
 

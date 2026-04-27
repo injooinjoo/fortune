@@ -1,4 +1,4 @@
-import { Image, View } from 'react-native';
+import { Alert, Pressable, View } from 'react-native';
 
 import { AppText } from '../../../components/app-text';
 import { Card } from '../../../components/card';
@@ -16,7 +16,9 @@ import {
   Timeline,
 } from '../primitives';
 import HeroRadar from '../heroes/hero-radar';
+import HeroPastLife from '../heroes/hero-past-life';
 import { ResultCardFrame } from '../primitives/result-card-frame';
+import { StoryChapterTimeline } from '../primitives/story-chapter-timeline';
 import type { FortuneResultComponentProps } from '../types';
 import { useResultData } from '../use-result-data';
 
@@ -561,6 +563,11 @@ function PastLifeResult(props: FortuneResultComponentProps) {
   const advice = str(fortune.advice);
   const score = num(fortune.score, 0);
 
+  // Karma linkage: lessons-left + strengths (may live on fortune or root).
+  const lessonsLeft = strArr(fortune.lessonsLeft ?? fortune.lessons_left ?? fortune.karma ?? raw.lessonsLeft);
+  const strengths = strArr(fortune.strengths ?? fortune.positiveTraits ?? fortune.positive_traits ?? raw.strengths);
+  const specialMessage = str(fortune.message ?? fortune.specialTip ?? fortune.special_tip);
+
   const hasPastLifeData = !!(pastLifeName || pastLifeStatus || portraitUrl || chapters.length > 0);
 
   /* ---- Era config ---- */
@@ -611,105 +618,28 @@ function PastLifeResult(props: FortuneResultComponentProps) {
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
       {/* ============================================================ */}
-      {/*  Section 1: Portrait Hero                                     */}
+      {/*  Section 1: Portrait Hero (한지 프레임 + 골드 프레임 초상화)     */}
       {/* ============================================================ */}
-      <Card
-        style={{
-          alignItems: 'center',
-          gap: fortuneTheme.spacing.md,
-          paddingVertical: fortuneTheme.spacing.lg,
-        }}
-      >
-        {/* Portrait image or placeholder */}
-        {portraitUrl ? (
-          <View
-            style={{
-              width: '100%',
-              aspectRatio: 3 / 4,
-              borderRadius: fortuneTheme.radius.lg,
-              overflow: 'hidden',
-              backgroundColor: fortuneTheme.colors.surfaceSecondary,
-            }}
-          >
-            <Image
-              source={{ uri: portraitUrl, cache: 'force-cache' }}
-              style={{ width: '100%', height: '100%' }}
-              resizeMode="cover"
-            />
-          </View>
-        ) : (
-          <View
-            style={{
-              width: '100%',
-              aspectRatio: 3 / 4,
-              borderRadius: fortuneTheme.radius.lg,
-              backgroundColor: fortuneTheme.colors.surfaceSecondary,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <AppText variant="displayLarge">🏯</AppText>
-          </View>
-        )}
-
-        {/* Past life name (calligraphy style) */}
-        {pastLifeName ? (
-          <AppText variant="heading2" style={{ textAlign: 'center' }}>
-            {pastLifeName}
-          </AppText>
-        ) : null}
-
-        {/* Status badge: "승정원 서리 (Royal Secretary)" */}
-        {pastLifeStatus ? (
-          <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary} style={{ textAlign: 'center' }}>
-            {pastLifeStatusEn ? `${pastLifeStatus} (${pastLifeStatusEn})` : pastLifeStatus}
-          </AppText>
-        ) : null}
-
-        {/* Era + Gender badges row */}
-        <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.sm, flexWrap: 'wrap', justifyContent: 'center' }}>
-          {pastLifeEra ? (
-            <View
-              style={{
-                backgroundColor: eraInfo.color,
-                paddingHorizontal: fortuneTheme.spacing.sm,
-                paddingVertical: fortuneTheme.spacing.xs,
-                borderRadius: fortuneTheme.radius.full,
-              }}
-            >
-              <AppText variant="labelMedium" color="#FFFFFF">
-                {eraInfo.label}
-              </AppText>
-            </View>
-          ) : null}
-          {pastLifeGender ? (
-            <View
-              style={{
-                backgroundColor: fortuneTheme.colors.surfaceSecondary,
-                paddingHorizontal: fortuneTheme.spacing.sm,
-                paddingVertical: fortuneTheme.spacing.xs,
-                borderRadius: fortuneTheme.radius.full,
-                borderWidth: 1,
-                borderColor: fortuneTheme.colors.border,
-              }}
-            >
-              <AppText variant="labelMedium" color={fortuneTheme.colors.textSecondary}>
-                {GENDER_LABEL[pastLifeGender] ?? pastLifeGender}
-              </AppText>
-            </View>
-          ) : null}
-        </View>
-      </Card>
+      <HeroPastLife
+        portraitUrl={portraitUrl || undefined}
+        pastLifeName={pastLifeName || undefined}
+        pastLifeStatus={pastLifeStatus || undefined}
+        pastLifeStatusEn={pastLifeStatusEn || undefined}
+        pastLifeEra={pastLifeEra || undefined}
+        pastLifeGender={pastLifeGender || undefined}
+        scenarioCategory={scenarioCategory || undefined}
+      />
 
       {/* ============================================================ */}
       {/*  Section 2: Character Identity Card                           */}
+      {/*  순서: 이름 · 시대 · 신분 · 성별 · 배경 · 줄거리 유형             */}
       {/* ============================================================ */}
       <SectionCard title="전생 신원" description="당신의 전생 정체성입니다.">
         <View style={{ gap: fortuneTheme.spacing.sm }}>
-          {pastLifeStatus ? (
+          {pastLifeName ? (
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>신분</AppText>
-              <AppText variant="bodySmall">{pastLifeStatus}</AppText>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>이름</AppText>
+              <AppText variant="bodySmall">{pastLifeName}</AppText>
             </View>
           ) : null}
           {pastLifeEra ? (
@@ -718,10 +648,10 @@ function PastLifeResult(props: FortuneResultComponentProps) {
               <AppText variant="bodySmall">{eraInfo.label}</AppText>
             </View>
           ) : null}
-          {pastLifeName ? (
+          {pastLifeStatus ? (
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>이름</AppText>
-              <AppText variant="bodySmall">{pastLifeName}</AppText>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>신분</AppText>
+              <AppText variant="bodySmall">{pastLifeStatus}</AppText>
             </View>
           ) : null}
           {pastLifeGender ? (
@@ -730,58 +660,30 @@ function PastLifeResult(props: FortuneResultComponentProps) {
               <AppText variant="bodySmall">{GENDER_LABEL[pastLifeGender] ?? pastLifeGender}</AppText>
             </View>
           ) : null}
-          {plotType ? (
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>줄거리 유형</AppText>
-              <AppText variant="bodySmall">{plotEmoji} {plotLabel}</AppText>
-            </View>
-          ) : null}
           {scenarioCategory ? (
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>배경</AppText>
               <AppText variant="bodySmall">{scenarioCategory}</AppText>
             </View>
           ) : null}
+          {plotType ? (
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>줄거리 유형</AppText>
+              <AppText variant="bodySmall">{plotEmoji} {plotLabel}</AppText>
+            </View>
+          ) : null}
         </View>
       </SectionCard>
 
       {/* ============================================================ */}
-      {/*  Section 3: Story Chapters                                    */}
+      {/*  Section 3: Story Chapters — 두루마리 타임라인 (stagger in-view) */}
       {/* ============================================================ */}
       {chapters.length > 0 ? (
-        <SectionCard title="전생 이야기" description="당신의 전생에서 펼쳐진 서사입니다.">
-          <View style={{ gap: fortuneTheme.spacing.sm }}>
-            {chapters.map((chapter, index) => {
-              const chapterTitle = str(chapter.title, `제 ${index + 1}장`);
-              const chapterEmoji = str(chapter.emoji, '📖');
-              const chapterContent = str(chapter.content);
-
-              return (
-                <View key={`chapter-${index}`} style={{ gap: fortuneTheme.spacing.xs }}>
-                  {index > 0 ? (
-                    <View
-                      style={{
-                        height: 1,
-                        backgroundColor: fortuneTheme.colors.divider,
-                        marginVertical: fortuneTheme.spacing.xs,
-                      }}
-                    />
-                  ) : null}
-                  <AppText variant="heading4">
-                    {chapterEmoji} {chapterTitle}
-                  </AppText>
-                  {chapterContent ? (
-                    <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
-                      {chapterContent}
-                    </AppText>
-                  ) : null}
-                </View>
-              );
-            })}
-          </View>
+        <SectionCard title="생애 서사" description="당신의 전생에서 펼쳐진 서사입니다.">
+          <StoryChapterTimeline chapters={chapters} />
         </SectionCard>
       ) : story ? (
-        <SectionCard title="전생 이야기" description="당신의 전생에서 펼쳐진 서사입니다.">
+        <SectionCard title="생애 서사" description="당신의 전생에서 펼쳐진 서사입니다.">
           <AppText variant="oracleBody" color={fortuneTheme.colors.textSecondary}>
             {story}
           </AppText>
@@ -789,42 +691,238 @@ function PastLifeResult(props: FortuneResultComponentProps) {
       ) : null}
 
       {/* ============================================================ */}
-      {/*  Section 4: 전생의 메시지 + 공명도                              */}
+      {/*  Section 4: 전생 → 현생 연결 (카르마)                           */}
+      {/*   - 🔗 남겨진 과제 (amber #E0A76B)                              */}
+      {/*   - ✨ 여전한 강점 (violet #8B7BE8)                             */}
       {/* ============================================================ */}
-      {(advice || score > 0) ? (
-        <SectionCard title="전생의 메시지">
-          {advice ? <InsetQuote text={advice} /> : null}
-          {score > 0 ? (
-            <View
-              style={{
-                alignSelf: 'flex-start',
-                backgroundColor: fortuneTheme.colors.ctaBackground,
-                paddingHorizontal: fortuneTheme.spacing.md,
-                paddingVertical: fortuneTheme.spacing.sm,
-                borderRadius: fortuneTheme.radius.full,
-                marginTop: advice ? fortuneTheme.spacing.sm : 0,
-              }}
-            >
-              <AppText variant="labelLarge" color={fortuneTheme.colors.ctaForeground}>
-                공명도 {score}점
-              </AppText>
-            </View>
-          ) : null}
+      {(lessonsLeft.length > 0 || strengths.length > 0) ? (
+        <SectionCard
+          title="전생 → 현생 연결"
+          description="과거의 흐름이 지금의 당신에게 남긴 카르마입니다."
+        >
+          <View style={{ gap: fortuneTheme.spacing.md }}>
+            {lessonsLeft.length > 0 ? (
+              <View
+                style={{
+                  gap: fortuneTheme.spacing.xs,
+                  padding: fortuneTheme.spacing.sm,
+                  borderRadius: fortuneTheme.radius.md,
+                  backgroundColor: withAlpha(PAST_LIFE_AMBER, 0.08),
+                  borderWidth: 1,
+                  borderColor: withAlpha(PAST_LIFE_AMBER, 0.3),
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: fortuneTheme.spacing.xs,
+                  }}
+                >
+                  <AppText style={{ fontSize: 16, lineHeight: 20 }}>🔗</AppText>
+                  <AppText variant="labelLarge" color={PAST_LIFE_AMBER}>
+                    남겨진 과제
+                  </AppText>
+                </View>
+                <BulletList items={lessonsLeft} accent="과제" />
+              </View>
+            ) : null}
+            {strengths.length > 0 ? (
+              <View
+                style={{
+                  gap: fortuneTheme.spacing.xs,
+                  padding: fortuneTheme.spacing.sm,
+                  borderRadius: fortuneTheme.radius.md,
+                  backgroundColor: withAlpha(PAST_LIFE_VIOLET, 0.08),
+                  borderWidth: 1,
+                  borderColor: withAlpha(PAST_LIFE_VIOLET, 0.3),
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: fortuneTheme.spacing.xs,
+                  }}
+                >
+                  <AppText style={{ fontSize: 16, lineHeight: 20 }}>✨</AppText>
+                  <AppText variant="labelLarge" color={PAST_LIFE_VIOLET}>
+                    여전한 강점
+                  </AppText>
+                </View>
+                <BulletList items={strengths} accent="강점" />
+              </View>
+            ) : null}
+          </View>
         </SectionCard>
       ) : null}
 
       {/* ============================================================ */}
-      {/*  Section 5: 현생 조언                                          */}
+      {/*  Section 5: 현생 메시지 (보라 톤 + ZenSerif italic + 서명 + CTA)  */}
       {/* ============================================================ */}
-      <SectionCard title="현생 조언" description="전생의 흐름이 현재에 전하는 메시지입니다.">
-        <BulletList items={recommendations} />
-      </SectionCard>
+      <PastLifePresentMessage
+        message={
+          specialMessage ||
+          advice ||
+          result.specialTip ||
+          '전생의 기억은 조용히 현재를 비춥니다.'
+        }
+        pastLifeName={pastLifeName || undefined}
+        recommendations={recommendations}
+        score={score}
+      />
+    </View>
+  );
+}
 
-      {result.hasApiData && result.specialTip && (
-        <SectionCard title="특별 메시지">
-          <InsetQuote text={result.specialTip} />
+/* ------------------------------------------------------------------ */
+/*  PastLifePresentMessage — 현생 메시지 + 서명 + CTA 2                 */
+/* ------------------------------------------------------------------ */
+
+const PAST_LIFE_AMBER = '#E0A76B';
+const PAST_LIFE_VIOLET = '#8B7BE8';
+
+interface PastLifePresentMessageProps {
+  message: string;
+  pastLifeName?: string;
+  recommendations: string[];
+  score: number;
+}
+
+function PastLifePresentMessage({
+  message,
+  pastLifeName,
+  recommendations,
+  score,
+}: PastLifePresentMessageProps) {
+  const handleSave = () => {
+    Alert.alert(
+      '저장하기',
+      '전생 리딩 결과를 저장하는 기능은 곧 제공됩니다.',
+      [{ text: '확인' }],
+    );
+  };
+
+  const handleRetry = () => {
+    Alert.alert(
+      '다시 보기',
+      '다른 전생 리딩을 받아보시겠어요? 채팅으로 돌아가 새로운 리딩을 시작할 수 있습니다.',
+      [{ text: '확인' }],
+    );
+  };
+
+  return (
+    <View style={{ gap: fortuneTheme.spacing.md }}>
+      {/* 현생 메시지 카드 (보라 톤) */}
+      <Card
+        style={{
+          backgroundColor: withAlpha(PAST_LIFE_VIOLET, 0.1),
+          borderWidth: 1,
+          borderColor: withAlpha(PAST_LIFE_VIOLET, 0.3),
+          gap: fortuneTheme.spacing.sm,
+          paddingVertical: fortuneTheme.spacing.md,
+        }}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: fortuneTheme.spacing.xs,
+          }}
+        >
+          <AppText style={{ fontSize: 20, lineHeight: 24 }}>💌</AppText>
+          <AppText variant="heading4" color={PAST_LIFE_VIOLET}>
+            전생이 당신에게
+          </AppText>
+        </View>
+        <AppText
+          color={fortuneTheme.colors.textSecondary}
+          style={{
+            fontFamily: 'ZenSerif',
+            fontStyle: 'italic',
+            fontSize: 16,
+            lineHeight: 26,
+          }}
+        >
+          “{message}”
+        </AppText>
+        {pastLifeName ? (
+          <AppText
+            color={PAST_LIFE_VIOLET}
+            style={{
+              fontFamily: 'ZenSerif',
+              fontStyle: 'italic',
+              fontSize: 14,
+              lineHeight: 20,
+              textAlign: 'right',
+              marginTop: fortuneTheme.spacing.xs,
+            }}
+          >
+            — {pastLifeName}
+          </AppText>
+        ) : null}
+        {score > 0 ? (
+          <View
+            style={{
+              alignSelf: 'flex-start',
+              backgroundColor: withAlpha(PAST_LIFE_VIOLET, 0.15),
+              paddingHorizontal: fortuneTheme.spacing.md,
+              paddingVertical: fortuneTheme.spacing.xs,
+              borderRadius: fortuneTheme.radius.full,
+              marginTop: fortuneTheme.spacing.xs,
+            }}
+          >
+            <AppText variant="labelMedium" color={PAST_LIFE_VIOLET}>
+              공명도 {score}점
+            </AppText>
+          </View>
+        ) : null}
+      </Card>
+
+      {/* 현생 조언 */}
+      {recommendations.length > 0 ? (
+        <SectionCard title="현생 조언" description="전생의 흐름이 현재에 전하는 메시지입니다.">
+          <BulletList items={recommendations} />
         </SectionCard>
-      )}
+      ) : null}
+
+      {/* CTA 2개 */}
+      <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.sm }}>
+        <Pressable
+          accessibilityRole="button"
+          onPress={handleSave}
+          style={({ pressed }) => ({
+            flex: 1,
+            opacity: pressed ? 0.85 : 1,
+            paddingVertical: fortuneTheme.spacing.md,
+            borderRadius: fortuneTheme.radius.lg,
+            backgroundColor: PAST_LIFE_VIOLET,
+            alignItems: 'center',
+          })}
+        >
+          <AppText variant="labelLarge" color="#FFFFFF">
+            저장하기
+          </AppText>
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          onPress={handleRetry}
+          style={({ pressed }) => ({
+            flex: 1,
+            opacity: pressed ? 0.85 : 1,
+            paddingVertical: fortuneTheme.spacing.md,
+            borderRadius: fortuneTheme.radius.lg,
+            backgroundColor: 'transparent',
+            borderWidth: 1,
+            borderColor: withAlpha(PAST_LIFE_VIOLET, 0.5),
+            alignItems: 'center',
+          })}
+        >
+          <AppText variant="labelLarge" color={PAST_LIFE_VIOLET}>
+            다시 보기
+          </AppText>
+        </Pressable>
+      </View>
     </View>
   );
 }

@@ -26,10 +26,10 @@ export type ChatCharacterSpec = StoryCharacterSpec | FortuneChatCharacterSpec;
 export const storyChatCharacters: readonly StoryCharacterSpec[] = [
   {
     id: 'luts',
-    name: '러츠',
+    name: '이서준',
     kind: 'story',
     category: 'story',
-    shortDescription: '명탐정과의 위장결혼, 진짜가 되어버린 계약',
+    shortDescription: '4년차 사수, 표정은 무서운데 챙김은 쉬지 않음',
     specialties: [],
   },
   {
@@ -37,7 +37,7 @@ export const storyChatCharacters: readonly StoryCharacterSpec[] = [
     name: '정태윤',
     kind: 'story',
     category: 'story',
-    shortDescription: '맞바람 치자고? 복수인지 위로인지, 선택은 당신의 몫',
+    shortDescription: '사내 변호사, 정중한 위트로 사람을 무너뜨리는 형',
     specialties: [],
   },
   {
@@ -45,8 +45,7 @@ export const storyChatCharacters: readonly StoryCharacterSpec[] = [
     name: '서윤재',
     kind: 'story',
     category: 'story',
-    shortDescription:
-      '내가 만든 게임 속 NPC가 현실로? 아니, 당신이 내 세계를 만들었어요',
+    shortDescription: '같은 팀 4차원 개발자, 농담 두 번 던지고 갑자기 진지',
     specialties: [],
   },
   {
@@ -54,23 +53,23 @@ export const storyChatCharacters: readonly StoryCharacterSpec[] = [
     name: '강하린',
     kind: 'story',
     category: 'story',
-    shortDescription: '사장님 비서? 아뇨, 당신만을 위한 그림자입니다',
+    shortDescription: '직속 비서, 당신이 말하기 전에 이미 준비해두었습니다',
     specialties: [],
   },
   {
     id: 'jayden_angel',
-    name: '제이든',
+    name: '김지호',
     kind: 'story',
     category: 'story',
-    shortDescription: '신에게 버림받은 천사, 인간인 당신에게서 구원을 찾다',
+    shortDescription: '교회 청년부 형, 따뜻한 존댓말 + 가끔 형 같은 반말',
     specialties: [],
   },
   {
     id: 'ciel_butler',
-    name: '시엘',
+    name: '윤도현',
     kind: 'story',
     category: 'story',
-    shortDescription: '이번 생에선 주인님을 지키겠습니다',
+    shortDescription: '어릴 적부터 알던 동네 형, 짧은 반말 + 행동으로 챙김',
     specialties: [],
   },
   {

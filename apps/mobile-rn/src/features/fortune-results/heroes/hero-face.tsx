@@ -1,157 +1,112 @@
-// HeroFace: port of result-cards.jsx HeroFace (~449-470). Centered face outline with three
-// horizontal zones (상정/중정/하정) tinted wood/amber/earth. Pure View geometry — no
-// react-native-svg; the face is an ellipse-like rounded View and zones are overlaid bands
-// clipped by the outer View's rounded border.
-import { View } from 'react-native';
-
-import { AppText } from '../../../components/app-text';
-import { fortuneTheme, withAlpha } from '../../../lib/theme';
-
-import { Kicker } from '../primitives';
+/**
+ * HeroFace — `result-cards.jsx:HeroFace` (449-470). View-only 근사 (SVG 재적용은 다음 빌드).
+ */
+import { Text, View } from 'react-native';
 
 interface HeroFaceProps {
-  overallImpression: string;
-  topZoneLabel?: string;
-  midZoneLabel?: string;
-  bottomZoneLabel?: string;
-  description?: string;
-  topScore?: number;
-  midScore?: number;
-  bottomScore?: number;
+  data?: unknown;
+  progress?: number;
 }
 
-const FACE_WIDTH = 140;
-const FACE_HEIGHT = 196;
-const ZONE_HEIGHT = FACE_HEIGHT / 3;
+const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+const stage = (p: number, from: number, to: number) =>
+  clamp01((p - from) / Math.max(0.0001, to - from));
 
-function Zone({
-  color,
-  label,
-  score,
-  top,
-  glyph,
-}: {
-  color: string;
-  label: string;
-  score?: number;
-  top: number;
-  glyph: string;
-}) {
+const FG = '#F5F6FB';
+const FG2 = '#9198AA';
+
+const W = 110;
+const H = 140;
+
+export default function HeroFace({ progress = 1 }: HeroFaceProps) {
+  const p = clamp01(progress);
+  const zoneOp = (t: number) => stage(p, t, t + 0.3) * 0.18;
+
   return (
     <View
       style={{
-        position: 'absolute',
-        top,
-        left: 0,
-        right: 0,
-        height: ZONE_HEIGHT,
-        backgroundColor: withAlpha(color, 0.22),
-        borderTopWidth: 0.5,
-        borderBottomWidth: 0.5,
-        borderColor: withAlpha(color, 0.4),
+        paddingTop: 10,
+        paddingHorizontal: 6,
+        paddingBottom: 2,
         alignItems: 'center',
-        justifyContent: 'center',
-        gap: 2,
       }}
     >
-      <AppText
-        variant="heading3"
-        color={withAlpha(color, 0.9)}
-        style={{ fontFamily: 'ZenSerif' }}
-      >
-        {glyph}
-      </AppText>
-      <AppText variant="caption" color={fortuneTheme.colors.textSecondary}>
-        {label}
-        {typeof score === 'number' ? ` · ${Math.round(score)}` : ''}
-      </AppText>
-    </View>
-  );
-}
-
-export default function HeroFace({
-  overallImpression,
-  topZoneLabel = '상정',
-  midZoneLabel = '중정',
-  bottomZoneLabel = '하정',
-  description,
-  topScore,
-  midScore,
-  bottomScore,
-}: HeroFaceProps) {
-  // Ondo palette mapping: wood (success/green) → amber (accentTertiary) → earth (accentSecondary).
-  const topColor = fortuneTheme.colors.success;
-  const midColor = fortuneTheme.colors.accentTertiary;
-  const bottomColor = fortuneTheme.colors.accentSecondary;
-
-  return (
-    <View
-      style={{
-        gap: fortuneTheme.spacing.md,
-        paddingVertical: fortuneTheme.spacing.sm,
-      }}
-    >
-      {/* Face outline with 三停 zones */}
-      <View style={{ alignItems: 'center' }}>
-        <View
-          style={{
-            width: FACE_WIDTH,
-            height: FACE_HEIGHT,
-            borderRadius: FACE_WIDTH * 0.5,
-            borderWidth: 1.5,
-            borderColor: withAlpha(fortuneTheme.colors.textSecondary, 0.5),
-            overflow: 'hidden',
-            backgroundColor: withAlpha(
-              fortuneTheme.colors.backgroundTertiary,
-              0.4,
-            ),
-          }}
-        >
-          <Zone
-            color={topColor}
-            label={topZoneLabel}
-            score={topScore}
-            top={0}
-            glyph="上"
-          />
-          <Zone
-            color={midColor}
-            label={midZoneLabel}
-            score={midScore}
-            top={ZONE_HEIGHT}
-            glyph="中"
-          />
-          <Zone
-            color={bottomColor}
-            label={bottomZoneLabel}
-            score={bottomScore}
-            top={ZONE_HEIGHT * 2}
-            glyph="下"
-          />
-        </View>
-      </View>
-
-      {/* Kicker + title + sub */}
       <View
         style={{
-          gap: 4,
+          width: W,
+          height: H,
+          borderRadius: W / 2,
+          borderWidth: 1.5,
+          borderColor: FG2,
+          overflow: 'hidden',
+          justifyContent: 'space-between',
           alignItems: 'center',
-          paddingHorizontal: fortuneTheme.spacing.xs,
+          paddingVertical: 6,
         }}
       >
-        <Kicker>FACE READING</Kicker>
-        <AppText variant="heading2" style={{ textAlign: 'center' }}>
-          {overallImpression}
-        </AppText>
-        {description ? (
-          <AppText
-            variant="bodySmall"
-            color={fortuneTheme.colors.textSecondary}
-            style={{ textAlign: 'center' }}
-          >
-            {description}
-          </AppText>
-        ) : null}
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: H * 0.33,
+            backgroundColor: '#FFC86B',
+            opacity: zoneOp(0.05),
+          }}
+        />
+        <View
+          style={{
+            position: 'absolute',
+            top: H * 0.33,
+            left: 0,
+            right: 0,
+            height: H * 0.33,
+            backgroundColor: '#E0A76B',
+            opacity: zoneOp(0.22),
+          }}
+        />
+        <View
+          style={{
+            position: 'absolute',
+            top: H * 0.66,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: '#FF8FB1',
+            opacity: zoneOp(0.42),
+          }}
+        />
+        <Text
+          style={{
+            fontFamily: 'ZenSerif',
+            fontSize: 12,
+            color: FG,
+            opacity: stage(p, 0.1, 0.35),
+          }}
+        >
+          上
+        </Text>
+        <Text
+          style={{
+            fontFamily: 'ZenSerif',
+            fontSize: 12,
+            color: FG,
+            opacity: stage(p, 0.28, 0.5),
+          }}
+        >
+          中
+        </Text>
+        <Text
+          style={{
+            fontFamily: 'ZenSerif',
+            fontSize: 12,
+            color: FG,
+            opacity: stage(p, 0.48, 0.7),
+          }}
+        >
+          下
+        </Text>
       </View>
     </View>
   );

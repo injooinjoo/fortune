@@ -1,172 +1,164 @@
-// HeroYearlyEncounter: signature Ondo hero for the Yearly Encounter result.
-// Circular ring with 12 equally-spaced month markers; peaks rendered in
-// solid ctaBackground, others outlined. Center shows the year number.
-// Right aside: ScoreDial with encounter potential. Ported from
-// result-cards.jsx HeroEncounter (12-month ring with peaks).
-import { View } from 'react-native';
+/**
+ * HeroYearlyEncounter — `result-cards.jsx:HeroEncounter` (660-685).
+ *
+ * 원본:
+ *   svg 140×140, center (70,70), R=54, r2=60
+ *   바깥 원 r54 stroke rgba(255,255,255,0.08)
+ *   12개 월 선분(R→r2) + 한자 아래 숫자 라벨 (1~12),
+ *     peak(예: "3월" 포함)은 #FF8FB1 stroke 2, 아니면 fg3 stroke 1
+ *     각 항목 opacity stage(p, i*0.04, i*0.04+0.3)
+ *   중앙 "緣" serif 14px fg, opacity stage(p, 0.3, 0.5)
+ *   padding 8/6/4
+ *
+ * RN 포팅: 월 선분 → rotated View(absolute), 라벨 absolute.
+ */
+import { Text, View } from 'react-native';
 
-import { AppText } from '../../../components/app-text';
-import { Card } from '../../../components/card';
-import { fortuneTheme, withAlpha } from '../../../lib/theme';
-import { Kicker } from '../primitives';
-import { ScoreDial } from '../primitives/score-dial';
+import { fortuneTheme } from '../../../lib/theme';
+
+const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+const stage = (p: number, from: number, to: number) =>
+  clamp01((p - from) / Math.max(0.0001, to - from));
 
 interface HeroYearlyEncounterProps {
-  year: number;
-  peakMonths: number[];
-  encounterScore: number;
-  description?: string;
+  data?: unknown;
+  progress?: number;
 }
 
-const RING_SIZE = 200;
-const RING_RADIUS = RING_SIZE / 2 - 18;
-const MARKER_SIZE = 26;
+const FG3 = '#9EA3B3';
 
-function MonthMarker({
-  monthIndex,
-  isPeak,
-}: {
-  monthIndex: number;
-  isPeak: boolean;
-}) {
-  // i=0 at top (-90deg), 30deg steps clockwise.
-  const angle = ((monthIndex * 30 - 90) * Math.PI) / 180;
-  const cx = RING_SIZE / 2 + RING_RADIUS * Math.cos(angle) - MARKER_SIZE / 2;
-  const cy = RING_SIZE / 2 + RING_RADIUS * Math.sin(angle) - MARKER_SIZE / 2;
+function extractPeaks(payload: unknown): number[] {
+  const fallback = [3, 7, 11];
+  if (!payload || typeof payload !== 'object') return fallback;
+  const root = payload as Record<string, unknown>;
+  const raw =
+    (root.rawApiResponse && typeof root.rawApiResponse === 'object'
+      ? (root.rawApiResponse as Record<string, unknown>)
+      : root) ?? {};
+  const data = (raw.data ?? raw.fortune ?? raw) as Record<string, unknown>;
+  const months = (data.months ?? data) as Record<string, unknown>;
+  const peak = Array.isArray(months.peak) ? months.peak : null;
+  if (!peak) return fallback;
+  // 원본은 '3월' 같은 문자열 → 숫자로 변환
+  const parsed = peak
+    .map((v) => {
+      if (typeof v === 'number') return v;
+      if (typeof v === 'string') {
+        const n = parseInt(v, 10);
+        return Number.isNaN(n) ? null : n;
+      }
+      return null;
+    })
+    .filter((x): x is number => x != null && x >= 1 && x <= 12);
+  return parsed.length > 0 ? parsed : fallback;
+}
 
-  const peakColor = fortuneTheme.colors.ctaBackground;
-  const idleColor = fortuneTheme.colors.textTertiary;
+const CONTAINER = 140;
+const CX = 70;
+const CY = 70;
+const R = 54;
+const R2 = 60;
+const LABEL_R = R2 + 10;
+
+export default function HeroYearlyEncounter({ data: payload, progress = 1 }: HeroYearlyEncounterProps) {
+  const p = clamp01(progress);
+  const peaks = extractPeaks(payload);
+  const centerOpacity = stage(p, 0.3, 0.5);
 
   return (
     <View
       style={{
-        position: 'absolute',
-        left: cx,
-        top: cy,
-        width: MARKER_SIZE,
-        height: MARKER_SIZE,
-        borderRadius: MARKER_SIZE / 2,
-        backgroundColor: isPeak ? peakColor : 'transparent',
-        borderWidth: 1,
-        borderColor: isPeak ? peakColor : withAlpha(idleColor, 0.4),
+        paddingTop: 8,
+        paddingHorizontal: 6,
+        paddingBottom: 4,
         alignItems: 'center',
-        justifyContent: 'center',
       }}
     >
-      <AppText
-        variant="caption"
-        color={
-          isPeak ? fortuneTheme.colors.background : fortuneTheme.colors.textSecondary
-        }
-        style={{ fontWeight: isPeak ? '800' : '500' }}
-      >
-        {monthIndex + 1}
-      </AppText>
-    </View>
-  );
-}
-
-function EncounterRing({
-  year,
-  peakSet,
-}: {
-  year: number;
-  peakSet: Set<number>;
-}) {
-  return (
-    <View
-      style={{
-        width: RING_SIZE,
-        height: RING_SIZE,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      {/* Ring background */}
-      <View
-        style={{
-          position: 'absolute',
-          width: RING_SIZE - MARKER_SIZE,
-          height: RING_SIZE - MARKER_SIZE,
-          borderRadius: (RING_SIZE - MARKER_SIZE) / 2,
-          borderWidth: 1,
-          borderColor: fortuneTheme.colors.borderOpaque,
-        }}
-      />
-
-      {/* 12 markers */}
-      {Array.from({ length: 12 }).map((_, i) => (
-        <MonthMarker key={i} monthIndex={i} isPeak={peakSet.has(i + 1)} />
-      ))}
-
-      {/* Center year */}
-      <View style={{ alignItems: 'center' }}>
-        <Kicker>YEARLY ENCOUNTER</Kicker>
-        <AppText variant="heading2">{year}</AppText>
-      </View>
-    </View>
-  );
-}
-
-export default function HeroYearlyEncounter({
-  year,
-  peakMonths,
-  encounterScore,
-  description,
-}: HeroYearlyEncounterProps) {
-  const peakSet = new Set(peakMonths.filter((m) => m >= 1 && m <= 12));
-  const clamped = Math.max(0, Math.min(100, Math.round(encounterScore)));
-  const firstPeak = peakMonths.find((m) => m >= 1 && m <= 12);
-  const title = firstPeak
-    ? `${firstPeak}월에 최고의 만남`
-    : '올해의 인연 흐름';
-  const sub =
-    description ??
-    '12개월의 흐름 속에서 인연이 가장 선명하게 드러나는 달을 표시했어요.';
-
-  return (
-    <Card
-      style={{
-        backgroundColor: fortuneTheme.colors.backgroundTertiary,
-        gap: fortuneTheme.spacing.md,
-      }}
-    >
-      <View style={{ alignItems: 'center', paddingVertical: fortuneTheme.spacing.sm }}>
-        <EncounterRing year={year} peakSet={peakSet} />
-      </View>
-
-      <View
-        style={{
-          flexDirection: 'row',
-          gap: fortuneTheme.spacing.md,
-          alignItems: 'center',
-        }}
-      >
-        <View style={{ flex: 1, gap: fortuneTheme.spacing.xs }}>
-          <AppText variant="heading3">{title}</AppText>
-          <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
-            {sub}
-          </AppText>
-        </View>
-
+      <View style={{ width: CONTAINER, height: CONTAINER, position: 'relative' }}>
+        {/* 바깥 원 */}
         <View
           style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: fortuneTheme.spacing.xs,
+            position: 'absolute',
+            left: CX - R,
+            top: CY - R,
+            width: R * 2,
+            height: R * 2,
+            borderRadius: R,
+            borderWidth: 1,
+            borderColor: 'rgba(255,255,255,0.08)',
+          }}
+        />
+        {/* 12개 월 눈금 선 + 라벨 */}
+        {Array.from({ length: 12 }).map((_, i) => {
+          const a = -Math.PI / 2 + (i / 12) * Math.PI * 2;
+          const x1 = CX + Math.cos(a) * R;
+          const y1 = CY + Math.sin(a) * R;
+          const x2 = CX + Math.cos(a) * R2;
+          const y2 = CY + Math.sin(a) * R2;
+          const month = i + 1;
+          const isPeak = peaks.includes(month);
+          const opacity = stage(p, i * 0.04, i * 0.04 + 0.3);
+          const color = isPeak ? '#FF8FB1' : FG3;
+          const weight = isPeak ? 2 : 1;
+
+          // 선분 = rotated view
+          const dx = x2 - x1;
+          const dy = y2 - y1;
+          const length = Math.sqrt(dx * dx + dy * dy);
+          const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
+
+          const lx = CX + Math.cos(a) * LABEL_R;
+          const ly = CY + Math.sin(a) * LABEL_R;
+
+          return (
+            <View key={`m-${i}`} pointerEvents="none">
+              <View
+                style={{
+                  position: 'absolute',
+                  left: x1,
+                  top: y1,
+                  width: length,
+                  height: weight,
+                  backgroundColor: color,
+                  opacity,
+                  transformOrigin: '0 0',
+                  transform: [{ rotate: `${angle}deg` }],
+                }}
+              />
+              <Text
+                style={{
+                  position: 'absolute',
+                  left: lx - 10,
+                  top: ly - 6,
+                  width: 20,
+                  textAlign: 'center',
+                  fontSize: 9,
+                  color: isPeak ? '#FF8FB1' : fortuneTheme.colors.textSecondary,
+                  opacity,
+                }}
+              >
+                {month}
+              </Text>
+            </View>
+          );
+        })}
+        {/* 중앙 緣 */}
+        <Text
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: CY - 10,
+            textAlign: 'center',
+            fontFamily: 'ZenSerif',
+            fontSize: 14,
+            color: fortuneTheme.colors.textPrimary,
+            opacity: centerOpacity,
           }}
         >
-          <ScoreDial
-            score={clamped}
-            color={fortuneTheme.colors.ctaBackground}
-            progress={1}
-            size={72}
-          />
-          <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
-            인연지수
-          </AppText>
-        </View>
+          緣
+        </Text>
       </View>
-    </Card>
+    </View>
   );
 }

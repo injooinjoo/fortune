@@ -1081,22 +1081,9 @@ function ExerciseResult(props: FortuneResultComponentProps) {
 
 function TarotResult({ payload }: FortuneResultComponentProps) {
   if (!payload) return null;
-  const spread = payload.spread ?? [];
-  const cards = (spread.length > 0
-    ? spread.slice(0, 3)
-    : [
-        { name: '과거', art: '\u263D' },
-        { name: '현재', art: '\u2600' },
-        { name: '미래', art: '\u2726' },
-      ]
-  ).map((c) => ({ name: c.name, emoji: c.art }));
   return (
-    <ResultCardFrame kind="tarot" data={payload} progress={1}>
-      <HeroTarot
-        cards={cards}
-        spreadLabel="과거 · 현재 · 미래"
-        description={payload.summary}
-      />
+    <ResultCardFrame kind="tarot" data={payload}>
+      <HeroTarot data={payload} />
     </ResultCardFrame>
   );
 }

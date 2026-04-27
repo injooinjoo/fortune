@@ -4,8 +4,10 @@ import { router } from 'expo-router';
 
 import { AppText } from '../../components/app-text';
 import { Card } from '../../components/card';
+import { resultReveal } from '../../lib/haptics';
 import { fortuneTheme } from '../../lib/theme';
 import type { ChatShellEmbeddedResultMessage } from '../../lib/chat-shell';
+import { useMobileAppState } from '../../providers/mobile-app-state-provider';
 import {
   BulletList as LegacyBulletList,
   InsetQuote,
@@ -20,6 +22,7 @@ import {
   HeroHealth,
   HeroLine,
   HeroOrbs,
+  HeroPastLife,
   HeroRadar,
   HeroSaju,
   HeroTarot,
@@ -42,6 +45,7 @@ const HEROED_RESULT_KINDS: Partial<Record<ResultKind, React.ComponentType<any>>>
   compatibility: HeroCompat,
   health: HeroHealth,
   love: HeroOrbs,
+  'past-life': HeroPastLife,
 };
 
 const REVEAL_DURATION_MS = 2400;
@@ -55,6 +59,18 @@ export function EmbeddedResultCard({
   const { payload } = message;
   const resultKind = resolveResultKindFromFortuneType(message.fortuneType);
   const Hero = resultKind ? HEROED_RESULT_KINDS[resultKind] : undefined;
+  const { state: mobileAppState } = useMobileAppState();
+  const hapticsEnabled = mobileAppState.settings.chatHapticsEnabled;
+
+  // 결과 카드가 채팅에 "등장"하는 순간 한 번 햅틱 재생 (fortune type 별 맞춤 패턴).
+  // message.id 기반 ref 가드로 리렌더 시 재발화 방지.
+  const firedRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!hapticsEnabled) return;
+    if (firedRef.current === message.id) return;
+    firedRef.current = message.id;
+    resultReveal(message.fortuneType, payload.score);
+  }, [hapticsEnabled, message.id, message.fortuneType, payload.score]);
 
   if (resultKind && Hero) {
     return (
@@ -66,17 +82,22 @@ export function EmbeddedResultCard({
     );
   }
 
-  // Fallback: dedicated result component via registry (legacy look).
+  // Registry path: Ondo* components already render their own ResultCardFrame
+  // (border + shimmer + footer). Don't wrap in <Card> or add EntertainmentFootnote
+  // here — doing so produces a double frame and duplicated disclaimer.
   if (resultKind) {
     return (
-      <View style={{ width: '100%' }}>
-        <Card>
-          <View style={{ gap: fortuneTheme.spacing.sm }}>
-            <RenderFortuneResult resultKind={resultKind} payload={payload} />
-            <EntertainmentFootnote />
-          </View>
-        </Card>
-      </View>
+      <Pressable
+        onPress={() =>
+          router.push({ pathname: '/result/[resultKind]', params: { resultKind } })
+        }
+        style={({ pressed }) => [
+          { width: '100%' },
+          pressed ? { opacity: 0.98, transform: [{ scale: 0.995 }] } : null,
+        ]}
+      >
+        <RenderFortuneResult resultKind={resultKind} payload={payload} />
+      </Pressable>
     );
   }
 

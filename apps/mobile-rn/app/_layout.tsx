@@ -11,6 +11,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { OnDeviceDownloadProgressBar } from '../src/components/on-device-download-progress-bar';
 import { WidgetSyncBridge } from '../src/components/widget-sync-bridge';
 import { initCrashReporting } from '../src/lib/crash-reporting';
+import { captureError } from '../src/lib/error-reporting';
 import { OnDeviceAutoDownloader } from '../src/lib/on-device-auto-downloader';
 import { navigationTheme } from '../src/lib/theme';
 import { AppBootstrapProvider } from '../src/providers/app-bootstrap-provider';
@@ -45,8 +46,10 @@ export default function RootLayout() {
           await Updates.fetchUpdateAsync();
           await Updates.reloadAsync();
         }
-      } catch {
-        // 네트워크 이슈 등은 조용히 무시 — 다음 런칭에서 재시도.
+      } catch (err) {
+        // 네트워크 이슈 등은 사용자에게 노출하지 않지만 Sentry 로 보고해
+        // 심사·프로덕션에서 무음 실패가 누적되는 것을 가시화한다.
+        void captureError(err, { scope: 'ota-update-check' });
       }
     })();
   }, []);

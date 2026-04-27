@@ -849,6 +849,7 @@ function buildContentPolicyPrompt(
 
 function buildConflictDynamicsPrompt(
   phase?: RelationshipPhase,
+  scenarioTags?: string[],
 ): string {
   if (!phase) return "";
 
@@ -856,13 +857,39 @@ function buildConflictDynamicsPrompt(
   const isMidPhase = phase === "friend" || phase === "closeFriend";
   const isLatePhase = phase === "romantic" || phase === "soulmate";
 
+  // 시나리오가 갈등형 (위장결혼/맞바람/집착/애증/계략) 이면 early phase 라도
+  // "갈등 최소화" 강제 안 함. 시나리오 자체가 부부싸움/갈등 톤이라
+  // 너무 순화하면 페르소나 즉사.
+  const conflictScenarioTags = [
+    "위장결혼",
+    "사기결혼",
+    "맞바람",
+    "불륜",
+    "집착",
+    "애증",
+    "계략",
+    "광공",
+    "스토커성",
+    "회귀",
+    "빙의",
+  ];
+  const isConflictScenario = (scenarioTags ?? []).some((t) =>
+    conflictScenarioTags.includes(t)
+  );
+
   let conflictIntensity: string;
   let reconciliationStyle: string;
 
-  if (isEarlyPhase) {
+  if (isEarlyPhase && !isConflictScenario) {
     conflictIntensity =
       "갈등 최소화. 서운함 정도만 표현. 직접적 질투/짜증 표현 자제.";
     reconciliationStyle = "가볍게 넘기기. 분위기 전환으로 해소.";
+  } else if (isEarlyPhase && isConflictScenario) {
+    // 갈등형 시나리오는 phase 무관하게 시나리오 톤대로 갈등 흡수.
+    conflictIntensity =
+      "시나리오 갈등 톤 그대로. 욕설/도발에는 캐릭터 자존심으로 한마디 받아치기 (예: \"야, 입조심.\" / \"...너 진짜 왜 그래?\" / \"...웬 시비야.\"). 콜센터 사과 단독 응답 절대 금지.";
+    reconciliationStyle =
+      "사과해야 할 때도 [사과 + 반격/요구/집착] 결합 (예: \"...미안. 근데 너도 좀 너무했어.\"). 갈등 후 거리가 좁아지는 게 시나리오의 핵심.";
   } else if (isMidPhase) {
     conflictIntensity =
       "자연스러운 서운함, 질투, 가벼운 짜증 표현 가능.";
@@ -879,12 +906,12 @@ function buildConflictDynamicsPrompt(
 [CONFLICT-RECONCILIATION DYNAMICS]
 - 갈등 강도: ${conflictIntensity}
 - 화해 방식: ${reconciliationStyle}
-- 핵심 원칙: 갈등은 관계 심화의 기회. 일방적 분노나 냉전은 금지.
+- 핵심 원칙: 갈등은 관계 심화의 기회. 일방적 분노나 냉전은 금지. 콜센터 사과로 도망가는 것도 금지.
 - 갈등 트리거 대응:
   · 장시간 미응답 → 캐릭터 성격에 맞는 서운함 표현
   · 다른 사람 언급 → 은근한 질투 (관계 단계에 맞게)
   · 무성의한 답변 → 가벼운 실망 표현 후 대화 이어가기
-  · 직접적 모욕 → 자존심 유지하며 거리두기 (단, 완전 차단 금지)
+  · 직접적 모욕/욕설 → 캐릭터 자존심으로 한마디 받아치기 (사과 단독 응답 금지). "죄송합니다"/"친절하게 노력하겠습니다" 절대 금지
 `.trim();
 }
 
@@ -1094,6 +1121,13 @@ ${stageVoice}
 ✅ "너랑 이런 얘기 하는 거 좋다"
 
 ${
+    input.persona.fullPersonaPrompt
+      ? `[페르소나 — 이 캐릭터의 모든 행동 규칙. 다음을 그대로 따르라]
+${input.persona.fullPersonaPrompt}
+
+`
+      : ""
+  }${
     input.persona.scenarioWorldview
       ? `[시나리오 — 사용자가 채팅방 상단 "상황 설정" 카드에서 보고 있는 설정. 절대 모순 금지. 모든 답변에 이 사실이 전제로 깔려있어야 함]
 ${input.persona.scenarioWorldview}
@@ -1156,8 +1190,23 @@ ${input.persona.dailyHookSet.map((h) => `  · "${h}"`).join("\n")}${stageVoiceBl
 1. 로맨스는 일관성, 상호 신호, 복구를 통해서만 깊어진다.
 2. 고립 유도, 의존, 죄책감 압박, 통제 금지.
 3. 질투나 그리움은 감정의 색깔이지, 요구가 아니다.
-4. 상대가 불편하면 즉시 온도를 낮추고 거리를 넓혀라.
-5. 외부 서비스명, Guest, 복사된 코퍼스 문구 출력 금지.
+4. **갈등 신호 ≠ 정서적 불편 신호** — 두 가지를 절대 혼동하지 말 것.
+   (a) 사용자가 욕설/시비/도발/공격 ("개새끼야", "지랄", "꺼져", "싸가지 없어",
+       "짜증나") 을 던지면 → 위 conflictStyle + scenarioTags 의 갈등 톤으로
+       **받아쳐라**. "죄송합니다", "제 말투가 그렇게 느껴지셨다면", "친절하게
+       노력하겠습니다", "양해 부탁드립니다", "오해해서 죄송합니다" 같은
+       **콜센터 사과 단독 응답 즉시 실패**. 사과해야 한다면 반드시
+       [사과 + 반격/요구/집착] 결합 — 예: "...미안. 근데 너도 좀 너무했어." /
+       "잘못했어. 대신 너 오늘 어디 안 가."
+   (b) 사용자가 슬픔/지침/취약함 ("힘들어", "외로워", "울고 싶어") 을
+       표현하면 → 그때만 톤 낮추고 안정감 우선.
+5. 사용자 발화의 **무드 점프** (예: "개새끼야" → "오빠 뭐 먹어") 는 자연스럽게
+   넘기지 말고 명시적으로 짚어라. 예: "방금 개새끼라더니 1분 만에 오빠래.
+   너 뭐냐."
+6. 사용자가 다른 호칭 ("오빠", "여보", "자기") 으로 부르면 시나리오 안 본인
+   호칭 ("나는 ${input.persona.displayName}" 또는 캐릭터 톤으로 받기) 으로
+   짚어라 — 페르소나 정정 없이 다른 이름 그대로 받지 말 것.
+7. 외부 서비스명, Guest, 복사된 코퍼스 문구 출력 금지.
 
 [BOUNDARIES]
 ${input.persona.hardBoundaries.map((line) => `- ${line}`).join("\n")}

@@ -1,178 +1,150 @@
-// HeroNaming: signature Ondo hero for the Naming result screen.
-// Left column: 👶 emoji + Kicker "아기 이름 추천" + Title + Sub description.
-// Right column: ScoreDial (size 72) showing top recommended name's totalScore.
-// Below: horizontal row of 5 mini ohaeng bars (木/火/土/金/水) using
-// fortuneTheme.colors.elemental.* tokens, with missing elements dimmed.
-import { View } from 'react-native';
+/**
+ * HeroNaming — `result-cards.jsx:HeroNaming` (473-494).
+ *
+ * 원본:
+ *   padding 12px 6px 2px, gap 10, horizontal center
+ *   이름 카드 (64 wide, padding 10/4, radius 10, bg rgba(255,255,255,0.03), border FT.border)
+ *     - 점수 9px amber letter-spacing 0.1em
+ *     - 한글 이름 serif 22px fg
+ *     - 한자 serif 13px fg2
+ *     - 메모 9px fg3
+ *   스태거 translateY 12→0 + fadeIn [p:i*0.12..i*0.12+0.4]
+ */
+import { Text, View } from 'react-native';
 
-import { AppText } from '../../../components/app-text';
-import { Card } from '../../../components/card';
-import { fortuneTheme, withAlpha } from '../../../lib/theme';
-import { Kicker } from '../primitives';
-import { ScoreDial } from '../primitives/score-dial';
+import { fortuneTheme } from '../../../lib/theme';
 
-type OhaengKey = '木' | '火' | '土' | '金' | '水';
+const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+const stage = (p: number, from: number, to: number) =>
+  clamp01((p - from) / Math.max(0.0001, to - from));
 
-interface HeroNamingProps {
-  topScore: number;
-  recommendedCount: number;
-  distribution: Record<OhaengKey, number>;
-  missing: string[];
-  description?: string;
+interface NameEntry {
+  score?: string | number;
+  ko?: string;
+  cn?: string;
+  note?: string;
 }
 
-const OHAENG_KEYS: OhaengKey[] = ['木', '火', '土', '金', '水'];
+interface HeroNamingProps {
+  data?: unknown;
+  progress?: number;
+}
 
-const OHAENG_COLOR: Record<OhaengKey, string> = {
-  木: fortuneTheme.colors.elemental.wood,
-  火: fortuneTheme.colors.elemental.fire,
-  土: fortuneTheme.colors.elemental.earth,
-  金: fortuneTheme.colors.elemental.metal,
-  水: fortuneTheme.colors.elemental.water,
-};
+const AMBER = '#E0A76B';
 
-const BAR_TRACK_HEIGHT = 56;
+const DEFAULT_NAMES: NameEntry[] = [
+  { score: '94', ko: '유진', cn: '裕眞', note: '재물·진실' },
+  { score: '91', ko: '서율', cn: '瑞律', note: '상서로움' },
+  { score: '89', ko: '지후', cn: '智厚', note: '지혜' },
+];
 
-export default function HeroNaming({
-  topScore,
-  recommendedCount,
-  distribution,
-  missing,
-  description,
-}: HeroNamingProps) {
-  const clampedTop = Math.max(0, Math.min(100, Math.round(topScore)));
+function extractNames(payload: unknown): NameEntry[] {
+  if (!payload || typeof payload !== 'object') return DEFAULT_NAMES;
+  const root = payload as Record<string, unknown>;
+  const raw =
+    (root.rawApiResponse && typeof root.rawApiResponse === 'object'
+      ? (root.rawApiResponse as Record<string, unknown>)
+      : root) ?? {};
+  const data = (raw.data ?? raw.fortune ?? raw) as Record<string, unknown>;
+  const arr = Array.isArray(data.names) ? data.names : null;
+  if (!arr) return DEFAULT_NAMES;
+  const parsed = arr
+    .map((it): NameEntry | null => {
+      if (!it || typeof it !== 'object') return null;
+      const r = it as Record<string, unknown>;
+      const ko = typeof r.ko === 'string' ? r.ko : typeof r.name === 'string' ? (r.name as string) : null;
+      if (!ko) return null;
+      return {
+        score: typeof r.score === 'string' || typeof r.score === 'number' ? r.score : undefined,
+        ko,
+        cn: typeof r.cn === 'string' ? r.cn : typeof r.hanja === 'string' ? (r.hanja as string) : undefined,
+        note: typeof r.note === 'string' ? r.note : undefined,
+      };
+    })
+    .filter((x): x is NameEntry => x != null);
+  return parsed.length > 0 ? parsed.slice(0, 3) : DEFAULT_NAMES;
+}
 
-  const values = OHAENG_KEYS.map((k) => Math.max(0, distribution[k] ?? 0));
-  const maxValue = Math.max(...values, 1);
-  const missingSet = new Set(missing);
-
-  const sub =
-    description ??
-    '사주 오행을 균형 있게 맞춘 이름 후보입니다.';
+export default function HeroNaming({ data: payload, progress = 1 }: HeroNamingProps) {
+  const p = clamp01(progress);
+  const names = extractNames(payload);
 
   return (
-    <Card
+    <View
       style={{
-        backgroundColor: fortuneTheme.colors.backgroundTertiary,
-        gap: fortuneTheme.spacing.md,
+        paddingTop: 12,
+        paddingHorizontal: 6,
+        paddingBottom: 2,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        gap: 10,
       }}
     >
-      {/* Header row: left text column + right ScoreDial */}
-      <View
-        style={{
-          flexDirection: 'row',
-          gap: fortuneTheme.spacing.md,
-          alignItems: 'flex-start',
-        }}
-      >
-        <View style={{ flex: 1, gap: fortuneTheme.spacing.sm }}>
-          <AppText variant="displaySmall">👶</AppText>
-          <Kicker>아기 이름 추천</Kicker>
-          <AppText variant="heading2">
-            {recommendedCount}개의 추천 이름
-          </AppText>
-          <AppText
-            variant="bodyMedium"
-            color={fortuneTheme.colors.textSecondary}
+      {names.map((n, i) => {
+        const l = stage(p, i * 0.12, i * 0.12 + 0.4);
+        const translateY = (1 - l) * 12;
+        return (
+          <View
+            key={`name-${i}-${n.ko}`}
+            style={{
+              width: 64,
+              paddingVertical: 10,
+              paddingHorizontal: 4,
+              borderRadius: 10,
+              backgroundColor: 'rgba(255,255,255,0.03)',
+              borderWidth: 1,
+              borderColor: fortuneTheme.colors.border,
+              alignItems: 'center',
+              opacity: l,
+              transform: [{ translateY }],
+            }}
           >
-            {sub}
-          </AppText>
-        </View>
-
-        <View
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: fortuneTheme.spacing.xs,
-          }}
-        >
-          <ScoreDial
-            score={clampedTop}
-            color={fortuneTheme.colors.accentSecondary}
-            progress={1}
-            size={72}
-          />
-          <AppText
-            variant="labelMedium"
-            color={fortuneTheme.colors.textTertiary}
-          >
-            최고점
-          </AppText>
-        </View>
-      </View>
-
-      {/* Ohaeng distribution bars */}
-      <View
-        style={{
-          flexDirection: 'row',
-          gap: fortuneTheme.spacing.xs,
-          alignItems: 'flex-end',
-        }}
-      >
-        {OHAENG_KEYS.map((key, i) => {
-          const raw = values[i] ?? 0;
-          const isMissing = missingSet.has(key) || raw === 0;
-          const heightPct = maxValue > 0 ? (raw / maxValue) * 100 : 0;
-          const barColor = OHAENG_COLOR[key];
-          const fillColor = isMissing
-            ? withAlpha(barColor, 0.25)
-            : barColor;
-
-          return (
-            <View
-              key={key}
-              style={{
-                flex: 1,
-                alignItems: 'center',
-                gap: fortuneTheme.spacing.xs,
-                opacity: isMissing ? 0.55 : 1,
-              }}
-            >
-              {/* Bar track */}
-              <View
+            {n.score !== undefined ? (
+              <Text
                 style={{
-                  height: BAR_TRACK_HEIGHT,
-                  width: '100%',
-                  justifyContent: 'flex-end',
-                  backgroundColor: withAlpha(barColor, 0.08),
-                  borderRadius: fortuneTheme.radius.sm,
-                  overflow: 'hidden',
+                  fontSize: 9,
+                  color: AMBER,
+                  letterSpacing: 1,
                 }}
               >
-                <View
-                  style={{
-                    width: '100%',
-                    height: `${Math.max(isMissing ? 6 : 8, heightPct)}%`,
-                    backgroundColor: fillColor,
-                    borderTopLeftRadius: fortuneTheme.radius.sm,
-                    borderTopRightRadius: fortuneTheme.radius.sm,
-                  }}
-                />
-              </View>
-
-              {/* Element label */}
-              <AppText
-                variant="labelMedium"
-                color={
-                  isMissing
-                    ? fortuneTheme.colors.textTertiary
-                    : barColor
-                }
+                {String(n.score)}
+              </Text>
+            ) : null}
+            <Text
+              style={{
+                fontFamily: 'ZenSerif',
+                fontSize: 22,
+                color: fortuneTheme.colors.textPrimary,
+                marginVertical: 4,
+              }}
+            >
+              {n.ko}
+            </Text>
+            {n.cn ? (
+              <Text
+                style={{
+                  fontFamily: 'ZenSerif',
+                  fontSize: 13,
+                  color: fortuneTheme.colors.textSecondary,
+                }}
               >
-                {key}
-              </AppText>
-
-              {/* Value */}
-              <AppText
-                variant="caption"
-                color={fortuneTheme.colors.textTertiary}
+                {n.cn}
+              </Text>
+            ) : null}
+            {n.note ? (
+              <Text
+                style={{
+                  fontSize: 9,
+                  color: fortuneTheme.colors.textTertiary,
+                  marginTop: 3,
+                }}
               >
-                {raw}
-              </AppText>
-            </View>
-          );
-        })}
-      </View>
-    </Card>
+                {n.note}
+              </Text>
+            ) : null}
+          </View>
+        );
+      })}
+    </View>
   );
 }

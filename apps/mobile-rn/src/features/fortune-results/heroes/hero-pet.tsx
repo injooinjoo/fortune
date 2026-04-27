@@ -1,136 +1,91 @@
-// HeroPet: signature Ondo hero for the Pet Compatibility result screen.
-// Two overlapping circles — user emoji on the left, pet emoji on the right —
-// collide at ~20% overlap to convey the owner-pet bond. Kicker + Title + Sub
-// sit below, with a ScoreDial on the right showing bond score.
-// Ported from result-cards.jsx HeroPet (animal + heart sparkle).
-import { View } from 'react-native';
+/**
+ * HeroPet — `result-cards.jsx:HeroPet` (547-557).
+ *
+ * 원본:
+ *   padding 18px 6px 6px, gap 12, horizontal center
+ *   이모지 48px, opacity stage(p, 0, 0.5), scale easeOut 0.7→1
+ *   우측: serif 16px 이름 + 11px fg3 종류, opacity stage(p, 0.2, 0.5)
+ */
+import { Text, View } from 'react-native';
 
-import { AppText } from '../../../components/app-text';
-import { Card } from '../../../components/card';
-import { fortuneTheme, withAlpha } from '../../../lib/theme';
-import { Kicker } from '../primitives';
-import { ScoreDial } from '../primitives/score-dial';
+import { fortuneTheme } from '../../../lib/theme';
 
-interface HeroPetProps {
-  petType: string; // e.g., '강아지', '고양이'
-  petEmoji: string; // 🐕, 🐈 etc.
-  userEmoji?: string; // defaults to '👤'
-  bondScore: number;
-  description?: string;
+const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+const stage = (p: number, from: number, to: number) =>
+  clamp01((p - from) / Math.max(0.0001, to - from));
+const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+const tween = (t: number, from: number, to: number) => from + (to - from) * t;
+
+interface PetData {
+  emoji?: string;
+  name?: string;
+  kind?: string;
 }
 
-const CIRCLE_SIZE = 100; // radius ~50
-// Overlap by ~20% of diameter. Applied as a negative margin on the right circle.
-const OVERLAP = Math.round(CIRCLE_SIZE * 0.2);
+interface HeroPetProps {
+  data?: unknown;
+  progress?: number;
+}
 
-function BondCircle({
-  emoji,
-  color,
-  offsetLeft,
-}: {
-  emoji: string;
-  color: string;
-  offsetLeft: number;
-}) {
+function extractPet(payload: unknown): PetData {
+  const fallback: PetData = { emoji: '🐶', name: '몽이', kind: '강아지' };
+  if (!payload || typeof payload !== 'object') return fallback;
+  const root = payload as Record<string, unknown>;
+  const raw =
+    (root.rawApiResponse && typeof root.rawApiResponse === 'object'
+      ? (root.rawApiResponse as Record<string, unknown>)
+      : root) ?? {};
+  const data = (raw.data ?? raw.fortune ?? raw) as Record<string, unknown>;
+  const pet = (data.pet ?? data) as Record<string, unknown>;
+  return {
+    emoji: typeof pet.emoji === 'string' ? pet.emoji : fallback.emoji,
+    name: typeof pet.name === 'string' ? pet.name : fallback.name,
+    kind: typeof pet.kind === 'string' ? pet.kind : fallback.kind,
+  };
+}
+
+export default function HeroPet({ data: payload, progress = 1 }: HeroPetProps) {
+  const p = clamp01(progress);
+  const l = stage(p, 0, 0.5);
+  const textOpacity = stage(p, 0.2, 0.5);
+  const scale = tween(easeOut(l), 0.7, 1);
+  const pet = extractPet(payload);
+
   return (
     <View
       style={{
-        width: CIRCLE_SIZE,
-        height: CIRCLE_SIZE,
-        borderRadius: CIRCLE_SIZE / 2,
-        backgroundColor: withAlpha(color, 0.25),
-        borderWidth: 2,
-        borderColor: withAlpha(color, 0.6),
-        alignItems: 'center',
+        paddingTop: 18,
+        paddingHorizontal: 6,
+        paddingBottom: 6,
+        flexDirection: 'row',
         justifyContent: 'center',
-        marginLeft: offsetLeft,
+        alignItems: 'center',
+        gap: 12,
       }}
     >
-      <AppText variant="emojiHero">{emoji}</AppText>
-    </View>
-  );
-}
-
-export default function HeroPet({
-  petType,
-  petEmoji,
-  userEmoji = '👤',
-  bondScore,
-  description,
-}: HeroPetProps) {
-  const clamped = Math.max(0, Math.min(100, Math.round(bondScore)));
-  const sub =
-    description ??
-    `${petType}와(과)의 오늘 유대감을 한 눈에 확인해보세요.`;
-
-  return (
-    <Card
-      style={{
-        backgroundColor: fortuneTheme.colors.backgroundTertiary,
-        gap: fortuneTheme.spacing.md,
-      }}
-    >
-      {/* Top: dual-circle bond visual — centered, circles overlap ~20% */}
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-          paddingVertical: fortuneTheme.spacing.sm,
-        }}
-      >
-        <BondCircle
-          emoji={userEmoji}
-          color={fortuneTheme.colors.accentSecondary}
-          offsetLeft={0}
-        />
-        <BondCircle
-          emoji={petEmoji}
-          color={fortuneTheme.colors.accentTertiary}
-          offsetLeft={-OVERLAP}
-        />
-      </View>
-
-      {/* Bottom row: left text + right ScoreDial */}
-      <View
-        style={{
-          flexDirection: 'row',
-          gap: fortuneTheme.spacing.md,
-          alignItems: 'center',
-        }}
-      >
-        <View style={{ flex: 1, gap: fortuneTheme.spacing.xs }}>
-          <Kicker>반려동물 궁합</Kicker>
-          <AppText variant="heading2">{petType}와의 유대감</AppText>
-          <AppText
-            variant="bodyMedium"
-            color={fortuneTheme.colors.textSecondary}
-          >
-            {sub}
-          </AppText>
-        </View>
-
-        <View
+      <Text style={{ fontSize: 48, opacity: l, transform: [{ scale }] }}>
+        {pet.emoji}
+      </Text>
+      <View style={{ opacity: textOpacity }}>
+        <Text
           style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: fortuneTheme.spacing.xs,
+            fontFamily: 'ZenSerif',
+            fontSize: 16,
+            color: fortuneTheme.colors.textPrimary,
           }}
         >
-          <ScoreDial
-            score={clamped}
-            color={fortuneTheme.colors.accentTertiary}
-            progress={1}
-            size={72}
-          />
-          <AppText
-            variant="labelMedium"
-            color={fortuneTheme.colors.textTertiary}
-          >
-            유대감
-          </AppText>
-        </View>
+          {pet.name}
+        </Text>
+        <Text
+          style={{
+            fontSize: 11,
+            color: fortuneTheme.colors.textTertiary,
+            marginTop: 2,
+          }}
+        >
+          {pet.kind}
+        </Text>
       </View>
-    </Card>
+    </View>
   );
 }

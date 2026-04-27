@@ -175,16 +175,7 @@ function ExamResult(props: FortuneResultComponentProps) {
       {/* ============================================================ */}
       {/*  Hero: Exam fortune — pencil halo + luck dial + stat pills    */}
       {/* ============================================================ */}
-      <HeroExam
-        examLabel={meta.title}
-        luckScore={displayPossibility}
-        stats={[
-          { label: '직감력', value: displayIntuition },
-          { label: '정신방어', value: displayDefense },
-          { label: '기억가속', value: displayMemory },
-        ]}
-        description={summary}
-      />
+      <HeroExam data={{ score: displayPossibility } as never} />
 
       {/* ============================================================ */}
       {/*  1. Grade badge + Pass gauge side by side                     */}
@@ -1496,13 +1487,7 @@ function ExLoverResult(props: FortuneResultComponentProps) {
       {/* ============================================================ */}
       {/*  1. Emotion Thermometer (HeroEx)                              */}
       {/* ============================================================ */}
-      <HeroEx
-        emotionLabel={coreIssue || thermoLabel}
-        emotionalTemperature={thermoScore}
-        recoveryScore={thermoScore}
-        description={emotionalDistance || undefined}
-        emotionColor={thermoColor}
-      />
+      <HeroEx />
 
       {/* ============================================================ */}
       {/*  2. Emotional Pattern Cards (with intensity bar + type badge) */}
@@ -1871,12 +1856,7 @@ function YearlyEncounterResult(props: FortuneResultComponentProps) {
       {/* ============================================================ */}
       {/*  Hero: 12-month encounter ring with peak markers              */}
       {/* ============================================================ */}
-      <HeroYearlyEncounter
-        year={new Date().getFullYear()}
-        peakMonths={Array.from(highlightedMonths).sort((a, b) => a - b)}
-        encounterScore={encounterGauge}
-        description={summary}
-      />
+      <HeroYearlyEncounter />
       {yearSummary ? (
         <AppText
           variant="bodySmall"
@@ -2209,14 +2189,7 @@ function DecisionResult(props: FortuneResultComponentProps) {
 
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
-      <HeroDecision
-        question={heroQuestion}
-        optionAlabel={optionAlabel}
-        optionBlabel={optionBlabel}
-        recommendation={recSide}
-        strengthScore={strengthScore}
-        description={summary}
-      />
+      <HeroDecision />
 
       {/* 질문 표시 */}
       {question ? (

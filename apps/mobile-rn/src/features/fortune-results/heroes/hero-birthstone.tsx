@@ -1,140 +1,131 @@
-// HeroBirthstone: signature Ondo hero for the Birthstone result screen.
-// Centered 💎 emoji wrapped in a concentric glow (soft outer halo + inner tinted
-// disc) paired with a ScoreDial showing resonance/energy score. Below the gem,
-// Kicker "탄생석" + Title (month name) + Sub (short description).
-import { View } from 'react-native';
+/**
+ * HeroStone (birthstone) — `result-cards.jsx:HeroStone` (497-523). View-only 근사 (SVG 재적용은 다음 빌드).
+ */
+import { Text, View } from 'react-native';
 
-import { AppText } from '../../../components/app-text';
-import { Card } from '../../../components/card';
-import { fortuneTheme, withAlpha } from '../../../lib/theme';
-import { Kicker } from '../primitives';
-import { ScoreDial } from '../primitives/score-dial';
+import { fortuneTheme } from '../../../lib/theme';
 
-interface HeroBirthstoneProps {
-  monthLabel: string;
-  stoneName: string;
-  description?: string;
-  resonanceScore: number;
-  /** Hex color of the gem — used for glow/accent tint. */
-  gemColor?: string;
+const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+const stage = (p: number, from: number, to: number) =>
+  clamp01((p - from) / Math.max(0.0001, to - from));
+const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+const tween = (t: number, from: number, to: number) => from + (to - from) * t;
+
+interface StoneData {
+  name?: string;
+  month?: string;
+  color?: string;
 }
 
-const OUTER_GLOW = 140;
-const INNER_DISC = 108;
-const GEM_SIZE = 68;
+interface HeroStoneProps {
+  data?: unknown;
+  progress?: number;
+}
 
-export default function HeroBirthstone({
-  monthLabel,
-  stoneName,
-  description,
-  resonanceScore,
-  gemColor,
-}: HeroBirthstoneProps) {
-  const accent = gemColor ?? fortuneTheme.colors.accentSecondary;
-  const clampedScore = Math.max(0, Math.min(100, Math.round(resonanceScore)));
+function extractStone(payload: unknown): StoneData {
+  const fallback: StoneData = { name: '자수정', month: '2월', color: '#8B7BE8' };
+  if (!payload || typeof payload !== 'object') return fallback;
+  const root = payload as Record<string, unknown>;
+  const raw =
+    (root.rawApiResponse && typeof root.rawApiResponse === 'object'
+      ? (root.rawApiResponse as Record<string, unknown>)
+      : root) ?? {};
+  const data = (raw.data ?? raw.fortune ?? raw) as Record<string, unknown>;
+  const stone = (data.stone ?? data.birthstone ?? data) as Record<string, unknown>;
+  return {
+    name: typeof stone.name === 'string' ? stone.name : fallback.name,
+    month: typeof stone.month === 'string' ? stone.month : fallback.month,
+    color: typeof stone.color === 'string' ? stone.color : fallback.color,
+  };
+}
 
-  const sub =
-    description ??
-    `${stoneName}의 기운으로 읽는 오늘의 탄생석 인사이트입니다.`;
+export default function HeroBirthstone({ data: payload, progress = 1 }: HeroStoneProps) {
+  const p = clamp01(progress);
+  const l = stage(p, 0, 0.5);
+  const eased = easeOut(l);
+  const rotate = tween(eased, -30, 0);
+  const scale = tween(eased, 0.5, 1);
+  const textOpacity = stage(p, 0.3, 0.55);
+  const stone = extractStone(payload);
+  const stoneColor = stone.color ?? '#8B7BE8';
 
   return (
-    <Card
+    <View
       style={{
-        backgroundColor: fortuneTheme.colors.backgroundTertiary,
-        gap: fortuneTheme.spacing.md,
+        paddingTop: 16,
+        paddingHorizontal: 6,
+        paddingBottom: 4,
         alignItems: 'center',
-        paddingVertical: fortuneTheme.spacing.lg,
+        position: 'relative',
       }}
     >
-      {/* Gem visual: outer glow + inner tinted disc + centered emoji */}
       <View
         style={{
-          width: OUTER_GLOW,
-          height: OUTER_GLOW,
+          width: 80,
+          height: 80,
+          opacity: l,
+          transform: [{ rotate: `${rotate}deg` }, { scale }],
+          shadowColor: stoneColor,
+          shadowOpacity: 0.6 * l,
+          shadowRadius: 10 * l,
+          shadowOffset: { width: 0, height: 0 },
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        {/* Outer halo — soft border ring with shadow */}
+        <View
+          style={{
+            width: 60,
+            height: 60,
+            backgroundColor: stoneColor,
+            borderWidth: 1.5,
+            borderColor: stoneColor,
+            transform: [{ rotate: '45deg' }],
+            borderRadius: 6,
+            opacity: 0.85,
+          }}
+        />
         <View
           style={{
             position: 'absolute',
-            width: OUTER_GLOW,
-            height: OUTER_GLOW,
-            borderRadius: OUTER_GLOW / 2,
-            borderWidth: 1,
-            borderColor: withAlpha(accent, 0.25),
-            backgroundColor: withAlpha(accent, 0.08),
-            shadowColor: accent,
-            shadowOffset: { width: 0, height: 0 },
-            shadowOpacity: 0.4,
-            shadowRadius: 24,
-            elevation: 6,
+            width: 30,
+            height: 30,
+            backgroundColor: '#FFFFFF',
+            opacity: 0.35,
+            transform: [{ rotate: '45deg' }],
+            borderRadius: 4,
+            top: 10,
           }}
         />
-
-        {/* Inner glow disc */}
-        <View
-          style={{
-            position: 'absolute',
-            width: INNER_DISC,
-            height: INNER_DISC,
-            borderRadius: INNER_DISC / 2,
-            backgroundColor: withAlpha(accent, 0.2),
-            borderWidth: 1,
-            borderColor: withAlpha(accent, 0.35),
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        />
-
-        {/* Centered gem emoji */}
-        <AppText style={{ fontSize: GEM_SIZE, lineHeight: GEM_SIZE + 4 }}>
-          💎
-        </AppText>
       </View>
-
-      {/* Text block + ScoreDial aside */}
       <View
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: fortuneTheme.spacing.md,
-          alignSelf: 'stretch',
+          position: 'absolute',
+          right: 20,
+          top: 14,
+          alignItems: 'flex-end',
+          opacity: textOpacity,
         }}
       >
-        <View style={{ flex: 1, gap: fortuneTheme.spacing.xs }}>
-          <Kicker color={accent}>탄생석 · {monthLabel}</Kicker>
-          <AppText variant="heading2">{stoneName}</AppText>
-          <AppText
-            variant="bodyMedium"
-            color={fortuneTheme.colors.textSecondary}
-          >
-            {sub}
-          </AppText>
-        </View>
-
-        <View
+        <Text
           style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: fortuneTheme.spacing.xs,
+            fontFamily: 'ZenSerif',
+            fontSize: 15,
+            color: fortuneTheme.colors.textPrimary,
           }}
         >
-          <ScoreDial
-            score={clampedScore}
-            color={accent}
-            progress={1}
-            size={72}
-          />
-          <AppText
-            variant="labelMedium"
-            color={fortuneTheme.colors.textTertiary}
-          >
-            공명
-          </AppText>
-        </View>
+          {stone.name}
+        </Text>
+        <Text
+          style={{
+            fontSize: 10,
+            color: fortuneTheme.colors.textTertiary,
+            marginTop: 2,
+          }}
+        >
+          {stone.month}
+        </Text>
       </View>
-    </Card>
+    </View>
   );
 }

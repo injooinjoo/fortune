@@ -52,7 +52,10 @@ interface SaveResponse {
   error?: string;
 }
 
-const MAX_MESSAGES = 50;
+// 클라이언트의 REMOTE_PERSIST_MESSAGE_CAP 과 동기화. 활성 유저가 몇 세션 만에
+// 50을 초과하면, load 시 원격이 잘린 상태로 돌아오고 focus 재하이드레이션이
+// 로컬을 stripped 버전으로 덮어써 비-텍스트 카드를 영구 소실시키던 원인.
+const MAX_MESSAGES = 200;
 
 serve(async (req: Request) => {
   // CORS 처리

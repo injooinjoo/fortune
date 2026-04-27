@@ -356,12 +356,7 @@ export function MovingResult(props: FortuneResultComponentProps) {
       {/* ============================================================ */}
       {/*  Section 1: Hero — Signature compass rose                     */}
       {/* ============================================================ */}
-      <HeroMoving
-        luckyDirection={`${direction}쪽`}
-        directionDegrees={directionToDegrees(direction)}
-        harmonyScore={dirCompatibility > 0 ? dirCompatibility : score}
-        description={oneLine || title}
-      />
+      <HeroMoving />
 
       {keywords.length > 0 && (
         <View

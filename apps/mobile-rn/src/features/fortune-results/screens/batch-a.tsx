@@ -17,8 +17,11 @@ import {
   SectionCard,
   StatRail,
 } from '../primitives';
+import HeroBlood from '../heroes/hero-blood';
 import HeroCalendar from '../heroes/hero-calendar';
+import HeroMbti from '../heroes/hero-mbti';
 import HeroRadar from '../heroes/hero-radar';
+import HeroZodiac from '../heroes/hero-zodiac';
 import HeroSaju from '../heroes/hero-saju';
 import { ResultCardFrame } from '../primitives/result-card-frame';
 import type { FortuneResultComponentProps } from '../types';
@@ -189,8 +192,8 @@ function DailyCalendarResult({ payload }: FortuneResultComponentProps) {
 function MbtiResult({ payload }: FortuneResultComponentProps) {
   if (!payload) return null;
   return (
-    <ResultCardFrame kind="mbti" data={payload} progress={1}>
-      <HeroRadar data={payload} progress={1} />
+    <ResultCardFrame kind="mbti" data={payload}>
+      <HeroMbti data={payload} />
     </ResultCardFrame>
   );
 }

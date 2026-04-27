@@ -124,13 +124,7 @@ export function BirthstoneResult(props: FortuneResultComponentProps) {
       {/* ============================================================ */}
       {/*  Section 1: Hero - 큰 보석 이모지, 월 이름, 탄생석 이름           */}
       {/* ============================================================ */}
-      <HeroBirthstone
-        monthLabel={`${monthly.month}월`}
-        stoneName={`${monthly.name} (${monthly.nameEn})`}
-        description={summary}
-        resonanceScore={overallScore}
-        gemColor={monthly.color}
-      />
+      <HeroBirthstone />
 
       {/* ============================================================ */}
       {/*  Section 2: Monthly Birthstone Card                           */}

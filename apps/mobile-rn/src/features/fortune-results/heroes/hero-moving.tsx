@@ -1,199 +1,176 @@
-// HeroMoving: signature Ondo hero for the Moving result screen.
-// A compass rose — circular View with 4 cardinal direction markers (북/동/남/서)
-// at the edges and a needle (rotated triangular View) pointing toward the
-// lucky direction. No SVG — the needle is a pair of stacked colored Views
-// rotated via `transform: rotate(deg)`.
-// Ported from result-cards.jsx HeroMoving (8-dir compass with needle).
-import { View } from 'react-native';
+/**
+ * HeroMoving — `result-cards.jsx:HeroMoving` (561-592). View-only 근사 (SVG 재적용은 다음 빌드).
+ */
+import { useEffect, useRef } from 'react';
+import { Animated, Text, View } from 'react-native';
 
-import { AppText } from '../../../components/app-text';
-import { Card } from '../../../components/card';
-import { fortuneTheme, withAlpha } from '../../../lib/theme';
-import { Kicker } from '../primitives';
-import { ScoreDial } from '../primitives/score-dial';
+const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+const stage = (p: number, from: number, to: number) =>
+  clamp01((p - from) / Math.max(0.0001, to - from));
+const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+const tween = (t: number, from: number, to: number) => from + (to - from) * t;
 
-interface HeroMovingProps {
-  luckyDirection: string; // e.g., '동남쪽'
-  directionDegrees?: number; // 0=N, 90=E, 180=S, 270=W
-  harmonyScore: number;
-  description?: string;
+const AMBER = '#E0A76B';
+const FG2 = '#9198AA';
+
+interface CompassData {
+  lucky?: string[];
+  unlucky?: string[];
 }
 
-const DIAL_SIZE = 170;
-const NEEDLE_LEN = DIAL_SIZE * 0.4;
-const NEEDLE_W = 6;
+interface HeroMovingProps {
+  data?: unknown;
+  progress?: number;
+}
 
-const CARDINALS: Array<{
-  label: string;
-  style: { top?: number; bottom?: number; left?: number; right?: number };
-}> = [
-  { label: '북', style: { top: 8, left: 0, right: 0 } },
-  { label: '남', style: { bottom: 8, left: 0, right: 0 } },
-  { label: '동', style: { top: 0, bottom: 0, right: 10 } },
-  { label: '서', style: { top: 0, bottom: 0, left: 10 } },
+const SIZE = 130;
+const DIRS = [
+  { k: '北', kr: '북', angle: 0 },
+  { k: '北東', kr: '북동', angle: 45 },
+  { k: '東', kr: '동', angle: 90 },
+  { k: '東南', kr: '동남', angle: 135 },
+  { k: '南', kr: '남', angle: 180 },
+  { k: '南西', kr: '남서', angle: 225 },
+  { k: '西', kr: '서', angle: 270 },
+  { k: '北西', kr: '북서', angle: 315 },
 ];
 
-function CompassDial({ degrees }: { degrees: number }) {
-  const accent = fortuneTheme.colors.accentTertiary;
+function extractCompass(payload: unknown): CompassData {
+  if (!payload || typeof payload !== 'object') return { lucky: ['동', '남'], unlucky: ['서'] };
+  const root = payload as Record<string, unknown>;
+  const raw =
+    (root.rawApiResponse && typeof root.rawApiResponse === 'object'
+      ? (root.rawApiResponse as Record<string, unknown>)
+      : root) ?? {};
+  const data = (raw.data ?? raw.fortune ?? raw) as Record<string, unknown>;
+  const compass = (data.compass ?? data) as Record<string, unknown>;
+  return {
+    lucky: Array.isArray(compass.lucky)
+      ? (compass.lucky as unknown[]).filter((x): x is string => typeof x === 'string')
+      : ['동', '남'],
+    unlucky: Array.isArray(compass.unlucky)
+      ? (compass.unlucky as unknown[]).filter((x): x is string => typeof x === 'string')
+      : ['서'],
+  };
+}
+
+export default function HeroMoving({ data: payload, progress = 1 }: HeroMovingProps) {
+  const p = clamp01(progress);
+  const l = stage(p, 0, 0.6);
+  const rotateDeg = tween(easeOut(l), -80, 0);
+  const labelOpacity = stage(p, 0.3, 0.6);
+  const compass = extractCompass(payload);
+
+  const rotAnim = useRef(new Animated.Value(-80)).current;
+  useEffect(() => {
+    Animated.timing(rotAnim, {
+      toValue: rotateDeg,
+      duration: 80,
+      useNativeDriver: true,
+    }).start();
+  }, [rotateDeg, rotAnim]);
+
+  const rotInterp = rotAnim.interpolate({
+    inputRange: [-360, 360],
+    outputRange: ['-360deg', '360deg'],
+  });
+
+  const isLucky = (kr: string) => compass.lucky?.includes(kr) ?? false;
+  const isUnlucky = (kr: string) => compass.unlucky?.includes(kr) ?? false;
+
+  const radius = SIZE / 2 - 12;
+
   return (
     <View
       style={{
-        width: DIAL_SIZE,
-        height: DIAL_SIZE,
-        borderRadius: DIAL_SIZE / 2,
-        borderWidth: 2,
-        borderColor: withAlpha(accent, 0.6),
-        backgroundColor: withAlpha(accent, 0.06),
+        paddingTop: 10,
+        paddingHorizontal: 6,
+        paddingBottom: 4,
         alignItems: 'center',
-        justifyContent: 'center',
-        position: 'relative',
-      }}
-    >
-      {/* Inner track */}
-      <View
-        style={{
-          position: 'absolute',
-          width: DIAL_SIZE * 0.78,
-          height: DIAL_SIZE * 0.78,
-          borderRadius: DIAL_SIZE * 0.39,
-          borderWidth: 1,
-          borderColor: withAlpha(accent, 0.3),
-        }}
-      />
-
-      {/* Cardinal markers — absolute positioned around the edge */}
-      {CARDINALS.map((c) => (
-        <View
-          key={c.label}
-          style={{
-            position: 'absolute',
-            alignItems: 'center',
-            justifyContent: 'center',
-            ...c.style,
-          }}
-        >
-          <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>
-            {c.label}
-          </AppText>
-        </View>
-      ))}
-
-      {/* Needle group — rotated by `degrees`, anchored at the center pivot. */}
-      <View
-        style={{
-          position: 'absolute',
-          width: NEEDLE_W,
-          height: NEEDLE_LEN * 2,
-          alignItems: 'center',
-          justifyContent: 'center',
-          transform: [{ rotate: `${degrees}deg` }],
-        }}
-      >
-        {/* Lucky tip (colored) */}
-        <View
-          style={{
-            position: 'absolute',
-            top: 0,
-            width: NEEDLE_W,
-            height: NEEDLE_LEN,
-            backgroundColor: fortuneTheme.colors.ctaBackground,
-            borderTopLeftRadius: NEEDLE_W / 2,
-            borderTopRightRadius: NEEDLE_W / 2,
-          }}
-        />
-        {/* Tail (neutral) */}
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            width: NEEDLE_W,
-            height: NEEDLE_LEN,
-            backgroundColor: withAlpha(fortuneTheme.colors.textTertiary, 0.6),
-            borderBottomLeftRadius: NEEDLE_W / 2,
-            borderBottomRightRadius: NEEDLE_W / 2,
-          }}
-        />
-      </View>
-
-      {/* Center pivot */}
-      <View
-        style={{
-          width: 14,
-          height: 14,
-          borderRadius: 7,
-          backgroundColor: accent,
-          borderWidth: 2,
-          borderColor: fortuneTheme.colors.backgroundTertiary,
-        }}
-      />
-    </View>
-  );
-}
-
-export default function HeroMoving({
-  luckyDirection,
-  directionDegrees = 135,
-  harmonyScore,
-  description,
-}: HeroMovingProps) {
-  const clamped = Math.max(0, Math.min(100, Math.round(harmonyScore)));
-  const sub =
-    description ??
-    '풍수 방위를 바탕으로 당신에게 가장 잘 맞는 이동 방향이에요.';
-
-  return (
-    <Card
-      style={{
-        backgroundColor: fortuneTheme.colors.backgroundTertiary,
-        gap: fortuneTheme.spacing.md,
       }}
     >
       <View
         style={{
+          width: SIZE,
+          height: SIZE,
           alignItems: 'center',
           justifyContent: 'center',
-          paddingVertical: fortuneTheme.spacing.sm,
         }}
       >
-        <CompassDial degrees={directionDegrees} />
-      </View>
-
-      <View
-        style={{
-          flexDirection: 'row',
-          gap: fortuneTheme.spacing.md,
-          alignItems: 'center',
-        }}
-      >
-        <View style={{ flex: 1, gap: fortuneTheme.spacing.xs }}>
-          <Kicker>방위</Kicker>
-          <AppText variant="heading2">{luckyDirection} 방향이 좋아요</AppText>
-          <AppText
-            variant="bodyMedium"
-            color={fortuneTheme.colors.textSecondary}
-          >
-            {sub}
-          </AppText>
-        </View>
-
         <View
           style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: fortuneTheme.spacing.xs,
+            position: 'absolute',
+            width: (SIZE * 50) / 60,
+            height: (SIZE * 50) / 60,
+            borderRadius: SIZE / 2,
+            borderWidth: 1,
+            borderColor: 'rgba(255,255,255,0.08)',
+          }}
+        />
+        <View
+          style={{
+            position: 'absolute',
+            width: 6,
+            height: 6,
+            borderRadius: 3,
+            backgroundColor: AMBER,
+          }}
+        />
+        <Animated.View
+          style={{
+            position: 'absolute',
+            width: 4,
+            height: SIZE * 0.66,
+            transform: [{ rotate: rotInterp }],
           }}
         >
-          <ScoreDial
-            score={clamped}
-            color={fortuneTheme.colors.accentTertiary}
-            progress={1}
-            size={72}
+          <View
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '50%',
+              backgroundColor: AMBER,
+              borderTopLeftRadius: 2,
+              borderTopRightRadius: 2,
+            }}
           />
-          <AppText variant="labelMedium" color={fortuneTheme.colors.textTertiary}>
-            방위궁합
-          </AppText>
-        </View>
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: '50%',
+              backgroundColor: '#9EA3B3',
+              borderBottomLeftRadius: 2,
+              borderBottomRightRadius: 2,
+            }}
+          />
+        </Animated.View>
+        {DIRS.map((d) => {
+          const rad = (d.angle - 90) * (Math.PI / 180);
+          const x = Math.cos(rad) * radius;
+          const y = Math.sin(rad) * radius;
+          const color = isLucky(d.kr) ? '#68B593' : isUnlucky(d.kr) ? '#FF8C7A' : FG2;
+          return (
+            <Text
+              key={d.k}
+              style={{
+                position: 'absolute',
+                transform: [{ translateX: x }, { translateY: y }],
+                fontSize: 10,
+                fontFamily: 'ZenSerif',
+                color,
+                opacity: labelOpacity,
+              }}
+            >
+              {d.k}
+            </Text>
+          );
+        })}
       </View>
-    </Card>
+    </View>
   );
 }

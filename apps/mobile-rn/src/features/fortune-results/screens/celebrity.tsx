@@ -259,13 +259,7 @@ export function CelebrityResult(props: FortuneResultComponentProps) {
           paddingVertical: fortuneTheme.spacing.lg,
         }}
       >
-        <HeroCelebrity
-          celebName={celebrityName}
-          userLabel="당신"
-          compatibilityScore={overallScore}
-          gradeLabel={compatibilityGrade}
-          description={mainMessage}
-        />
+        <HeroCelebrity />
       </Card>
 
       {/* ============================================================ */}

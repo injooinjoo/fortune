@@ -208,11 +208,7 @@ export function LuckyItemsResult(props: FortuneResultComponentProps) {
       {/* ============================================================ */}
       {/*  Section 1: Hero — Signature 3x2 lucky-tile grid              */}
       {/* ============================================================ */}
-      <HeroLucky
-        items={heroTiles}
-        luckyScore={score}
-        description={summary || title}
-      />
+      <HeroLucky />
 
       {element || heroChips.length > 0 ? (
         <View
