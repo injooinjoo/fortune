@@ -1176,6 +1176,26 @@ export function ChatScreen() {
     return result;
   }, [firstRunCharacters, messagesByCharacterId, lastSeenByCharacterId]);
 
+  // 채팅 목록 정렬 (메신저 표준):
+  //   1) 안 읽은 메시지 있는 캐릭터 그룹 (unreadCount > 0) 이 항상 위
+  //   2) 각 그룹 내부는 lastActivityAt desc — 가장 최근에 보내거나 받은 쪽이 위
+  //   3) 활동 시각이 같으면 firstRunCharacters 의 정의 순서 유지 (stable)
+  // metaByCharacterId 가 이미 두 키를 모두 들고 있어 추가 입력 없이 정렬 가능.
+  const sortedFirstRunCharacters = useMemo(() => {
+    const arr = [...firstRunCharacters];
+    arr.sort((a, b) => {
+      const ma = characterListMetaById[a.id];
+      const mb = characterListMetaById[b.id];
+      const unreadA = ma && ma.unreadCount > 0 ? 1 : 0;
+      const unreadB = mb && mb.unreadCount > 0 ? 1 : 0;
+      if (unreadA !== unreadB) return unreadB - unreadA;
+      const tA = ma?.lastActivityAt ?? 0;
+      const tB = mb?.lastActivityAt ?? 0;
+      return tB - tA;
+    });
+    return arr;
+  }, [firstRunCharacters, characterListMetaById]);
+
   // 앱 아이콘 배지 = 전 캐릭터 unread 합산. messagesByCharacterId /
   // lastSeenByCharacterId 가 바뀔 때마다 재계산해 OS 배지와 동기화.
   // 메신저 앱 표준 — iMessage / WhatsApp / KakaoTalk 모두 홈스크린에 숫자.
@@ -3126,7 +3146,7 @@ export function ChatScreen() {
         ) : (
           <ChatFirstRunSurface
             activeTab={activeTab}
-            characters={firstRunCharacters}
+            characters={sortedFirstRunCharacters}
             lastFortuneType={mobileAppState.chat.lastFortuneType}
             onChangeTab={setActiveTab}
             onOpenProfile={() => router.push(session ? '/profile' : '/signup')}

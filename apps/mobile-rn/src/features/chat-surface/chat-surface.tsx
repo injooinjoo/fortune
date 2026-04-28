@@ -326,6 +326,45 @@ export interface CharacterListRowMeta {
   unreadCount: number;
   /** 편의 플래그 — `unreadCount > 0`. 기존 소비자 호환용. */
   unread: boolean;
+  /**
+   * 마지막 활동 시각(ms epoch). 받은 메시지 / 보낸 메시지 가장 최근 것.
+   * 채팅 목록 정렬 (최근 활동 desc) 에 사용. 정보 없으면 0.
+   */
+  lastActivityAt: number;
+}
+
+/**
+ * 메시지 한 개에서 활동 시각(ms epoch) 을 최대한 추출한다. ChatShellMessage 가
+ * 타입별로 시간 필드를 다르게 가지므로 우선순위:
+ *   1) `createMessageId` (chat-shell.ts:596) 가 박은 `${prefix}-${Date.now()}-rand`
+ *      → id.split('-')[1] 의 ms epoch (가장 흔한 케이스)
+ *   2) my-saju-context.timestamp (number)
+ *   3) text 의 proactive.generatedAt (ISO8601)
+ *   4) text 의 readAt (ISO8601, 사용자 메시지 읽음 시각)
+ * 어느 것도 없으면 0 — 정렬 시 가장 뒤로 보낸다.
+ */
+function extractActivityFromMessage(message: ChatShellMessage): number {
+  const idParts = message.id.split('-');
+  const idTimestamp = Number(idParts[1]);
+  // 2017-07-14 이후 ms epoch 만 유효 — 더 작은 값은 ID 가 다른 형식 (예:
+  // `${characterId}:${fortuneType}`) 인 케이스라 무시.
+  if (Number.isFinite(idTimestamp) && idTimestamp > 1_500_000_000_000) {
+    return idTimestamp;
+  }
+  if (message.kind === 'my-saju-context') {
+    return message.timestamp;
+  }
+  if (message.kind === 'text') {
+    if (message.proactive?.generatedAt) {
+      const parsed = Date.parse(message.proactive.generatedAt);
+      if (Number.isFinite(parsed)) return parsed;
+    }
+    if (message.readAt) {
+      const parsed = Date.parse(message.readAt);
+      if (Number.isFinite(parsed)) return parsed;
+    }
+  }
+  return 0;
 }
 
 function extractMessagePreview(message: ChatShellMessage): string {
@@ -352,10 +391,11 @@ export function buildCharacterListMeta(
   lastSeenMessageId: string | undefined,
 ): CharacterListRowMeta {
   if (!messages || messages.length === 0) {
-    return { lastMessagePreview: null, unreadCount: 0, unread: false };
+    return { lastMessagePreview: null, unreadCount: 0, unread: false, lastActivityAt: 0 };
   }
   const last = messages[messages.length - 1];
   const preview = extractMessagePreview(last);
+  const lastActivityAt = extractActivityFromMessage(last);
 
   // Unread 판정 (일반 메신저 표준):
   //   "lastSeen 이후로 도착한 assistant/system 메시지 개수" 를 센다. 0 이면
@@ -391,6 +431,7 @@ export function buildCharacterListMeta(
     lastMessagePreview: preview.length > 0 ? preview : null,
     unreadCount,
     unread: unreadCount > 0,
+    lastActivityAt,
   };
 }
 
@@ -1192,12 +1233,9 @@ export function ChatFirstRunSurface({
   romanceScores?: Record<string, number>;
   metaByCharacterId?: Record<string, CharacterListRowMeta>;
 }) {
-  const safeCharacters = Array.isArray(characters) ? characters : [];
-  const orderedCharacters = [
-    ...safeCharacters.filter((character) => character.id === selectedCharacterId),
-    ...safeCharacters.filter((character) => character.id !== selectedCharacterId),
-  ];
-  const visibleCharacters = orderedCharacters;
+  // 정렬은 호출자(chat-screen.tsx) 가 metaByCharacterId 의 unread/lastActivityAt
+  // 으로 미리 끝낸 상태로 받는다. 여기서는 입력 순서를 그대로 보존.
+  const visibleCharacters = Array.isArray(characters) ? characters : [];
 
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
