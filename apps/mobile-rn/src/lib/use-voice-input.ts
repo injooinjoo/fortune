@@ -139,10 +139,15 @@ export function useVoiceInput({
       lastTranscriptRef.current = '';
       stopRequestedRef.current = false;
 
+      // continuous: true — 사용자가 직접 stop 누르기 전까지 끊지 않는다.
+      // continuous: false 일 때 native 측 ExpoSpeechRecognizer.swift 가 매 결과
+      // 후 3초 침묵 타이머를 재설정해서 자동 stopListening() 을 호출한다 — 사용자가
+      // 잠깐 숨 고를 때마다 녹음이 끊기는 원인. continuous 모드에서는 그 타이머를
+      // 안 건다.
       ExpoSpeechRecognitionModule.start({
         lang: language,
         interimResults: true,
-        continuous: false,
+        continuous: true,
       });
 
       setState('recording');
