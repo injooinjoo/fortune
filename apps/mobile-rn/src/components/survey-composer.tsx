@@ -11,6 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { ActivityIndicator, Animated, Easing, Pressable, TextInput, View } from 'react-native';
 
 import { AppText } from './app-text';
+import { VoiceWaveform } from './voice-waveform';
 import { fortuneTheme } from '../lib/theme';
 import { useVoiceInput } from '../lib/use-voice-input';
 
@@ -38,7 +39,7 @@ export function SurveyComposer({
     [onChangeText, value],
   );
 
-  const { isRecording, isTranscribing, isActive, toggleRecording } =
+  const { isRecording, isTranscribing, isActive, currentVolume, toggleRecording } =
     useVoiceInput({ onTranscript: handleTranscript });
 
   // Pulse animation for recording indicator
@@ -117,26 +118,42 @@ export function SurveyComposer({
           </Pressable>
         ) : null}
 
-        {/* TextInput */}
+        {/* TextInput / Waveform */}
         <View style={{ flex: 1 }}>
-          <TextInput
-            accessibilityLabel="survey text input"
-            multiline
-            onChangeText={onChangeText}
-            placeholder={isRecording ? '녹음 중...' : placeholder}
-            placeholderTextColor={
-              isRecording ? '#EF4444' : fortuneTheme.colors.textTertiary
-            }
-            style={{
-              color: fortuneTheme.colors.textPrimary,
-              maxHeight: 72,
-              minHeight: 28,
-              paddingHorizontal: 4,
-              paddingVertical: 6,
-              textAlignVertical: 'center',
-            }}
-            value={value}
-          />
+          {isRecording ? (
+            <View
+              style={{
+                alignItems: 'center',
+                flexDirection: 'row',
+                minHeight: 28,
+                paddingHorizontal: 4,
+                paddingVertical: 6,
+              }}
+            >
+              <VoiceWaveform
+                color="#EF4444"
+                height={20}
+                volume={currentVolume}
+              />
+            </View>
+          ) : (
+            <TextInput
+              accessibilityLabel="survey text input"
+              multiline
+              onChangeText={onChangeText}
+              placeholder={placeholder}
+              placeholderTextColor={fortuneTheme.colors.textTertiary}
+              style={{
+                color: fortuneTheme.colors.textPrimary,
+                maxHeight: 72,
+                minHeight: 28,
+                paddingHorizontal: 4,
+                paddingVertical: 6,
+                textAlignVertical: 'center',
+              }}
+              value={value}
+            />
+          )}
         </View>
 
         {/* Right button: send or mic */}

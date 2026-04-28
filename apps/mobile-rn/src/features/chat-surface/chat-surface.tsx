@@ -17,6 +17,7 @@ import { PrimaryButton } from '../../components/primary-button';
 import { SpeakerButton } from '../../components/speaker-button';
 import { SurveyComposer } from '../../components/survey-composer';
 import { SocialAuthPillButton } from '../../components/social-auth-pill-button';
+import { VoiceWaveform } from '../../components/voice-waveform';
 import { characterDetails } from '../../lib/character-details';
 import {
   isFortuneChatCharacter,
@@ -1273,6 +1274,7 @@ export function ActiveChatComposer({
   onOpenPersonaSettings,
   onToggleVoiceInput,
   voiceInputState = 'idle',
+  voiceVolume = 0,
   quickActions,
   trayOpen,
   onToggleTray,
@@ -1290,6 +1292,8 @@ export function ActiveChatComposer({
   onOpenPersonaSettings?: () => void;
   onToggleVoiceInput: () => void;
   voiceInputState?: VoiceInputState;
+  /** 0~1 정규화된 마이크 음량. recording 중에만 의미 있음. */
+  voiceVolume?: number;
   quickActions: ChatShellAction[];
   trayOpen: boolean;
   onToggleTray: () => void;
@@ -1582,24 +1586,40 @@ export function ActiveChatComposer({
           </View>
         </Pressable>
         <View style={{ flex: 1 }}>
-          <TextInput
-            accessibilityLabel="chat composer"
-            multiline
-            onChangeText={onDraftChange}
-            placeholder={voiceRecording ? '녹음 중...' : '메시지...'}
-            placeholderTextColor={
-              voiceRecording ? '#EF4444' : fortuneTheme.colors.textTertiary
-            }
-            style={{
-              color: fortuneTheme.colors.textPrimary,
-              maxHeight: 72,
-              minHeight: 28,
-              paddingHorizontal: 4,
-              paddingVertical: 6,
-              textAlignVertical: 'center',
-            }}
-            value={draft}
-          />
+          {voiceRecording ? (
+            <View
+              style={{
+                alignItems: 'center',
+                flexDirection: 'row',
+                minHeight: 28,
+                paddingHorizontal: 4,
+                paddingVertical: 6,
+              }}
+            >
+              <VoiceWaveform
+                color="#EF4444"
+                height={20}
+                volume={voiceVolume}
+              />
+            </View>
+          ) : (
+            <TextInput
+              accessibilityLabel="chat composer"
+              multiline
+              onChangeText={onDraftChange}
+              placeholder="메시지..."
+              placeholderTextColor={fortuneTheme.colors.textTertiary}
+              style={{
+                color: fortuneTheme.colors.textPrimary,
+                maxHeight: 72,
+                minHeight: 28,
+                paddingHorizontal: 4,
+                paddingVertical: 6,
+                textAlignVertical: 'center',
+              }}
+              value={draft}
+            />
+          )}
         </View>
         <Pressable
           accessibilityLabel={

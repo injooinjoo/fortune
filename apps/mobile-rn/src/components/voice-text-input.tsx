@@ -19,6 +19,7 @@ import {
 
 import { fortuneTheme } from '../lib/theme';
 import { useVoiceInput } from '../lib/use-voice-input';
+import { VoiceWaveform } from './voice-waveform';
 
 interface VoiceTextInputProps extends Omit<TextInputProps, 'style'> {
   onChangeText: (text: string) => void;
@@ -40,7 +41,7 @@ export function VoiceTextInput({
     [onChangeText, value],
   );
 
-  const { isRecording, isTranscribing, toggleRecording } = useVoiceInput({
+  const { isRecording, isTranscribing, currentVolume, toggleRecording } = useVoiceInput({
     onTranscript: handleTranscript,
   });
 
@@ -84,26 +85,45 @@ export function VoiceTextInput({
         borderWidth: 1,
       }}
     >
-      <TextInput
-        {...rest}
-        multiline={multiline}
-        onChangeText={onChangeText}
-        placeholder={isRecording ? '녹음 중...' : placeholder}
-        placeholderTextColor={
-          isRecording ? '#EF4444' : fortuneTheme.colors.textTertiary
-        }
-        style={{
-          flex: 1,
-          color: fortuneTheme.colors.textPrimary,
-          fontFamily: 'System',
-          fontSize: 15,
-          minHeight: multiline ? 104 : 52,
-          paddingHorizontal: 14,
-          paddingVertical: multiline ? 14 : 12,
-          textAlignVertical: multiline ? 'top' : 'center',
-        }}
-        value={value}
-      />
+      {isRecording ? (
+        <View
+          style={{
+            alignItems: 'center',
+            flex: 1,
+            flexDirection: 'row',
+            gap: 10,
+            minHeight: multiline ? 104 : 52,
+            paddingHorizontal: 14,
+            paddingVertical: multiline ? 14 : 12,
+          }}
+        >
+          <VoiceWaveform
+            color="#EF4444"
+            height={20}
+            volume={currentVolume}
+          />
+          <View style={{ flex: 1 }} />
+        </View>
+      ) : (
+        <TextInput
+          {...rest}
+          multiline={multiline}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          placeholderTextColor={fortuneTheme.colors.textTertiary}
+          style={{
+            flex: 1,
+            color: fortuneTheme.colors.textPrimary,
+            fontFamily: 'System',
+            fontSize: 15,
+            minHeight: multiline ? 104 : 52,
+            paddingHorizontal: 14,
+            paddingVertical: multiline ? 14 : 12,
+            textAlignVertical: multiline ? 'top' : 'center',
+          }}
+          value={value}
+        />
+      )}
       <Pressable
         accessibilityLabel={
           isRecording

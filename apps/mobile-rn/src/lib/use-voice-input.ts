@@ -14,14 +14,33 @@ import { Alert } from 'react-native';
 
 // Native module은 dev build에만 링크됨. JS 패키지 자체 import가 top-level에서
 // throw하면 chat 탭 전체가 죽으므로 require로 감싸 런타임에 안전하게 로드한다.
+type SpeechRecognitionStartOptions = {
+  lang: string;
+  interimResults: boolean;
+  continuous: boolean;
+  volumeChangeEventOptions?: {
+    enabled: boolean;
+    intervalMillis?: number;
+  };
+};
+
+type SpeechRecognitionEvent = {
+  results?: { transcript: string }[];
+  isFinal?: boolean;
+  error?: string;
+  message?: string;
+  // volumechange 이벤트의 페이로드. native 는 -2 ~ 10 범위 float 로 보낸다.
+  value?: number;
+};
+
 type SpeechRecognitionNative = {
   ExpoSpeechRecognitionModule: {
     isRecognitionAvailable: () => boolean;
     requestPermissionsAsync: () => Promise<{ granted: boolean }>;
-    start: (opts: { lang: string; interimResults: boolean; continuous: boolean }) => void;
+    start: (opts: SpeechRecognitionStartOptions) => void;
     stop: () => void;
   };
-  useSpeechRecognitionEvent: (event: string, cb: (e: { results?: { transcript: string }[]; isFinal?: boolean; error?: string; message?: string }) => void) => void;
+  useSpeechRecognitionEvent: (event: string, cb: (e: SpeechRecognitionEvent) => void) => void;
 };
 
 let nativeSpeech: SpeechRecognitionNative | null = null;
@@ -55,6 +74,9 @@ export function useVoiceInput({
   language = 'ko-KR',
 }: UseVoiceInputOptions) {
   const [state, setState] = useState<VoiceInputState>('idle');
+  // 0~1 normalized 음량. native 는 -2 ~ 10 범위로 보내므로 받을 때 정규화한다.
+  // 파형 시각화 (voice-waveform.tsx) 가 이 값으로 막대 height 를 보간한다.
+  const [currentVolume, setCurrentVolume] = useState<number>(0);
   // 마지막에 받은 final 텍스트. end 이벤트 시점에 onTranscript로 flush.
   const lastTranscriptRef = useRef<string>('');
   // stop()을 명시적으로 호출했는지 추적 — end 이벤트에서 사용자 의도로 중단된
@@ -101,7 +123,16 @@ export function useVoiceInput({
     if (pending) {
       onTranscript(pending);
     }
+    setCurrentVolume(0);
     setState('idle');
+  });
+
+  useSpeechRecognitionEvent('volumechange', (event) => {
+    // native 는 -2 (소음 레벨 미만) ~ 10 (최대) 범위 float 로 보낸다. 0~1 로
+    // 정규화하면서 음수 구간은 0 으로 클램프 — 막대 height 가 음수가 안 되도록.
+    const raw = event.value ?? 0;
+    const normalized = Math.max(0, Math.min(1, (raw + 2) / 12));
+    setCurrentVolume(normalized);
   });
 
   // 언마운트 시 활성 세션 정리.
@@ -148,8 +179,15 @@ export function useVoiceInput({
         lang: language,
         interimResults: true,
         continuous: true,
+        // volumechange 이벤트 활성화 — 100ms 마다 음량 float 발행. 파형 막대
+        // 시각화 (voice-waveform.tsx) 가 이 값으로 height 를 보간한다.
+        volumeChangeEventOptions: {
+          enabled: true,
+          intervalMillis: 100,
+        },
       });
 
+      setCurrentVolume(0);
       setState('recording');
     } catch (error) {
       console.warn('[useVoiceInput] Failed to start recognition:', error);
@@ -190,6 +228,7 @@ export function useVoiceInput({
     }
     lastTranscriptRef.current = '';
     stopRequestedRef.current = false;
+    setCurrentVolume(0);
     setState('idle');
   }, []);
 
@@ -198,6 +237,7 @@ export function useVoiceInput({
     isRecording,
     isTranscribing,
     isActive,
+    currentVolume,
     toggleRecording,
     cancelRecording,
   };

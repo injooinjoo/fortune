@@ -406,6 +406,7 @@ export function ChatScreen() {
   );
   const {
     state: voiceInputState,
+    currentVolume: voiceVolume,
     toggleRecording: toggleVoiceRecording,
   } = useVoiceInput({ onTranscript: handleVoiceTranscript });
 
@@ -3023,6 +3024,7 @@ export function ChatScreen() {
               onSend={handleSendDraft}
               onToggleVoiceInput={handleToggleVoiceInput}
               voiceInputState={voiceInputState}
+              voiceVolume={voiceVolume}
               onToggleTray={() => setComposerTrayOpen((current) => !current)}
               quickActions={selectedCharacterActions}
               trayOpen={composerTrayOpen}
