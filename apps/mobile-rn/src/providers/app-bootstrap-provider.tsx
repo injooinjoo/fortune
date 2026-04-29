@@ -420,8 +420,20 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
     // 으로 한 번 더 호출되므로 종료 상태에서 탭으로 열린 경우도 커버.
     const removePushHandlers = installPushNotificationHandlers({
       onTap: (payload) => {
-        const target = payload.route
-          ? payload.route
+        // 옛 route (`/character/{id}?openCharacterChat=true`) 호환 — 이미 발송돼
+        // APNs 큐에 있는 in-flight 푸시들이 있을 수 있으므로 클라이언트에서도
+        // 캐릭터 인트로 라우트를 채팅 직행으로 rewrite. 새 서버 응답은 처음부터
+        // /chat 으로 옴.
+        const looksLikeLegacyCharacterIntro =
+          payload.route?.startsWith('/character/') &&
+          (payload.route.includes('openCharacterChat=true') ||
+            payload.route.includes('openCharacterChat%3Dtrue'));
+        const rewrittenRoute =
+          looksLikeLegacyCharacterIntro && payload.characterId
+            ? `/chat?characterId=${encodeURIComponent(payload.characterId)}`
+            : payload.route;
+        const target = rewrittenRoute
+          ? rewrittenRoute
           : payload.characterId
             ? `/chat?characterId=${encodeURIComponent(payload.characterId)}`
             : null;

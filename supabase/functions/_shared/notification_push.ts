@@ -38,7 +38,11 @@ export interface PushDeliveryParams {
 
 function getCharacterDmRoute(characterId: string): string {
   const encodedCharacterId = encodeURIComponent(characterId);
-  return `/character/${encodedCharacterId}?openCharacterChat=true`;
+  // 푸시 탭 → 캐릭터 채팅방 직행. /chat?characterId=... 가 chat-screen.tsx 의
+  // `directCharacterId` 분기를 활성화해 surfaceMode='chat' 으로 바로 진입한다.
+  // 과거에는 `/character/{id}?openCharacterChat=true` 인트로 화면을 거쳐
+  // 사용자가 한 번 더 "이 캐릭터로 채팅하기" 를 눌러야 했음.
+  return `/chat?characterId=${encodedCharacterId}`;
 }
 
 export function buildCharacterDmPayload(
