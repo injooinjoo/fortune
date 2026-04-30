@@ -323,6 +323,34 @@ export function ChatScreen() {
     Record<string, string>
   >(cachedLastSeenByCharacterId);
 
+  // useState lazy init 은 mount 시점에 한 번만 실행된다. cold start 에서
+  // chat-screen 이 bootstrap 의 `Promise.all(loadCachedCharacterMessagesBatch)`
+  // 보다 먼저 mount 되면 (= 거의 항상), `cachedCharacterConversations` 가
+  // 빈 객체 `{}` 인 상태로 초기값이 평가되어 모든 캐릭터가 인트로 fallback
+  // 으로 고착된다. 그 후 bootstrap 이 캐시를 채워도 messagesByCharacterId
+  // state 는 자동 갱신되지 않아 "재진입 시 이전 대화가 사라지는" 회귀 발생.
+  //
+  // 이 effect 는 cachedCharacterConversations 가 채워지는 시점에 캐시를
+  // state 로 흡수하되, `shouldAcceptRemoteMessages` 로 "캐시가 현재 state
+  // 보다 더 길거나 더 최신" 일 때만 채택한다 → 사용자가 입력 중인 신규
+  // 메시지를 절대 잃지 않는다.
+  useEffect(() => {
+    setMessagesByCharacterId((current) => {
+      let next: Record<string, ChatShellMessage[]> | null = null;
+      for (const [characterId, cached] of Object.entries(
+        cachedCharacterConversations,
+      )) {
+        if (!cached || cached.length === 0) continue;
+        const existing = current[characterId];
+        if (!shouldAcceptRemoteMessages(existing, cached)) continue;
+        if (isSameMessageList(existing, cached)) continue;
+        if (!next) next = { ...current };
+        next[characterId] = cached;
+      }
+      return next ?? current;
+    });
+  }, [cachedCharacterConversations]);
+
   // 스레드 체류 중 새 AI/system 메시지 도착 → 즉시 읽음 처리.
   // 일반 메신저(iMessage/WhatsApp/KakaoTalk) 와 동일한 동작: 유저가 해당
   // 스레드를 보고 있는 동안 상대 메시지가 오면 수신과 동시에 "읽음".
@@ -535,6 +563,24 @@ export function ChatScreen() {
         const messages = await loadCharacterConversation(characterId);
 
         if (!messages) {
+          // 원격이 null (네트워크/세션/빈 응답) 이어도 로컬 캐시
+          // (`fortune.chat.msgs.v1.*`) 에 이전 대화가 살아있을 수 있다.
+          // romance pilot 분기와 동일하게 fallback 해서 인트로만 보이는
+          // 회귀를 막는다. shouldAcceptRemoteMessages 로 in-flight 신규
+          // 메시지는 보존.
+          const cachedMessages = cachedCharacterConversations[characterId];
+          if (cachedMessages && cachedMessages.length > 0) {
+            setMessagesByCharacterId((current) => {
+              const cur = current[characterId];
+              if (!shouldAcceptRemoteMessages(cur, cachedMessages)) {
+                return current;
+              }
+              if (isSameMessageList(cur, cachedMessages)) {
+                return current;
+              }
+              return { ...current, [characterId]: cachedMessages };
+            });
+          }
           return;
         }
 
