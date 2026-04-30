@@ -282,6 +282,10 @@ const config: ExpoConfig = {
   plugins: [
     'expo-router',
     'expo-iap',
+    // 채팅 메시지 영속화 — SecureStore chunked JSON blob 에서 row-per-message
+    // SQLite 로 이전. expo-sqlite 는 native module 등록만 하면 동작 (별도
+    // entitlement / Info.plist 변경 불필요).
+    'expo-sqlite',
     'expo-apple-authentication',
     'expo-web-browser',
     ['expo-speech-recognition', {

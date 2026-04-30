@@ -211,13 +211,20 @@ function shouldAcceptRemoteMessages(
 }
 
 /**
- * 채팅 영속/읽음 정책 (2026-04-26 정비):
- *  1) 메시지: SecureStore `fortune.chat.msgs.v1.*` — bootstrap preload
- *     (`app-bootstrap-provider.cachedCharacterConversations`), 메시지 추가
- *     직후 즉시 flush. 텍스트 메시지만 원격 동기화 (Edge soft-fail).
+ * 채팅 영속/읽음 정책 (2026-04-30 SQLite 마이그레이션 후):
+ *  1) 메시지: SQLite (`apps/mobile-rn/src/lib/chat-db.ts`, 파일명 `fortune-chat.db`).
+ *     Native(iOS/Android) 는 row-per-message append-only INSERT, web 은 기존
+ *     SecureStore `fortune.chat.msgs.v1.*` 폴백 유지. bootstrap preload
+ *     (`cachedCharacterConversations`) 가 batch SELECT 로 한 번에 로드.
+ *     1회 백필: 첫 SQLite open 시 SecureStore 캐시 → SQLite INSERT, 성공
+ *     하면 SecureStore 키 삭제 + `fortune.chat.db.migrated.v1` 플래그 set.
+ *     원격 동기화 (`character-conversation-save/load` Edge Function) 는
+ *     변경 없음 — SQLite 가 source of truth, 원격은 백업·기기간 복원용.
  *  2) 스토리 스냅샷: SecureStore
  *     `fortune.mobile-rn.story-chat-thread.v1.{userId}.{characterId}` —
  *     character open 시 lazy hydrate. romance state 포함 전체 snapshot.
+ *     (메시지 부분은 SQLite 가 별도로 저장하므로 중복이지만 romance state
+ *     스키마와 분리하기 위해 유지.)
  *  3) 읽음 상태: SecureStore `fortune.chat-last-seen.v1` — bootstrap preload
  *     (`cachedLastSeenByCharacterId`) 로 race 방지. 직렬화 큐로 concurrent
  *     write merge 보장 (`storage.ts:setChatLastSeenForCharacter`).
