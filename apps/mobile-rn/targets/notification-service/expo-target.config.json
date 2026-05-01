@@ -1,0 +1,7 @@
+{
+  "$schema": "https://unpkg.com/@bacons/apple-targets@0.3.0/schema.json",
+  "type": "notification-service",
+  "name": "OndoNotificationService",
+  "bundleIdentifier": "com.beyond.fortune.notification-service",
+  "deploymentTarget": "17.0"
+}

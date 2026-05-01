@@ -2,6 +2,7 @@ import {
   createClient,
   type SupabaseClient,
 } from "https://esm.sh/@supabase/supabase-js@2";
+import { getCharacterAvatarUrl } from "./character_avatar_urls.ts";
 
 const EXPO_PUSH_ENDPOINT = "https://exp.host/--/api/v2/push/send";
 
@@ -171,6 +172,15 @@ interface ExpoPushMessage {
   sound: "default";
   priority: "high";
   channelId?: string;
+  // 캐릭터 얼굴을 푸시에 띄우기 위한 필드.
+  // - Android: Expo SDK 가 BigPictureStyle 로 자동 렌더 (네이티브 지원).
+  // - iOS:   Expo Push API 가 mutableContent + APNS attachment hint 로 변환.
+  //          앱 측 Notification Service Extension 이 다운로드 후 첨부.
+  //          (apps/mobile-rn/targets/notification-service)
+  richContent?: { image?: string };
+  // iOS NSE 를 호출하기 위해 필수. richContent.image 만 있어도 Expo 가
+  // 내부적으로 켜주지만, 명시적으로 true 로 보내 향후 SDK 변경에 대비한다.
+  mutableContent?: boolean;
 }
 
 interface ExpoPushTicket {
@@ -194,14 +204,28 @@ async function sendExpoPushToTokens(
     data: Record<string, string>;
   },
 ): Promise<number> {
+  // characterId 가 있으면 캐릭터 얼굴 URL 부착. 미등록 캐릭터/SUPABASE_URL
+  // 누락 등 어떤 이유로든 URL 을 못 만들면 텍스트 푸시로 graceful fallback.
+  const avatarUrl = getCharacterAvatarUrl(
+    params.data.character_id ?? params.data.characterId,
+  );
+  const richContent = avatarUrl ? { image: avatarUrl } : undefined;
+
+  // data 페이로드에도 같은 URL 을 박는다. iOS NSE 가 ExpoPushAPI 변환 결과를
+  // 신뢰 못 하는 경우(SDK 버전 차이) data.image 를 fallback 으로 사용 가능.
+  const dataWithImage = avatarUrl
+    ? { ...params.data, image: avatarUrl }
+    : params.data;
+
   const messages: ExpoPushMessage[] = params.tokens.map((token) => ({
     to: token,
     title: params.title,
     body: params.body,
-    data: params.data,
+    data: dataWithImage,
     sound: "default",
     priority: "high",
-    channelId: params.data.channel ?? "character_dm",
+    channelId: dataWithImage.channel ?? "character_dm",
+    ...(richContent ? { richContent, mutableContent: true } : {}),
   }));
 
   const accessToken = Deno.env.get("EXPO_ACCESS_TOKEN");
