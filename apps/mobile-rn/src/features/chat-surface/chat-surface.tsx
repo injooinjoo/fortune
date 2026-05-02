@@ -63,6 +63,13 @@ function CharacterAvatar({
 }) {
   const avatarSource = resolveChatCharacterAvatarSource(characterId);
 
+  // webp 원본은 portrait 인물사진(약 576×1024 / 9:16). 정사각형 동그라미에
+  // resizeMode='cover' 디폴트를 그대로 두면 좌우 기준 cover crop 으로 얼굴이
+  // 위로 빠져나가 어깨/가슴이 보인다. 이미지를 컨테이너 폭에 맞추고 비율 유지로
+  // 세로를 늘린 뒤 top:0 으로 align — 얼굴이 동그라미 위쪽에 들어와 보이게.
+  const PORTRAIT_ASPECT = 9 / 16;
+  const imageHeight = size / PORTRAIT_ASPECT;
+
   return (
     <View
       style={{
@@ -80,8 +87,12 @@ function CharacterAvatar({
       {avatarSource ? (
         <Image
           source={avatarSource}
+          resizeMode="cover"
           style={{
-            height: size,
+            height: imageHeight,
+            left: 0,
+            position: 'absolute',
+            top: 0,
             width: size,
           }}
         />
@@ -714,10 +725,9 @@ function MessageBubble({
   );
 }
 
-function TypingIndicatorBubble({
-  queuedCount = 0,
-}: {
+function TypingIndicatorBubble(_props: {
   character: ChatCharacterSpec;
+  /** @deprecated 배칭은 사용자에게 투명. 호출자 호환을 위해 시그니처만 유지. */
   queuedCount?: number;
 }) {
   // ondo story-chat-player `Typing` 원본: 말풍선 없음. 3점만.
@@ -737,11 +747,6 @@ function TypingIndicatorBubble({
         <WaveDot delay={150} />
         <WaveDot delay={300} />
       </View>
-      {queuedCount > 0 ? (
-        <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-          대기 +{queuedCount}
-        </AppText>
-      ) : null}
     </View>
   );
 }

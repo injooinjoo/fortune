@@ -133,6 +133,15 @@ function supportsChatNativeRuntime(fortuneType: FortuneTypeId) {
 
 const PENDING_SENDS_STORAGE_KEY = 'fortune.pending-sends.v1';
 
+// AC1, AC3 — 메시지 배칭 및 응답 지연 floor.
+// 첫 send 후 BATCH_IDLE_WINDOW_MS 동안 추가 send 가 없으면 누적 큐를 단일
+// Edge Function 호출로 flush. REPLY_FLOOR_MS 는 send 시점 부터 응답이
+// 화면에 렌더되기까지 최소 보장 시간.
+const BATCH_IDLE_WINDOW_MS = 5000;
+const REPLY_FLOOR_MS = 10000;
+const FALLBACK_REPLY_MAX_SEC = 3;
+const FALLBACK_REPLY_MIN_SEC = 1;
+
 /**
  * 미읽음 user kind='text' 메시지 전부에 `readAt`을 도장찍어 돌려준다.
  * AI 응답 시점에 호출되므로, 그 전까지 쌓인 모든 유저 메시지를 한꺼번에
@@ -418,12 +427,20 @@ export function ChatScreen() {
     Record<string, boolean>
   >({});
   // 모델 응답 대기 중에도 입력은 항상 가능. 같은 캐릭터에 도착한 다음 메시지들은
-  // 여기 큐에 쌓이고, 현재 응답이 끝난 직후 하나씩 순차 발송된다.
+  // 여기 큐에 쌓이고, 5초 idle 후 단일 Edge Function 호출로 묶어서 보낸다.
   // 비동기 finally/타이머에서 최신값을 참조해야 해서 state 대신 ref로 관리.
   const pendingSendsRef = useRef<
     Record<string, { text: string; userMessageId: string }[]>
   >({});
-  // UI 노출용 큐 카운트 (typing indicator "대기 +N"). ref 변경마다 동기 업데이트.
+  // 배칭 idle 타이머 (캐릭터별). reset 가능. unmount/캐릭터 전환 시 정리.
+  const batchTimersRef = useRef<
+    Record<string, ReturnType<typeof setTimeout> | null>
+  >({});
+  // 배치의 첫 send 시각 (캐릭터별). 응답 floor 계산용 (AC1) — 첫 send 부터
+  // REPLY_FLOOR_MS 가 지나야 응답이 화면에 나오도록 보장.
+  const batchFirstSendAtRef = useRef<Record<string, number>>({});
+  // UI 노출용 큐 카운트. 배칭은 사용자에게 투명해야 하므로 항상 0 유지 (AC4).
+  // state 자체는 surface prop 시그니처 호환을 위해 남겨둠.
   const [pendingSendCountByCharacterId, setPendingSendCountByCharacterId] =
     useState<Record<string, number>>({});
   const [activeSurveysByCharacterId, setActiveSurveysByCharacterId] = useState<
@@ -658,10 +675,14 @@ export function ChatScreen() {
   useFocusEffect(
     useCallback(() => {
       if (gate !== 'ready') return;
+      // 챗 룸 안(detail) 에서는 force-refresh 스킵. 일반 메신저앱처럼 in-memory
+      // + SQLite 가 source of truth. 캐릭터 프로필 등에서 돌아올 때 visible
+      // flicker (응답 사라짐 → 재로드) 회귀 방지. 리스트 화면 복귀일 때만 새로고침.
+      if (surfaceMode !== 'list') return;
       for (const character of chatCharacters) {
         void hydrateStoryCharacter(character.id, { force: true });
       }
-    }, [gate, hydrateStoryCharacter]),
+    }, [gate, surfaceMode, hydrateStoryCharacter]),
   );
 
   useEffect(() => {
@@ -878,41 +899,21 @@ export function ChatScreen() {
   ]);
 
   // ---------------------------------------------------------------------------
-  // F2 — 읽음 표시 타이머 (유저가 메시지 보내고 N초 뒤 "1" 배지 제거)
+  // F2 — 읽음 표시
+  //
+  // 정책 (2026-05-02): 유저가 메시지를 보내면 LLM 호출 전에 즉시 readAt 을
+  // 찍어 노란 "1" 뱃지를 제거한다. "캐릭터가 읽음 → 그 다음 답장" 흐름을 위해
+  // 랜덤 지연 타이머는 폐기. 응답 도착 후 idempotent 재호출은 noop (이미 readAt
+  // 가 있으면 markLatestUserMessageAsRead 가 그대로 통과).
+  // 외부에 노출된 clearReadReceiptTimer 는 과거 타이머를 정리하던 호출 사이트
+  // 들에서 noop 으로 남겨둔다 — 회귀 안전을 위해 함수 자체는 유지.
   // ---------------------------------------------------------------------------
-  const readReceiptTimersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(
-    new Map(),
-  );
-
-  const clearReadReceiptTimer = useCallback((characterId: string) => {
-    const timer = readReceiptTimersRef.current.get(characterId);
-    if (timer) {
-      clearTimeout(timer);
-      readReceiptTimersRef.current.delete(characterId);
-    }
+  const clearReadReceiptTimer = useCallback((_characterId: string) => {
+    // no-op (랜덤 지연 타이머 폐기). 호출 사이트 회귀 안전을 위해 시그니처 유지.
   }, []);
-
-  const scheduleReadReceipt = useCallback(
-    (characterId: string) => {
-      clearReadReceiptTimer(characterId);
-      const delay = randomInRange(8000, 20000); // 8-20초 랜덤
-      const timer = setTimeout(() => {
-        readReceiptTimersRef.current.delete(characterId);
-        setMessagesByCharacterId((current) => ({
-          ...current,
-          [characterId]: markLatestUserMessageAsRead(
-            current[characterId] ?? [],
-          ),
-        }));
-      }, delay);
-      readReceiptTimersRef.current.set(characterId, timer);
-    },
-    [clearReadReceiptTimer],
-  );
 
   const markUserMessageReadImmediately = useCallback(
     (characterId: string) => {
-      clearReadReceiptTimer(characterId);
       setMessagesByCharacterId((current) => ({
         ...current,
         [characterId]: markLatestUserMessageAsRead(
@@ -920,19 +921,8 @@ export function ChatScreen() {
         ),
       }));
     },
-    [clearReadReceiptTimer],
+    [],
   );
-
-  // 언마운트 시 모든 타이머 정리
-  useEffect(() => {
-    const timersRef = readReceiptTimersRef;
-    return () => {
-      for (const timer of timersRef.current.values()) {
-        clearTimeout(timer);
-      }
-      timersRef.current.clear();
-    };
-  }, []);
 
   // 부팅 시 큐 복원 — 앱 강제 종료되어도 대기 중이던 유저 메시지를 이어서 처리.
   useEffect(() => {
@@ -954,8 +944,8 @@ export function ChatScreen() {
     })();
   }, []);
 
-  // gate=ready가 되면 복원된 큐를 자동으로 drain. 캐릭터별 1회만 트리거하고,
-  // 이후 chain은 각 send 함수의 finally → drainNextPendingSend가 이어 받는다.
+  // gate=ready가 되면 복원된 큐를 자동으로 flush. 앱 강제 종료로 미전송된
+  // 누적 메시지를 단일 배치로 보낸다. 캐릭터별 1회만 트리거.
   const didInitialDrainRef = useRef(false);
   useEffect(() => {
     if (gate !== 'ready' || didInitialDrainRef.current) return;
@@ -967,10 +957,26 @@ export function ChatScreen() {
       if (storyTypingByCharacterId[cid]) continue;
       const character = findChatCharacterById(cid, createdFriends);
       if (!character) continue;
-      drainNextPendingSend(character);
+      // 부트 복원은 anchor 가 없을 수 있으니 지금을 첫 send 시각으로 간주.
+      if (!batchFirstSendAtRef.current[cid]) {
+        batchFirstSendAtRef.current[cid] = Date.now();
+      }
+      flushBatch(character);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gate, createdFriends]);
+
+  // unmount 시 잔여 배치 타이머 정리. expo-router 에서 chat 스크린이 unmount
+  // 되는 경우는 드물지만 안전장치.
+  useEffect(() => {
+    return () => {
+      for (const id of Object.keys(batchTimersRef.current)) {
+        const t = batchTimersRef.current[id];
+        if (t) clearTimeout(t);
+      }
+      batchTimersRef.current = {};
+    };
+  }, []);
 
   // ---------------------------------------------------------------------------
   // F3 — 햅틱 토글 (chatHapticsEnabled 설정)
@@ -1887,19 +1893,64 @@ export function ChatScreen() {
   }
 
   // pendingSendsRef가 바뀔 때마다 UI 카운트 동기 업데이트 + 디스크 영속화.
+  // AC4 — 배칭은 사용자에게 투명하므로 카운트는 항상 0 으로 유지. state 자체
+  // 는 surface prop 호환을 위해 남겨둠.
   function syncPendingCount(characterId: string) {
-    setPendingSendCountByCharacterId((current) => ({
-      ...current,
-      [characterId]: pendingSendsRef.current[characterId]?.length ?? 0,
-    }));
+    setPendingSendCountByCharacterId((current) => {
+      if (current[characterId] === 0) return current;
+      return { ...current, [characterId]: 0 };
+    });
     void setSecureItem(
       PENDING_SENDS_STORAGE_KEY,
       JSON.stringify(pendingSendsRef.current),
     ).catch(() => undefined);
   }
 
-  // 응답 대기 중 사용자 입력을 큐에 적재. 유저 메시지는 즉시 thread에 보여
-  // 전송 피드백을 준다. drain은 현재 응답 finally에서 처리.
+  function clearBatchTimer(characterId: string) {
+    const existing = batchTimersRef.current[characterId];
+    if (existing) {
+      clearTimeout(existing);
+      batchTimersRef.current[characterId] = null;
+    }
+  }
+
+  // 캐릭터별 누적 큐를 단일 Edge Function 호출로 보낸다. 5초 idle 윈도우
+  // 만료 또는 부트 복원 시 호출. 큐는 비우고 첫 항목의 userMessageId 를 send
+  // 함수에 넘겨 read receipt / rollback 가 head 메시지를 가리키게 한다.
+  function flushBatch(character: ChatCharacterSpec) {
+    clearBatchTimer(character.id);
+    const queue = pendingSendsRef.current[character.id] ?? [];
+    if (queue.length === 0) {
+      return;
+    }
+    pendingSendsRef.current = {
+      ...pendingSendsRef.current,
+      [character.id]: [],
+    };
+    syncPendingCount(character.id);
+
+    const combinedText = queue.map((item) => item.text).join('\n\n');
+    const headUserMessageId = queue[0].userMessageId;
+
+    if (isStoryRomancePilotCharacterId(character.id)) {
+      void sendStoryPilotMessage(character, combinedText, {
+        skipOptimisticUserMessage: true,
+        userMessageId: headUserMessageId,
+      });
+      return;
+    }
+
+    if (character.kind === 'story') {
+      void sendCharacterChatMessage(character, combinedText, {
+        skipOptimisticUserMessage: true,
+        userMessageId: headUserMessageId,
+      });
+    }
+  }
+
+  // 응답 대기 중에도 입력 가능. 첫 send 시 BATCH_IDLE_WINDOW_MS 타이머 시작,
+  // 추가 send 마다 reset. idle 만료되면 누적 큐 한 번에 flush. typing
+  // indicator 는 첫 send 부터 응답 렌더 직전까지 계속 표시 (AC3).
   function enqueueStorySend(character: ChatCharacterSpec, text: string) {
     const queuedUserMessage = buildUserMessage(text);
     setMessagesByCharacterId((current) => ({
@@ -1917,36 +1968,32 @@ export function ChatScreen() {
       ],
     };
     syncPendingCount(character.id);
+
+    // 첫 send 만 batchFirstSendAt 기록. 이후 reset 되어도 floor 계산용
+    // anchor 는 첫 send 시점으로 유지된다.
+    if (!batchFirstSendAtRef.current[character.id]) {
+      batchFirstSendAtRef.current[character.id] = Date.now();
+    }
+    clearBatchTimer(character.id);
+    batchTimersRef.current[character.id] = setTimeout(() => {
+      batchTimersRef.current[character.id] = null;
+      flushBatch(character);
+    }, BATCH_IDLE_WINDOW_MS);
+
+    setStoryTypingByCharacterId((current) => ({
+      ...current,
+      [character.id]: true,
+    }));
     setComposerTrayOpen(false);
     setSurfaceMode('chat');
   }
 
-  function drainNextPendingSend(character: ChatCharacterSpec) {
-    const queue = pendingSendsRef.current[character.id] ?? [];
-    if (queue.length === 0) {
-      return;
-    }
-    const [next, ...rest] = queue;
-    pendingSendsRef.current = {
-      ...pendingSendsRef.current,
-      [character.id]: rest,
-    };
-    syncPendingCount(character.id);
-
-    if (isStoryRomancePilotCharacterId(character.id)) {
-      void sendStoryPilotMessage(character, next.text, {
-        skipOptimisticUserMessage: true,
-        userMessageId: next.userMessageId,
-      });
-      return;
-    }
-
-    if (character.kind === 'story') {
-      void sendCharacterChatMessage(character, next.text, {
-        skipOptimisticUserMessage: true,
-        userMessageId: next.userMessageId,
-      });
-    }
+  // 배칭 모델 도입 후 sequential drain 은 사용 안 함. 호환을 위해 no-op
+  // wrapper 만 유지 (sendStoryPilotMessage / sendCharacterChatMessage finally
+  // 에서 호출되는 자리). 큐에 남은 메시지는 다음 enqueueStorySend 가 새
+  // 배치를 시작하면서 처리한다.
+  function drainNextPendingSend(_character: ChatCharacterSpec) {
+    // intentional no-op
   }
 
   async function sendStoryPilotMessage(
@@ -2032,8 +2079,9 @@ export function ChatScreen() {
       ...current,
       [character.id]: true,
     }));
-    // F2 — 읽음 표시 랜덤 지연 타이머 시작 (서버 응답 먼저 오면 즉시 제거)
-    scheduleReadReceipt(character.id);
+    // F2 — "읽음 → 답장" 문맥. LLM 호출 전에 노란 unread 뱃지를 즉시 클리어
+    // 한다. 캐릭터가 메시지를 읽고 → (타이핑 인디케이터 노출) → 답장하는 흐름.
+    markUserMessageReadImmediately(character.id);
     setComposerTrayOpen(false);
     setSurfaceMode('chat');
 
@@ -2168,11 +2216,19 @@ export function ChatScreen() {
         lastAssistantEmotionTagRef.current = response.emotionTag;
       }
 
-      // Random reply delay — typing indicator stays visible during wait (첫 버블 전 딜레이)
-      const replyDelay = response.delaySec
-        ? Math.min(response.delaySec, 8)
-        : Math.random() * 2 + 1; // 1-3초 기본 딜레이
-      await new Promise((r) => setTimeout(r, replyDelay * 1000));
+      // Reply delay — 8초 cap 제거. 서버가 emotion + 길이 + 야간 multiplier
+      // 적용한 delaySec 를 그대로 신뢰. 추가로 batchFirstSendAt 기준 floor
+      // (REPLY_FLOOR_MS) 적용해 첫 send 부터 최소 10초 보장 (AC1).
+      let replyDelayMs = response.delaySec
+        ? response.delaySec * 1000
+        : (Math.random() * (FALLBACK_REPLY_MAX_SEC - FALLBACK_REPLY_MIN_SEC) +
+          FALLBACK_REPLY_MIN_SEC) * 1000;
+      const elapsedSinceFirstSend = Date.now() -
+        (batchFirstSendAtRef.current[character.id] ?? Date.now());
+      const minRemaining = Math.max(0, REPLY_FLOOR_MS - elapsedSinceFirstSend);
+      replyDelayMs = Math.max(replyDelayMs, minRemaining);
+      delete batchFirstSendAtRef.current[character.id];
+      await new Promise((r) => setTimeout(r, replyDelayMs));
 
       // 최신 유저 메시지 읽음 처리 — 현재 state 기준으로 찍어야 큐잉된 다음
       // 메시지들을 덮어쓰지 않는다.
@@ -2341,7 +2397,8 @@ export function ChatScreen() {
       ...current,
       [character.id]: true,
     }));
-    scheduleReadReceipt(character.id);
+    // F2 — "읽음 → 답장" 문맥. LLM 호출 전에 노란 unread 뱃지를 즉시 클리어.
+    markUserMessageReadImmediately(character.id);
     setComposerTrayOpen(false);
     setSurfaceMode('chat');
 
@@ -2384,10 +2441,16 @@ export function ChatScreen() {
               lastAssistantEmotionTagRef.current = response.emotionTag;
             }
 
-            const replyDelay = response.delaySec
-              ? Math.min(response.delaySec, 8)
-              : Math.random() * 2 + 1;
-            await new Promise((r) => setTimeout(r, replyDelay * 1000));
+            let replyDelayMs = response.delaySec
+              ? response.delaySec * 1000
+              : (Math.random() * (FALLBACK_REPLY_MAX_SEC - FALLBACK_REPLY_MIN_SEC) +
+                FALLBACK_REPLY_MIN_SEC) * 1000;
+            const elapsedSinceFirstSend = Date.now() -
+              (batchFirstSendAtRef.current[character.id] ?? Date.now());
+            const minRemaining = Math.max(0, REPLY_FLOOR_MS - elapsedSinceFirstSend);
+            replyDelayMs = Math.max(replyDelayMs, minRemaining);
+            delete batchFirstSendAtRef.current[character.id];
+            await new Promise((r) => setTimeout(r, replyDelayMs));
 
             setMessagesByCharacterId((current) => ({
               ...current,
@@ -2515,21 +2578,27 @@ export function ChatScreen() {
         lastAssistantEmotionTagRef.current = payload.emotionTag;
       }
 
-      // Phase 2 — 답장 지연 발송: 서버가 scheduledId+deliverAt 을 리턴했으면
-      // 그 시각까지 타이핑 인디케이터 유지하다가 렌더 + ack. 8초 cap 제거.
-      // legacy 경로(서버 REPLY_DELAY_ENABLED=false)면 scheduledId undefined →
-      // 기존 처럼 짧은 랜덤 딜레이 후 즉시 렌더.
+      // Phase 2 — 답장 지연 발송: scheduledId+deliverAt 이 오면 그 시각까지
+      // 타이핑 유지. legacy(REPLY_DELAY_ENABLED=false) 면 payload.delaySec
+      // (서버 emotion + 길이 + 야간 multiplier 적용분) 을 그대로 사용. 8초
+      // cap 제거. AC1 — batchFirstSendAt 기준 floor (REPLY_FLOOR_MS).
       let replyDelayMs: number;
       const scheduledId = payload.scheduledId;
       if (scheduledId && payload.deliverAt) {
         const deliverAtMs = Date.parse(payload.deliverAt);
         replyDelayMs = Math.max(0, deliverAtMs - Date.now());
+      } else if (typeof payload.delaySec === 'number') {
+        replyDelayMs = payload.delaySec * 1000;
       } else {
-        const fallbackSec = typeof payload.delaySec === 'number'
-          ? Math.min(payload.delaySec, 8)
-          : Math.random() * 2 + 1;
-        replyDelayMs = fallbackSec * 1000;
+        replyDelayMs = (Math.random() *
+          (FALLBACK_REPLY_MAX_SEC - FALLBACK_REPLY_MIN_SEC) +
+          FALLBACK_REPLY_MIN_SEC) * 1000;
       }
+      const elapsedSinceFirstSend = Date.now() -
+        (batchFirstSendAtRef.current[character.id] ?? Date.now());
+      const minRemaining = Math.max(0, REPLY_FLOOR_MS - elapsedSinceFirstSend);
+      replyDelayMs = Math.max(replyDelayMs, minRemaining);
+      delete batchFirstSendAtRef.current[character.id];
       await new Promise((r) => setTimeout(r, replyDelayMs));
 
       setMessagesByCharacterId((current) => ({
@@ -2709,8 +2778,9 @@ export function ChatScreen() {
       return;
     }
 
-    // 응답 대기 중 타이핑 → 큐 적재. 유저 메시지는 즉시 thread에 표시.
-    if (isBusy && trimmed) {
+    // 스토리/커스텀 친구 모든 텍스트는 enqueueStorySend 로 라우팅 — 5초 idle
+    // 윈도우가 단일 메시지 케이스도 동일하게 처리한다 (AC3).
+    if (isStoryCharacter && trimmed) {
       enqueueStorySend(selectedCharacter, trimmed);
       return;
     }

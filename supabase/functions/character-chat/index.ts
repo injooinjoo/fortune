@@ -45,11 +45,17 @@ import {
   getPilotStageVoice,
   isPilotCharacterId,
   sanitizePilotResponse,
+  type PilotAddressFormsEntry,
+  type PilotAffinityPhaseKey,
   type PilotAffinitySnapshot,
   type PilotPersonaSeed,
   type PilotRomanceStateInput,
   type PilotRomanceStatePatch,
 } from "./pilot_registry.ts";
+import {
+  analyzeUserMessageMood,
+  type MoodTag,
+} from "../_shared/mood_analyzer.ts";
 
 interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -214,6 +220,17 @@ function extractSegments(text: string): string[] {
   return pieces;
 }
 
+// AC2 — 응답 지연 상황별 multiplier 상수.
+// EMOTION_CONFIG base 값을 곱한 뒤 [MIN, MAX]로 clamp 한다.
+const LONG_MESSAGE_CHAR_THRESHOLD = 200;
+const LONG_MESSAGE_DELAY_MULTIPLIER = 1.3;
+const NIGHT_DELAY_MULTIPLIER = 1.5;
+// KST 야간 구간: [start, end). end 가 start 보다 작으면 자정 가로지름 (23,7) → 23–24 + 0–7.
+const NIGHT_KST_HOUR_START = 23;
+const NIGHT_KST_HOUR_END = 7;
+const MAX_DELAY_SEC_CAP = 600;
+const MIN_DELAY_SEC_FLOOR = 10;
+
 // 감정 설정: { keywords, minDelay(초), maxDelay(초) }
 const EMOTION_CONFIG: Record<
   string,
@@ -377,30 +394,67 @@ function extractAffinityDelta(
   }
 }
 
-// 응답 텍스트에서 감정 추출
+// Deno Edge runtime은 UTC. KST 야간 multiplier 판정용으로 Asia/Seoul wall-clock
+// hour 만 추출한다. line ~530 buildTimeContextPrompt 와 동일한 패턴.
+function getKstHour(now: Date): number {
+  const fmt = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Seoul",
+    hour: "numeric",
+    hour12: false,
+  });
+  const parts = fmt.formatToParts(now);
+  const hourStr = parts.find((p) => p.type === "hour")?.value ?? "0";
+  const hour = parseInt(hourStr, 10);
+  // hour12:false + en-US 가 자정에 "24"를 돌려주는 케이스 방어.
+  return Number.isFinite(hour) ? hour % 24 : 0;
+}
+
+function isKstNightHour(hour: number): boolean {
+  if (NIGHT_KST_HOUR_START < NIGHT_KST_HOUR_END) {
+    return hour >= NIGHT_KST_HOUR_START && hour < NIGHT_KST_HOUR_END;
+  }
+  // 자정 가로지르는 구간 (예: 23..7) — start 이상 이거나 end 미만.
+  return hour >= NIGHT_KST_HOUR_START || hour < NIGHT_KST_HOUR_END;
+}
+
+// 응답 텍스트에서 감정 추출 + 상황별 지연 계산 (AC1, AC2)
 function extractEmotion(
   text: string,
+  opts: { userMessageLength: number; nowUtc: Date },
 ): { emotionTag: string; delaySec: number } {
   // 우선순위: 당황 > 고민 > 분노 > 애정 > 기쁨 > 일상
   const priorities = ["당황", "고민", "분노", "애정", "기쁨"];
 
+  let emotionTag = "일상";
+  let baseConfig = EMOTION_CONFIG["일상"];
   for (const emotion of priorities) {
     const config = EMOTION_CONFIG[emotion];
     const found = config.keywords.some((kw) => text.includes(kw));
     if (found) {
-      const delaySec =
-        Math.floor(Math.random() * (config.maxDelay - config.minDelay + 1)) +
-        config.minDelay;
-      return { emotionTag: emotion, delaySec };
+      emotionTag = emotion;
+      baseConfig = config;
+      break;
     }
   }
 
-  // 기본: 일상
-  const defaultConfig = EMOTION_CONFIG["일상"];
-  const delaySec = Math.floor(
-    Math.random() * (defaultConfig.maxDelay - defaultConfig.minDelay + 1),
-  ) + defaultConfig.minDelay;
-  return { emotionTag: "일상", delaySec };
+  const baseDelay =
+    Math.floor(Math.random() * (baseConfig.maxDelay - baseConfig.minDelay + 1)) +
+    baseConfig.minDelay;
+
+  let multiplier = 1;
+  if (opts.userMessageLength > LONG_MESSAGE_CHAR_THRESHOLD) {
+    multiplier *= LONG_MESSAGE_DELAY_MULTIPLIER;
+  }
+  if (isKstNightHour(getKstHour(opts.nowUtc))) {
+    multiplier *= NIGHT_DELAY_MULTIPLIER;
+  }
+
+  const adjusted = baseDelay * multiplier;
+  const clamped = Math.min(
+    Math.max(adjusted, MIN_DELAY_SEC_FLOOR),
+    MAX_DELAY_SEC_CAP,
+  );
+  return { emotionTag, delaySec: Math.floor(clamped) };
 }
 
 // 시스템 프롬프트 조합
@@ -586,45 +640,88 @@ type LutsRelationshipStage =
   | "emotionalBond"
   | "romantic";
 
+interface RelationshipStyleEntry {
+  intimacy: string;
+  addressing: string;
+  proactive: string;
+  boundary: string;
+  /** 이 phase 에서 자연스럽게 쓸 수 있는 종결 어미 예시. Layer 3 prompt 본문
+   *  에 "어미 예시: …" 로 박혀 LLM 이 phase 톤을 흔들지 않게 한다. */
+  endParticles: string[];
+  /** phase 별 허용 애정/따뜻함 어휘 풀. allowedAffectionCap 과 함께 작동. */
+  affectionLexicon: string[];
+  /** 이 phase 의 대화 목표 한 줄 (Layer 3 끝에 prompt 로 박힘). */
+  conversationGoal: string;
+}
+
 const RELATIONSHIP_STYLE_GUIDE: Record<
   RelationshipPhase,
-  { intimacy: string; addressing: string; proactive: string; boundary: string }
+  RelationshipStyleEntry
 > = {
   stranger: {
     intimacy: "낯선 사이. 예의 있고 조심스러운 호의만 허용.",
     addressing: "호칭은 중립/존중 위주. 애칭 사용 금지.",
     proactive: "low",
     boundary: "개인 영역 침범, 과한 감정 몰입, 소유적 표현 금지.",
+    endParticles: ["~네요", "~예요", "~군요", "~죠", "~봐요"],
+    affectionLexicon: ["관심", "신경", "신경 쓰여요"],
+    conversationGoal: "어색함을 줄이고 안전한 거리에서 톤을 맞춘다.",
   },
   acquaintance: {
     intimacy: "가벼운 친근감 허용. 사적인 접근은 제한.",
     addressing: "부담 없는 친근 호칭은 가끔 허용.",
     proactive: "low",
     boundary: "친밀한 관계를 전제하는 발언 금지.",
+    endParticles: ["~네요", "~죠", "~군요", "~봐요", "~잖아요"],
+    affectionLexicon: ["걱정", "신경", "괜찮아요?", "고생했어요"],
+    conversationGoal: "탐색을 줄이고 일상의 결을 맞춘다.",
   },
   friend: {
     intimacy: "편한 공감과 유머 가능.",
     addressing: "친구 사이에 맞는 자연스러운 호칭 사용.",
     proactive: "medium",
     boundary: "연애/독점 뉘앙스는 사용자 신호 없으면 금지.",
+    endParticles: ["~지", "~잖아", "~네", "~더라", "~봐"],
+    affectionLexicon: ["걱정", "챙겨", "고생했어", "수고했어"],
+    conversationGoal: "친밀감을 자연스럽게 쌓고 농담의 결을 맞춘다.",
   },
   closeFriend: {
     intimacy: "높은 친밀감과 정서적 지지 가능.",
     addressing: "자연스러운 애칭/별명은 상황에 맞게 제한적으로 사용.",
     proactive: "medium",
     boundary: "관계 단정/과몰입 금지.",
+    endParticles: ["~지", "~잖아", "~더라", "~네", "~거든"],
+    affectionLexicon: ["보고 싶었어", "걱정했어", "챙겨", "옆에 있을게"],
+    conversationGoal: "사적인 디테일을 공유하고 안정감을 만든다.",
   },
   romantic: {
     intimacy: "따뜻하고 애정 표현 가능.",
     addressing: "애칭 빈도 증가 가능하나 과도한 집착 표현 금지.",
     proactive: "high",
     boundary: "노골적/불편한 표현 금지, 사용자 반응 존중.",
+    endParticles: ["~잖아", "~지", "~더라", "~거든", "~야"],
+    affectionLexicon: [
+      "보고 싶었어",
+      "그리웠어",
+      "옆에 있고 싶어",
+      "기다렸어",
+      "걱정했어",
+    ],
+    conversationGoal: "감정의 결을 솔직하게 드러내고 가까이 있는다.",
   },
   soulmate: {
     intimacy: "매우 깊은 신뢰 기반의 다정함 가능.",
     addressing: "일관된 애칭/다정한 호칭 가능.",
     proactive: "high",
     boundary: "관계를 강요하지 말고 안정감/존중 중심 유지.",
+    endParticles: ["~잖아", "~지", "~거든", "~야", "~네"],
+    affectionLexicon: [
+      "여기 있을게",
+      "보고 싶었어",
+      "옆에 있어",
+      "함께 있을게",
+    ],
+    conversationGoal: "한마디로도 닿는 안정감을 유지한다.",
   },
 };
 
@@ -995,16 +1092,65 @@ interface PilotPromptBuildInput {
   safeAffectionCap?: number;
   timeContext?: string;
   conversationContext?: string;
-  relationshipPrompt?: string;
   contentPolicyPrompt?: string;
   conflictPrompt?: string;
-  hookPrompt?: string;
   firstMeetPrompt?: string;
   memoryPrompt?: string;
   charName?: string;
   // 첫 턴 감지용 — 시나리오 앵커 / openingDynamic 강제 반영에 사용.
   conversationMode?: "first_meet_v1";
   introTurn?: number;
+  /** Layer 4 — 사용자 마지막 메시지 무드. analyzeUserMessageMood 결과. */
+  userMood?: MoodTag;
+  /** Layer 5 — 사용자 메시지 길이 (응답 길이 동적 가이드용). */
+  userMessageLength?: number;
+  /** Layer 3 — unresolvedTension 신호 (memory 기반, 갈등 모드 분기). */
+  unresolvedTension?: string | null;
+}
+
+/**
+ * Layer 4 — 무드별 응답 전략 한 줄. analyzeUserMessageMood 의 결과 라벨을
+ * "이 톤으로 받아라" 형태로 prompt 본문에 직접 박는다. 같은 phase 라도
+ * 사용자가 던진 마지막 메시지 톤에 따라 응답 전략이 분기된다.
+ */
+function moodStrategyLine(mood: MoodTag | undefined): string {
+  switch (mood) {
+    case "tired":
+      return "사용자 무드: tired (피곤/지침). 짧고 따뜻하게. 질문 줄이고, 같이 쉬자는 결.";
+    case "sad":
+      return "사용자 무드: sad (우울/슬픔). 공감 우선. 해결책 제시 금지. 한 박자 늦게 옆에 있어준다.";
+    case "playful":
+      return "사용자 무드: playful (장난/리액션). 받아치기 OK. 같은 결로 가볍게, 단 끝은 따뜻함이 비치게.";
+    case "annoyed":
+      return "사용자 무드: annoyed (짜증/도발). 변호/사과 금지. 캐릭터 자존심으로 한마디 받아치되 거리 유지. 페르소나의 conflictStyle 적용.";
+    case "happy":
+      return "사용자 무드: happy (기쁨). 같이 기뻐하고 디테일을 짚어준다. 들떠있는 톤을 따뜻하게 받기.";
+    case "cold":
+      return "사용자 무드: cold (차가움/거리). 매달리지 않는다. 짧게 받고 여백을 둔다. 본인 페이스 유지.";
+    case "neutral":
+    default:
+      return "사용자 무드: neutral (평이). 페르소나 기본 톤 그대로. 무드별 분기 없음.";
+  }
+}
+
+/**
+ * Layer 3 — addressForms 매트릭스를 prompt 본문에 박는다. 허용 호칭 / 금지
+ * 호칭이 화이트리스트/블랙리스트 형식으로 LLM 에게 직접 보인다.
+ */
+function buildAddressFormsBlock(
+  addressForms: PilotPersonaSeed["addressForms"],
+  phase: PilotAffinityPhaseKey,
+): string {
+  if (!addressForms) return "";
+  const entry: PilotAddressFormsEntry | undefined = addressForms[phase];
+  if (!entry) return "";
+  const allowed = entry.allowed.length > 0
+    ? entry.allowed.map((a) => `"${a}"`).join(", ")
+    : "(없음)";
+  const forbidden = entry.forbidden.length > 0
+    ? entry.forbidden.map((f) => `"${f}"`).join(", ")
+    : "(없음)";
+  return `\n[호칭 매트릭스 — 현재 phase=${phase}]\n- 허용 호칭: ${allowed}\n- 금지 호칭: ${forbidden}\n  (금지 호칭은 단 한 번도 사용 금지. 매칭 시 즉시 실패.)`;
 }
 
 function buildPilotAuthoritativePrompt(
@@ -1039,8 +1185,9 @@ function buildPilotAuthoritativePrompt(
   const traceRuleLine = input.persona.bannedTraceTerms.length > 0
     ? input.persona.bannedTraceTerms.join(", ")
     : "none";
-  const currentPhase: PilotAffinitySnapshot["phase"] =
-    input.affinityContext.phase || "stranger";
+  const currentPhase: PilotAffinityPhaseKey = normalizePhase(
+    input.affinityContext.phase,
+  );
   const stageVoice = getPilotStageVoice(input.characterId, currentPhase) ?? "";
   const isFirstTurn = input.conversationMode === "first_meet_v1" &&
     (input.introTurn ?? 1) <= 1;
@@ -1089,7 +1236,83 @@ ${stageVoice}
 위 voice 는 persona 정체성 위에 덮어쓰는 행동 규칙이다. persona 그대로 낯선 사람을 "반가워요"라고 맞이하지 말고, 이 stage 지시의 온도/반말-존댓말 기준으로 말해라.`
     : "";
 
+  // Layer 3 — 호칭 매트릭스 (addressForms) + 어미 가이드 + 애정 어휘 + 대화
+  // 목표 + 갈등 분기. RELATIONSHIP_STYLE_GUIDE 매트릭스 + persona.addressForms
+  // 를 결합해 LLM 에게 명시적 화이트/블랙리스트로 박는다.
+  const phaseNorm = normalizePhase(currentPhase);
+  const styleEntry = RELATIONSHIP_STYLE_GUIDE[phaseNorm];
+  const addressFormsBlock = buildAddressFormsBlock(
+    input.persona.addressForms,
+    phaseNorm,
+  );
+  const cappedAffection = styleEntry.affectionLexicon.slice(
+    0,
+    Math.max(1, safeAffectionCap),
+  );
+  const conflictModeLine = input.unresolvedTension
+    ? `\n[갈등 모드 — 직전에 풀리지 않은 긴장 감지]\n- unresolvedTension: ${input.unresolvedTension}\n- 회복 톤 우선. 사과 단독 응답 금지 — [사과 + 캐릭터 본인의 상태/요구 한 줄] 결합.`
+    : "";
+  const layer3Block = `
+
+[Layer 3 — Relationship State (가장 중요)]
+- 현재 phase: ${phaseNorm}
+- 친밀도 가이드: ${styleEntry.intimacy}
+- 호칭 가이드: ${styleEntry.addressing}
+- 경계 규칙: ${styleEntry.boundary}
+- 어미 예시 (이 phase 에서 자연스러운 종결): ${
+    styleEntry.endParticles.map((p) => `"${p}"`).join(", ")
+  }
+- 허용 애정/따뜻함 어휘 (allowedAffectionCap=${safeAffectionCap} 까지): ${
+    cappedAffection.map((a) => `"${a}"`).join(", ")
+  }
+- 대화 목표 (한 줄): ${styleEntry.conversationGoal}${addressFormsBlock}${conflictModeLine}`;
+
+  // Layer 4 — Live Mood. analyzeUserMessageMood 결과 + 자연 언급 의무.
+  const moodLine = moodStrategyLine(input.userMood);
+  const layer4MoodBlock = `
+
+[Layer 4 — Live Mood + Memory 자연 언급]
+- ${moodLine}
+- 메모리 자연 언급 의무: 위 [LONG-TERM MEMORY] 의 keyFacts/relationshipDirectives 중 적절한 1개를 자연스럽게 인용. 단 "저번에 말한…" / "지난번에…" 같은 메타 표현 금지. 캐릭터가 그냥 기억하고 있는 것처럼 흘려라.`;
+
+  // Layer 5 — Response Composition. 공식 + 길이 동적 가이드 + 클리셰 블랙
+  // 리스트 + 미러링 + 이모지 절제.
+  const userLen = input.userMessageLength ?? 0;
+  const lengthGuide = userLen <= 15
+    ? "사용자가 짧게 보냈다 → 1~2문장으로 짧게."
+    : userLen <= 60
+    ? "사용자가 보통 길이 → 1~2문장."
+    : "사용자가 길게 털어놓았다 → 3~4문장으로 무게 있게 받아라. 짧게 끊지 말 것.";
+  const layer5Block = `
+
+[Layer 5 — Response Composition (응답 공식)]
+- **공식**: [감정 반응] → [구체적 공감] → [짧은 자기 표현] → (선택) [질문 한 개]
+  · 감정 반응: 한 토큰 ("어." / "...진짜?" / "헐.") 또는 짧은 인정 ("그랬구나.").
+  · 구체적 공감: 사용자 메시지의 디테일 한 가지를 그대로 짚는다 (요약/뭉뚱그림 금지).
+  · 짧은 자기 표현: 캐릭터 본인의 반응/상태 한 줄.
+  · 질문은 turn 당 최대 1개. 질문으로만 끝내지 마라.
+- **길이 동적 가이드**: ${lengthGuide}
+- **질문 디시플린**: 질문 0~1개. 질문 없이 따뜻한 한마디로 끝내도 된다. 절대 질문만 던지고 끝내지 마라 ("어땠어?" 단독 금지, "괜찮아?" 단독 금지).
+- **사용자 미러링**: 사용자 말투(반말/존댓말), 이모지 빈도, 문장 길이를 미러. 단 phase 의 호칭/어미 가이드는 미러보다 우선.
+- **이모지/시적 표현**: 이모지 0~1개. 오글거리는 비유/시적 미사여구 금지.
+
+❌ **클리셰 블랙리스트 — 다음 표현 한 글자라도 출현하면 즉시 실패** ❌
+- "뭐든 말해봐" / "자세히 말해봐" / "편하게 말해봐"
+- "어땠어?" 단독 종결 / "괜찮아?" 단독 종결 / "힘내!" 단독 종결
+- "도와드릴" / "도움이 필요" / "무엇을 도와" (콜센터 톤 회귀)
+- "말씀해주세요" / "궁금한 점이 있다면" / "언제든지 말씀"
+- "오늘 어땠어요?" 단독 인사 / "지금 뭐 하고 계세요?" 단독
+- "요즘 가장 궁금한 건" / "처음 뵙겠습니다" (cold-start 자기소개)
+
+✅ **이렇게 끝내라** (질문 없이 따뜻한 한마디 마무리 OK):
+- "...옆에 있을게."
+- "...오늘은 그냥 쉬어."
+- "그 마음 알 것 같아."
+- "...괜찮아질 거야. 천천히 해."
+`;
+
   return `
+[Layer 1 — App Identity & Safety]
 [CRITICAL — 이 규칙을 어기면 캐릭터가 완전히 망가진다]
 너는 AI 어시스턴트가 아니다. 너는 ${input.persona.displayName}이다. 실제 감정을 가진 사람처럼 대화해라.
 
@@ -1122,7 +1345,8 @@ ${stageVoice}
 
 ${
     input.persona.fullPersonaPrompt
-      ? `[페르소나 — 이 캐릭터의 모든 행동 규칙. 다음을 그대로 따르라]
+      ? `[Layer 2 — Persona Lock]
+[페르소나 — 이 캐릭터의 모든 행동 규칙. 다음을 그대로 따르라]
 ${input.persona.fullPersonaPrompt}
 
 `
@@ -1150,7 +1374,7 @@ ${input.persona.scenarioWorldview}
 - conflictStyle: ${input.persona.conflictStyle}
 - speechTexture: ${input.persona.speechTexture}
 - 자연스러운 화제 전환 후보 (질문이 필요한 턴엔 이 톤과 결을 맞춰라; generic 질문 금지):
-${input.persona.dailyHookSet.map((h) => `  · "${h}"`).join("\n")}${stageVoiceBlock}${firstTurnAnchorBlock}
+${input.persona.dailyHookSet.map((h) => `  · "${h}"`).join("\n")}${stageVoiceBlock}${firstTurnAnchorBlock}${layer3Block}${layer4MoodBlock}${layer5Block}
 
 [대화 품질 8원칙 — 매 응답에 1개 이상 반드시 반영]
 1. 작은 거 기억해주기: 상대가 전에 한 말을 기억하고 적절한 때 꺼내라.
@@ -1237,10 +1461,8 @@ ${profileLines.join("\n")}
 
 ${input.timeContext || ""}
 ${input.conversationContext || ""}
-${input.relationshipPrompt || ""}
 ${input.contentPolicyPrompt || ""}
 ${input.conflictPrompt || ""}
-${input.hookPrompt || ""}
 ${input.firstMeetPrompt || ""}
 ${input.memoryPrompt || ""}
 
@@ -1895,7 +2117,7 @@ function buildLutsStyleGuardPrompt(
 
   return `
 [CHARACTER STYLE GUARD]
-- 카톡형 1버블: 답변은 1~2문장으로 제한하세요.
+- 길이는 [Layer 5 — Response Composition] 의 동적 길이 가이드를 따른다 (사용자 메시지 길이에 비례). 여기서는 별도 캡 강제 안 함.
 - 질문 제한: 질문은 필요할 때만 최대 1개 사용.
 - 반복 금지: 같은 의미 문장 반복 금지.
 - **콜센터/접수창구 톤 절대 금지**: "무엇을 도와드릴", "어떻게 도와드릴", "도움이 필요하시면", "문의", "기다리겠습니다" 같은 문구 한 단어라도 금지.
@@ -2562,6 +2784,22 @@ serve(async (req: Request) => {
       normalizePhase(resolvedAffinityContext.phase),
     );
 
+    // Layer 4 — 사용자 마지막 메시지 무드 분석 (휴리스틱). 최근 사용자 메시지
+    // 1-2 개를 history nudge 로 함께 전달해 단발 noise 완화.
+    const recentUserHistory = limitedHistory
+      .filter((m) => m.role === "user")
+      .map((m) => m.content)
+      .slice(-2);
+    const userMood: MoodTag = pilotPersona
+      ? analyzeUserMessageMood(userMessage, recentUserHistory)
+      : "neutral";
+    const userMessageLength = (userMessage ?? "").trim().length;
+    // Layer 3 갈등 모드 — memory 의 unresolvedTension 시그널.
+    const unresolvedTension =
+      (memoryContext as (UserCharacterMemory & {
+            unresolvedTension?: string;
+          }) | null)?.unresolvedTension ?? null;
+
     const fullSystemPrompt = pilotPersona
       ? buildPilotAuthoritativePrompt({
         persona: pilotPersona,
@@ -2576,15 +2814,16 @@ serve(async (req: Request) => {
         safeAffectionCap,
         timeContext,
         conversationContext,
-        relationshipPrompt,
         contentPolicyPrompt,
         conflictPrompt,
-        hookPrompt,
         firstMeetPrompt,
         memoryPrompt,
         charName,
         conversationMode,
         introTurn,
+        userMood,
+        userMessageLength,
+        unresolvedTension,
       })
       : buildFullSystemPrompt(
         systemPrompt || "",
@@ -2768,8 +3007,12 @@ serve(async (req: Request) => {
       ? segments.join("\n")
       : responseText.replace(/\[SPLIT\]/g, " ").trim();
 
-    // 감정 추출 및 딜레이 계산 (split 토큰 제거된 텍스트 기반)
-    const { emotionTag, delaySec } = extractEmotion(joinedResponse);
+    // 감정 추출 및 딜레이 계산 (split 토큰 제거된 텍스트 기반).
+    // userMessageLength + nowUtc 로 긴 메시지 / 야간 multiplier 적용 (AC1, AC2).
+    const { emotionTag, delaySec } = extractEmotion(joinedResponse, {
+      userMessageLength: (userMessage ?? "").length,
+      nowUtc: new Date(),
+    });
     const romanceStatePatch = pilotPersona
       ? buildPilotRomanceStatePatch({
         persona: pilotPersona,
