@@ -87,6 +87,7 @@ import {
   resolveChatProvider,
 } from '../lib/chat-provider';
 import { onDeviceLLMEngine } from '../lib/on-device-llm';
+import { insertMessages as insertStoreMessages } from '../lib/message-store';
 import {
   ackScheduledReplyIfPresent,
   clearActiveChatCharacterId,
@@ -1087,6 +1088,9 @@ export function ChatScreen() {
           latestThread = updated;
           return { ...current, [characterId]: updated };
         });
+        // Bridge to MessageStore — segment 단위로도 store 에 sync. 같은
+        // bubble id 면 dedup, push 로 먼저 도착해도 안전.
+        insertStoreMessages(characterId, [bubble]).catch(() => undefined);
 
         // 햅틱 — 첫 버블에서만 울리거나 전부 울리거나. 카톡도 각 메시지마다 울리므로 전부.
         triggerAssistantHaptic(emotionTag);
@@ -1370,6 +1374,10 @@ export function ChatScreen() {
         [character.id]: [...base, ...nextMessages],
       };
     });
+    // Bridge to MessageStore (Step 1.D/E) — push handler 도 같은 store 에
+    // INSERT 하므로, send / receive / push 메시지가 한 곳에 모임. 멱등성:
+    // store 가 id 기반 INSERT OR IGNORE — 중복 안전. fire-and-forget.
+    insertStoreMessages(character.id, nextMessages).catch(() => undefined);
   }
 
   function setActiveSurvey(

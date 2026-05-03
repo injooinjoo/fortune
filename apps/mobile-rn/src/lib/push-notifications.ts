@@ -1,6 +1,8 @@
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 
+import type { ChatShellMessage } from './chat-shell';
+import { insertMessages } from './message-store';
 import {
   deleteSecureItem,
   getSecureItem,
@@ -121,6 +123,45 @@ export async function setAppIconBadgeCount(count: number): Promise<void> {
 }
 
 /**
+ * Push payload 가 메시지 본문을 담고 있으면 MessageStore 에 즉시 INSERT.
+ *
+ * iMessage / WhatsApp / Signal 표준: push 도착 = 메시지 도착. 서버에 추가
+ * fetch 안 함 (extra round-trip 0). 사용자가 채팅창에 있으면 새 메시지가
+ * 자동 등장, 다른 화면에 있어도 store 캐시에 들어가 다음 진입 시 즉시 표시.
+ *
+ * 멱등성: store 가 id 기반 INSERT OR IGNORE — 같은 메시지가 push + 다음
+ * fetch 두 번 도착해도 1번만 추가됨.
+ *
+ * id 결정 우선순위:
+ *   1) scheduledId (cron deliver-due-replies 발송) — `scheduled-{uuid}` prefix
+ *      로 통일해서 서버 character_conversations.messages 와 같은 id 보장.
+ *   2) messageId (서버에서 fully-qualified id 보낸 경우)
+ *   3) fallback — push 시각 기반 (id 없는 옛 페이로드 호환).
+ */
+export async function insertMessageFromPushIfPresent(
+  payload: PushResponsePayload,
+): Promise<void> {
+  if (!payload.characterId || !payload.body) return;
+  const id = payload.scheduledId
+    ? `scheduled-${payload.scheduledId}`
+    : payload.messageId ?? `push-${Date.now()}`;
+  const message: ChatShellMessage = {
+    id,
+    kind: 'text',
+    sender: 'assistant',
+    text: payload.body,
+  };
+  try {
+    await insertMessages(payload.characterId, [message]);
+  } catch (error) {
+    // store insert 실패해도 사용자 가시 영향 없음 — 다음 채팅창 진입 시
+    // character-conversation-load 로 복구.
+    // eslint-disable-next-line no-console
+    console.warn('[push] store insertFromPush 실패:', error);
+  }
+}
+
+/**
  * scheduled_character_replies row 에 대한 ack 를 멱등하게 발사.
  *
  * 같은 scheduledId 가 여러 채널(foreground receive / tap / send→response)
@@ -166,6 +207,14 @@ export interface PushResponsePayload {
    * Telegram scheduled-message API 패턴 (서버 ID 별도 필드).
    */
   scheduledId?: string;
+  /**
+   * 캐릭터 메시지 본문 — buildCharacterDmPayload 가 항상 포함.
+   * 클라가 받자마자 MessageStore 에 INSERT 하면 채팅창에 자동 등장
+   * (extra fetch 0). iMessage / WhatsApp / Signal 표준 push payload.
+   */
+  body?: string;
+  /** 캐릭터 이름 — push 알림 title 로도 사용. */
+  title?: string;
   route?: string;
   raw: Record<string, unknown>;
 }
@@ -225,7 +274,9 @@ export function installPushNotificationHandlers(handlers: {
         ? messageId.slice('scheduled-'.length)
         : undefined);
     const route = d.route as string | undefined;
-    return { characterId, messageId, scheduledId, route, raw: d };
+    const body = typeof d.body === 'string' ? (d.body as string) : undefined;
+    const title = typeof d.title === 'string' ? (d.title as string) : undefined;
+    return { characterId, messageId, scheduledId, body, title, route, raw: d };
   }
 
   const respSub = Notifications.addNotificationResponseReceivedListener(

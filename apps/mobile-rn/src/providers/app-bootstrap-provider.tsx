@@ -25,10 +25,12 @@ import { exchangeAuthCodeFromUrl, isAuthCallbackUrl } from '../lib/auth-session'
 import { chatCharacters } from '../lib/chat-characters';
 import type { ChatShellMessage } from '../lib/chat-shell';
 import { loadCachedCharacterMessagesBatch } from '../lib/character-conversation-cache';
+import { hydrateBatch as hydrateMessageStoreBatch } from '../lib/message-store';
 import { appEnv } from '../lib/env';
 import { captureError } from '../lib/error-reporting';
 import {
   ackScheduledReplyIfPresent,
+  insertMessageFromPushIfPresent,
   installPushNotificationHandlers,
   registerPushTokenForSignedInUser,
 } from '../lib/push-notifications';
@@ -256,6 +258,12 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
           setCachedLastSeenByCharacterId(cachedLastSeen);
         }
 
+        // MessageStore hydrate (Step 1.C) — preload 와 동일 SQLite 소스라
+        // 데이터는 같음. store 캐시를 채워야 useStoreMessages hook (Step 1.D)
+        // 이 즉시 표시 가능. fire-and-forget — 실패해도 cachedCharacterConversations
+        // state 가 fallback.
+        hydrateMessageStoreBatch(characterIds).catch(() => undefined);
+
         if (!mounted) {
           return;
         }
@@ -427,15 +435,20 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
     // Set 으로 dedup → 같은 scheduledId 는 세션당 1회만 네트워크 호출.
     const removePushHandlers = installPushNotificationHandlers({
       onForegroundReceive: (payload) => {
-        // 앱이 켜진 상태에서 push 도착: 사용자가 채팅 화면에 있든 다른
-        // 화면에 있든, 메시지 본문은 이미 push payload + chat-runtime
-        // 의 character_conversations.messages 에 있음 (cron 이 미리
-        // append). 여기서는 ack 만 fire-and-forget.
+        // 앱이 켜진 상태에서 push 도착 — iMessage/WhatsApp 표준:
+        // 1) 메시지 본문이 payload 에 있으면 즉시 MessageStore 에 INSERT
+        //    (extra fetch 0). 사용자가 채팅창에 있으면 자동 reflect, 다른
+        //    화면이면 다음 진입 시 즉시 표시. 멱등성: store 가 id dedup.
+        // 2) ack 호출 (fire-and-forget) — cron 중복 발송 방지.
+        insertMessageFromPushIfPresent(payload);
         ackScheduledReplyIfPresent(payload.scheduledId);
       },
       onTap: (payload) => {
         // 백그라운드/종료 상태에서 push 탭 → 앱 진입.
-        // 1) 즉시 ack — 라우팅보다 먼저 발사해 네트워크 latency 흡수.
+        // 1) 메시지 본문 store INSERT — 화면 진입 시 즉시 표시 (latency 0).
+        // 2) ack — 라우팅보다 먼저 발사해 네트워크 latency 흡수.
+        // 3) 라우팅.
+        insertMessageFromPushIfPresent(payload);
         ackScheduledReplyIfPresent(payload.scheduledId);
 
         // 2) 라우팅. 옛 route (`/character/{id}?openCharacterChat=true`) 호환
