@@ -325,6 +325,19 @@ const config: ExpoConfig = {
         enableOpenCL: true,
       },
     ],
+    // AdMob — 광고 시청 보상 토큰 시스템 (BM v2.2 Sprint 5/7).
+    // App ID 는 native build 시 plist/Manifest 에 주입되어 SDK 초기화에 사용.
+    // EXPO_PUBLIC_ADMOB_* 환경변수 미설정 시 SDK 초기화 자체가 실패하므로
+    // .env 또는 EAS secrets 에 반드시 설정되어야 함.
+    [
+      'react-native-google-mobile-ads',
+      {
+        androidAppId: process.env.EXPO_PUBLIC_ADMOB_APP_ID_ANDROID ??
+          'ca-app-pub-2803643717997352~8320790178',
+        iosAppId: process.env.EXPO_PUBLIC_ADMOB_APP_ID_IOS ??
+          'ca-app-pub-2803643717997352~5970615545',
+      },
+    ],
   ],
   updates: {
     url: 'https://u.expo.dev/f7a724ea-b46e-494a-b83c-94e7a6fec02a',
@@ -371,6 +384,17 @@ const config: ExpoConfig = {
       '',
     kakaoAppKey:
       process.env.EXPO_PUBLIC_KAKAO_APP_KEY ?? process.env.KAKAO_APP_KEY ?? '',
+    admob: {
+      appIdAndroid: process.env.EXPO_PUBLIC_ADMOB_APP_ID_ANDROID ??
+        'ca-app-pub-2803643717997352~8320790178',
+      appIdIos: process.env.EXPO_PUBLIC_ADMOB_APP_ID_IOS ??
+        'ca-app-pub-2803643717997352~5970615545',
+      rewardedUnitAndroid:
+        process.env.EXPO_PUBLIC_ADMOB_REWARDED_UNIT_ANDROID ??
+        'ca-app-pub-2803643717997352/9908766911',
+      rewardedUnitIos: process.env.EXPO_PUBLIC_ADMOB_REWARDED_UNIT_IOS ??
+        'ca-app-pub-2803643717997352/7422204375',
+    },
   },
 };
 

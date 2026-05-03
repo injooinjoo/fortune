@@ -88,6 +88,7 @@ import {
 } from '../lib/chat-provider';
 import { onDeviceLLMEngine } from '../lib/on-device-llm';
 import {
+  ackScheduledReplyIfPresent,
   clearActiveChatCharacterId,
   setActiveChatCharacterId,
   setAppIconBadgeCount,
@@ -111,6 +112,7 @@ import { fortuneTheme } from '../lib/theme';
 import { loveHeartbeat, scoreReveal, tapLight } from '../lib/haptics';
 import { pickPresenceLine } from '../lib/presence-lines';
 import { useVoiceInput } from '../lib/use-voice-input';
+import { useRewardedAd } from '../lib/ad-rewards';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { useFriendCreation } from '../providers/friend-creation-provider';
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
@@ -269,6 +271,21 @@ export function ChatScreen() {
   } = useMobileAppState();
   const { createdFriends, resetDraft, removeFriend } = useFriendCreation();
   const { isSupported, startSocialAuth } = useSocialAuth();
+  // 한도 도달 paywall 에서 "광고 보고 토큰" 옵션 제공. 광고 비활성 / 미준비
+  // 시 isReady=false 라 alert 분기에서 자동 숨김.
+  const rewardedAd = useRewardedAd({
+    session,
+    userId: session?.user.id ?? null,
+    onReward: (outcome) => {
+      if (outcome.success && outcome.tokensGranted) {
+        // 잔액 갱신은 premium-remote 가 다음 fetch 시 반영. 여기선 토스트만.
+        Alert.alert(
+          '🎁 토큰 획득',
+          `광고 시청으로 ${outcome.tokensGranted} 토큰을 받았어요.`,
+        );
+      }
+    },
+  });
   const [activeFortuneType, setActiveFortuneType] =
     useState<FortuneTypeId | null>(null);
   const [activeProviderId, setActiveProviderId] =
@@ -2584,20 +2601,30 @@ export function ChatScreen() {
         deliverAt?: string;
       } | null;
 
-      // Streak 한도 도달 (429). 토큰/구독 안내 후 chat 흐름 종료.
+      // Streak 한도 도달 (429). 토큰/구독/광고 안내 후 chat 흐름 종료.
       if (payload?.error === 'daily_chat_limit_reached') {
         const limit = payload.chatLimit?.dailyLimit ?? 30;
+        const buttons: import('react-native').AlertButton[] = [
+          { text: '확인', style: 'cancel' as const },
+          {
+            text: '구독 알아보기',
+            onPress: () => router.push('/premium'),
+          },
+        ];
+        // 광고 시청 옵션은 광고 모듈 사용 가능 + 광고 prefetch 완료된 경우만 추가.
+        if (rewardedAd.isReady && !rewardedAd.isUnavailable) {
+          buttons.splice(1, 0, {
+            text: '광고 보고 1 토큰',
+            onPress: () => {
+              void rewardedAd.showAd();
+            },
+          });
+        }
         Alert.alert(
           '오늘 무료 채팅 한도',
           payload.message ??
-            `오늘 ${limit}개 메시지를 모두 사용했어요. 내일 또 만나요 ✨`,
-          [
-            { text: '확인', style: 'cancel' },
-            {
-              text: '구독 알아보기',
-              onPress: () => router.push('/premium'),
-            },
-          ],
+            `오늘 ${limit}개 메시지를 모두 사용했어요. 광고 보고 토큰 받거나 구독으로 무제한 사용해보세요.`,
+          buttons,
         );
         return;
       }
@@ -2673,15 +2700,10 @@ export function ChatScreen() {
       // 푸시로 다시 보내지 않도록 client_acked_at 마킹. 실패해도 사용자
       // 가시 영향은 없음 — 푸시 1회 중복 노이즈만 발생할 수 있음 (backend
       // 가 20초 grace window 로 race 완화).
-      if (scheduledId && supabase) {
-        supabase.functions
-          .invoke('ack-scheduled-reply', {
-            body: { scheduledId },
-          })
-          .catch((ackError: unknown) => {
-            console.warn('[chat] ack-scheduled-reply 실패:', ackError);
-          });
-      }
+      // ackScheduledReplyIfPresent (push-notifications.ts) 가 module-scope
+      // dedup Set 보유 → 같은 scheduledId 가 send→response + push receive
+      // 양쪽 채널로 도착해도 네트워크 1회만.
+      ackScheduledReplyIfPresent(scheduledId);
     } catch (error) {
       if (error instanceof OnDeviceNotReadyError) {
         // 온디바이스 미준비 시: 팝업 없이 백그라운드 다운로드만 트리거.
