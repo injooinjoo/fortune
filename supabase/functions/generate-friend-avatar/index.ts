@@ -3,8 +3,13 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { LLMFactory } from "../_shared/llm/factory.ts";
+import { UsageLogger } from "../_shared/llm/usage-logger.ts";
 import { authenticateUser } from "../_shared/auth.ts";
 import type { ImageResponse } from "../_shared/llm/types.ts";
+
+// 첫 1회는 무료, 재시도부터 25 토큰 차감 (구독자 무제한).
+// "첫 시도" 여부는 llm_usage_logs 의 friend-avatar 성공 카운트로 판정.
+const FRIEND_AVATAR_RETRY_COST = 25;
 
 interface GenerateFriendAvatarRequest {
   gender: string;
@@ -169,8 +174,126 @@ serve(async (req: Request) => {
       throw new Error("Supabase service role 환경변수가 설정되지 않았습니다");
     }
 
-    const prompt = buildPrompt(request);
-    const imageResult = await generateImageWithFallback(prompt);
+    const supabase = createClient(supabaseUrl, serviceRoleKey);
+
+    // 첫 시도 무료 / 재시도 25 토큰. 구독자는 통과.
+    const { data: subscription } = await supabase
+      .from("subscriptions")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("status", "active")
+      .gt("expires_at", new Date().toISOString())
+      .limit(1)
+      .maybeSingle();
+
+    const hasUnlimited = !!subscription;
+    let tokensDeducted = false;
+    let balanceBeforeDeduct = 0;
+
+    if (!hasUnlimited) {
+      const { count: priorAttempts } = await supabase
+        .from("llm_usage_logs")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .eq("fortune_type", "friend-avatar")
+        .eq("success", true);
+
+      const isFirstFree = (priorAttempts ?? 0) === 0;
+
+      if (!isFirstFree) {
+        const { data: tokenData } = await supabase
+          .from("token_balance")
+          .select("balance, total_spent")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        balanceBeforeDeduct = tokenData?.balance ?? 0;
+        const totalSpent = tokenData?.total_spent ?? 0;
+
+        if (balanceBeforeDeduct < FRIEND_AVATAR_RETRY_COST) {
+          return new Response(
+            JSON.stringify({
+              success: false,
+              error: "토큰이 부족합니다 (재생성 25 토큰 필요)",
+              errorCode: "unknown",
+            } as GenerateFriendAvatarResponse),
+            {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+              status: 402,
+            },
+          );
+        }
+
+        const newBalance = balanceBeforeDeduct - FRIEND_AVATAR_RETRY_COST;
+        await supabase.from("token_balance").upsert(
+          {
+            user_id: user.id,
+            balance: newBalance,
+            total_spent: totalSpent + FRIEND_AVATAR_RETRY_COST,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "user_id" },
+        );
+        await supabase.from("token_transactions").insert({
+          user_id: user.id,
+          transaction_type: "consumption",
+          amount: -FRIEND_AVATAR_RETRY_COST,
+          balance_after: newBalance,
+          description: "친구 아바타 재생성",
+          reference_type: "friend_avatar_retry",
+        });
+        tokensDeducted = true;
+      }
+    }
+
+    let imageResult: ImageResponse;
+    try {
+      const prompt = buildPrompt(request);
+      imageResult = await generateImageWithFallback(prompt);
+    } catch (genError) {
+      // 이미지 생성 실패 시 차감한 토큰 환불.
+      if (tokensDeducted) {
+        await supabase.from("token_balance").upsert(
+          {
+            user_id: user.id,
+            balance: balanceBeforeDeduct,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "user_id" },
+        );
+        await supabase.from("token_transactions").insert({
+          user_id: user.id,
+          transaction_type: "refund",
+          amount: FRIEND_AVATAR_RETRY_COST,
+          balance_after: balanceBeforeDeduct,
+          description: "친구 아바타 생성 실패 환불",
+          reference_type: "friend_avatar_retry",
+        });
+      }
+      throw genError;
+    }
+
+    // 사용량 로깅 — 다음 호출에서 "첫 시도" 판정 기준이 됨.
+    UsageLogger.log({
+      userId: user.id,
+      fortuneType: "friend-avatar",
+      provider: imageResult.provider,
+      model: imageResult.model,
+      response: {
+        content: "",
+        provider: imageResult.provider,
+        model: imageResult.model,
+        usage: {
+          promptTokens: 0,
+          completionTokens: 0,
+          totalTokens: 0,
+        },
+        latency: imageResult.latency,
+        finishReason: "stop",
+      },
+    }).catch((logError) => {
+      console.error("[friend-avatar] usage log failed:", logError);
+    });
 
     const imageBytes = Uint8Array.from(
       atob(imageResult.imageBase64),
@@ -178,7 +301,6 @@ serve(async (req: Request) => {
     );
     const storagePath = buildStoragePath(request.name || "friend");
 
-    const supabase = createClient(supabaseUrl, serviceRoleKey);
     const { error: uploadError } = await supabase.storage
       .from(BUCKET_NAME)
       .upload(storagePath, imageBytes, {

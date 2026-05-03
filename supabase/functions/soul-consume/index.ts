@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { FORTUNE_TOKEN_COSTS } from '../_shared/types.ts'
+import { FORTUNE_TOKEN_COSTS, normalizeFortuneType } from '../_shared/types.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -57,9 +57,9 @@ serve(async (req) => {
 
     // 요청 Body 파싱
     const body = await req.json()
-    const { fortuneType, referenceId } = body
+    const { fortuneType: rawFortuneType, referenceId } = body
 
-    if (!fortuneType) {
+    if (!rawFortuneType) {
       return new Response(
         JSON.stringify({ error: 'Missing fortuneType' }),
         {
@@ -69,7 +69,10 @@ serve(async (req) => {
       )
     }
 
-    console.log(`🔮 Soul consume request: fortuneType=${fortuneType}, referenceId=${referenceId}`)
+    // camelCase / snake_case 클라이언트 호출도 허용 (DB 일관성 위해 kebab 정규화).
+    const fortuneType = normalizeFortuneType(rawFortuneType)
+
+    console.log(`🔮 Soul consume request: fortuneType=${fortuneType} (raw=${rawFortuneType}), referenceId=${referenceId}`)
 
     // Supabase 클라이언트 생성
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!

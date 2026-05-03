@@ -109,15 +109,25 @@ export const FORTUNE_POINT_COSTS = {
   'palm-reading': 10,
   physiognomy: 12,
   'face-reading': 15,
+  // === 포스터 가이드 7종 (generate-poster-guide Edge Function) ===
+  // palm-reading 은 위 entry 와 동일 키 (10P).
+  'beauty-simulation': 10,
+  'hair-style-guide': 10,
+  'face-reading-guide': 12,
+  'ootd-guide': 10,
+  'blind-date-guide': 12,
+  'past-life-guide': 10,
   timeline: 12,
   'lucky-exam': 8,
   exam: 8,
   network: 10,
   'network-report': 15,
 
-  // === 채팅/롤플레이 (4P per message) ===
-  'free-chat': 4,
-  'character-chat': 4,
+  // === 채팅/롤플레이 (1 토큰 per LLM 호출, 배칭됨) ===
+  // 5s idle window 안에 사용자가 N개 메시지를 보내도 batched 되어
+  // edge function 은 1 회만 호출되므로 1 토큰만 차감된다.
+  'free-chat': 1,
+  'character-chat': 1,
 
   // === 울트라 프리미엄 (20-50P) ===
   startup: 30,
@@ -143,3 +153,15 @@ export const FORTUNE_POINT_COSTS = {
 export const FORTUNE_TOKEN_COSTS = FORTUNE_POINT_COSTS
 
 export type FortuneType = keyof typeof FORTUNE_TOKEN_COSTS
+
+/**
+ * fortuneType 키를 canonical kebab-case 로 정규화한다.
+ * DB 에 dailyCalendar / daily_calendar / daily-calendar 가 혼재해 토큰
+ * 차감 lookup 이 깨지는 사례 차단. soul-consume 등 entry point 에서 사용.
+ */
+export function normalizeFortuneType(input: string): string {
+  return input
+    .replace(/_/g, "-")
+    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+    .toLowerCase();
+}

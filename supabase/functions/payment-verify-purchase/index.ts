@@ -440,6 +440,27 @@ const PRODUCT_TOKENS: Record<string, number> = {
   "com.beyond.fortune.points3000": 4400,
 };
 
+// 허용된 product_id 화이트리스트.
+// packages/product-contracts/src/products.ts 의 allProductIds 와 동기화 필수.
+// 이 목록에 없는 ID 는 결제 검증 단계에서 차단 (DB 오염 방지).
+const ALLOWED_PRODUCT_IDS = new Set<string>([
+  // Consumables (active)
+  "com.beyond.fortune.tokens10",
+  "com.beyond.fortune.tokens50",
+  "com.beyond.fortune.tokens100",
+  "com.beyond.fortune.tokens200",
+  // Legacy consumables (restore-only, storefront 미노출)
+  "com.beyond.fortune.points300",
+  "com.beyond.fortune.points600",
+  "com.beyond.fortune.points1200",
+  "com.beyond.fortune.points3000",
+  // Subscriptions
+  "com.beyond.fortune.subscription.monthly",
+  "com.beyond.fortune.subscription.max",
+  // Non-consumable
+  "com.beyond.fortune.premium_saju_lifetime",
+]);
+
 serve(async (req) => {
   console.log("========================================");
   console.log("🚀 payment-verify-purchase v18 시작");
@@ -494,6 +515,23 @@ serve(async (req) => {
       console.log("❌ 필수 파라미터 누락!");
       return new Response(
         JSON.stringify({ valid: false, error: "Missing required parameters" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
+    }
+
+    // product_id 화이트리스트 검증.
+    // 정의되지 않은 productId 로 결제 시도 시 차단 (DB 에 87 건 오염 사례 발견됨).
+    if (!ALLOWED_PRODUCT_IDS.has(productId)) {
+      console.log(`❌ 허용되지 않은 productId: ${productId}`);
+      return new Response(
+        JSON.stringify({
+          valid: false,
+          error: "Unknown product_id",
+          productId,
+        }),
         {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },

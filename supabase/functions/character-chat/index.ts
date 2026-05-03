@@ -23,6 +23,7 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { LLMFactory } from "../_shared/llm/factory.ts";
+import { UsageLogger } from "../_shared/llm/usage-logger.ts";
 import {
   MODEL_OUTPUT_BLOCK_FALLBACK_RESPONSE,
   moderateText,
@@ -2673,6 +2674,57 @@ serve(async (req: Request) => {
       );
     }
 
+    // Streak 기반 일일 채팅 한도 (Free 사용자만, 구독자는 무제한).
+    // streak: 1일=30, 2일=100, 3일=200, 4일+=400. 끊기면 30 으로 리셋.
+    // 모더레이션 통과한 실 호출만 카운트되도록 여기에 위치.
+    if (userId && supabase) {
+      const { data: subscription } = await supabase
+        .from("subscriptions")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("status", "active")
+        .gt("expires_at", new Date().toISOString())
+        .limit(1)
+        .maybeSingle();
+
+      const hasUnlimitedChat = !!subscription;
+
+      if (!hasUnlimitedChat) {
+        const { data: streakResult, error: streakError } = await supabase
+          .rpc("consume_chat_streak", { p_user_id: userId })
+          .single<{
+            allowed: boolean;
+            current_count: number;
+            daily_limit: number;
+            streak_days: number;
+          }>();
+
+        if (streakError) {
+          console.warn(
+            "[character-chat] streak check failed (fail-open):",
+            streakError,
+          );
+        } else if (streakResult && !streakResult.allowed) {
+          return new Response(
+            JSON.stringify({
+              success: false,
+              error: "daily_chat_limit_reached",
+              message: "오늘 무료 채팅 한도에 도달했어요. 내일 또 만나요 ✨",
+              chatLimit: {
+                currentCount: streakResult.current_count,
+                dailyLimit: streakResult.daily_limit,
+                streakDays: streakResult.streak_days,
+              },
+            }),
+            {
+              status: 429,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            },
+          );
+        }
+      }
+    }
+
     // 인증 사용자는 DB 기반 관계/메모리 컨텍스트 우선
     if (userId && supabase) {
       try {
@@ -2955,6 +3007,22 @@ serve(async (req: Request) => {
     }
 
     const latencyMs = Date.now() - startTime;
+
+    // LLM 사용량 로깅 (비용/지연/모델 분포 추적). 실패해도 메인 흐름 차단 X.
+    UsageLogger.log({
+      userId: userId ?? undefined,
+      fortuneType: "character-chat",
+      provider: llmResponse.provider,
+      model: llmResponse.model,
+      response: llmResponse,
+      metadata: {
+        characterId,
+        fallbackUsed,
+        isFortuneRequest,
+      },
+    }).catch((logError) => {
+      console.error("[character-chat] usage log failed:", logError);
+    });
 
     // 후처리: 호감도 평가 추출 → OOC 블록 제거 → 이모티콘 검증
     const { cleanedText: textWithoutAffinity, affinityDelta } =
