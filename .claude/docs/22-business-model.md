@@ -29,9 +29,9 @@ Ondo 앱의 수익화 모델을 정의한 문서입니다. **모든 AI 기능은
 | 플랜 | 가격(KRW) | 보너스토큰/월 | 일일 채팅 한도 | 추가 혜택 |
 |---|---:|---:|---:|---|
 | **Free** | 0 | 매일 streak grant + 광고 1회당 1토큰 | streak: 30/100/200/400 | 광고 노출 |
-| **Lite** | ₩4,900 | 200 | 무제한 (구독자) | 광고 제거 |
+| **Lite** | ₩4,400 | 200 | 무제한 (구독자) | 광고 제거 |
 | **Pro** ⭐ | ₩9,900 | 500 | 무제한 | + 캐릭터 무제한, 메모리 확장 |
-| **Max** | ₩19,900 | 2,000 | 무제한 | + 음성 무제한, 우선응답, TTS 보너스 |
+| **Max** | ₩19,800 | 2,000 | 무제한 | + 음성 무제한, 우선응답, TTS 보너스 |
 
 연간: 월 × 10 (~17% 할인). Apple Small Business Program 시 수수료 15%.
 
@@ -65,8 +65,8 @@ DB: `user_chat_streak` 테이블 + `consume_chat_streak(user_id)` RPC.
 
 | 패키지 | 가격 | 토큰 | ₩/토큰 |
 |---|---:|---:|---:|
-| Starter | ₩1,500 | 50 | 30 |
-| Basic | ₩4,000 | 150 | 27 |
+| Starter | ₩1,100 | 30 | 37 |
+| Basic | ₩4,400 | 150 | 29 |
 | Popular | ₩9,900 | 400 | 25 |
 | Heavy | ₩22,000 | 1,000 | 22 |
 
@@ -153,15 +153,20 @@ FROM user_chat_streak GROUP BY 1 ORDER BY 1;
 
 ---
 
-## 8. 사용자 작업 필수 (BM v2.2 런칭 전 체크)
+## 8. 사용자 작업 (BM v2.2 런칭 전 체크)
 
-- [ ] **App Store Connect**: 신규 7개 IAP 등록 (tokens.starter/basic/popular/heavy + subscription.lite/pro/max)
-- [ ] **Google Play Console**: 동일
+- [x] **App Store Connect**: 신규 7개 IAP 등록 (tokens.starter/basic/popular/heavy + subscription.lite/pro/max)
+- [x] **Google Play Console**: 동일
 - [ ] **Apple Family Sharing 비활성화** (premium_saju_lifetime)
 - [ ] **Legacy product_id 비활성화** (tokens10/50/100/200, subscription.monthly) — restore 만 허용
-- [ ] **AdMob 계정** 생성 + iOS/Android ad unit ID 발급
-- [ ] **AdMob SSV** 활성화 + public key 등록 (grant-ad-reward 검증 강화 시 필요)
-- [ ] **expo-ads-admob 또는 react-native-google-mobile-ads** 통합 (네이티브 빌드 필요)
+- [x] **AdMob 계정** + iOS/Android Rewarded ad unit ID 발급
+  - iOS App ID: `ca-app-pub-2803643717997352~5970615545`
+  - Android App ID: `ca-app-pub-2803643717997352~8320790178`
+  - iOS Rewarded Unit: `ca-app-pub-2803643717997352/7422204375`
+  - Android Rewarded Unit: `ca-app-pub-2803643717997352/9908766911`
+- [ ] **AdMob SSV 검증 로직** grant-ad-reward 에 추가 (ECDSA P-256, gstatic.com 동적 키 조회)
+- [ ] **AdMob SSV 콜백 URL 등록**: grant-ad-reward 배포 후 양 ad unit 에 등록
+- [ ] **expo-ads-admob / react-native-google-mobile-ads** 통합 (네이티브 빌드 필요)
 
 ---
 

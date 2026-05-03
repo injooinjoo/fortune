@@ -430,8 +430,8 @@ async function verifyAppleReceipt(
 
 // 상품별 토큰 수량 매핑 (BM v2.2 + 레거시 복원)
 const PRODUCT_TOKENS: Record<string, number> = {
-  // BM v2.2 신규 패키지
-  "com.beyond.fortune.tokens.starter": 50,
+  // BM v2.2 신규 패키지 (Apple Korea tier 정합 — Starter 50→30 으로 축소)
+  "com.beyond.fortune.tokens.starter": 30,
   "com.beyond.fortune.tokens.basic": 150,
   "com.beyond.fortune.tokens.popular": 400,
   "com.beyond.fortune.tokens.heavy": 1000,

@@ -38,18 +38,18 @@ export const productCatalog = {
   // === BM v2.2 신규 토큰 패키지 ===
   'com.beyond.fortune.tokens.starter': {
     id: 'com.beyond.fortune.tokens.starter',
-    title: '50 토큰',
+    title: '30 토큰',
     description: '기본 운세를 가볍게 체험할 수 있는 스타터 패키지',
-    price: 1500,
-    points: 50,
-    basePoints: 50,
+    price: 1100,
+    points: 30,
+    basePoints: 30,
     isSubscription: false,
   },
   'com.beyond.fortune.tokens.basic': {
     id: 'com.beyond.fortune.tokens.basic',
     title: '150 토큰',
     description: '자주 사용하는 분들을 위한 기본 패키지',
-    price: 4000,
+    price: 4400,
     points: 150,
     basePoints: 150,
     isSubscription: false,
@@ -77,7 +77,7 @@ export const productCatalog = {
     id: 'com.beyond.fortune.subscription.lite',
     title: '라이트 구독',
     description: '매월 200 토큰 + 광고 제거',
-    price: 4900,
+    price: 4400,
     points: 200,
     isSubscription: true,
     subscriptionPeriod: 'lite',
@@ -176,7 +176,7 @@ export const productCatalog = {
     id: 'com.beyond.fortune.subscription.max',
     title: '맥스 구독',
     description: '매월 2000 토큰 + 음성 무제한 + 우선 응답',
-    price: 19900,
+    price: 19800,
     points: 2000,
     isSubscription: true,
     subscriptionPeriod: 'max',
@@ -264,7 +264,7 @@ export function isLegacySubscriptionProductId(productId: ProductId): boolean {
 export function getProductDisplayTitle(productId: ProductId): string {
   switch (productId) {
     case 'com.beyond.fortune.tokens.starter':
-      return '토큰 50개';
+      return '토큰 30개';
     case 'com.beyond.fortune.tokens.basic':
       return '토큰 150개';
     case 'com.beyond.fortune.tokens.popular':
