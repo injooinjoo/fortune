@@ -1520,13 +1520,9 @@ export function ChatScreen() {
     }
 
     try {
-      if (session) {
-        await consumeRemoteTokens(session, {
-          fortuneType: completed.fortuneType,
-          referenceId: `fortune:${character.id}:${completed.fortuneType}`,
-        });
-      }
-
+      // C1 fix: Edge Function 호출 → 성공 시에만 토큰 차감.
+      // 이전 순서(차감 먼저)는 Edge 실패 시 토큰만 소실되는 빌링 버그.
+      // 차감 실패(insufficient/race) 시 결과는 이미 생성됐으므로 보여주고 로그만.
       const embeddedResult = await resolveFortuneResultMessage(
         completed.fortuneType,
         buildResultContext(character, completed.answers),
@@ -1535,6 +1531,30 @@ export function ChatScreen() {
 
       if (!embeddedResult) {
         return;
+      }
+
+      if (session) {
+        try {
+          await consumeRemoteTokens(session, {
+            fortuneType: completed.fortuneType,
+            referenceId: `fortune:${character.id}:${completed.fortuneType}`,
+          });
+        } catch (chargeError) {
+          if (
+            chargeError instanceof RemoteTokenConsumeError &&
+            chargeError.code === 'INSUFFICIENT_TOKENS'
+          ) {
+            appendMessages(character, [
+              buildAssistantTextMessage(
+                chargeError.message || '토큰이 부족해요. 토큰을 충전한 뒤 다시 시도해주세요.',
+              ),
+            ]);
+            return;
+          }
+          await captureError(chargeError, {
+            surface: 'chat:fortune-charge-after-success',
+          }).catch(() => undefined);
+        }
       }
 
       const resultReply = buildAssistantTextMessage(
@@ -1556,14 +1576,7 @@ export function ChatScreen() {
         }).catch(() => undefined);
       });
     } catch (error) {
-      if (error instanceof RemoteTokenConsumeError) {
-        appendMessages(character, [
-          buildAssistantTextMessage(
-            error.message || '토큰이 부족해요. 토큰을 충전한 뒤 다시 시도해주세요.',
-          ),
-        ]);
-        return;
-      }
+      // Edge Function 실패 (resolveFortuneResultMessage throw). 토큰 차감 X.
       throw error;
     } finally {
       setFortuneTypingCharacterId(null);
@@ -2554,20 +2567,45 @@ export function ChatScreen() {
         },
       });
 
-      if (error) {
-        throw error;
-      }
-
       const payload = data as {
         response?: string;
         success?: boolean;
         error?: string;
+        message?: string;
+        chatLimit?: {
+          currentCount: number;
+          dailyLimit: number;
+          streakDays: number;
+        };
         delaySec?: number;
         emotionTag?: string;
         segments?: unknown;
         scheduledId?: string;
         deliverAt?: string;
       } | null;
+
+      // Streak 한도 도달 (429). 토큰/구독 안내 후 chat 흐름 종료.
+      if (payload?.error === 'daily_chat_limit_reached') {
+        const limit = payload.chatLimit?.dailyLimit ?? 30;
+        Alert.alert(
+          '오늘 무료 채팅 한도',
+          payload.message ??
+            `오늘 ${limit}개 메시지를 모두 사용했어요. 내일 또 만나요 ✨`,
+          [
+            { text: '확인', style: 'cancel' },
+            {
+              text: '구독 알아보기',
+              onPress: () => router.push('/premium'),
+            },
+          ],
+        );
+        return;
+      }
+
+      if (error) {
+        throw error;
+      }
+
       if (!payload?.response || (payload.success === false)) {
         throw new Error(payload?.error ?? 'Character chat response is empty.');
       }

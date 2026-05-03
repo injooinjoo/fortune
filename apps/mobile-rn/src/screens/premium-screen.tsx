@@ -314,7 +314,7 @@ export function PremiumScreen() {
             subtitle={product.description}
             trailing={`월 ${storePriceLabels[product.id] ?? formatPrice(product.price)}`}
             badge={
-              product.id === 'com.beyond.fortune.subscription.max'
+              product.id === 'com.beyond.fortune.subscription.pro'
                 ? '추천'
                 : undefined
             }
