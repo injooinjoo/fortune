@@ -5,6 +5,12 @@ export type FortuneTypeId =
   | 'traditional-saju'
   | 'face-reading'
   | 'palm-reading'
+  | 'beauty-simulation'
+  | 'hair-style-guide'
+  | 'face-reading-guide'
+  | 'ootd-guide'
+  | 'blind-date-guide'
+  | 'past-life-guide'
   | 'mbti'
   | 'blood-type'
   | 'personality-dna'
@@ -80,7 +86,37 @@ const fortuneTypeSpecs = [
   {
     id: 'palm-reading',
     labelKey: 'fortunePalmReading',
-    endpoint: '/fortune-palm-reading',
+    endpoint: '/generate-poster-guide',
+  },
+  {
+    id: 'beauty-simulation',
+    labelKey: 'fortuneBeautySimulation',
+    endpoint: '/generate-poster-guide',
+  },
+  {
+    id: 'hair-style-guide',
+    labelKey: 'fortuneHairStyleGuide',
+    endpoint: '/generate-poster-guide',
+  },
+  {
+    id: 'face-reading-guide',
+    labelKey: 'fortuneFaceReadingGuide',
+    endpoint: '/generate-poster-guide',
+  },
+  {
+    id: 'ootd-guide',
+    labelKey: 'fortuneOotdGuide',
+    endpoint: '/generate-poster-guide',
+  },
+  {
+    id: 'blind-date-guide',
+    labelKey: 'fortuneBlindDateGuide',
+    endpoint: '/generate-poster-guide',
+  },
+  {
+    id: 'past-life-guide',
+    labelKey: 'fortunePastLifeGuide',
+    endpoint: '/generate-poster-guide',
   },
   { id: 'mbti', labelKey: 'fortuneMbti', endpoint: '/fortune-mbti' },
   {

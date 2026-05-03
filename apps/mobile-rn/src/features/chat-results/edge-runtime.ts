@@ -397,14 +397,71 @@ function buildFortuneRequestBody(
       break;
     }
     case 'palm-reading': {
-      // Palm reading Edge Function expects { userId, imageBase64 } only.
+      // Generic poster-guide Edge Function expects:
+      //   { posterType, userId, imageBase64?, contextText? }
       // Survey field id is `palmImage` (defined in chat-survey/registry.ts).
+      payload.posterType = 'palm-reading';
       const imageData = readString(answers.palmImage);
       if (imageData) {
         payload.imageBase64 = imageData;
       }
       // Drop the raw `palmImage` key to avoid shipping the same base64 twice.
       delete payload.palmImage;
+      break;
+    }
+    case 'beauty-simulation':
+    case 'hair-style-guide':
+    case 'face-reading-guide': {
+      // photoKind: 'face' — survey field id is `faceImage`.
+      payload.posterType = fortuneType;
+      const imageData = readString(answers.faceImage);
+      if (imageData) {
+        payload.imageBase64 = imageData;
+      }
+      delete payload.faceImage;
+      break;
+    }
+    case 'ootd-guide': {
+      // photoKind: 'face-and-body' — survey field id is `bodyImage`.
+      // Optional contextText: lookContext label (work/date/daily/special).
+      payload.posterType = 'ootd-guide';
+      const imageData = readString(answers.bodyImage);
+      if (imageData) {
+        payload.imageBase64 = imageData;
+      }
+      const lookContextLabel = labels.lookContext ?? readString(answers.lookContext);
+      if (lookContextLabel) {
+        payload.contextText = lookContextLabel;
+      }
+      delete payload.bodyImage;
+      delete payload.lookContext;
+      break;
+    }
+    case 'blind-date-guide': {
+      // photoKind: 'face' + optional contextText.
+      payload.posterType = 'blind-date-guide';
+      const imageData = readString(answers.faceImage);
+      if (imageData) {
+        payload.imageBase64 = imageData;
+      }
+      const contextText = readString(answers.contextText);
+      if (contextText) {
+        payload.contextText = contextText;
+      }
+      delete payload.faceImage;
+      // contextText already in payload via generic loop — keep it as-is.
+      break;
+    }
+    case 'past-life-guide': {
+      // photoKind: 'none' — text-only survey. eraVibe + optional contextText.
+      payload.posterType = 'past-life-guide';
+      const eraLabel = labels.eraVibe ?? readString(answers.eraVibe);
+      const ctxText = readString(answers.contextText);
+      const merged = [eraLabel, ctxText].filter(Boolean).join(' / ');
+      if (merged) {
+        payload.contextText = merged;
+      }
+      delete payload.eraVibe;
       break;
     }
     case 'past-life': {
