@@ -556,6 +556,3 @@ leadershipAnalysis: {...}                // 남성 전용
 
 - [05-fortune-system.md](05-fortune-system.md) - 운세 시스템 전체
 - [17-face-reading-system.md](17-face-reading-system.md) - 관상 V2 시스템 전체 가이드
-- [docs/data/LLM_MODULE_GUIDE.md](/docs/data/LLM_MODULE_GUIDE.md) - 상세 가이드
-- [docs/data/LLM_PROVIDER_MIGRATION.md](/docs/data/LLM_PROVIDER_MIGRATION.md) - Provider 전환
-- [docs/data/PROMPT_ENGINEERING_GUIDE.md](/docs/data/PROMPT_ENGINEERING_GUIDE.md) - 프롬프트 작성

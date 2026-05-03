@@ -2,27 +2,73 @@
 
 > 최종 업데이트: 2026.05.03
 
-## 워크플로우 (글로벌 gstack 위임)
+## 워크플로우 (검토 게이트 + 사용자 직접 확인)
 
-이 프로젝트는 솔로 운영입니다. 자체 Generator-Evaluator 파이프라인 대신 글로벌 `~/.claude/skills/`의 검증된 스킬을 위임 사용합니다.
+이 프로젝트는 솔로 운영이며 **모든 코드 변경/배포/업데이트는 사용자 직접 확인 게이트를 통과해야 합니다**. 자동 배포는 기본 OFF.
+
+### 4단계 라이프사이클
+
+```
+1. PLAN     ─ 변경 범위/접근 결정 (큰 변경은 /autoplan)
+2. CODE     ─ Search Before Building, Root Cause First로 작성
+3. REVIEW   ─ 멀티 에이전트 병렬 검토 (아래 게이트 표 참고)
+4. CONFIRM  ─ 사용자가 보고서 확인 후 명시적으로 "배포해" / /ship
+```
+
+### 변경 유형별 진입점
 
 | 상황 | 사용할 스킬 / 도구 |
 |------|---------------------|
-| 큰 변경 (3+ 파일, 새 기능) | `/autoplan` (CEO/eng/design/devex 4단 리뷰) → 코드 작성 |
+| 큰 변경 (3+ 파일, 새 기능) | `/autoplan` (CEO/eng/design/devex 4단 리뷰) → 코드 |
 | 버그/에러/"안됨"/"깨짐" | `/investigate` (4-phase RCA, Iron Law: no fix without root cause) |
 | 1–2 파일 단순 수정 | 직접 편집 + `npx tsc --noEmit` |
-| 코드 리뷰 / 머지 직전 | `/review` |
-| 브랜치 → PR | `/ship` (CHANGELOG, 버전 범프, 푸시, PR 생성) |
-| QA / 동작 확인 | iOS Simulator MCP (`mcp__ios-simulator__*`) 또는 Expo Dev Client |
-| 보안/스킴 점검 | `/cso` 또는 `/security-review` |
 | Supabase Edge Function 단독 작업 | 프로젝트 `backend-service` 스킬 |
 
-배포는 Stop 훅이 `./scripts/auto-deploy-on-stop.sh`로 OTA를 자동 처리합니다 (네이티브 모듈 추가 시는 EAS build 필요).
+### 검토 게이트 (CODE → REVIEW)
+
+코드 변경 후, 가능한 경우 **여러 에이전트를 병렬**로 실행하여 통합 보고:
+
+| 검토 종류 | 도구 | 트리거 조건 |
+|-----------|------|-------------|
+| Diff 안전성 | `/review` | 모든 코드 변경 |
+| 독립 2차 의견 | `/codex` (consult/challenge) | 큰 변경 또는 까다로운 로직 |
+| 동작 확인 | iOS Simulator MCP (`mcp__ios-simulator__*`) | UI/페이지 변경 |
+| 보안 | `/security-review` 또는 `/cso` | Edge Function / DB / auth 변경 |
+| 디자인 일관성 | `/design-review` | 시각적 변경 |
+| 설계 적합성 | `/plan-eng-review` | 새 아키텍처/패턴 도입 |
+
+병렬 호출 예시 (Agent tool 멀티 콜):
+```
+Agent(/review, diff 안전성), Agent(/codex consult, 2nd opinion),
+Agent(iOS Simulator, 동작 캡처)  ← 한 메시지에서 동시 실행
+```
+
+검토 결과는 **하나의 통합 보고**로 사용자에게 제시하고, 사용자 응답 전에는 다음 단계로 넘어가지 않습니다.
+
+### 배포 게이트 (REVIEW → CONFIRM)
+
+Stop 훅 `scripts/auto-deploy-on-stop.sh`은 **리뷰 모드가 디폴트**입니다.
+
+| 모드 | 동작 |
+|------|------|
+| **리뷰 모드 (기본)** | 변경 요약 + `tsc` 검증 + 다음 명령 안내. **자동 배포 X** |
+| 자동 배포 모드 | `AUTO_DEPLOY_ON=1` 또는 `.claude/.auto-deploy-on` 파일 존재 시 활성. 옵트인 |
+| 완전 OFF | `AUTO_DEPLOY_OFF=1` 또는 `.claude/.auto-deploy-off` |
+
+실제 배포 명령(사용자 직접 실행 또는 사용자 명시 승인 후 Claude 실행):
+- Edge Function: `supabase functions deploy <fn>`
+- RN OTA: `cd apps/mobile-rn && eas update --branch production`
+- Native 변경: `pnpm deploy:native` (EAS build)
+- DB 마이그레이션: `supabase db push --include-all`
+
+`/ship`은 CHANGELOG + commit + PR까지만 — 실제 배포는 머지 후 또는 위 명령으로.
 
 ### 핵심 철학
+- **User Confirms Before Deploy**: 자동 배포 금지. 모든 외부 효과는 사용자 명시 승인 후.
 - **Search Before Building**: 새로 만들기 전 `Grep`/`Glob`으로 기존 코드 확인.
 - **Root Cause First**: 빈 catch / 단순 null 가드로 증상만 가리지 않기.
 - **Verify Before Done**: `npx tsc --noEmit` 통과 + 사용자 테스트 확인 후 완료 선언.
+- **Parallel Reviews**: 가능한 검토는 병렬로 — 시간 절약 + 더 많은 시각.
 - **Bisect Commits**: 하나의 논리적 변경 = 하나의 커밋.
 
 ---
