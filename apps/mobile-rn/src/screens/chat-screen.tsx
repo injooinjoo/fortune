@@ -87,7 +87,10 @@ import {
   resolveChatProvider,
 } from '../lib/chat-provider';
 import { onDeviceLLMEngine } from '../lib/on-device-llm';
-import { insertMessages as insertStoreMessages } from '../lib/message-store';
+import {
+  insertMessages as insertStoreMessages,
+  useStoreMessages,
+} from '../lib/message-store';
 import {
   ackScheduledReplyIfPresent,
   clearActiveChatCharacterId,
@@ -384,6 +387,31 @@ export function ChatScreen() {
       return next ?? current;
     });
   }, [cachedCharacterConversations]);
+
+  // MessageStore → useState 단방향 sync (Step 2.A).
+  //
+  // 푸시 도착 시 push-handler 가 store.insertMessages 호출 → store 변경 →
+  // useStoreMessages re-render → 이 effect 가 useState 갱신 → 화면 즉시 reflect.
+  // iMessage/WhatsApp/KakaoTalk 표준 — 채팅창에 머무는 동안 새 메시지 자동 등장.
+  //
+  // 단방향 (store → useState) 인 이유: chat-screen 의 send/append 는 여전히
+  // useState 가 source 이고 (옛 흐름 유지), store 에는 bridge 로 sync 만 됨.
+  // 두 source 가 같은 메시지 (id 동일) 면 store 가 더 길 수 없어 no-op.
+  // 다른 메시지 (push 로 도착한 새 메시지) 면 store len > useState len 으로 진입.
+  //
+  // 다음 phase 에서 useState 자체를 store 로 대체. 그때까지는 mirror sync.
+  const storeMessagesForActive = useStoreMessages(selectedCharacterId);
+  useEffect(() => {
+    if (!selectedCharacterId) return;
+    if (storeMessagesForActive.length === 0) return;
+    setMessagesByCharacterId((prev) => {
+      const existing = prev[selectedCharacterId] ?? [];
+      // store 가 더 많은 메시지를 가진 경우만 업데이트. 같거나 적으면 useState
+      // 가 더 fresh (chat-screen 이 직접 append 한 직후) — 덮어쓰지 않음.
+      if (storeMessagesForActive.length <= existing.length) return prev;
+      return { ...prev, [selectedCharacterId]: storeMessagesForActive };
+    });
+  }, [storeMessagesForActive, selectedCharacterId]);
 
   // 스레드 체류 중 새 AI/system 메시지 도착 → 즉시 읽음 처리.
   // 일반 메신저(iMessage/WhatsApp/KakaoTalk) 와 동일한 동작: 유저가 해당
