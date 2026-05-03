@@ -428,8 +428,18 @@ async function verifyAppleReceipt(
  * ============================================================
  */
 
-// 상품별 토큰 수량 매핑
+// 상품별 토큰 수량 매핑 (BM v2.2 + 레거시 복원)
 const PRODUCT_TOKENS: Record<string, number> = {
+  // BM v2.2 신규 패키지
+  "com.beyond.fortune.tokens.starter": 50,
+  "com.beyond.fortune.tokens.basic": 150,
+  "com.beyond.fortune.tokens.popular": 400,
+  "com.beyond.fortune.tokens.heavy": 1000,
+  // BM v2.2 신규 구독 (월간 보너스 토큰)
+  "com.beyond.fortune.subscription.lite": 200,
+  "com.beyond.fortune.subscription.pro": 500,
+  "com.beyond.fortune.subscription.max": 2000,
+  // Legacy 토큰 (restore 시 보조)
   "com.beyond.fortune.tokens10": 10,
   "com.beyond.fortune.tokens50": 50,
   "com.beyond.fortune.tokens100": 100,
@@ -438,27 +448,36 @@ const PRODUCT_TOKENS: Record<string, number> = {
   "com.beyond.fortune.points600": 700,
   "com.beyond.fortune.points1200": 1650,
   "com.beyond.fortune.points3000": 4400,
+  // Legacy 구독 (이전 분량 그대로 복원)
+  "com.beyond.fortune.subscription.monthly": 30000,
 };
 
 // 허용된 product_id 화이트리스트.
 // packages/product-contracts/src/products.ts 의 allProductIds 와 동기화 필수.
 // 이 목록에 없는 ID 는 결제 검증 단계에서 차단 (DB 오염 방지).
 const ALLOWED_PRODUCT_IDS = new Set<string>([
-  // Consumables (active)
+  // BM v2.2 storefront consumables
+  "com.beyond.fortune.tokens.starter",
+  "com.beyond.fortune.tokens.basic",
+  "com.beyond.fortune.tokens.popular",
+  "com.beyond.fortune.tokens.heavy",
+  // BM v2.2 storefront subscriptions
+  "com.beyond.fortune.subscription.lite",
+  "com.beyond.fortune.subscription.pro",
+  "com.beyond.fortune.subscription.max",
+  // Non-consumable
+  "com.beyond.fortune.premium_saju_lifetime",
+  // Legacy consumables (restore-only)
   "com.beyond.fortune.tokens10",
   "com.beyond.fortune.tokens50",
   "com.beyond.fortune.tokens100",
   "com.beyond.fortune.tokens200",
-  // Legacy consumables (restore-only, storefront 미노출)
   "com.beyond.fortune.points300",
   "com.beyond.fortune.points600",
   "com.beyond.fortune.points1200",
   "com.beyond.fortune.points3000",
-  // Subscriptions
+  // Legacy subscription (restore-only)
   "com.beyond.fortune.subscription.monthly",
-  "com.beyond.fortune.subscription.max",
-  // Non-consumable
-  "com.beyond.fortune.premium_saju_lifetime",
 ]);
 
 serve(async (req) => {

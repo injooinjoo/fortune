@@ -1,4 +1,15 @@
 export type ProductId =
+  // BM v2.2 신규 토큰 패키지 (storefront 노출)
+  | 'com.beyond.fortune.tokens.starter'
+  | 'com.beyond.fortune.tokens.basic'
+  | 'com.beyond.fortune.tokens.popular'
+  | 'com.beyond.fortune.tokens.heavy'
+  // BM v2.2 신규 구독 (storefront 노출)
+  | 'com.beyond.fortune.subscription.lite'
+  | 'com.beyond.fortune.subscription.pro'
+  // 평생소장 (storefront 노출)
+  | 'com.beyond.fortune.premium_saju_lifetime'
+  // Legacy / restore-only (storefront 미노출)
   | 'com.beyond.fortune.tokens10'
   | 'com.beyond.fortune.tokens50'
   | 'com.beyond.fortune.tokens100'
@@ -8,8 +19,7 @@ export type ProductId =
   | 'com.beyond.fortune.points1200'
   | 'com.beyond.fortune.points3000'
   | 'com.beyond.fortune.subscription.monthly'
-  | 'com.beyond.fortune.subscription.max'
-  | 'com.beyond.fortune.premium_saju_lifetime';
+  | 'com.beyond.fortune.subscription.max';
 
 export interface ProductInfo {
   id: ProductId;
@@ -20,11 +30,68 @@ export interface ProductInfo {
   basePoints?: number;
   bonusPoints?: number;
   isSubscription: boolean;
-  subscriptionPeriod?: 'monthly' | 'max';
+  subscriptionPeriod?: 'lite' | 'pro' | 'max' | 'monthly';
   isNonConsumable?: boolean;
 }
 
 export const productCatalog = {
+  // === BM v2.2 신규 토큰 패키지 ===
+  'com.beyond.fortune.tokens.starter': {
+    id: 'com.beyond.fortune.tokens.starter',
+    title: '50 토큰',
+    description: '기본 운세를 가볍게 체험할 수 있는 스타터 패키지',
+    price: 1500,
+    points: 50,
+    basePoints: 50,
+    isSubscription: false,
+  },
+  'com.beyond.fortune.tokens.basic': {
+    id: 'com.beyond.fortune.tokens.basic',
+    title: '150 토큰',
+    description: '자주 사용하는 분들을 위한 기본 패키지',
+    price: 4000,
+    points: 150,
+    basePoints: 150,
+    isSubscription: false,
+  },
+  'com.beyond.fortune.tokens.popular': {
+    id: 'com.beyond.fortune.tokens.popular',
+    title: '400 토큰',
+    description: '다양한 운세와 깊이 있는 인사이트를 위한 알찬 패키지',
+    price: 9900,
+    points: 400,
+    basePoints: 400,
+    isSubscription: false,
+  },
+  'com.beyond.fortune.tokens.heavy': {
+    id: 'com.beyond.fortune.tokens.heavy',
+    title: '1000 토큰',
+    description: '헤비 유저를 위한 최대 가성비 토큰 패키지',
+    price: 22000,
+    points: 1000,
+    basePoints: 1000,
+    isSubscription: false,
+  },
+  // === BM v2.2 신규 구독 ===
+  'com.beyond.fortune.subscription.lite': {
+    id: 'com.beyond.fortune.subscription.lite',
+    title: '라이트 구독',
+    description: '매월 200 토큰 + 광고 제거',
+    price: 4900,
+    points: 200,
+    isSubscription: true,
+    subscriptionPeriod: 'lite',
+  },
+  'com.beyond.fortune.subscription.pro': {
+    id: 'com.beyond.fortune.subscription.pro',
+    title: '프로 구독',
+    description: '매월 500 토큰 + 캐릭터 무제한 + 메모리 확장',
+    price: 9900,
+    points: 500,
+    isSubscription: true,
+    subscriptionPeriod: 'pro',
+  },
+  // === Legacy 토큰 패키지 (restore-only, storefront 미노출) ===
   'com.beyond.fortune.tokens10': {
     id: 'com.beyond.fortune.tokens10',
     title: '10 토큰',
@@ -104,23 +171,25 @@ export const productCatalog = {
     bonusPoints: 400,
     isSubscription: false,
   },
+  // BM v2.2 max 구독 (storefront 노출, 가격/토큰 갱신).
+  'com.beyond.fortune.subscription.max': {
+    id: 'com.beyond.fortune.subscription.max',
+    title: '맥스 구독',
+    description: '매월 2000 토큰 + 음성 무제한 + 우선 응답',
+    price: 19900,
+    points: 2000,
+    isSubscription: true,
+    subscriptionPeriod: 'max',
+  },
+  // Legacy 구독 (restore-only).
   'com.beyond.fortune.subscription.monthly': {
     id: 'com.beyond.fortune.subscription.monthly',
-    title: '프로 구독',
-    description: '매월 토큰이 자동 충전되는 기본 구독 플랜',
+    title: '레거시 월간 구독',
+    description: '이전 구매 복원용',
     price: 4500,
     points: 30000,
     isSubscription: true,
     subscriptionPeriod: 'monthly',
-  },
-  'com.beyond.fortune.subscription.max': {
-    id: 'com.beyond.fortune.subscription.max',
-    title: '맥스 구독',
-    description: '모든 기능을 넉넉하게 쓰는 고급 구독 플랜',
-    price: 12900,
-    points: 100000,
-    isSubscription: true,
-    subscriptionPeriod: 'max',
   },
   'com.beyond.fortune.premium_saju_lifetime': {
     id: 'com.beyond.fortune.premium_saju_lifetime',
@@ -133,26 +202,39 @@ export const productCatalog = {
   },
 } as const satisfies Record<ProductId, ProductInfo>;
 
+// BM v2.2 신규 storefront 토큰 패키지.
 export const consumableProductIds = [
-  'com.beyond.fortune.tokens10',
-  'com.beyond.fortune.tokens50',
-  'com.beyond.fortune.tokens100',
-  'com.beyond.fortune.tokens200',
+  'com.beyond.fortune.tokens.starter',
+  'com.beyond.fortune.tokens.basic',
+  'com.beyond.fortune.tokens.popular',
+  'com.beyond.fortune.tokens.heavy',
 ] as const satisfies readonly ProductId[];
 
 // Customer-facing consumables that should appear in the store UI.
 export const storefrontConsumableProductIds = consumableProductIds;
 
+// Legacy 토큰 (storefront 미노출, restore 만 허용).
 export const legacyConsumableProductIds = [
+  'com.beyond.fortune.tokens10',
+  'com.beyond.fortune.tokens50',
+  'com.beyond.fortune.tokens100',
+  'com.beyond.fortune.tokens200',
   'com.beyond.fortune.points300',
   'com.beyond.fortune.points600',
   'com.beyond.fortune.points1200',
   'com.beyond.fortune.points3000',
 ] as const satisfies readonly ProductId[];
 
+// BM v2.2 신규 storefront 구독 (lite/pro/max).
 export const subscriptionProductIds = [
-  'com.beyond.fortune.subscription.monthly',
+  'com.beyond.fortune.subscription.lite',
+  'com.beyond.fortune.subscription.pro',
   'com.beyond.fortune.subscription.max',
+] as const satisfies readonly ProductId[];
+
+// Legacy 구독 (restore-only).
+export const legacySubscriptionProductIds = [
+  'com.beyond.fortune.subscription.monthly',
 ] as const satisfies readonly ProductId[];
 
 export const nonConsumableProductIds = [
@@ -167,6 +249,7 @@ export const allProductIds = [
   ...consumableProductIds,
   ...legacyConsumableProductIds,
   ...subscriptionProductIds,
+  ...legacySubscriptionProductIds,
   ...nonConsumableProductIds,
 ] as const satisfies readonly ProductId[];
 
@@ -174,8 +257,20 @@ export function isLegacyConsumableProductId(productId: ProductId): boolean {
   return (legacyConsumableProductIds as readonly ProductId[]).includes(productId);
 }
 
+export function isLegacySubscriptionProductId(productId: ProductId): boolean {
+  return (legacySubscriptionProductIds as readonly ProductId[]).includes(productId);
+}
+
 export function getProductDisplayTitle(productId: ProductId): string {
   switch (productId) {
+    case 'com.beyond.fortune.tokens.starter':
+      return '토큰 50개';
+    case 'com.beyond.fortune.tokens.basic':
+      return '토큰 150개';
+    case 'com.beyond.fortune.tokens.popular':
+      return '토큰 400개';
+    case 'com.beyond.fortune.tokens.heavy':
+      return '토큰 1000개';
     case 'com.beyond.fortune.tokens10':
       return '토큰 10개';
     case 'com.beyond.fortune.tokens50':
@@ -189,10 +284,14 @@ export function getProductDisplayTitle(productId: ProductId): string {
     case 'com.beyond.fortune.points1200':
     case 'com.beyond.fortune.points3000':
       return '이전 구매 토큰 상품';
-    case 'com.beyond.fortune.subscription.monthly':
+    case 'com.beyond.fortune.subscription.lite':
+      return '라이트 구독';
+    case 'com.beyond.fortune.subscription.pro':
       return '프로 구독';
     case 'com.beyond.fortune.subscription.max':
       return '맥스 구독';
+    case 'com.beyond.fortune.subscription.monthly':
+      return '레거시 구독';
     case 'com.beyond.fortune.premium_saju_lifetime':
       return '상세 사주명리서';
   }
@@ -200,8 +299,10 @@ export function getProductDisplayTitle(productId: ProductId): string {
 
 export function getSubscriptionPeriodLabel(productId: ProductId): string | null {
   switch (productId) {
-    case 'com.beyond.fortune.subscription.monthly':
+    case 'com.beyond.fortune.subscription.lite':
+    case 'com.beyond.fortune.subscription.pro':
     case 'com.beyond.fortune.subscription.max':
+    case 'com.beyond.fortune.subscription.monthly':
       return '매월 결제';
     default:
       return null;
