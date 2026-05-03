@@ -32,10 +32,19 @@
 |-----------|------|-------------|
 | Diff 안전성 | `/review` | 모든 코드 변경 |
 | 독립 2차 의견 | `/codex` (consult/challenge) | 큰 변경 또는 까다로운 로직 |
+| **High-blast-radius 검증** | **`/ultrareview`** | **DB 마이그레이션 / 결제 로직 / LLM 단가 / SSV 검증 / RLS / IAP 화이트리스트 변경 시 자동** |
 | 동작 확인 | iOS Simulator MCP (`mcp__ios-simulator__*`) | UI/페이지 변경 |
 | 보안 | `/security-review` 또는 `/cso` | Edge Function / DB / auth 변경 |
 | 디자인 일관성 | `/design-review` | 시각적 변경 |
 | 설계 적합성 | `/plan-eng-review` | 새 아키텍처/패턴 도입 |
+
+**`/ultrareview` 자동 트리거 사례** (한 번이라도 해당하면 sprint 마지막에 무조건 실행):
+- `supabase/migrations/*.sql` 변경
+- `payment-verify-purchase`, `soul-consume`, `soul-refund`, `grant-ad-reward` 수정
+- `FORTUNE_POINT_COSTS`, `PRODUCT_TOKENS`, `ALLOWED_PRODUCT_IDS` 변경
+- `subscriptions` / `token_balance` / `token_transactions` 직접 INSERT/UPDATE 코드
+- ECDSA / 서명 검증 / OAuth 코드
+- `verify_jwt` 설정 변경, RLS 정책 변경
 
 병렬 호출 예시 (Agent tool 멀티 콜):
 ```
@@ -208,6 +217,20 @@ const result = await llm.generate({ prompt, maxTokens: 2000 })
 | 4 | JIRA | 티켓 관리 |
 | 5 | Pencil | 공식 디자인 툴 (.pen 파일) |
 | 6 | Figma | 디자인 컨텍스트 |
+
+---
+
+## 설치된 Claude Code 플러그인
+
+| 플러그인 | 용도 | 활용 시점 |
+|---------|------|-----------|
+| **context-mode** | tool result raw bytes → 압축, session 상태 SQLite 저장 | 자동 (모든 세션) |
+| **skill-creator** | 프로젝트 특화 skill 생성 (SOP → reusable .md) | "이 작업 패턴 skill 화 해줘" 요청 시 |
+
+**중복 설치 금지** — 다음 플러그인은 기존 시스템과 중복되어 설치하지 않음:
+- ❌ `superpowers` / `get-shit-done` (`/sc:sprint` Generator-Evaluator + Hard Block 패턴이 동일 기능 제공)
+- ❌ `claude-mem` (`~/.claude/projects/.../memory/` 자동 메모리와 같은 hook 영역 → 중복 저장 / 충돌 위험)
+- ❌ `frontend-design` (Pencil MCP 가 공식 디자인 툴, CLAUDE.md 룰)
 
 ---
 
