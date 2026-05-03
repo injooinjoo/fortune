@@ -86,7 +86,7 @@ loadWorkspaceEnvFiles();
 const config: ExpoConfig = {
   name: '온도',
   slug: 'ondo-mobile-rn',
-  version: '1.0.12',
+  version: '1.0.13',
   orientation: 'portrait',
   icon: './assets/icon.png',
   // expo-router + expo-linking 가 standalone production 빌드에서 deep link
@@ -348,7 +348,7 @@ const config: ExpoConfig = {
     checkAutomatically: 'ON_LOAD',
     fallbackToCacheTimeout: 0,
   },
-  runtimeVersion: '1.0.12',
+  runtimeVersion: '1.0.13',
   experiments: {
     typedRoutes: true,
     autolinkingModuleResolution: true,
