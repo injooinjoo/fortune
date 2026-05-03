@@ -1,9 +1,7 @@
-import fs from 'node:fs';
-import path from 'node:path';
+const fs = require('node:fs');
+const path = require('node:path');
 
-import type { ExpoConfig } from 'expo/config';
-
-function isPlaceholderEnvValue(value: string) {
+function isPlaceholderEnvValue(value) {
   const normalized = value.trim().toLowerCase();
 
   return (
@@ -16,7 +14,7 @@ function isPlaceholderEnvValue(value: string) {
   );
 }
 
-function parseEnvFile(filePath: string, protectedKeys: ReadonlySet<string>) {
+function parseEnvFile(filePath, protectedKeys) {
   const content = fs.readFileSync(filePath, 'utf8');
 
   for (const rawLine of content.split(/\r?\n/)) {
@@ -83,7 +81,7 @@ function loadWorkspaceEnvFiles() {
 
 loadWorkspaceEnvFiles();
 
-const config: ExpoConfig = {
+const config = {
   name: '온도',
   slug: 'ondo-mobile-rn',
   version: '1.0.13',
@@ -398,4 +396,4 @@ const config: ExpoConfig = {
   },
 };
 
-export default config;
+module.exports = config;
