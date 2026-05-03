@@ -103,7 +103,7 @@ import {
   consumeRemoteTokens,
   RemoteTokenConsumeError,
 } from '../lib/premium-remote';
-import { useTextToSpeech } from '../lib/use-text-to-speech';
+// useTextToSpeech 는 useChatTtsHaptics hook 안에서 사용.
 import {
   socialAuthProviderLabelById,
   type SocialAuthProviderId,
@@ -113,7 +113,10 @@ import {
   saveCharacterPersona,
 } from '../lib/character-persona-store';
 import { fortuneTheme } from '../lib/theme';
-import { loveHeartbeat, scoreReveal, tapLight } from '../lib/haptics';
+// loveHeartbeat/tapLight 은 useChatTtsHaptics hook 안에서 사용. 여기엔 phase
+// 전환 1회성 scoreReveal 만 남음.
+import { scoreReveal } from '../lib/haptics';
+import { useChatTtsHaptics } from '../features/chat-surface/hooks/use-chat-tts-haptics';
 import { pickPresenceLine } from '../lib/presence-lines';
 import { useVoiceInput } from '../lib/use-voice-input';
 import { useRewardedAd } from '../lib/ad-rewards';
@@ -875,25 +878,18 @@ export function ChatScreen() {
     storyTypingByCharacterId[selectedCharacter.id] === true;
   const selectedFortuneIsTyping = fortuneTypingCharacterId === selectedCharacter.id;
 
-  // 캐릭터 음성 재생 (Gemini TTS) controller — 화면 전체에 1개 인스턴스.
-  // 각 SpeakerButton 은 자기 messageId 가 controller.activeMessageId 와 같을
-  // 때만 'playing'/'loading' 상태로 표시. 새 재생이 시작되면 직전 사운드는
-  // 자동 unload — 동시 재생 없음 (자연스러운 메신저 UX).
-  const tts = useTextToSpeech();
-  const handlePlayTts = useCallback(
-    (args: { messageId: string; text: string; emotion?: string }) => {
-      void tts.play({
-        messageId: args.messageId,
-        text: args.text,
-        characterId: selectedCharacter.id,
-        emotion: args.emotion,
-      });
-    },
-    [selectedCharacter.id, tts],
-  );
-  const handleStopTts = useCallback(() => {
-    void tts.stop();
-  }, [tts]);
+  // 캐릭터 음성 재생 (Gemini TTS) + 응답 햅틱.
+  // useChatTtsHaptics hook 안에서 useTextToSpeech 인스턴스 1개 + chatHaptics
+  // 토글 ref 관리. chat-screen.tsx 분해 1단계 — TTS/Haptic 책임 격리.
+  const {
+    tts,
+    handlePlayTts,
+    handleStopTts,
+    triggerAssistantHaptic,
+  } = useChatTtsHaptics({
+    selectedCharacterId: selectedCharacter.id,
+    chatHapticsEnabled: mobileAppState.settings.chatHapticsEnabled,
+  });
 
   // ---------------------------------------------------------------------------
   // 자동 답장 재개 — 채팅방 진입 시 마지막 메시지가 user 면 AI 응답 트리거
@@ -1027,25 +1023,9 @@ export function ChatScreen() {
   // ---------------------------------------------------------------------------
   // F3 — 햅틱 토글 (chatHapticsEnabled 설정)
   // ---------------------------------------------------------------------------
-  const chatHapticsEnabled = mobileAppState.settings.chatHapticsEnabled;
-  const chatHapticsEnabledRef = useRef(chatHapticsEnabled);
-  useEffect(() => {
-    chatHapticsEnabledRef.current = chatHapticsEnabled;
-  }, [chatHapticsEnabled]);
-
-  const triggerAssistantHaptic = useCallback(
-    (emotionTag: string | undefined) => {
-      if (!chatHapticsEnabledRef.current) {
-        return;
-      }
-      if (emotionTag === '애정') {
-        loveHeartbeat();
-      } else {
-        tapLight();
-      }
-    },
-    [],
-  );
+  // chatHaptics + tts 는 useChatTtsHaptics hook 으로 이동 (위쪽).
+  // scoreReveal 햅틱만 여기에 남김 (관계 phase 전환 1회성, TTS/응답 햅틱과
+  // 다른 책임).
 
   // ---------------------------------------------------------------------------
   // F3 — 관계 단계 변화 시 scoreReveal(90)
@@ -1067,11 +1047,11 @@ export function ChatScreen() {
         phaseChanged = true;
       }
     }
-    if (phaseChanged && chatHapticsEnabledRef.current) {
+    if (phaseChanged && mobileAppState.settings.chatHapticsEnabled) {
       scoreReveal(90);
     }
     previousPhaseByCharacterIdRef.current = nextSnapshot;
-  }, [storyThreadSnapshotsByCharacterId]);
+  }, [storyThreadSnapshotsByCharacterId, mobileAppState.settings.chatHapticsEnabled]);
 
   // ---------------------------------------------------------------------------
   // F1 — 멀티버블 순차 enqueue 헬퍼
