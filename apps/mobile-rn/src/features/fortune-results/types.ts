@@ -35,6 +35,7 @@ export const resultKinds = [
   'decision',
   'daily-review',
   'face-reading',
+  'palm-reading',
   'naming',
   'birthstone',
   'celebrity',

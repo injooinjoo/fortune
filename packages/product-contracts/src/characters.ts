@@ -21,7 +21,13 @@ export const fortuneCharacters = [
     name: '현우',
     category: 'traditional',
     shortDescription: '사주와 전통 명리학으로 당신의 근본을 봅니다',
-    specialties: ['traditional-saju', 'face-reading', 'blood-type', 'naming'],
+    specialties: [
+      'traditional-saju',
+      'face-reading',
+      'palm-reading',
+      'blood-type',
+      'naming',
+    ],
   },
   {
     id: 'fortune_stella',

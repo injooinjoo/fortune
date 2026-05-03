@@ -522,6 +522,26 @@ export const embeddedResultSeedByKind: Record<ResultKind, EmbeddedResultSeed> = 
     luckyItems: ['라이트 블루', '남동쪽', '아침 미소 연습'],
     specialTip: '관상은 타고난 것보다 표정과 습관에서 더 크게 바뀝니다. 좋은 표정이 좋은 관상을 만드는 가장 확실한 방법입니다.',
   },
+  'palm-reading': {
+    score: 80,
+    summary:
+      '손바닥의 주요 손금을 한국어 가이드 이미지로 정리한 손금 분석 리포트입니다.',
+    metrics: [
+      { label: '주요 손금', value: '5개', note: '감정선·지능선·생명선·운명선·태양선' },
+      { label: '가이드 형식', value: '이미지', note: '한국어 텍스트 포함' },
+    ],
+    highlights: [
+      '손바닥의 주요 라인을 깔끔한 컨투어 일러스트로 정리합니다',
+      '한국어 손금 가이드가 카드 형태로 함께 들어갑니다',
+    ],
+    recommendations: [
+      '결과 이미지는 캡쳐하거나 공유해서 보관하세요',
+      '같은 손이라도 시기에 따라 결이 달라 보이니 1~2개월 간격으로 다시 봐도 좋아요',
+    ],
+    warnings: ['손금은 운명을 단정하지 않습니다. 흐름의 참고용으로만 활용하세요'],
+    specialTip:
+      '손금가이드는 매번 새로 생성됩니다. 마음에 든 결과는 따로 저장해두세요.',
+  },
   naming: {
     score: 90,
     summary: '사주 오행 분석을 바탕으로 아기에게 가장 어울리는 이름을 추천합니다.',

@@ -396,6 +396,17 @@ function buildFortuneRequestBody(
       payload.userName = profile.displayName || 'user';
       break;
     }
+    case 'palm-reading': {
+      // Palm reading Edge Function expects { userId, imageBase64 } only.
+      // Survey field id is `palmImage` (defined in chat-survey/registry.ts).
+      const imageData = readString(answers.palmImage);
+      if (imageData) {
+        payload.imageBase64 = imageData;
+      }
+      // Drop the raw `palmImage` key to avoid shipping the same base64 twice.
+      delete payload.palmImage;
+      break;
+    }
     case 'past-life': {
       // Survey answers — curiosity / eraVibe / feeling passed through generic loop.
       // Face image must be mapped to the Edge Function's `faceImageBase64` field.

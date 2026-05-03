@@ -43,6 +43,7 @@ import {
   OndoYearlyEncounterResult,
   OndoZodiacAnimalResult,
 } from './screens/ondo-batch';
+import { OndoPalmReadingResult } from './screens/palm-reading';
 import { type FortuneResultComponentProps, type ResultKind } from './types';
 
 const registry: Record<ResultKind, ComponentType<FortuneResultComponentProps>> = {
@@ -75,6 +76,7 @@ const registry: Record<ResultKind, ComponentType<FortuneResultComponentProps>> =
   decision: OndoDecisionResult,
   'daily-review': OndoDailyReviewResult,
   'face-reading': OndoFaceReadingResult,
+  'palm-reading': OndoPalmReadingResult,
   naming: OndoNamingResult,
   birthstone: OndoBirthstoneResult,
   celebrity: OndoCelebrityResult,

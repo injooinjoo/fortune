@@ -189,6 +189,7 @@ const fortuneTypeLabels: Partial<Record<FortuneTypeId, string>> = {
   'new-year': '새해 인사이트',
   'traditional-saju': '전통 사주',
   'face-reading': '관상',
+  'palm-reading': '손금가이드',
   mbti: 'MBTI 결과',
   'blood-type': '혈액형',
   'zodiac-animal': '띠별 분석',

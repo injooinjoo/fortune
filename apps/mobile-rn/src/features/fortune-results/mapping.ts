@@ -13,6 +13,7 @@ export const fortuneTypeToResultKind: FortuneTypeToResultKind = {
   'new-year': 'new-year',
   'fortune-cookie': 'daily-calendar',
   'face-reading': 'face-reading',
+  'palm-reading': 'palm-reading',
   naming: 'naming',
   mbti: 'mbti',
   'blood-type': 'blood-type',
@@ -288,6 +289,14 @@ export const resultMetadataByKind: Record<ResultKind, ResultMetadata> = {
     title: '관상 분석',
     subtitle: '얼굴형, 오관, 삼정, 흐름을 종합 분석한 프리미엄 결과',
     eyebrow: '나의 관상 리포트',
+  },
+  'palm-reading': {
+    resultKind: 'palm-reading',
+    fortuneCode: 'F38',
+    paperNodeId: '6WA-1',
+    title: '손금가이드',
+    subtitle: '내 손바닥의 주요 손금을 한국어로 풀어낸 프리미엄 손금 가이드',
+    eyebrow: '나의 손금 리포트',
   },
   naming: {
     resultKind: 'naming',

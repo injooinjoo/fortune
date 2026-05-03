@@ -4,6 +4,7 @@ export type FortuneTypeId =
   | 'new-year'
   | 'traditional-saju'
   | 'face-reading'
+  | 'palm-reading'
   | 'mbti'
   | 'blood-type'
   | 'personality-dna'
@@ -75,6 +76,11 @@ const fortuneTypeSpecs = [
     id: 'face-reading',
     labelKey: 'fortuneFaceReading',
     endpoint: '/fortune-face-reading',
+  },
+  {
+    id: 'palm-reading',
+    labelKey: 'fortunePalmReading',
+    endpoint: '/fortune-palm-reading',
   },
   { id: 'mbti', labelKey: 'fortuneMbti', endpoint: '/fortune-mbti' },
   {

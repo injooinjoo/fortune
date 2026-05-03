@@ -106,6 +106,7 @@ export const FORTUNE_POINT_COSTS = {
   'celebrity-match': 8,
   'traditional-compatibility': 12,
   palmistry: 10,
+  'palm-reading': 10,
   physiognomy: 12,
   'face-reading': 15,
   timeline: 12,

@@ -1103,6 +1103,23 @@ const faceReadingSurvey: ChatSurveyDefinition = {
   ],
 };
 
+const palmReadingSurvey: ChatSurveyDefinition = {
+  fortuneType: 'palm-reading',
+  title: '손금가이드',
+  introReply:
+    '손금을 봐드릴게요. 손바닥 안쪽이 잘 보이게 사진을 한 장 준비해주세요.',
+  submitReply:
+    '손바닥을 분석하고 한국어 손금 가이드를 만들고 있어요. 30~60초 정도 걸려요.',
+  steps: [
+    {
+      id: 'palmImage',
+      question:
+        '손바닥 안쪽 사진을 올려주세요. 손가락이 모두 보이도록 정면에서 찍어주시면 좋아요.',
+      inputKind: 'image',
+    },
+  ],
+};
+
 const ootdSurvey: ChatSurveyDefinition = {
   fortuneType: 'ootd-evaluation',
   title: 'OOTD 코디',
@@ -1409,6 +1426,7 @@ const surveyDefinitions = [
   examSurvey,
   ootdSurvey,
   faceReadingSurvey,
+  palmReadingSurvey,
   bloodTypeSurvey,
   coachingSurvey,
   chatInsightSurvey,
