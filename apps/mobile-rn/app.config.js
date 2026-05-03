@@ -304,7 +304,10 @@ const config = {
         cameraPermission: '관상 분석을 위해 카메라 접근이 필요합니다.',
       },
     ],
-    '@sentry/react-native',
+    // Sentry sourcemap auto-upload 은 SENTRY_AUTH_TOKEN 미설정 환경에서 gradle
+    // SentryUpload 태스크를 fail 시킴 (createBundleReleaseJsAndAssets_SentryUpload).
+    // 1.0.13 출시 우선이라 autoUpload 비활성. 추후 EAS secrets 에 토큰 설정 후 재활성.
+    ['@sentry/react-native', { autoUpload: false }],
     './plugins/with-ios-prebuilt-react-native',
     // Sprint W1 — iOS 홈 화면 위젯 extension 타겟(@main)을
     // apps/mobile-rn/targets/widgets/ 에서 선언된 expo-target.config.json
