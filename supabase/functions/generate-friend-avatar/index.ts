@@ -5,6 +5,11 @@ import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { LLMFactory } from "../_shared/llm/factory.ts";
 import { UsageLogger } from "../_shared/llm/usage-logger.ts";
 import { authenticateUser } from "../_shared/auth.ts";
+import {
+  chargeTokens,
+  hasUnlimitedSubscription,
+  refundTokens,
+} from "../_shared/token_charge.ts";
 import type { ImageResponse } from "../_shared/llm/types.ts";
 
 // 첫 1회는 무료, 재시도부터 25 토큰 차감 (구독자 무제한).
@@ -176,21 +181,17 @@ serve(async (req: Request) => {
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // 첫 시도 무료 / 재시도 25 토큰. 구독자는 통과.
-    const { data: subscription } = await supabase
-      .from("subscriptions")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("status", "active")
-      .gt("expires_at", new Date().toISOString())
-      .limit(1)
-      .maybeSingle();
+    // 첫 시도 무료 (llm_usage_logs 카운트 기준) / 재시도 25 토큰. 구독자는 통과.
+    // LLM 호출 + storage upload 한 try 블록으로 감싸 어디서 실패해도 환불 보장.
+    const chargeCtx = {
+      description: "친구 아바타 재생성",
+      referenceType: "friend_avatar_retry",
+    };
 
-    const hasUnlimited = !!subscription;
-    let tokensDeducted = false;
-    let balanceBeforeDeduct = 0;
+    const unlimited = await hasUnlimitedSubscription(supabase, user.id);
+    let charge: Awaited<ReturnType<typeof chargeTokens>> | null = null;
 
-    if (!hasUnlimited) {
+    if (!unlimited) {
       const { count: priorAttempts } = await supabase
         .from("llm_usage_logs")
         .select("id", { count: "exact", head: true })
@@ -201,16 +202,14 @@ serve(async (req: Request) => {
       const isFirstFree = (priorAttempts ?? 0) === 0;
 
       if (!isFirstFree) {
-        const { data: tokenData } = await supabase
-          .from("token_balance")
-          .select("balance, total_spent")
-          .eq("user_id", user.id)
-          .maybeSingle();
+        charge = await chargeTokens(
+          supabase,
+          user.id,
+          FRIEND_AVATAR_RETRY_COST,
+          chargeCtx,
+        );
 
-        balanceBeforeDeduct = tokenData?.balance ?? 0;
-        const totalSpent = tokenData?.total_spent ?? 0;
-
-        if (balanceBeforeDeduct < FRIEND_AVATAR_RETRY_COST) {
+        if (!charge.charged && !charge.unlimited) {
           return new Response(
             JSON.stringify({
               success: false,
@@ -223,54 +222,47 @@ serve(async (req: Request) => {
             },
           );
         }
-
-        const newBalance = balanceBeforeDeduct - FRIEND_AVATAR_RETRY_COST;
-        await supabase.from("token_balance").upsert(
-          {
-            user_id: user.id,
-            balance: newBalance,
-            total_spent: totalSpent + FRIEND_AVATAR_RETRY_COST,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "user_id" },
-        );
-        await supabase.from("token_transactions").insert({
-          user_id: user.id,
-          transaction_type: "consumption",
-          amount: -FRIEND_AVATAR_RETRY_COST,
-          balance_after: newBalance,
-          description: "친구 아바타 재생성",
-          reference_type: "friend_avatar_retry",
-        });
-        tokensDeducted = true;
       }
     }
 
     let imageResult: ImageResponse;
+    let publicUrl: string;
     try {
       const prompt = buildPrompt(request);
       imageResult = await generateImageWithFallback(prompt);
-    } catch (genError) {
-      // 이미지 생성 실패 시 차감한 토큰 환불.
-      if (tokensDeducted) {
-        await supabase.from("token_balance").upsert(
-          {
-            user_id: user.id,
-            balance: balanceBeforeDeduct,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "user_id" },
-        );
-        await supabase.from("token_transactions").insert({
-          user_id: user.id,
-          transaction_type: "refund",
-          amount: FRIEND_AVATAR_RETRY_COST,
-          balance_after: balanceBeforeDeduct,
-          description: "친구 아바타 생성 실패 환불",
-          reference_type: "friend_avatar_retry",
+
+      const imageBytes = Uint8Array.from(
+        atob(imageResult.imageBase64),
+        (c) => c.charCodeAt(0),
+      );
+      const storagePath = buildStoragePath(request.name || "friend");
+
+      const { error: uploadError } = await supabase.storage
+        .from(BUCKET_NAME)
+        .upload(storagePath, imageBytes, {
+          contentType: "image/png",
+          upsert: false,
         });
+
+      if (uploadError) {
+        throw new Error(`이미지 업로드 실패: ${uploadError.message}`);
       }
-      throw genError;
+
+      const { data: publicUrlData } = supabase.storage
+        .from(BUCKET_NAME)
+        .getPublicUrl(storagePath);
+      publicUrl = publicUrlData.publicUrl;
+    } catch (workError) {
+      if (charge?.charged) {
+        await refundTokens(
+          supabase,
+          user.id,
+          FRIEND_AVATAR_RETRY_COST,
+          charge.balanceBeforeCharge,
+          chargeCtx,
+        );
+      }
+      throw workError;
     }
 
     // 사용량 로깅 — 다음 호출에서 "첫 시도" 판정 기준이 됨.
@@ -295,31 +287,10 @@ serve(async (req: Request) => {
       console.error("[friend-avatar] usage log failed:", logError);
     });
 
-    const imageBytes = Uint8Array.from(
-      atob(imageResult.imageBase64),
-      (c) => c.charCodeAt(0),
-    );
-    const storagePath = buildStoragePath(request.name || "friend");
-
-    const { error: uploadError } = await supabase.storage
-      .from(BUCKET_NAME)
-      .upload(storagePath, imageBytes, {
-        contentType: "image/png",
-        upsert: false,
-      });
-
-    if (uploadError) {
-      throw new Error(`이미지 업로드 실패: ${uploadError.message}`);
-    }
-
-    const { data: publicUrlData } = supabase.storage
-      .from(BUCKET_NAME)
-      .getPublicUrl(storagePath);
-
     return new Response(
       JSON.stringify({
         success: true,
-        data: { avatarUrl: publicUrlData.publicUrl },
+        data: { avatarUrl: publicUrl },
         meta: {
           provider: imageResult.provider,
           model: imageResult.model,

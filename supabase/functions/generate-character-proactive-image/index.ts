@@ -4,6 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { LLMFactory } from "../_shared/llm/factory.ts";
 import { authenticateUser } from "../_shared/auth.ts";
+import { chargeTokens, refundTokens } from "../_shared/token_charge.ts";
 import type { ImageResponse } from "../_shared/llm/types.ts";
 
 async function generateImageWithFallback(
@@ -254,120 +255,79 @@ serve(async (req: Request) => {
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // 토큰 차감. 무제한 구독자는 통과. 잔액 부족 시 이미지 생성 자체를 차단해
-    // 적자(₩52/장)를 막는다. 이미지 생성 실패 시 finally 에서 환불.
-    const { data: subscription } = await supabase
-      .from("subscriptions")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("status", "active")
-      .gt("expires_at", new Date().toISOString())
-      .limit(1)
-      .maybeSingle();
+    // 토큰 차감 (₩52/장 적자 차단). 무제한 구독자 통과. LLM 호출 + storage
+    // upload 까지 한 try 블록으로 감싸 어디서 실패해도 환불 보장.
+    const chargeCtx = {
+      description: "캐릭터 선톡 이미지",
+      referenceType: "proactive_image",
+      referenceId: request.characterId,
+    };
+    const charge = await chargeTokens(
+      supabase,
+      user.id,
+      PROACTIVE_IMAGE_TOKEN_COST,
+      chargeCtx,
+    );
 
-    const hasUnlimited = !!subscription;
-    let tokensDeducted = false;
-    let balanceBeforeDeduct = 0;
-
-    if (!hasUnlimited) {
-      const { data: tokenData } = await supabase
-        .from("token_balance")
-        .select("balance, total_spent")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      balanceBeforeDeduct = tokenData?.balance ?? 0;
-      const totalSpent = tokenData?.total_spent ?? 0;
-
-      if (balanceBeforeDeduct < PROACTIVE_IMAGE_TOKEN_COST) {
-        return new Response(
-          JSON.stringify({
-            success: false,
-            error: "토큰이 부족합니다",
-            errorCode: "unknown",
-          } as GenerateCharacterProactiveImageResponse),
-          {
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-            status: 402,
-          },
-        );
-      }
-
-      const newBalance = balanceBeforeDeduct - PROACTIVE_IMAGE_TOKEN_COST;
-      await supabase.from("token_balance").upsert(
+    if (!charge.charged && !charge.unlimited) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "토큰이 부족합니다",
+          errorCode: "unknown",
+        } as GenerateCharacterProactiveImageResponse),
         {
-          user_id: user.id,
-          balance: newBalance,
-          total_spent: totalSpent + PROACTIVE_IMAGE_TOKEN_COST,
-          updated_at: new Date().toISOString(),
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 402,
         },
-        { onConflict: "user_id" },
       );
-      await supabase.from("token_transactions").insert({
-        user_id: user.id,
-        transaction_type: "consumption",
-        amount: -PROACTIVE_IMAGE_TOKEN_COST,
-        balance_after: newBalance,
-        description: "캐릭터 선톡 이미지",
-        reference_type: "proactive_image",
-        reference_id: request.characterId,
-      });
-      tokensDeducted = true;
     }
 
     let imageResult: ImageResponse;
+    let storagePath: string;
+    let publicUrl: string;
     try {
       const prompt = buildPrompt(request);
       imageResult = await generateImageWithFallback(prompt);
-    } catch (genError) {
-      // 이미지 생성 실패 시 차감한 토큰 환불.
-      if (tokensDeducted) {
-        await supabase.from("token_balance").upsert(
-          {
-            user_id: user.id,
-            balance: balanceBeforeDeduct,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "user_id" },
-        );
-        await supabase.from("token_transactions").insert({
-          user_id: user.id,
-          transaction_type: "refund",
-          amount: PROACTIVE_IMAGE_TOKEN_COST,
-          balance_after: balanceBeforeDeduct,
-          description: "선톡 이미지 생성 실패 환불",
-          reference_type: "proactive_image",
-          reference_id: request.characterId,
+
+      const imageBytes = Uint8Array.from(
+        atob(imageResult.imageBase64),
+        (c) => c.charCodeAt(0),
+      );
+      storagePath = buildStoragePath(request.characterId, request.category);
+
+      const { error: uploadError } = await supabase.storage
+        .from(BUCKET_NAME)
+        .upload(storagePath, imageBytes, {
+          contentType: "image/png",
+          upsert: false,
         });
+
+      if (uploadError) {
+        throw new Error(`이미지 업로드 실패: ${uploadError.message}`);
       }
-      throw genError;
+
+      const { data: publicUrlData } = supabase.storage
+        .from(BUCKET_NAME)
+        .getPublicUrl(storagePath);
+      publicUrl = publicUrlData.publicUrl;
+    } catch (workError) {
+      if (charge.charged) {
+        await refundTokens(
+          supabase,
+          user.id,
+          PROACTIVE_IMAGE_TOKEN_COST,
+          charge.balanceBeforeCharge,
+          chargeCtx,
+        );
+      }
+      throw workError;
     }
-
-    const imageBytes = Uint8Array.from(
-      atob(imageResult.imageBase64),
-      (c) => c.charCodeAt(0),
-    );
-    const storagePath = buildStoragePath(request.characterId, request.category);
-
-    const { error: uploadError } = await supabase.storage
-      .from(BUCKET_NAME)
-      .upload(storagePath, imageBytes, {
-        contentType: "image/png",
-        upsert: false,
-      });
-
-    if (uploadError) {
-      throw new Error(`이미지 업로드 실패: ${uploadError.message}`);
-    }
-
-    const { data: publicUrlData } = supabase.storage
-      .from(BUCKET_NAME)
-      .getPublicUrl(storagePath);
 
     return new Response(
       JSON.stringify({
         success: true,
-        imageUrl: publicUrlData.publicUrl,
+        imageUrl: publicUrl,
         meta: {
           provider: imageResult.provider,
           model: imageResult.model,
