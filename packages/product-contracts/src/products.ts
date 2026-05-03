@@ -176,7 +176,7 @@ export const productCatalog = {
     id: 'com.beyond.fortune.subscription.max',
     title: '맥스 구독',
     description: '매월 2000 토큰 + 음성 무제한 + 우선 응답',
-    price: 19800,
+    price: 19000,
     points: 2000,
     isSubscription: true,
     subscriptionPeriod: 'max',
