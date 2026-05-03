@@ -28,6 +28,7 @@ import { loadCachedCharacterMessagesBatch } from '../lib/character-conversation-
 import { appEnv } from '../lib/env';
 import { captureError } from '../lib/error-reporting';
 import {
+  ackScheduledReplyIfPresent,
   installPushNotificationHandlers,
   registerPushTokenForSignedInUser,
 } from '../lib/push-notifications';
@@ -418,12 +419,29 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
     // Push 알림 리스너 설치 — 탭 시 해당 캐릭터 채팅 스크린으로 라우팅.
     // 앱 콜드 스타트 시 getLastNotificationResponseAsync 가 내부에서 fallback
     // 으로 한 번 더 호출되므로 종료 상태에서 탭으로 열린 경우도 커버.
+    //
+    // ACK 정책 (메신저 앱 표준 — Telegram/iMessage/WhatsApp 패턴):
+    // scheduledId 가 페이로드에 있으면 onForegroundReceive / onTap /
+    // chat-screen send→response 응답 어느 채널로 도착하든 즉시 ack 호출.
+    // ackScheduledReplyIfPresent (push-notifications.ts) 가 module-scope
+    // Set 으로 dedup → 같은 scheduledId 는 세션당 1회만 네트워크 호출.
     const removePushHandlers = installPushNotificationHandlers({
+      onForegroundReceive: (payload) => {
+        // 앱이 켜진 상태에서 push 도착: 사용자가 채팅 화면에 있든 다른
+        // 화면에 있든, 메시지 본문은 이미 push payload + chat-runtime
+        // 의 character_conversations.messages 에 있음 (cron 이 미리
+        // append). 여기서는 ack 만 fire-and-forget.
+        ackScheduledReplyIfPresent(payload.scheduledId);
+      },
       onTap: (payload) => {
-        // 옛 route (`/character/{id}?openCharacterChat=true`) 호환 — 이미 발송돼
-        // APNs 큐에 있는 in-flight 푸시들이 있을 수 있으므로 클라이언트에서도
-        // 캐릭터 인트로 라우트를 채팅 직행으로 rewrite. 새 서버 응답은 처음부터
-        // /chat 으로 옴.
+        // 백그라운드/종료 상태에서 push 탭 → 앱 진입.
+        // 1) 즉시 ack — 라우팅보다 먼저 발사해 네트워크 latency 흡수.
+        ackScheduledReplyIfPresent(payload.scheduledId);
+
+        // 2) 라우팅. 옛 route (`/character/{id}?openCharacterChat=true`) 호환
+        //    — 이미 발송돼 APNs 큐에 있는 in-flight 푸시들이 있을 수 있으므로
+        //    클라이언트에서도 캐릭터 인트로 라우트를 채팅 직행으로 rewrite.
+        //    새 서버 응답은 처음부터 /chat 으로 옴.
         const looksLikeLegacyCharacterIntro =
           payload.route?.startsWith('/character/') &&
           (payload.route.includes('openCharacterChat=true') ||

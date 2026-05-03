@@ -120,9 +120,52 @@ export async function setAppIconBadgeCount(count: number): Promise<void> {
   }
 }
 
+/**
+ * scheduled_character_replies row 에 대한 ack 를 멱등하게 발사.
+ *
+ * 같은 scheduledId 가 여러 채널(foreground receive / tap / send→response)
+ * 로 도착해도 모듈-스코프 Set 으로 dedup → 네트워크 1회만. 서버 ack-
+ * scheduled-reply 는 자체 멱등이지만 회선/배터리 절약.
+ *
+ * cold-start 시 모듈 다시 로드되어 Set 빔 → 재호출 가능. 서버 멱등이라 안전.
+ */
+const ackedScheduledIds = new Set<string>();
+const ACKED_SCHEDULED_IDS_MAX = 256;
+
+export function ackScheduledReplyIfPresent(
+  scheduledId: string | null | undefined,
+): void {
+  if (!scheduledId) return;
+  if (ackedScheduledIds.has(scheduledId)) return;
+  if (!supabase) return;
+  // LRU-ish: 256 hit 시 가장 오래 들어온 절반 제거.
+  if (ackedScheduledIds.size >= ACKED_SCHEDULED_IDS_MAX) {
+    const toDrop = Array.from(ackedScheduledIds).slice(
+      0,
+      Math.floor(ACKED_SCHEDULED_IDS_MAX / 2),
+    );
+    toDrop.forEach((id) => ackedScheduledIds.delete(id));
+  }
+  ackedScheduledIds.add(scheduledId);
+  supabase.functions
+    .invoke('ack-scheduled-reply', { body: { scheduledId } })
+    .catch((ackError: unknown) => {
+      // 실패해도 cron 의 20s grace + client_acked_at NULL 조건에서 재시도
+      // 가능. 사용자 가시 영향 없음.
+      console.warn('[push] ack-scheduled-reply 실패:', ackError);
+    });
+}
+
 export interface PushResponsePayload {
   characterId?: string;
   messageId?: string;
+  /**
+   * scheduled_character_replies row id. 캐릭터의 지연 답장이 cron 으로
+   * 발송된 경우에만 채워짐. 받자마자 ack-scheduled-reply 호출 → cron 이
+   * 같은 메시지를 또 처리하지 않도록 client_acked_at 마킹.
+   * Telegram scheduled-message API 패턴 (서버 ID 별도 필드).
+   */
+  scheduledId?: string;
   route?: string;
   raw: Record<string, unknown>;
 }
@@ -170,8 +213,19 @@ export function installPushNotificationHandlers(handlers: {
     const messageId =
       (d.message_id as string | undefined) ??
       (d.messageId as string | undefined);
+    // 새 서버는 scheduled_id/scheduledId 별도 필드를 보냄. 옛 서버
+    // (`scheduled-{uuid}` prefix) 호환: messageId 가 그 형식이면 추출.
+    // 다음 서버 릴리스에서 prefix 제거 후 이 fallback 도 삭제.
+    const scheduledIdRaw =
+      (d.scheduled_id as string | undefined) ??
+      (d.scheduledId as string | undefined);
+    const scheduledId =
+      scheduledIdRaw ??
+      (typeof messageId === 'string' && messageId.startsWith('scheduled-')
+        ? messageId.slice('scheduled-'.length)
+        : undefined);
     const route = d.route as string | undefined;
-    return { characterId, messageId, route, raw: d };
+    return { characterId, messageId, scheduledId, route, raw: d };
   }
 
   const respSub = Notifications.addNotificationResponseReceivedListener(
@@ -439,6 +493,71 @@ export async function syncNotificationPreferencesForSignedInUser(
     return { ok: false, reason: 'sync failed' };
   }
   return { ok: true };
+}
+
+/**
+ * 현재 메모리에 보관된 Expo push token 반환. 미발급/미등록이면 null.
+ * dev-tools 화면에서 토큰을 화면에 노출/복사하기 위한 read-only getter.
+ */
+export function getCurrentPushTokenSnapshot(): string | null {
+  return lastRegisteredToken;
+}
+
+/**
+ * 로컬 푸시 발사 — 캐릭터 DM 페이로드 모양과 동일하게 만들어, NSE/Android
+ * BigPicture 동작을 검증하기 위한 dev 전용 도구. 실제 서버 발송 경로를
+ * 거치지 않고 OS 알림센터에 곧장 띄운다.
+ *
+ * 주의: 로컬 푸시는 iOS NSE 가 호출되지 않는다 (NSE 는 원격 푸시 전용).
+ * 따라서 image attachment 는 로컬 푸시에서는 안 보인다 — 이 도구는 주로
+ * Android BigPicture 검증과 페이로드 라우팅(`character_id`/`route` 정상
+ * 전달) 검증 용. iOS NSE 검증은 실제 서버 푸시(친구 메시지 보내기)로만
+ * 가능.
+ */
+export async function presentLocalCharacterDmPushForDev(params: {
+  characterId: string;
+  characterName: string;
+  body: string;
+  imageUrl?: string | null;
+}): Promise<{ ok: true } | { ok: false; reason: string }> {
+  const Notifications = loadNotifications();
+  if (!Notifications) {
+    return { ok: false, reason: 'expo-notifications not linked' };
+  }
+  ensureNotificationHandler(Notifications);
+  const perm = await Notifications.getPermissionsAsync();
+  if (!perm.granted) {
+    return { ok: false, reason: 'permission denied' };
+  }
+  await ensureAndroidChannel(Notifications);
+
+  const data: Record<string, string> = {
+    type: 'character_dm',
+    channel: 'character_dm',
+    character_id: params.characterId,
+    characterId: params.characterId,
+    title: params.characterName,
+    body: params.body,
+    route: `/chat?characterId=${encodeURIComponent(params.characterId)}`,
+  };
+  if (params.imageUrl) {
+    data.image = params.imageUrl;
+  }
+
+  try {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: params.characterName,
+        body: params.body,
+        data,
+        sound: 'default',
+      },
+      trigger: null,
+    });
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, reason: (e as Error).message ?? 'schedule failed' };
+  }
 }
 
 export async function deactivateCurrentPushToken(): Promise<void> {

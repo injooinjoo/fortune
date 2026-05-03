@@ -114,20 +114,11 @@ serve(async (req: Request) => {
           continue;
         }
 
-        // 2. character_conversations 에 append. 클라이언트 ack 경로와 다르게
+        // 2. character_conversations 에 append. RPC merge_character_conversation_messages
+        //    가 advisory lock + id-dedup + cap 트림을 atomic 으로 처리. 클라
+        //    측 character-conversation-save 와 동시 호출되어도 메시지 손실 0.
         //    cron 은 단일 합본 메시지로 append (multi-segment 분기 처리 생략).
         //    foreground 와 시각적으로 약간 다르지만 메시지 자체는 보존됨.
-        const { data: convoRow } = await supabase
-          .from("character_conversations")
-          .select("messages")
-          .eq("user_id", row.user_id)
-          .eq("character_id", row.character_id)
-          .maybeSingle();
-
-        const existingMessages = Array.isArray(convoRow?.messages)
-          ? (convoRow!.messages as unknown[])
-          : [];
-
         const newMessage = {
           id: `scheduled-${row.id}`,
           type: "character" as const,
@@ -135,47 +126,33 @@ serve(async (req: Request) => {
           timestamp: claimAt,
           emotionTag: row.emotion_tag ?? undefined,
         };
-        const nextMessages = [...existingMessages, newMessage].slice(-200);
 
-        if (convoRow) {
-          const { error: updErr } = await supabase
-            .from("character_conversations")
-            .update({
-              messages: nextMessages,
-              last_message_at: claimAt,
-            })
-            .eq("user_id", row.user_id)
-            .eq("character_id", row.character_id);
-          if (updErr) {
-            failed.push({
-              scheduledId: row.id,
-              error: `conversation update: ${updErr.message}`,
-            });
-            // claim 은 이미 됐지만 conversation update 가 실패. delivered_at
-            // 을 되돌릴지? 우선 그냥 두고 다음 사이클에서 재시도하지 않음.
-            // 다음 cron 에서는 delivered_at NOT NULL 이라 스킵.
-            // → 이 케이스는 알림센터 history 만 누락 (푸시는 보냄).
-            continue;
-          }
-        } else {
-          const { error: insErr } = await supabase
-            .from("character_conversations")
-            .insert({
-              user_id: row.user_id,
-              character_id: row.character_id,
-              messages: nextMessages,
-              last_message_at: claimAt,
-            });
-          if (insErr) {
-            failed.push({
-              scheduledId: row.id,
-              error: `conversation insert: ${insErr.message}`,
-            });
-            continue;
-          }
+        const { error: mergeErr } = await supabase.rpc(
+          "merge_character_conversation_messages",
+          {
+            p_user_id: row.user_id,
+            p_character_id: row.character_id,
+            p_incoming_messages: [newMessage],
+            p_runtime_state: null,
+            p_max_messages: 200,
+          },
+        );
+        if (mergeErr) {
+          failed.push({
+            scheduledId: row.id,
+            error: `conversation merge: ${mergeErr.message}`,
+          });
+          // claim 은 이미 됐지만 merge 가 실패. delivered_at 을 되돌릴지?
+          // 우선 그냥 두고 다음 사이클에서 재시도하지 않음. 다음 cron 에서는
+          // delivered_at NOT NULL 이라 스킵 → 알림센터 history 누락 (푸시는 보냄).
+          continue;
         }
 
         // 3. 푸시 발송. character_dm 토글 체크는 sendCharacterDmPush 내부에서.
+        // scheduledId 별도 필드: 클라가 받자마자 ack-scheduled-reply 호출 →
+        // client_acked_at 마킹 → 같은 row 재처리 방지 (정확도). messageId
+        // 는 옛 OTA 클라이언트 호환을 위해 1 릴리스 동안 유지하되, 새 클라
+        // 는 scheduledId 만 본다.
         const pushResult = await sendCharacterDmPush({
           supabase,
           userId: row.user_id,
@@ -183,6 +160,7 @@ serve(async (req: Request) => {
           characterName: row.character_name,
           messageText: row.content,
           messageId: `scheduled-${row.id}`,
+          scheduledId: row.id,
           type: "character_dm",
           roomState: "character_chat",
         });

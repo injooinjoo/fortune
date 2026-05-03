@@ -91,6 +91,18 @@ interface PersistedStoryMessage {
    * "뒤에 AI/system 응답이 있으면 그 시점에 읽혔다"로 추론 보강된다.
    */
   readAt?: string;
+  /**
+   * 카드(embedded-result/fortune-cookie/saju-preview/image/story-reveal/
+   * my-saju-context) 메시지를 원격 저장하기 위한 sentinel + raw payload.
+   * 디바이스 교체 시 사용자가 본 fortune 결과 카드, 포춘쿠키 등이 새 폰에서도
+   * 복원되도록 — iMessage/WhatsApp 표준 (multimedia 메시지도 sync).
+   *
+   * 정책: text 메시지는 기존 type/content 필드만 사용 (옛 클라 호환).
+   * 카드 메시지는 cardKind + cardPayload 박고 type='character', content는
+   * preview text (옛 클라가 받았을 때 깨끗한 텍스트로 fallback 표시).
+   */
+  cardKind?: string;
+  cardPayload?: unknown;
 }
 
 interface PersistedStoryRuntimeState {
@@ -179,35 +191,102 @@ function createTimestampFromMessageId(messageId: string, fallback: string) {
 // 크기 모두 여유.
 const REMOTE_PERSIST_MESSAGE_CAP = 200;
 
+function extractCardPreviewText(message: ChatShellMessage): string {
+  // 옛 클라 fallback 표시용 — 새 클라는 cardPayload 를 보고 카드로 렌더.
+  switch (message.kind) {
+    case 'embedded-result':
+      return `[운세 결과 — ${message.fortuneType ?? ''}]`;
+    case 'fortune-cookie':
+      return '[포춘쿠키]';
+    case 'saju-preview':
+      return '[사주 프리뷰]';
+    case 'image':
+      return '[사진]';
+    case 'story-reveal':
+      return '[스토리]';
+    case 'my-saju-context':
+      return '[내 사주]';
+    default:
+      return '';
+  }
+}
+
 function toPersistedStoryMessages(
   messages: ChatShellMessage[],
 ): PersistedStoryMessage[] {
+  // 카드 메시지도 함께 원격 저장 — 디바이스 교체 시 복원 (메신저 표준).
+  // text/카드 모두 같은 cap 안에서 시간순 truncation.
   return messages
-    .filter(isTextMessage)
     .slice(-REMOTE_PERSIST_MESSAGE_CAP)
-    .map((message) => {
-      const textMessage = message as ChatShellTextMessage;
-      const base: PersistedStoryMessage = {
-        id: textMessage.id,
-        type:
-          textMessage.sender === 'assistant'
-            ? 'character'
-            : textMessage.sender === 'system'
-              ? 'system'
-              : 'user',
-        content: textMessage.text,
-        timestamp: createTimestampFromMessageId(
-          textMessage.id,
-          new Date().toISOString(),
-        ),
-      };
-      // "1" 배지 안 사라지는 버그의 근본 원인: readAt 이 로컬 전용이었음.
-      // 서버에 함께 저장해야 재진입 시 force-rehydrate 해도 보존된다.
-      if (textMessage.sender === 'user' && textMessage.readAt) {
-        base.readAt = textMessage.readAt;
+    .map((message): PersistedStoryMessage | null => {
+      if (message.kind === 'text') {
+        const textMessage = message as ChatShellTextMessage;
+        const base: PersistedStoryMessage = {
+          id: textMessage.id,
+          type:
+            textMessage.sender === 'assistant'
+              ? 'character'
+              : textMessage.sender === 'system'
+                ? 'system'
+                : 'user',
+          content: textMessage.text,
+          timestamp: createTimestampFromMessageId(
+            textMessage.id,
+            new Date().toISOString(),
+          ),
+        };
+        // "1" 배지 안 사라지는 버그의 근본 원인: readAt 이 로컬 전용이었음.
+        // 서버에 함께 저장해야 재진입 시 force-rehydrate 해도 보존된다.
+        if (textMessage.sender === 'user' && textMessage.readAt) {
+          base.readAt = textMessage.readAt;
+        }
+        return base;
       }
-      return base;
-    });
+
+      // 카드 메시지: 원본 JSON 을 cardPayload 에 보존. 옛 클라는 content
+      // (preview) 만 보고, 새 클라는 cardKind+cardPayload 로 카드 복원.
+      const id = (message as { id?: unknown }).id;
+      if (typeof id !== 'string') return null;
+      return {
+        id,
+        type: 'character',
+        content: extractCardPreviewText(message),
+        timestamp: createTimestampFromMessageId(id, new Date().toISOString()),
+        cardKind: message.kind,
+        cardPayload: message,
+      };
+    })
+    .filter((m): m is PersistedStoryMessage => m !== null);
+}
+
+const VALID_CARD_KINDS: ReadonlySet<string> = new Set([
+  'embedded-result',
+  'fortune-cookie',
+  'saju-preview',
+  'image',
+  'story-reveal',
+  'my-saju-context',
+]);
+
+function tryRestoreCardMessage(
+  candidate: Record<string, unknown>,
+): ChatShellMessage | null {
+  const cardKind = candidate.cardKind;
+  const cardPayload = candidate.cardPayload;
+  if (typeof cardKind !== 'string' || !VALID_CARD_KINDS.has(cardKind)) {
+    return null;
+  }
+  if (!cardPayload || typeof cardPayload !== 'object') {
+    return null;
+  }
+  // payload 가 클라가 직렬화한 ChatShellMessage 그대로. kind 필드와 id 필드만
+  // 최소 검증 — 깨진 payload 면 null 반환해서 카드 무시 (text fallback 도 별도
+  // 처리 안 함, 옛 클라가 받은 것처럼 통과).
+  const payloadObj = cardPayload as Record<string, unknown>;
+  if (payloadObj.kind !== cardKind || typeof payloadObj.id !== 'string') {
+    return null;
+  }
+  return cardPayload as ChatShellMessage;
 }
 
 function fromPersistedStoryMessages(
@@ -217,13 +296,19 @@ function fromPersistedStoryMessages(
     return [];
   }
 
-  const normalizedMessages: Array<ChatShellTextMessage | null> = messages
-    .map((rawMessage): ChatShellTextMessage | null => {
+  const normalizedMessages: Array<ChatShellMessage | null> = messages
+    .map((rawMessage): ChatShellMessage | null => {
       if (!rawMessage || typeof rawMessage !== 'object') {
         return null;
       }
 
       const candidate = rawMessage as Record<string, unknown>;
+
+      // 카드 메시지 우선 시도 (cardKind sentinel). 매칭 실패 시 text 처리로
+      // fall-through.
+      const cardMessage = tryRestoreCardMessage(candidate);
+      if (cardMessage) return cardMessage;
+
       if (
         typeof candidate.id !== 'string' ||
         typeof candidate.content !== 'string' ||
@@ -257,7 +342,7 @@ function fromPersistedStoryMessages(
     });
 
   const filtered = normalizedMessages.filter(
-    (message): message is ChatShellTextMessage => message !== null,
+    (message): message is ChatShellMessage => message !== null,
   );
 
   // 레거시 데이터 보강: 서버에 readAt 필드 없이 저장된 과거 메시지 대응.
@@ -265,11 +350,15 @@ function fromPersistedStoryMessages(
   // 으로 간주한다. AI가 답을 했다 = 읽었다는 사용자 멘탈 모델과 일치.
   // 한 번이라도 이 경로로 통과한 메시지는 다음 save 때 readAt이 서버에 함께
   // 저장되므로, 이 보강은 사실상 1회성 마이그레이션 역할.
+  // (text 메시지에만 적용 — 카드는 readAt 없음.)
   for (let i = 0; i < filtered.length; i += 1) {
     const current = filtered[i];
-    if (current.sender !== 'user' || current.readAt) continue;
+    if (current.kind !== 'text' || current.sender !== 'user' || current.readAt) {
+      continue;
+    }
     for (let j = i + 1; j < filtered.length; j += 1) {
       const later = filtered[j];
+      if (later.kind !== 'text') continue;
       if (later.sender === 'assistant' || later.sender === 'system') {
         const fallbackTimestamp = createTimestampFromMessageId(
           later.id,
