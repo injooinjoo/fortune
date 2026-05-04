@@ -137,6 +137,35 @@ export interface ChatShellStoryRevealMessage {
 }
 
 /**
+ * 30초+ 비동기 작업이 진행 중일 때 채팅 흐름에 끼어드는 진행상황 카드.
+ *
+ * 손금/타로/사주처럼 결과가 늦게 도착하는 운세에서 사용자가 "막히지 않았다"고
+ * 인지할 수 있게 phase 텍스트 + 경과시간 + 단계 인디케이터를 보여준다.
+ *
+ * - `jobId`: Phase B에서 Supabase realtime 구독 키로 사용. 없어도 fake-phase 로 동작 가능.
+ * - `fortuneType`: 라벨/아이콘/색상 결정용 (없으면 generic "분석 중").
+ * - `phase`: 현재 표시할 단계 텍스트. 서버 phase 도착 시 in-place 갱신.
+ * - `phaseSteps`: 시각적 진행 도트용 라벨 시퀀스. 없으면 도트 미표시.
+ * - `currentStepIndex`: phaseSteps 중 active 인덱스.
+ * - `startedAt`: epoch ms — 경과시간 계산용.
+ * - `estimatedSeconds`: 서버가 예상한 총 소요시간 — 남은시간 표시용.
+ *
+ * 완료되면 이 메시지는 결과 카드로 교체되거나 그대로 둘 수 있음 (replace 정책은 호출 측 결정).
+ */
+export interface ChatShellProgressMessage {
+  id: string;
+  kind: 'progress';
+  sender: 'assistant';
+  jobId?: string;
+  fortuneType?: FortuneTypeId;
+  phase: string;
+  phaseSteps?: string[];
+  currentStepIndex?: number;
+  startedAt: number;
+  estimatedSeconds?: number;
+}
+
+/**
  * System-role card that pins the user's own Saju context into the chat.
  * Injected when user taps "사주로 대화하기" on the Manseryeok screen — acts as
  * a visual reminder that the following conversation is grounded in this chart.
@@ -173,7 +202,8 @@ export type ChatShellMessage =
   | ChatShellSajuPreviewMessage
   | ChatShellImageMessage
   | ChatShellStoryRevealMessage
-  | ChatShellMySajuContextMessage;
+  | ChatShellMySajuContextMessage
+  | ChatShellProgressMessage;
 
 export interface ChatShellAction {
   id: string;
@@ -560,6 +590,39 @@ export function buildMySajuContextMessage(
       dominantTenGods,
     },
     timestamp: Date.now(),
+  };
+}
+
+export interface BuildProgressMessageOptions {
+  jobId?: string;
+  fortuneType?: FortuneTypeId;
+  /** 시작 phase 텍스트. 미지정 시 fortuneType 라벨 기반 기본값. */
+  phase?: string;
+  phaseSteps?: string[];
+  currentStepIndex?: number;
+  /** epoch ms. 미지정 시 Date.now(). */
+  startedAt?: number;
+  estimatedSeconds?: number;
+}
+
+export function buildProgressMessage(
+  options: BuildProgressMessageOptions = {},
+): ChatShellProgressMessage {
+  const fortuneLabel = options.fortuneType
+    ? formatFortuneTypeLabel(options.fortuneType)
+    : null;
+  const defaultPhase = fortuneLabel ? `${fortuneLabel} 분석 중` : '분석 중';
+  return {
+    id: createMessageId('progress'),
+    kind: 'progress',
+    sender: 'assistant',
+    jobId: options.jobId,
+    fortuneType: options.fortuneType,
+    phase: options.phase ?? defaultPhase,
+    phaseSteps: options.phaseSteps,
+    currentStepIndex: options.currentStepIndex,
+    startedAt: options.startedAt ?? Date.now(),
+    estimatedSeconds: options.estimatedSeconds,
   };
 }
 

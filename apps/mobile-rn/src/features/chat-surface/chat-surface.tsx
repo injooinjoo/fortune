@@ -40,6 +40,7 @@ import { FadeUpWords, StoryRevealMessage } from '../story-chat-animations';
 import { FortuneCookieCard } from '../fortune-cookie/fortune-cookie-card';
 import { SajuPreviewCard } from '../fortune-cookie/saju-preview-card';
 import { MySajuContextCard } from './my-saju-context-card';
+import { ProgressMessageCard } from './progress-message-card';
 import type { ChatSurveyStep } from '../chat-survey/types';
 import { TarotDrawWidget } from '../chat-survey/tarot-draw-widget';
 
@@ -852,7 +853,8 @@ function ChatThreadMessage({
     message.kind === 'fortune-cookie' ||
     message.kind === 'saju-preview' ||
     message.kind === 'story-reveal' ||
-    message.kind === 'my-saju-context';
+    message.kind === 'my-saju-context' ||
+    message.kind === 'progress';
   const isImage = message.kind === 'image';
 
   // Apple 5.2.3 — assistant 텍스트 메시지 long-press로 신고 시트 오픈.
@@ -917,6 +919,12 @@ function ChatThreadMessage({
       return (
         <View style={{ width: '100%' }}>
           <MySajuContextCard message={message} />
+        </View>
+      );
+    if (message.kind === 'progress')
+      return (
+        <View style={{ width: '100%' }}>
+          <ProgressMessageCard message={message} />
         </View>
       );
     if (isImage)
@@ -1973,10 +1981,8 @@ function SurveyImagePicker({
 
       const result = await launchFn({
         mediaTypes: ['images'],
-        // 0.6 = AI 분석에 충분한 화질 + base64 size 절반 감소 (3-5MB → 1.5-2MB).
-        // 손금/관상 분석은 윤곽선이 핵심이라 약간의 압축 손실 영향 없음.
-        // Supabase Edge Function 6MB body limit + 모바일 4G 업로드 지연 고려한 절충값.
-        quality: 0.6,
+        // 0.9 = 시각적 무손실에 가까우면서 base64 size 합리적 유지.
+        quality: 0.9,
         base64: true,
         // iOS 기본 1:1 강제 크롭 비활성 (위아래 잘림 방지).
         // 손금/얼굴/전신 모두 원본 비율 유지 — Edge Function 이 알아서 처리.

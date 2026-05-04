@@ -153,6 +153,14 @@ Deno.serve(async (req) => {
 /**
  * Placeholder 텍스트 메시지를 character_conversations 에 INSERT.
  * 사용자가 즉시 채팅창에서 "분석 시작했어!" 라는 응답을 본다.
+ *
+ * 영속화 envelope (`{id, type, content, timestamp}`) 형식 — 클라
+ * `fromPersistedStoryMessages` 의 text 분기가 이 shape 을 요구.
+ * (이전: `{id, kind:'text', sender, text}` 클라 in-memory 형식 → 파서가
+ * reject 해 silently DROP. 클라 측은 chat-screen 의 local appendMessages
+ * 가 동일 placeholder 를 별도로 push 하므로 사용자 가시 영향은 없었지만,
+ * 다른 디바이스/콜드스타트 시 재진입하면 placeholder 가 사라지는 문제가
+ * 있었다.)
  */
 async function insertPlaceholderMessage(
   client: SupabaseClient,
@@ -165,9 +173,9 @@ async function insertPlaceholderMessage(
 
   const placeholder = {
     id: messageId,
-    kind: 'text',
-    sender: 'assistant',
-    text: placeholderText,
+    type: 'character',
+    content: placeholderText,
+    timestamp: new Date().toISOString(),
   };
 
   const { error } = await client.rpc('merge_character_conversation_messages', {

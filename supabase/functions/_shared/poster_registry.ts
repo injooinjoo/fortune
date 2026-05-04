@@ -297,6 +297,8 @@ const faceReadingGuide: PosterTypeConfig = {
   posterType: "face-reading-guide",
   displayName: "페이스리딩 가이드",
   templatePath: "face-reading-guide.png",
+  // 전용 템플릿 미준비 → beauty-simulation 으로 임시 fallback. 이후 업로드 시 자동 우선.
+  fallbackTemplatePath: "beauty-simulation.png",
   requiresUserPhoto: true,
   photoKind: "face",
   buildPrompt: () => FACE_READING_GUIDE_PROMPT,
@@ -460,7 +462,10 @@ const pastLifeGuide: PosterTypeConfig = {
   templatePath: "past-life-guide.png",
   // No fallback: past-life narrative layout 은 palm/beauty 와 너무 달라
   // fallback 으로 잘못된 구조 출력되면 UX 깨짐. template 미업로드 시 명확한 에러로 운영자에게 알림.
-  fallbackTemplatePath: undefined,
+  // past-life-guide 전용 템플릿 미준비 → beauty-simulation 으로 fallback.
+  // narrative 레이아웃은 다르지만 portrait + section 구조는 호환. 이후 전용
+  // 템플릿 업로드 시 자동 우선 사용.
+  fallbackTemplatePath: "beauty-simulation.png",
   // 전생은 사진 없이도 가능 (contextText 만으로 narrative 생성)
   requiresUserPhoto: false,
   // photoKind 는 RN survey 분기용 메타. 'none' 으로 정확히 표기 (실제 photo step 미노출).

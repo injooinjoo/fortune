@@ -216,7 +216,12 @@ function toPersistedStoryMessages(
 ): PersistedStoryMessage[] {
   // 카드 메시지도 함께 원격 저장 — 디바이스 교체 시 복원 (메신저 표준).
   // text/카드 모두 같은 cap 안에서 시간순 truncation.
+  //
+  // `progress` 는 transient — long-running job 진행상황 카드. 작업 완료 시
+  // 결과 카드로 교체되므로 원격 저장하면 이미 끝난 작업이 살아있는 듯 보인다.
+  // 영속 시점에 사전 필터.
   return messages
+    .filter((m) => m.kind !== 'progress')
     .slice(-REMOTE_PERSIST_MESSAGE_CAP)
     .map((message): PersistedStoryMessage | null => {
       if (message.kind === 'text') {

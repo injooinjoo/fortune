@@ -27,7 +27,7 @@
  *     dispatch 3개를 1개로) — 다음 단계.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   appendMessages as dbAppendMessages,
@@ -332,9 +332,15 @@ export function updateMessage(
  *
  * synchronous read — chat-screen useState 초기값 / SSR-style render 에서 사용.
  * 이게 "채팅창 진입 시 즉시 표시" 의 핵심 (네트워크/디스크 wait 0).
+ *
+ * 빈 배열 fallback 은 module-scope `EMPTY_MESSAGES` 싱글톤 — 호출마다 새
+ * `[]` 를 만들면 호출 측 (useStoreMessages) 의 useMemo dep 가 매번 mismatch.
  */
+const EMPTY_MESSAGES: ReadonlyArray<ChatShellMessage> = Object.freeze([]);
+
 export function getMessages(characterId: string): ChatShellMessage[] {
-  return cacheByCharacter.get(characterId)?.messages ?? [];
+  return (cacheByCharacter.get(characterId)?.messages
+    ?? (EMPTY_MESSAGES as ChatShellMessage[]));
 }
 
 /**
@@ -357,35 +363,70 @@ export function subscribe(characterId: string, listener: Listener): () => void {
  * React hook — 컴포넌트가 한 캐릭터의 메시지 배열을 구독.
  *
  * 사용:
- *   const messages = useStoreMessages(characterId);
+ *   const { characterId, messages } = useStoreMessages(id);
  *
- * 반환값은 캐릭터 메시지 배열. store 변경 시 자동 re-render.
+ * 반환값은 `(characterId, messages)` 쌍. 캐릭터를 전환하는 순간
+ * (selectedCharacterId 가 A→B 로 바뀌는 순간) 호출 측이 stale messages 를
+ * 잘못된 캐릭터로 적용하는 것을 막기 위해, 첫 렌더에서 messages 와 함께
+ * "이 messages 가 어느 캐릭터의 것인지" identity 도 동일 batch 로 노출한다.
+ *
+ * 이전 구현 (messages-only) 의 race:
+ *   1) 캐릭터 A 활성, hook state = A.messages
+ *   2) selectedCharacterId 가 A → B 로 변경
+ *   3) 다음 render: useStoreMessages(B) 호출되지만 useState 는 여전히 A.messages
+ *      를 들고 있어 stale A 데이터가 반환됨
+ *   4) 호출 측 (chat-screen 의 bridge effect) 이 selectedCharacterId='B' 와
+ *      stale A.messages 를 묶어서 messagesByCharacterId['B'] 에 써 넣음
+ *      → 캐릭터 A 의 메시지가 캐릭터 B 의 채팅창에 누출
+ *
+ * 해결: hook 이 반환하는 messages 는 항상 첫 렌더부터 정확한 characterId 의
+ * 캐시를 동기 read 로 가져온다. 호출 측은 반환된 characterId 가 자신이 기대한
+ * id 와 일치하는지 즉시 검증할 수 있어, mismatch 시 적용을 skip 한다.
+ *
  * 첫 호출 시 캐시가 비어있으면 hydrate 자동 트리거.
  */
+export interface StoreMessagesSnapshot {
+  /** 이 messages 가 어느 캐릭터의 것인지. null = 비활성/미선택. */
+  characterId: string | null;
+  messages: ChatShellMessage[];
+}
+
 export function useStoreMessages(
   characterId: string | null | undefined,
-): ChatShellMessage[] {
-  const [messages, setMessages] = useState<ChatShellMessage[]>(() =>
-    characterId ? getMessages(characterId) : [],
-  );
+): StoreMessagesSnapshot {
+  const normalizedId = characterId ?? null;
+  // store 변경(push/insert)마다 forceTick 으로 re-render 유발. tick 자체는 dep
+  // 으로만 쓰임 — 실제 messages 는 항상 동기 getMessages(normalizedId) 결과.
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
-    if (!characterId) {
-      setMessages([]);
+    if (!normalizedId) {
       return;
     }
-    // 즉시 현재 캐시 반영 (캐릭터 변경 시).
-    setMessages(getMessages(characterId));
     // 백그라운드 hydrate (이미 hydrate 됐으면 no-op).
-    hydrateCharacter(characterId).catch(() => undefined);
-    // subscribe — store 변경 시 자동 re-render.
-    const unsubscribe = subscribe(characterId, (next) => {
-      setMessages(next);
+    hydrateCharacter(normalizedId).catch(() => undefined);
+    // subscribe — store 변경 시 강제 re-render.
+    const unsubscribe = subscribe(normalizedId, () => {
+      setTick((t) => t + 1);
     });
     return unsubscribe;
-  }, [characterId]);
+  }, [normalizedId]);
 
-  return messages;
+  // 매 렌더 동기 read — characterId 가 바뀌는 순간에도 stale 한 이전 캐릭터의
+  // messages 가 절대 새 characterId 와 짝지어 반환되지 않음.
+  // useMemo 로 snapshot 객체 reference 안정화 — 호출 측 useEffect 의 dep array
+  // 가 매 렌더 새 객체로 fire 되는 것을 방지. (characterId, messages 가 동일
+  // 하면 같은 reference 반환.) `tick` 은 store 변경을 강제 trigger 하기 위해
+  // dep 에 포함 — store 가 변하면 entry.messages reference 도 바뀌므로 사실상
+  // 중복이지만, 명시적 의존성 표기 + 미래에 in-place mutation 도입 시 안전망.
+  const messages = normalizedId
+    ? getMessages(normalizedId)
+    : (EMPTY_MESSAGES as ChatShellMessage[]);
+  return useMemo(
+    () => ({ characterId: normalizedId, messages }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [normalizedId, messages, tick],
+  );
 }
 
 /**

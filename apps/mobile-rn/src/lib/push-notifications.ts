@@ -141,7 +141,24 @@ export async function setAppIconBadgeCount(count: number): Promise<void> {
 export async function insertMessageFromPushIfPresent(
   payload: PushResponsePayload,
 ): Promise<void> {
-  if (!payload.characterId || !payload.body) return;
+  if (!payload.characterId) return;
+
+  // Poster-result push 우선 처리 — cardPayload 가 박혀 있으면 카드 INSERT.
+  // process-poster-jobs cron worker 가 손금/관상 등 결과 카드 push 시 사용.
+  if (payload.type === 'poster_result' && payload.cardPayloadJson) {
+    try {
+      const card = JSON.parse(payload.cardPayloadJson) as ChatShellMessage;
+      if (card && typeof card === 'object' && 'id' in card && 'kind' in card) {
+        await insertMessages(payload.characterId, [card]);
+        return;
+      }
+    } catch (e) {
+      console.warn('[push] poster_result card_payload_json parse 실패:', e);
+      // fall-through to text fallback (push body 라도 표시)
+    }
+  }
+
+  if (!payload.body) return;
   const id = payload.scheduledId
     ? `scheduled-${payload.scheduledId}`
     : payload.messageId ?? `push-${Date.now()}`;
@@ -216,6 +233,14 @@ export interface PushResponsePayload {
   /** 캐릭터 이름 — push 알림 title 로도 사용. */
   title?: string;
   route?: string;
+  /**
+   * Poster-job 결과 카드 payload (JSON-stringified ChatShellEmbeddedResultMessage).
+   * process-poster-jobs cron worker 가 결과 도착 push 에 박아서 보내면
+   * 클라가 받자마자 INSERT — hydrate / 추가 fetch 없이 즉시 결과 카드 등장.
+   */
+  cardPayloadJson?: string;
+  /** 푸시 타입 — 'poster_result' 면 cardPayloadJson 사용. */
+  type?: string;
   raw: Record<string, unknown>;
 }
 
@@ -276,7 +301,24 @@ export function installPushNotificationHandlers(handlers: {
     const route = d.route as string | undefined;
     const body = typeof d.body === 'string' ? (d.body as string) : undefined;
     const title = typeof d.title === 'string' ? (d.title as string) : undefined;
-    return { characterId, messageId, scheduledId, body, title, route, raw: d };
+    const type = typeof d.type === 'string' ? (d.type as string) : undefined;
+    const cardPayloadJson =
+      typeof d.card_payload_json === 'string'
+        ? (d.card_payload_json as string)
+        : typeof d.cardPayloadJson === 'string'
+          ? (d.cardPayloadJson as string)
+          : undefined;
+    return {
+      characterId,
+      messageId,
+      scheduledId,
+      body,
+      title,
+      route,
+      type,
+      cardPayloadJson,
+      raw: d,
+    };
   }
 
   const respSub = Notifications.addNotificationResponseReceivedListener(

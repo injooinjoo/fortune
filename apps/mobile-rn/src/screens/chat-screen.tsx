@@ -288,9 +288,18 @@ export function ChatScreen() {
   const [activeProviderId, setActiveProviderId] =
     useState<SocialAuthProviderId | null>(null);
   const [authMessage, setAuthMessage] = useState<string | null>(null);
-  const [draft, setDraft] = useState('');
-  const [surveyDraft, setSurveyDraft] = useState('');
-  const [surveySelections, setSurveySelections] = useState<string[]>([]);
+  // draft (입력창 텍스트) 는 반드시 캐릭터별 격리 — 캐릭터 전환 시 다른 캐릭터의
+  // 입력 잔여 텍스트가 새어나오면 안 됨. setDraft 는 현재 selectedCharacterId
+  // 를 ref 로 읽어서 stale closure 회피.
+  const [draftsByCharacterId, setDraftsByCharacterId] = useState<
+    Record<string, string>
+  >({});
+  // surveyDraft / surveySelections 도 캐릭터별 격리 (입력창 draft 와 동일 이유).
+  const [surveyDraftsByCharacterId, setSurveyDraftsByCharacterId] = useState<
+    Record<string, string>
+  >({});
+  const [surveySelectionsByCharacterId, setSurveySelectionsByCharacterId] =
+    useState<Record<string, string[]>>({});
   const [launchOrigin, setLaunchOrigin] = useState<'deeplink' | 'user' | null>(
     null,
   );
@@ -321,6 +330,65 @@ export function ChatScreen() {
   const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(
     null,
   );
+  // selectedCharacterId 의 최신 값을 ref 로 미러링 — async closure / useCallback
+  // 안에서 stale state 회피용. setDraft / setSurveyDraft 가 사용.
+  const selectedCharacterIdRef = useRef<string | null>(null);
+  selectedCharacterIdRef.current = selectedCharacterId;
+
+  // draft (입력창 텍스트) 캐릭터별 격리. 캐릭터 전환 시 다른 캐릭터 draft 안 새어나옴.
+  const draft = selectedCharacterId
+    ? (draftsByCharacterId[selectedCharacterId] ?? '')
+    : '';
+  const setDraft = useCallback(
+    (value: string | ((prev: string) => string)) => {
+      const id = selectedCharacterIdRef.current;
+      if (!id) return;
+      setDraftsByCharacterId((prev) => {
+        const current = prev[id] ?? '';
+        const next = typeof value === 'function' ? value(current) : value;
+        if (next === current) return prev;
+        return { ...prev, [id]: next };
+      });
+    },
+    [],
+  );
+
+  // surveyDraft (서베이 텍스트 답변) 도 동일 패턴.
+  const surveyDraft = selectedCharacterId
+    ? (surveyDraftsByCharacterId[selectedCharacterId] ?? '')
+    : '';
+  const setSurveyDraft = useCallback(
+    (value: string | ((prev: string) => string)) => {
+      const id = selectedCharacterIdRef.current;
+      if (!id) return;
+      setSurveyDraftsByCharacterId((prev) => {
+        const current = prev[id] ?? '';
+        const next = typeof value === 'function' ? value(current) : value;
+        if (next === current) return prev;
+        return { ...prev, [id]: next };
+      });
+    },
+    [],
+  );
+
+  // surveySelections (서베이 chip 다중 선택) 도 동일 패턴.
+  const surveySelections = selectedCharacterId
+    ? (surveySelectionsByCharacterId[selectedCharacterId] ?? [])
+    : [];
+  const setSurveySelections = useCallback(
+    (value: string[] | ((prev: string[]) => string[])) => {
+      const id = selectedCharacterIdRef.current;
+      if (!id) return;
+      setSurveySelectionsByCharacterId((prev) => {
+        const current = prev[id] ?? [];
+        const next = typeof value === 'function' ? value(current) : value;
+        if (next === current) return prev;
+        return { ...prev, [id]: next };
+      });
+    },
+    [],
+  );
+
   const [surfaceMode, setSurfaceMode] = useState<SurfaceMode>(() =>
     !forceListMode && directCharacterId ? 'chat' : 'list',
   );
@@ -392,10 +460,24 @@ export function ChatScreen() {
   // 두 source 가 같은 메시지 (id 동일) 면 store 가 더 길 수 없어 no-op.
   // 다른 메시지 (push 로 도착한 새 메시지) 면 store len > useState len 으로 진입.
   //
+  // **CRITICAL — cross-character leak 방지**:
+  //   useStoreMessages 가 반환하는 snapshot 은 (characterId, messages) tuple
+  //   이라 호출 측이 identity 검증 가능. 캐릭터 A→B 전환 순간 hook 의 stale
+  //   캐시에서 A.messages 가 잠깐 반환되더라도 snapshot.characterId === 'A'
+  //   여서 selectedCharacterId === 'B' 와 mismatch — 적용 SKIP. 다음 렌더에서
+  //   B 의 정확한 데이터로 다시 시도. (이전 구조: messages-only 반환 →
+  //   selectedCharacterId='B' + messages=A.messages 로 messagesByCharacterId
+  //   ['B'] 에 A 의 데이터를 잘못 써 넣어 손금가이드 결과 이미지 등이 다른
+  //   캐릭터 채팅창에 누출되던 1.0.11 production 버그.)
+  //
   // 다음 phase 에서 useState 자체를 store 로 대체. 그때까지는 mirror sync.
-  const storeMessagesForActive = useStoreMessages(selectedCharacterId);
+  const storeSnapshot = useStoreMessages(selectedCharacterId);
   useEffect(() => {
     if (!selectedCharacterId) return;
+    // Identity 검증 — snapshot 이 현재 활성 캐릭터의 것이 맞는지 반드시 확인.
+    // 다른 캐릭터의 stale snapshot 이 현재 active id 와 짝지어지면 누출 발생.
+    if (storeSnapshot.characterId !== selectedCharacterId) return;
+    const storeMessagesForActive = storeSnapshot.messages;
     if (storeMessagesForActive.length === 0) return;
     setMessagesByCharacterId((prev) => {
       const existing = prev[selectedCharacterId] ?? [];
@@ -404,7 +486,7 @@ export function ChatScreen() {
       if (storeMessagesForActive.length <= existing.length) return prev;
       return { ...prev, [selectedCharacterId]: storeMessagesForActive };
     });
-  }, [storeMessagesForActive, selectedCharacterId]);
+  }, [storeSnapshot, selectedCharacterId]);
 
   // 스레드 체류 중 새 AI/system 메시지 도착 → 즉시 읽음 처리.
   // 일반 메신저(iMessage/WhatsApp/KakaoTalk) 와 동일한 동작: 유저가 해당

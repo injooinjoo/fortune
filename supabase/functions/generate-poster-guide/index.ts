@@ -48,7 +48,10 @@ const RESULTS_BUCKET = "poster-guide-images";
 const OPENAI_EDITS_ENDPOINT = "https://api.openai.com/v1/images/edits";
 
 /** gpt-image-2 multi-image edits 평균 30~60s — 90s 여유. */
-const REQUEST_TIMEOUT_MS = 90_000;
+// Supabase Edge Function platform max wall-clock = 150s. 안전 마진 위해 140s.
+const REQUEST_TIMEOUT_MS = 140_000;
+// gpt-image-2 quality: 'low' | 'medium' | 'high' | 'auto'. 'medium' = 속도/품질 균형.
+const OPENAI_QUALITY = "medium";
 
 /** 사용자 사진 raw bytes 상한 (8MB). 더 크면 base64 inflate 로 OpenAI 거부. */
 const MAX_USER_IMAGE_BYTES = 8 * 1024 * 1024;
@@ -258,14 +261,17 @@ async function generatePosterImage(
   form.append("prompt", prompt);
   form.append("size", config.outputSize);
   form.append("n", OPENAI_N_IMAGES);
+  form.append("quality", OPENAI_QUALITY);
 
   // Uint8Array → BlobPart 캐스팅으로 Deno DOM lib 의 SharedArrayBuffer 추론 회피.
   const blobOf = (bytes: Uint8Array): Blob =>
     new Blob([bytes as unknown as BlobPart], { type: "image/png" });
 
-  form.append("image", blobOf(templatePng), "template.png");
+  // OpenAI gpt-image-2: 여러 reference 이미지는 `image[]` 배열 문법 필수.
+  // 같은 필드 `image` 를 중복 append 하면 400 "Duplicate parameter" 에러.
+  form.append("image[]", blobOf(templatePng), "template.png");
   if (userPhotoPng) {
-    form.append("image", blobOf(userPhotoPng), "user.png");
+    form.append("image[]", blobOf(userPhotoPng), "user.png");
   }
 
   const controller = new AbortController();
