@@ -330,8 +330,12 @@ const config = {
     [
       'llama.rn',
       {
-        enableEntitlements: true,
-        entitlementsProfile: 'production',
+        // enableEntitlements 는 com.apple.developer.kernel.{extended-virtual-addressing,
+        // increased-memory-limit} 를 요구. 현재 Apple Developer Portal 의
+        // com.beyond.fortune App ID 에 해당 capability 미설정 → provisioning profile
+        // 에 포함 안 돼 빌드 실패. 추후 Apple Developer Portal 에서 capability 추가
+        // 후 true 로 복구. 현재는 ship 우선.
+        enableEntitlements: false,
         forceCxx20: true,
         enableOpenCL: true,
       },
