@@ -132,10 +132,12 @@ export async function fetchEmbeddedEdgeResultPayload(
   }
 
   const functionName = endpoint.replace(/^\//u, '');
-  // W10: 30s hard timeout. AbortController 로 오프라인/hanging 응답 단절.
-  // 실제 edge function timeout 은 서버측 25~30s 이므로 클라 35s 여유.
+  // 타임아웃: gpt-image-2 기반 poster-guide (palm-reading 등) 은 20-40s 걸림
+  // → 90s 여유. 일반 텍스트 fortune 은 보통 5s 안에 끝나므로 timeout 큼은 무해.
+  const isLongRunning = endpoint === '/generate-poster-guide';
+  const timeoutMs = isLongRunning ? 90_000 : 35_000;
   const controller = new AbortController();
-  const timeoutHandle = setTimeout(() => controller.abort(), 35_000);
+  const timeoutHandle = setTimeout(() => controller.abort(), timeoutMs);
   let data: unknown;
   let error: unknown;
   try {

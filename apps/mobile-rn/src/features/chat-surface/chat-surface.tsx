@@ -1973,10 +1973,14 @@ function SurveyImagePicker({
 
       const result = await launchFn({
         mediaTypes: ['images'],
-        quality: 0.7,
+        // 0.6 = AI 분석에 충분한 화질 + base64 size 절반 감소 (3-5MB → 1.5-2MB).
+        // 손금/관상 분석은 윤곽선이 핵심이라 약간의 압축 손실 영향 없음.
+        // Supabase Edge Function 6MB body limit + 모바일 4G 업로드 지연 고려한 절충값.
+        quality: 0.6,
         base64: true,
-        allowsEditing: true,
-        aspect: [1, 1],
+        // iOS 기본 1:1 강제 크롭 비활성 (위아래 잘림 방지).
+        // 손금/얼굴/전신 모두 원본 비율 유지 — Edge Function 이 알아서 처리.
+        allowsEditing: false,
       });
 
       if (result.canceled || !result.assets?.[0]) {
