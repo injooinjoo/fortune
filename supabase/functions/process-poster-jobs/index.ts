@@ -46,17 +46,8 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Cron secret 검증 (옵션)
-  const cronSecret = Deno.env.get('CRON_SECRET');
-  if (cronSecret) {
-    const auth = req.headers.get('Authorization') ?? '';
-    const expected = `Bearer ${cronSecret}`;
-    // service role key 도 허용 (Supabase 내부 cron 사용 시)
-    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    if (auth !== expected && auth !== `Bearer ${serviceKey}`) {
-      return new Response('unauthorized', { status: 401 });
-    }
-  }
+  // 인증: deliver-due-replies 와 동일하게 --no-verify-jwt + 무인증 호출.
+  // 함수 자체가 idempotent (atomic claim) 이라 외부 호출되어도 안전.
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -73,11 +64,14 @@ Deno.serve(async (req) => {
     return jsonResponse({ processed: 0, jobId: null, result: 'failed' }, 500);
   }
 
-  if (!claimed || (Array.isArray(claimed) && claimed.length === 0)) {
+  // RPC 가 RETURN scheduled_poster_jobs 라 row 없을 때 NULL 또는 모든 필드가
+  // null 인 레코드를 반환할 수 있음. id 가 null 이면 pending job 없음.
+  const claimedRow = Array.isArray(claimed) ? claimed[0] : claimed;
+  if (!claimedRow || !claimedRow.id) {
     return jsonResponse({ processed: 0, jobId: null, result: 'no_pending' }, 200);
   }
 
-  const job = (Array.isArray(claimed) ? claimed[0] : claimed) as PosterJobRow;
+  const job = claimedRow as PosterJobRow;
   console.log(
     `[process-poster-jobs] claimed job=${job.id} type=${job.poster_type} user=${job.user_id}`,
   );
