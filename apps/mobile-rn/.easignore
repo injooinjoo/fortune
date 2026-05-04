@@ -1,6 +1,11 @@
-# Flutter (legacy, not needed for RN build)
+# Native folders 전체 — EAS 가 매 빌드 fresh prebuild 강제.
+# 이전엔 prebuild 가 "ios directory already exists" 로 스킵되어 react-native-google-mobile-ads
+# plugin 의 GADApplicationIdentifier inject 누락 → TestFlight #55, #56 SIGABRT.
+# .gitignore 는 .easignore 에 영향 없음 (EAS 는 untracked 도 업로드).
 /android
 /ios
+android
+ios
 /lib
 /macos
 /windows
