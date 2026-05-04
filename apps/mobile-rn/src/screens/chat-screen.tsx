@@ -34,7 +34,11 @@ import {
   startChatSurvey,
 } from '../features/chat-survey/registry';
 import type { ActiveChatSurvey } from '../features/chat-survey/types';
-import { fetchEmbeddedEdgeResultPayload } from '../features/chat-results/edge-runtime';
+import {
+  fetchEmbeddedEdgeResultPayload,
+  isAsyncPosterFortuneType,
+  startAsyncPosterJob,
+} from '../features/chat-results/edge-runtime';
 import { resolveResultKindFromFortuneType } from '../features/fortune-results/mapping';
 import { captureError } from '../lib/error-reporting';
 import {
@@ -94,7 +98,9 @@ import {
 } from '../lib/chat-message-utils';
 import {
   deleteMessage as deleteStoreMessage,
+  deleteMessages as deleteStoreMessages,
   insertMessages as insertStoreMessages,
+  markUserMessagesAsReadInStore,
   replaceAllForCharacter as replaceStoreMessages,
   useStoreMessages,
 } from '../lib/message-store';
@@ -548,6 +554,8 @@ export function ChatScreen() {
       if (existing.some((m) => m.id === message.id)) {
         return current;
       }
+      // Step G: store sync — store id-dedup 으로 멱등.
+      insertStoreMessages(targetCharacterId, [message]).catch(() => undefined);
       return {
         ...current,
         [targetCharacterId]: [message, ...existing],
@@ -951,6 +959,8 @@ export function ChatScreen() {
 
   const markUserMessageReadImmediately = useCallback(
     (characterId: string) => {
+      // Step G: store 에도 readAt 마킹 — useStoreMessages 구독자 (chat list 등) 즉시 reflect.
+      markUserMessagesAsReadInStore(characterId);
       setMessagesByCharacterId((current) => ({
         ...current,
         [characterId]: markLatestUserMessageAsRead(
@@ -1483,6 +1493,14 @@ export function ChatScreen() {
     }
 
     try {
+      // 비동기 poster-guide 분기 (palm-reading 등 gpt-image-2 기반).
+      // 즉시 큐 등록 + placeholder 메시지 → push 알림으로 결과 도착.
+      // 사용자 자유롭게 다른 채팅 / 앱 종료 가능.
+      if (isAsyncPosterFortuneType(completed.fortuneType)) {
+        await handleAsyncPosterFortune(character, completed);
+        return;
+      }
+
       // C1 fix: Edge Function 호출 → 성공 시에만 토큰 차감.
       // 이전 순서(차감 먼저)는 Edge 실패 시 토큰만 소실되는 빌링 버그.
       // 차감 실패(insufficient/race) 시 결과는 이미 생성됐으므로 보여주고 로그만.
@@ -1837,19 +1855,23 @@ export function ChatScreen() {
       [characterId]: [],
     };
     syncPendingCount(characterId);
-    const idsToRemove = new Set(queue.map((item) => item.userMessageId));
+    const idsToRemove = queue.map((item) => item.userMessageId);
+    const idsSet = new Set(idsToRemove);
     setMessagesByCharacterId((current) => {
       const thread = current[characterId] ?? [];
       return {
         ...current,
-        [characterId]: thread.filter((m) => !idsToRemove.has(m.id)),
+        [characterId]: thread.filter((m) => !idsSet.has(m.id)),
       };
     });
+    // Step G: store 에서도 일괄 삭제.
+    deleteStoreMessages(characterId, idsToRemove);
   }
 
   // 실패한 전송의 유저 메시지만 thread에서 제거. 뒤늦게 큐잉된 다른 메시지는
   // 건드리지 않는다. id가 없으면 가장 최근 user 메시지 하나를 pop.
   function rollbackUserMessage(characterId: string, userMessageId?: string) {
+    let resolvedUserMessageId = userMessageId;
     setMessagesByCharacterId((current) => {
       const thread = current[characterId] ?? [];
       if (userMessageId) {
@@ -1860,6 +1882,7 @@ export function ChatScreen() {
       }
       const lastUserIndex = thread.findLastIndex((m) => m.sender === 'user');
       if (lastUserIndex < 0) return current;
+      resolvedUserMessageId = thread[lastUserIndex].id;
       return {
         ...current,
         [characterId]: [
@@ -1868,6 +1891,10 @@ export function ChatScreen() {
         ],
       };
     });
+    // Step G: store 에서도 제거 — failed transient 메시지여도 store 일관성 유지.
+    if (resolvedUserMessageId) {
+      deleteStoreMessage(characterId, resolvedUserMessageId);
+    }
   }
 
   // pendingSendsRef가 바뀔 때마다 UI 카운트 동기 업데이트 + 디스크 영속화.
@@ -1938,6 +1965,8 @@ export function ChatScreen() {
         queuedUserMessage,
       ],
     }));
+    // Step G: store sync — push 도착 등 다른 채널과 같은 store 에 모임.
+    insertStoreMessages(character.id, [queuedUserMessage]).catch(() => undefined);
     pendingSendsRef.current = {
       ...pendingSendsRef.current,
       [character.id]: [
@@ -2052,6 +2081,8 @@ export function ChatScreen() {
         ...current,
         [character.id]: [...(current[character.id] ?? []), userMessage],
       }));
+      // Step G: store sync — optimistic user message
+      insertStoreMessages(character.id, [userMessage]).catch(() => undefined);
     }
     setStoryTypingByCharacterId((current) => ({
       ...current,
@@ -2077,6 +2108,8 @@ export function ChatScreen() {
             ],
           };
         });
+        // Step G: store sync — fallback assistant message
+        insertStoreMessages(character.id, [fallbackMessage]).catch(() => undefined);
         return;
       }
 
@@ -2370,6 +2403,8 @@ export function ChatScreen() {
         ...current,
         [character.id]: [...(current[character.id] ?? []), userMessage],
       }));
+      // Step G: store sync — optimistic user message (character chat path)
+      insertStoreMessages(character.id, [userMessage]).catch(() => undefined);
     }
     setStoryTypingByCharacterId((current) => ({
       ...current,
@@ -2394,6 +2429,8 @@ export function ChatScreen() {
             ],
           };
         });
+        // Step G: store sync — draft fallback reply
+        insertStoreMessages(character.id, [fallbackMessage]).catch(() => undefined);
         return;
       }
 
@@ -2714,6 +2751,8 @@ export function ChatScreen() {
           ],
         };
       });
+      // Step G: store sync — error fallback reply
+      insertStoreMessages(character.id, [fallbackMessage]).catch(() => undefined);
     } finally {
       setStoryTypingByCharacterId((current) =>
         current[character.id]

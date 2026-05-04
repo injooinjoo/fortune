@@ -245,6 +245,66 @@ export function deleteMessage(
 }
 
 /**
+ * 미읽음 user kind='text' 메시지 전부에 readAt 마킹 — 메모리 + listener notify.
+ * SQLite update 는 fire-and-forget (다음 hydrate 시 반영). chat-screen 의
+ * markUserMessageReadImmediately 보완 — useState 마킹과 동일 시점에 store 도.
+ *
+ * 메신저 표준: AI 답장 시작 = 그 전 user 메시지들 일괄 읽음.
+ */
+export function markUserMessagesAsReadInStore(
+  characterId: string,
+  readAt: string = new Date().toISOString(),
+): void {
+  const entry = cacheByCharacter.get(characterId);
+  if (!entry) return;
+  let patched = false;
+  const next = entry.messages.map((m) => {
+    if (m.kind === 'text' && m.sender === 'user' && !m.readAt) {
+      patched = true;
+      return { ...m, readAt };
+    }
+    return m;
+  });
+  if (!patched) return;
+  entry.messages = next;
+  notifyListeners(entry);
+  // SQLite 는 readAt 컬럼 없음 — 다음 appendMessages 가 payload_json 으로 통째
+  // 갱신 시 함께 영속화. read receipt 는 transient 라 강한 영속화 불필요.
+}
+
+/**
+ * 메시지 N 개 일괄 삭제 (id 리스트) — flushPendingQueue / rollback 용.
+ *
+ * 메모리 + listener notify + SQLite 1개씩 delete (트랜잭션 X — 빈도 낮음).
+ */
+export function deleteMessages(
+  characterId: string,
+  messageIds: readonly string[],
+): number {
+  if (messageIds.length === 0) return 0;
+  const entry = cacheByCharacter.get(characterId);
+  if (!entry) return 0;
+  const idSet = new Set(messageIds);
+  const remaining = entry.messages.filter((m) => !idSet.has(m.id));
+  if (remaining.length === entry.messages.length) return 0;
+  const removedCount = entry.messages.length - remaining.length;
+  entry.messages = remaining;
+  notifyListeners(entry);
+  if (isChatDbAvailable) {
+    Promise.all(
+      messageIds.map((id) =>
+        dbDeleteMessage(characterId, id).catch((error: unknown) => {
+          captureError(error, {
+            surface: 'message-store:db-delete-batch',
+          }).catch(() => undefined);
+        }),
+      ),
+    ).catch(() => undefined);
+  }
+  return removedCount;
+}
+
+/**
  * 메시지 1개 update — id 로 찾아서 callback 의 결과로 교체. 없으면 no-op.
  *
  * 사용처: readAt 마킹, status 변경 (pending→sent), animate 플래그 토글 등.
