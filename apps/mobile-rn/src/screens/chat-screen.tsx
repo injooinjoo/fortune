@@ -88,9 +88,15 @@ import {
 } from '../lib/chat-provider';
 import { onDeviceLLMEngine } from '../lib/on-device-llm';
 import {
+  markLatestUserMessageAsRead,
+  sleep,
+  randomInRange,
+} from '../lib/chat-message-utils';
+import {
   insertMessages as insertStoreMessages,
   useStoreMessages,
 } from '../lib/message-store';
+import { useMessageQueue } from '../features/chat-surface/hooks/use-message-queue';
 import {
   ackScheduledReplyIfPresent,
   clearActiveChatCharacterId,
@@ -156,32 +162,8 @@ const FALLBACK_REPLY_MIN_SEC = 1;
  * AI 응답 시점에 호출되므로, 그 전까지 쌓인 모든 유저 메시지를 한꺼번에
  * 읽음 처리 (연속으로 보낸 경우에도 "1" 배지가 남지 않도록).
  */
-function markLatestUserMessageAsRead(
-  messages: ChatShellMessage[],
-  readAt: string = new Date().toISOString(),
-): ChatShellMessage[] {
-  let patched = false;
-  const next = messages.map((message) => {
-    if (
-      message.kind === 'text' &&
-      message.sender === 'user' &&
-      !message.readAt
-    ) {
-      patched = true;
-      return { ...message, readAt };
-    }
-    return message;
-  });
-  return patched ? next : messages;
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function randomInRange(minMs: number, maxMs: number): number {
-  return minMs + Math.floor(Math.random() * Math.max(1, maxMs - minMs + 1));
-}
+// markLatestUserMessageAsRead, sleep, randomInRange 는 lib/chat-message-utils.ts
+// 로 이동. import 는 파일 상단 named import 참고.
 
 /**
  * 두 메시지 리스트가 id 기준으로 같은지 얕은 비교. hydrate 결과가 캐시와
@@ -1061,53 +1043,12 @@ export function ChatScreen() {
    * 각 버블 앞에 타이핑 인디케이터 200-600ms + 버블 사이 600-1800ms 랜덤 간격.
    * 첫 버블은 호출자가 이미 replyDelay를 걸었다고 가정 (중복 delay X).
    */
-  const enqueueAssistantSegments = useCallback(
-    async (options: {
-      characterId: string;
-      segments: string[];
-      emotionTag?: string;
-    }) => {
-      const { characterId, segments, emotionTag } = options;
-      // 응답 append는 항상 현재 state 위에 쌓는다. 큐잉된 유저 메시지(응답 대기 중
-      // 사용자가 추가로 보낸 것)를 덮어쓰지 않도록 functional setter로만 처리.
-      let latestThread: ChatShellMessage[] = [];
-
-      for (let index = 0; index < segments.length; index += 1) {
-        const text = segments[index]?.trim() ?? '';
-        if (text.length === 0) {
-          continue;
-        }
-
-        if (index > 0) {
-          // 버블 간 타이핑 인디케이터 유지 — storyTyping/fortuneTyping은 이미 on 상태
-          const gap = randomInRange(200, 600); // 타이핑 지속
-          await sleep(gap);
-          const betweenBubbles = randomInRange(600, 1800);
-          await sleep(betweenBubbles);
-        }
-
-        const bubble = buildAssistantTextMessage(text, {
-          animate: true,
-          emotionTag,
-        });
-        setMessagesByCharacterId((current) => {
-          const thread = current[characterId] ?? [];
-          const updated = [...thread, bubble];
-          latestThread = updated;
-          return { ...current, [characterId]: updated };
-        });
-        // Bridge to MessageStore — segment 단위로도 store 에 sync. 같은
-        // bubble id 면 dedup, push 로 먼저 도착해도 안전.
-        insertStoreMessages(characterId, [bubble]).catch(() => undefined);
-
-        // 햅틱 — 첫 버블에서만 울리거나 전부 울리거나. 카톡도 각 메시지마다 울리므로 전부.
-        triggerAssistantHaptic(emotionTag);
-      }
-
-      return latestThread;
-    },
-    [triggerAssistantHaptic],
-  );
+  // enqueueAssistantSegments + appendMessages 는 useMessageQueue hook 으로 이동
+  // (Step B 분해). 호출 시그니처 동일.
+  const { enqueueAssistantSegments, appendMessages } = useMessageQueue({
+    setMessagesByCharacterId,
+    triggerAssistantHaptic,
+  });
 
   // ---------------------------------------------------------------------------
   // F4 — 프레전스 라인 ("커피 내리는 중", "네 생각 중..." 등)
@@ -1362,31 +1303,7 @@ export function ChatScreen() {
     selectedCharacter,
   ]);
 
-  function appendMessages(
-    character: ChatCharacterSpec,
-    nextMessages: ChatShellMessage[],
-  ) {
-    // 새로 붙는 메시지 중 assistant/system 이 섞여 있으면, 그 시점에 미읽음
-    // 상태인 user 메시지는 모두 읽음 처리. (운세 설문/액션/일반 채팅 등
-    // 모든 경로를 한 곳에서 커버해서 "1" 배지가 남는 현상 방지)
-    const hasNonUserMessage = nextMessages.some(
-      (m) => m.sender === 'assistant' || m.sender === 'system',
-    );
-    setMessagesByCharacterId((current) => {
-      const existing = current[character.id] ?? [];
-      const base = hasNonUserMessage
-        ? markLatestUserMessageAsRead(existing)
-        : existing;
-      return {
-        ...current,
-        [character.id]: [...base, ...nextMessages],
-      };
-    });
-    // Bridge to MessageStore (Step 1.D/E) — push handler 도 같은 store 에
-    // INSERT 하므로, send / receive / push 메시지가 한 곳에 모임. 멱등성:
-    // store 가 id 기반 INSERT OR IGNORE — 중복 안전. fire-and-forget.
-    insertStoreMessages(character.id, nextMessages).catch(() => undefined);
-  }
+  // appendMessages 는 useMessageQueue hook 으로 이동 (위쪽). 호출 시그니처 동일.
 
   function setActiveSurvey(
     characterId: string,

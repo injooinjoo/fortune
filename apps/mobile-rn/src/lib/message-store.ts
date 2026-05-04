@@ -31,6 +31,7 @@ import { useEffect, useState } from 'react';
 
 import {
   appendMessages as dbAppendMessages,
+  deleteMessage as dbDeleteMessage,
   isChatDbAvailable,
   loadMessagesForCharacter,
   loadMessagesForCharactersBatch,
@@ -212,6 +213,35 @@ export async function replaceAllForCharacter(
       }).catch(() => undefined);
     });
   }
+}
+
+/**
+ * 메시지 1개 제거 — id 로 찾아서 store + SQLite 양쪽에서 삭제.
+ * 없으면 no-op (false 반환).
+ *
+ * 사용처: chat-screen handleDeleteUserMessage. 사용자가 자기 메시지 long-press
+ * → 삭제. assistant/system 은 일반적으로 삭제 X (메신저 표준).
+ */
+export function deleteMessage(
+  characterId: string,
+  messageId: string,
+): boolean {
+  const entry = cacheByCharacter.get(characterId);
+  if (!entry) return false;
+  const idx = entry.messages.findIndex((m) => m.id === messageId);
+  if (idx < 0) return false;
+  const newArray = entry.messages.slice();
+  newArray.splice(idx, 1);
+  entry.messages = newArray;
+  notifyListeners(entry);
+  if (isChatDbAvailable) {
+    dbDeleteMessage(characterId, messageId).catch((error: unknown) => {
+      captureError(error, {
+        surface: 'message-store:db-delete',
+      }).catch(() => undefined);
+    });
+  }
+  return true;
 }
 
 /**
