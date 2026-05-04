@@ -93,7 +93,9 @@ import {
   randomInRange,
 } from '../lib/chat-message-utils';
 import {
+  deleteMessage as deleteStoreMessage,
   insertMessages as insertStoreMessages,
+  replaceAllForCharacter as replaceStoreMessages,
   useStoreMessages,
 } from '../lib/message-store';
 import { useMessageQueue } from '../features/chat-surface/hooks/use-message-queue';
@@ -593,6 +595,10 @@ export function ChatScreen() {
                 }
                 return { ...current, [characterId]: cachedMessages };
               });
+              // Step G: store sync — 다른 화면 (chat list 등) 도 즉시 reflect.
+              replaceStoreMessages(characterId, cachedMessages).catch(
+                () => undefined,
+              );
             }
             return;
           }
@@ -607,6 +613,9 @@ export function ChatScreen() {
             }
             return { ...current, [characterId]: snapshot.messages };
           });
+          replaceStoreMessages(characterId, snapshot.messages).catch(
+            () => undefined,
+          );
           setStoryThreadSnapshotsByCharacterId((current) => ({
             ...current,
             [characterId]: snapshot,
@@ -635,6 +644,9 @@ export function ChatScreen() {
               }
               return { ...current, [characterId]: cachedMessages };
             });
+            replaceStoreMessages(characterId, cachedMessages).catch(
+              () => undefined,
+            );
           }
           return;
         }
@@ -649,6 +661,7 @@ export function ChatScreen() {
           }
           return { ...current, [characterId]: messages };
         });
+        replaceStoreMessages(characterId, messages).catch(() => undefined);
       } catch (error) {
         // Remove from set so it can be retried
         hydratedCharacterIdsRef.current.delete(characterId);
@@ -1653,6 +1666,8 @@ export function ChatScreen() {
       ...current,
       [characterId]: nextThread,
     }));
+    // Step G: store 에서도 삭제 — useStoreMessages 구독자 자동 reflect.
+    deleteStoreMessage(characterId, messageId);
     autoResumedUserMessageIdsRef.current.delete(messageId);
     // 디스크에 TTS 캐시가 있으면 정리. user 메시지는 캐시 없으므로 no-op이지만
     // 안전하게 호출 (idempotent).
