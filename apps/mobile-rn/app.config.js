@@ -132,6 +132,16 @@ const config = {
         'UIInterfaceOrientationPortrait',
         'UIInterfaceOrientationPortraitUpsideDown',
       ],
+      // AdMob: react-native-google-mobile-ads plugin 이 inject 해야 하지만
+      // pnpm hoisted + monorepo 구성에서 누락되면 SDK 초기화 시
+      // GADApplicationVerifyPublisherInitializedCorrectly 가 SIGABRT.
+      // 명시 inject 로 안전 장치 (build #8 TestFlight 크래시 사례).
+      GADApplicationIdentifier:
+        process.env.EXPO_PUBLIC_ADMOB_APP_ID_IOS ||
+        'ca-app-pub-2803643717997352~5970615545',
+      // ATT (App Tracking Transparency) - AdMob SDK 권장
+      NSUserTrackingUsageDescription:
+        '맞춤형 광고를 제공하기 위해 사용됩니다. 거부해도 광고는 표시됩니다.',
     },
     entitlements: {
       'aps-environment': 'production',
@@ -333,9 +343,12 @@ const config = {
     [
       'react-native-google-mobile-ads',
       {
-        androidAppId: process.env.EXPO_PUBLIC_ADMOB_APP_ID_ANDROID ??
+        // ?? (nullish) 는 빈 문자열에 fallback 안 함 — || 로 truthy 체크.
+        // EAS env 가 EXPO_PUBLIC_ADMOB_APP_ID_IOS='' 로 들어오면 빈
+        // GADApplicationIdentifier 가 Info.plist 에 박혀 SDK abort.
+        androidAppId: process.env.EXPO_PUBLIC_ADMOB_APP_ID_ANDROID ||
           'ca-app-pub-2803643717997352~8320790178',
-        iosAppId: process.env.EXPO_PUBLIC_ADMOB_APP_ID_IOS ??
+        iosAppId: process.env.EXPO_PUBLIC_ADMOB_APP_ID_IOS ||
           'ca-app-pub-2803643717997352~5970615545',
       },
     ],
