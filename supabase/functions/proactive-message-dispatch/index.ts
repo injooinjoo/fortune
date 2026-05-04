@@ -22,7 +22,7 @@ import {
   type SupabaseClient,
 } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
-import { sendCharacterDmPush } from "../_shared/notification_push.ts";
+import { persistAndPushCharacterMessage } from "../_shared/character_message_helper.ts";
 import { LLMFactory } from "../_shared/llm/factory.ts";
 import type { LLMMessage } from "../_shared/llm/types.ts";
 import {
@@ -899,57 +899,10 @@ serve(async (req: Request) => {
         continue;
       }
 
-      // 메시지 저장 (character_conversations append, 200개 cap 클라이언트와 일관)
-      const newMessage = {
-        id: messageId,
-        type: "character",
-        content: composed.text,
-        timestamp: now.toISOString(),
-        proactive: {
-          slotKey,
-          category: composed.imageCategory ?? "greeting",
-          generatedAt: now.toISOString(),
-        },
-      };
-      const nextMessages = [...existingMessages, newMessage].slice(-200);
-
-      if (convoRow) {
-        const { error: updErr } = await supabase
-          .from("character_conversations")
-          .update({
-            messages: nextMessages,
-            last_message_at: now.toISOString(),
-          })
-          .eq("user_id", pref.user_id)
-          .eq("character_id", chosenCharId);
-        if (updErr) {
-          errors.push({
-            userId: pref.user_id,
-            characterId: chosenCharId,
-            error: `conversation update 실패: ${updErr.message}`,
-          });
-          continue;
-        }
-      } else {
-        const { error: insErr } = await supabase
-          .from("character_conversations")
-          .insert({
-            user_id: pref.user_id,
-            character_id: chosenCharId,
-            messages: nextMessages,
-            last_message_at: now.toISOString(),
-          });
-        if (insErr) {
-          errors.push({
-            userId: pref.user_id,
-            characterId: chosenCharId,
-            error: `conversation insert 실패: ${insErr.message}`,
-          });
-          continue;
-        }
-      }
-
-      // 알림 토글 체크 (character_proactive 별도 컬럼)
+      // 알림 토글 체크 (character_proactive 별도 컬럼). 메시지 저장 + push
+      // 발송은 _shared/character_message_helper persistAndPushCharacterMessage
+      // 가 통합 처리 (deliver-due-replies 와 동일 helper, "서버 한 곳" 정책).
+      // 토글 off 면 push 만 skip 하고 메시지는 RPC merge 로 직접 저장.
       const { data: notifPrefs } = await supabase
         .from("user_notification_preferences")
         .select("enabled, character_proactive")
@@ -960,28 +913,66 @@ serve(async (req: Request) => {
       const proactiveEnabled =
         (notifPrefs?.character_proactive as boolean | undefined) !== false;
 
+      const persona = getProactivePersona(chosenCharId);
+      const proactiveMeta = {
+        slotKey,
+        category: composed.imageCategory ?? "greeting",
+        generatedAt: now.toISOString(),
+      };
       let pushSentCount = 0;
       let pushSkippedReason: string | undefined;
-      if (!globalEnabled) {
-        pushSkippedReason = "notif globally disabled";
-      } else if (!proactiveEnabled) {
-        pushSkippedReason = "character_proactive disabled";
+
+      if (!globalEnabled || !proactiveEnabled) {
+        // push 토글 off — merge 만 직접 (helper 우회). 클라가 다음 진입 시 봄.
+        const { error: mergeErr } = await supabase.rpc(
+          "merge_character_conversation_messages",
+          {
+            p_user_id: pref.user_id,
+            p_character_id: chosenCharId,
+            p_incoming_messages: [{
+              id: messageId,
+              type: "character",
+              content: composed.text,
+              timestamp: now.toISOString(),
+              proactive: proactiveMeta,
+            }],
+            p_runtime_state: null,
+            p_max_messages: 200,
+          },
+        );
+        if (mergeErr) {
+          errors.push({
+            userId: pref.user_id,
+            characterId: chosenCharId,
+            error: `conversation merge 실패: ${mergeErr.message}`,
+          });
+          continue;
+        }
+        pushSkippedReason = !globalEnabled
+          ? "notif globally disabled"
+          : "character_proactive disabled";
       } else {
-        const persona = getProactivePersona(chosenCharId);
-        const pushResult = await sendCharacterDmPush({
+        // 통합 helper — RPC merge + push 동시. fail-soft.
+        const result = await persistAndPushCharacterMessage({
           supabase,
           userId: pref.user_id,
           characterId: chosenCharId,
           characterName: persona.name,
-          messageText: composed.text,
+          messageContent: composed.text,
           messageId,
-          // Slice 1: notification_push.ts type union에 character_proactive 추가 보류
-          // (사용자 다른 진행 작업과 섞이지 않게). character_follow_up 으로 발송 — 의미 가까움.
-          // Slice 2에서 character_proactive 정식 추가 + 클라 라우팅 분기.
-          type: "character_follow_up",
+          pushType: "character_follow_up",
+          proactive: proactiveMeta,
         });
-        pushSentCount = pushResult.sentCount;
-        if (pushResult.skipped) pushSkippedReason = pushResult.reason;
+        if (result.persistError) {
+          errors.push({
+            userId: pref.user_id,
+            characterId: chosenCharId,
+            error: `conversation merge 실패: ${result.persistError}`,
+          });
+          continue;
+        }
+        pushSentCount = result.pushSentCount;
+        if (result.pushSkipped) pushSkippedReason = result.pushSkipReason;
       }
 
       // log INSERT
