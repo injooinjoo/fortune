@@ -18,9 +18,6 @@ ios
 
 # Design & docs
 *.pen
-*.png
-!assets/*.png
-!assets/**/*.png
 /screenshots
 /export
 *.tar.gz
