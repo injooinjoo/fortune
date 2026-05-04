@@ -1564,6 +1564,114 @@ export function ChatScreen() {
     }
   }
 
+  function posterTypeKoreanLabel(fortuneType: FortuneTypeId): string {
+    switch (fortuneType) {
+      case 'palm-reading':
+        return '손금가이드';
+      case 'beauty-simulation':
+        return '뷰티 시뮬레이션';
+      case 'hair-style-guide':
+        return '헤어스타일 가이드';
+      case 'face-reading-guide':
+        return '얼굴 인상 리포트';
+      case 'ootd-guide':
+        return 'OOTD 가이드';
+      case 'blind-date-guide':
+        return '소개팅 가이드';
+      case 'past-life-guide':
+        return '전생 리포트';
+      default:
+        return '운세';
+    }
+  }
+
+  /**
+   * 비동기 poster-guide 처리 (palm-reading 등).
+   *   1. 큐 등록 (start-poster-job) — 즉시 반환
+   *   2. placeholder 메시지 로컬 append (서버측도 INSERT 됐으나 즉시 UI 반영 위해)
+   *   3. 토큰 차감 (job 등록 성공이면 cron 이 처리할 거라 차감해도 안전)
+   *   4. 사용자는 자유롭게 다른 채팅 / 앱 종료 가능
+   *   5. cron 완료 → push 알림 → 사용자 진입 → hydrate → 결과 카드 등장
+   */
+  async function handleAsyncPosterFortune(
+    character: ChatCharacterSpec,
+    completed: { fortuneType: FortuneTypeId; answers: Record<string, unknown> },
+  ) {
+    // 사진 base64 추출 (어느 키든 — palm/face/body)
+    const answers = completed.answers ?? {};
+    const imageBase64 =
+      typeof answers.palmImage === 'string'
+        ? answers.palmImage
+        : typeof answers.faceImage === 'string'
+          ? answers.faceImage
+          : typeof answers.bodyImage === 'string'
+            ? answers.bodyImage
+            : undefined;
+
+    // 컨텍스트 텍스트 (past-life / blind-date 등 옵션)
+    const contextText =
+      typeof answers.lookContext === 'string'
+        ? answers.lookContext
+        : typeof answers.scenario === 'string'
+          ? answers.scenario
+          : undefined;
+
+    const result = await startAsyncPosterJob({
+      fortuneType: completed.fortuneType,
+      characterId: character.id,
+      characterName: character.name,
+      imageBase64,
+      contextText,
+    });
+
+    if (!result) {
+      // 큐 등록 실패 → 사용자에게 안내
+      appendMessages(character, [
+        buildAssistantTextMessage(
+          '잠깐, 지금 분석 요청을 받지 못했어. 잠시 후 다시 시도해줘.',
+        ),
+      ]);
+      return;
+    }
+
+    // 토큰 차감 — 큐 등록 성공이라 차감 OK (cron 이 처리할 것)
+    if (session) {
+      try {
+        await consumeRemoteTokens(session, {
+          fortuneType: completed.fortuneType,
+          referenceId: `fortune:${character.id}:${completed.fortuneType}:${result.jobId}`,
+        });
+      } catch (chargeError) {
+        if (
+          chargeError instanceof RemoteTokenConsumeError &&
+          chargeError.code === 'INSUFFICIENT_TOKENS'
+        ) {
+          // 토큰 부족 — job 은 이미 큐에 있지만 cron 이 user_token_balance 도 체크하므로
+          // 별도 cancel 안 해도 무해. 사용자에게 안내만.
+          appendMessages(character, [
+            buildAssistantTextMessage(
+              chargeError.message ||
+                '토큰이 부족해요. 토큰을 충전한 뒤 다시 시도해주세요.',
+            ),
+          ]);
+          return;
+        }
+        await captureError(chargeError, {
+          surface: 'chat:fortune-charge-after-async-queue',
+        }).catch(() => undefined);
+      }
+    }
+
+    // Placeholder 메시지 로컬 append (서버측 start-poster-job 도 동일 메시지 INSERT 했지만
+    // hydrate 가 즉시 안 일어나므로 로컬도 mirror — id 충돌 없도록 prefix 다르게).
+    const fortuneLabel = posterTypeKoreanLabel(completed.fortuneType);
+    const placeholder = buildAssistantTextMessage(
+      `${fortuneLabel} 분석 시작했어! 보통 30초~1분 정도 걸려.\n` +
+        `끝나면 푸시 알림으로 알려줄게. 그동안 다른 얘기 자유롭게 해도 돼!`,
+    );
+    appendMessages(character, [placeholder]);
+  }
+
   function reopenFortuneResult(
     character: ChatCharacterSpec,
     fortuneType: FortuneTypeId,

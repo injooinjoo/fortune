@@ -185,6 +185,60 @@ export async function fetchEmbeddedEdgeResultPayload(
   return result;
 }
 
+/**
+ * Async poster-job 시작 — palm-reading 등 gpt-image-2 기반 무거운 운세를
+ * 백그라운드 큐에 등록한다. 즉시 반환 (~200ms) — 결과는 push 알림으로 도착.
+ *
+ * @returns
+ *   - `{ jobId: string }` 성공
+ *   - `null` 실패 (auth 누락 / supabase 미설정 / endpoint 누락 / 큐 초과)
+ *
+ * @sideEffect
+ *   서버측 start-poster-job 이 character_conversations 에 placeholder
+ *   text 메시지 ("분석 시작했어!") 를 INSERT 함. 클라이언트는 별도로 동일
+ *   메시지를 local appendMessages 해도 무방 — merge RPC 가 id dedup 처리.
+ */
+export async function startAsyncPosterJob(params: {
+  fortuneType: FortuneTypeId;
+  characterId: string;
+  characterName: string;
+  imageBase64?: string;
+  contextText?: string;
+}): Promise<{ jobId: string } | null> {
+  if (!supabase) return null;
+
+  const { data, error } = await supabase.functions.invoke('start-poster-job', {
+    body: {
+      posterType: params.fortuneType,
+      characterId: params.characterId,
+      characterName: params.characterName,
+      imageBase64: params.imageBase64,
+      contextText: params.contextText,
+    },
+  });
+
+  if (error) {
+    console.warn('[start-poster-job] failed:', error);
+    return null;
+  }
+
+  const result = data as { success?: boolean; jobId?: string };
+  if (!result?.success || !result.jobId) {
+    return null;
+  }
+
+  return { jobId: result.jobId };
+}
+
+/**
+ * fortuneType 이 비동기 poster-guide 큐 (palm-reading 등) 대상인지.
+ * `/generate-poster-guide` 엔드포인트에 매핑되는 타입만 true.
+ */
+export function isAsyncPosterFortuneType(fortuneType: FortuneTypeId): boolean {
+  const endpoint = resolveFortuneEndpoint(fortuneType, {});
+  return endpoint === '/generate-poster-guide';
+}
+
 function buildFortuneRequestBody(
   fortuneType: FortuneTypeId,
   context: EmbeddedResultBuildContext,
