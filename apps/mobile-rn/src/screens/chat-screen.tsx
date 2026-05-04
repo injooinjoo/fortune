@@ -36,7 +36,10 @@ import {
 import type { ActiveChatSurvey } from '../features/chat-survey/types';
 import {
   fetchEmbeddedEdgeResultPayload,
+  isAsyncLongRunningFortuneType,
   isAsyncPosterFortuneType,
+  lookupCachedFortuneResult,
+  startAsyncLongRunningJob,
   startAsyncPosterJob,
 } from '../features/chat-results/edge-runtime';
 import { resolveResultKindFromFortuneType } from '../features/fortune-results/mapping';
@@ -46,6 +49,7 @@ import {
   buildEmbeddedResultMessage,
   buildEmbeddedResultMessageFromPayload,
   buildFortuneCookieMessage,
+  buildProgressMessage,
   buildSajuPreviewMessage,
   buildDraftReply,
   buildInitialThread,
@@ -59,6 +63,12 @@ import {
   type ChatShellMessage,
   type ChatShellTextMessage,
 } from '../lib/chat-shell';
+import {
+  describeLlmTextPhase,
+  LLM_TEXT_PHASE_STEPS,
+  POSTER_PHASE_STEPS,
+  trackJob as trackLongRunningJob,
+} from '../lib/long-running-jobs';
 import {
   buildChatCharactersWithCustomFriends,
   buildStoryCharactersWithCustomFriends,
@@ -101,7 +111,6 @@ import {
   deleteMessages as deleteStoreMessages,
   insertMessages as insertStoreMessages,
   markUserMessagesAsReadInStore,
-  replaceAllForCharacter as replaceStoreMessages,
   useStoreMessages,
 } from '../lib/message-store';
 import { useMessageQueue } from '../features/chat-surface/hooks/use-message-queue';
@@ -686,7 +695,10 @@ export function ChatScreen() {
                 return { ...current, [characterId]: cachedMessages };
               });
               // Step G: store sync — 다른 화면 (chat list 등) 도 즉시 reflect.
-              replaceStoreMessages(characterId, cachedMessages).catch(
+              // Non-destructive: dedup-append. 절대 REPLACE 금지 — 원격이 in-flight
+              // (push 도착 메시지, 막 보낸 user 메시지) 보다 짧을 수 있어 store
+              // /SQLite 를 REPLACE 하면 그 메시지들이 사라진다 (Bug 2 회귀).
+              insertStoreMessages(characterId, cachedMessages).catch(
                 () => undefined,
               );
             }
@@ -703,7 +715,9 @@ export function ChatScreen() {
             }
             return { ...current, [characterId]: snapshot.messages };
           });
-          replaceStoreMessages(characterId, snapshot.messages).catch(
+          // 원격 hydrate 도 dedup-append. REPLACE 하면 in-flight (push/optimistic)
+          // 메시지가 사라진다.
+          insertStoreMessages(characterId, snapshot.messages).catch(
             () => undefined,
           );
           setStoryThreadSnapshotsByCharacterId((current) => ({
@@ -734,7 +748,9 @@ export function ChatScreen() {
               }
               return { ...current, [characterId]: cachedMessages };
             });
-            replaceStoreMessages(characterId, cachedMessages).catch(
+            // Non-destructive: dedup-append. REPLACE 하면 in-flight 메시지
+            // (push 본문, 막 보낸 user_msg) 가 store/SQLite 에서 사라진다.
+            insertStoreMessages(characterId, cachedMessages).catch(
               () => undefined,
             );
           }
@@ -751,7 +767,8 @@ export function ChatScreen() {
           }
           return { ...current, [characterId]: messages };
         });
-        replaceStoreMessages(characterId, messages).catch(() => undefined);
+        // 원격 hydrate 도 dedup-append. REPLACE 절대 금지 (Bug 2 회귀 방지).
+        insertStoreMessages(characterId, messages).catch(() => undefined);
       } catch (error) {
         // Remove from set so it can be retried
         hydratedCharacterIdsRef.current.delete(characterId);
@@ -869,7 +886,24 @@ export function ChatScreen() {
     selectedCharacterId,
   ]);
 
+  // 자동 라우팅 마운트 1회만 — 한번 라우팅 결정한 후엔 사용자 탭 전환 등으로
+  // 재실행되어 강제 복귀되지 않도록 ref 가드. 회귀: 사용자가 스토리 탭 chip 을
+  // 눌러 list 모드로 가려고 해도 highlightedExpert 가 남아있으면 effect 재실행
+  // 시 surfaceMode='chat' 으로 강제 되돌리는 버그 발견 → 1회만 적용.
+  const initialRouteAppliedRef = useRef(false);
   useEffect(() => {
+    if (initialRouteAppliedRef.current) {
+      // directCharacterId 가 새로 들어오면 (push tap → /chat?characterId=X) 예외
+      // — 사용자가 push 탭으로 명시적 진입했으므로 chat 모드 강제 OK.
+      if (directCharacterId) {
+        setSelectedCharacterId(directCharacterId);
+        setActiveTab(directCharacter?.kind ?? 'story');
+        setSurfaceMode('chat');
+      }
+      return;
+    }
+    initialRouteAppliedRef.current = true;
+
     if (directCharacterId) {
       setSelectedCharacterId(directCharacterId);
       setActiveTab(directCharacter?.kind ?? 'story');
@@ -1583,6 +1617,13 @@ export function ChatScreen() {
         return;
       }
 
+      // 비동기 long-running 텍스트 운세 (tarot/dream/compatibility/traditional-saju).
+      // 동기 호출 시 20-40s 블록 → progress 카드로 진행단계 가시화.
+      if (isAsyncLongRunningFortuneType(completed.fortuneType)) {
+        await handleAsyncLongRunningFortune(character, completed);
+        return;
+      }
+
       // C1 fix: Edge Function 호출 → 성공 시에만 토큰 차감.
       // 이전 순서(차감 먼저)는 Edge 실패 시 토큰만 소실되는 빌링 버그.
       // 차감 실패(insufficient/race) 시 결과는 이미 생성됐으므로 보여주고 로그만.
@@ -1744,14 +1785,104 @@ export function ChatScreen() {
       }
     }
 
-    // Placeholder 메시지 로컬 append (서버측 start-poster-job 도 동일 메시지 INSERT 했지만
-    // hydrate 가 즉시 안 일어나므로 로컬도 mirror — id 충돌 없도록 prefix 다르게).
-    const fortuneLabel = posterTypeKoreanLabel(completed.fortuneType);
-    const placeholder = buildAssistantTextMessage(
-      `${fortuneLabel} 분석 시작했어! 보통 30초~1분 정도 걸려.\n` +
-        `끝나면 푸시 알림으로 알려줄게. 그동안 다른 얘기 자유롭게 해도 돼!`,
+    // 진행상황 카드 로컬 INSERT — 단계별 phase 텍스트 + 경과시간 표시.
+    // 서버측 start-poster-job 도 텍스트 placeholder INSERT 하지만 (cross-device
+    // hydration 용), 본 디바이스는 progress 카드를 우선 노출.
+    //
+    // jobId 와 message id 를 트래커에 등록 → use-long-running-jobs-realtime hook
+    // 이 scheduled_poster_jobs.phase UPDATE 를 수신하면 카드의 phase 텍스트가
+    // in-place 갱신된다. 결과 push 도착 시 finalizeJob 으로 카드 제거.
+    const progressMessage = buildProgressMessage({
+      jobId: result.jobId,
+      fortuneType: completed.fortuneType,
+      phase: '분석 준비 중',
+      phaseSteps: [...POSTER_PHASE_STEPS],
+      currentStepIndex: 0,
+      estimatedSeconds: 60,
+    });
+    appendMessages(character, [progressMessage]);
+    trackLongRunningJob(result.jobId, character.id, progressMessage.id);
+  }
+
+  /**
+   * 비동기 long-running 텍스트 운세 (tarot/dream/compatibility/traditional-saju).
+   * `handleAsyncPosterFortune` 와 동일한 패턴 — 큐 등록 + 토큰 차감 + progress
+   * 카드 INSERT + 트래커 등록. 차이점은 (1) start-long-running-job 호출, (2)
+   * LLM-text 단계 라벨 사용, (3) 사진 대신 서베이 답변을 payload 로 forward.
+   *
+   * 캐시 게이트: 동일 fortuneType + 같은 날 + 30분 이내 결과가 클라 캐시에 있으면
+   * 큐 우회 → 인라인 즉시 렌더 (동기 경로와 동일 UX). 캐시 미스 시에만 큐 진입.
+   */
+  async function handleAsyncLongRunningFortune(
+    character: ChatCharacterSpec,
+    completed: { fortuneType: FortuneTypeId; answers: Record<string, unknown> },
+  ) {
+    // 30분 클라 캐시 hit → 큐 우회. 동기 흐름이 fetchEmbeddedEdgeResultPayload
+    // 내부에서 자동 처리하던 동작을 비동기 분기에서도 유지.
+    const cached = lookupCachedFortuneResult(
+      completed.fortuneType,
+      session?.user.id,
     );
-    appendMessages(character, [placeholder]);
+    if (cached) {
+      const cardMessage = buildEmbeddedResultMessageFromPayload(cached);
+      appendMessages(character, [cardMessage]);
+      return;
+    }
+
+    const result = await startAsyncLongRunningJob({
+      fortuneType: completed.fortuneType,
+      characterId: character.id,
+      characterName: character.name,
+      context: buildResultContext(character, completed.answers),
+      userId: session?.user.id,
+    });
+
+    if (!result) {
+      appendMessages(character, [
+        buildAssistantTextMessage(
+          '잠깐, 지금 분석 요청을 받지 못했어. 잠시 후 다시 시도해줘.',
+        ),
+      ]);
+      return;
+    }
+
+    if (session) {
+      try {
+        await consumeRemoteTokens(session, {
+          fortuneType: completed.fortuneType,
+          referenceId: `fortune:${character.id}:${completed.fortuneType}:${result.jobId}`,
+        });
+      } catch (chargeError) {
+        if (
+          chargeError instanceof RemoteTokenConsumeError &&
+          chargeError.code === 'INSUFFICIENT_TOKENS'
+        ) {
+          appendMessages(character, [
+            buildAssistantTextMessage(
+              chargeError.message ||
+                '토큰이 부족해요. 토큰을 충전한 뒤 다시 시도해주세요.',
+            ),
+          ]);
+          return;
+        }
+        await captureError(chargeError, {
+          surface: 'chat:fortune-charge-after-async-long-running',
+        }).catch(() => undefined);
+      }
+    }
+
+    const progressMessage = buildProgressMessage({
+      jobId: result.jobId,
+      fortuneType: completed.fortuneType,
+      phase: '준비 중',
+      phaseSteps: [...LLM_TEXT_PHASE_STEPS],
+      currentStepIndex: 0,
+      estimatedSeconds: 45,
+    });
+    appendMessages(character, [progressMessage]);
+    trackLongRunningJob(result.jobId, character.id, progressMessage.id, {
+      describePhase: describeLlmTextPhase,
+    });
   }
 
   function reopenFortuneResult(
