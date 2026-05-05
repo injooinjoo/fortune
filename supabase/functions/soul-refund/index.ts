@@ -59,6 +59,9 @@ serve(async (req) => {
       idempotencyKey?: string | null
     }
 
+    // /ultrareview BM P0 #2: referenceId 필수.
+    // 환불은 1) 같은 user, 2) 같은 referenceId 의 'consume' transaction 이 존재하고,
+    // 3) 그 referenceId 로 이미 환불 처리되지 않은 경우에만 허용. 위조/중복 환불 차단.
     if (!fortuneType) {
       return new Response(
         JSON.stringify({ error: 'Missing fortuneType' }),
