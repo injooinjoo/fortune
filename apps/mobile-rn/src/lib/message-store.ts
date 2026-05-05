@@ -36,6 +36,7 @@ import {
   loadMessagesForCharacter,
   loadMessagesForCharactersBatch,
   replaceAllMessages as dbReplaceAllMessages,
+  updateMessage as dbUpdateMessage,
 } from './chat-db';
 import type { ChatShellMessage } from './chat-shell';
 import { captureError } from './error-reporting';
@@ -245,11 +246,14 @@ export function deleteMessage(
 }
 
 /**
- * 미읽음 user kind='text' 메시지 전부에 readAt 마킹 — 메모리 + listener notify.
- * SQLite update 는 fire-and-forget (다음 hydrate 시 반영). chat-screen 의
- * markUserMessageReadImmediately 보완 — useState 마킹과 동일 시점에 store 도.
+ * 미읽음 user kind='text' 메시지 전부에 readAt 마킹 — 메모리 + listener notify
+ * + SQLite payload_json UPDATE.
  *
- * 메신저 표준: AI 답장 시작 = 그 전 user 메시지들 일괄 읽음.
+ * Bug 1 회귀 방지: 이전 구현은 SQLite 영속화를 다음 appendMessages 에 위임
+ * 했으나, appendMessages 는 INSERT OR IGNORE 라 기존 row 의 payload_json 을
+ * 갱신하지 않는다. 결과적으로 readAt 이 메모리에만 살고 다음 cold start /
+ * SQLite hydrate 시 사라져 사용자 메시지의 "1" 배지가 다시 나타났다.
+ * 이제 readAt 패치마다 dbUpdateMessage 로 row payload_json 까지 동기화한다.
  */
 export function markUserMessagesAsReadInStore(
   characterId: string,
@@ -258,18 +262,34 @@ export function markUserMessagesAsReadInStore(
   const entry = cacheByCharacter.get(characterId);
   if (!entry) return;
   let patched = false;
+  const patchedMessages: ChatShellMessage[] = [];
   const next = entry.messages.map((m) => {
     if (m.kind === 'text' && m.sender === 'user' && !m.readAt) {
       patched = true;
-      return { ...m, readAt };
+      const updated = { ...m, readAt };
+      patchedMessages.push(updated);
+      return updated;
     }
     return m;
   });
   if (!patched) return;
   entry.messages = next;
   notifyListeners(entry);
-  // SQLite 는 readAt 컬럼 없음 — 다음 appendMessages 가 payload_json 으로 통째
-  // 갱신 시 함께 영속화. read receipt 는 transient 라 강한 영속화 불필요.
+  if (isChatDbAvailable && patchedMessages.length > 0) {
+    // 각 패치된 user 메시지의 payload_json 을 SQLite 에서 갱신.
+    // appendMessages 는 INSERT OR IGNORE 라 기존 row 갱신 불가 → 반드시
+    // updateMessage(UPDATE payload_json) 사용. fire-and-forget — 메모리 즉시
+    // 반영, 디스크는 백그라운드. 실패해도 메모리는 살아있어 같은 세션은 OK.
+    Promise.all(
+      patchedMessages.map((m) =>
+        dbUpdateMessage(characterId, m).catch((error: unknown) => {
+          captureError(error, {
+            surface: 'message-store:db-update-readAt',
+          }).catch(() => undefined);
+        }),
+      ),
+    ).catch(() => undefined);
+  }
 }
 
 /**

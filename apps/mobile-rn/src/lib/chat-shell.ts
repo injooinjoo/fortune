@@ -163,6 +163,12 @@ export interface ChatShellProgressMessage {
   currentStepIndex?: number;
   startedAt: number;
   estimatedSeconds?: number;
+  /**
+   * 에러 발생 시 채워지는 사용자 메시지. 값이 있으면 진행카드가 실패 상태로
+   * 렌더 (스피너 정지 + 빨간 인디케이터). 보통 진행카드는 결과카드/에러텍스트로
+   * 교체되지만, 짧은 에러를 카드 안에 표시하고 싶을 때 사용.
+   */
+  error?: string;
 }
 
 /**
@@ -616,13 +622,21 @@ export function buildProgressMessage(
     id: createMessageId('progress'),
     kind: 'progress',
     sender: 'assistant',
-    jobId: options.jobId,
-    fortuneType: options.fortuneType,
     phase: options.phase ?? defaultPhase,
-    phaseSteps: options.phaseSteps,
-    currentStepIndex: options.currentStepIndex,
     startedAt: options.startedAt ?? Date.now(),
-    estimatedSeconds: options.estimatedSeconds,
+    ...(options.jobId !== undefined ? { jobId: options.jobId } : {}),
+    ...(options.fortuneType !== undefined
+      ? { fortuneType: options.fortuneType }
+      : {}),
+    ...(options.phaseSteps !== undefined
+      ? { phaseSteps: options.phaseSteps }
+      : {}),
+    ...(options.currentStepIndex !== undefined
+      ? { currentStepIndex: options.currentStepIndex }
+      : {}),
+    ...(options.estimatedSeconds !== undefined
+      ? { estimatedSeconds: options.estimatedSeconds }
+      : {}),
   };
 }
 

@@ -44,6 +44,19 @@ export function invalidateFortuneResultCache(): void {
   fortuneResultCache.clear();
 }
 
+/**
+ * 클라이언트 캐시 체크 — 같은 fortuneType + 동일 user + 같은 날 (UTC) 30분 TTL.
+ * 동기 호출 (`fetchEmbeddedEdgeResultPayload`) 은 내부적으로 본 캐시를 자동
+ * 사용하지만, 비동기 큐 경로 (long_running_jobs) 는 캐시를 우회하므로 chat-screen
+ * 에서 명시적으로 체크해 큐 적체/대기시간 회피 — 동기 흐름과 UX 동일성 유지.
+ */
+export function lookupCachedFortuneResult(
+  fortuneType: FortuneTypeId,
+  userId?: string | null,
+): EmbeddedResultPayload | null {
+  return getCachedResult(buildCacheKey(fortuneType, userId));
+}
+
 function getCachedResult(key: string): EmbeddedResultPayload | null {
   const entry = fortuneResultCache.get(key);
   if (!entry) return null;
@@ -237,6 +250,76 @@ export async function startAsyncPosterJob(params: {
 export function isAsyncPosterFortuneType(fortuneType: FortuneTypeId): boolean {
   const endpoint = resolveFortuneEndpoint(fortuneType, {});
   return endpoint === '/generate-poster-guide';
+}
+
+/**
+ * fortuneType 이 비동기 long_running_jobs 큐 대상인지.
+ * tarot/dream/compatibility/traditional-saju 4종 — 동기 직접 호출 시 20-40s
+ * 블록 → 사용자 진행상태 미가시. 큐로 이전해 progress 카드로 노출.
+ *
+ * 향후 다른 30s+ 텍스트 운세 추가 시 본 set 에 fortuneType 추가 + 서버측
+ * start-long-running-job ALLOWED_JOB_TYPES + handlers.ts JOB_HANDLERS 등록.
+ */
+const ASYNC_LONG_RUNNING_FORTUNE_TYPES = new Set<FortuneTypeId>([
+  'tarot',
+  'dream',
+  'compatibility',
+  'traditional-saju',
+]);
+
+export function isAsyncLongRunningFortuneType(
+  fortuneType: FortuneTypeId,
+): boolean {
+  return ASYNC_LONG_RUNNING_FORTUNE_TYPES.has(fortuneType);
+}
+
+/**
+ * Async long-running job 시작 — tarot/dream/compatibility/traditional-saju.
+ * `start-long-running-job` Edge Function 에 enqueue, jobId 즉시 반환.
+ * 결과는 push 알림으로 도착, RN 은 progress 카드를 phase realtime UPDATE 로 갱신.
+ */
+export async function startAsyncLongRunningJob(params: {
+  fortuneType: FortuneTypeId;
+  characterId: string;
+  characterName: string;
+  context: EmbeddedResultBuildContext;
+  userId?: string | null;
+  estimatedSeconds?: number;
+}): Promise<{ jobId: string } | null> {
+  if (!supabase) return null;
+
+  // payload 는 직접 호출 시와 동일한 fortune-* request body — worker 가 그대로
+  // forward 하므로 동일 LLMFactory 로직이 두 호출자를 구분하지 않는다.
+  const requestBody = buildFortuneRequestBody(
+    params.fortuneType,
+    params.context,
+    params.userId,
+  );
+  if (!requestBody) {
+    return null;
+  }
+
+  const { data, error } = await supabase.functions.invoke('start-long-running-job', {
+    body: {
+      jobType: params.fortuneType,
+      characterId: params.characterId,
+      characterName: params.characterName,
+      payload: requestBody,
+      estimatedSeconds: params.estimatedSeconds,
+    },
+  });
+
+  if (error) {
+    console.warn('[start-long-running-job] failed:', error);
+    return null;
+  }
+
+  const result = data as { success?: boolean; jobId?: string };
+  if (!result?.success || !result.jobId) {
+    return null;
+  }
+
+  return { jobId: result.jobId };
 }
 
 function buildFortuneRequestBody(

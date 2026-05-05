@@ -10,11 +10,11 @@
  * - `OndoPalmReadingResult` 는 본 컴포넌트의 thin alias 로 유지 (registry 호환).
  */
 import { useState } from 'react';
-import { ActivityIndicator, Image, Share, View } from 'react-native';
+import { ActivityIndicator, Image, Pressable, Share, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import { AppText } from '../../../components/app-text';
 import { Card } from '../../../components/card';
-import { PrimaryButton } from '../../../components/primary-button';
 import { captureError } from '../../../lib/error-reporting';
 import { fortuneTheme } from '../../../lib/theme';
 import type { FortuneResultComponentProps } from '../types';
@@ -204,96 +204,104 @@ export function OndoPosterGuideResult({
   }
 
   return (
-    <View style={{ gap: fortuneTheme.spacing.md }}>
-      <Card
+    <Card
+      style={{
+        backgroundColor: fortuneTheme.colors.surface,
+        padding: 0,
+        overflow: 'hidden',
+      }}
+    >
+      <View
         style={{
-          backgroundColor: fortuneTheme.colors.surface,
-          padding: 0,
-          overflow: 'hidden',
+          width: '100%',
+          aspectRatio: copy.aspect,
+          backgroundColor: fortuneTheme.colors.surfaceSecondary,
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
-        <View
-          style={{
-            width: '100%',
-            aspectRatio: copy.aspect,
-            backgroundColor: fortuneTheme.colors.surfaceSecondary,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          {!imageError ? (
-            <Image
-              source={{ uri: imageUrl }}
-              style={{ width: '100%', height: '100%' }}
-              resizeMode="contain"
-              onLoadStart={() => {
-                setImageLoading(true);
-                setImageError(false);
-              }}
-              onLoadEnd={() => setImageLoading(false)}
-              onError={() => {
-                setImageLoading(false);
-                setImageError(true);
-              }}
-              accessibilityLabel={copy.accessibilityLabel}
-            />
-          ) : (
-            <View
-              style={{
-                gap: fortuneTheme.spacing.xs,
-                alignItems: 'center',
-                paddingHorizontal: fortuneTheme.spacing.md,
-              }}
-            >
-              <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-                {FALLBACK_LOAD_ERROR}
-              </AppText>
-            </View>
-          )}
-
-          {imageLoading && !imageError ? (
-            <View
-              style={{
-                position: 'absolute',
-                top: 0,
-                bottom: 0,
-                left: 0,
-                right: 0,
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: fortuneTheme.spacing.xs,
-              }}
-            >
-              <ActivityIndicator
-                size="small"
-                color={fortuneTheme.colors.accentSecondary}
-              />
-              <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-                {GENERIC_LOADING_TEXT}
-              </AppText>
-            </View>
-          ) : null}
-        </View>
-      </Card>
-
-      <Card>
-        <View style={{ gap: fortuneTheme.spacing.sm }}>
-          <AppText variant="heading4">{copy.title}</AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {copy.body}
-          </AppText>
-          <PrimaryButton
-            variant="primary"
-            size="lg"
-            fullWidth
-            onPress={handleShare}
-            loading={sharing}
-            disabled={imageError}
+        {!imageError ? (
+          <Image
+            source={{ uri: imageUrl }}
+            style={{ width: '100%', height: '100%' }}
+            resizeMode="contain"
+            onLoadStart={() => {
+              setImageLoading(true);
+              setImageError(false);
+            }}
+            onLoadEnd={() => setImageLoading(false)}
+            onError={() => {
+              setImageLoading(false);
+              setImageError(true);
+            }}
+            accessibilityLabel={copy.accessibilityLabel}
+          />
+        ) : (
+          <View
+            style={{
+              gap: fortuneTheme.spacing.xs,
+              alignItems: 'center',
+              paddingHorizontal: fortuneTheme.spacing.md,
+            }}
           >
-            공유하기
-          </PrimaryButton>
-        </View>
-      </Card>
-    </View>
+            <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+              {FALLBACK_LOAD_ERROR}
+            </AppText>
+          </View>
+        )}
+
+        {imageLoading && !imageError ? (
+          <View
+            style={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: fortuneTheme.spacing.xs,
+            }}
+          >
+            <ActivityIndicator
+              size="small"
+              color={fortuneTheme.colors.accentSecondary}
+            />
+            <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+              {GENERIC_LOADING_TEXT}
+            </AppText>
+          </View>
+        ) : null}
+
+        {/* 공유 아이콘 — 우상단 floating. 큰 버튼/카드 대신 minimal. */}
+        {!imageError ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="결과 이미지 공유"
+            onPress={handleShare}
+            disabled={sharing}
+            hitSlop={12}
+            style={({ pressed }) => ({
+              position: 'absolute',
+              top: fortuneTheme.spacing.sm,
+              right: fortuneTheme.spacing.sm,
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              backgroundColor: 'rgba(0,0,0,0.55)',
+              justifyContent: 'center',
+              alignItems: 'center',
+              opacity: pressed ? 0.7 : sharing ? 0.5 : 1,
+            })}
+          >
+            {sharing ? (
+              <ActivityIndicator size="small" color="#ffffff" />
+            ) : (
+              <Ionicons name="share-outline" size={20} color="#ffffff" />
+            )}
+          </Pressable>
+        ) : null}
+      </View>
+    </Card>
   );
 }

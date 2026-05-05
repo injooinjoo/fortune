@@ -26,6 +26,7 @@ import { chatCharacters } from '../lib/chat-characters';
 import type { ChatShellMessage } from '../lib/chat-shell';
 import { loadCachedCharacterMessagesBatch } from '../lib/character-conversation-cache';
 import { hydrateBatch as hydrateMessageStoreBatch } from '../lib/message-store';
+import { subscribeToPosterJobs } from '../lib/long-running-jobs';
 import { appEnv } from '../lib/env';
 import { captureError } from '../lib/error-reporting';
 import {
@@ -488,6 +489,17 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       appStateSubscription.remove();
     };
   }, []);
+
+  // Long-running job (poster-guide phase) realtime 구독.
+  // session 이 바뀌거나 sign-out 되면 채널 재구성. 미인증 상태에선 noop.
+  useEffect(() => {
+    const userId = session?.user.id;
+    if (!userId) return;
+    const unsubscribe = subscribeToPosterJobs(userId);
+    return () => {
+      unsubscribe();
+    };
+  }, [session?.user.id]);
 
   async function markGuestBrowse() {
     const next = await patchUnifiedOnboardingProgress({

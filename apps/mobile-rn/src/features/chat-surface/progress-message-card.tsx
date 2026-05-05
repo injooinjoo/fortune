@@ -22,11 +22,13 @@ interface Props {
  */
 export function ProgressMessageCard({ message }: Props) {
   const elapsed = useElapsedSeconds(message.startedAt);
-  const pulse = usePulseAnimation();
+  const isErrored = message.error != null && message.error.length > 0;
+  const pulse = usePulseAnimation(!isErrored);
 
-  const remaining = message.estimatedSeconds
-    ? Math.max(0, message.estimatedSeconds - elapsed)
-    : null;
+  const remaining =
+    message.estimatedSeconds != null
+      ? Math.max(0, message.estimatedSeconds - elapsed)
+      : null;
 
   const stepDots =
     message.phaseSteps && message.phaseSteps.length > 0 ? (
@@ -36,6 +38,10 @@ export function ProgressMessageCard({ message }: Props) {
       />
     ) : null;
 
+  const accentColor = isErrored
+    ? fortuneTheme.colors.error
+    : fortuneTheme.colors.ctaBackground;
+
   return (
     <View
       style={{
@@ -43,9 +49,9 @@ export function ProgressMessageCard({ message }: Props) {
         paddingHorizontal: 16,
         paddingVertical: 14,
         borderRadius: fortuneTheme.radius.md,
-        backgroundColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.06),
+        backgroundColor: withAlpha(accentColor, 0.06),
         borderWidth: 1,
-        borderColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.18),
+        borderColor: withAlpha(accentColor, 0.18),
         gap: 10,
       }}
     >
@@ -55,7 +61,7 @@ export function ProgressMessageCard({ message }: Props) {
             width: 10,
             height: 10,
             borderRadius: 5,
-            backgroundColor: fortuneTheme.colors.ctaBackground,
+            backgroundColor: accentColor,
             transform: [{ scale: pulse }],
           }}
         />
@@ -74,7 +80,9 @@ export function ProgressMessageCard({ message }: Props) {
         variant="labelSmall"
         color={fortuneTheme.colors.textSecondary}
       >
-        {formatStatusLine(elapsed, remaining)}
+        {isErrored
+          ? (message.error ?? '오류가 발생했어요')
+          : formatStatusLine(elapsed, remaining)}
       </AppText>
     </View>
   );
@@ -122,15 +130,20 @@ function formatStatusLine(elapsed: number, remaining: number | null): string {
 function useElapsedSeconds(startedAt: number): number {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
+    setNow(Date.now());
     const tick = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(tick);
-  }, []);
+  }, [startedAt]);
   return Math.max(0, Math.floor((now - startedAt) / 1000));
 }
 
-function usePulseAnimation(): Animated.Value {
+function usePulseAnimation(active: boolean): Animated.Value {
   const value = useRef(new Animated.Value(1)).current;
   useEffect(() => {
+    if (!active) {
+      value.setValue(1);
+      return;
+    }
     const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(value, {
@@ -149,6 +162,6 @@ function usePulseAnimation(): Animated.Value {
     );
     loop.start();
     return () => loop.stop();
-  }, [value]);
+  }, [value, active]);
   return value;
 }

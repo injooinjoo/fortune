@@ -77,8 +77,12 @@ Deno.serve(async (req) => {
   );
 
   try {
-    // 기존 generate-poster-guide Edge Function 호출 — 코드 중복 회피.
+    // Phase: rendering — claim 직후, OpenAI 호출 직전 1회만 emit.
+    // 호출 자체가 30-90s 로 lifecycle 대부분이라 별도 'preparing' 단계는 의미
+    // 없음 (preparing→rendering 두 UPDATE 가 <1ms 간격이라 클라가 둘 다 받아도
+    // 한 프레임에 깜빡임). preparing 은 enum 에 남겨 두지만 사용 안 함.
     const generateUrl = `${supabaseUrl}/functions/v1/generate-poster-guide`;
+    await updateJobPhase(admin, job.id, 'rendering');
     const generateResponse = await fetch(generateUrl, {
       method: 'POST',
       headers: {
@@ -112,17 +116,23 @@ Deno.serve(async (req) => {
 
     const imageUrl = result.imageUrl;
 
+    // Phase: finalizing — 결과 받음, 메시지 INSERT + push 발송 단계.
+    // 보통 1-2초로 짧지만 사용자에게 "거의 다 됐다" 신호로 의미.
+    await updateJobPhase(admin, job.id, 'finalizing');
+
     // 결과 카드 메시지 INSERT
     await insertResultCardMessage(admin, job, imageUrl);
 
     // Push 발송 (cardPayload 포함 → 클라가 hydrate 없이 즉시 INSERT)
     await sendCompletionPush(admin, job, imageUrl);
 
-    // Job mark done
+    // Job mark done — phase=completed 와 status=done 한 번에.
     await admin
       .from('scheduled_poster_jobs')
       .update({
         status: 'done',
+        phase: 'completed',
+        phase_updated_at: new Date().toISOString(),
         result_image_url: imageUrl,
         completed_at: new Date().toISOString(),
       })
@@ -143,6 +153,8 @@ Deno.serve(async (req) => {
       .from('scheduled_poster_jobs')
       .update({
         status: 'failed',
+        phase: 'failed',
+        phase_updated_at: new Date().toISOString(),
         error_message: errMsg.slice(0, 500),
         completed_at: new Date().toISOString(),
       })
@@ -154,6 +166,27 @@ Deno.serve(async (req) => {
     );
   }
 });
+
+/**
+ * scheduled_poster_jobs.phase 갱신 + phase_updated_at 자동 세팅.
+ * 실패해도 throw 하지 않음 — phase 는 부수정보, 결과 발송 lifecycle 을 막지 않는다.
+ */
+async function updateJobPhase(
+  admin: SupabaseClient,
+  jobId: string,
+  phase: 'rendering' | 'finalizing',
+): Promise<void> {
+  const { error } = await admin
+    .from('scheduled_poster_jobs')
+    .update({ phase, phase_updated_at: new Date().toISOString() })
+    .eq('id', jobId);
+  if (error) {
+    console.warn(
+      `[process-poster-jobs] phase update failed (job=${jobId} phase=${phase}):`,
+      error.message,
+    );
+  }
+}
 
 /**
  * 성공 결과 카드 메시지 (embedded-result kind) 를 character_conversations 에 INSERT.
