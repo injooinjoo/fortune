@@ -6,6 +6,7 @@ import {
   useLocalSearchParams,
   type Href,
 } from 'expo-router';
+import * as Crypto from 'expo-crypto';
 import { type FortuneTypeId } from '@fortune/product-contracts';
 import { Alert, Dimensions, Keyboard, Modal, Pressable, ScrollView, TextInput, View } from 'react-native';
 
@@ -1640,9 +1641,13 @@ export function ChatScreen() {
 
       if (session) {
         try {
+          // PR-0a: idempotencyKey 호출 단위 unique. reference_id 도 같은 값으로
+          // 두어 같은 운세 결과의 환불이 필요할 때 단일 키로 추적 가능.
+          const consumeKey = `fortune:${character.id}:${completed.fortuneType}:${Crypto.randomUUID()}`;
           await consumeRemoteTokens(session, {
             fortuneType: completed.fortuneType,
-            referenceId: `fortune:${character.id}:${completed.fortuneType}`,
+            referenceId: consumeKey,
+            idempotencyKey: consumeKey,
           });
         } catch (chargeError) {
           if (
@@ -1761,9 +1766,12 @@ export function ChatScreen() {
     // 토큰 차감 — 큐 등록 성공이라 차감 OK (cron 이 처리할 것)
     if (session) {
       try {
+        // PR-0a: jobId 가 이미 unique — referenceId/idempotencyKey 동일 값으로 사용.
+        const jobConsumeKey = `fortune:${character.id}:${completed.fortuneType}:${result.jobId}`;
         await consumeRemoteTokens(session, {
           fortuneType: completed.fortuneType,
-          referenceId: `fortune:${character.id}:${completed.fortuneType}:${result.jobId}`,
+          referenceId: jobConsumeKey,
+          idempotencyKey: jobConsumeKey,
         });
       } catch (chargeError) {
         if (
@@ -1849,9 +1857,12 @@ export function ChatScreen() {
 
     if (session) {
       try {
+        // PR-0a: jobId 가 이미 unique — referenceId/idempotencyKey 동일 값으로 사용.
+        const longRunConsumeKey = `fortune:${character.id}:${completed.fortuneType}:${result.jobId}`;
         await consumeRemoteTokens(session, {
           fortuneType: completed.fortuneType,
-          referenceId: `fortune:${character.id}:${completed.fortuneType}:${result.jobId}`,
+          referenceId: longRunConsumeKey,
+          idempotencyKey: longRunConsumeKey,
         });
       } catch (chargeError) {
         if (
@@ -2441,9 +2452,13 @@ export function ChatScreen() {
 
       // Skip token consumption for guest users and on-device mode
       if (session && chatProvider.getProviderName() === 'cloud') {
+        // PR-0a: 같은 캐릭터 메시지 여러 번 — referenceId 가 같으면 atomic refund 가
+        // 모호해짐. idempotencyKey 만 호출 단위 unique 로 두고 reference_id 도 같이.
+        const storyConsumeKey = `story:${character.id}:${Crypto.randomUUID()}`;
         await consumeRemoteTokens(session, {
           fortuneType: 'character-chat',
-          referenceId: `story:${character.id}`,
+          referenceId: storyConsumeKey,
+          idempotencyKey: storyConsumeKey,
         });
 
         syncRemoteProfile().catch((error: unknown) => {
@@ -2525,9 +2540,12 @@ export function ChatScreen() {
           }
           // 온디바이스 실패 → 같은 메시지 그대로 클라우드 재시도 (롤백 없음)
           if (session) {
+            // PR-0a: 호출 단위 unique key. 위 첫 시도 차감과 별도 keyed.
+            const fallbackConsumeKey = `story:${character.id}:fallback:${Crypto.randomUUID()}`;
             await consumeRemoteTokens(session, {
               fortuneType: 'character-chat',
-              referenceId: `story:${character.id}`,
+              referenceId: fallbackConsumeKey,
+              idempotencyKey: fallbackConsumeKey,
             }).catch(() => undefined);
           }
           response = await cloudChatProvider.invoke(
@@ -2824,9 +2842,12 @@ export function ChatScreen() {
 
       // Skip token consumption for guest users, but still call the server
       if (session) {
+        // PR-0a: 호출 단위 unique. 같은 referenceId 여러 메시지 차감 = atomic refund 모호.
+        const characterConsumeKey = `character:${character.id}:${Crypto.randomUUID()}`;
         await consumeRemoteTokens(session, {
           fortuneType: 'character-chat',
-          referenceId: `character:${character.id}`,
+          referenceId: characterConsumeKey,
+          idempotencyKey: characterConsumeKey,
         });
 
         syncRemoteProfile().catch((error: unknown) => {

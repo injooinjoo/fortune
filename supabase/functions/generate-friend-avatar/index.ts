@@ -183,9 +183,13 @@ serve(async (req: Request) => {
 
     // 첫 시도 무료 (llm_usage_logs 카운트 기준) / 재시도 25 토큰. 구독자는 통과.
     // LLM 호출 + storage upload 한 try 블록으로 감싸 어디서 실패해도 환불 보장.
+    // PR-0a: referenceId 필수 — atomic refund RPC 가 원본 consume 추적에 사용.
+    const chargeReferenceId = crypto.randomUUID();
     const chargeCtx = {
       description: "친구 아바타 재생성",
       referenceType: "friend_avatar_retry",
+      referenceId: `friend_avatar_retry:${user.id}:${chargeReferenceId}`,
+      idempotencyKey: `friend_avatar_retry:${user.id}:${chargeReferenceId}`,
     };
 
     const unlimited = await hasUnlimitedSubscription(supabase, user.id);

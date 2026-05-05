@@ -1,6 +1,10 @@
 // 공통 토큰 차감 / 환불 / 무제한 구독 체크 헬퍼.
 // generate-character-proactive-image, generate-friend-avatar, soul-consume,
-// soul-refund 등 4곳에 동일 로직이 흩어져 있어 단가 변경 시 누락 위험. 단일 진실로 통합.
+// soul-refund 등에 동일 로직 산재 → 단일 진실로 통합.
+//
+// PR-0a: atomic RPC (consume_token_atomic / refund_token_atomic) 위임.
+// 잔액 update + 거래 insert 가 동일 트랜잭션 안에서 이루어져 부분 실패/race 차단.
+// idempotency_key 옵션 추가 — 같은 키 재전송 시 1회만 차감.
 
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -11,17 +15,23 @@ export interface ChargeContext {
   referenceType: string;
   /** 선택: token_transactions.reference_id */
   referenceId?: string | null;
+  /** PR-0a: 같은 키 재전송 시 1회만 차감. 클라가 생성. */
+  idempotencyKey?: string | null;
 }
 
 export interface ChargeResult {
-  /** 차감 성공 여부. false 면 잔액 부족. */
+  /** 차감 성공 여부. false 면 잔액 부족 또는 무제한 구독자. */
   charged: boolean;
   /** 무제한 구독자라 차감 자체를 skip 했는지. */
   unlimited: boolean;
-  /** 차감 직전 잔액 (환불 시 복원에 사용). */
+  /** 차감 직전 잔액. 환불 시 복원에 사용 (legacy). */
   balanceBeforeCharge: number;
   /** 차감 후 잔액. */
   balanceAfter: number;
+  /** PR-0a: 같은 idempotency_key 가 이미 처리됨 — 새 차감 안 함. */
+  replayed: boolean;
+  /** PR-0a: 거래 ID. 환불 호출 시 reference 로 활용 가능. */
+  transactionId: string | null;
 }
 
 export async function hasUnlimitedSubscription(
@@ -45,6 +55,8 @@ export async function hasUnlimitedSubscription(
  *
  * 성공 시 (charged=true || unlimited=true) 작업 수행 후 실패하면 refundTokens()
  * 로 환불해야 한다 — 호출자 책임.
+ *
+ * PR-0a: ctx.idempotencyKey 가 있으면 같은 키 재전송 시 1회만 차감.
  */
 export async function chargeTokens(
   supabase: SupabaseClient,
@@ -58,84 +70,108 @@ export async function chargeTokens(
       unlimited: true,
       balanceBeforeCharge: 0,
       balanceAfter: 0,
+      replayed: false,
+      transactionId: null,
     };
   }
 
-  const { data: tokenData } = await supabase
-    .from("token_balance")
-    .select("balance, total_spent")
-    .eq("user_id", userId)
-    .maybeSingle();
-
-  const balanceBeforeCharge = tokenData?.balance ?? 0;
-  const totalSpent = tokenData?.total_spent ?? 0;
-
-  if (balanceBeforeCharge < amount) {
-    return {
-      charged: false,
-      unlimited: false,
-      balanceBeforeCharge,
-      balanceAfter: balanceBeforeCharge,
-    };
-  }
-
-  const balanceAfter = balanceBeforeCharge - amount;
-
-  await supabase.from("token_balance").upsert(
+  const { data: rpcResult, error: rpcError } = await supabase.rpc(
+    "consume_token_atomic",
     {
-      user_id: userId,
-      balance: balanceAfter,
-      total_spent: totalSpent + amount,
-      updated_at: new Date().toISOString(),
+      p_user_id: userId,
+      p_cost: amount,
+      p_description: ctx.description,
+      p_reference_type: ctx.referenceType,
+      p_reference_id: ctx.referenceId ?? null,
+      p_idempotency_key: ctx.idempotencyKey ?? null,
     },
-    { onConflict: "user_id" },
   );
 
-  await supabase.from("token_transactions").insert({
-    user_id: userId,
-    transaction_type: "consumption",
-    amount: -amount,
-    balance_after: balanceAfter,
-    description: ctx.description,
-    reference_type: ctx.referenceType,
-    reference_id: ctx.referenceId ?? null,
-  });
+  if (rpcError) {
+    // INSUFFICIENT_TOKENS = P0001
+    if ((rpcError as { code?: string }).code === "P0001") {
+      const { data: tokenData } = await supabase
+        .from("token_balance")
+        .select("balance")
+        .eq("user_id", userId)
+        .maybeSingle();
+      const currentBalance = tokenData?.balance ?? 0;
+      return {
+        charged: false,
+        unlimited: false,
+        balanceBeforeCharge: currentBalance,
+        balanceAfter: currentBalance,
+        replayed: false,
+        transactionId: null,
+      };
+    }
+    throw rpcError;
+  }
+
+  const result = rpcResult as {
+    balance: number;
+    total_earned: number;
+    total_spent: number;
+    replayed: boolean;
+    transaction_id: string;
+  };
 
   return {
     charged: true,
     unlimited: false,
-    balanceBeforeCharge,
-    balanceAfter,
+    balanceBeforeCharge: result.balance + amount,
+    balanceAfter: result.balance,
+    replayed: result.replayed,
+    transactionId: result.transaction_id,
   };
 }
 
 /**
  * 작업 실패 시 차감한 토큰을 원상복원.
  * chargeResult.charged=true 인 경우에만 호출해야 의미 있음.
+ *
+ * PR-0a: atomic RPC 위임. 같은 reference_id 로 이미 환불됐으면 idempotent 처리.
+ *
+ * 호환성:
+ * - 기존 호출자가 amount/balanceBeforeCharge 를 넘기지만 RPC 는 원본 consume 의
+ *   amount 를 사용. 기존 인자는 무시 (legacy 시그니처 유지).
+ * - referenceId 가 없으면 환불 불가 (이전엔 referenceId 무시하고 환불 가능했음).
+ *   → 이 헬퍼를 쓰는 호출자는 chargeTokens 호출 시 referenceId 항상 전달해야 함.
  */
 export async function refundTokens(
   supabase: SupabaseClient,
   userId: string,
-  amount: number,
-  balanceBeforeCharge: number,
+  _amount: number,
+  _balanceBeforeCharge: number,
   ctx: ChargeContext,
 ): Promise<void> {
-  await supabase.from("token_balance").upsert(
-    {
-      user_id: userId,
-      balance: balanceBeforeCharge,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "user_id" },
-  );
+  if (!ctx.referenceId) {
+    console.warn(
+      "[token_charge.refundTokens] referenceId 없음 — 환불 skip (legacy fallback 미지원).",
+    );
+    return;
+  }
 
-  await supabase.from("token_transactions").insert({
-    user_id: userId,
-    transaction_type: "refund",
-    amount: amount,
-    balance_after: balanceBeforeCharge,
-    description: `${ctx.description} 실패 환불`,
-    reference_type: ctx.referenceType,
-    reference_id: ctx.referenceId ?? null,
+  const { error: rpcError } = await supabase.rpc("refund_token_atomic", {
+    p_user_id: userId,
+    p_consume_reference_id: ctx.referenceId,
+    p_description: `${ctx.description} 실패 환불`,
+    p_reference_type: ctx.referenceType,
+    p_idempotency_key: ctx.idempotencyKey ?? null,
   });
+
+  if (rpcError) {
+    // NO_MATCHING_CONSUME = P0002 — 차감이 RPC 도입 전이거나 referenceId 누락.
+    // 무한 루프/잘못된 환불 방지로 throw 보다 로깅.
+    if ((rpcError as { code?: string }).code === "P0002") {
+      console.warn(
+        `[token_charge.refundTokens] 원본 consume 없음 — referenceId=${ctx.referenceId}, user=${userId}. legacy 데이터일 수 있음.`,
+      );
+      return;
+    }
+    console.error(
+      `[token_charge.refundTokens] RPC 실패 — userId=${userId}, ref=${ctx.referenceId}:`,
+      rpcError,
+    );
+  }
 }
