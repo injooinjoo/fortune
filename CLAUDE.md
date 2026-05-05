@@ -15,14 +15,19 @@
 4. CONFIRM  ─ 사용자가 보고서 확인 후 명시적으로 "배포해" / /ship
 ```
 
-### 변경 유형별 진입점
+### 변경 유형별 진입점 (Codex 검증 게이트 강제)
 
-| 상황 | 사용할 스킬 / 도구 |
+핵심 룰: **Claude = 생산자, Codex = 검증자.** 모든 비-trivial 작업은 Codex adversarial 리뷰 거침. Claude 가 같은 버그를 2회 이상 못 고치면 즉시 `/codex consult` 또는 `/investigate` 로 escalate.
+
+| 작업 규모 | 워크플로우 |
 |------|---------------------|
-| 큰 변경 (3+ 파일, 새 기능) | `/autoplan` (CEO/eng/design/devex 4단 리뷰) → 코드 |
-| 버그/에러/"안됨"/"깨짐" | `/investigate` (4-phase RCA, Iron Law: no fix without root cause) |
-| 1–2 파일 단순 수정 | 직접 편집 + `npx tsc --noEmit` |
-| Supabase Edge Function 단독 작업 | 프로젝트 `backend-service` 스킬 |
+| **1–2 파일 단순 수정** | 직접 편집 + `npx tsc --noEmit` → `/codex review` → 커밋 |
+| **버그/에러/"안됨"/"깨짐"** | `/investigate` (4-phase RCA, Iron Law: no fix without root cause) → 수정 → `/codex review` |
+| **일반 기능 (3+ 파일, 새 기능)** | `/autoplan` (CEO/eng/design/devex 4단 리뷰) → 단계별 구현 → 각 단계 테스트 → `/codex review` |
+| **Supabase Edge Function 단독 작업** | 프로젝트 `backend-service` 스킬 → `/codex review` |
+| **큰 작업 (인증/결제/DB/마이그레이션/캐싱/cron/외부 API/상태관리)** | plan.md 작성 → `/codex challenge` × **2~3회** (반박 / 수정 반복) → 단계별 구현 (타입 → 핵심 → UI → 에러 → 테스트) → 각 단계마다 `/codex review` → 회귀 테스트 → 커밋 |
+
+**Codex adversarial review 자동 트리거 키워드**: 인증, 결제, 마이그레이션, RLS, cron, DB, 스키마, 토큰, 구독, OAuth, JWT, race, concurrent, 동시성, 캐시 — 한 번이라도 매칭되면 큰 작업 워크플로우 적용.
 
 ### 검토 게이트 (CODE → REVIEW)
 
@@ -31,7 +36,8 @@
 | 검토 종류 | 도구 | 트리거 조건 |
 |-----------|------|-------------|
 | Diff 안전성 | `/review` | 모든 코드 변경 |
-| 독립 2차 의견 | `/codex` (consult/challenge) | 큰 변경 또는 까다로운 로직 |
+| **Codex adversarial review** | **`/codex review` (강제) / `/codex challenge` × 2~3회 (큰 작업)** | **모든 비-trivial 변경 — Claude 단독 verdict 금지. Claude = 생산자, Codex = 검증자.** |
+| Codex Rescue (막혔을 때) | `/codex consult` 또는 `/investigate` | 같은 버그 2회 이상 fix 시도 실패 / typecheck 같은 패턴 3회+ 깨짐 — Claude 에 계속 못 시키고 즉시 Codex 로 escalate |
 | **High-blast-radius 검증** | **`/ultrareview`** | **DB 마이그레이션 / 결제 로직 / LLM 단가 / SSV 검증 / RLS / IAP 화이트리스트 변경 시 자동** |
 | 동작 확인 | iOS Simulator MCP (`mcp__ios-simulator__*`) | UI/페이지 변경 |
 | 보안 | `/security-review` 또는 `/cso` | Edge Function / DB / auth 변경 |
