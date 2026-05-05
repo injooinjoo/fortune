@@ -36,6 +36,7 @@ import { fortuneTheme, romanceTintBackground } from '../../lib/theme';
 
 import { MessageReportSheet } from './message-report-sheet';
 import { EmbeddedResultCard } from '../chat-results/embedded-result-card';
+import { FortuneMenuCard } from '../fortune-results/fortune-menu-card';
 import { FadeUpWords, StoryRevealMessage } from '../story-chat-animations';
 import { FortuneCookieCard } from '../fortune-cookie/fortune-cookie-card';
 import { SajuPreviewCard } from '../fortune-cookie/saju-preview-card';
@@ -248,37 +249,10 @@ export function FloatingCreateButton({
   );
 }
 
-function SegmentedPills({
-  activeTab,
-  onChangeTab,
-}: {
-  activeTab: ChatCharacterTab;
-  onChangeTab: (tab: ChatCharacterTab) => void;
-}) {
-  return (
-    <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.xs }}>
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => onChangeTab('story')}
-        style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
-      >
-        <Chip label="스토리" tone={activeTab === 'story' ? 'accent' : 'neutral'} />
-      </Pressable>
-      {/* TODO: 호기심 탭 임시 비활성화
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => onChangeTab('fortune')}
-        style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
-      >
-        <Chip
-          label="호기심"
-          tone={activeTab === 'fortune' ? 'accent' : 'neutral'}
-        />
-      </Pressable>
-      */}
-    </View>
-  );
-}
+// PR-B1: SegmentedPills (스토리/호기심 chip 라인) 제거.
+// 호기심 chip 은 이미 비활성, 스토리 chip 단독은 의미 없는 시각 노이즈.
+// 사용자가 명시적으로 "그 chip 라인바 자체가 없어도 돼" 라고 요청.
+// 운세는 하늘이 채팅 안의 메뉴 카드로 통합 — 별도 탭 자체가 불필요.
 
 function EntryActionRow({
   title,
@@ -921,9 +895,20 @@ function ChatThreadMessage({
         </View>
       );
     if (message.kind === 'fortune-menu') {
-      // PR-A: 운세 메뉴 카드 UI 는 PR-B 에서 구현. 본 PR 에서는 메시지 타입만
-      // 등록 — 실제 emit 자체가 없어 fallback 도달 X. 안전망으로 empty 렌더.
-      return null;
+      // PR-B1: 정적 카탈로그 렌더. onSelect 는 chat-screen 이 connect — 본 surface
+      // 에서는 prop 으로 전달하지 못해 우선 console + nothing handler. PR-B2 가
+      // ChatThreadMessage 의 prop 인터페이스 확장으로 wire-up 예정.
+      return (
+        <FortuneMenuCard
+          message={message}
+          onSelect={(entry) => {
+            console.warn(
+              '[fortune-menu] onSelect not wired — will be handled in PR-B2:',
+              entry.id,
+            );
+          }}
+        />
+      );
     }
     if (isImage)
       return (
@@ -1259,7 +1244,6 @@ export function ChatFirstRunSurface({
       >
         <View style={{ gap: fortuneTheme.spacing.xs }}>
           <AppText variant="displaySmall">메시지</AppText>
-          <SegmentedPills activeTab={activeTab} onChangeTab={onChangeTab} />
         </View>
         <HeaderActionButton
           kind="profile"
