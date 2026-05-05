@@ -1,6 +1,9 @@
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 
+import type { ChatShellMessage } from './chat-shell';
+import { finalizeJob } from './long-running-jobs';
+import { insertMessages } from './message-store';
 import {
   deleteSecureItem,
   getSecureItem,
@@ -120,10 +123,180 @@ export async function setAppIconBadgeCount(count: number): Promise<void> {
   }
 }
 
+/**
+ * Push payload 가 메시지 본문을 담고 있으면 MessageStore 에 즉시 INSERT.
+ *
+ * iMessage / WhatsApp / Signal 표준: push 도착 = 메시지 도착. 서버에 추가
+ * fetch 안 함 (extra round-trip 0). 사용자가 채팅창에 있으면 새 메시지가
+ * 자동 등장, 다른 화면에 있어도 store 캐시에 들어가 다음 진입 시 즉시 표시.
+ *
+ * 멱등성: store 가 id 기반 INSERT OR IGNORE — 같은 메시지가 push + 다음
+ * fetch 두 번 도착해도 1번만 추가됨.
+ *
+ * id 결정 우선순위:
+ *   1) scheduledId (cron deliver-due-replies 발송) — `scheduled-{uuid}` prefix
+ *      로 통일해서 서버 character_conversations.messages 와 같은 id 보장.
+ *   2) messageId (서버에서 fully-qualified id 보낸 경우)
+ *   3) fallback — push 시각 기반 (id 없는 옛 페이로드 호환).
+ */
+export async function insertMessageFromPushIfPresent(
+  payload: PushResponsePayload,
+): Promise<void> {
+  if (!payload.characterId) return;
+
+  // Slice 2: hookForReveal hook 의 pendingProactiveMessageId 가 있으면 stash.
+  // 다음 character-chat 호출이 consume 해서 서버에 보내고 → 서버가 reveal claim.
+  if (payload.pendingProactiveMessageId) {
+    stashPendingProactiveMessageId(
+      payload.characterId,
+      payload.pendingProactiveMessageId,
+    );
+  }
+
+  // Long-running 결과 push (poster_result | long_running_result) — 두 큐
+  // 테이블 모두 같은 cardPayloadJson 형식으로 발송하므로 동일 처리.
+  // process-poster-jobs / process-long-running-jobs cron worker 가 발송.
+  const isLongRunningResult =
+    payload.type === 'poster_result' || payload.type === 'long_running_result';
+  if (isLongRunningResult && payload.cardPayloadJson) {
+    try {
+      const card = JSON.parse(payload.cardPayloadJson) as ChatShellMessage;
+      if (card && typeof card === 'object' && 'id' in card && 'kind' in card) {
+        await insertMessages(payload.characterId, [card]);
+        // 진행 카드 제거 — realtime UPDATE(status=done) 가 이미 finalizeJob 을
+        // 호출했더라도 untrackJob/deleteMessages 는 멱등 (no-op safe). 푸시가
+        // realtime 보다 먼저 도착한 경우(드물지만 가능) 여기서 정리.
+        if (payload.scheduledId) {
+          finalizeJob(payload.scheduledId, { status: 'done' });
+        }
+        return;
+      }
+    } catch (e) {
+      console.warn('[push] long-running cardPayloadJson parse 실패:', e);
+      // fall-through to text fallback (push body 라도 표시)
+    }
+  }
+
+  if (!payload.body) return;
+  const id = payload.scheduledId
+    ? `scheduled-${payload.scheduledId}`
+    : payload.messageId ?? `push-${Date.now()}`;
+  const message: ChatShellMessage = {
+    id,
+    kind: 'text',
+    sender: 'assistant',
+    text: payload.body,
+  };
+  try {
+    await insertMessages(payload.characterId, [message]);
+  } catch (error) {
+    // store insert 실패해도 사용자 가시 영향 없음 — 다음 채팅창 진입 시
+    // character-conversation-load 로 복구.
+    // eslint-disable-next-line no-console
+    console.warn('[push] store insertFromPush 실패:', error);
+  }
+}
+
+/**
+ * scheduled_character_replies row 에 대한 ack 를 멱등하게 발사.
+ *
+ * 같은 scheduledId 가 여러 채널(foreground receive / tap / send→response)
+ * 로 도착해도 모듈-스코프 Set 으로 dedup → 네트워크 1회만. 서버 ack-
+ * scheduled-reply 는 자체 멱등이지만 회선/배터리 절약.
+ *
+ * cold-start 시 모듈 다시 로드되어 Set 빔 → 재호출 가능. 서버 멱등이라 안전.
+ */
+const ackedScheduledIds = new Set<string>();
+const ACKED_SCHEDULED_IDS_MAX = 256;
+
+/**
+ * Slice 2: characterId 별 pendingProactiveMessageId 큐.
+ * push 가 도착(또는 탭) 했을 때 stash → 다음 character-chat 호출이 consume.
+ *
+ * 한 캐릭터에 같은 시점 hookForReveal hook 은 1개 (서버 idempotency 보장).
+ * 사용자가 답장 안 하고 새 hook 받는 케이스 — 새 push 의 id 가 덮어씀.
+ * (구 hook 은 서버 24h window 만료로 자연스럽게 reveal 안 됨.)
+ *
+ * cold-start 시 모듈 다시 로드 → 이 큐 빔. 그래도 서버 character-chat 의
+ * fast-path lookup (partial index) 이 직전 unrevealed hook 을 찾아내므로
+ * pendingProactiveMessageId 미전달이 reveal 차단으로 직결되진 않음.
+ */
+const pendingProactiveByCharacter = new Map<string, string>();
+
+export function stashPendingProactiveMessageId(
+  characterId: string,
+  pendingId: string | null | undefined,
+): void {
+  if (!characterId || !pendingId) return;
+  pendingProactiveByCharacter.set(characterId, pendingId);
+}
+
+export function consumePendingProactiveMessageId(
+  characterId: string,
+): string | undefined {
+  const id = pendingProactiveByCharacter.get(characterId);
+  if (id) pendingProactiveByCharacter.delete(characterId);
+  return id;
+}
+
+export function ackScheduledReplyIfPresent(
+  scheduledId: string | null | undefined,
+): void {
+  if (!scheduledId) return;
+  if (ackedScheduledIds.has(scheduledId)) return;
+  if (!supabase) return;
+  // LRU-ish: 256 hit 시 가장 오래 들어온 절반 제거.
+  if (ackedScheduledIds.size >= ACKED_SCHEDULED_IDS_MAX) {
+    const toDrop = Array.from(ackedScheduledIds).slice(
+      0,
+      Math.floor(ACKED_SCHEDULED_IDS_MAX / 2),
+    );
+    toDrop.forEach((id) => ackedScheduledIds.delete(id));
+  }
+  ackedScheduledIds.add(scheduledId);
+  supabase.functions
+    .invoke('ack-scheduled-reply', { body: { scheduledId } })
+    .catch((ackError: unknown) => {
+      // 실패해도 cron 의 20s grace + client_acked_at NULL 조건에서 재시도
+      // 가능. 사용자 가시 영향 없음.
+      console.warn('[push] ack-scheduled-reply 실패:', ackError);
+    });
+}
+
 export interface PushResponsePayload {
   characterId?: string;
   messageId?: string;
+  /**
+   * scheduled_character_replies row id. 캐릭터의 지연 답장이 cron 으로
+   * 발송된 경우에만 채워짐. 받자마자 ack-scheduled-reply 호출 → cron 이
+   * 같은 메시지를 또 처리하지 않도록 client_acked_at 마킹.
+   * Telegram scheduled-message API 패턴 (서버 ID 별도 필드).
+   */
+  scheduledId?: string;
+  /**
+   * 캐릭터 메시지 본문 — buildCharacterDmPayload 가 항상 포함.
+   * 클라가 받자마자 MessageStore 에 INSERT 하면 채팅창에 자동 등장
+   * (extra fetch 0). iMessage / WhatsApp / Signal 표준 push payload.
+   */
+  body?: string;
+  /** 캐릭터 이름 — push 알림 title 로도 사용. */
+  title?: string;
   route?: string;
+  /**
+   * Poster-job 결과 카드 payload (JSON-stringified ChatShellEmbeddedResultMessage).
+   * process-poster-jobs cron worker 가 결과 도착 push 에 박아서 보내면
+   * 클라가 받자마자 INSERT — hydrate / 추가 fetch 없이 즉시 결과 카드 등장.
+   */
+  cardPayloadJson?: string;
+  /** 푸시 타입 — 'poster_result' 면 cardPayloadJson 사용. */
+  type?: string;
+  /**
+   * Slice 2 proactive hookForReveal: hooking push 의 proactive_message_log row id.
+   * 클라가 다음 character-chat 호출 시 body 에 첨부 → 서버는 이 id 로 reveal claim
+   * (race-free). 일반 push 는 비어 있음.
+   * PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.5 (A10).
+   */
+  pendingProactiveMessageId?: string;
   raw: Record<string, unknown>;
 }
 
@@ -170,8 +343,42 @@ export function installPushNotificationHandlers(handlers: {
     const messageId =
       (d.message_id as string | undefined) ??
       (d.messageId as string | undefined);
+    // 새 서버는 scheduled_id/scheduledId 별도 필드를 보냄. 옛 서버
+    // (`scheduled-{uuid}` prefix) 호환: messageId 가 그 형식이면 추출.
+    // 다음 서버 릴리스에서 prefix 제거 후 이 fallback 도 삭제.
+    const scheduledIdRaw =
+      (d.scheduled_id as string | undefined) ??
+      (d.scheduledId as string | undefined);
+    const scheduledId =
+      scheduledIdRaw ??
+      (typeof messageId === 'string' && messageId.startsWith('scheduled-')
+        ? messageId.slice('scheduled-'.length)
+        : undefined);
     const route = d.route as string | undefined;
-    return { characterId, messageId, route, raw: d };
+    const body = typeof d.body === 'string' ? (d.body as string) : undefined;
+    const title = typeof d.title === 'string' ? (d.title as string) : undefined;
+    const type = typeof d.type === 'string' ? (d.type as string) : undefined;
+    const cardPayloadJson =
+      typeof d.card_payload_json === 'string'
+        ? (d.card_payload_json as string)
+        : typeof d.cardPayloadJson === 'string'
+          ? (d.cardPayloadJson as string)
+          : undefined;
+    const pendingProactiveMessageId =
+      (d.pending_proactive_message_id as string | undefined) ??
+      (d.pendingProactiveMessageId as string | undefined);
+    return {
+      characterId,
+      messageId,
+      scheduledId,
+      body,
+      title,
+      route,
+      type,
+      cardPayloadJson,
+      pendingProactiveMessageId,
+      raw: d,
+    };
   }
 
   const respSub = Notifications.addNotificationResponseReceivedListener(
@@ -439,6 +646,71 @@ export async function syncNotificationPreferencesForSignedInUser(
     return { ok: false, reason: 'sync failed' };
   }
   return { ok: true };
+}
+
+/**
+ * 현재 메모리에 보관된 Expo push token 반환. 미발급/미등록이면 null.
+ * dev-tools 화면에서 토큰을 화면에 노출/복사하기 위한 read-only getter.
+ */
+export function getCurrentPushTokenSnapshot(): string | null {
+  return lastRegisteredToken;
+}
+
+/**
+ * 로컬 푸시 발사 — 캐릭터 DM 페이로드 모양과 동일하게 만들어, NSE/Android
+ * BigPicture 동작을 검증하기 위한 dev 전용 도구. 실제 서버 발송 경로를
+ * 거치지 않고 OS 알림센터에 곧장 띄운다.
+ *
+ * 주의: 로컬 푸시는 iOS NSE 가 호출되지 않는다 (NSE 는 원격 푸시 전용).
+ * 따라서 image attachment 는 로컬 푸시에서는 안 보인다 — 이 도구는 주로
+ * Android BigPicture 검증과 페이로드 라우팅(`character_id`/`route` 정상
+ * 전달) 검증 용. iOS NSE 검증은 실제 서버 푸시(친구 메시지 보내기)로만
+ * 가능.
+ */
+export async function presentLocalCharacterDmPushForDev(params: {
+  characterId: string;
+  characterName: string;
+  body: string;
+  imageUrl?: string | null;
+}): Promise<{ ok: true } | { ok: false; reason: string }> {
+  const Notifications = loadNotifications();
+  if (!Notifications) {
+    return { ok: false, reason: 'expo-notifications not linked' };
+  }
+  ensureNotificationHandler(Notifications);
+  const perm = await Notifications.getPermissionsAsync();
+  if (!perm.granted) {
+    return { ok: false, reason: 'permission denied' };
+  }
+  await ensureAndroidChannel(Notifications);
+
+  const data: Record<string, string> = {
+    type: 'character_dm',
+    channel: 'character_dm',
+    character_id: params.characterId,
+    characterId: params.characterId,
+    title: params.characterName,
+    body: params.body,
+    route: `/chat?characterId=${encodeURIComponent(params.characterId)}`,
+  };
+  if (params.imageUrl) {
+    data.image = params.imageUrl;
+  }
+
+  try {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: params.characterName,
+        body: params.body,
+        data,
+        sound: 'default',
+      },
+      trigger: null,
+    });
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, reason: (e as Error).message ?? 'schedule failed' };
+  }
 }
 
 export async function deactivateCurrentPushToken(): Promise<void> {

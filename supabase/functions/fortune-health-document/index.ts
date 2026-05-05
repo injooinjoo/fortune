@@ -26,6 +26,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
+import { deriveUserIdFromJwt } from '../_shared/auth.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -280,18 +281,26 @@ serve(async (req) => {
   try {
     const requestBody = await req.json()
 
+    // /ultrareview SRE P0 #5: body.userId 신뢰 금지. JWT 또는 internal-worker 헤더로만.
+    const userId = await deriveUserIdFromJwt(req)
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Unauthorized — JWT 필요' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      )
+    }
+
     console.log('📋 [HealthDocument] Request received:', {
       hasDocumentImage: !!requestBody.documentImage,
       imageLength: requestBody.documentImage?.length || 0,
       documentType: requestBody.documentType,
-      userId: requestBody.userId,
+      userId,
       hasBirthDate: !!requestBody.birthDate
     })
 
     const {
       documentImage,
       documentType = 'checkup',
-      userId,
       birthDate,
       birthTime,
       gender

@@ -214,3 +214,10 @@ scripts/*.local.sh
 # Test output screenshots
 output/
 skills-lock.json
+
+.claude/refs/
+
+# Secrets
+.env.local
+*.p8
+AuthKey_*.p8

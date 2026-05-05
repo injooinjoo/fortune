@@ -12,7 +12,7 @@
  *   • Auth / social
  *
  * Existing ad-hoc imports from individual files still work; this barrel is
- * additive. Prefer `import { Pill, DateInput, OracleMessage } from '@/components'`
+ * additive. Prefer `import { Pill, DateInput } from '@/components'`
  * for new code.
  */
 
@@ -25,9 +25,7 @@ export { PrimaryButton } from './primary-button';
 
 // --- Inputs / pickers (Ondo onboarding primitives) ---
 export { DateInput, type DateInputValue } from './date-input';
-export { TimeInput, TIME_INPUT_UNKNOWN } from './time-input';
 export { MBTIPicker, type MbtiType } from './mbti-picker';
-export { BloodPicker, type BloodType } from './blood-picker';
 export { ToneSlider } from './tone-slider';
 
 // --- Onboarding scaffolding ---
@@ -44,12 +42,7 @@ export { SelectableChip } from './selectable-chip';
 export { Avatar } from './avatar';
 export { Card } from './card';
 export { CharacterCard, type CharacterCardProps } from './character-card';
-export { FortuneSummaryCard } from './fortune-summary-card';
 export { Screen } from './screen';
-
-// --- Chat / oracle ---
-export { OracleMessage } from './oracle-message';
-export { Composer } from './composer';
 
 // --- Auth / social ---
 export { AppleAuthButton } from './apple-auth-button';

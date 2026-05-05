@@ -8,6 +8,13 @@ import { corsHeaders } from './cors.ts'
  * 인증 필수 엔드포인트는 `authenticateUser`로 401을 반환받을 것.
  *
  * body.userId / body.user_id 류 클라이언트가 주는 식별자를 절대 신뢰하지 말 것.
+ *
+ * 단, **internal worker (process-long-running-jobs 등)** 가 호출할 때는
+ * 다음 두 헤더 동시 만족 시 본문 위임 신뢰:
+ *   - `Authorization: Bearer <SUPABASE_SERVICE_ROLE_KEY>` — 시크릿 보유 증명
+ *   - `X-Internal-User-Id: <uuid>` — 위임할 user_id
+ * 두 시크릿은 외부 노출되지 않으므로 (worker 만 보유) 위조 불가.
+ * 일반 클라이언트는 이 경로를 사용할 수 없다.
  */
 export async function deriveUserIdFromJwt(req: Request): Promise<string | null> {
   const authHeader = req.headers.get('Authorization')
@@ -15,6 +22,23 @@ export async function deriveUserIdFromJwt(req: Request): Promise<string | null> 
 
   const token = authHeader.replace('Bearer ', '')
   if (!token) return null
+
+  // Internal-worker 우회 — service_role token + X-Internal-User-Id 헤더.
+  const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+  if (serviceRoleKey && token === serviceRoleKey) {
+    const internalUserId = req.headers.get('X-Internal-User-Id')
+    if (
+      internalUserId &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        internalUserId,
+      )
+    ) {
+      return internalUserId
+    }
+    // service-role 토큰인데 internal-user-id 가 없으면 user identity 부재 →
+    // null 반환 (기존 동작과 동일).
+    return null
+  }
 
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,

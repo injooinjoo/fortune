@@ -72,19 +72,6 @@ TEST_ACCOUNT_PASSWORD=TestFortuneApp2025!@#SecurePassword
 
 ## 사용 방법
 
-### Skill 실행
-
-```bash
-# 특정 페이지 테스트
-/sc:auto-qa /fortune/daily
-
-# 전체 E2E 테스트
-/sc:auto-qa all
-
-# 최근 변경된 페이지 자동 감지
-/sc:auto-qa
-```
-
 ### CLI 직접 실행
 
 ```bash
@@ -269,7 +256,7 @@ static bool isTestMode() {
 권장 조치:
 1. 콘솔 에러 확인 후 해당 코드 수정
 2. API 응답 확인 (Edge Function 로그 체크)
-3. /sc:analyze-error로 근본 원인 분석
+3. `/investigate`로 근본 원인 분석
 ```
 
 ---
@@ -298,23 +285,13 @@ playwright.config.js             # Playwright 설정
 
 ---
 
-## 관련 Agent
+## 관련 도구
 
-| Agent | 역할 |
-|-------|------|
-| `playwright-qa-agent` | E2E 테스트 실행 및 결과 분석 |
-| `testing-architect` | 테스트 전략 및 커버리지 관리 |
-| `error-resolver` | 테스트 실패 시 근본 원인 분석 |
-
----
-
-## 관련 Skill
-
-| Skill | 용도 |
-|-------|------|
-| `/sc:auto-qa` | 자동 QA 실행 |
-| `/sc:quality-gate` | 품질 게이트 (테스트 포함) |
-| `/sc:analyze-error` | 에러 분석 |
+| 도구 | 역할 |
+|------|------|
+| iOS Simulator MCP | RN 앱 화면 캡처/탐색 (주력 QA 경로) |
+| `/qa` (글로벌) | 헤드리스 브라우저 기반 QA (웹 surface가 있을 때) |
+| `/investigate` (글로벌) | 테스트 실패 시 근본 원인 분석 |
 
 ---
 

@@ -428,8 +428,18 @@ async function verifyAppleReceipt(
  * ============================================================
  */
 
-// 상품별 토큰 수량 매핑
+// 상품별 토큰 수량 매핑 (BM v2.2 + 레거시 복원)
 const PRODUCT_TOKENS: Record<string, number> = {
+  // BM v2.2 신규 패키지 (Apple Korea tier 정합 — Starter 50→30 으로 축소)
+  "com.beyond.fortune.tokens.starter": 30,
+  "com.beyond.fortune.tokens.basic": 150,
+  "com.beyond.fortune.tokens.popular": 400,
+  "com.beyond.fortune.tokens.heavy": 1000,
+  // BM v2.2 신규 구독 (월간 보너스 토큰)
+  "com.beyond.fortune.subscription.lite": 200,
+  "com.beyond.fortune.subscription.pro": 500,
+  "com.beyond.fortune.subscription.max": 2000,
+  // Legacy 토큰 (restore 시 보조)
   "com.beyond.fortune.tokens10": 10,
   "com.beyond.fortune.tokens50": 50,
   "com.beyond.fortune.tokens100": 100,
@@ -438,7 +448,37 @@ const PRODUCT_TOKENS: Record<string, number> = {
   "com.beyond.fortune.points600": 700,
   "com.beyond.fortune.points1200": 1650,
   "com.beyond.fortune.points3000": 4400,
+  // Legacy 구독 (이전 분량 그대로 복원)
+  "com.beyond.fortune.subscription.monthly": 30000,
 };
+
+// 허용된 product_id 화이트리스트.
+// packages/product-contracts/src/products.ts 의 allProductIds 와 동기화 필수.
+// 이 목록에 없는 ID 는 결제 검증 단계에서 차단 (DB 오염 방지).
+const ALLOWED_PRODUCT_IDS = new Set<string>([
+  // BM v2.2 storefront consumables
+  "com.beyond.fortune.tokens.starter",
+  "com.beyond.fortune.tokens.basic",
+  "com.beyond.fortune.tokens.popular",
+  "com.beyond.fortune.tokens.heavy",
+  // BM v2.2 storefront subscriptions
+  "com.beyond.fortune.subscription.lite",
+  "com.beyond.fortune.subscription.pro",
+  "com.beyond.fortune.subscription.max",
+  // Non-consumable
+  "com.beyond.fortune.premium_saju_lifetime",
+  // Legacy consumables (restore-only)
+  "com.beyond.fortune.tokens10",
+  "com.beyond.fortune.tokens50",
+  "com.beyond.fortune.tokens100",
+  "com.beyond.fortune.tokens200",
+  "com.beyond.fortune.points300",
+  "com.beyond.fortune.points600",
+  "com.beyond.fortune.points1200",
+  "com.beyond.fortune.points3000",
+  // Legacy subscription (restore-only)
+  "com.beyond.fortune.subscription.monthly",
+]);
 
 serve(async (req) => {
   console.log("========================================");
@@ -466,7 +506,9 @@ serve(async (req) => {
   try {
     console.log("📥 요청 body 파싱 시작...");
     const body = await req.json();
-    console.log("📥 받은 body:", JSON.stringify(body, null, 2));
+    // /ultrareview BM P0 #3: raw receipt full-body 로깅 금지. receipt 본문에는
+    // Apple/Google transaction 메타가 포함될 수 있어 logs sink 노출 위험.
+    // 개별 필드만 안전하게 마킹해서 log.
 
     const {
       platform,
@@ -485,8 +527,8 @@ serve(async (req) => {
         receipt ? "있음 (길이:" + String(receipt).length + ")" : "없음"
       }`,
     );
-    console.log(`📦 orderId: ${orderId}`);
-    console.log(`📦 transactionId: ${transactionId}`);
+    console.log(`📦 orderId: ${orderId ? "있음" : "없음"}`);
+    console.log(`📦 transactionId: ${transactionId ? "있음" : "없음"}`);
     console.log(`📦 packageName: ${packageName || "없음(기본값 사용 예정)"}`);
 
     // 필수 파라미터 검증
@@ -494,6 +536,23 @@ serve(async (req) => {
       console.log("❌ 필수 파라미터 누락!");
       return new Response(
         JSON.stringify({ valid: false, error: "Missing required parameters" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
+    }
+
+    // product_id 화이트리스트 검증.
+    // 정의되지 않은 productId 로 결제 시도 시 차단 (DB 에 87 건 오염 사례 발견됨).
+    if (!ALLOWED_PRODUCT_IDS.has(productId)) {
+      console.log(`❌ 허용되지 않은 productId: ${productId}`);
+      return new Response(
+        JSON.stringify({
+          valid: false,
+          error: "Unknown product_id",
+          productId,
+        }),
         {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -630,10 +689,64 @@ serve(async (req) => {
       `✅ 플랫폼 검증 결과: isValid = ${isValid}, environment = ${environment}`,
     );
 
-    // 검증 성공 시 토큰 추가
-    const tokensToAdd = PRODUCT_TOKENS[productId] || 0;
-    console.log(`💰 추가할 토큰 수: ${tokensToAdd} (productId: ${productId})`);
-    console.log(`💰 PRODUCT_TOKENS 매핑: ${JSON.stringify(PRODUCT_TOKENS)}`);
+    // /ultrareview BM P0 #1: 검증 통과 시 verified_purchases 에 기록.
+    // subscription-activate 등 후속 함수가 이 row 존재 여부로 진위 확인.
+    // ON CONFLICT DO NOTHING — replay 시도라도 verify_purchases 자체는 멱등.
+    if (userId && isValid && verifiedTransactionId) {
+      const { error: vpInsertErr } = await supabase
+        .from("verified_purchases")
+        .insert({
+          user_id: userId,
+          platform,
+          verified_product_id: verifiedProductId,
+          verified_transaction_id: verifiedTransactionId,
+          environment,
+        });
+      // duplicate key error 는 무시 (UNIQUE 제약 → idempotent)
+      if (vpInsertErr && !vpInsertErr.message?.includes("duplicate")) {
+        console.warn(
+          `⚠️ verified_purchases insert 실패: ${vpInsertErr.message}`,
+        );
+      }
+    }
+
+    // /ultrareview BM P0 #3: verified productId (Apple/Google 응답) 사용.
+    // 이전엔 클라가 보낸 productId 로 토큰 지급 → 낮은 가격 receipt 로 비싼 product
+    // 요청 시 비싼 양 지급되는 mismatch 공격 가능했음.
+    const tokensToAdd = PRODUCT_TOKENS[verifiedProductId] || 0;
+    console.log(
+      `💰 추가할 토큰 수: ${tokensToAdd} (verifiedProductId: ${verifiedProductId}, requestedProductId: ${productId})`,
+    );
+    if (verifiedProductId !== productId) {
+      console.warn(
+        `⚠️ verifiedProductId 와 requestedProductId 불일치 — verified 기준으로 지급`,
+      );
+    }
+
+    // /ultrareview BM P0 #3: replay 차단 — 같은 verifiedTransactionId 가 이미
+    // 토큰 지급된 경우 idempotent 응답 (성공이지만 토큰 추가 안 함).
+    let alreadyGranted = false;
+    if (userId && isValid && verifiedTransactionId) {
+      const { data: existingTxn, error: replayCheckErr } = await supabase
+        .from("token_transactions")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("transaction_type", "purchase")
+        .eq("reference_id", verifiedTransactionId)
+        .limit(1)
+        .maybeSingle();
+      if (replayCheckErr) {
+        console.warn(
+          `⚠️ replay 체크 쿼리 실패 (계속 진행): ${replayCheckErr.message}`,
+        );
+      }
+      if (existingTxn) {
+        alreadyGranted = true;
+        console.log(
+          `🔁 verifiedTransactionId=${verifiedTransactionId} 는 이미 지급 처리됨 — replay 무시`,
+        );
+      }
+    }
 
     // 첫 구매 보너스 관련 변수 (응답에서도 사용)
     let actualTokensToAdd = tokensToAdd;
@@ -649,8 +762,13 @@ serve(async (req) => {
     if (tokensToAdd <= 0) {
       console.log(`⚠️ tokensToAdd=${tokensToAdd} 라서 토큰 추가 건너뜀`);
     }
+    if (alreadyGranted) {
+      console.log(
+        `⚠️ alreadyGranted=true (이전에 같은 transaction 으로 지급됨) — 토큰 추가 건너뜀`,
+      );
+    }
 
-    if (userId && isValid && tokensToAdd > 0) {
+    if (userId && isValid && tokensToAdd > 0 && !alreadyGranted) {
       console.log("========================================");
       console.log("💰 토큰 추가 프로세스 시작");
       console.log("========================================");
