@@ -28,6 +28,7 @@ import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { extractUsername, fetchInstagramProfileImage, downloadAndEncodeImage } from '../_shared/instagram/scraper.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 import { initializePrompts, PromptManager } from '../_shared/prompts/index.ts'
+import { deriveUserIdFromJwt } from '../_shared/auth.ts'
 import {
   extractFaceReadingCohort,
   generateCohortHash,
@@ -570,12 +571,21 @@ serve(async (req) => {
 
     const requestBody = await req.json()
 
+    // /ultrareview SRE P0 #5: body.userId 신뢰 금지. JWT 또는 internal-worker.
+    const userId = await deriveUserIdFromJwt(req)
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Unauthorized — JWT 필요' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      )
+    }
+
     console.log('📸 [FaceReading V2] Request received:', {
       hasImage: !!requestBody.image,
       imageLength: requestBody.image?.length || 0,
       hasInstagramUrl: !!requestBody.instagram_url,
       analysisSource: requestBody.analysis_source,
-      userId: requestBody.userId,
+      userId,
       isPremium: requestBody.isPremium,
       userGender: requestBody.userGender,
       userAgeGroup: requestBody.userAgeGroup,
@@ -586,7 +596,6 @@ serve(async (req) => {
       image,
       instagram_url,
       analysis_source,
-      userId,
       userName,
       userGender,
       userAgeGroup,

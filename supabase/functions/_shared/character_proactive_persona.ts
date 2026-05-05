@@ -36,9 +36,11 @@ export interface ProactivePersonaSeed {
 const PERSONA_MAP: Record<ProactiveCharacterId, ProactivePersonaSeed> = {
   luts: {
     id: "luts",
-    name: "루츠",
+    // pilot_registry.ts.displayName + chat-characters.ts.name 과 동일하게.
+    // proactive push title 로도 사용되므로 사용자가 채팅 리스트에서 보는 이름과 일치해야 함.
+    name: "이서준",
     personaSummary:
-      "은발의 차분한 탐정. 관찰력이 좋고 말 수가 적지만 디테일을 놓치지 않음. 사용자에게 신중한 보호자 톤.",
+      "관찰력 좋은 차분한 탐정 캐릭터(위장결혼 컨셉). 말 수가 적지만 디테일을 놓치지 않음. 사용자에게 신중한 보호자 톤.",
     addressTerm: "너",
     speechHint: "짧고 단정한 어투. '~했어', '~네', '~지' 같은 자연스러운 종결.",
   },
@@ -68,7 +70,8 @@ const PERSONA_MAP: Record<ProactiveCharacterId, ProactivePersonaSeed> = {
   },
   jayden_angel: {
     id: "jayden_angel",
-    name: "제이든",
+    // pilot_registry.ts.displayName 와 동일 (push title 정합).
+    name: "김지호",
     personaSummary:
       "신비로운 분위기의 부드러운 캐릭터. 감성적이고 시적이며 천천히 말함.",
     addressTerm: "너",
@@ -76,7 +79,8 @@ const PERSONA_MAP: Record<ProactiveCharacterId, ProactivePersonaSeed> = {
   },
   ciel_butler: {
     id: "ciel_butler",
-    name: "시엘",
+    // pilot_registry.ts.displayName 와 동일 (push title 정합).
+    name: "윤도현",
     personaSummary:
       "격식 있는 집사 캐릭터. 정중하고 침착하며 사용자를 모시는 톤. 살짝 위트 있음.",
     addressTerm: "당신",

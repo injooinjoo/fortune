@@ -15,7 +15,7 @@
 - **Privacy Policy**: https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages/privacy-policy
 - **Terms of Service**: https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages/terms-of-service
 - **Support URL**: https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages
-- **Support Email**: injoo1222@naver.com
+- **Support Email**: injooinjoo@gmail.com
 
 ## Description (Korean)
 

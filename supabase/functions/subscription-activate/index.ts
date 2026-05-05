@@ -68,13 +68,16 @@ serve(async (req) => {
     const body = await req.json();
     const { productId, purchaseId, platform } = body;
 
-    // 필수 파라미터 검증
-    if (!productId || !platform) {
+    // 필수 파라미터 검증.
+    // /ultrareview BM P0 #1: purchaseId (Apple/Google verified transaction id) 필수.
+    // 이 id 로 verified_purchases 테이블 lookup → payment-verify-purchase 가 미리
+    // 등록한 row 가 없으면 거부. 클라가 productId 만 들고 임의 활성화하던 경로 차단.
+    if (!productId || !platform || !purchaseId) {
       console.log("❌ Missing required parameters");
       return new Response(
         JSON.stringify({
           success: false,
-          error: "Missing required parameters: productId, platform",
+          error: "Missing required parameters: productId, platform, purchaseId",
         }),
         {
           status: 400,
@@ -129,6 +132,80 @@ serve(async (req) => {
     console.log(`   - Platform: ${platform}`);
     console.log(`   - Purchase ID: ${purchaseId}`);
 
+    // /ultrareview BM P0 #1: verified_purchases 에 정합한 row 가 있는지 확인.
+    // payment-verify-purchase 가 Apple/Google 검증 통과 후 INSERT 한 row 만 매치됨.
+    // - user_id 동일 (JWT 에서 추출)
+    // - platform 동일
+    // - verified_transaction_id 동일 (purchaseId)
+    // - verified_product_id == productId (mismatch 차단)
+    // - 아직 subscription 활성화에 사용 안 됨 (consumed_for_subscription = false)
+    const { data: vp, error: vpErr } = await supabase
+      .from("verified_purchases")
+      .select("id, verified_product_id, consumed_for_subscription")
+      .eq("user_id", user.id)
+      .eq("platform", platform)
+      .eq("verified_transaction_id", purchaseId)
+      .maybeSingle();
+    if (vpErr) {
+      console.error("❌ verified_purchases lookup 실패:", vpErr.message);
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Verified purchase lookup failed",
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
+    }
+    if (!vp) {
+      console.log(
+        `❌ verified_purchases row 없음 — 결제 미검증 또는 위조 시도. user=${user.id} txn=${purchaseId}`,
+      );
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error:
+            "결제 검증되지 않은 구독 — payment-verify-purchase 를 먼저 호출하세요.",
+        }),
+        {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
+    }
+    if (vp.verified_product_id !== productId) {
+      console.log(
+        `❌ productId mismatch — verified=${vp.verified_product_id} requested=${productId}`,
+      );
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Product ID mismatch with verified purchase",
+        }),
+        {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
+    }
+    if (vp.consumed_for_subscription) {
+      console.log(
+        `🔁 verified_purchases 이미 subscription 활성화에 사용됨 — replay`,
+      );
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Subscription already activated for this transaction",
+        }),
+        {
+          status: 409,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
+    }
+
     // 1. 기존 활성 구독 만료 처리
     const { error: expireError } = await supabase
       .from("subscriptions")
@@ -174,6 +251,18 @@ serve(async (req) => {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         },
+      );
+    }
+
+    // /ultrareview BM P0 #1: verified_purchases 의 consumed_for_subscription
+    // 마킹 — 같은 transaction id 로 두 번 활성화 못 하도록.
+    const { error: vpUpdateErr } = await supabase
+      .from("verified_purchases")
+      .update({ consumed_for_subscription: true })
+      .eq("id", vp.id);
+    if (vpUpdateErr) {
+      console.warn(
+        `⚠️ verified_purchases consume 마킹 실패 (계속 진행): ${vpUpdateErr.message}`,
       );
     }
 

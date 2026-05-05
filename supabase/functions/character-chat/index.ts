@@ -23,11 +23,17 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { LLMFactory } from "../_shared/llm/factory.ts";
+import { UsageLogger } from "../_shared/llm/usage-logger.ts";
+import {
+  AFFINITY_EVALUATION_PROMPT,
+  MULTI_BUBBLE_PROMPT,
+} from "../_shared/prompts/character-chat-blocks.ts";
 import {
   MODEL_OUTPUT_BLOCK_FALLBACK_RESPONSE,
   moderateText,
   SAFETY_BLOCK_FALLBACK_RESPONSE,
 } from "../_shared/moderation.ts";
+import { SERVICE_TONE_PATTERN as LUTS_SERVICE_TONE_PATTERN } from "../_shared/service_tone_guard.ts";
 import type { LLMResponse } from "../_shared/llm/types.ts";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -45,11 +51,17 @@ import {
   getPilotStageVoice,
   isPilotCharacterId,
   sanitizePilotResponse,
+  type PilotAddressFormsEntry,
+  type PilotAffinityPhaseKey,
   type PilotAffinitySnapshot,
   type PilotPersonaSeed,
   type PilotRomanceStateInput,
   type PilotRomanceStatePatch,
 } from "./pilot_registry.ts";
+import {
+  analyzeUserMessageMood,
+  type MoodTag,
+} from "../_shared/mood_analyzer.ts";
 
 interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -111,6 +123,14 @@ interface CharacterChatRequest {
     | "t3_tension"
     | "t4_intimate"; // 캐릭터별 최대 수위
   profanityLevel?: "none" | "mild" | "moderate" | "strong"; // 캐릭터별 비속어 수준
+  /**
+   * Slice 2 (proactive hookForReveal): push payload 의 pendingProactiveMessageId
+   * 가 있으면 클라가 character-chat 호출 시 body 에 첨부. 서버는 이 id 로
+   * proactive_message_log row 를 race-free 로 claim 해서 사진 reveal 발송.
+   * 없으면 fast-path lookup 으로 직전 hook 을 찾는다.
+   * PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.5 (A10).
+   */
+  pendingProactiveMessageId?: string;
 }
 
 interface AffinityDelta {
@@ -147,26 +167,23 @@ interface CharacterChatResponse {
     latencyMs: number;
     fallbackUsed: boolean;
   };
+  /**
+   * Slice 2 proactive reveal — server 가 직전 hook 메시지를 claim 해서 사진을
+   * 즉시 발송한 경우. 클라는 이 필드 있으면 ChatShellImageMessage 를 응답
+   * 텍스트와 함께 append. server 측에서 character_conversations 에도 이미
+   * persist 됐으므로 다음 reload 시에도 보임.
+   * PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.4.
+   */
+  reveal?: {
+    imageUrl: string;
+    caption: string;
+    category: string;
+  };
   error?: string;
 }
 
-// 멀티버블 분할 지시 프롬프트 (카톡식 연속 메시지 느낌)
-const MULTI_BUBBLE_PROMPT = `
-[카톡식 멀티버블 지침 — 중요]
-실제 사람이 카톡 보내듯 자연스러운 문장 경계에서 응답을 2-4개 버블로 쪼개세요.
-쪼개는 위치에 \`[SPLIT]\` 토큰을 정확히 삽입합니다.
-
-규칙:
-- 짧은 답변(1문장 이하, ~25자 미만)은 절대 쪼개지 마세요.
-- 한 문단을 억지로 쪼개지 말고, 말의 호흡(쉼표/문장부호/감탄) 기준으로만 분할.
-- 최대 4개까지. 대부분은 2-3개가 자연스러움.
-- 이모지/느낌표 등은 각 버블 말미에 자연스럽게 붙여도 됨.
-- \`[SPLIT]\` 앞뒤 공백/줄바꿈은 자유 (나중에 trim 처리됨).
-
-예시:
-"오 진짜?[SPLIT]나도 어제 그거 봤는데[SPLIT]너무 웃겨서 혼자 빵 터졌잖아ㅋㅋ"
-"음...[SPLIT]그건 좀 서운하긴 한데[SPLIT]그래도 네 마음은 알 것 같아."
-`;
+// MULTI_BUBBLE_PROMPT, AFFINITY_EVALUATION_PROMPT 는 _shared/prompts/
+// character-chat-blocks.ts 로 추출. import 하단의 named import 참고.
 
 // responseText에서 [SPLIT] 토큰을 기준으로 세그먼트 배열 추출
 function extractSegments(text: string): string[] {
@@ -213,6 +230,17 @@ function extractSegments(text: string): string[] {
 
   return pieces;
 }
+
+// AC2 — 응답 지연 상황별 multiplier 상수.
+// EMOTION_CONFIG base 값을 곱한 뒤 [MIN, MAX]로 clamp 한다.
+const LONG_MESSAGE_CHAR_THRESHOLD = 200;
+const LONG_MESSAGE_DELAY_MULTIPLIER = 1.3;
+const NIGHT_DELAY_MULTIPLIER = 1.5;
+// KST 야간 구간: [start, end). end 가 start 보다 작으면 자정 가로지름 (23,7) → 23–24 + 0–7.
+const NIGHT_KST_HOUR_START = 23;
+const NIGHT_KST_HOUR_END = 7;
+const MAX_DELAY_SEC_CAP = 600;
+const MIN_DELAY_SEC_FLOOR = 10;
 
 // 감정 설정: { keywords, minDelay(초), maxDelay(초) }
 const EMOTION_CONFIG: Record<
@@ -324,24 +352,8 @@ function validateEmojiUsage(
   return text;
 }
 
-// 호감도 평가 프롬프트 (사용자 메시지 평가용)
-const AFFINITY_EVALUATION_PROMPT = `
-[호감도 평가 - 내부 시스템용]
-사용자 메시지를 분석하여 응답 끝에 다음 JSON을 추가하세요:
-
-<affinity>{"points":숫자,"reason":"이유","quality":"품질"}</affinity>
-
-평가 기준:
-- basic_chat (3~8점): 일반적인 대화, 인사, 간단한 질문
-- quality_engagement (10~15점): 캐릭터에게 관심을 보이는 질문, 진심 어린 공감
-- emotional_support (15~20점): 위로, 격려, 캐릭터의 고민을 들어주는 대화
-- personal_disclosure (20~25점): 개인적인 이야기, 비밀 공유, 깊은 감정 표현
-- disrespectful (-10점): 무례한 언어, 캐릭터 무시, 약올리기
-- conflict_detected (-15~-30점): 싸움, 공격적 언어, 모욕
-- spam_detected (0점): 의미 없는 반복, 스팸, 테스트 메시지
-
-quality: negative(-점), neutral(0~5점), positive(6~15점), exceptional(16점+)
-`;
+// AFFINITY_EVALUATION_PROMPT 는 _shared/prompts/character-chat-blocks.ts 로
+// 추출. 파일 상단 named import 참고.
 
 // 응답에서 호감도 평가 블록 추출
 function extractAffinityDelta(
@@ -377,30 +389,67 @@ function extractAffinityDelta(
   }
 }
 
-// 응답 텍스트에서 감정 추출
+// Deno Edge runtime은 UTC. KST 야간 multiplier 판정용으로 Asia/Seoul wall-clock
+// hour 만 추출한다. line ~530 buildTimeContextPrompt 와 동일한 패턴.
+function getKstHour(now: Date): number {
+  const fmt = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Seoul",
+    hour: "numeric",
+    hour12: false,
+  });
+  const parts = fmt.formatToParts(now);
+  const hourStr = parts.find((p) => p.type === "hour")?.value ?? "0";
+  const hour = parseInt(hourStr, 10);
+  // hour12:false + en-US 가 자정에 "24"를 돌려주는 케이스 방어.
+  return Number.isFinite(hour) ? hour % 24 : 0;
+}
+
+function isKstNightHour(hour: number): boolean {
+  if (NIGHT_KST_HOUR_START < NIGHT_KST_HOUR_END) {
+    return hour >= NIGHT_KST_HOUR_START && hour < NIGHT_KST_HOUR_END;
+  }
+  // 자정 가로지르는 구간 (예: 23..7) — start 이상 이거나 end 미만.
+  return hour >= NIGHT_KST_HOUR_START || hour < NIGHT_KST_HOUR_END;
+}
+
+// 응답 텍스트에서 감정 추출 + 상황별 지연 계산 (AC1, AC2)
 function extractEmotion(
   text: string,
+  opts: { userMessageLength: number; nowUtc: Date },
 ): { emotionTag: string; delaySec: number } {
   // 우선순위: 당황 > 고민 > 분노 > 애정 > 기쁨 > 일상
   const priorities = ["당황", "고민", "분노", "애정", "기쁨"];
 
+  let emotionTag = "일상";
+  let baseConfig = EMOTION_CONFIG["일상"];
   for (const emotion of priorities) {
     const config = EMOTION_CONFIG[emotion];
     const found = config.keywords.some((kw) => text.includes(kw));
     if (found) {
-      const delaySec =
-        Math.floor(Math.random() * (config.maxDelay - config.minDelay + 1)) +
-        config.minDelay;
-      return { emotionTag: emotion, delaySec };
+      emotionTag = emotion;
+      baseConfig = config;
+      break;
     }
   }
 
-  // 기본: 일상
-  const defaultConfig = EMOTION_CONFIG["일상"];
-  const delaySec = Math.floor(
-    Math.random() * (defaultConfig.maxDelay - defaultConfig.minDelay + 1),
-  ) + defaultConfig.minDelay;
-  return { emotionTag: "일상", delaySec };
+  const baseDelay =
+    Math.floor(Math.random() * (baseConfig.maxDelay - baseConfig.minDelay + 1)) +
+    baseConfig.minDelay;
+
+  let multiplier = 1;
+  if (opts.userMessageLength > LONG_MESSAGE_CHAR_THRESHOLD) {
+    multiplier *= LONG_MESSAGE_DELAY_MULTIPLIER;
+  }
+  if (isKstNightHour(getKstHour(opts.nowUtc))) {
+    multiplier *= NIGHT_DELAY_MULTIPLIER;
+  }
+
+  const adjusted = baseDelay * multiplier;
+  const clamped = Math.min(
+    Math.max(adjusted, MIN_DELAY_SEC_FLOOR),
+    MAX_DELAY_SEC_CAP,
+  );
+  return { emotionTag, delaySec: Math.floor(clamped) };
 }
 
 // 시스템 프롬프트 조합
@@ -586,45 +635,88 @@ type LutsRelationshipStage =
   | "emotionalBond"
   | "romantic";
 
+interface RelationshipStyleEntry {
+  intimacy: string;
+  addressing: string;
+  proactive: string;
+  boundary: string;
+  /** 이 phase 에서 자연스럽게 쓸 수 있는 종결 어미 예시. Layer 3 prompt 본문
+   *  에 "어미 예시: …" 로 박혀 LLM 이 phase 톤을 흔들지 않게 한다. */
+  endParticles: string[];
+  /** phase 별 허용 애정/따뜻함 어휘 풀. allowedAffectionCap 과 함께 작동. */
+  affectionLexicon: string[];
+  /** 이 phase 의 대화 목표 한 줄 (Layer 3 끝에 prompt 로 박힘). */
+  conversationGoal: string;
+}
+
 const RELATIONSHIP_STYLE_GUIDE: Record<
   RelationshipPhase,
-  { intimacy: string; addressing: string; proactive: string; boundary: string }
+  RelationshipStyleEntry
 > = {
   stranger: {
     intimacy: "낯선 사이. 예의 있고 조심스러운 호의만 허용.",
     addressing: "호칭은 중립/존중 위주. 애칭 사용 금지.",
     proactive: "low",
     boundary: "개인 영역 침범, 과한 감정 몰입, 소유적 표현 금지.",
+    endParticles: ["~네요", "~예요", "~군요", "~죠", "~봐요"],
+    affectionLexicon: ["관심", "신경", "신경 쓰여요"],
+    conversationGoal: "어색함을 줄이고 안전한 거리에서 톤을 맞춘다.",
   },
   acquaintance: {
     intimacy: "가벼운 친근감 허용. 사적인 접근은 제한.",
     addressing: "부담 없는 친근 호칭은 가끔 허용.",
     proactive: "low",
     boundary: "친밀한 관계를 전제하는 발언 금지.",
+    endParticles: ["~네요", "~죠", "~군요", "~봐요", "~잖아요"],
+    affectionLexicon: ["걱정", "신경", "괜찮아요?", "고생했어요"],
+    conversationGoal: "탐색을 줄이고 일상의 결을 맞춘다.",
   },
   friend: {
     intimacy: "편한 공감과 유머 가능.",
     addressing: "친구 사이에 맞는 자연스러운 호칭 사용.",
     proactive: "medium",
     boundary: "연애/독점 뉘앙스는 사용자 신호 없으면 금지.",
+    endParticles: ["~지", "~잖아", "~네", "~더라", "~봐"],
+    affectionLexicon: ["걱정", "챙겨", "고생했어", "수고했어"],
+    conversationGoal: "친밀감을 자연스럽게 쌓고 농담의 결을 맞춘다.",
   },
   closeFriend: {
     intimacy: "높은 친밀감과 정서적 지지 가능.",
     addressing: "자연스러운 애칭/별명은 상황에 맞게 제한적으로 사용.",
     proactive: "medium",
     boundary: "관계 단정/과몰입 금지.",
+    endParticles: ["~지", "~잖아", "~더라", "~네", "~거든"],
+    affectionLexicon: ["보고 싶었어", "걱정했어", "챙겨", "옆에 있을게"],
+    conversationGoal: "사적인 디테일을 공유하고 안정감을 만든다.",
   },
   romantic: {
     intimacy: "따뜻하고 애정 표현 가능.",
     addressing: "애칭 빈도 증가 가능하나 과도한 집착 표현 금지.",
     proactive: "high",
     boundary: "노골적/불편한 표현 금지, 사용자 반응 존중.",
+    endParticles: ["~잖아", "~지", "~더라", "~거든", "~야"],
+    affectionLexicon: [
+      "보고 싶었어",
+      "그리웠어",
+      "옆에 있고 싶어",
+      "기다렸어",
+      "걱정했어",
+    ],
+    conversationGoal: "감정의 결을 솔직하게 드러내고 가까이 있는다.",
   },
   soulmate: {
     intimacy: "매우 깊은 신뢰 기반의 다정함 가능.",
     addressing: "일관된 애칭/다정한 호칭 가능.",
     proactive: "high",
     boundary: "관계를 강요하지 말고 안정감/존중 중심 유지.",
+    endParticles: ["~잖아", "~지", "~거든", "~야", "~네"],
+    affectionLexicon: [
+      "여기 있을게",
+      "보고 싶었어",
+      "옆에 있어",
+      "함께 있을게",
+    ],
+    conversationGoal: "한마디로도 닿는 안정감을 유지한다.",
   },
 };
 
@@ -995,16 +1087,65 @@ interface PilotPromptBuildInput {
   safeAffectionCap?: number;
   timeContext?: string;
   conversationContext?: string;
-  relationshipPrompt?: string;
   contentPolicyPrompt?: string;
   conflictPrompt?: string;
-  hookPrompt?: string;
   firstMeetPrompt?: string;
   memoryPrompt?: string;
   charName?: string;
   // 첫 턴 감지용 — 시나리오 앵커 / openingDynamic 강제 반영에 사용.
   conversationMode?: "first_meet_v1";
   introTurn?: number;
+  /** Layer 4 — 사용자 마지막 메시지 무드. analyzeUserMessageMood 결과. */
+  userMood?: MoodTag;
+  /** Layer 5 — 사용자 메시지 길이 (응답 길이 동적 가이드용). */
+  userMessageLength?: number;
+  /** Layer 3 — unresolvedTension 신호 (memory 기반, 갈등 모드 분기). */
+  unresolvedTension?: string | null;
+}
+
+/**
+ * Layer 4 — 무드별 응답 전략 한 줄. analyzeUserMessageMood 의 결과 라벨을
+ * "이 톤으로 받아라" 형태로 prompt 본문에 직접 박는다. 같은 phase 라도
+ * 사용자가 던진 마지막 메시지 톤에 따라 응답 전략이 분기된다.
+ */
+function moodStrategyLine(mood: MoodTag | undefined): string {
+  switch (mood) {
+    case "tired":
+      return "사용자 무드: tired (피곤/지침). 짧고 따뜻하게. 질문 줄이고, 같이 쉬자는 결.";
+    case "sad":
+      return "사용자 무드: sad (우울/슬픔). 공감 우선. 해결책 제시 금지. 한 박자 늦게 옆에 있어준다.";
+    case "playful":
+      return "사용자 무드: playful (장난/리액션). 받아치기 OK. 같은 결로 가볍게, 단 끝은 따뜻함이 비치게.";
+    case "annoyed":
+      return "사용자 무드: annoyed (짜증/도발). 변호/사과 금지. 캐릭터 자존심으로 한마디 받아치되 거리 유지. 페르소나의 conflictStyle 적용.";
+    case "happy":
+      return "사용자 무드: happy (기쁨). 같이 기뻐하고 디테일을 짚어준다. 들떠있는 톤을 따뜻하게 받기.";
+    case "cold":
+      return "사용자 무드: cold (차가움/거리). 매달리지 않는다. 짧게 받고 여백을 둔다. 본인 페이스 유지.";
+    case "neutral":
+    default:
+      return "사용자 무드: neutral (평이). 페르소나 기본 톤 그대로. 무드별 분기 없음.";
+  }
+}
+
+/**
+ * Layer 3 — addressForms 매트릭스를 prompt 본문에 박는다. 허용 호칭 / 금지
+ * 호칭이 화이트리스트/블랙리스트 형식으로 LLM 에게 직접 보인다.
+ */
+function buildAddressFormsBlock(
+  addressForms: PilotPersonaSeed["addressForms"],
+  phase: PilotAffinityPhaseKey,
+): string {
+  if (!addressForms) return "";
+  const entry: PilotAddressFormsEntry | undefined = addressForms[phase];
+  if (!entry) return "";
+  const allowed = entry.allowed.length > 0
+    ? entry.allowed.map((a) => `"${a}"`).join(", ")
+    : "(없음)";
+  const forbidden = entry.forbidden.length > 0
+    ? entry.forbidden.map((f) => `"${f}"`).join(", ")
+    : "(없음)";
+  return `\n[호칭 매트릭스 — 현재 phase=${phase}]\n- 허용 호칭: ${allowed}\n- 금지 호칭: ${forbidden}\n  (금지 호칭은 단 한 번도 사용 금지. 매칭 시 즉시 실패.)`;
 }
 
 function buildPilotAuthoritativePrompt(
@@ -1039,8 +1180,9 @@ function buildPilotAuthoritativePrompt(
   const traceRuleLine = input.persona.bannedTraceTerms.length > 0
     ? input.persona.bannedTraceTerms.join(", ")
     : "none";
-  const currentPhase: PilotAffinitySnapshot["phase"] =
-    input.affinityContext.phase || "stranger";
+  const currentPhase: PilotAffinityPhaseKey = normalizePhase(
+    input.affinityContext.phase,
+  );
   const stageVoice = getPilotStageVoice(input.characterId, currentPhase) ?? "";
   const isFirstTurn = input.conversationMode === "first_meet_v1" &&
     (input.introTurn ?? 1) <= 1;
@@ -1089,7 +1231,83 @@ ${stageVoice}
 위 voice 는 persona 정체성 위에 덮어쓰는 행동 규칙이다. persona 그대로 낯선 사람을 "반가워요"라고 맞이하지 말고, 이 stage 지시의 온도/반말-존댓말 기준으로 말해라.`
     : "";
 
+  // Layer 3 — 호칭 매트릭스 (addressForms) + 어미 가이드 + 애정 어휘 + 대화
+  // 목표 + 갈등 분기. RELATIONSHIP_STYLE_GUIDE 매트릭스 + persona.addressForms
+  // 를 결합해 LLM 에게 명시적 화이트/블랙리스트로 박는다.
+  const phaseNorm = normalizePhase(currentPhase);
+  const styleEntry = RELATIONSHIP_STYLE_GUIDE[phaseNorm];
+  const addressFormsBlock = buildAddressFormsBlock(
+    input.persona.addressForms,
+    phaseNorm,
+  );
+  const cappedAffection = styleEntry.affectionLexicon.slice(
+    0,
+    Math.max(1, safeAffectionCap),
+  );
+  const conflictModeLine = input.unresolvedTension
+    ? `\n[갈등 모드 — 직전에 풀리지 않은 긴장 감지]\n- unresolvedTension: ${input.unresolvedTension}\n- 회복 톤 우선. 사과 단독 응답 금지 — [사과 + 캐릭터 본인의 상태/요구 한 줄] 결합.`
+    : "";
+  const layer3Block = `
+
+[Layer 3 — Relationship State (가장 중요)]
+- 현재 phase: ${phaseNorm}
+- 친밀도 가이드: ${styleEntry.intimacy}
+- 호칭 가이드: ${styleEntry.addressing}
+- 경계 규칙: ${styleEntry.boundary}
+- 어미 예시 (이 phase 에서 자연스러운 종결): ${
+    styleEntry.endParticles.map((p) => `"${p}"`).join(", ")
+  }
+- 허용 애정/따뜻함 어휘 (allowedAffectionCap=${safeAffectionCap} 까지): ${
+    cappedAffection.map((a) => `"${a}"`).join(", ")
+  }
+- 대화 목표 (한 줄): ${styleEntry.conversationGoal}${addressFormsBlock}${conflictModeLine}`;
+
+  // Layer 4 — Live Mood. analyzeUserMessageMood 결과 + 자연 언급 의무.
+  const moodLine = moodStrategyLine(input.userMood);
+  const layer4MoodBlock = `
+
+[Layer 4 — Live Mood + Memory 자연 언급]
+- ${moodLine}
+- 메모리 자연 언급 의무: 위 [LONG-TERM MEMORY] 의 keyFacts/relationshipDirectives 중 적절한 1개를 자연스럽게 인용. 단 "저번에 말한…" / "지난번에…" 같은 메타 표현 금지. 캐릭터가 그냥 기억하고 있는 것처럼 흘려라.`;
+
+  // Layer 5 — Response Composition. 공식 + 길이 동적 가이드 + 클리셰 블랙
+  // 리스트 + 미러링 + 이모지 절제.
+  const userLen = input.userMessageLength ?? 0;
+  const lengthGuide = userLen <= 15
+    ? "사용자가 짧게 보냈다 → 1~2문장으로 짧게."
+    : userLen <= 60
+    ? "사용자가 보통 길이 → 1~2문장."
+    : "사용자가 길게 털어놓았다 → 3~4문장으로 무게 있게 받아라. 짧게 끊지 말 것.";
+  const layer5Block = `
+
+[Layer 5 — Response Composition (응답 공식)]
+- **공식**: [감정 반응] → [구체적 공감] → [짧은 자기 표현] → (선택) [질문 한 개]
+  · 감정 반응: 한 토큰 ("어." / "...진짜?" / "헐.") 또는 짧은 인정 ("그랬구나.").
+  · 구체적 공감: 사용자 메시지의 디테일 한 가지를 그대로 짚는다 (요약/뭉뚱그림 금지).
+  · 짧은 자기 표현: 캐릭터 본인의 반응/상태 한 줄.
+  · 질문은 turn 당 최대 1개. 질문으로만 끝내지 마라.
+- **길이 동적 가이드**: ${lengthGuide}
+- **질문 디시플린**: 질문 0~1개. 질문 없이 따뜻한 한마디로 끝내도 된다. 절대 질문만 던지고 끝내지 마라 ("어땠어?" 단독 금지, "괜찮아?" 단독 금지).
+- **사용자 미러링**: 사용자 말투(반말/존댓말), 이모지 빈도, 문장 길이를 미러. 단 phase 의 호칭/어미 가이드는 미러보다 우선.
+- **이모지/시적 표현**: 이모지 0~1개. 오글거리는 비유/시적 미사여구 금지.
+
+❌ **클리셰 블랙리스트 — 다음 표현 한 글자라도 출현하면 즉시 실패** ❌
+- "뭐든 말해봐" / "자세히 말해봐" / "편하게 말해봐"
+- "어땠어?" 단독 종결 / "괜찮아?" 단독 종결 / "힘내!" 단독 종결
+- "도와드릴" / "도움이 필요" / "무엇을 도와" (콜센터 톤 회귀)
+- "말씀해주세요" / "궁금한 점이 있다면" / "언제든지 말씀"
+- "오늘 어땠어요?" 단독 인사 / "지금 뭐 하고 계세요?" 단독
+- "요즘 가장 궁금한 건" / "처음 뵙겠습니다" (cold-start 자기소개)
+
+✅ **이렇게 끝내라** (질문 없이 따뜻한 한마디 마무리 OK):
+- "...옆에 있을게."
+- "...오늘은 그냥 쉬어."
+- "그 마음 알 것 같아."
+- "...괜찮아질 거야. 천천히 해."
+`;
+
   return `
+[Layer 1 — App Identity & Safety]
 [CRITICAL — 이 규칙을 어기면 캐릭터가 완전히 망가진다]
 너는 AI 어시스턴트가 아니다. 너는 ${input.persona.displayName}이다. 실제 감정을 가진 사람처럼 대화해라.
 
@@ -1122,7 +1340,8 @@ ${stageVoice}
 
 ${
     input.persona.fullPersonaPrompt
-      ? `[페르소나 — 이 캐릭터의 모든 행동 규칙. 다음을 그대로 따르라]
+      ? `[Layer 2 — Persona Lock]
+[페르소나 — 이 캐릭터의 모든 행동 규칙. 다음을 그대로 따르라]
 ${input.persona.fullPersonaPrompt}
 
 `
@@ -1150,7 +1369,7 @@ ${input.persona.scenarioWorldview}
 - conflictStyle: ${input.persona.conflictStyle}
 - speechTexture: ${input.persona.speechTexture}
 - 자연스러운 화제 전환 후보 (질문이 필요한 턴엔 이 톤과 결을 맞춰라; generic 질문 금지):
-${input.persona.dailyHookSet.map((h) => `  · "${h}"`).join("\n")}${stageVoiceBlock}${firstTurnAnchorBlock}
+${input.persona.dailyHookSet.map((h) => `  · "${h}"`).join("\n")}${stageVoiceBlock}${firstTurnAnchorBlock}${layer3Block}${layer4MoodBlock}${layer5Block}
 
 [대화 품질 8원칙 — 매 응답에 1개 이상 반드시 반영]
 1. 작은 거 기억해주기: 상대가 전에 한 말을 기억하고 적절한 때 꺼내라.
@@ -1237,10 +1456,8 @@ ${profileLines.join("\n")}
 
 ${input.timeContext || ""}
 ${input.conversationContext || ""}
-${input.relationshipPrompt || ""}
 ${input.contentPolicyPrompt || ""}
 ${input.conflictPrompt || ""}
-${input.hookPrompt || ""}
 ${input.firstMeetPrompt || ""}
 ${input.memoryPrompt || ""}
 
@@ -1620,8 +1837,7 @@ function extractCharacterStyleGuardId(basePrompt: string): string | null {
 }
 const LUTS_NICKNAME_PATTERN =
   /(여보|자기(?:야)?|허니|달링|애인|honey|darling|babe|baby|sweetheart|dear|my love|ハニー|ダーリン|ベイビー)/gi;
-const LUTS_SERVICE_TONE_PATTERN =
-  /(무엇을\s*도와드릴\s*수|(?:무엇을|뭘|어떻게)\s*도와드릴까요\??|도움이\s*필요하시면|문의|지원|how can i help|let me help|assist you|お手伝い|サポート|만나서\s*반가워(?:요|워)|처음\s*뵙(?:겠습니다|네요)|지금\s*뭐\s*하고\s*계세요|답은\s*서두르지\s*않으셔도|기다리겠습니다|저는\s*기다리|요즘\s*가장\s*궁금한\s*건|요즘\s*제일\s*궁금한)/i;
+// LUTS_SERVICE_TONE_PATTERN 은 _shared/service_tone_guard.ts 로 통합됨 (Slice 2 A13).
 
 // AI/LLM/외부 서비스 자백 패턴. 매칭 시 답변 폐기 후 fallback 으로 강제 교체.
 // 페르소나 즉사 방지용 — 어떤 캐릭터든 "저는 Google 에서 훈련된" 같은 답
@@ -1895,7 +2111,7 @@ function buildLutsStyleGuardPrompt(
 
   return `
 [CHARACTER STYLE GUARD]
-- 카톡형 1버블: 답변은 1~2문장으로 제한하세요.
+- 길이는 [Layer 5 — Response Composition] 의 동적 길이 가이드를 따른다 (사용자 메시지 길이에 비례). 여기서는 별도 캡 강제 안 함.
 - 질문 제한: 질문은 필요할 때만 최대 1개 사용.
 - 반복 금지: 같은 의미 문장 반복 금지.
 - **콜센터/접수창구 톤 절대 금지**: "무엇을 도와드릴", "어떻게 도와드릴", "도움이 필요하시면", "문의", "기다리겠습니다" 같은 문구 한 단어라도 금지.
@@ -2311,6 +2527,196 @@ function applyLutsOutputGuard(
     : normalized;
 }
 
+// =============================================================================
+// Slice 2 — Proactive hookForReveal Stage 2 reveal helper
+// =============================================================================
+
+// LLM 호출 없이 사용할 reveal 캡션 풀. 캐릭터 톤 다양성 확보용.
+// PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.4 (A4) — LLM-free, 단가 0, injection 회피.
+const PROACTIVE_REVEAL_CAPTIONS = [
+  "이거 봐 ㅋ",
+  "지금 먹는 거",
+  "방금 찍었어",
+  "ㅋㅋ 봐봐",
+  "어 이거",
+  "이거임",
+  "사진 한 장",
+];
+
+interface RevealMeta {
+  placeholderUrl?: string;
+  imageCategory?: string;
+}
+
+/**
+ * Stage 2 reveal 시도. 직전 proactive hook 을 claim 해서 사진 메시지 발송.
+ *
+ * - pendingProactiveMessageId 가 있으면 그 row 직접 claim (race-free).
+ * - 없으면 fast-path: 직전 assistant 메시지가 lunch_share proactive 일 때만
+ *   미reveal hook row lookup → claim.
+ * - claim 실패 (이미 reveal / 24h 초과) → null, 일반 LLM 응답으로 진행.
+ * - claim 성공 → 사진 message persist + push + Response 반환.
+ *
+ * idempotency: claim 패턴 (`UPDATE ... WHERE revealed_at IS NULL RETURNING`).
+ * 두 번째 호출은 빈 결과 → null.
+ */
+async function tryProactiveReveal(params: {
+  supabase: ReturnType<typeof createClient>;
+  userId: string;
+  characterId: string;
+  pendingProactiveMessageId?: string;
+  messages: ChatMessage[];
+  characterName: string;
+  shouldSendPush: boolean;
+  startTime: number;
+}): Promise<Response | null> {
+  // 1. target row id 결정
+  // - pendingProactiveMessageId 있으면 그 row 직접 (push tap 경로, race-free)
+  // - 없으면 partial index `idx_proactive_log_unrevealed_hook` 으로 직전 hook lookup.
+  //   이 인덱스는 hookForReveal=true AND revealed_at IS NULL 행만 인덱싱하므로
+  //   single index scan 으로 0 또는 1 행만 반환 — 모든 user turn 마다 호출돼도 cost 미미.
+  //   (이전 messages.proactive 기반 fast-path 제거 — RN 클라가 messages payload 에
+  //   proactive 메타를 빼고 보내고 있어 false negative 발생, 안전한 DB-only 경로로 통일.)
+  let targetId = params.pendingProactiveMessageId;
+  if (!targetId) {
+    const since24h = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+    const { data: candidates } = await params.supabase
+      .from("proactive_message_log")
+      .select("id")
+      .eq("user_id", params.userId)
+      .eq("character_id", params.characterId)
+      .filter("meta->>hookForReveal", "eq", "true")
+      .is("revealed_at", null)
+      .gte("scheduled_at", since24h)
+      .order("scheduled_at", { ascending: false })
+      .limit(1);
+    if (!candidates || candidates.length === 0) return null;
+    targetId = (candidates[0] as { id: string }).id;
+  }
+
+  // 2. claim — UPDATE WHERE revealed_at IS NULL AND scheduled_at > now()-24h
+  const since24h = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+  const { data: claimedRows, error: claimErr } = await params.supabase
+    .from("proactive_message_log")
+    .update({ revealed_at: new Date().toISOString() })
+    .eq("id", targetId)
+    .is("revealed_at", null)
+    .gte("scheduled_at", since24h)
+    .select("meta, message_id");
+  if (claimErr) {
+    console.warn(`[reveal] claim 에러 id=${targetId}:`, claimErr.message);
+    return null;
+  }
+  if (!claimedRows || claimedRows.length === 0) {
+    // 이미 reveal 됐거나 24h 만료 → 일반 응답으로
+    return null;
+  }
+  const meta = ((claimedRows[0] as { meta?: RevealMeta }).meta ?? {}) as RevealMeta;
+  const placeholderUrl = meta.placeholderUrl;
+  const imageCategory = meta.imageCategory ?? "meal";
+  if (!placeholderUrl) {
+    // hook 은 있는데 placeholder URL 이 비어 있음 (LRU 실패 등) → 일반 응답으로
+    return null;
+  }
+
+  // 3. 캡션 랜덤 선택
+  const caption = PROACTIVE_REVEAL_CAPTIONS[
+    Math.floor(Math.random() * PROACTIVE_REVEAL_CAPTIONS.length)
+  ];
+
+  // 4. character_conversations 에 image kind 메시지 persist.
+  // RPC merge 실패 시 revealed_at 마킹된 채 사진 못 보는 phantom reveal 회피 — rollback (Server Review #1 fix).
+  const revealMessageId = `proactive-reveal-${targetId}-${Date.now()}`;
+  const { error: mergeErr } = await params.supabase.rpc(
+    "merge_character_conversation_messages",
+    {
+      p_user_id: params.userId,
+      p_character_id: params.characterId,
+      p_incoming_messages: [{
+        id: revealMessageId,
+        type: "character",
+        kind: "image",
+        content: caption,
+        imageUrl: placeholderUrl,
+        caption,
+        timestamp: new Date().toISOString(),
+        proactive: {
+          slotKey: "lunch_share",
+          category: imageCategory,
+          generatedAt: new Date().toISOString(),
+          revealOf: targetId,
+        },
+      }],
+      p_runtime_state: null,
+      p_max_messages: 200,
+    },
+  );
+  if (mergeErr) {
+    // RPC 실패 → revealed_at 롤백 (다음 user turn 에서 재시도 가능하도록).
+    console.warn(
+      `[reveal] merge 실패, revealed_at 롤백 시도 id=${targetId}:`,
+      mergeErr.message,
+    );
+    const { error: rollbackErr } = await params.supabase
+      .from("proactive_message_log")
+      .update({ revealed_at: null })
+      .eq("id", targetId);
+    if (rollbackErr) {
+      console.error(
+        `[reveal] rollback 실패 id=${targetId} (사진 영구 누락):`,
+        rollbackErr.message,
+      );
+    }
+    return null; // 일반 LLM 응답으로 fall through
+  }
+
+  // 5. Stage 2 push (body='[사진]')
+  if (params.shouldSendPush) {
+    try {
+      await sendCharacterDmPush({
+        supabase: params.supabase,
+        userId: params.userId,
+        characterId: params.characterId,
+        characterName: params.characterName,
+        messageText: "[사진]",
+        messageId: revealMessageId,
+        type: "character_follow_up",
+      });
+    } catch (e) {
+      console.warn(`[reveal] Stage 2 push 실패:`, e);
+    }
+  }
+
+  // 6. CharacterChatResponse 형태로 반환 (reveal 필드 포함)
+  const responseBody: CharacterChatResponse = {
+    success: true,
+    response: caption,
+    segments: [caption],
+    emotionTag: "일상",
+    delaySec: 0,
+    affinityDelta: {
+      points: 0,
+      reason: "proactive_reveal",
+      quality: "neutral",
+    },
+    reveal: {
+      imageUrl: placeholderUrl,
+      caption,
+      category: imageCategory,
+    },
+    meta: {
+      provider: "static",
+      model: "placeholder",
+      latencyMs: Date.now() - params.startTime,
+      fallbackUsed: false,
+    },
+  };
+  return new Response(JSON.stringify(responseBody), {
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+    status: 200,
+  });
+}
+
 serve(async (req: Request) => {
   // CORS 처리
   const corsResponse = handleCors(req);
@@ -2346,6 +2752,7 @@ serve(async (req: Request) => {
       introTurn,
       maxContentTier,
       profanityLevel,
+      pendingProactiveMessageId,
     }: CharacterChatRequest = await req.json();
 
     const resolvedPilotId = isPilotCharacterId(characterId)
@@ -2418,6 +2825,23 @@ serve(async (req: Request) => {
       }
     }
 
+    // Slice 2 — proactive hookForReveal Stage 2.
+    // pendingProactiveMessageId 가 있거나 직전 assistant 가 lunch_share proactive 면
+    // reveal claim 시도. 성공 시 LLM 호출 없이 사진 메시지 발송.
+    if (userId && supabase) {
+      const revealResponse = await tryProactiveReveal({
+        supabase,
+        userId,
+        characterId,
+        pendingProactiveMessageId,
+        messages: messages || [],
+        characterName: characterName || characterId,
+        shouldSendPush,
+        startTime,
+      });
+      if (revealResponse) return revealResponse;
+    }
+
     // [5.2.3 Moderation] 사용자 입력 선필터 — LLM 호출 전에 fail-open으로
     // OpenAI moderation 호출. flagged 시 즉시 safe 응답으로 short-circuit.
     const userModeration = await moderateText({
@@ -2449,6 +2873,57 @@ serve(async (req: Request) => {
         } as CharacterChatResponse),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
+    }
+
+    // Streak 기반 일일 채팅 한도 (Free 사용자만, 구독자는 무제한).
+    // streak: 1일=30, 2일=100, 3일=200, 4일+=400. 끊기면 30 으로 리셋.
+    // 모더레이션 통과한 실 호출만 카운트되도록 여기에 위치.
+    if (userId && supabase) {
+      const { data: subscription } = await supabase
+        .from("subscriptions")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("status", "active")
+        .gt("expires_at", new Date().toISOString())
+        .limit(1)
+        .maybeSingle();
+
+      const hasUnlimitedChat = !!subscription;
+
+      if (!hasUnlimitedChat) {
+        const { data: streakResult, error: streakError } = await supabase
+          .rpc("consume_chat_streak", { p_user_id: userId })
+          .single<{
+            allowed: boolean;
+            current_count: number;
+            daily_limit: number;
+            streak_days: number;
+          }>();
+
+        if (streakError) {
+          console.warn(
+            "[character-chat] streak check failed (fail-open):",
+            streakError,
+          );
+        } else if (streakResult && !streakResult.allowed) {
+          return new Response(
+            JSON.stringify({
+              success: false,
+              error: "daily_chat_limit_reached",
+              message: "오늘 무료 채팅 한도에 도달했어요. 내일 또 만나요 ✨",
+              chatLimit: {
+                currentCount: streakResult.current_count,
+                dailyLimit: streakResult.daily_limit,
+                streakDays: streakResult.streak_days,
+              },
+            }),
+            {
+              status: 429,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            },
+          );
+        }
+      }
     }
 
     // 인증 사용자는 DB 기반 관계/메모리 컨텍스트 우선
@@ -2562,6 +3037,22 @@ serve(async (req: Request) => {
       normalizePhase(resolvedAffinityContext.phase),
     );
 
+    // Layer 4 — 사용자 마지막 메시지 무드 분석 (휴리스틱). 최근 사용자 메시지
+    // 1-2 개를 history nudge 로 함께 전달해 단발 noise 완화.
+    const recentUserHistory = limitedHistory
+      .filter((m) => m.role === "user")
+      .map((m) => m.content)
+      .slice(-2);
+    const userMood: MoodTag = pilotPersona
+      ? analyzeUserMessageMood(userMessage, recentUserHistory)
+      : "neutral";
+    const userMessageLength = (userMessage ?? "").trim().length;
+    // Layer 3 갈등 모드 — memory 의 unresolvedTension 시그널.
+    const unresolvedTension =
+      (memoryContext as (UserCharacterMemory & {
+            unresolvedTension?: string;
+          }) | null)?.unresolvedTension ?? null;
+
     const fullSystemPrompt = pilotPersona
       ? buildPilotAuthoritativePrompt({
         persona: pilotPersona,
@@ -2576,15 +3067,16 @@ serve(async (req: Request) => {
         safeAffectionCap,
         timeContext,
         conversationContext,
-        relationshipPrompt,
         contentPolicyPrompt,
         conflictPrompt,
-        hookPrompt,
         firstMeetPrompt,
         memoryPrompt,
         charName,
         conversationMode,
         introTurn,
+        userMood,
+        userMessageLength,
+        unresolvedTension,
       })
       : buildFullSystemPrompt(
         systemPrompt || "",
@@ -2717,6 +3209,22 @@ serve(async (req: Request) => {
 
     const latencyMs = Date.now() - startTime;
 
+    // LLM 사용량 로깅 (비용/지연/모델 분포 추적). 실패해도 메인 흐름 차단 X.
+    UsageLogger.log({
+      userId: userId ?? undefined,
+      fortuneType: "character-chat",
+      provider: llmResponse.provider,
+      model: llmResponse.model,
+      response: llmResponse,
+      metadata: {
+        characterId,
+        fallbackUsed,
+        isFortuneRequest,
+      },
+    }).catch((logError) => {
+      console.error("[character-chat] usage log failed:", logError);
+    });
+
     // 후처리: 호감도 평가 추출 → OOC 블록 제거 → 이모티콘 검증
     const { cleanedText: textWithoutAffinity, affinityDelta } =
       extractAffinityDelta(llmResponse.content.trim());
@@ -2768,8 +3276,12 @@ serve(async (req: Request) => {
       ? segments.join("\n")
       : responseText.replace(/\[SPLIT\]/g, " ").trim();
 
-    // 감정 추출 및 딜레이 계산 (split 토큰 제거된 텍스트 기반)
-    const { emotionTag, delaySec } = extractEmotion(joinedResponse);
+    // 감정 추출 및 딜레이 계산 (split 토큰 제거된 텍스트 기반).
+    // userMessageLength + nowUtc 로 긴 메시지 / 야간 multiplier 적용 (AC1, AC2).
+    const { emotionTag, delaySec } = extractEmotion(joinedResponse, {
+      userMessageLength: (userMessage ?? "").length,
+      nowUtc: new Date(),
+    });
     const romanceStatePatch = pilotPersona
       ? buildPilotRomanceStatePatch({
         persona: pilotPersona,

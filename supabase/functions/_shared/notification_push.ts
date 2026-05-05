@@ -2,6 +2,7 @@ import {
   createClient,
   type SupabaseClient,
 } from "https://esm.sh/@supabase/supabase-js@2";
+import { getCharacterAvatarUrl } from "./character_avatar_urls.ts";
 
 const EXPO_PUSH_ENDPOINT = "https://exp.host/--/api/v2/push/send";
 
@@ -19,6 +20,13 @@ export interface CharacterPushPayload {
   roomState?: string;
   type?: "character_dm" | "character_follow_up";
   route?: string;
+  // scheduled_character_replies row id. 클라가 받자마자 ack-scheduled-reply
+  // 호출해서 client_acked_at 마킹 → cron 중복 발송 방지.
+  // Telegram scheduled-message API 패턴 (별도 필드, 매직 prefix 폐기).
+  scheduledId?: string;
+  // proactive_message_log row id (Slice 2). hookForReveal=true 인 메시지일 때만.
+  // 클라가 character-chat 호출 시 body 에 동봉 → 서버가 reveal claim 시 race 회피.
+  pendingProactiveMessageId?: string;
 }
 
 export interface CharacterPushSendResult {
@@ -70,6 +78,21 @@ export function buildCharacterDmPayload(
 
   if (params.roomState) {
     payload["room_state"] = params.roomState;
+  }
+
+  if (params.scheduledId) {
+    // snake + camel 둘 다 박는 이유: 기존 character_id/characterId 패턴 동일.
+    // RN 클라가 둘 중 어느 키로 읽든 호환되도록 — 다음 OTA에서 클라가 양방향
+    // fallback 안정화되면 한 키로 정리 예정.
+    payload["scheduled_id"] = params.scheduledId;
+    payload["scheduledId"] = params.scheduledId;
+  }
+
+  if (params.pendingProactiveMessageId) {
+    // Slice 2: proactive hooking → user reply → reveal race 회피용.
+    // 클라가 character-chat 호출 시 body 에 동봉.
+    payload["pending_proactive_message_id"] = params.pendingProactiveMessageId;
+    payload["pendingProactiveMessageId"] = params.pendingProactiveMessageId;
   }
 
   return payload;
@@ -171,6 +194,15 @@ interface ExpoPushMessage {
   sound: "default";
   priority: "high";
   channelId?: string;
+  // 캐릭터 얼굴을 푸시에 띄우기 위한 필드.
+  // - Android: Expo SDK 가 BigPictureStyle 로 자동 렌더 (네이티브 지원).
+  // - iOS:   Expo Push API 가 mutableContent + APNS attachment hint 로 변환.
+  //          앱 측 Notification Service Extension 이 다운로드 후 첨부.
+  //          (apps/mobile-rn/targets/notification-service)
+  richContent?: { image?: string };
+  // iOS NSE 를 호출하기 위해 필수. richContent.image 만 있어도 Expo 가
+  // 내부적으로 켜주지만, 명시적으로 true 로 보내 향후 SDK 변경에 대비한다.
+  mutableContent?: boolean;
 }
 
 interface ExpoPushTicket {
@@ -194,14 +226,28 @@ async function sendExpoPushToTokens(
     data: Record<string, string>;
   },
 ): Promise<number> {
+  // characterId 가 있으면 캐릭터 얼굴 URL 부착. 미등록 캐릭터/SUPABASE_URL
+  // 누락 등 어떤 이유로든 URL 을 못 만들면 텍스트 푸시로 graceful fallback.
+  const avatarUrl = getCharacterAvatarUrl(
+    params.data.character_id ?? params.data.characterId,
+  );
+  const richContent = avatarUrl ? { image: avatarUrl } : undefined;
+
+  // data 페이로드에도 같은 URL 을 박는다. iOS NSE 가 ExpoPushAPI 변환 결과를
+  // 신뢰 못 하는 경우(SDK 버전 차이) data.image 를 fallback 으로 사용 가능.
+  const dataWithImage = avatarUrl
+    ? { ...params.data, image: avatarUrl }
+    : params.data;
+
   const messages: ExpoPushMessage[] = params.tokens.map((token) => ({
     to: token,
     title: params.title,
     body: params.body,
-    data: params.data,
+    data: dataWithImage,
     sound: "default",
     priority: "high",
-    channelId: params.data.channel ?? "character_dm",
+    channelId: dataWithImage.channel ?? "character_dm",
+    ...(richContent ? { richContent, mutableContent: true } : {}),
   }));
 
   const accessToken = Deno.env.get("EXPO_ACCESS_TOKEN");
@@ -324,6 +370,8 @@ export async function sendCharacterDmPush(params: {
   conversationId?: string;
   roomState?: string;
   type?: CharacterPushPayload["type"];
+  scheduledId?: string;
+  pendingProactiveMessageId?: string;
 }): Promise<CharacterPushSendResult> {
   const isEnabled = await hasCharacterNotificationEnabled(
     params.supabase,
@@ -359,6 +407,8 @@ export async function sendCharacterDmPush(params: {
     conversationId: params.conversationId,
     roomState: params.roomState,
     type: params.type,
+    scheduledId: params.scheduledId,
+    pendingProactiveMessageId: params.pendingProactiveMessageId,
   });
 
   const sentCount = await sendExpoPushToTokens(params.supabase, {

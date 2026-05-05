@@ -88,9 +88,24 @@ export function EmbeddedResultCard({
   if (resultKind) {
     return (
       <Pressable
-        onPress={() =>
-          router.push({ pathname: '/result/[resultKind]', params: { resultKind } })
-        }
+        onPress={() => {
+          // payload 를 URL params 로 전달 — 결과 화면이 동일 데이터로 풀뷰 렌더.
+          // payload 없이 navigate 하면 결과 화면이 fetch 못해서 fallback 표시.
+          // poster-guide (손금/관상 등) 의 imageUrl 도 payload 안에 있어 카드와
+          // 풀뷰가 같은 이미지 보장.
+          let payloadJson: string | undefined;
+          try {
+            payloadJson = JSON.stringify(payload);
+          } catch {
+            // payload 직렬화 실패 시 resultKind 만 전달 — 기존 동작 폴백.
+          }
+          router.push({
+            pathname: '/result/[resultKind]',
+            params: payloadJson
+              ? { resultKind, payload: payloadJson }
+              : { resultKind },
+          });
+        }}
         style={({ pressed }) => [
           { width: '100%' },
           pressed ? { opacity: 0.98, transform: [{ scale: 0.995 }] } : null,

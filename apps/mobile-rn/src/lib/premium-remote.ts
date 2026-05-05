@@ -42,6 +42,10 @@ interface TokenConsumeResponse {
   required?: number;
   available?: number;
   error?: string;
+  /** PR-0a: idempotency 재전송 시 true. */
+  replayed?: boolean;
+  /** PR-0a: 거래 ID. */
+  transactionId?: string;
 }
 
 export interface RemotePremiumSnapshot {
@@ -97,11 +101,17 @@ export class RemoteTokenConsumeError extends Error {
 export interface RemoteTokenConsumePayload {
   fortuneType: string;
   referenceId?: string | null;
+  /** PR-0a: 같은 키 재전송 시 1회만 차감. 클라가 호출 단위 unique 값으로 생성. */
+  idempotencyKey?: string | null;
 }
 
 export interface RemoteTokenConsumeResult {
   balance: number | null;
   isUnlimited: boolean;
+  /** PR-0a: idempotency_key 가 이미 처리됐는지. UI 로직에 활용 가능. */
+  replayed?: boolean;
+  /** PR-0a: 거래 ID. 환불 호출 시 reference 로 활용 가능. */
+  transactionId?: string | null;
 }
 
 export interface RemoteSubscriptionActivationPayload {
@@ -340,6 +350,7 @@ export async function consumeRemoteTokens(
     body: JSON.stringify({
       fortuneType: payload.fortuneType,
       referenceId: payload.referenceId ?? null,
+      idempotencyKey: payload.idempotencyKey ?? null,
     }),
   });
 
@@ -383,5 +394,81 @@ export async function consumeRemoteTokens(
         ? result.balance.remainingTokens
         : null,
     isUnlimited: result.balance?.hasUnlimitedAccess === true,
+    replayed: result.replayed === true,
+    transactionId: result.transactionId ?? null,
   };
+}
+
+/**
+ * PR-0a: 토큰 환불 호출. 운세 결과 생성이 차감 후 실패한 경우 호출.
+ *
+ * referenceId 는 차감 시 보낸 referenceId 와 동일해야 한다 — 서버가 그 reference 로
+ * 원본 consume 을 찾는다. idempotencyKey 는 환불 자체의 unique key (다른 키 권장).
+ *
+ * 실패해도 throw 하지 않음 — 환불 누락이 사용자 흐름을 막아선 안 됨. 호출자는
+ * 실패 시 captureError 같은 운영 채널로 보고만 한다.
+ */
+export async function refundRemoteTokens(
+  session: Session,
+  payload: {
+    fortuneType: string;
+    referenceId: string;
+    reason?: string;
+    idempotencyKey?: string | null;
+  },
+): Promise<{
+  success: boolean;
+  refunded?: boolean;
+  replayed?: boolean;
+  balance?: number | null;
+}> {
+  if (!appEnv.isSupabaseConfigured) {
+    return { success: false };
+  }
+
+  try {
+    invalidateTokenBalanceCache();
+
+    const response = await fetch(
+      `${appEnv.supabaseUrl}/functions/v1/soul-refund`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          apikey: appEnv.supabaseAnonKey,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fortuneType: payload.fortuneType,
+          referenceId: payload.referenceId,
+          reason: payload.reason ?? 'fortune_generation_failed',
+          idempotencyKey: payload.idempotencyKey ?? null,
+        }),
+      },
+    );
+
+    const result = (await response.json()) as {
+      balance?: TokenConsumeBalancePayload;
+      refunded?: boolean;
+      replayed?: boolean;
+      error?: string;
+    };
+
+    if (!response.ok) {
+      return { success: false };
+    }
+
+    return {
+      success: true,
+      refunded: result.refunded === true,
+      replayed: result.replayed === true,
+      balance:
+        typeof result.balance?.remainingTokens === 'number' &&
+        Number.isFinite(result.balance.remainingTokens)
+          ? result.balance.remainingTokens
+          : null,
+    };
+  } catch {
+    return { success: false };
+  }
 }

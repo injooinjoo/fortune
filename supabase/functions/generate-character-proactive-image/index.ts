@@ -4,6 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { LLMFactory } from "../_shared/llm/factory.ts";
 import { authenticateUser } from "../_shared/auth.ts";
+import { chargeTokens, refundTokens } from "../_shared/token_charge.ts";
 import type { ImageResponse } from "../_shared/llm/types.ts";
 
 async function generateImageWithFallback(
@@ -78,6 +79,10 @@ const SUPPORTED_CHARACTER_IDS = new Set([
   "min_junhyuk",
 ]);
 const BUCKET_NAME = "character-proactive-images";
+
+// 이미지 1장 생성 원가 ≈ ₩52 (gemini-2.5-flash-image 기준).
+// 마진과 사용자 perception 고려해 50 토큰 차감.
+const PROACTIVE_IMAGE_TOKEN_COST = 50;
 
 function isValidCategory(value: string): value is ProactiveImageCategory {
   return [
@@ -180,6 +185,28 @@ serve(async (req: Request) => {
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
 
+  // Slice 2 (2026-05-05): AI 이미지 생성 비활성. /autoplan A3 결정.
+  // proactive-message-dispatch 가 이 함수 대신 character-proactive-images 버킷의
+  // 정적 placeholder (사용자 큐레이션) 를 사용하도록 우회됨. Slice 3 에서 큐레이션
+  // 게이트(생성 → 사용자 1-click 승인 → Storage 적재) 와 함께 재가동 검토.
+  // 코드는 보존 — 재가동 시 이 가드 블록만 제거하면 됨.
+  return new Response(
+    JSON.stringify(
+      {
+        success: false,
+        error:
+          "이 함수는 Slice 2 기간 비활성화됨. character-proactive-images 버킷의 정적 placeholder 를 사용하세요. (PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.4)",
+        errorCode: "disabled_for_slice_2",
+      } satisfies GenerateCharacterProactiveImageResponse & { errorCode: string },
+    ),
+    {
+      status: 410,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    },
+  );
+
+  // 아래 본 핸들러는 Slice 3 큐레이션 게이트 합류 전까지 dead code.
+  // deno-lint-ignore no-unreachable
   const startedAt = Date.now();
 
   try {
@@ -248,35 +275,85 @@ serve(async (req: Request) => {
       throw new Error("Supabase service role 환경변수가 설정되지 않았습니다");
     }
 
-    const prompt = buildPrompt(request);
-    const imageResult = await generateImageWithFallback(prompt);
-
-    const imageBytes = Uint8Array.from(
-      atob(imageResult.imageBase64),
-      (c) => c.charCodeAt(0),
-    );
-    const storagePath = buildStoragePath(request.characterId, request.category);
-
     const supabase = createClient(supabaseUrl, serviceRoleKey);
-    const { error: uploadError } = await supabase.storage
-      .from(BUCKET_NAME)
-      .upload(storagePath, imageBytes, {
-        contentType: "image/png",
-        upsert: false,
-      });
 
-    if (uploadError) {
-      throw new Error(`이미지 업로드 실패: ${uploadError.message}`);
+    // 토큰 차감 (₩52/장 적자 차단). 무제한 구독자 통과. LLM 호출 + storage
+    // upload 까지 한 try 블록으로 감싸 어디서 실패해도 환불 보장.
+    // PR-0a: referenceId 는 호출 단위 unique 여야 atomic refund 가 원본 추적 가능.
+    // characterId 만 쓰면 같은 캐릭터의 과거 차감과 reference 충돌. UUID 추가.
+    const chargeRunId = crypto.randomUUID();
+    const chargeCtx = {
+      description: "캐릭터 선톡 이미지",
+      referenceType: "proactive_image",
+      referenceId: `proactive_image:${request.characterId}:${chargeRunId}`,
+      idempotencyKey: `proactive_image:${request.characterId}:${chargeRunId}`,
+    };
+    const charge = await chargeTokens(
+      supabase,
+      user.id,
+      PROACTIVE_IMAGE_TOKEN_COST,
+      chargeCtx,
+    );
+
+    if (!charge.charged && !charge.unlimited) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "토큰이 부족합니다",
+          errorCode: "unknown",
+        } as GenerateCharacterProactiveImageResponse),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 402,
+        },
+      );
     }
 
-    const { data: publicUrlData } = supabase.storage
-      .from(BUCKET_NAME)
-      .getPublicUrl(storagePath);
+    let imageResult: ImageResponse;
+    let storagePath: string;
+    let publicUrl: string;
+    try {
+      const prompt = buildPrompt(request);
+      imageResult = await generateImageWithFallback(prompt);
+
+      const imageBytes = Uint8Array.from(
+        atob(imageResult.imageBase64),
+        (c) => c.charCodeAt(0),
+      );
+      storagePath = buildStoragePath(request.characterId, request.category);
+
+      const { error: uploadError } = await supabase.storage
+        .from(BUCKET_NAME)
+        .upload(storagePath, imageBytes, {
+          contentType: "image/png",
+          upsert: false,
+        });
+
+      if (uploadError) {
+        throw new Error(`이미지 업로드 실패: ${uploadError.message}`);
+      }
+
+      const { data: publicUrlData } = supabase.storage
+        .from(BUCKET_NAME)
+        .getPublicUrl(storagePath);
+      publicUrl = publicUrlData.publicUrl;
+    } catch (workError) {
+      if (charge.charged) {
+        await refundTokens(
+          supabase,
+          user.id,
+          PROACTIVE_IMAGE_TOKEN_COST,
+          charge.balanceBeforeCharge,
+          chargeCtx,
+        );
+      }
+      throw workError;
+    }
 
     return new Response(
       JSON.stringify({
         success: true,
-        imageUrl: publicUrlData.publicUrl,
+        imageUrl: publicUrl,
         meta: {
           provider: imageResult.provider,
           model: imageResult.model,
