@@ -20,6 +20,13 @@ export interface CharacterPushPayload {
   roomState?: string;
   type?: "character_dm" | "character_follow_up";
   route?: string;
+  // scheduled_character_replies row id. 클라가 받자마자 ack-scheduled-reply
+  // 호출해서 client_acked_at 마킹 → cron 중복 발송 방지.
+  // Telegram scheduled-message API 패턴 (별도 필드, 매직 prefix 폐기).
+  scheduledId?: string;
+  // proactive_message_log row id (Slice 2). hookForReveal=true 인 메시지일 때만.
+  // 클라가 character-chat 호출 시 body 에 동봉 → 서버가 reveal claim 시 race 회피.
+  pendingProactiveMessageId?: string;
 }
 
 export interface CharacterPushSendResult {
@@ -71,6 +78,21 @@ export function buildCharacterDmPayload(
 
   if (params.roomState) {
     payload["room_state"] = params.roomState;
+  }
+
+  if (params.scheduledId) {
+    // snake + camel 둘 다 박는 이유: 기존 character_id/characterId 패턴 동일.
+    // RN 클라가 둘 중 어느 키로 읽든 호환되도록 — 다음 OTA에서 클라가 양방향
+    // fallback 안정화되면 한 키로 정리 예정.
+    payload["scheduled_id"] = params.scheduledId;
+    payload["scheduledId"] = params.scheduledId;
+  }
+
+  if (params.pendingProactiveMessageId) {
+    // Slice 2: proactive hooking → user reply → reveal race 회피용.
+    // 클라가 character-chat 호출 시 body 에 동봉.
+    payload["pending_proactive_message_id"] = params.pendingProactiveMessageId;
+    payload["pendingProactiveMessageId"] = params.pendingProactiveMessageId;
   }
 
   return payload;
@@ -348,6 +370,8 @@ export async function sendCharacterDmPush(params: {
   conversationId?: string;
   roomState?: string;
   type?: CharacterPushPayload["type"];
+  scheduledId?: string;
+  pendingProactiveMessageId?: string;
 }): Promise<CharacterPushSendResult> {
   const isEnabled = await hasCharacterNotificationEnabled(
     params.supabase,
@@ -383,6 +407,8 @@ export async function sendCharacterDmPush(params: {
     conversationId: params.conversationId,
     roomState: params.roomState,
     type: params.type,
+    scheduledId: params.scheduledId,
+    pendingProactiveMessageId: params.pendingProactiveMessageId,
   });
 
   const sentCount = await sendExpoPushToTokens(params.supabase, {

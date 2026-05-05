@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { FORTUNE_TOKEN_COSTS } from '../_shared/types.ts'
+import { FORTUNE_TOKEN_COSTS, normalizeFortuneType } from '../_shared/types.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,7 +11,10 @@ const corsHeaders = {
  * 토큰(영혼) 소비 Edge Function
  *
  * POST /soul-consume
- * Body: { fortuneType: string, referenceId?: string }
+ * Body: { fortuneType: string, referenceId?: string, idempotencyKey?: string }
+ *
+ * idempotencyKey: PR-0a 추가. 같은 키 재전송 시 1회만 차감 + 기존 결과 반환.
+ * referenceId: token_transactions.reference_id 에 저장. 환불 시 원본 찾기에 사용.
  *
  * Response:
  * {
@@ -21,16 +24,15 @@ const corsHeaders = {
  *     "remainingTokens": 485,
  *     "lastUpdated": "2025-12-21T10:00:00Z",
  *     "hasUnlimitedAccess": false
- *   }
+ *   },
+ *   "replayed"?: true   // idempotency 재전송 시
  * }
  */
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
-  // POST 요청만 허용
   if (req.method !== 'POST') {
     return new Response(
       JSON.stringify({ error: 'Method not allowed' }),
@@ -42,7 +44,6 @@ serve(async (req) => {
   }
 
   try {
-    // 인증 토큰 추출
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
       console.log('❌ No authorization header')
@@ -55,11 +56,18 @@ serve(async (req) => {
       )
     }
 
-    // 요청 Body 파싱
     const body = await req.json()
-    const { fortuneType, referenceId } = body
+    const {
+      fortuneType: rawFortuneType,
+      referenceId,
+      idempotencyKey,
+    } = body as {
+      fortuneType?: string
+      referenceId?: string | null
+      idempotencyKey?: string | null
+    }
 
-    if (!fortuneType) {
+    if (!rawFortuneType) {
       return new Response(
         JSON.stringify({ error: 'Missing fortuneType' }),
         {
@@ -69,9 +77,13 @@ serve(async (req) => {
       )
     }
 
-    console.log(`🔮 Soul consume request: fortuneType=${fortuneType}, referenceId=${referenceId}`)
+    const fortuneType = normalizeFortuneType(rawFortuneType)
 
-    // Supabase 클라이언트 생성
+    console.log(
+      `🔮 Soul consume: fortuneType=${fortuneType} (raw=${rawFortuneType}), ` +
+      `referenceId=${referenceId}, hasIdempotencyKey=${!!idempotencyKey}`,
+    )
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
@@ -82,7 +94,6 @@ serve(async (req) => {
       }
     })
 
-    // JWT에서 사용자 ID 추출
     const token = authHeader.replace('Bearer ', '')
     const { data: { user }, error: userError } = await supabase.auth.getUser(token)
 
@@ -99,11 +110,10 @@ serve(async (req) => {
 
     console.log(`👤 User: ${user.id}`)
 
-    // 0. 일일 무료 운세 체크 (daily 타입만)
+    // 0. 일일 무료 운세 (daily 타입). RPC 밖에서 처리 — 토큰 path 와 분리.
     if (fortuneType === 'daily') {
-      const today = new Date().toISOString().split('T')[0] // UTC 기준 날짜
+      const today = new Date().toISOString().split('T')[0]
 
-      // 오늘 무료 사용 여부 확인
       const { data: usedToday } = await supabase
         .from('daily_free_fortune')
         .select('id')
@@ -112,7 +122,6 @@ serve(async (req) => {
         .maybeSingle()
 
       if (!usedToday) {
-        // 무료 사용 기록 삽입
         const { error: insertError } = await supabase
           .from('daily_free_fortune')
           .insert({
@@ -124,7 +133,6 @@ serve(async (req) => {
         if (!insertError) {
           console.log(`🎁 Free daily fortune used for user ${user.id}`)
 
-          // 현재 잔액 조회 (응답용)
           const { data: tokenData } = await supabase
             .from('token_balance')
             .select('balance, total_earned, total_spent')
@@ -149,7 +157,7 @@ serve(async (req) => {
       }
     }
 
-    // 1. 활성 구독 확인 (무제한 이용권)
+    // 1. 무제한 구독 체크. RPC 밖 — 구독자는 토큰 차감 자체 skip.
     const { data: subscription } = await supabase
       .from('subscriptions')
       .select('id, product_id, expires_at, status')
@@ -158,35 +166,22 @@ serve(async (req) => {
       .gt('expires_at', new Date().toISOString())
       .order('expires_at', { ascending: false })
       .limit(1)
-      .single()
+      .maybeSingle()
 
-    const hasUnlimitedAccess = !!subscription
+    if (subscription) {
+      const { data: tokenData } = await supabase
+        .from('token_balance')
+        .select('balance, total_earned, total_spent')
+        .eq('user_id', user.id)
+        .single()
 
-    // 2. 현재 토큰 잔액 조회
-    const { data: tokenData, error: tokenError } = await supabase
-      .from('token_balance')
-      .select('balance, total_earned, total_spent')
-      .eq('user_id', user.id)
-      .single()
-
-    const currentBalance = tokenData?.balance ?? 0
-    const totalEarned = tokenData?.total_earned ?? 0
-    const totalSpent = tokenData?.total_spent ?? 0
-
-    // 3. 필요한 토큰 수 계산
-    const cost = FORTUNE_TOKEN_COSTS[fortuneType as keyof typeof FORTUNE_TOKEN_COSTS] ?? 1
-
-    console.log(`💰 Current balance: ${currentBalance}, Cost: ${cost}, Unlimited: ${hasUnlimitedAccess}`)
-
-    // 무제한 이용권이 있으면 토큰 소비 없이 성공
-    if (hasUnlimitedAccess) {
-      console.log(`✅ Unlimited access - no token consumption`)
+      console.log(`✅ Unlimited access — no token consumption`)
       return new Response(
         JSON.stringify({
           balance: {
-            totalTokens: totalEarned,
-            usedTokens: totalSpent,
-            remainingTokens: currentBalance,
+            totalTokens: tokenData?.total_earned ?? 0,
+            usedTokens: tokenData?.total_spent ?? 0,
+            remainingTokens: tokenData?.balance ?? 0,
             lastUpdated: new Date().toISOString(),
             hasUnlimitedAccess: true
           }
@@ -195,41 +190,50 @@ serve(async (req) => {
       )
     }
 
-    // 4. 토큰 부족 체크
-    if (currentBalance < cost) {
-      console.log(`❌ Insufficient tokens: have ${currentBalance}, need ${cost}`)
+    // 2. 비용 계산
+    const cost = FORTUNE_TOKEN_COSTS[fortuneType as keyof typeof FORTUNE_TOKEN_COSTS] ?? 1
+
+    // 3. atomic RPC 호출
+    const { data: rpcResult, error: rpcError } = await supabase.rpc(
+      'consume_token_atomic',
+      {
+        p_user_id: user.id,
+        p_cost: cost,
+        p_description: `${fortuneType} 운세 이용`,
+        p_reference_type: 'fortune',
+        p_reference_id: referenceId ?? null,
+        p_idempotency_key: idempotencyKey ?? null,
+      },
+    )
+
+    if (rpcError) {
+      // INSUFFICIENT_TOKENS = SQLSTATE P0001
+      if (rpcError.code === 'P0001') {
+        console.log(`❌ Insufficient tokens (RPC): ${rpcError.details ?? rpcError.message}`)
+        // 잔액 안내용 현재 잔액 조회
+        const { data: tokenData } = await supabase
+          .from('token_balance')
+          .select('balance')
+          .eq('user_id', user.id)
+          .maybeSingle()
+
+        return new Response(
+          JSON.stringify({
+            code: 'INSUFFICIENT_TOKENS',
+            message: '토큰이 부족합니다',
+            required: cost,
+            available: tokenData?.balance ?? 0,
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        )
+      }
+
+      console.error('❌ consume_token_atomic RPC failed:', rpcError)
       return new Response(
-        JSON.stringify({
-          code: 'INSUFFICIENT_TOKENS',
-          message: '토큰이 부족합니다',
-          required: cost,
-          available: currentBalance
-        }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      )
-    }
-
-    // 5. 토큰 차감
-    const newBalance = currentBalance - cost
-    const newTotalSpent = totalSpent + cost
-
-    const { error: updateError } = await supabase
-      .from('token_balance')
-      .upsert({
-        user_id: user.id,
-        balance: newBalance,
-        total_earned: totalEarned,
-        total_spent: newTotalSpent,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'user_id' })
-
-    if (updateError) {
-      console.error('❌ Token update failed:', updateError.message)
-      return new Response(
-        JSON.stringify({ error: 'Failed to update token balance' }),
+        JSON.stringify({ error: 'Failed to consume token' }),
         {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -237,30 +241,35 @@ serve(async (req) => {
       )
     }
 
-    // 6. 거래 이력 기록
-    await supabase
-      .from('token_transactions')
-      .insert({
-        user_id: user.id,
-        transaction_type: 'consumption',
-        amount: -cost,
-        balance_after: newBalance,
-        description: `${fortuneType} 운세 이용`,
-        reference_type: 'fortune',
-        reference_id: referenceId || null
-      })
+    const result = rpcResult as {
+      balance: number
+      total_earned: number
+      total_spent: number
+      replayed: boolean
+      transaction_id: string
+    }
 
-    console.log(`✅ Token consumed: ${currentBalance} → ${newBalance} (cost: ${cost})`)
+    if (result.replayed) {
+      console.log(
+        `🔁 Idempotent replay: txn=${result.transaction_id}, balance=${result.balance}`,
+      )
+    } else {
+      console.log(
+        `✅ Token consumed: balance=${result.balance}, txn=${result.transaction_id}`,
+      )
+    }
 
     return new Response(
       JSON.stringify({
         balance: {
-          totalTokens: totalEarned,
-          usedTokens: newTotalSpent,
-          remainingTokens: newBalance,
+          totalTokens: result.total_earned,
+          usedTokens: result.total_spent,
+          remainingTokens: result.balance,
           lastUpdated: new Date().toISOString(),
           hasUnlimitedAccess: false
-        }
+        },
+        replayed: result.replayed,
+        transactionId: result.transaction_id,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )

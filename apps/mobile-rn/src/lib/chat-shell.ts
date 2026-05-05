@@ -137,6 +137,41 @@ export interface ChatShellStoryRevealMessage {
 }
 
 /**
+ * 30초+ 비동기 작업이 진행 중일 때 채팅 흐름에 끼어드는 진행상황 카드.
+ *
+ * 손금/타로/사주처럼 결과가 늦게 도착하는 운세에서 사용자가 "막히지 않았다"고
+ * 인지할 수 있게 phase 텍스트 + 경과시간 + 단계 인디케이터를 보여준다.
+ *
+ * - `jobId`: Phase B에서 Supabase realtime 구독 키로 사용. 없어도 fake-phase 로 동작 가능.
+ * - `fortuneType`: 라벨/아이콘/색상 결정용 (없으면 generic "분석 중").
+ * - `phase`: 현재 표시할 단계 텍스트. 서버 phase 도착 시 in-place 갱신.
+ * - `phaseSteps`: 시각적 진행 도트용 라벨 시퀀스. 없으면 도트 미표시.
+ * - `currentStepIndex`: phaseSteps 중 active 인덱스.
+ * - `startedAt`: epoch ms — 경과시간 계산용.
+ * - `estimatedSeconds`: 서버가 예상한 총 소요시간 — 남은시간 표시용.
+ *
+ * 완료되면 이 메시지는 결과 카드로 교체되거나 그대로 둘 수 있음 (replace 정책은 호출 측 결정).
+ */
+export interface ChatShellProgressMessage {
+  id: string;
+  kind: 'progress';
+  sender: 'assistant';
+  jobId?: string;
+  fortuneType?: FortuneTypeId;
+  phase: string;
+  phaseSteps?: string[];
+  currentStepIndex?: number;
+  startedAt: number;
+  estimatedSeconds?: number;
+  /**
+   * 에러 발생 시 채워지는 사용자 메시지. 값이 있으면 진행카드가 실패 상태로
+   * 렌더 (스피너 정지 + 빨간 인디케이터). 보통 진행카드는 결과카드/에러텍스트로
+   * 교체되지만, 짧은 에러를 카드 안에 표시하고 싶을 때 사용.
+   */
+  error?: string;
+}
+
+/**
  * System-role card that pins the user's own Saju context into the chat.
  * Injected when user taps "사주로 대화하기" on the Manseryeok screen — acts as
  * a visual reminder that the following conversation is grounded in this chart.
@@ -196,7 +231,7 @@ export type ChatShellMessage =
   | ChatShellImageMessage
   | ChatShellStoryRevealMessage
   | ChatShellMySajuContextMessage
-  | ChatShellFortuneMenuMessage;
+  | ChatShellProgressMessage;
 
 export interface ChatShellAction {
   id: string;
@@ -212,6 +247,13 @@ const fortuneTypeLabels: Partial<Record<FortuneTypeId, string>> = {
   'new-year': '새해 인사이트',
   'traditional-saju': '전통 사주',
   'face-reading': '관상',
+  'palm-reading': '손금가이드',
+  'beauty-simulation': '뷰티 시뮬레이션',
+  'hair-style-guide': '헤어스타일 가이드',
+  'face-reading-guide': '얼굴 인상 리포트',
+  'ootd-guide': 'OOTD 가이드',
+  'blind-date-guide': '소개팅 가이드',
+  'past-life-guide': '전생 리포트',
   mbti: 'MBTI 결과',
   'blood-type': '혈액형',
   'zodiac-animal': '띠별 분석',
@@ -597,6 +639,47 @@ export function buildMySajuContextMessage(
       dominantTenGods,
     },
     timestamp: Date.now(),
+  };
+}
+
+export interface BuildProgressMessageOptions {
+  jobId?: string;
+  fortuneType?: FortuneTypeId;
+  /** 시작 phase 텍스트. 미지정 시 fortuneType 라벨 기반 기본값. */
+  phase?: string;
+  phaseSteps?: string[];
+  currentStepIndex?: number;
+  /** epoch ms. 미지정 시 Date.now(). */
+  startedAt?: number;
+  estimatedSeconds?: number;
+}
+
+export function buildProgressMessage(
+  options: BuildProgressMessageOptions = {},
+): ChatShellProgressMessage {
+  const fortuneLabel = options.fortuneType
+    ? formatFortuneTypeLabel(options.fortuneType)
+    : null;
+  const defaultPhase = fortuneLabel ? `${fortuneLabel} 분석 중` : '분석 중';
+  return {
+    id: createMessageId('progress'),
+    kind: 'progress',
+    sender: 'assistant',
+    phase: options.phase ?? defaultPhase,
+    startedAt: options.startedAt ?? Date.now(),
+    ...(options.jobId !== undefined ? { jobId: options.jobId } : {}),
+    ...(options.fortuneType !== undefined
+      ? { fortuneType: options.fortuneType }
+      : {}),
+    ...(options.phaseSteps !== undefined
+      ? { phaseSteps: options.phaseSteps }
+      : {}),
+    ...(options.currentStepIndex !== undefined
+      ? { currentStepIndex: options.currentStepIndex }
+      : {}),
+    ...(options.estimatedSeconds !== undefined
+      ? { estimatedSeconds: options.estimatedSeconds }
+      : {}),
   };
 }
 

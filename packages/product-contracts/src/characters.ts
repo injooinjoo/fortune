@@ -21,7 +21,16 @@ export const fortuneCharacters = [
     name: '현우',
     category: 'traditional',
     shortDescription: '사주와 전통 명리학으로 당신의 근본을 봅니다',
-    specialties: ['traditional-saju', 'face-reading', 'blood-type', 'naming'],
+    specialties: [
+      'traditional-saju',
+      'face-reading',
+      'palm-reading',
+      'face-reading-guide',
+      'beauty-simulation',
+      'hair-style-guide',
+      'blood-type',
+      'naming',
+    ],
   },
   {
     id: 'fortune_stella',
@@ -42,6 +51,7 @@ export const fortuneCharacters = [
       'coaching',
       'chat-insight',
       'past-life',
+      'past-life-guide',
     ],
   },
   {
@@ -53,6 +63,7 @@ export const fortuneCharacters = [
       'love',
       'compatibility',
       'blind-date',
+      'blind-date-guide',
       'ex-lover',
       'avoid-people',
       'celebrity',
@@ -71,7 +82,7 @@ export const fortuneCharacters = [
     name: '럭키',
     category: 'lucky',
     shortDescription: '행운 아이템과 기분 좋은 우연을 모아드려요',
-    specialties: ['lucky-items', 'lotto', 'ootd-evaluation'],
+    specialties: ['lucky-items', 'lotto', 'ootd-evaluation', 'ootd-guide'],
   },
   {
     id: 'fortune_marco',

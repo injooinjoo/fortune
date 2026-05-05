@@ -6,6 +6,7 @@ import {
   useLocalSearchParams,
   type Href,
 } from 'expo-router';
+import * as Crypto from 'expo-crypto';
 import { type FortuneTypeId } from '@fortune/product-contracts';
 import { Alert, Dimensions, Keyboard, Modal, Pressable, ScrollView, TextInput, View } from 'react-native';
 
@@ -34,7 +35,14 @@ import {
   startChatSurvey,
 } from '../features/chat-survey/registry';
 import type { ActiveChatSurvey } from '../features/chat-survey/types';
-import { fetchEmbeddedEdgeResultPayload } from '../features/chat-results/edge-runtime';
+import {
+  fetchEmbeddedEdgeResultPayload,
+  isAsyncLongRunningFortuneType,
+  isAsyncPosterFortuneType,
+  lookupCachedFortuneResult,
+  startAsyncLongRunningJob,
+  startAsyncPosterJob,
+} from '../features/chat-results/edge-runtime';
 import { resolveResultKindFromFortuneType } from '../features/fortune-results/mapping';
 import { captureError } from '../lib/error-reporting';
 import {
@@ -42,6 +50,7 @@ import {
   buildEmbeddedResultMessage,
   buildEmbeddedResultMessageFromPayload,
   buildFortuneCookieMessage,
+  buildProgressMessage,
   buildSajuPreviewMessage,
   buildDraftReply,
   buildInitialThread,
@@ -55,6 +64,12 @@ import {
   type ChatShellMessage,
   type ChatShellTextMessage,
 } from '../lib/chat-shell';
+import {
+  describeLlmTextPhase,
+  LLM_TEXT_PHASE_STEPS,
+  POSTER_PHASE_STEPS,
+  trackJob as trackLongRunningJob,
+} from '../lib/long-running-jobs';
 import {
   buildChatCharactersWithCustomFriends,
   buildStoryCharactersWithCustomFriends,
@@ -88,7 +103,22 @@ import {
 } from '../lib/chat-provider';
 import { onDeviceLLMEngine } from '../lib/on-device-llm';
 import {
+  markLatestUserMessageAsRead,
+  sleep,
+  randomInRange,
+} from '../lib/chat-message-utils';
+import {
+  deleteMessage as deleteStoreMessage,
+  deleteMessages as deleteStoreMessages,
+  insertMessages as insertStoreMessages,
+  markUserMessagesAsReadInStore,
+  useStoreMessages,
+} from '../lib/message-store';
+import { useMessageQueue } from '../features/chat-surface/hooks/use-message-queue';
+import {
+  ackScheduledReplyIfPresent,
   clearActiveChatCharacterId,
+  consumePendingProactiveMessageId,
   setActiveChatCharacterId,
   setAppIconBadgeCount,
 } from '../lib/push-notifications';
@@ -98,7 +128,7 @@ import {
   consumeRemoteTokens,
   RemoteTokenConsumeError,
 } from '../lib/premium-remote';
-import { useTextToSpeech } from '../lib/use-text-to-speech';
+// useTextToSpeech 는 useChatTtsHaptics hook 안에서 사용.
 import {
   socialAuthProviderLabelById,
   type SocialAuthProviderId,
@@ -108,9 +138,13 @@ import {
   saveCharacterPersona,
 } from '../lib/character-persona-store';
 import { fortuneTheme } from '../lib/theme';
-import { loveHeartbeat, scoreReveal, tapLight } from '../lib/haptics';
+// loveHeartbeat/tapLight 은 useChatTtsHaptics hook 안에서 사용. 여기엔 phase
+// 전환 1회성 scoreReveal 만 남음.
+import { scoreReveal } from '../lib/haptics';
+import { useChatTtsHaptics } from '../features/chat-surface/hooks/use-chat-tts-haptics';
 import { pickPresenceLine } from '../lib/presence-lines';
 import { useVoiceInput } from '../lib/use-voice-input';
+import { useRewardedAd } from '../lib/ad-rewards';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { useFriendCreation } from '../providers/friend-creation-provider';
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
@@ -147,32 +181,8 @@ const FALLBACK_REPLY_MIN_SEC = 1;
  * AI 응답 시점에 호출되므로, 그 전까지 쌓인 모든 유저 메시지를 한꺼번에
  * 읽음 처리 (연속으로 보낸 경우에도 "1" 배지가 남지 않도록).
  */
-function markLatestUserMessageAsRead(
-  messages: ChatShellMessage[],
-  readAt: string = new Date().toISOString(),
-): ChatShellMessage[] {
-  let patched = false;
-  const next = messages.map((message) => {
-    if (
-      message.kind === 'text' &&
-      message.sender === 'user' &&
-      !message.readAt
-    ) {
-      patched = true;
-      return { ...message, readAt };
-    }
-    return message;
-  });
-  return patched ? next : messages;
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function randomInRange(minMs: number, maxMs: number): number {
-  return minMs + Math.floor(Math.random() * Math.max(1, maxMs - minMs + 1));
-}
+// markLatestUserMessageAsRead, sleep, randomInRange 는 lib/chat-message-utils.ts
+// 로 이동. import 는 파일 상단 named import 참고.
 
 /**
  * 두 메시지 리스트가 id 기준으로 같은지 얕은 비교. hydrate 결과가 캐시와
@@ -269,14 +279,38 @@ export function ChatScreen() {
   } = useMobileAppState();
   const { createdFriends, resetDraft, removeFriend } = useFriendCreation();
   const { isSupported, startSocialAuth } = useSocialAuth();
+  // 한도 도달 paywall 에서 "광고 보고 토큰" 옵션 제공. 광고 비활성 / 미준비
+  // 시 isReady=false 라 alert 분기에서 자동 숨김.
+  const rewardedAd = useRewardedAd({
+    session,
+    userId: session?.user.id ?? null,
+    onReward: (outcome) => {
+      if (outcome.success && outcome.tokensGranted) {
+        // 잔액 갱신은 premium-remote 가 다음 fetch 시 반영. 여기선 토스트만.
+        Alert.alert(
+          '🎁 토큰 획득',
+          `광고 시청으로 ${outcome.tokensGranted} 토큰을 받았어요.`,
+        );
+      }
+    },
+  });
   const [activeFortuneType, setActiveFortuneType] =
     useState<FortuneTypeId | null>(null);
   const [activeProviderId, setActiveProviderId] =
     useState<SocialAuthProviderId | null>(null);
   const [authMessage, setAuthMessage] = useState<string | null>(null);
-  const [draft, setDraft] = useState('');
-  const [surveyDraft, setSurveyDraft] = useState('');
-  const [surveySelections, setSurveySelections] = useState<string[]>([]);
+  // draft (입력창 텍스트) 는 반드시 캐릭터별 격리 — 캐릭터 전환 시 다른 캐릭터의
+  // 입력 잔여 텍스트가 새어나오면 안 됨. setDraft 는 현재 selectedCharacterId
+  // 를 ref 로 읽어서 stale closure 회피.
+  const [draftsByCharacterId, setDraftsByCharacterId] = useState<
+    Record<string, string>
+  >({});
+  // surveyDraft / surveySelections 도 캐릭터별 격리 (입력창 draft 와 동일 이유).
+  const [surveyDraftsByCharacterId, setSurveyDraftsByCharacterId] = useState<
+    Record<string, string>
+  >({});
+  const [surveySelectionsByCharacterId, setSurveySelectionsByCharacterId] =
+    useState<Record<string, string[]>>({});
   const [launchOrigin, setLaunchOrigin] = useState<'deeplink' | 'user' | null>(
     null,
   );
@@ -307,6 +341,65 @@ export function ChatScreen() {
   const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(
     null,
   );
+  // selectedCharacterId 의 최신 값을 ref 로 미러링 — async closure / useCallback
+  // 안에서 stale state 회피용. setDraft / setSurveyDraft 가 사용.
+  const selectedCharacterIdRef = useRef<string | null>(null);
+  selectedCharacterIdRef.current = selectedCharacterId;
+
+  // draft (입력창 텍스트) 캐릭터별 격리. 캐릭터 전환 시 다른 캐릭터 draft 안 새어나옴.
+  const draft = selectedCharacterId
+    ? (draftsByCharacterId[selectedCharacterId] ?? '')
+    : '';
+  const setDraft = useCallback(
+    (value: string | ((prev: string) => string)) => {
+      const id = selectedCharacterIdRef.current;
+      if (!id) return;
+      setDraftsByCharacterId((prev) => {
+        const current = prev[id] ?? '';
+        const next = typeof value === 'function' ? value(current) : value;
+        if (next === current) return prev;
+        return { ...prev, [id]: next };
+      });
+    },
+    [],
+  );
+
+  // surveyDraft (서베이 텍스트 답변) 도 동일 패턴.
+  const surveyDraft = selectedCharacterId
+    ? (surveyDraftsByCharacterId[selectedCharacterId] ?? '')
+    : '';
+  const setSurveyDraft = useCallback(
+    (value: string | ((prev: string) => string)) => {
+      const id = selectedCharacterIdRef.current;
+      if (!id) return;
+      setSurveyDraftsByCharacterId((prev) => {
+        const current = prev[id] ?? '';
+        const next = typeof value === 'function' ? value(current) : value;
+        if (next === current) return prev;
+        return { ...prev, [id]: next };
+      });
+    },
+    [],
+  );
+
+  // surveySelections (서베이 chip 다중 선택) 도 동일 패턴.
+  const surveySelections = selectedCharacterId
+    ? (surveySelectionsByCharacterId[selectedCharacterId] ?? [])
+    : [];
+  const setSurveySelections = useCallback(
+    (value: string[] | ((prev: string[]) => string[])) => {
+      const id = selectedCharacterIdRef.current;
+      if (!id) return;
+      setSurveySelectionsByCharacterId((prev) => {
+        const current = prev[id] ?? [];
+        const next = typeof value === 'function' ? value(current) : value;
+        if (next === current) return prev;
+        return { ...prev, [id]: next };
+      });
+    },
+    [],
+  );
+
   const [surfaceMode, setSurfaceMode] = useState<SurfaceMode>(() =>
     !forceListMode && directCharacterId ? 'chat' : 'list',
   );
@@ -366,6 +459,45 @@ export function ChatScreen() {
       return next ?? current;
     });
   }, [cachedCharacterConversations]);
+
+  // MessageStore → useState 단방향 sync (Step 2.A).
+  //
+  // 푸시 도착 시 push-handler 가 store.insertMessages 호출 → store 변경 →
+  // useStoreMessages re-render → 이 effect 가 useState 갱신 → 화면 즉시 reflect.
+  // iMessage/WhatsApp/KakaoTalk 표준 — 채팅창에 머무는 동안 새 메시지 자동 등장.
+  //
+  // 단방향 (store → useState) 인 이유: chat-screen 의 send/append 는 여전히
+  // useState 가 source 이고 (옛 흐름 유지), store 에는 bridge 로 sync 만 됨.
+  // 두 source 가 같은 메시지 (id 동일) 면 store 가 더 길 수 없어 no-op.
+  // 다른 메시지 (push 로 도착한 새 메시지) 면 store len > useState len 으로 진입.
+  //
+  // **CRITICAL — cross-character leak 방지**:
+  //   useStoreMessages 가 반환하는 snapshot 은 (characterId, messages) tuple
+  //   이라 호출 측이 identity 검증 가능. 캐릭터 A→B 전환 순간 hook 의 stale
+  //   캐시에서 A.messages 가 잠깐 반환되더라도 snapshot.characterId === 'A'
+  //   여서 selectedCharacterId === 'B' 와 mismatch — 적용 SKIP. 다음 렌더에서
+  //   B 의 정확한 데이터로 다시 시도. (이전 구조: messages-only 반환 →
+  //   selectedCharacterId='B' + messages=A.messages 로 messagesByCharacterId
+  //   ['B'] 에 A 의 데이터를 잘못 써 넣어 손금가이드 결과 이미지 등이 다른
+  //   캐릭터 채팅창에 누출되던 1.0.11 production 버그.)
+  //
+  // 다음 phase 에서 useState 자체를 store 로 대체. 그때까지는 mirror sync.
+  const storeSnapshot = useStoreMessages(selectedCharacterId);
+  useEffect(() => {
+    if (!selectedCharacterId) return;
+    // Identity 검증 — snapshot 이 현재 활성 캐릭터의 것이 맞는지 반드시 확인.
+    // 다른 캐릭터의 stale snapshot 이 현재 active id 와 짝지어지면 누출 발생.
+    if (storeSnapshot.characterId !== selectedCharacterId) return;
+    const storeMessagesForActive = storeSnapshot.messages;
+    if (storeMessagesForActive.length === 0) return;
+    setMessagesByCharacterId((prev) => {
+      const existing = prev[selectedCharacterId] ?? [];
+      // store 가 더 많은 메시지를 가진 경우만 업데이트. 같거나 적으면 useState
+      // 가 더 fresh (chat-screen 이 직접 append 한 직후) — 덮어쓰지 않음.
+      if (storeMessagesForActive.length <= existing.length) return prev;
+      return { ...prev, [selectedCharacterId]: storeMessagesForActive };
+    });
+  }, [storeSnapshot, selectedCharacterId]);
 
   // 스레드 체류 중 새 AI/system 메시지 도착 → 즉시 읽음 처리.
   // 일반 메신저(iMessage/WhatsApp/KakaoTalk) 와 동일한 동작: 유저가 해당
@@ -515,6 +647,8 @@ export function ChatScreen() {
       if (existing.some((m) => m.id === message.id)) {
         return current;
       }
+      // Step G: store sync — store id-dedup 으로 멱등.
+      insertStoreMessages(targetCharacterId, [message]).catch(() => undefined);
       return {
         ...current,
         [targetCharacterId]: [message, ...existing],
@@ -562,6 +696,13 @@ export function ChatScreen() {
                 }
                 return { ...current, [characterId]: cachedMessages };
               });
+              // Step G: store sync — 다른 화면 (chat list 등) 도 즉시 reflect.
+              // Non-destructive: dedup-append. 절대 REPLACE 금지 — 원격이 in-flight
+              // (push 도착 메시지, 막 보낸 user 메시지) 보다 짧을 수 있어 store
+              // /SQLite 를 REPLACE 하면 그 메시지들이 사라진다 (Bug 2 회귀).
+              insertStoreMessages(characterId, cachedMessages).catch(
+                () => undefined,
+              );
             }
             return;
           }
@@ -576,6 +717,11 @@ export function ChatScreen() {
             }
             return { ...current, [characterId]: snapshot.messages };
           });
+          // 원격 hydrate 도 dedup-append. REPLACE 하면 in-flight (push/optimistic)
+          // 메시지가 사라진다.
+          insertStoreMessages(characterId, snapshot.messages).catch(
+            () => undefined,
+          );
           setStoryThreadSnapshotsByCharacterId((current) => ({
             ...current,
             [characterId]: snapshot,
@@ -604,6 +750,11 @@ export function ChatScreen() {
               }
               return { ...current, [characterId]: cachedMessages };
             });
+            // Non-destructive: dedup-append. REPLACE 하면 in-flight 메시지
+            // (push 본문, 막 보낸 user_msg) 가 store/SQLite 에서 사라진다.
+            insertStoreMessages(characterId, cachedMessages).catch(
+              () => undefined,
+            );
           }
           return;
         }
@@ -618,6 +769,8 @@ export function ChatScreen() {
           }
           return { ...current, [characterId]: messages };
         });
+        // 원격 hydrate 도 dedup-append. REPLACE 절대 금지 (Bug 2 회귀 방지).
+        insertStoreMessages(characterId, messages).catch(() => undefined);
       } catch (error) {
         // Remove from set so it can be retried
         hydratedCharacterIdsRef.current.delete(characterId);
@@ -735,7 +888,24 @@ export function ChatScreen() {
     selectedCharacterId,
   ]);
 
+  // 자동 라우팅 마운트 1회만 — 한번 라우팅 결정한 후엔 사용자 탭 전환 등으로
+  // 재실행되어 강제 복귀되지 않도록 ref 가드. 회귀: 사용자가 스토리 탭 chip 을
+  // 눌러 list 모드로 가려고 해도 highlightedExpert 가 남아있으면 effect 재실행
+  // 시 surfaceMode='chat' 으로 강제 되돌리는 버그 발견 → 1회만 적용.
+  const initialRouteAppliedRef = useRef(false);
   useEffect(() => {
+    if (initialRouteAppliedRef.current) {
+      // directCharacterId 가 새로 들어오면 (push tap → /chat?characterId=X) 예외
+      // — 사용자가 push 탭으로 명시적 진입했으므로 chat 모드 강제 OK.
+      if (directCharacterId) {
+        setSelectedCharacterId(directCharacterId);
+        setActiveTab(directCharacter?.kind ?? 'story');
+        setSurfaceMode('chat');
+      }
+      return;
+    }
+    initialRouteAppliedRef.current = true;
+
     if (directCharacterId) {
       setSelectedCharacterId(directCharacterId);
       setActiveTab(directCharacter?.kind ?? 'story');
@@ -829,25 +999,18 @@ export function ChatScreen() {
     storyTypingByCharacterId[selectedCharacter.id] === true;
   const selectedFortuneIsTyping = fortuneTypingCharacterId === selectedCharacter.id;
 
-  // 캐릭터 음성 재생 (Gemini TTS) controller — 화면 전체에 1개 인스턴스.
-  // 각 SpeakerButton 은 자기 messageId 가 controller.activeMessageId 와 같을
-  // 때만 'playing'/'loading' 상태로 표시. 새 재생이 시작되면 직전 사운드는
-  // 자동 unload — 동시 재생 없음 (자연스러운 메신저 UX).
-  const tts = useTextToSpeech();
-  const handlePlayTts = useCallback(
-    (args: { messageId: string; text: string; emotion?: string }) => {
-      void tts.play({
-        messageId: args.messageId,
-        text: args.text,
-        characterId: selectedCharacter.id,
-        emotion: args.emotion,
-      });
-    },
-    [selectedCharacter.id, tts],
-  );
-  const handleStopTts = useCallback(() => {
-    void tts.stop();
-  }, [tts]);
+  // 캐릭터 음성 재생 (Gemini TTS) + 응답 햅틱.
+  // useChatTtsHaptics hook 안에서 useTextToSpeech 인스턴스 1개 + chatHaptics
+  // 토글 ref 관리. chat-screen.tsx 분해 1단계 — TTS/Haptic 책임 격리.
+  const {
+    tts,
+    handlePlayTts,
+    handleStopTts,
+    triggerAssistantHaptic,
+  } = useChatTtsHaptics({
+    selectedCharacterId: selectedCharacter.id,
+    chatHapticsEnabled: mobileAppState.settings.chatHapticsEnabled,
+  });
 
   // ---------------------------------------------------------------------------
   // 자동 답장 재개 — 채팅방 진입 시 마지막 메시지가 user 면 AI 응답 트리거
@@ -914,6 +1077,8 @@ export function ChatScreen() {
 
   const markUserMessageReadImmediately = useCallback(
     (characterId: string) => {
+      // Step G: store 에도 readAt 마킹 — useStoreMessages 구독자 (chat list 등) 즉시 reflect.
+      markUserMessagesAsReadInStore(characterId);
       setMessagesByCharacterId((current) => ({
         ...current,
         [characterId]: markLatestUserMessageAsRead(
@@ -981,25 +1146,9 @@ export function ChatScreen() {
   // ---------------------------------------------------------------------------
   // F3 — 햅틱 토글 (chatHapticsEnabled 설정)
   // ---------------------------------------------------------------------------
-  const chatHapticsEnabled = mobileAppState.settings.chatHapticsEnabled;
-  const chatHapticsEnabledRef = useRef(chatHapticsEnabled);
-  useEffect(() => {
-    chatHapticsEnabledRef.current = chatHapticsEnabled;
-  }, [chatHapticsEnabled]);
-
-  const triggerAssistantHaptic = useCallback(
-    (emotionTag: string | undefined) => {
-      if (!chatHapticsEnabledRef.current) {
-        return;
-      }
-      if (emotionTag === '애정') {
-        loveHeartbeat();
-      } else {
-        tapLight();
-      }
-    },
-    [],
-  );
+  // chatHaptics + tts 는 useChatTtsHaptics hook 으로 이동 (위쪽).
+  // scoreReveal 햅틱만 여기에 남김 (관계 phase 전환 1회성, TTS/응답 햅틱과
+  // 다른 책임).
 
   // ---------------------------------------------------------------------------
   // F3 — 관계 단계 변화 시 scoreReveal(90)
@@ -1021,11 +1170,11 @@ export function ChatScreen() {
         phaseChanged = true;
       }
     }
-    if (phaseChanged && chatHapticsEnabledRef.current) {
+    if (phaseChanged && mobileAppState.settings.chatHapticsEnabled) {
       scoreReveal(90);
     }
     previousPhaseByCharacterIdRef.current = nextSnapshot;
-  }, [storyThreadSnapshotsByCharacterId]);
+  }, [storyThreadSnapshotsByCharacterId, mobileAppState.settings.chatHapticsEnabled]);
 
   // ---------------------------------------------------------------------------
   // F1 — 멀티버블 순차 enqueue 헬퍼
@@ -1035,50 +1184,12 @@ export function ChatScreen() {
    * 각 버블 앞에 타이핑 인디케이터 200-600ms + 버블 사이 600-1800ms 랜덤 간격.
    * 첫 버블은 호출자가 이미 replyDelay를 걸었다고 가정 (중복 delay X).
    */
-  const enqueueAssistantSegments = useCallback(
-    async (options: {
-      characterId: string;
-      segments: string[];
-      emotionTag?: string;
-    }) => {
-      const { characterId, segments, emotionTag } = options;
-      // 응답 append는 항상 현재 state 위에 쌓는다. 큐잉된 유저 메시지(응답 대기 중
-      // 사용자가 추가로 보낸 것)를 덮어쓰지 않도록 functional setter로만 처리.
-      let latestThread: ChatShellMessage[] = [];
-
-      for (let index = 0; index < segments.length; index += 1) {
-        const text = segments[index]?.trim() ?? '';
-        if (text.length === 0) {
-          continue;
-        }
-
-        if (index > 0) {
-          // 버블 간 타이핑 인디케이터 유지 — storyTyping/fortuneTyping은 이미 on 상태
-          const gap = randomInRange(200, 600); // 타이핑 지속
-          await sleep(gap);
-          const betweenBubbles = randomInRange(600, 1800);
-          await sleep(betweenBubbles);
-        }
-
-        const bubble = buildAssistantTextMessage(text, {
-          animate: true,
-          emotionTag,
-        });
-        setMessagesByCharacterId((current) => {
-          const thread = current[characterId] ?? [];
-          const updated = [...thread, bubble];
-          latestThread = updated;
-          return { ...current, [characterId]: updated };
-        });
-
-        // 햅틱 — 첫 버블에서만 울리거나 전부 울리거나. 카톡도 각 메시지마다 울리므로 전부.
-        triggerAssistantHaptic(emotionTag);
-      }
-
-      return latestThread;
-    },
-    [triggerAssistantHaptic],
-  );
+  // enqueueAssistantSegments + appendMessages 는 useMessageQueue hook 으로 이동
+  // (Step B 분해). 호출 시그니처 동일.
+  const { enqueueAssistantSegments, appendMessages } = useMessageQueue({
+    setMessagesByCharacterId,
+    triggerAssistantHaptic,
+  });
 
   // ---------------------------------------------------------------------------
   // F4 — 프레전스 라인 ("커피 내리는 중", "네 생각 중..." 등)
@@ -1333,27 +1444,7 @@ export function ChatScreen() {
     selectedCharacter,
   ]);
 
-  function appendMessages(
-    character: ChatCharacterSpec,
-    nextMessages: ChatShellMessage[],
-  ) {
-    // 새로 붙는 메시지 중 assistant/system 이 섞여 있으면, 그 시점에 미읽음
-    // 상태인 user 메시지는 모두 읽음 처리. (운세 설문/액션/일반 채팅 등
-    // 모든 경로를 한 곳에서 커버해서 "1" 배지가 남는 현상 방지)
-    const hasNonUserMessage = nextMessages.some(
-      (m) => m.sender === 'assistant' || m.sender === 'system',
-    );
-    setMessagesByCharacterId((current) => {
-      const existing = current[character.id] ?? [];
-      const base = hasNonUserMessage
-        ? markLatestUserMessageAsRead(existing)
-        : existing;
-      return {
-        ...current,
-        [character.id]: [...base, ...nextMessages],
-      };
-    });
-  }
+  // appendMessages 는 useMessageQueue hook 으로 이동 (위쪽). 호출 시그니처 동일.
 
   function setActiveSurvey(
     characterId: string,
@@ -1520,13 +1611,24 @@ export function ChatScreen() {
     }
 
     try {
-      if (session) {
-        await consumeRemoteTokens(session, {
-          fortuneType: completed.fortuneType,
-          referenceId: `fortune:${character.id}:${completed.fortuneType}`,
-        });
+      // 비동기 poster-guide 분기 (palm-reading 등 gpt-image-2 기반).
+      // 즉시 큐 등록 + placeholder 메시지 → push 알림으로 결과 도착.
+      // 사용자 자유롭게 다른 채팅 / 앱 종료 가능.
+      if (isAsyncPosterFortuneType(completed.fortuneType)) {
+        await handleAsyncPosterFortune(character, completed);
+        return;
       }
 
+      // 비동기 long-running 텍스트 운세 (tarot/dream/compatibility/traditional-saju).
+      // 동기 호출 시 20-40s 블록 → progress 카드로 진행단계 가시화.
+      if (isAsyncLongRunningFortuneType(completed.fortuneType)) {
+        await handleAsyncLongRunningFortune(character, completed);
+        return;
+      }
+
+      // C1 fix: Edge Function 호출 → 성공 시에만 토큰 차감.
+      // 이전 순서(차감 먼저)는 Edge 실패 시 토큰만 소실되는 빌링 버그.
+      // 차감 실패(insufficient/race) 시 결과는 이미 생성됐으므로 보여주고 로그만.
       const embeddedResult = await resolveFortuneResultMessage(
         completed.fortuneType,
         buildResultContext(character, completed.answers),
@@ -1535,6 +1637,34 @@ export function ChatScreen() {
 
       if (!embeddedResult) {
         return;
+      }
+
+      if (session) {
+        try {
+          // PR-0a: idempotencyKey 호출 단위 unique. reference_id 도 같은 값으로
+          // 두어 같은 운세 결과의 환불이 필요할 때 단일 키로 추적 가능.
+          const consumeKey = `fortune:${character.id}:${completed.fortuneType}:${Crypto.randomUUID()}`;
+          await consumeRemoteTokens(session, {
+            fortuneType: completed.fortuneType,
+            referenceId: consumeKey,
+            idempotencyKey: consumeKey,
+          });
+        } catch (chargeError) {
+          if (
+            chargeError instanceof RemoteTokenConsumeError &&
+            chargeError.code === 'INSUFFICIENT_TOKENS'
+          ) {
+            appendMessages(character, [
+              buildAssistantTextMessage(
+                chargeError.message || '토큰이 부족해요. 토큰을 충전한 뒤 다시 시도해주세요.',
+              ),
+            ]);
+            return;
+          }
+          await captureError(chargeError, {
+            surface: 'chat:fortune-charge-after-success',
+          }).catch(() => undefined);
+        }
       }
 
       const resultReply = buildAssistantTextMessage(
@@ -1556,18 +1686,215 @@ export function ChatScreen() {
         }).catch(() => undefined);
       });
     } catch (error) {
-      if (error instanceof RemoteTokenConsumeError) {
-        appendMessages(character, [
-          buildAssistantTextMessage(
-            error.message || '토큰이 부족해요. 토큰을 충전한 뒤 다시 시도해주세요.',
-          ),
-        ]);
-        return;
-      }
+      // Edge Function 실패 (resolveFortuneResultMessage throw). 토큰 차감 X.
       throw error;
     } finally {
       setFortuneTypingCharacterId(null);
     }
+  }
+
+  function posterTypeKoreanLabel(fortuneType: FortuneTypeId): string {
+    switch (fortuneType) {
+      case 'palm-reading':
+        return '손금가이드';
+      case 'beauty-simulation':
+        return '뷰티 시뮬레이션';
+      case 'hair-style-guide':
+        return '헤어스타일 가이드';
+      case 'face-reading-guide':
+        return '얼굴 인상 리포트';
+      case 'ootd-guide':
+        return 'OOTD 가이드';
+      case 'blind-date-guide':
+        return '소개팅 가이드';
+      case 'past-life-guide':
+        return '전생 리포트';
+      default:
+        return '운세';
+    }
+  }
+
+  /**
+   * 비동기 poster-guide 처리 (palm-reading 등).
+   *   1. 큐 등록 (start-poster-job) — 즉시 반환
+   *   2. placeholder 메시지 로컬 append (서버측도 INSERT 됐으나 즉시 UI 반영 위해)
+   *   3. 토큰 차감 (job 등록 성공이면 cron 이 처리할 거라 차감해도 안전)
+   *   4. 사용자는 자유롭게 다른 채팅 / 앱 종료 가능
+   *   5. cron 완료 → push 알림 → 사용자 진입 → hydrate → 결과 카드 등장
+   */
+  async function handleAsyncPosterFortune(
+    character: ChatCharacterSpec,
+    completed: { fortuneType: FortuneTypeId; answers: Record<string, unknown> },
+  ) {
+    // 사진 base64 추출 (어느 키든 — palm/face/body)
+    const answers = completed.answers ?? {};
+    const imageBase64 =
+      typeof answers.palmImage === 'string'
+        ? answers.palmImage
+        : typeof answers.faceImage === 'string'
+          ? answers.faceImage
+          : typeof answers.bodyImage === 'string'
+            ? answers.bodyImage
+            : undefined;
+
+    // 컨텍스트 텍스트 (past-life / blind-date 등 옵션)
+    const contextText =
+      typeof answers.lookContext === 'string'
+        ? answers.lookContext
+        : typeof answers.scenario === 'string'
+          ? answers.scenario
+          : undefined;
+
+    const result = await startAsyncPosterJob({
+      fortuneType: completed.fortuneType,
+      characterId: character.id,
+      characterName: character.name,
+      imageBase64,
+      contextText,
+    });
+
+    if (!result) {
+      // 큐 등록 실패 → 사용자에게 안내
+      appendMessages(character, [
+        buildAssistantTextMessage(
+          '잠깐, 지금 분석 요청을 받지 못했어. 잠시 후 다시 시도해줘.',
+        ),
+      ]);
+      return;
+    }
+
+    // 토큰 차감 — 큐 등록 성공이라 차감 OK (cron 이 처리할 것)
+    if (session) {
+      try {
+        // PR-0a: jobId 가 이미 unique — referenceId/idempotencyKey 동일 값으로 사용.
+        const jobConsumeKey = `fortune:${character.id}:${completed.fortuneType}:${result.jobId}`;
+        await consumeRemoteTokens(session, {
+          fortuneType: completed.fortuneType,
+          referenceId: jobConsumeKey,
+          idempotencyKey: jobConsumeKey,
+        });
+      } catch (chargeError) {
+        if (
+          chargeError instanceof RemoteTokenConsumeError &&
+          chargeError.code === 'INSUFFICIENT_TOKENS'
+        ) {
+          // 토큰 부족 — job 은 이미 큐에 있지만 cron 이 user_token_balance 도 체크하므로
+          // 별도 cancel 안 해도 무해. 사용자에게 안내만.
+          appendMessages(character, [
+            buildAssistantTextMessage(
+              chargeError.message ||
+                '토큰이 부족해요. 토큰을 충전한 뒤 다시 시도해주세요.',
+            ),
+          ]);
+          return;
+        }
+        await captureError(chargeError, {
+          surface: 'chat:fortune-charge-after-async-queue',
+        }).catch(() => undefined);
+      }
+    }
+
+    // 진행상황 카드 로컬 INSERT — 단계별 phase 텍스트 + 경과시간 표시.
+    // 서버측 start-poster-job 도 텍스트 placeholder INSERT 하지만 (cross-device
+    // hydration 용), 본 디바이스는 progress 카드를 우선 노출.
+    //
+    // jobId 와 message id 를 트래커에 등록 → use-long-running-jobs-realtime hook
+    // 이 scheduled_poster_jobs.phase UPDATE 를 수신하면 카드의 phase 텍스트가
+    // in-place 갱신된다. 결과 push 도착 시 finalizeJob 으로 카드 제거.
+    const progressMessage = buildProgressMessage({
+      jobId: result.jobId,
+      fortuneType: completed.fortuneType,
+      phase: '분석 준비 중',
+      phaseSteps: [...POSTER_PHASE_STEPS],
+      currentStepIndex: 0,
+      estimatedSeconds: 60,
+    });
+    appendMessages(character, [progressMessage]);
+    trackLongRunningJob(result.jobId, character.id, progressMessage.id);
+  }
+
+  /**
+   * 비동기 long-running 텍스트 운세 (tarot/dream/compatibility/traditional-saju).
+   * `handleAsyncPosterFortune` 와 동일한 패턴 — 큐 등록 + 토큰 차감 + progress
+   * 카드 INSERT + 트래커 등록. 차이점은 (1) start-long-running-job 호출, (2)
+   * LLM-text 단계 라벨 사용, (3) 사진 대신 서베이 답변을 payload 로 forward.
+   *
+   * 캐시 게이트: 동일 fortuneType + 같은 날 + 30분 이내 결과가 클라 캐시에 있으면
+   * 큐 우회 → 인라인 즉시 렌더 (동기 경로와 동일 UX). 캐시 미스 시에만 큐 진입.
+   */
+  async function handleAsyncLongRunningFortune(
+    character: ChatCharacterSpec,
+    completed: { fortuneType: FortuneTypeId; answers: Record<string, unknown> },
+  ) {
+    // 30분 클라 캐시 hit → 큐 우회. 동기 흐름이 fetchEmbeddedEdgeResultPayload
+    // 내부에서 자동 처리하던 동작을 비동기 분기에서도 유지.
+    const cached = lookupCachedFortuneResult(
+      completed.fortuneType,
+      session?.user.id,
+    );
+    if (cached) {
+      const cardMessage = buildEmbeddedResultMessageFromPayload(cached);
+      appendMessages(character, [cardMessage]);
+      return;
+    }
+
+    const result = await startAsyncLongRunningJob({
+      fortuneType: completed.fortuneType,
+      characterId: character.id,
+      characterName: character.name,
+      context: buildResultContext(character, completed.answers),
+      userId: session?.user.id,
+    });
+
+    if (!result) {
+      appendMessages(character, [
+        buildAssistantTextMessage(
+          '잠깐, 지금 분석 요청을 받지 못했어. 잠시 후 다시 시도해줘.',
+        ),
+      ]);
+      return;
+    }
+
+    if (session) {
+      try {
+        // PR-0a: jobId 가 이미 unique — referenceId/idempotencyKey 동일 값으로 사용.
+        const longRunConsumeKey = `fortune:${character.id}:${completed.fortuneType}:${result.jobId}`;
+        await consumeRemoteTokens(session, {
+          fortuneType: completed.fortuneType,
+          referenceId: longRunConsumeKey,
+          idempotencyKey: longRunConsumeKey,
+        });
+      } catch (chargeError) {
+        if (
+          chargeError instanceof RemoteTokenConsumeError &&
+          chargeError.code === 'INSUFFICIENT_TOKENS'
+        ) {
+          appendMessages(character, [
+            buildAssistantTextMessage(
+              chargeError.message ||
+                '토큰이 부족해요. 토큰을 충전한 뒤 다시 시도해주세요.',
+            ),
+          ]);
+          return;
+        }
+        await captureError(chargeError, {
+          surface: 'chat:fortune-charge-after-async-long-running',
+        }).catch(() => undefined);
+      }
+    }
+
+    const progressMessage = buildProgressMessage({
+      jobId: result.jobId,
+      fortuneType: completed.fortuneType,
+      phase: '준비 중',
+      phaseSteps: [...LLM_TEXT_PHASE_STEPS],
+      currentStepIndex: 0,
+      estimatedSeconds: 45,
+    });
+    appendMessages(character, [progressMessage]);
+    trackLongRunningJob(result.jobId, character.id, progressMessage.id, {
+      describePhase: describeLlmTextPhase,
+    });
   }
 
   function reopenFortuneResult(
@@ -1690,6 +2017,8 @@ export function ChatScreen() {
       ...current,
       [characterId]: nextThread,
     }));
+    // Step G: store 에서도 삭제 — useStoreMessages 구독자 자동 reflect.
+    deleteStoreMessage(characterId, messageId);
     autoResumedUserMessageIdsRef.current.delete(messageId);
     // 디스크에 TTS 캐시가 있으면 정리. user 메시지는 캐시 없으므로 no-op이지만
     // 안전하게 호출 (idempotent).
@@ -1859,19 +2188,23 @@ export function ChatScreen() {
       [characterId]: [],
     };
     syncPendingCount(characterId);
-    const idsToRemove = new Set(queue.map((item) => item.userMessageId));
+    const idsToRemove = queue.map((item) => item.userMessageId);
+    const idsSet = new Set(idsToRemove);
     setMessagesByCharacterId((current) => {
       const thread = current[characterId] ?? [];
       return {
         ...current,
-        [characterId]: thread.filter((m) => !idsToRemove.has(m.id)),
+        [characterId]: thread.filter((m) => !idsSet.has(m.id)),
       };
     });
+    // Step G: store 에서도 일괄 삭제.
+    deleteStoreMessages(characterId, idsToRemove);
   }
 
   // 실패한 전송의 유저 메시지만 thread에서 제거. 뒤늦게 큐잉된 다른 메시지는
   // 건드리지 않는다. id가 없으면 가장 최근 user 메시지 하나를 pop.
   function rollbackUserMessage(characterId: string, userMessageId?: string) {
+    let resolvedUserMessageId = userMessageId;
     setMessagesByCharacterId((current) => {
       const thread = current[characterId] ?? [];
       if (userMessageId) {
@@ -1882,6 +2215,7 @@ export function ChatScreen() {
       }
       const lastUserIndex = thread.findLastIndex((m) => m.sender === 'user');
       if (lastUserIndex < 0) return current;
+      resolvedUserMessageId = thread[lastUserIndex].id;
       return {
         ...current,
         [characterId]: [
@@ -1890,6 +2224,10 @@ export function ChatScreen() {
         ],
       };
     });
+    // Step G: store 에서도 제거 — failed transient 메시지여도 store 일관성 유지.
+    if (resolvedUserMessageId) {
+      deleteStoreMessage(characterId, resolvedUserMessageId);
+    }
   }
 
   // pendingSendsRef가 바뀔 때마다 UI 카운트 동기 업데이트 + 디스크 영속화.
@@ -1960,6 +2298,8 @@ export function ChatScreen() {
         queuedUserMessage,
       ],
     }));
+    // Step G: store sync — push 도착 등 다른 채널과 같은 store 에 모임.
+    insertStoreMessages(character.id, [queuedUserMessage]).catch(() => undefined);
     pendingSendsRef.current = {
       ...pendingSendsRef.current,
       [character.id]: [
@@ -2074,6 +2414,8 @@ export function ChatScreen() {
         ...current,
         [character.id]: [...(current[character.id] ?? []), userMessage],
       }));
+      // Step G: store sync — optimistic user message
+      insertStoreMessages(character.id, [userMessage]).catch(() => undefined);
     }
     setStoryTypingByCharacterId((current) => ({
       ...current,
@@ -2099,6 +2441,8 @@ export function ChatScreen() {
             ],
           };
         });
+        // Step G: store sync — fallback assistant message
+        insertStoreMessages(character.id, [fallbackMessage]).catch(() => undefined);
         return;
       }
 
@@ -2108,9 +2452,13 @@ export function ChatScreen() {
 
       // Skip token consumption for guest users and on-device mode
       if (session && chatProvider.getProviderName() === 'cloud') {
+        // PR-0a: 같은 캐릭터 메시지 여러 번 — referenceId 가 같으면 atomic refund 가
+        // 모호해짐. idempotencyKey 만 호출 단위 unique 로 두고 reference_id 도 같이.
+        const storyConsumeKey = `story:${character.id}:${Crypto.randomUUID()}`;
         await consumeRemoteTokens(session, {
           fortuneType: 'character-chat',
-          referenceId: `story:${character.id}`,
+          referenceId: storyConsumeKey,
+          idempotencyKey: storyConsumeKey,
         });
 
         syncRemoteProfile().catch((error: unknown) => {
@@ -2192,9 +2540,12 @@ export function ChatScreen() {
           }
           // 온디바이스 실패 → 같은 메시지 그대로 클라우드 재시도 (롤백 없음)
           if (session) {
+            // PR-0a: 호출 단위 unique key. 위 첫 시도 차감과 별도 keyed.
+            const fallbackConsumeKey = `story:${character.id}:fallback:${Crypto.randomUUID()}`;
             await consumeRemoteTokens(session, {
               fortuneType: 'character-chat',
-              referenceId: `story:${character.id}`,
+              referenceId: fallbackConsumeKey,
+              idempotencyKey: fallbackConsumeKey,
             }).catch(() => undefined);
           }
           response = await cloudChatProvider.invoke(
@@ -2392,6 +2743,8 @@ export function ChatScreen() {
         ...current,
         [character.id]: [...(current[character.id] ?? []), userMessage],
       }));
+      // Step G: store sync — optimistic user message (character chat path)
+      insertStoreMessages(character.id, [userMessage]).catch(() => undefined);
     }
     setStoryTypingByCharacterId((current) => ({
       ...current,
@@ -2416,6 +2769,8 @@ export function ChatScreen() {
             ],
           };
         });
+        // Step G: store sync — draft fallback reply
+        insertStoreMessages(character.id, [fallbackMessage]).catch(() => undefined);
         return;
       }
 
@@ -2487,9 +2842,12 @@ export function ChatScreen() {
 
       // Skip token consumption for guest users, but still call the server
       if (session) {
+        // PR-0a: 호출 단위 unique. 같은 referenceId 여러 메시지 차감 = atomic refund 모호.
+        const characterConsumeKey = `character:${character.id}:${Crypto.randomUUID()}`;
         await consumeRemoteTokens(session, {
           fortuneType: 'character-chat',
-          referenceId: `character:${character.id}`,
+          referenceId: characterConsumeKey,
+          idempotencyKey: characterConsumeKey,
         });
 
         syncRemoteProfile().catch((error: unknown) => {
@@ -2534,6 +2892,10 @@ export function ChatScreen() {
               : 'friend'
         : 'friend';
 
+      // Slice 2: hookForReveal hook 의 push payload 동봉 id 가 있으면 character-chat 에 전달.
+      // 서버는 이 id 로 reveal claim (race-free).
+      const pendingProactiveMessageId = consumePendingProactiveMessageId(character.id);
+
       const { data, error } = await supabase.functions.invoke('character-chat', {
         body: {
           characterId: character.id,
@@ -2551,23 +2913,61 @@ export function ChatScreen() {
             (session?.user.user_metadata.full_name as string | undefined) ||
             mobileAppState.profile.displayName ||
             'user',
+          ...(pendingProactiveMessageId ? { pendingProactiveMessageId } : {}),
         },
       });
-
-      if (error) {
-        throw error;
-      }
 
       const payload = data as {
         response?: string;
         success?: boolean;
         error?: string;
+        message?: string;
+        chatLimit?: {
+          currentCount: number;
+          dailyLimit: number;
+          streakDays: number;
+        };
         delaySec?: number;
         emotionTag?: string;
         segments?: unknown;
         scheduledId?: string;
         deliverAt?: string;
+        // Slice 2: 서버가 Stage 2 reveal 한 사진 (있을 때만).
+        reveal?: { imageUrl: string; caption: string; category: string };
       } | null;
+
+      // Streak 한도 도달 (429). 토큰/구독/광고 안내 후 chat 흐름 종료.
+      if (payload?.error === 'daily_chat_limit_reached') {
+        const limit = payload.chatLimit?.dailyLimit ?? 30;
+        const buttons: import('react-native').AlertButton[] = [
+          { text: '확인', style: 'cancel' as const },
+          {
+            text: '구독 알아보기',
+            onPress: () => router.push('/premium'),
+          },
+        ];
+        // 광고 시청 옵션은 광고 모듈 사용 가능 + 광고 prefetch 완료된 경우만 추가.
+        if (rewardedAd.isReady && !rewardedAd.isUnavailable) {
+          buttons.splice(1, 0, {
+            text: '광고 보고 1 토큰',
+            onPress: () => {
+              void rewardedAd.showAd();
+            },
+          });
+        }
+        Alert.alert(
+          '오늘 무료 채팅 한도',
+          payload.message ??
+            `오늘 ${limit}개 메시지를 모두 사용했어요. 광고 보고 토큰 받거나 구독으로 무제한 사용해보세요.`,
+          buttons,
+        );
+        return;
+      }
+
+      if (error) {
+        throw error;
+      }
+
       if (!payload?.response || (payload.success === false)) {
         throw new Error(payload?.error ?? 'Character chat response is empty.');
       }
@@ -2622,6 +3022,32 @@ export function ChatScreen() {
         emotionTag: payload.emotionTag,
       });
 
+      // Slice 2: 서버가 reveal 사진을 함께 보냈으면 thread 에 image 메시지 즉시 append.
+      // 서버 측 character_conversations 에도 이미 persist 됐으므로 reload 시에도 보존.
+      if (payload.reveal?.imageUrl && payload.reveal.caption) {
+        const revealImage = {
+          id: `proactive-reveal-${Date.now()}-${Math.random()
+            .toString(36)
+            .slice(2, 8)}`,
+          kind: 'image' as const,
+          sender: 'assistant' as const,
+          imageUrl: payload.reveal.imageUrl,
+          caption: payload.reveal.caption,
+          proactive: {
+            slotKey: 'lunch_share',
+            category: payload.reveal.category,
+            generatedAt: new Date().toISOString(),
+          },
+        };
+        try {
+          await insertStoreMessages(character.id, [revealImage]);
+        } catch (storeErr) {
+          // 비치명: 서버 측에 persist 됐으니 reload 시 복구.
+          // eslint-disable-next-line no-console
+          console.warn('[chat] reveal image store insert 실패:', storeErr);
+        }
+      }
+
       // Persist conversation to remote
       saveCharacterConversation(character.id, nextMessages).catch(
         (saveError: unknown) => {
@@ -2635,15 +3061,10 @@ export function ChatScreen() {
       // 푸시로 다시 보내지 않도록 client_acked_at 마킹. 실패해도 사용자
       // 가시 영향은 없음 — 푸시 1회 중복 노이즈만 발생할 수 있음 (backend
       // 가 20초 grace window 로 race 완화).
-      if (scheduledId && supabase) {
-        supabase.functions
-          .invoke('ack-scheduled-reply', {
-            body: { scheduledId },
-          })
-          .catch((ackError: unknown) => {
-            console.warn('[chat] ack-scheduled-reply 실패:', ackError);
-          });
-      }
+      // ackScheduledReplyIfPresent (push-notifications.ts) 가 module-scope
+      // dedup Set 보유 → 같은 scheduledId 가 send→response + push receive
+      // 양쪽 채널로 도착해도 네트워크 1회만.
+      ackScheduledReplyIfPresent(scheduledId);
     } catch (error) {
       if (error instanceof OnDeviceNotReadyError) {
         // 온디바이스 미준비 시: 팝업 없이 백그라운드 다운로드만 트리거.
@@ -2706,6 +3127,8 @@ export function ChatScreen() {
           ],
         };
       });
+      // Step G: store sync — error fallback reply
+      insertStoreMessages(character.id, [fallbackMessage]).catch(() => undefined);
     } finally {
       setStoryTypingByCharacterId((current) =>
         current[character.id]
