@@ -131,9 +131,13 @@ export const haneulOracleCharacter: FortuneChatCharacterSpec = {
   specialties: [],
 };
 
+// PR-B1: 하늘이는 module-level 에는 항상 포함 — findChatCharacterById 등
+// 도메인 lookup 이 전부 작동해야 하기 때문. UI 노출 자체는 `getVisibleChatCharacters`
+// 또는 chat-screen 의 `haneul_enabled` flag check 로 게이팅.
 export const chatCharacters: readonly ChatCharacterSpec[] = [
   ...storyChatCharacters,
   ...fortuneChatCharacters,
+  haneulOracleCharacter,
 ];
 
 /**

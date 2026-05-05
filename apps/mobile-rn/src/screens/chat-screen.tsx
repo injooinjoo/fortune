@@ -76,12 +76,14 @@ import {
   chatCharacters,
   findChatCharacterById,
   fortuneChatCharacters,
+  haneulOracleCharacter,
   isCustomFriendCharacter,
   isFortuneChatCharacter,
   storyChatCharacters,
   type ChatCharacterSpec,
   type ChatCharacterTab,
 } from '../lib/chat-characters';
+import { useFeatureFlag } from '../lib/feature-flags';
 import { setChatLastSeenForCharacter } from '../lib/storage';
 import { getSecureItem, setSecureItem } from '../lib/secure-store-storage';
 import { supabase } from '../lib/supabase';
@@ -846,9 +848,17 @@ export function ChatScreen() {
     }
   }, [gate, surfaceMode, hydrateStoryCharacter]);
 
+  // PR-B1: haneul_enabled flag 가 true 인 사용자에게만 하늘이 노출.
+  // 사용자가 사용자별 sticky ramp 안에 들어가면 항상 보이고, 밖이면 안 보임.
+  const haneulEnabledFlag = useFeatureFlag<boolean>('haneul_enabled');
   const allStoryCharacters = useMemo(
-    () => buildStoryCharactersWithCustomFriends(createdFriends),
-    [createdFriends],
+    () => {
+      const base = buildStoryCharactersWithCustomFriends(createdFriends);
+      return haneulEnabledFlag.value
+        ? [...base, haneulOracleCharacter]
+        : base;
+    },
+    [createdFriends, haneulEnabledFlag.value],
   );
   const allChatCharacters = useMemo(
     () => buildChatCharactersWithCustomFriends(createdFriends),
