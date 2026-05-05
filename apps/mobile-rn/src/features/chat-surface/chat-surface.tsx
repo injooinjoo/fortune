@@ -935,6 +935,7 @@ function ChatThreadMessage({
   ttsError,
   onPlayTts,
   onStopTts,
+  onSelectFortuneMenuEntry,
 }: {
   character: ChatCharacterSpec;
   message: ChatShellMessage;
@@ -948,6 +949,8 @@ function ChatThreadMessage({
   ttsError?: import('../../lib/use-text-to-speech').TtsErrorState | null;
   onPlayTts?: (args: { messageId: string; text: string; emotion?: string }) => void;
   onStopTts?: () => void;
+  /** PR-B2: 운세 메뉴 카드 entry 탭 시 호출. chat-screen 이 cost modal 띄움. */
+  onSelectFortuneMenuEntry?: (entry: import('@fortune/product-contracts').FortuneCatalogEntry) => void;
 }) {
   const isUser = message.sender === 'user';
   const isFullWidth =
@@ -2443,6 +2446,7 @@ export function ActiveCharacterChatSurface({
   showHeader = true,
   romanceScore = 0,
   presenceLine,
+  onSelectFortuneMenuEntry,
 }: {
   character: ChatCharacterSpec;
   actions: ChatShellAction[];
@@ -2473,6 +2477,8 @@ export function ActiveCharacterChatSurface({
    * 비어있거나 undefined면 기존 `shortDescription`으로 폴백.
    */
   presenceLine?: string | null;
+  /** PR-B2: 운세 메뉴 entry 탭 시 호출. chat-screen 이 cost modal 띄움. */
+  onSelectFortuneMenuEntry?: (entry: import('@fortune/product-contracts').FortuneCatalogEntry) => void;
 }) {
   const visibleMessages = messages;
   const promptActions = actions;
