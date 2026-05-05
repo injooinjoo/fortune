@@ -416,6 +416,12 @@ export function ProfileScreen() {
           title="내 만세력"
           onPress={() => router.push('/profile/saju-summary')}
         />
+        {/* PR-B3: 내 운세 — 이전에 본 운세 결과 모음. */}
+        <IconMenuTile
+          icon="bookmark-outline"
+          title="내 운세"
+          onPress={() => router.push('/profile/my-fortunes' as Href)}
+        />
         <IconMenuTile
           icon="people-outline"
           title="인간관계"

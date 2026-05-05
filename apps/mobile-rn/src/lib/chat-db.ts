@@ -246,6 +246,58 @@ export async function updateMessage(
 }
 
 /**
+ * PR-B3: "내 운세" 화면용 — 모든 캐릭터에 걸쳐 embedded-result 메시지만 추려
+ * 시간 역순으로 반환. payload_json 안의 timestamp 가 없는 variant 가 있으므로
+ * created_at 으로 정렬.
+ */
+export async function loadAllEmbeddedResults(
+  limit = 200,
+): Promise<Array<{
+  characterId: string;
+  message: ChatShellMessage;
+  createdAt: number;
+}>> {
+  if (!isChatDbAvailable) return [];
+  const db = await openChatDb();
+  const rows = await db.getAllAsync<{
+    character_id: string;
+    payload_json: string;
+    created_at: number;
+  }>(
+    `SELECT character_id, payload_json, created_at
+       FROM chat_messages
+      WHERE payload_json LIKE '%"kind":"embedded-result"%'
+      ORDER BY created_at DESC
+      LIMIT ?`,
+    [limit],
+  );
+
+  const result: Array<{
+    characterId: string;
+    message: ChatShellMessage;
+    createdAt: number;
+  }> = [];
+  for (const row of rows) {
+    try {
+      const message = JSON.parse(row.payload_json) as ChatShellMessage;
+      // SQL LIKE 가 false positive 일 수 있으니 한 번 더 확인.
+      if (message.kind === 'embedded-result') {
+        result.push({
+          characterId: row.character_id,
+          message,
+          createdAt: row.created_at,
+        });
+      }
+    } catch (error) {
+      captureError(error, {
+        surface: 'chat-db:parse-row-vault',
+      }).catch(() => undefined);
+    }
+  }
+  return result;
+}
+
+/**
  * 단일 메시지 삭제. 사용자가 자기 메시지를 명시적으로 삭제할 때.
  */
 export async function deleteMessage(
