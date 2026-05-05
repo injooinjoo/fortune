@@ -112,10 +112,42 @@ export const fortuneChatCharacters: readonly FortuneChatCharacterSpec[] =
     kind: 'fortune' as const,
   }));
 
+/**
+ * PR-A: 하늘이 — 모든 운세 카테고리의 단일 진입점 캐릭터.
+ *
+ * 본 PR 에서는 `chatCharacters` 배열에 자동 포함되지 않음 — `haneul_enabled` flag
+ * 가 true 인 사용자만 보여야 함. PR-B 에서 `getVisibleChatCharacters(flag)` 헬퍼
+ * 통해 노출.
+ *
+ * specialties 는 단일 캐릭터에 운세 전체를 통합하므로 비워둠 (FORTUNE_CATALOG 가
+ * 메뉴 카드의 SoT).
+ */
+export const haneulOracleCharacter: FortuneChatCharacterSpec = {
+  id: 'haneul_oracle',
+  name: '하늘이',
+  kind: 'fortune',
+  category: 'lifestyle',
+  shortDescription: '오늘 어떤 흐름이 있는지 같이 봐줄게',
+  specialties: [],
+};
+
 export const chatCharacters: readonly ChatCharacterSpec[] = [
   ...storyChatCharacters,
   ...fortuneChatCharacters,
 ];
+
+/**
+ * PR-A: flag 가 켜진 경우만 하늘이를 리스트에 포함. PR-B 가 chat-surface 에서 이걸
+ * 사용하면 점진 ramp 가능.
+ */
+export function getVisibleChatCharacters(opts: {
+  haneulEnabled: boolean;
+}): readonly ChatCharacterSpec[] {
+  if (opts.haneulEnabled) {
+    return [...storyChatCharacters, ...fortuneChatCharacters, haneulOracleCharacter];
+  }
+  return chatCharacters;
+}
 
 export function createdFriendToStoryCharacter(
   friend: CreatedFriend,
