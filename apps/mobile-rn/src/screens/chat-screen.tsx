@@ -2373,6 +2373,10 @@ export function ChatScreen() {
       ...current,
       [character.id]: true,
     }));
+    // 카톡 표준: 타이핑 인디케이터(...) 가 뜬다 = 캐릭터가 메시지 읽고 답하는 중.
+    // 그러므로 typing=true 설정과 동시에 직전 user 메시지의 "1" unread 배지 클리어.
+    // 이전에는 BATCH_IDLE_WINDOW_MS (5초) 동안 "1" + 타이핑 동시 노출되는 순서 버그.
+    markUserMessageReadImmediately(character.id);
     setComposerTrayOpen(false);
     setSurfaceMode('chat');
   }
@@ -2704,7 +2708,7 @@ export function ChatScreen() {
         }
 
         if (error.code === 'UNAUTHORIZED') {
-          setAuthMessage(error.message);
+          setAuthMessage('세션이 만료되었어요. 다시 로그인해 주세요.');
           return;
         }
 
@@ -3148,7 +3152,7 @@ export function ChatScreen() {
         }
 
         if (error.code === 'UNAUTHORIZED') {
-          setAuthMessage(error.message);
+          setAuthMessage('세션이 만료되었어요. 다시 로그인해 주세요.');
           return;
         }
 
