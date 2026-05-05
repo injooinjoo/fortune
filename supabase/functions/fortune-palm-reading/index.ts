@@ -30,6 +30,7 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
+import { deriveUserIdFromJwt } from "../_shared/auth.ts";
 
 // =====================================================
 // 상수 (매직 넘버 금지)
@@ -308,11 +309,12 @@ serve(async (req) => {
     return failure(400, `Invalid JSON body: ${(err as Error).message}`);
   }
 
-  const userId = readString(body.userId);
+  // /ultrareview SRE P0 #5: body.userId 신뢰 금지. JWT 또는 internal-worker 헤더만.
+  const userId = await deriveUserIdFromJwt(req);
   const imageBase64 = readString(body.imageBase64);
 
   if (!userId) {
-    return failure(400, "userId required");
+    return failure(401, "Unauthorized — JWT 필요");
   }
   if (!imageBase64) {
     return failure(400, "imageBase64 required");

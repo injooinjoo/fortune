@@ -36,6 +36,7 @@ import {
   type ProactiveCharacterId,
 } from "../_shared/character_proactive_persona.ts";
 import { SERVICE_TONE_PATTERN as PROACTIVE_SERVICE_TONE_PATTERN } from "../_shared/service_tone_guard.ts";
+import { requireWorkerAuth } from "../_shared/worker_auth.ts";
 
 // =============================================================================
 // 타입
@@ -641,6 +642,12 @@ function jsonResponse(body: DispatchResponse, status = 200): Response {
 serve(async (req: Request) => {
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
+
+  // /ultrareview SRE P0 #6: cron worker 인증 강제. SUPABASE_SERVICE_ROLE_KEY
+  // 또는 CRON_SECRET 만 호출 가능. 외부 호출자가 강제로 dispatch 트리거 + LLM
+  // 비용 폭주 방지.
+  const authError = requireWorkerAuth(req);
+  if (authError) return authError;
 
   if (req.method !== "POST") {
     return jsonResponse(

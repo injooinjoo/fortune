@@ -24,6 +24,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { persistAndPushCharacterMessage } from "../_shared/character_message_helper.ts";
+import { requireWorkerAuth } from "../_shared/worker_auth.ts";
 
 interface ScheduledReplyRow {
   id: string;
@@ -48,6 +49,10 @@ interface DeliveryResult {
 serve(async (req: Request) => {
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
+
+  // /ultrareview SRE P0 #6: cron worker 인증 강제.
+  const authError = requireWorkerAuth(req);
+  if (authError) return authError;
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,

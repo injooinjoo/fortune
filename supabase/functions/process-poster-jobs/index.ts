@@ -23,6 +23,7 @@
 import { createClient, type SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { sendPushToUser } from '../_shared/notification_push.ts';
 import type { PosterType } from '../_shared/poster_registry.ts';
+import { requireWorkerAuth } from '../_shared/worker_auth.ts';
 
 interface PosterJobRow {
   id: string;
@@ -46,8 +47,10 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // 인증: deliver-due-replies 와 동일하게 --no-verify-jwt + 무인증 호출.
-  // 함수 자체가 idempotent (atomic claim) 이라 외부 호출되어도 안전.
+  // /ultrareview SRE P0 #6: cron worker 는 SERVICE_ROLE_KEY 또는 CRON_SECRET
+  // 만 호출 가능. 이전엔 무인증이라 외부에서 큐 강제 처리 + OpenAI 비용 폭주 가능.
+  const authError = requireWorkerAuth(req);
+  if (authError) return authError;
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;

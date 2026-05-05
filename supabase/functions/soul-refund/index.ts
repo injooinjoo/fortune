@@ -58,8 +58,11 @@ serve(async (req) => {
 
     // Body
     const body = await req.json()
-    const { fortuneType, reason } = body
+    const { fortuneType, reason, referenceId } = body
 
+    // /ultrareview BM P0 #2: referenceId 필수.
+    // 환불은 1) 같은 user, 2) 같은 referenceId 의 'consume' transaction 이 존재하고,
+    // 3) 그 referenceId 로 이미 환불 처리되지 않은 경우에만 허용. 위조/중복 환불 차단.
     if (!fortuneType) {
       return new Response(
         JSON.stringify({ error: 'Missing fortuneType' }),
@@ -69,8 +72,17 @@ serve(async (req) => {
         }
       )
     }
+    if (!referenceId || typeof referenceId !== 'string' || referenceId.length === 0) {
+      return new Response(
+        JSON.stringify({ error: 'Missing referenceId — soul-consume 호출 시 발급된 id 필요' }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
+    }
 
-    console.log(`🔄 Soul refund request: fortuneType=${fortuneType}, reason=${reason}`)
+    console.log(`🔄 Soul refund request: fortuneType=${fortuneType}, reason=${reason}, referenceId=${referenceId}`)
 
     // Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -132,8 +144,68 @@ serve(async (req) => {
       )
     }
 
-    // 2. 환불할 토큰 수 계산
-    const refundAmount = FORTUNE_TOKEN_COSTS[fortuneType as keyof typeof FORTUNE_TOKEN_COSTS] ?? 1
+    // /ultrareview BM P0 #2: 원본 consume 트랜잭션 검증.
+    // 1) 같은 (user_id, reference_id) 의 'consume' 이 존재하는지.
+    // 2) 같은 reference_id 의 'refund' 가 이미 처리되지 않았는지 (idempotency).
+    // 3) consume 의 amount 사용 (클라가 보낸 fortuneType 기준 cost 무시).
+    const { data: consumeTxn, error: consumeLookupErr } = await supabase
+      .from('token_transactions')
+      .select('id, amount, transaction_type')
+      .eq('user_id', user.id)
+      .eq('reference_id', referenceId)
+      .eq('transaction_type', 'consume')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    if (consumeLookupErr) {
+      console.error(`❌ consume lookup 실패: ${consumeLookupErr.message}`)
+      return new Response(
+        JSON.stringify({ error: 'Refund verification failed' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+    if (!consumeTxn) {
+      console.log(`❌ 원본 consume 없음 — referenceId=${referenceId} user=${user.id}`)
+      return new Response(
+        JSON.stringify({ error: 'No matching consume transaction for this referenceId' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const { data: existingRefund } = await supabase
+      .from('token_transactions')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('reference_id', referenceId)
+      .eq('transaction_type', 'refund')
+      .limit(1)
+      .maybeSingle()
+    if (existingRefund) {
+      console.log(`🔁 이미 환불 처리됨 referenceId=${referenceId} — replay 무시`)
+      // idempotent: 현재 잔액만 반환 (성공 응답)
+      const { data: tokenData } = await supabase
+        .from('token_balance')
+        .select('balance, total_earned, total_spent')
+        .eq('user_id', user.id)
+        .single()
+      return new Response(
+        JSON.stringify({
+          balance: {
+            totalTokens: tokenData?.total_earned ?? 0,
+            usedTokens: tokenData?.total_spent ?? 0,
+            remainingTokens: tokenData?.balance ?? 0,
+            lastUpdated: new Date().toISOString(),
+            hasUnlimitedAccess: false
+          }
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // 2. 환불할 토큰 수 — 원본 consume 의 amount 사용 (클라 fortuneType 비신뢰).
+    // FORTUNE_TOKEN_COSTS lookup 은 fallback 용으로만 보존.
+    const refundAmount = (consumeTxn.amount as number | null) ??
+      (FORTUNE_TOKEN_COSTS[fortuneType as keyof typeof FORTUNE_TOKEN_COSTS] ?? 1)
 
     // 3. 현재 잔액 조회
     const { data: tokenData } = await supabase
@@ -171,7 +243,8 @@ serve(async (req) => {
       )
     }
 
-    // 5. 환불 거래 이력 기록
+    // 5. 환불 거래 이력 기록 — referenceId 박아서 DB UNIQUE 제약(아래 마이그레이션) 으로
+    //    중복 환불 차단. application-level 위에서 이미 막지만 race 보호 안전망.
     const { error: txError } = await supabase
       .from('token_transactions')
       .insert({
@@ -181,7 +254,7 @@ serve(async (req) => {
         balance_after: newBalance,
         description: `${fortuneType} 환불 (${reason || 'fortune_generation_failed'})`,
         reference_type: 'fortune_refund',
-        reference_id: null
+        reference_id: referenceId,
       })
 
     if (txError) {
