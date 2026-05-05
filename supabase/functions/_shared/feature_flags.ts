@@ -45,10 +45,13 @@ interface CachedFlag<T extends FlagValue = FlagValue> {
 
 const flagCache = new Map<FlagId, CachedFlag>();
 
+// /codex review P1: safety/route flag 은 P0 takedown 이 즉시 전파돼야 한다.
+// 30초 캐시 = 30초 stale → 결제 게이팅 같은 안전성 flag 가 계속 켜짐. 짧게 둠.
+// visibility 는 P0 영향 낮으니 5분 그대로.
 const TTL_BY_SAFETY_CLASS: Record<FlagSafetyClass, number> = {
   visibility: 5 * 60 * 1000,
-  safety: 30 * 1000,
-  route: 30 * 1000,
+  safety: 5 * 1000, // 5초 — Edge instance 고빈도 DB 호출 방지하면서 P0 빠른 전파
+  route: 5 * 1000,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -211,8 +214,30 @@ export async function resolveAllFlags(
     rampPcts[id] = result.rampPct;
   }
 
-  // fortune_route_behavior 다운그레이드 — redirect_to_haneul 인데 haneul_fortune_enabled
-  // 가 false 면 legacy 강제. 불가능한 상태 차단.
+  // /codex review P2: 의존 그래프 다운그레이드.
+  // 각 flag 가 독립 hash 로 평가돼서 자식 flag 가 부모 false 일 때도 true 가능.
+  // 의존이 끊어진 자식은 default 강제 — 안전성 flag 단독 노출 차단.
+  //
+  // 의존 그래프 (FLAG_CLIENT_META 와 동일):
+  //   haneul_fortune_enabled  → haneul_enabled
+  //   direct_chips_enabled    → haneul_fortune_enabled (≒ haneul_enabled 도)
+  //   fortune_route_behavior  → (redirect_to_haneul 일 때만) haneul_fortune_enabled
+
+  // 1) haneul_fortune_enabled 가 켜졌는데 haneul_enabled 가 꺼진 경우
+  if (flags.haneul_fortune_enabled === true && flags.haneul_enabled === false) {
+    flags.haneul_fortune_enabled = false;
+  }
+
+  // 2) direct_chips_enabled 는 haneul_fortune_enabled 의존
+  //    위에서 재계산된 값을 사용 (cascade)
+  if (
+    flags.direct_chips_enabled === true &&
+    flags.haneul_fortune_enabled === false
+  ) {
+    flags.direct_chips_enabled = false;
+  }
+
+  // 3) fortune_route_behavior — redirect_to_haneul 모드 전용 의존
   if (
     flags.fortune_route_behavior === "redirect_to_haneul" &&
     flags.haneul_fortune_enabled === false
