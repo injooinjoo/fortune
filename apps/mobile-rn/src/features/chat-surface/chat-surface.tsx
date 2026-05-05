@@ -852,7 +852,8 @@ function ChatThreadMessage({
     message.kind === 'fortune-cookie' ||
     message.kind === 'saju-preview' ||
     message.kind === 'story-reveal' ||
-    message.kind === 'my-saju-context';
+    message.kind === 'my-saju-context' ||
+    message.kind === 'fortune-menu';
   const isImage = message.kind === 'image';
 
   // Apple 5.2.3 — assistant 텍스트 메시지 long-press로 신고 시트 오픈.
@@ -919,6 +920,11 @@ function ChatThreadMessage({
           <MySajuContextCard message={message} />
         </View>
       );
+    if (message.kind === 'fortune-menu') {
+      // PR-A: 운세 메뉴 카드 UI 는 PR-B 에서 구현. 본 PR 에서는 메시지 타입만
+      // 등록 — 실제 emit 자체가 없어 fallback 도달 X. 안전망으로 empty 렌더.
+      return null;
+    }
     if (isImage)
       return (
         <View style={{ gap: 4 }}>

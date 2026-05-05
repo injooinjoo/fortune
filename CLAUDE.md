@@ -292,11 +292,10 @@ export type ChatShellMessage =
 
 | 탭 | 경로 | 역할 |
 |----|------|------|
-| Home | `/chat` | 통합 채팅 진입점 |
-| 인사이트 alias | `/home` | 레거시 별칭, 현재는 `/chat`으로 redirect |
-| 탐구 | `/fortune` | 인사이트 카테고리 + Face AI |
-| 트렌드 | `/trend` | 트렌드 콘텐츠 |
+| 채팅 | `/chat` | 통합 채팅 진입점 (운세 카탈로그 = 하늘이 채팅 안에서 펼침) |
 | 프로필 | `/profile` | 설정 + Premium |
+
+`(tabs)/_layout.tsx` 가 실제 운영하는 탭은 chat + profile 만. `/fortune`, `/trend`, `/home` 등 deep route 는 레거시 redirect 또는 외부 호환용으로 남아있고 탭 바에는 노출되지 않음 (PR-A 정리).
 
 라우팅은 `expo-router` 기반 (`apps/mobile-rn/app/(tabs)/`).
 
@@ -353,7 +352,7 @@ UI/페이지 수정 완료 시 자동으로 QA 제안:
 
 ```
 apps/mobile-rn/                        # Expo SDK 54 / RN 0.81 / TypeScript
-  app/(tabs)/                          # expo-router 라우트 (chat/fortune/trend/profile)
+  app/(tabs)/                          # expo-router 탭 (chat + profile 만 운영)
   src/components/                      # 공용 컴포넌트 (app-text, screen, chip, ...)
   src/features/
     chat-surface/                      # 통합 채팅 화면 조립

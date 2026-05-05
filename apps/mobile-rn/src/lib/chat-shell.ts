@@ -166,6 +166,28 @@ export interface ChatShellMySajuContextMessage {
   timestamp: number;
 }
 
+/**
+ * PR-A: 하늘이 운세 메뉴 카드. 클라이언트 정적 카탈로그 (FORTUNE_CATALOG) 를
+ * 그룹 단위로 펼쳐 보여주는 카드. LLM 이 생성하지 않음 — UI 가 직접 렌더.
+ *
+ * 사용자가 "내가 뭘 할 수 있는지 알려줘" 류 chip 또는 "메뉴" 류 의도 → 채팅에
+ * 본 메시지 1개 추가됨. 각 카탈로그 entry 탭 → cost confirmation modal → 운세 결과.
+ */
+export interface ChatShellFortuneMenuMessage {
+  id: string;
+  kind: 'fortune-menu';
+  sender: 'assistant';
+  /** 본 메뉴 카드를 발행한 캐릭터 (현재는 항상 'haneul_oracle'). */
+  characterId: string;
+  /** 캐릭터 멘트 (메뉴 카드 위 짧은 한 줄). 빈 문자열도 허용. */
+  intro?: string;
+  /** 선택적으로 특정 카테고리 highlight (deep link redirect intent 보존용). */
+  highlightGroupId?: string;
+  /** 선택적으로 특정 fortune-type 미리선택 (cost modal 즉시 띄움). */
+  preselectedFortuneTypeId?: string;
+  timestamp: number;
+}
+
 export type ChatShellMessage =
   | ChatShellTextMessage
   | ChatShellEmbeddedResultMessage
@@ -173,7 +195,8 @@ export type ChatShellMessage =
   | ChatShellSajuPreviewMessage
   | ChatShellImageMessage
   | ChatShellStoryRevealMessage
-  | ChatShellMySajuContextMessage;
+  | ChatShellMySajuContextMessage
+  | ChatShellFortuneMenuMessage;
 
 export interface ChatShellAction {
   id: string;
@@ -485,6 +508,27 @@ export function buildFortuneCookieMessage(): ChatShellFortuneCookieMessage {
     id: createMessageId('fortune-cookie'),
     kind: 'fortune-cookie',
     sender: 'assistant',
+  };
+}
+
+/**
+ * PR-A: 하늘이 운세 메뉴 카드 빌더.
+ */
+export function buildFortuneMenuMessage(opts: {
+  characterId: string;
+  intro?: string;
+  highlightGroupId?: string;
+  preselectedFortuneTypeId?: string;
+}): ChatShellFortuneMenuMessage {
+  return {
+    id: createMessageId('fortune-menu'),
+    kind: 'fortune-menu',
+    sender: 'assistant',
+    characterId: opts.characterId,
+    intro: opts.intro,
+    highlightGroupId: opts.highlightGroupId,
+    preselectedFortuneTypeId: opts.preselectedFortuneTypeId,
+    timestamp: Date.now(),
   };
 }
 

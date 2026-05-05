@@ -7,7 +7,9 @@ export type AppRouteId =
   | 'onboarding-toss-style'
   | 'chat'
   | 'home'
-  | 'fortune'
+  // PR-A: 'fortune' route id 제거 — 본 contract 가 "탭" 의도였는데 실제 운영은
+  // chat+profile 만. 라우트 자체는 app/fortune.tsx 에 redirect 로 남아있고 PR-C
+  // 가 flag 분기 추가 예정.
   | 'trend'
   | 'premium'
   | 'account-deletion'
@@ -43,7 +45,8 @@ export interface AppRouteSpec {
   title: string;
   description: string;
   group: RouteGroup;
-  tabLabel?: string;
+  // PR-A: tabLabel 제거 — (tabs)/_layout.tsx 가 chat+profile 만 운영하고
+  // tabLabel 을 실제로 읽는 코드가 0. dead annotation 이라 contract 에서 빼냄.
   redirectTo?: string;
 }
 
@@ -97,7 +100,6 @@ export const appRoutes: readonly AppRouteSpec[] = [
     title: '메시지',
     description: '캐릭터와 대화를 이어가며 운세 결과를 확인하는 기본 화면입니다.',
     group: 'chat',
-    tabLabel: '채팅',
   },
   {
     id: 'home',
@@ -107,21 +109,16 @@ export const appRoutes: readonly AppRouteSpec[] = [
     group: 'chat',
     redirectTo: '/chat',
   },
-  {
-    id: 'fortune',
-    path: '/fortune',
-    title: '탐구',
-    description: '운세 카탈로그와 다양한 주제를 살펴보는 탭입니다.',
-    group: 'explore',
-    tabLabel: '탐구',
-  },
+  // PR-A: /fortune 탭 entry 제거. 실제 라우트는 app/fortune.tsx 의 redirect 로
+  // 동작 — 본 contract 는 "탭 표시" 의도였는데 이미 (tabs)/_layout.tsx 가 chat+profile
+  // 만 운영 중이라 entry 가 거짓말. 제거해 contract 와 실제 동작 일치.
+  // 후속 PR-C 가 /fortune 라우트 동작 자체를 flag 로 분기.
   {
     id: 'trend',
     path: '/trend',
     title: '트렌드',
     description: '추천 흐름과 요즘 많이 보는 콘텐츠를 모아보는 탭입니다.',
     group: 'trend',
-    tabLabel: '트렌드',
   },
   {
     id: 'premium',
@@ -143,7 +140,6 @@ export const appRoutes: readonly AppRouteSpec[] = [
     title: '프로필',
     description: '프로필 정보와 계정 관련 설정을 확인하는 화면입니다.',
     group: 'profile',
-    tabLabel: '프로필',
   },
   {
     id: 'profile-edit',
@@ -237,6 +233,5 @@ export const appRoutesById = Object.fromEntries(
   appRoutes.map((route) => [route.id, route]),
 ) as Record<AppRouteId, AppRouteSpec>;
 
-export const tabRouteIds = appRoutes
-  .filter((route) => Boolean(route.tabLabel))
-  .map((route) => route.id as AppRouteId);
+// PR-A: tabRouteIds 제거 — (tabs)/_layout.tsx 가 자체적으로 chat+profile 만 등록.
+// contract 에서 "tab 인지 여부" 표시는 dead concept.
