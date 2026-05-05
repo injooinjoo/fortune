@@ -152,12 +152,19 @@ export async function refundTokens(
     return;
   }
 
+  // /codex review P2: ctx.idempotencyKey 는 consume row 가 이미 사용 중. 같은 키
+  // 그대로 환불 INSERT 하면 partial unique index (idempotency_key) 충돌로 환불
+  // 누락. consume key 에 ':refund' suffix 붙여 같은 ctx 재사용 안전하게.
+  const refundIdempotencyKey = ctx.idempotencyKey
+    ? `${ctx.idempotencyKey}:refund`
+    : null;
+
   const { error: rpcError } = await supabase.rpc("refund_token_atomic", {
     p_user_id: userId,
     p_consume_reference_id: ctx.referenceId,
     p_description: `${ctx.description} 실패 환불`,
     p_reference_type: ctx.referenceType,
-    p_idempotency_key: ctx.idempotencyKey ?? null,
+    p_idempotency_key: refundIdempotencyKey,
   });
 
   if (rpcError) {
