@@ -58,6 +58,12 @@ export interface PersistAndPushInput {
    */
   scheduledId?: string;
   /**
+   * proactive_message_log row id (Slice 2 hookForReveal). character-chat 이
+   * 다음 user turn 에서 reveal claim 시 race 회피용. push payload 에 동봉되어
+   * 클라가 character-chat 호출 시 body 에 첨부.
+   */
+  pendingProactiveMessageId?: string;
+  /**
    * character_dm: 사용자 메시지에 대한 답장 (deliver-due-replies)
    * character_follow_up: 캐릭터 선톡 (proactive-message-dispatch)
    * 클라 측 알림 토글 (character_dm vs character_proactive) 별도라 유의.
@@ -136,6 +142,7 @@ export async function persistAndPushCharacterMessage(
     messageText: input.messageContent,
     messageId: input.messageId,
     scheduledId: input.scheduledId,
+    pendingProactiveMessageId: input.pendingProactiveMessageId,
     type: input.pushType,
     roomState: input.roomState,
   });

@@ -117,6 +117,7 @@ import { useMessageQueue } from '../features/chat-surface/hooks/use-message-queu
 import {
   ackScheduledReplyIfPresent,
   clearActiveChatCharacterId,
+  consumePendingProactiveMessageId,
   setActiveChatCharacterId,
   setAppIconBadgeCount,
 } from '../lib/push-notifications';
@@ -2870,6 +2871,10 @@ export function ChatScreen() {
               : 'friend'
         : 'friend';
 
+      // Slice 2: hookForReveal hook 의 push payload 동봉 id 가 있으면 character-chat 에 전달.
+      // 서버는 이 id 로 reveal claim (race-free).
+      const pendingProactiveMessageId = consumePendingProactiveMessageId(character.id);
+
       const { data, error } = await supabase.functions.invoke('character-chat', {
         body: {
           characterId: character.id,
@@ -2887,6 +2892,7 @@ export function ChatScreen() {
             (session?.user.user_metadata.full_name as string | undefined) ||
             mobileAppState.profile.displayName ||
             'user',
+          ...(pendingProactiveMessageId ? { pendingProactiveMessageId } : {}),
         },
       });
 
@@ -2905,6 +2911,8 @@ export function ChatScreen() {
         segments?: unknown;
         scheduledId?: string;
         deliverAt?: string;
+        // Slice 2: 서버가 Stage 2 reveal 한 사진 (있을 때만).
+        reveal?: { imageUrl: string; caption: string; category: string };
       } | null;
 
       // Streak 한도 도달 (429). 토큰/구독/광고 안내 후 chat 흐름 종료.
@@ -2992,6 +3000,32 @@ export function ChatScreen() {
         segments,
         emotionTag: payload.emotionTag,
       });
+
+      // Slice 2: 서버가 reveal 사진을 함께 보냈으면 thread 에 image 메시지 즉시 append.
+      // 서버 측 character_conversations 에도 이미 persist 됐으므로 reload 시에도 보존.
+      if (payload.reveal?.imageUrl && payload.reveal.caption) {
+        const revealImage = {
+          id: `proactive-reveal-${Date.now()}-${Math.random()
+            .toString(36)
+            .slice(2, 8)}`,
+          kind: 'image' as const,
+          sender: 'assistant' as const,
+          imageUrl: payload.reveal.imageUrl,
+          caption: payload.reveal.caption,
+          proactive: {
+            slotKey: 'lunch_share',
+            category: payload.reveal.category,
+            generatedAt: new Date().toISOString(),
+          },
+        };
+        try {
+          await insertStoreMessages(character.id, [revealImage]);
+        } catch (storeErr) {
+          // 비치명: 서버 측에 persist 됐으니 reload 시 복구.
+          // eslint-disable-next-line no-console
+          console.warn('[chat] reveal image store insert 실패:', storeErr);
+        }
+      }
 
       // Persist conversation to remote
       saveCharacterConversation(character.id, nextMessages).catch(

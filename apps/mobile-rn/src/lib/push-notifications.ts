@@ -2,6 +2,7 @@ import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 
 import type { ChatShellMessage } from './chat-shell';
+import { finalizeJob } from './long-running-jobs';
 import { insertMessages } from './message-store';
 import {
   deleteSecureItem,
@@ -143,17 +144,35 @@ export async function insertMessageFromPushIfPresent(
 ): Promise<void> {
   if (!payload.characterId) return;
 
-  // Poster-result push 우선 처리 — cardPayload 가 박혀 있으면 카드 INSERT.
-  // process-poster-jobs cron worker 가 손금/관상 등 결과 카드 push 시 사용.
-  if (payload.type === 'poster_result' && payload.cardPayloadJson) {
+  // Slice 2: hookForReveal hook 의 pendingProactiveMessageId 가 있으면 stash.
+  // 다음 character-chat 호출이 consume 해서 서버에 보내고 → 서버가 reveal claim.
+  if (payload.pendingProactiveMessageId) {
+    stashPendingProactiveMessageId(
+      payload.characterId,
+      payload.pendingProactiveMessageId,
+    );
+  }
+
+  // Long-running 결과 push (poster_result | long_running_result) — 두 큐
+  // 테이블 모두 같은 cardPayloadJson 형식으로 발송하므로 동일 처리.
+  // process-poster-jobs / process-long-running-jobs cron worker 가 발송.
+  const isLongRunningResult =
+    payload.type === 'poster_result' || payload.type === 'long_running_result';
+  if (isLongRunningResult && payload.cardPayloadJson) {
     try {
       const card = JSON.parse(payload.cardPayloadJson) as ChatShellMessage;
       if (card && typeof card === 'object' && 'id' in card && 'kind' in card) {
         await insertMessages(payload.characterId, [card]);
+        // 진행 카드 제거 — realtime UPDATE(status=done) 가 이미 finalizeJob 을
+        // 호출했더라도 untrackJob/deleteMessages 는 멱등 (no-op safe). 푸시가
+        // realtime 보다 먼저 도착한 경우(드물지만 가능) 여기서 정리.
+        if (payload.scheduledId) {
+          finalizeJob(payload.scheduledId, { status: 'done' });
+        }
         return;
       }
     } catch (e) {
-      console.warn('[push] poster_result card_payload_json parse 실패:', e);
+      console.warn('[push] long-running cardPayloadJson parse 실패:', e);
       // fall-through to text fallback (push body 라도 표시)
     }
   }
@@ -189,6 +208,36 @@ export async function insertMessageFromPushIfPresent(
  */
 const ackedScheduledIds = new Set<string>();
 const ACKED_SCHEDULED_IDS_MAX = 256;
+
+/**
+ * Slice 2: characterId 별 pendingProactiveMessageId 큐.
+ * push 가 도착(또는 탭) 했을 때 stash → 다음 character-chat 호출이 consume.
+ *
+ * 한 캐릭터에 같은 시점 hookForReveal hook 은 1개 (서버 idempotency 보장).
+ * 사용자가 답장 안 하고 새 hook 받는 케이스 — 새 push 의 id 가 덮어씀.
+ * (구 hook 은 서버 24h window 만료로 자연스럽게 reveal 안 됨.)
+ *
+ * cold-start 시 모듈 다시 로드 → 이 큐 빔. 그래도 서버 character-chat 의
+ * fast-path lookup (partial index) 이 직전 unrevealed hook 을 찾아내므로
+ * pendingProactiveMessageId 미전달이 reveal 차단으로 직결되진 않음.
+ */
+const pendingProactiveByCharacter = new Map<string, string>();
+
+export function stashPendingProactiveMessageId(
+  characterId: string,
+  pendingId: string | null | undefined,
+): void {
+  if (!characterId || !pendingId) return;
+  pendingProactiveByCharacter.set(characterId, pendingId);
+}
+
+export function consumePendingProactiveMessageId(
+  characterId: string,
+): string | undefined {
+  const id = pendingProactiveByCharacter.get(characterId);
+  if (id) pendingProactiveByCharacter.delete(characterId);
+  return id;
+}
 
 export function ackScheduledReplyIfPresent(
   scheduledId: string | null | undefined,
@@ -241,6 +290,13 @@ export interface PushResponsePayload {
   cardPayloadJson?: string;
   /** 푸시 타입 — 'poster_result' 면 cardPayloadJson 사용. */
   type?: string;
+  /**
+   * Slice 2 proactive hookForReveal: hooking push 의 proactive_message_log row id.
+   * 클라가 다음 character-chat 호출 시 body 에 첨부 → 서버는 이 id 로 reveal claim
+   * (race-free). 일반 push 는 비어 있음.
+   * PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.5 (A10).
+   */
+  pendingProactiveMessageId?: string;
   raw: Record<string, unknown>;
 }
 
@@ -308,6 +364,9 @@ export function installPushNotificationHandlers(handlers: {
         : typeof d.cardPayloadJson === 'string'
           ? (d.cardPayloadJson as string)
           : undefined;
+    const pendingProactiveMessageId =
+      (d.pending_proactive_message_id as string | undefined) ??
+      (d.pendingProactiveMessageId as string | undefined);
     return {
       characterId,
       messageId,
@@ -317,6 +376,7 @@ export function installPushNotificationHandlers(handlers: {
       route,
       type,
       cardPayloadJson,
+      pendingProactiveMessageId,
       raw: d,
     };
   }

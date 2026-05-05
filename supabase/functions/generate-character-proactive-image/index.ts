@@ -185,6 +185,28 @@ serve(async (req: Request) => {
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
 
+  // Slice 2 (2026-05-05): AI 이미지 생성 비활성. /autoplan A3 결정.
+  // proactive-message-dispatch 가 이 함수 대신 character-proactive-images 버킷의
+  // 정적 placeholder (사용자 큐레이션) 를 사용하도록 우회됨. Slice 3 에서 큐레이션
+  // 게이트(생성 → 사용자 1-click 승인 → Storage 적재) 와 함께 재가동 검토.
+  // 코드는 보존 — 재가동 시 이 가드 블록만 제거하면 됨.
+  return new Response(
+    JSON.stringify(
+      {
+        success: false,
+        error:
+          "이 함수는 Slice 2 기간 비활성화됨. character-proactive-images 버킷의 정적 placeholder 를 사용하세요. (PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.4)",
+        errorCode: "disabled_for_slice_2",
+      } satisfies GenerateCharacterProactiveImageResponse & { errorCode: string },
+    ),
+    {
+      status: 410,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    },
+  );
+
+  // 아래 본 핸들러는 Slice 3 큐레이션 게이트 합류 전까지 dead code.
+  // deno-lint-ignore no-unreachable
   const startedAt = Date.now();
 
   try {

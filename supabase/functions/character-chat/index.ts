@@ -33,6 +33,7 @@ import {
   moderateText,
   SAFETY_BLOCK_FALLBACK_RESPONSE,
 } from "../_shared/moderation.ts";
+import { SERVICE_TONE_PATTERN as LUTS_SERVICE_TONE_PATTERN } from "../_shared/service_tone_guard.ts";
 import type { LLMResponse } from "../_shared/llm/types.ts";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -122,6 +123,14 @@ interface CharacterChatRequest {
     | "t3_tension"
     | "t4_intimate"; // 캐릭터별 최대 수위
   profanityLevel?: "none" | "mild" | "moderate" | "strong"; // 캐릭터별 비속어 수준
+  /**
+   * Slice 2 (proactive hookForReveal): push payload 의 pendingProactiveMessageId
+   * 가 있으면 클라가 character-chat 호출 시 body 에 첨부. 서버는 이 id 로
+   * proactive_message_log row 를 race-free 로 claim 해서 사진 reveal 발송.
+   * 없으면 fast-path lookup 으로 직전 hook 을 찾는다.
+   * PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.5 (A10).
+   */
+  pendingProactiveMessageId?: string;
 }
 
 interface AffinityDelta {
@@ -157,6 +166,18 @@ interface CharacterChatResponse {
     model: string;
     latencyMs: number;
     fallbackUsed: boolean;
+  };
+  /**
+   * Slice 2 proactive reveal — server 가 직전 hook 메시지를 claim 해서 사진을
+   * 즉시 발송한 경우. 클라는 이 필드 있으면 ChatShellImageMessage 를 응답
+   * 텍스트와 함께 append. server 측에서 character_conversations 에도 이미
+   * persist 됐으므로 다음 reload 시에도 보임.
+   * PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.4.
+   */
+  reveal?: {
+    imageUrl: string;
+    caption: string;
+    category: string;
   };
   error?: string;
 }
@@ -1816,8 +1837,7 @@ function extractCharacterStyleGuardId(basePrompt: string): string | null {
 }
 const LUTS_NICKNAME_PATTERN =
   /(여보|자기(?:야)?|허니|달링|애인|honey|darling|babe|baby|sweetheart|dear|my love|ハニー|ダーリン|ベイビー)/gi;
-const LUTS_SERVICE_TONE_PATTERN =
-  /(무엇을\s*도와드릴\s*수|(?:무엇을|뭘|어떻게)\s*도와드릴까요\??|도움이\s*필요하시면|문의|지원|how can i help|let me help|assist you|お手伝い|サポート|만나서\s*반가워(?:요|워)|처음\s*뵙(?:겠습니다|네요)|지금\s*뭐\s*하고\s*계세요|답은\s*서두르지\s*않으셔도|기다리겠습니다|저는\s*기다리|요즘\s*가장\s*궁금한\s*건|요즘\s*제일\s*궁금한)/i;
+// LUTS_SERVICE_TONE_PATTERN 은 _shared/service_tone_guard.ts 로 통합됨 (Slice 2 A13).
 
 // AI/LLM/외부 서비스 자백 패턴. 매칭 시 답변 폐기 후 fallback 으로 강제 교체.
 // 페르소나 즉사 방지용 — 어떤 캐릭터든 "저는 Google 에서 훈련된" 같은 답
@@ -2507,6 +2527,196 @@ function applyLutsOutputGuard(
     : normalized;
 }
 
+// =============================================================================
+// Slice 2 — Proactive hookForReveal Stage 2 reveal helper
+// =============================================================================
+
+// LLM 호출 없이 사용할 reveal 캡션 풀. 캐릭터 톤 다양성 확보용.
+// PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.4 (A4) — LLM-free, 단가 0, injection 회피.
+const PROACTIVE_REVEAL_CAPTIONS = [
+  "이거 봐 ㅋ",
+  "지금 먹는 거",
+  "방금 찍었어",
+  "ㅋㅋ 봐봐",
+  "어 이거",
+  "이거임",
+  "사진 한 장",
+];
+
+interface RevealMeta {
+  placeholderUrl?: string;
+  imageCategory?: string;
+}
+
+/**
+ * Stage 2 reveal 시도. 직전 proactive hook 을 claim 해서 사진 메시지 발송.
+ *
+ * - pendingProactiveMessageId 가 있으면 그 row 직접 claim (race-free).
+ * - 없으면 fast-path: 직전 assistant 메시지가 lunch_share proactive 일 때만
+ *   미reveal hook row lookup → claim.
+ * - claim 실패 (이미 reveal / 24h 초과) → null, 일반 LLM 응답으로 진행.
+ * - claim 성공 → 사진 message persist + push + Response 반환.
+ *
+ * idempotency: claim 패턴 (`UPDATE ... WHERE revealed_at IS NULL RETURNING`).
+ * 두 번째 호출은 빈 결과 → null.
+ */
+async function tryProactiveReveal(params: {
+  supabase: ReturnType<typeof createClient>;
+  userId: string;
+  characterId: string;
+  pendingProactiveMessageId?: string;
+  messages: ChatMessage[];
+  characterName: string;
+  shouldSendPush: boolean;
+  startTime: number;
+}): Promise<Response | null> {
+  // 1. target row id 결정
+  // - pendingProactiveMessageId 있으면 그 row 직접 (push tap 경로, race-free)
+  // - 없으면 partial index `idx_proactive_log_unrevealed_hook` 으로 직전 hook lookup.
+  //   이 인덱스는 hookForReveal=true AND revealed_at IS NULL 행만 인덱싱하므로
+  //   single index scan 으로 0 또는 1 행만 반환 — 모든 user turn 마다 호출돼도 cost 미미.
+  //   (이전 messages.proactive 기반 fast-path 제거 — RN 클라가 messages payload 에
+  //   proactive 메타를 빼고 보내고 있어 false negative 발생, 안전한 DB-only 경로로 통일.)
+  let targetId = params.pendingProactiveMessageId;
+  if (!targetId) {
+    const since24h = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+    const { data: candidates } = await params.supabase
+      .from("proactive_message_log")
+      .select("id")
+      .eq("user_id", params.userId)
+      .eq("character_id", params.characterId)
+      .filter("meta->>hookForReveal", "eq", "true")
+      .is("revealed_at", null)
+      .gte("scheduled_at", since24h)
+      .order("scheduled_at", { ascending: false })
+      .limit(1);
+    if (!candidates || candidates.length === 0) return null;
+    targetId = (candidates[0] as { id: string }).id;
+  }
+
+  // 2. claim — UPDATE WHERE revealed_at IS NULL AND scheduled_at > now()-24h
+  const since24h = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+  const { data: claimedRows, error: claimErr } = await params.supabase
+    .from("proactive_message_log")
+    .update({ revealed_at: new Date().toISOString() })
+    .eq("id", targetId)
+    .is("revealed_at", null)
+    .gte("scheduled_at", since24h)
+    .select("meta, message_id");
+  if (claimErr) {
+    console.warn(`[reveal] claim 에러 id=${targetId}:`, claimErr.message);
+    return null;
+  }
+  if (!claimedRows || claimedRows.length === 0) {
+    // 이미 reveal 됐거나 24h 만료 → 일반 응답으로
+    return null;
+  }
+  const meta = ((claimedRows[0] as { meta?: RevealMeta }).meta ?? {}) as RevealMeta;
+  const placeholderUrl = meta.placeholderUrl;
+  const imageCategory = meta.imageCategory ?? "meal";
+  if (!placeholderUrl) {
+    // hook 은 있는데 placeholder URL 이 비어 있음 (LRU 실패 등) → 일반 응답으로
+    return null;
+  }
+
+  // 3. 캡션 랜덤 선택
+  const caption = PROACTIVE_REVEAL_CAPTIONS[
+    Math.floor(Math.random() * PROACTIVE_REVEAL_CAPTIONS.length)
+  ];
+
+  // 4. character_conversations 에 image kind 메시지 persist.
+  // RPC merge 실패 시 revealed_at 마킹된 채 사진 못 보는 phantom reveal 회피 — rollback (Server Review #1 fix).
+  const revealMessageId = `proactive-reveal-${targetId}-${Date.now()}`;
+  const { error: mergeErr } = await params.supabase.rpc(
+    "merge_character_conversation_messages",
+    {
+      p_user_id: params.userId,
+      p_character_id: params.characterId,
+      p_incoming_messages: [{
+        id: revealMessageId,
+        type: "character",
+        kind: "image",
+        content: caption,
+        imageUrl: placeholderUrl,
+        caption,
+        timestamp: new Date().toISOString(),
+        proactive: {
+          slotKey: "lunch_share",
+          category: imageCategory,
+          generatedAt: new Date().toISOString(),
+          revealOf: targetId,
+        },
+      }],
+      p_runtime_state: null,
+      p_max_messages: 200,
+    },
+  );
+  if (mergeErr) {
+    // RPC 실패 → revealed_at 롤백 (다음 user turn 에서 재시도 가능하도록).
+    console.warn(
+      `[reveal] merge 실패, revealed_at 롤백 시도 id=${targetId}:`,
+      mergeErr.message,
+    );
+    const { error: rollbackErr } = await params.supabase
+      .from("proactive_message_log")
+      .update({ revealed_at: null })
+      .eq("id", targetId);
+    if (rollbackErr) {
+      console.error(
+        `[reveal] rollback 실패 id=${targetId} (사진 영구 누락):`,
+        rollbackErr.message,
+      );
+    }
+    return null; // 일반 LLM 응답으로 fall through
+  }
+
+  // 5. Stage 2 push (body='[사진]')
+  if (params.shouldSendPush) {
+    try {
+      await sendCharacterDmPush({
+        supabase: params.supabase,
+        userId: params.userId,
+        characterId: params.characterId,
+        characterName: params.characterName,
+        messageText: "[사진]",
+        messageId: revealMessageId,
+        type: "character_follow_up",
+      });
+    } catch (e) {
+      console.warn(`[reveal] Stage 2 push 실패:`, e);
+    }
+  }
+
+  // 6. CharacterChatResponse 형태로 반환 (reveal 필드 포함)
+  const responseBody: CharacterChatResponse = {
+    success: true,
+    response: caption,
+    segments: [caption],
+    emotionTag: "일상",
+    delaySec: 0,
+    affinityDelta: {
+      points: 0,
+      reason: "proactive_reveal",
+      quality: "neutral",
+    },
+    reveal: {
+      imageUrl: placeholderUrl,
+      caption,
+      category: imageCategory,
+    },
+    meta: {
+      provider: "static",
+      model: "placeholder",
+      latencyMs: Date.now() - params.startTime,
+      fallbackUsed: false,
+    },
+  };
+  return new Response(JSON.stringify(responseBody), {
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+    status: 200,
+  });
+}
+
 serve(async (req: Request) => {
   // CORS 처리
   const corsResponse = handleCors(req);
@@ -2542,6 +2752,7 @@ serve(async (req: Request) => {
       introTurn,
       maxContentTier,
       profanityLevel,
+      pendingProactiveMessageId,
     }: CharacterChatRequest = await req.json();
 
     const resolvedPilotId = isPilotCharacterId(characterId)
@@ -2612,6 +2823,23 @@ serve(async (req: Request) => {
       } else {
         userId = user.id;
       }
+    }
+
+    // Slice 2 — proactive hookForReveal Stage 2.
+    // pendingProactiveMessageId 가 있거나 직전 assistant 가 lunch_share proactive 면
+    // reveal claim 시도. 성공 시 LLM 호출 없이 사진 메시지 발송.
+    if (userId && supabase) {
+      const revealResponse = await tryProactiveReveal({
+        supabase,
+        userId,
+        characterId,
+        pendingProactiveMessageId,
+        messages: messages || [],
+        characterName: characterName || characterId,
+        shouldSendPush,
+        startTime,
+      });
+      if (revealResponse) return revealResponse;
     }
 
     // [5.2.3 Moderation] 사용자 입력 선필터 — LLM 호출 전에 fail-open으로

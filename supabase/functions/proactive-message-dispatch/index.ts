@@ -35,6 +35,7 @@ import {
   listProactiveCharacterIds,
   type ProactiveCharacterId,
 } from "../_shared/character_proactive_persona.ts";
+import { SERVICE_TONE_PATTERN as PROACTIVE_SERVICE_TONE_PATTERN } from "../_shared/service_tone_guard.ts";
 
 // =============================================================================
 // 타입
@@ -120,15 +121,27 @@ const SLOT_WINDOWS: Record<SlotKey, SlotWindow> = {
 
 // 자동 활성화 슬롯 (cron 호출 시 dispatcher 가 사용자별 local time 으로 결정).
 // 부재 트리거(absence_*) 는 시간 무관이라 별도 경로(forceSlotKey) 로만 호출.
+//
+// Slice 2 (2026-05-05): luts 파일럿용으로 3 슬롯만 활성. 나머지 4 슬롯은 미활성.
+// PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.2. Slice 3 진입 시 7 슬롯 복구.
 const AUTO_ACTIVE_SLOTS: SlotKey[] = [
-  "morning_greet",
-  "commute_chat",
   "lunch_share",
-  "afternoon_break",
-  "after_work",
   "evening_chat",
   "goodnight",
 ];
+
+// Slice 2 파일럿 캐릭터 화이트리스트. D10 결정 — luts 1명만.
+// Slice 3 에서 9명 캐릭터 확장 시 이 배열 또는 환경변수로 토글.
+const SLICE_2_PILOT_CHARACTER_IDS: ProactiveCharacterId[] = ["luts"];
+
+// Slice 2 placeholder 사진 카테고리 + 장수. 사용자가 Storage 에 업로드.
+// Slice 3 에서 selfie/night 추가 시 이 맵 확장.
+const PLACEHOLDER_CATEGORY_TOTAL: Record<string, number> = {
+  meal: 7, // /autoplan UC1 결정. last 5 LRU 보장.
+};
+
+// Storage 버킷명 — generate-character-proactive-image 와 동일.
+const PLACEHOLDER_BUCKET = "character-proactive-images";
 
 function determineSlotForLocalHour(localHour: number): SlotKey | null {
   for (const slotKey of AUTO_ACTIVE_SLOTS) {
@@ -136,6 +149,80 @@ function determineSlotForLocalHour(localHour: number): SlotKey | null {
     if (localHour >= w.startHour && localHour < w.endHour) return slotKey;
   }
   return null;
+}
+
+// =============================================================================
+// Slice 2 — 일별 image-bearing 결정 + LRU placeholder 선택
+// =============================================================================
+
+// 단순 hash — 같은 (userId, localDate) 입력은 항상 같은 출력. cron 5min 재시도가
+// 동일 사용자에게 슬롯 결정을 뒤집지 않도록 deterministic 보장.
+function simpleHash(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h);
+}
+
+// 오늘 lunch_share 가 image-bearing 인지 결정. ~33% 확률 (3일 중 1일).
+// Slice 2 는 meal 사진만 큐레이션됐으므로 lunch_share 만 image-bearing 가능.
+// Slice 3 에서 selfie/night 추가 시 이 함수가 (slot, category) 쌍을 반환하는 형태로 확장.
+function isLunchImageBearing(userId: string, localDate: string): boolean {
+  return simpleHash(`${userId}::${localDate}::lunch_image`) % 3 === 0;
+}
+
+// LRU: 최근 5개 placeholderIndex 제외하고 랜덤 선택. 5장 무중복 보장 (총 7장 중 5 제외 = 2 후보).
+async function pickPlaceholderIndexLRU(
+  supabase: SupabaseClient,
+  userId: string,
+  characterId: string,
+  category: string,
+): Promise<number> {
+  const total = PLACEHOLDER_CATEGORY_TOTAL[category] ?? 5;
+
+  const { data: recentLogs } = await supabase
+    .from("proactive_message_log")
+    .select("meta")
+    .eq("user_id", userId)
+    .eq("character_id", characterId)
+    .order("created_at", { ascending: false })
+    .limit(20);
+
+  const recentIndices = new Set<number>();
+  for (const row of (recentLogs ?? []) as Array<{ meta?: Record<string, unknown> }>) {
+    const meta = row.meta;
+    if (!meta) continue;
+    const idx = meta.placeholderIndex;
+    const cat = meta.imageCategory;
+    if (typeof idx === "number" && cat === category) {
+      recentIndices.add(idx);
+      if (recentIndices.size >= 5) break;
+    }
+  }
+
+  const candidates: number[] = [];
+  for (let i = 1; i <= total; i++) {
+    if (!recentIndices.has(i)) candidates.push(i);
+  }
+  if (candidates.length === 0) {
+    // 7장 모두 최근 사용됨 (사실상 발생 불가, 7-5=2 보장) — 그냥 랜덤.
+    return 1 + Math.floor(Math.random() * total);
+  }
+  return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
+// Storage 의 character-proactive-images 버킷은 public — getPublicUrl 만으로 충분.
+// signed URL 불요 (PROACTIVE_MESSAGING_PLAN.md Slice 2 A2 결정).
+function getPlaceholderPublicUrl(
+  supabase: SupabaseClient,
+  characterId: string,
+  category: string,
+  index: number,
+): string {
+  const path = `${characterId}/${category}/${index}.png`;
+  const { data } = supabase.storage.from(PLACEHOLDER_BUCKET).getPublicUrl(path);
+  return data.publicUrl;
 }
 
 // =============================================================================
@@ -420,11 +507,8 @@ async function composeProactiveMessageInline(params: {
   };
 }
 
-// 캐릭터(특히 스토리/로맨스 페르소나) 가 절대 보내면 안 되는 상담봇 톤 패턴.
-// character-chat/index.ts:1298 의 LUTS_SERVICE_TONE_PATTERN 과 동일 — 두 함수가
-// 분리돼 있어서 양쪽 다 정의해야 함. 한쪽 변경 시 다른쪽도 동기화.
-const PROACTIVE_SERVICE_TONE_PATTERN =
-  /(무엇을\s*도와드릴\s*수|(?:무엇을|뭘|어떻게)\s*도와드릴까요\??|도움이\s*필요하시면|문의|지원|how can i help|let me help|assist you|お手伝い|サポート|만나서\s*반가워(?:요|워)|처음\s*뵙(?:겠습니다|네요)|지금\s*뭐\s*하고\s*계세요|답은\s*서두르지\s*않으셔도|기다리겠습니다|저는\s*기다리|요즘\s*가장\s*궁금한\s*건|요즘\s*제일\s*궁금한|안녕하세요[,.\s]+[가-힣]+(?:이|예)요)/i;
+// PROACTIVE_SERVICE_TONE_PATTERN 은 _shared/service_tone_guard.ts 로 통합됨 (Slice 2 A13).
+// 양쪽 (dispatcher + character-chat) 가 같은 패턴을 import 한다.
 
 // =============================================================================
 // 유틸 — timezone-aware 시간 계산
@@ -750,15 +834,20 @@ serve(async (req: Request) => {
       }
 
       // 후보 캐릭터 결정
-      const eligible: ProactiveCharacterId[] =
+      // Slice 2 (D10): 파일럿은 luts 1명만. SLICE_2_PILOT_CHARACTER_IDS 와 교집합.
+      // Slice 3 진입 시 이 교집합 제거하면 9명 확장.
+      const allEligible: ProactiveCharacterId[] =
         pref.enabled_character_ids.length > 0
           ? pref.enabled_character_ids.filter(isProactiveCharacterId)
           : listProactiveCharacterIds();
+      const eligible = allEligible.filter((id) =>
+        SLICE_2_PILOT_CHARACTER_IDS.includes(id)
+      );
 
       if (eligible.length === 0) {
         skipped.push({
           userId: pref.user_id,
-          reason: "no eligible characters",
+          reason: "no eligible characters in Slice 2 pilot",
         });
         continue;
       }
@@ -880,10 +969,39 @@ serve(async (req: Request) => {
         meta: composeResult.meta,
       };
 
+      // Slice 2: 오늘 lunch_share 가 image-bearing 인지 deterministic 결정.
+      // image-bearing 이면 텍스트는 hooking, character-chat 이 다음 user turn 에서
+      // 사진 reveal. PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.4.
+      let hookForReveal = false;
+      let plannedImageCategory: string | null = null;
+      let plannedPlaceholderIndex: number | null = null;
+      let plannedPlaceholderUrl: string | null = null;
+
+      if (slotKey === "lunch_share" && isLunchImageBearing(pref.user_id, localDate)) {
+        plannedImageCategory = "meal";
+        plannedPlaceholderIndex = await pickPlaceholderIndexLRU(
+          supabase,
+          pref.user_id,
+          chosenCharId,
+          plannedImageCategory,
+        );
+        plannedPlaceholderUrl = getPlaceholderPublicUrl(
+          supabase,
+          chosenCharId,
+          plannedImageCategory,
+          plannedPlaceholderIndex,
+        );
+        hookForReveal = true;
+      }
+
       const messageId =
         `proactive-${slotKey}-${chosenCharId}-${now.getTime()}-${
           Math.random().toString(36).slice(2, 6)
         }`;
+
+      // Slice 2: log row id 를 미리 발급. push payload 에 동봉되어 character-chat
+      // 의 reveal claim 이 race 없이 정확한 row 를 잠그도록.
+      const logRowId = crypto.randomUUID();
 
       // dryRun: 메시지 저장/푸시 모두 스킵
       if (dryRun) {
@@ -921,6 +1039,44 @@ serve(async (req: Request) => {
       };
       let pushSentCount = 0;
       let pushSkippedReason: string | undefined;
+
+      // Slice 2 (Server Review fix #5): log INSERT 를 push 보다 먼저 수행.
+      // 순서를 뒤집은 이유: 만약 push 후 log INSERT 가 실패하면 character-chat 의
+      // reveal claim 시 row 가 없어 silent failure (사용자는 hook 만 받고 사진 못 봄).
+      // INSERT 먼저 → 실패 시 push 자체를 abort. push_sent_count 는 0 으로 시작
+      // 후 push 결과로 UPDATE.
+      const { error: logInsertErr } = await supabase
+        .from("proactive_message_log")
+        .insert({
+          id: logRowId,
+          user_id: pref.user_id,
+          character_id: chosenCharId,
+          slot_key: slotKey,
+          content_kind: "text",
+          message_id: messageId,
+          user_local_date: localDate,
+          push_sent_count: 0,
+          push_skipped_reason: null,
+          meta: {
+            provider: composed.meta?.provider ?? "unknown",
+            model: composed.meta?.model ?? "unknown",
+            latency_ms: composed.meta?.latencyMs ?? null,
+            dispatch_at_utc: now.toISOString(),
+            user_local_time: localIsoTime,
+            hookForReveal,
+            imageCategory: plannedImageCategory,
+            placeholderIndex: plannedPlaceholderIndex,
+            placeholderUrl: plannedPlaceholderUrl,
+          },
+        });
+      if (logInsertErr) {
+        errors.push({
+          userId: pref.user_id,
+          characterId: chosenCharId,
+          error: `log INSERT 실패 (push 미발송): ${logInsertErr.message}`,
+        });
+        continue;
+      }
 
       if (!globalEnabled || !proactiveEnabled) {
         // push 토글 off — merge 만 직접 (helper 우회). 클라가 다음 진입 시 봄.
@@ -962,6 +1118,9 @@ serve(async (req: Request) => {
           messageId,
           pushType: "character_follow_up",
           proactive: proactiveMeta,
+          // Slice 2: hookForReveal 인 메시지일 때만 push 에 logRowId 동봉.
+          // character-chat 이 다음 user turn 에서 이 id 로 reveal claim.
+          pendingProactiveMessageId: hookForReveal ? logRowId : undefined,
         });
         if (result.persistError) {
           errors.push({
@@ -975,30 +1134,41 @@ serve(async (req: Request) => {
         if (result.pushSkipped) pushSkippedReason = result.pushSkipReason;
       }
 
-      // log INSERT
-      const { error: logErr } = await supabase
+      // log push 결과 UPDATE — 위 INSERT 가 push_sent_count=0 으로 시작했으니 실제 결과 반영.
+      // hookForReveal=true 인데 push_sent_count=0 이면 사용자는 hook 못 받음 → reveal 안 됨.
+      // hookAbandoned 플래그로 metric 노출. (Server Review #6 fix)
+      const updateMeta: Record<string, unknown> = {};
+      if (hookForReveal && pushSentCount === 0) {
+        updateMeta.hookAbandoned = true;
+        updateMeta.hookAbandonedReason = pushSkippedReason ?? "push_failed";
+      }
+      const { error: logUpdateErr } = await supabase
         .from("proactive_message_log")
-        .insert({
-          user_id: pref.user_id,
-          character_id: chosenCharId,
-          slot_key: slotKey,
-          content_kind: "text",
-          message_id: messageId,
-          user_local_date: localDate,
+        .update({
           push_sent_count: pushSentCount,
           push_skipped_reason: pushSkippedReason ?? null,
-          meta: {
-            provider: composed.meta?.provider ?? "unknown",
-            model: composed.meta?.model ?? "unknown",
-            latency_ms: composed.meta?.latencyMs ?? null,
-            dispatch_at_utc: now.toISOString(),
-            user_local_time: localIsoTime,
-          },
-        });
-      if (logErr) {
-        // log 실패는 치명적이지 않음 (메시지/푸시는 이미 나감)
+          ...(Object.keys(updateMeta).length > 0
+            ? {
+              meta: {
+                provider: composed.meta?.provider ?? "unknown",
+                model: composed.meta?.model ?? "unknown",
+                latency_ms: composed.meta?.latencyMs ?? null,
+                dispatch_at_utc: now.toISOString(),
+                user_local_time: localIsoTime,
+                hookForReveal,
+                imageCategory: plannedImageCategory,
+                placeholderIndex: plannedPlaceholderIndex,
+                placeholderUrl: plannedPlaceholderUrl,
+                ...updateMeta,
+              },
+            }
+            : {}),
+        })
+        .eq("id", logRowId);
+      if (logUpdateErr) {
+        // 비치명: push 는 이미 나갔고 log row 는 살아있음 (push_sent_count 만 0 으로 잘못 기록).
         console.warn(
-          `[dispatch] log insert 실패 user=${pref.user_id}: ${logErr.message}`,
+          `[dispatch] log push update 실패 user=${pref.user_id}: ${logUpdateErr.message}`,
         );
       }
 

@@ -7,6 +7,7 @@ import {
   type ChatShellTextMessage,
 } from './chat-shell';
 import { captureError } from './error-reporting';
+import { consumePendingProactiveMessageId } from './push-notifications';
 import { getSecureItem, setSecureItem } from './secure-store-storage';
 import { supabase } from './supabase';
 import {
@@ -59,6 +60,18 @@ export interface StoryChatResponse {
   };
   romanceStatePatch?: Partial<StoryRomanceState>;
   followUpHint?: string;
+  /**
+   * Slice 2 proactive Stage 2 reveal — 서버가 직전 hook 메시지를 claim 해서
+   * 사진을 즉시 발송한 경우. 클라는 이 필드 있으면 ChatShellImageMessage 를
+   * thread 에 append 해서 즉각 표시. server 가 이미 character_conversations 에도
+   * persist 했으므로 reload 시에도 보존.
+   * PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.4.
+   */
+  reveal?: {
+    imageUrl: string;
+    caption: string;
+    category: string;
+  };
   meta?: {
     provider?: string;
     model?: string;
@@ -638,6 +651,17 @@ function normalizeStoryChatResponse(raw: unknown): StoryChatResponse {
       typeof candidate.followUpHint === 'string'
         ? candidate.followUpHint.trim()
         : undefined,
+    reveal: (() => {
+      // Slice 2: 서버 reveal payload normalize.
+      const r = candidate.reveal;
+      if (!r || typeof r !== 'object') return undefined;
+      const rec = r as Record<string, unknown>;
+      const imageUrl = typeof rec.imageUrl === 'string' ? rec.imageUrl : null;
+      const caption = typeof rec.caption === 'string' ? rec.caption : null;
+      if (!imageUrl || !caption) return undefined;
+      const category = typeof rec.category === 'string' ? rec.category : 'meal';
+      return { imageUrl, caption, category };
+    })(),
     meta:
       metaCandidate &&
       (typeof metaCandidate.provider === 'string' ||
@@ -1074,9 +1098,18 @@ export async function invokeStoryChat(
     : baseBody;
   // imageBase64 는 "data:image/jpeg;base64,XXXX" 또는 raw base64. 서버에서 두
   // 경우 모두 받아 LLMFactory 에 image_url 멀티파트로 전달.
-  const body = options?.imageBase64
+  const bodyWithImage = options?.imageBase64
     ? { ...bodyWithDesc, imageBase64: options.imageBase64 }
     : bodyWithDesc;
+
+  // Slice 2: hookForReveal hook 의 push payload 에 동봉된 pendingProactiveMessageId
+  // 가 있으면 이번 호출에 포함 → 서버는 이 id 로 reveal claim (race-free).
+  // 미전달이어도 서버 fallback (partial index lookup) 동작.
+  const pendingProactiveMessageId =
+    consumePendingProactiveMessageId(character.id);
+  const body = pendingProactiveMessageId
+    ? { ...bodyWithImage, pendingProactiveMessageId }
+    : bodyWithImage;
 
   const { data, error } = await supabase.functions.invoke('character-chat', {
     body,
