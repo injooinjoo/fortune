@@ -596,8 +596,11 @@ export function ChatScreen() {
       return;
     }
 
+    // 하늘이 통합 후: deep link로 fortuneType 들어와도 haneul_oracle 로 라우팅.
+    // 'fortune' tab 자체가 사라졌고 운세는 하늘이 단독.
     setActiveFortuneType(pendingChatFortuneType);
-    setActiveTab('fortune');
+    setActiveTab('story');
+    setSelectedCharacterId(haneulOracleCharacter.id);
     setLaunchOrigin('deeplink');
     setSurfaceMode('chat');
     consumePendingChatFortuneType().catch((error) => {
@@ -621,18 +624,14 @@ export function ChatScreen() {
       return;
     }
 
+    // 하늘이 통합 후: 사주 컨텍스트 카드는 하늘이 채팅으로 라우팅.
+    // (deprecated fortune characters 더 이상 노출 X)
     const targetCharacterId =
       selectedCharacterId ??
       mobileAppState.chat.selectedCharacterId ??
-      fortuneChatCharacters[0]?.id ??
-      chatCharacters[0]?.id ??
-      null;
+      haneulOracleCharacter.id;
 
-    if (!targetCharacterId) {
-      return;
-    }
-
-    setActiveTab('fortune');
+    setActiveTab('story');
     setSurfaceMode('chat');
     if (selectedCharacterId == null) {
       setSelectedCharacterId(targetCharacterId);
@@ -927,8 +926,10 @@ export function ChatScreen() {
     }
 
     if (highlightedExpert) {
-      setSelectedCharacterId(highlightedExpert.id);
-      setActiveTab('fortune');
+      // 하늘이 통합 후: highlightedExpert (deprecated fortune character) 대신
+      // haneul_oracle 로 라우팅. 운세 처리는 하늘이 단독.
+      setSelectedCharacterId(haneulOracleCharacter.id);
+      setActiveTab('story');
       setSurfaceMode('chat');
       return;
     }
@@ -2205,12 +2206,11 @@ export function ChatScreen() {
   }, [gate, selectedCharacter.id, session?.user.id]);
 
   function handleOpenRecentResult(fortuneType: FortuneTypeId) {
-    const recentFortuneCharacterId =
-      fortuneChatCharacters.find((character) =>
-        character.specialties.includes(fortuneType),
-      )?.id ?? selectedCharacter.id;
+    // 하늘이 통합 후: 모든 운세 결과는 하늘이 채팅 안에 embed.
+    // recent result 도 하늘이로 라우팅 (deprecated fortune characters 미사용).
+    const recentFortuneCharacterId = haneulOracleCharacter.id;
 
-    setActiveTab('fortune');
+    setActiveTab('story');
     setSelectedCharacterId(recentFortuneCharacterId);
     setSurfaceMode('chat');
     const character =

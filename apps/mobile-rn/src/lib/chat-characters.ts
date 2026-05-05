@@ -131,25 +131,25 @@ export const haneulOracleCharacter: FortuneChatCharacterSpec = {
   specialties: [],
 };
 
-// PR-B1: 하늘이는 module-level 에는 항상 포함 — findChatCharacterById 등
-// 도메인 lookup 이 전부 작동해야 하기 때문. UI 노출 자체는 `getVisibleChatCharacters`
-// 또는 chat-screen 의 `haneul_enabled` flag check 로 게이팅.
+// 하늘이 통합 후: chatCharacters = story 10명 + 하늘이.
+// 기존 fortuneChatCharacters (fortune_haneul, fortune_muhyeon, fortune_stella,
+// fortune_dr_mind, fortune_rose 등) 는 deprecated — 채팅 리스트/도메인 lookup
+// 모두에서 제외. 운세는 하늘이 단독으로 통합.
+//
+// fortuneChatCharacters export 자체는 친구 만들기 등 legacy 참조 호환을 위해
+// 유지하지만, chatCharacters union 에는 포함 X.
 export const chatCharacters: readonly ChatCharacterSpec[] = [
   ...storyChatCharacters,
-  ...fortuneChatCharacters,
   haneulOracleCharacter,
 ];
 
 /**
- * PR-A: flag 가 켜진 경우만 하늘이를 리스트에 포함. PR-B 가 chat-surface 에서 이걸
- * 사용하면 점진 ramp 가능.
+ * 채팅 리스트에 노출할 캐릭터 — flag 와 무관하게 항상 story + 하늘이.
+ * (이전엔 haneul_enabled flag 게이팅이 있었지만 fortune 탭 자체가 사라져서 단순화.)
  */
-export function getVisibleChatCharacters(opts: {
-  haneulEnabled: boolean;
+export function getVisibleChatCharacters(_opts?: {
+  haneulEnabled?: boolean;
 }): readonly ChatCharacterSpec[] {
-  if (opts.haneulEnabled) {
-    return [...storyChatCharacters, ...fortuneChatCharacters, haneulOracleCharacter];
-  }
   return chatCharacters;
 }
 
@@ -178,8 +178,9 @@ export function createdFriendToStoryCharacter(
 export function buildChatCharactersWithCustomFriends(
   friends: readonly CreatedFriend[],
 ): readonly ChatCharacterSpec[] {
+  // 하늘이 통합 후: 운세 캐릭터는 하늘이 단독. fortuneChatCharacters 미포함.
   const customStoryCharacters = friends.map(createdFriendToStoryCharacter);
-  return [...customStoryCharacters, ...storyChatCharacters, ...fortuneChatCharacters];
+  return [...customStoryCharacters, ...storyChatCharacters, haneulOracleCharacter];
 }
 
 export function buildStoryCharactersWithCustomFriends(
