@@ -33,6 +33,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import { deriveUserIdFromJwt } from '../_shared/auth.ts'
 import {
   extractSajuCohort,
   generateCohortHash,
@@ -71,8 +72,15 @@ serve(async (req) => {
     )
 
     const requestData = await req.json()
+    // /ultrareview SRE P0 #5: body.userId 신뢰 금지. JWT 또는 internal-worker.
+    const userId = await deriveUserIdFromJwt(req)
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Unauthorized — JWT 필요' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      )
+    }
     const {
-      userId,
       question,
       sajuData,
       isPremium = false

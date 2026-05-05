@@ -1,0 +1,13 @@
+Migration inventory:
+  inactive: instruction files - none found
+  inactive: skills - none found
+  inactive: command sources - none found
+  inactive: subagents - none found
+Migration surfaces:
+  inactive: AGENTS.md - No supported instruction file found.
+  inactive: skills - Not selected by CLI flags.
+  active: MCP config - 0 MCP server(s) converted into config.toml.
+  inactive: subagents - Not selected by CLI flags.
+Migration report:
+  rewritten: .codex/hooks.json - Unsupported Claude hook fields need review: `hooks.Stop.matcher`. Rewritten for Codex hooks; review behavior before relying on it. Codex hooks require `[features].codex_hooks = true`, only execute `command` handlers, skip `async` / `prompt` / `agent` handlers, ignore `matcher` for `UserPromptSubmit` and `Stop`, and `PreToolUse` / `PostToolUse` currently run for shell commands only.
+  rewritten: .codex/config.toml - Converted 0 MCP server entries.

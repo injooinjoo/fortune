@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 
 import { Card } from '../../src/components/card';
@@ -7,14 +7,31 @@ import { FortuneResultLayout } from '../../src/features/fortune-results/primitiv
 import { resultMetadataByKind } from '../../src/features/fortune-results/mapping';
 import { RenderFortuneResult } from '../../src/features/fortune-results/registry';
 import { isResultKind } from '../../src/features/fortune-results/types';
+import type { EmbeddedResultPayload } from '../../src/features/chat-results/types';
 import { resultReveal } from '../../src/lib/haptics';
 import { useMobileAppState } from '../../src/providers/mobile-app-state-provider';
 
 export default function ResultRoute() {
-  const params = useLocalSearchParams<{ resultKind?: string }>();
+  const params = useLocalSearchParams<{
+    resultKind?: string;
+    payload?: string;
+  }>();
   const resultKind = params.resultKind;
   const { state } = useMobileAppState();
   const hapticsEnabled = state.settings.chatHapticsEnabled;
+
+  // payload 가 URL param 으로 전달되면 풀뷰가 동일 데이터로 렌더 (poster-guide
+  // 등 imageUrl 보존 필수). 직렬화 실패 시 undefined → 기존 fallback.
+  const payload = useMemo<EmbeddedResultPayload | undefined>(() => {
+    if (typeof params.payload !== 'string' || params.payload.length === 0) {
+      return undefined;
+    }
+    try {
+      return JSON.parse(params.payload) as EmbeddedResultPayload;
+    } catch {
+      return undefined;
+    }
+  }, [params.payload]);
 
   // 풀뷰 결과 화면 마운트 시 1회 햅틱. resultKind 별 적절한 패턴 자동 매핑.
   useEffect(() => {
@@ -47,7 +64,7 @@ export default function ResultRoute() {
 
   return (
     <FortuneResultLayout metadata={resultMetadataByKind[resultKind]}>
-      <RenderFortuneResult resultKind={resultKind} />
+      <RenderFortuneResult resultKind={resultKind} payload={payload} />
     </FortuneResultLayout>
   );
 }

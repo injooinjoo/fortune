@@ -12,6 +12,8 @@ import {
 } from '@fortune/product-contracts';
 import { Alert, Linking, Platform, Pressable, View } from 'react-native';
 
+import { useRewardedAd } from '../lib/ad-rewards';
+
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { Chip } from '../components/chip';
@@ -86,6 +88,10 @@ export function PremiumScreen() {
   const [selectedProductId, setSelectedProductId] = useState<ProductId>(
     storefrontSubscriptionProductIds[0],
   );
+  const rewardedAd = useRewardedAd({
+    session,
+    userId: session?.user.id ?? null,
+  });
   const [actionState, setActionState] = useState<'idle' | 'refreshing' | 'managing'>(
     'idle',
   );
@@ -314,7 +320,7 @@ export function PremiumScreen() {
             subtitle={product.description}
             trailing={`월 ${storePriceLabels[product.id] ?? formatPrice(product.price)}`}
             badge={
-              product.id === 'com.beyond.fortune.subscription.max'
+              product.id === 'com.beyond.fortune.subscription.pro'
                 ? '추천'
                 : undefined
             }
@@ -352,6 +358,44 @@ export function PremiumScreen() {
           />
         ))}
       </Card>
+
+      {session && !rewardedAd.isUnavailable ? (
+        <Card>
+          <AppText variant="heading4">광고 보고 토큰 받기</AppText>
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            짧은 광고 1회 시청으로 토큰 1개 획득. 일일 5회까지.
+          </AppText>
+          <PrimaryButton
+            onPress={() => {
+              void rewardedAd.showAd().then((outcome) => {
+                if (outcome.success) {
+                  Alert.alert(
+                    '🎁 토큰 획득',
+                    `${outcome.tokensGranted ?? 1} 토큰을 받았어요. (오늘 ${
+                      outcome.remainingToday ?? 0
+                    }회 남음)`,
+                  );
+                } else if (outcome.error === 'ad_not_ready') {
+                  Alert.alert('광고 준비 중', '잠시 후 다시 시도해주세요.');
+                } else if (outcome.errorCode === 'limit_reached') {
+                  Alert.alert(
+                    '오늘 한도 도달',
+                    '내일 다시 광고로 토큰을 받을 수 있어요.',
+                  );
+                }
+              });
+            }}
+            disabled={!rewardedAd.isReady || rewardedAd.isShowing}
+            fullWidth
+          >
+            {rewardedAd.isShowing
+              ? '광고 재생 중…'
+              : rewardedAd.isReady
+                ? '🎁 광고 1회 시청'
+                : '광고 준비 중…'}
+          </PrimaryButton>
+        </Card>
+      ) : null}
 
       <Card>
         <AppText variant="heading4">선택된 상품</AppText>

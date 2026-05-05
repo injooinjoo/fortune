@@ -624,4 +624,3 @@ Apple Watch 및 모바일 위젯용 경량 관상 분석 Edge Function.
 - [05-fortune-system.md](05-fortune-system.md) - 운세 시스템 전반
 - [06-llm-module.md](06-llm-module.md) - LLM 모듈
 - [03-ui-design-system.md](03-ui-design-system.md) - UI 디자인 시스템
-- [docs/app_store_submission.md](/docs/app_store_submission.md) - 앱 스토어 제출

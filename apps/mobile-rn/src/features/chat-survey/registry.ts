@@ -1103,6 +1103,166 @@ const faceReadingSurvey: ChatSurveyDefinition = {
   ],
 };
 
+const palmReadingSurvey: ChatSurveyDefinition = {
+  fortuneType: 'palm-reading',
+  title: '손금가이드',
+  introReply:
+    '손금을 봐드릴게요. 손바닥 안쪽이 잘 보이게 사진을 한 장 준비해주세요.',
+  submitReply:
+    '손바닥을 분석하고 한국어 손금 가이드를 만들고 있어요. 30~60초 정도 걸려요.',
+  steps: [
+    {
+      id: 'palmImage',
+      question:
+        '손바닥 안쪽 사진을 올려주세요. 손가락이 모두 보이도록 정면에서 찍어주시면 좋아요.',
+      inputKind: 'image',
+    },
+  ],
+};
+
+// ── Poster guide 7종 (palm-reading 기존 + 6 신규) ─────────────────────────
+// 모두 generic Edge Function `/generate-poster-guide` 로 라우트.
+// SurveyImagePicker 는 단일 inputKind: 'image' UX 만 제공하므로
+// photoKind (face / face-and-body / palm) 차이는 question 텍스트로 안내.
+
+const beautySimulationSurvey: ChatSurveyDefinition = {
+  fortuneType: 'beauty-simulation',
+  title: '뷰티 시뮬레이션',
+  introReply:
+    '뷰티 시뮬레이션을 만들어드릴게요. 정면 얼굴 사진을 한 장 준비해주세요.',
+  submitReply:
+    '얼굴을 분석하고 좌측 원본 / 우측 부드러운 스타일링 비교 가이드를 만들고 있어요. 30~60초 정도 걸려요.',
+  steps: [
+    {
+      id: 'faceImage',
+      question:
+        '정면 얼굴 사진을 올려주세요. 화장기 적은 자연광 셀카가 가장 정확해요.',
+      inputKind: 'image',
+    },
+  ],
+};
+
+const hairStyleGuideSurvey: ChatSurveyDefinition = {
+  fortuneType: 'hair-style-guide',
+  title: '헤어스타일 가이드',
+  introReply:
+    '얼굴형에 어울리는 헤어스타일 10가지를 한 장에 정리해드릴게요. 정면 얼굴 사진을 올려주세요.',
+  submitReply:
+    '얼굴형과 모발을 분석해 헤어스타일 가이드를 만들고 있어요. 30~60초 정도 걸려요.',
+  steps: [
+    {
+      id: 'faceImage',
+      question:
+        '정면 얼굴 사진을 올려주세요. 머리카락이 잘 보이게 묶지 않은 상태가 좋아요.',
+      inputKind: 'image',
+    },
+  ],
+};
+
+const faceReadingGuideSurvey: ChatSurveyDefinition = {
+  fortuneType: 'face-reading-guide',
+  title: '얼굴 인상 리포트',
+  introReply:
+    '눈·코·입·얼굴형·분위기까지 종합한 인상 리포트를 만들어드릴게요. 정면 얼굴 사진을 올려주세요.',
+  submitReply:
+    '인상을 분석하고 한 장짜리 리포트를 만들고 있어요. 30~60초 정도 걸려요.',
+  steps: [
+    {
+      id: 'faceImage',
+      question:
+        '정면 얼굴 사진을 올려주세요. 표정이 자연스럽고 조명이 균일한 사진이 가장 정확해요.',
+      inputKind: 'image',
+    },
+  ],
+};
+
+const ootdGuideSurvey: ChatSurveyDefinition = {
+  fortuneType: 'ootd-guide',
+  title: 'OOTD 가이드',
+  introReply:
+    '오늘 입은 옷의 색감/톤/상황 적합도를 분석한 가이드를 만들어드릴게요. 전신 또는 상반신 사진을 올려주세요.',
+  submitReply:
+    '코디를 분석하고 OOTD 가이드를 만들고 있어요. 30~60초 정도 걸려요.',
+  steps: [
+    {
+      id: 'lookContext',
+      question: '오늘 어디로 가시나요?',
+      inputKind: 'chips',
+      required: false,
+      options: [
+        { id: 'work', label: '출근/업무' },
+        { id: 'date', label: '데이트' },
+        { id: 'daily', label: '일상 외출' },
+        { id: 'special', label: '특별한 자리' },
+      ],
+    },
+    {
+      id: 'bodyImage',
+      question:
+        '전신 또는 상반신 사진을 올려주세요. 자연광에서 찍은 사진이 가장 정확해요.',
+      inputKind: 'image',
+    },
+  ],
+};
+
+const blindDateGuideSurvey: ChatSurveyDefinition = {
+  fortuneType: 'blind-date-guide',
+  title: '소개팅 가이드',
+  introReply:
+    '옷·헤어·말투·첫인상까지 정리한 소개팅 가이드를 만들어드릴게요. 정면 얼굴 사진과 상황을 알려주세요.',
+  submitReply:
+    '얼굴과 상황을 분석해 소개팅 가이드를 만들고 있어요. 30~60초 정도 걸려요.',
+  steps: [
+    {
+      id: 'contextText',
+      question:
+        '어떤 상황인가요? (선택) 예: 첫 소개팅, 회사 동료의 소개, 두 번째 만남',
+      inputKind: 'text-with-skip',
+      required: false,
+      placeholder: '예: 내일 첫 소개팅, 30대 직장인',
+    },
+    {
+      id: 'faceImage',
+      question:
+        '정면 얼굴 사진을 올려주세요. 표정이 자연스럽고 머리카락이 잘 보이는 사진이 좋아요.',
+      inputKind: 'image',
+    },
+  ],
+};
+
+const pastLifeGuideSurvey: ChatSurveyDefinition = {
+  fortuneType: 'past-life-guide',
+  title: '전생 리포트',
+  introReply:
+    '시대·역할·배운 교훈까지 narrative 로 정리한 전생 리포트를 만들어드릴게요. 끌리는 시대 감각이나 평소 자주 드는 감각을 짧게 적어주세요.',
+  submitReply:
+    '전생의 시대와 역할을 풀어내고 있어요. 30~60초 정도 걸려요.',
+  // 사진 step 은 일부러 포함하지 않음 (past-life-guide 는 photoKind: 'none').
+  // 텍스트 컨텍스트만으로 충분하며, SurveyImagePicker 가 skip 을 지원하지 않아
+  // 이미지 step 을 optional 로 두면 사용자가 진행 불가 상태에 빠질 수 있다.
+  steps: [
+    {
+      id: 'eraVibe',
+      question: '끌리는 시대 감각이 있나요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'ancient', label: '고대' },
+        { id: 'medieval', label: '중세' },
+        { id: 'modern', label: '근대' },
+        { id: 'unknown', label: '잘 모르겠어요' },
+      ],
+    },
+    {
+      id: 'contextText',
+      question:
+        '평소 자주 드는 감각이나 직관을 적어주세요. (선택)',
+      inputKind: 'text-with-skip',
+      required: false,
+      placeholder: '예: 어딘가 낯익은 항구, 누군가를 지켜야 할 것 같음',
+    },
+  ],
+};
+
 const ootdSurvey: ChatSurveyDefinition = {
   fortuneType: 'ootd-evaluation',
   title: 'OOTD 코디',
@@ -1409,6 +1569,13 @@ const surveyDefinitions = [
   examSurvey,
   ootdSurvey,
   faceReadingSurvey,
+  palmReadingSurvey,
+  beautySimulationSurvey,
+  hairStyleGuideSurvey,
+  faceReadingGuideSurvey,
+  ootdGuideSurvey,
+  blindDateGuideSurvey,
+  pastLifeGuideSurvey,
   bloodTypeSurvey,
   coachingSurvey,
   chatInsightSurvey,
