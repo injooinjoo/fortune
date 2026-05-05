@@ -9,3 +9,6 @@ verify_jwt = false
 # Edge Function 내부에서 Authorization 있으면 userId 추출, 없으면 installId 만으로 sticky ramp.
 [functions.feature-flags-resolve]
 verify_jwt = false
+
+[functions.feature-flag-exposure-log]
+verify_jwt = false
