@@ -331,17 +331,10 @@ export function ChatScreen() {
     Record<string, string>
   >({});
   const chatScrollRef = useRef<ScrollView | null>(null);
-  const [activeTab, setActiveTab] = useState<ChatCharacterTab>(() => {
-    if (directCharacter) {
-      return directCharacter.kind;
-    }
-
-    const restoredCharacter = findChatCharacterById(
-      mobileAppState.chat.selectedCharacterId,
-    );
-
-    return restoredCharacter?.kind ?? 'story';
-  });
+  // 하늘이 통합 후: 채팅 리스트는 항상 'story' 뷰. fortuneChatCharacters
+  // 는 deprecated (마르코/닥터마인드 등 더 이상 노출 안 함). activeTab state
+  // 자체는 deep link / inner 분기 일부에 남아있지만 list 화면은 무조건 story.
+  const [activeTab, setActiveTab] = useState<ChatCharacterTab>('story');
   const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(
     null,
   );
@@ -871,13 +864,13 @@ export function ChatScreen() {
         character.specialties.includes(activeFortuneType),
       )
     : undefined;
-  const tabCharacters =
-    activeTab === 'story' ? allStoryCharacters : fortuneChatCharacters;
+  // 하늘이 통합 후: 운세 캐릭터는 하늘이 단독. 기존 fortuneChatCharacters
+  // (마르코, 닥터마인드 등) 는 채팅 리스트에 노출 안 함. activeTab='fortune'
+  // state 는 deeplink/내부 분기에 남아있지만 리스트는 항상 story+하늘이.
+  const tabCharacters = allStoryCharacters;
   const defaultCharacter =
     highlightedExpert ??
-    (activeTab === 'fortune'
-      ? fortuneChatCharacters[0]
-      : tabCharacters[0]) ??
+    tabCharacters[0] ??
     allStoryCharacters[0] ??
     allChatCharacters[0];
   const selectedCharacter = useMemo(() => {
@@ -886,8 +879,16 @@ export function ChatScreen() {
       directCharacterId ??
       mobileAppState.chat.selectedCharacterId;
 
+    const resolved = findChatCharacterById(targetId, createdFriends);
+
+    // 하늘이 통합 후: 기존 fortune 캐릭터 (fortune_haneul, fortune_muhyeon, ...)
+    // 가 selected 로 복원되면 사용자가 dead character 진입 = 회귀. 강제 폴백.
+    // 새 통합 fortune entry 인 'haneul_oracle' 은 그대로 통과.
+    const isDeprecatedFortune =
+      resolved?.kind === 'fortune' && resolved.id !== 'haneul_oracle';
+
     return (
-      findChatCharacterById(targetId, createdFriends) ??
+      (isDeprecatedFortune ? null : resolved) ??
       highlightedExpert ??
       defaultCharacter
     );
