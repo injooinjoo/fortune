@@ -31,6 +31,10 @@ export type FlagExposureSurface =
 
 interface BufferedEvent {
   installId: string;
+  /** /codex review P2: 이벤트 발생 시점의 userId 를 per-event 캡처. flush 시점의
+   *  auth state 가 다를 수 있어 (anon → 로그인 / 계정 전환) flush 시 일괄 attribution
+   *  하면 잘못된 사용자에게 매핑됨. */
+  userId: string | null;
   flagName: FlagId;
   resolvedValue: FlagValue;
   rampPct: number;
@@ -72,6 +76,18 @@ export async function logFlagExposure(payload: {
     return;
   }
 
+  // /codex review P2: 이벤트 발생 시점의 user_id 캡처. flush 시점에 하면 auth 변경
+  // 시 attribution 깨짐. supabase 클라가 없으면 anon 으로 기록.
+  let userId: string | null = null;
+  if (supabase) {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      userId = session?.user?.id ?? null;
+    } catch {
+      userId = null;
+    }
+  }
+
   const evaluatedAt = new Date().toISOString();
 
   for (const flagName of Object.keys(payload.flags) as FlagId[]) {
@@ -81,6 +97,7 @@ export async function logFlagExposure(payload: {
     }
     buffer.push({
       installId,
+      userId,
       flagName,
       resolvedValue: payload.flags[flagName],
       rampPct: payload.rampPcts[flagName] ?? 0,
