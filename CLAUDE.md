@@ -1,8 +1,33 @@
 # Ondo RN App - Claude Code 가이드
 
-> 최종 업데이트: 2026.05.03
+> 최종 업데이트: 2026.05.05
 
-## 워크플로우 (검토 게이트 + 사용자 직접 확인)
+## 0. 기본 행동 원칙 (Base Layer — 모든 작업에 적용)
+
+다른 룰 위에 깔리는 default. trivial 작업엔 judgment 적용.
+
+### 1. Think Before Coding — 가정 X, 혼란 숨기지 X, tradeoff 드러내기
+구현 전 assumption 명시. 불확실하면 묻기. 해석 여러 개면 모두 제시 (조용히 선택 X). 더 단순한 접근 있으면 말하기 + 필요하면 push back. 불명확 → 멈추고 질문.
+
+### 2. Simplicity First — 최소 코드, 추정 금지
+요청한 것 외 기능 X. 1회용 코드에 abstraction X. 요청 안 한 flexibility/configurability X. 불가능 시나리오 error handling X. 200줄 썼는데 50줄로 가능 → 다시 씀. 자가 점검: "시니어가 overcomplicated 라고 할까?"
+
+### 3. Surgical Changes — 필요한 것만, 자기 mess 만 청소
+인접 코드/주석/포맷팅 "개선" X. 안 깨진 거 refactor X. 기존 스타일 따름. 무관한 dead code → 언급만, 삭제 X. **변경된 모든 줄이 사용자 요청에 직접 trace 가능해야 함**.
+
+### 4. Goal-Driven Execution — 성공 기준 정의, 검증까지 loop
+모호한 task → 검증 가능한 goal 로 변환:
+- "validation 추가" → "invalid input 테스트 작성, 통과"
+- "버그 fix" → "재현 테스트 작성, 통과"
+- "refactor" → "전후 테스트 통과 보장"
+
+multi-step 은 plan 명시 (`1. [Step] → verify: [check]`). 강한 성공 기준 = 독립 loop. 약한 기준 = clarification 반복.
+
+**작동 신호**: diff 에 불필요 변경 줄어듦 / overcomplication 재작성 줄어듦 / clarifying 질문이 구현 전에 나옴.
+
+---
+
+## 1. 워크플로우 (검토 게이트 + 사용자 직접 확인)
 
 이 프로젝트는 솔로 운영이며 **모든 코드 변경/배포/업데이트는 사용자 직접 확인 게이트를 통과해야 합니다**. 자동 배포는 기본 OFF.
 
