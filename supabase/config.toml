@@ -3,3 +3,9 @@ verify_jwt = false
 
 [functions.naver-oauth]
 verify_jwt = false
+
+
+# PR-0b: feature-flags-resolve — anon 도 호출해야 (사전 로그인 사용자) verify_jwt=false.
+# Edge Function 내부에서 Authorization 있으면 userId 추출, 없으면 installId 만으로 sticky ramp.
+[functions.feature-flags-resolve]
+verify_jwt = false
