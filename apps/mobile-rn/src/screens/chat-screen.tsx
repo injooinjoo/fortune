@@ -69,6 +69,8 @@ import {
   type ChatCharacterTab,
 } from '../lib/chat-characters';
 import { useFeatureFlag } from '../lib/feature-flags';
+import { CostConfirmationSheet } from '../features/fortune-results/cost-confirmation-sheet';
+import type { FortuneCatalogEntry } from '@fortune/product-contracts';
 import { setChatLastSeenForCharacter } from '../lib/storage';
 import { getSecureItem, setSecureItem } from '../lib/secure-store-storage';
 import { supabase } from '../lib/supabase';
@@ -1686,6 +1688,42 @@ export function ChatScreen() {
     handleCharacterActionPress(selectedCharacter.id, fortuneType);
   }
 
+  // PR-B2: 하늘이 운세 메뉴 entry 탭 — cost confirmation modal 띄우고 확인 시
+  // 기존 fortune flow 로 라우팅. cancel / 부족 시 충전 페이지.
+  const [pendingMenuEntry, setPendingMenuEntry] =
+    useState<FortuneCatalogEntry | null>(null);
+  const [costSheetVisible, setCostSheetVisible] = useState(false);
+
+  const handleSelectFortuneMenuEntry = useCallback(
+    (entry: FortuneCatalogEntry) => {
+      setPendingMenuEntry(entry);
+      setCostSheetVisible(true);
+    },
+    [],
+  );
+
+  const handleConfirmCostSheet = useCallback(() => {
+    if (pendingMenuEntry) {
+      handleCharacterActionPress(
+        selectedCharacter.id,
+        pendingMenuEntry.id as FortuneTypeId,
+      );
+    }
+    setCostSheetVisible(false);
+    setPendingMenuEntry(null);
+  }, [pendingMenuEntry, selectedCharacter.id]);
+
+  const handleCancelCostSheet = useCallback(() => {
+    setCostSheetVisible(false);
+    setPendingMenuEntry(null);
+  }, []);
+
+  const handleTopUpFromCostSheet = useCallback(() => {
+    setCostSheetVisible(false);
+    setPendingMenuEntry(null);
+    router.push('/premium' as Href);
+  }, []);
+
   // 본인이 보낸 텍스트 메시지 길게 누르기 → 삭제 컨펌. messagesByCharacterId
   // 에서 빼고 디스크 + 원격 양쪽 갱신. story romance pilot 은 snapshot 통째로
   // 다시 저장해야 romance state / scene intent 보존됨. 자동 재개 ref 에서도
@@ -3275,6 +3313,7 @@ export function ChatScreen() {
             ttsError={tts.state.error}
             onPlayTts={handlePlayTts}
             onStopTts={handleStopTts}
+            onSelectFortuneMenuEntry={handleSelectFortuneMenuEntry}
           />
         ) : (
           <ChatFirstRunSurface
@@ -3402,6 +3441,17 @@ export function ChatScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* PR-B2: 하늘이 운세 메뉴 entry 탭 시 비용 확인 sheet. */}
+      <CostConfirmationSheet
+        visible={costSheetVisible}
+        entry={pendingMenuEntry}
+        currentBalance={mobileAppState.premium.tokenBalance ?? null}
+        isUnlimited={mobileAppState.premium.isUnlimited}
+        onConfirm={handleConfirmCostSheet}
+        onCancel={handleCancelCostSheet}
+        onTopUpRequest={handleTopUpFromCostSheet}
+      />
     </Screen>
   );
 }

@@ -56,6 +56,11 @@ import {
   analyzeUserMessageMood,
   type MoodTag,
 } from "../_shared/mood_analyzer.ts";
+import {
+  HANEUL_CHARACTER_ID,
+  checkHaneulOutput,
+  getHaneulSystemPrompt,
+} from "../_shared/haneul_persona.ts";
 
 interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -2570,6 +2575,14 @@ serve(async (req: Request) => {
       profanityLevel,
     }: CharacterChatRequest = await req.json();
 
+    // PR-B2: 하늘이 (haneul_oracle) 는 클라 systemPrompt 무시하고 server-side
+    // persona 를 강제 주입. 클라가 우회할 수 없도록 최우선.
+    let effectiveSystemPrompt = systemPrompt;
+    if (characterId === HANEUL_CHARACTER_ID) {
+      effectiveSystemPrompt = getHaneulSystemPrompt({ userName });
+      console.log("[character-chat] haneul persona override applied");
+    }
+
     const resolvedPilotId = isPilotCharacterId(characterId)
       ? characterId
       : null;
@@ -2583,8 +2596,9 @@ serve(async (req: Request) => {
       });
     }
 
-    // 유효성 검사
-    if (!characterId || !userMessage || (!pilotPersona && !systemPrompt)) {
+    // 유효성 검사. PR-B2: haneul_oracle 은 server-side persona 라 systemPrompt 옵션.
+    const isHaneul = characterId === HANEUL_CHARACTER_ID;
+    if (!characterId || !userMessage || (!pilotPersona && !isHaneul && !systemPrompt)) {
       return new Response(
         JSON.stringify({
           success: false,
@@ -2826,7 +2840,7 @@ serve(async (req: Request) => {
         unresolvedTension,
       })
       : buildFullSystemPrompt(
-        systemPrompt || "",
+        effectiveSystemPrompt || "",
         userName,
         userDescription,
         oocInstructions,
@@ -2998,6 +3012,20 @@ serve(async (req: Request) => {
         });
       }
       responseText = pilotSafetyResult.text;
+    }
+
+    // PR-B2: 하늘이 출력 경계 — 운세성 컨텐츠 leak / 콜센터 톤 검출 시 캐릭터형
+    // fallback 으로 대체. systemPrompt 가 1차 방어, 본 가드가 2차 안전망.
+    if (characterId === HANEUL_CHARACTER_ID) {
+      const guard = checkHaneulOutput(responseText);
+      if (!guard.passed) {
+        console.warn(
+          "[character-chat] haneul output guard triggered:",
+          guard.matchedPattern,
+          "→ fallback",
+        );
+        responseText = guard.fallback ?? responseText;
+      }
     }
 
     // 멀티버블 분할 — systemPrompt가 [SPLIT] 토큰을 넣도록 지시됨

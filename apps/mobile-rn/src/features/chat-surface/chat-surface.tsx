@@ -808,6 +808,7 @@ function ChatThreadMessage({
   ttsError,
   onPlayTts,
   onStopTts,
+  onSelectFortuneMenuEntry,
 }: {
   character: ChatCharacterSpec;
   message: ChatShellMessage;
@@ -819,6 +820,8 @@ function ChatThreadMessage({
   ttsError?: import('../../lib/use-text-to-speech').TtsErrorState | null;
   onPlayTts?: (args: { messageId: string; text: string; emotion?: string }) => void;
   onStopTts?: () => void;
+  /** PR-B2: 운세 메뉴 카드 entry 탭 시 호출. chat-screen 이 cost modal 띄움. */
+  onSelectFortuneMenuEntry?: (entry: import('@fortune/product-contracts').FortuneCatalogEntry) => void;
 }) {
   const isUser = message.sender === 'user';
   const isFullWidth =
@@ -895,17 +898,19 @@ function ChatThreadMessage({
         </View>
       );
     if (message.kind === 'fortune-menu') {
-      // PR-B1: 정적 카탈로그 렌더. onSelect 는 chat-screen 이 connect — 본 surface
-      // 에서는 prop 으로 전달하지 못해 우선 console + nothing handler. PR-B2 가
-      // ChatThreadMessage 의 prop 인터페이스 확장으로 wire-up 예정.
+      // PR-B2: onSelect 는 chat-screen 의 cost confirmation modal 로 라우팅.
       return (
         <FortuneMenuCard
           message={message}
           onSelect={(entry) => {
-            console.warn(
-              '[fortune-menu] onSelect not wired — will be handled in PR-B2:',
-              entry.id,
-            );
+            if (onSelectFortuneMenuEntry) {
+              onSelectFortuneMenuEntry(entry);
+            } else {
+              console.warn(
+                '[fortune-menu] onSelectFortuneMenuEntry handler missing — entry tap ignored:',
+                entry.id,
+              );
+            }
           }}
         />
       );
@@ -2310,6 +2315,7 @@ export function ActiveCharacterChatSurface({
   showHeader = true,
   romanceScore = 0,
   presenceLine,
+  onSelectFortuneMenuEntry,
 }: {
   character: ChatCharacterSpec;
   actions: ChatShellAction[];
@@ -2340,6 +2346,8 @@ export function ActiveCharacterChatSurface({
    * 비어있거나 undefined면 기존 `shortDescription`으로 폴백.
    */
   presenceLine?: string | null;
+  /** PR-B2: 운세 메뉴 entry 탭 시 호출. chat-screen 이 cost modal 띄움. */
+  onSelectFortuneMenuEntry?: (entry: import('@fortune/product-contracts').FortuneCatalogEntry) => void;
 }) {
   const visibleMessages = messages;
   const promptActions = actions;
@@ -2455,6 +2463,7 @@ export function ActiveCharacterChatSurface({
             ttsError={ttsError}
             onPlayTts={onPlayTts}
             onStopTts={onStopTts}
+            onSelectFortuneMenuEntry={onSelectFortuneMenuEntry}
           />
         ))}
         {isTyping ? (
