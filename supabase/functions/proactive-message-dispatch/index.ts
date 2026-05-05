@@ -332,7 +332,12 @@ interface InlineComposed {
 
 interface InlineComposeError {
   error: string;
-  errorCode: "safety_blocked" | "llm_failure" | "parse_failure";
+  // service_tone_blocked: 모델이 콜센터/상담봇 톤 출력 → 페르소나 즉사 회피용 발송 스킵.
+  errorCode:
+    | "safety_blocked"
+    | "llm_failure"
+    | "parse_failure"
+    | "service_tone_blocked";
   meta?: { provider: string; model: string; latencyMs: number };
 }
 
