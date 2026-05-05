@@ -23,7 +23,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
-import { sendCharacterDmPush } from "../_shared/notification_push.ts";
+import { persistAndPushCharacterMessage } from "../_shared/character_message_helper.ts";
+import { requireWorkerAuth } from "../_shared/worker_auth.ts";
 
 interface ScheduledReplyRow {
   id: string;
@@ -48,6 +49,10 @@ interface DeliveryResult {
 serve(async (req: Request) => {
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
+
+  // /ultrareview SRE P0 #6: cron worker 인증 강제.
+  const authError = requireWorkerAuth(req);
+  if (authError) return authError;
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
@@ -114,81 +119,40 @@ serve(async (req: Request) => {
           continue;
         }
 
-        // 2. character_conversations 에 append. 클라이언트 ack 경로와 다르게
-        //    cron 은 단일 합본 메시지로 append (multi-segment 분기 처리 생략).
-        //    foreground 와 시각적으로 약간 다르지만 메시지 자체는 보존됨.
-        const { data: convoRow } = await supabase
-          .from("character_conversations")
-          .select("messages")
-          .eq("user_id", row.user_id)
-          .eq("character_id", row.character_id)
-          .maybeSingle();
-
-        const existingMessages = Array.isArray(convoRow?.messages)
-          ? (convoRow!.messages as unknown[])
-          : [];
-
-        const newMessage = {
-          id: `scheduled-${row.id}`,
-          type: "character" as const,
-          content: row.content,
-          timestamp: claimAt,
-          emotionTag: row.emotion_tag ?? undefined,
-        };
-        const nextMessages = [...existingMessages, newMessage].slice(-200);
-
-        if (convoRow) {
-          const { error: updErr } = await supabase
-            .from("character_conversations")
-            .update({
-              messages: nextMessages,
-              last_message_at: claimAt,
-            })
-            .eq("user_id", row.user_id)
-            .eq("character_id", row.character_id);
-          if (updErr) {
-            failed.push({
-              scheduledId: row.id,
-              error: `conversation update: ${updErr.message}`,
-            });
-            // claim 은 이미 됐지만 conversation update 가 실패. delivered_at
-            // 을 되돌릴지? 우선 그냥 두고 다음 사이클에서 재시도하지 않음.
-            // 다음 cron 에서는 delivered_at NOT NULL 이라 스킵.
-            // → 이 케이스는 알림센터 history 만 누락 (푸시는 보냄).
-            continue;
-          }
-        } else {
-          const { error: insErr } = await supabase
-            .from("character_conversations")
-            .insert({
-              user_id: row.user_id,
-              character_id: row.character_id,
-              messages: nextMessages,
-              last_message_at: claimAt,
-            });
-          if (insErr) {
-            failed.push({
-              scheduledId: row.id,
-              error: `conversation insert: ${insErr.message}`,
-            });
-            continue;
-          }
-        }
-
-        // 3. 푸시 발송. character_dm 토글 체크는 sendCharacterDmPush 내부에서.
-        const pushResult = await sendCharacterDmPush({
+        // 2+3. character_conversations 머지 + push 발송 통합.
+        // _shared/character_message_helper.persistAndPushCharacterMessage 가
+        // RPC merge (advisory lock + id-dedup + cap) + sendCharacterDmPush 를
+        // 함께 처리. proactive-message-dispatch 와 동일 helper — "서버 한 곳"
+        // 정책. fail-soft: merge 실패해도 push 시도, 그 반대도 마찬가지.
+        // scheduledId 별도 필드: 클라가 받자마자 ack-scheduled-reply 호출 →
+        // client_acked_at 마킹 → 같은 row 재처리 방지. messageId 는 옛 OTA
+        // 클라 호환을 위해 1 릴리스 유지 (helper 내부에서 messageId 로 전달).
+        const result = await persistAndPushCharacterMessage({
           supabase,
           userId: row.user_id,
           characterId: row.character_id,
           characterName: row.character_name,
-          messageText: row.content,
+          messageContent: row.content,
           messageId: `scheduled-${row.id}`,
-          type: "character_dm",
+          emotionTag: row.emotion_tag ?? undefined,
+          scheduledId: row.id,
+          pushType: "character_dm",
           roomState: "character_chat",
         });
+        if (result.persistError) {
+          failed.push({
+            scheduledId: row.id,
+            error: `conversation merge: ${result.persistError}`,
+          });
+          // claim 은 이미 됐지만 merge 가 실패. 다음 cron 에서는 delivered_at
+          // NOT NULL 이라 스킵 → 알림센터 history 누락 (push 는 helper 가 시도).
+          continue;
+        }
 
         // 4. push_sent_at 마킹
-        const pushSentAt = pushResult.sentCount > 0 ? new Date().toISOString() : null;
+        const pushSentAt = result.pushSentCount > 0
+          ? new Date().toISOString()
+          : null;
         await supabase
           .from("scheduled_character_replies")
           .update({ push_sent_at: pushSentAt })
@@ -198,8 +162,8 @@ serve(async (req: Request) => {
           scheduledId: row.id,
           userId: row.user_id,
           characterId: row.character_id,
-          pushSent: pushResult.sentCount > 0,
-          reason: pushResult.reason,
+          pushSent: result.pushSentCount > 0,
+          reason: result.pushSkipReason,
         });
       } catch (rowError) {
         failed.push({

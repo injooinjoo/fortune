@@ -11,6 +11,12 @@ interface ExpoExtra {
   googleIosClientId?: string;
   googleAndroidClientId?: string;
   kakaoAppKey?: string;
+  admob?: {
+    appIdAndroid?: string;
+    appIdIos?: string;
+    rewardedUnitAndroid?: string;
+    rewardedUnitIos?: string;
+  };
 }
 
 const extra = (Constants.expoConfig?.extra ?? {}) as ExpoExtra;
@@ -26,6 +32,12 @@ export const appEnv = {
   googleIosClientId: extra.googleIosClientId ?? '',
   googleAndroidClientId: extra.googleAndroidClientId ?? '',
   kakaoAppKey: extra.kakaoAppKey ?? '',
+  admob: {
+    appIdAndroid: extra.admob?.appIdAndroid ?? '',
+    appIdIos: extra.admob?.appIdIos ?? '',
+    rewardedUnitAndroid: extra.admob?.rewardedUnitAndroid ?? '',
+    rewardedUnitIos: extra.admob?.rewardedUnitIos ?? '',
+  },
   get isSupabaseConfigured() {
     return Boolean(this.supabaseUrl && this.supabaseAnonKey);
   },

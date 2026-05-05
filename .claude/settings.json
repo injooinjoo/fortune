@@ -1,30 +1,26 @@
 {
   "permissions": {
     "allow": [
-      "Bash(flutter analyze*)",
-      "Bash(flutter test*)",
-      "Bash(flutter pub*)",
-      "Bash(flutter build*)",
-      "Bash(flutter gen-l10n*)",
-      "Bash(flutter clean*)",
-      "Bash(flutter doctor*)",
-      "Bash(dart format*)",
-      "Bash(dart run build_runner*)",
-      "Bash(dart analyze*)",
-      "Bash(dart fix*)",
-      "Bash(dart pub*)",
-      "Bash(dart mcp-server*)",
       "Bash(supabase functions*)",
       "Bash(supabase db*)",
       "Bash(supabase migration*)",
       "Bash(supabase start*)",
       "Bash(supabase stop*)",
       "Bash(supabase status*)",
+      "Bash(eas update*)",
+      "Bash(eas build*)",
+      "Bash(eas channel*)",
+      "Bash(eas whoami*)",
       "Bash(npm run test*)",
       "Bash(npm run lint*)",
+      "Bash(npm run typecheck*)",
+      "Bash(npm run deploy:ota*)",
       "Bash(npm run source-inventory*)",
       "Bash(npm run figma*)",
+      "Bash(npx tsc*)",
+      "Bash(npx expo*)",
       "Bash(npx playwright*)",
+      "Bash(./scripts/auto-deploy-on-stop.sh*)",
       "Bash(git status*)",
       "Bash(git diff*)",
       "Bash(git log*)",
@@ -36,6 +32,7 @@
       "Bash(git fetch*)",
       "Bash(git pull*)",
       "Bash(git merge*)",
+      "Bash(git ls-files*)",
       "Bash(ls *)",
       "Bash(pwd)",
       "Bash(which *)",
@@ -54,8 +51,25 @@
     "deny": [
       "Bash(rm -rf *)",
       "Bash(git push --force*)",
-      "Bash(git reset --hard*)",
-      "Bash(flutter run*)"
+      "Bash(git reset --hard*)"
     ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/auto-deploy-on-stop.sh",
+            "timeout": 300
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "context-mode@context-mode": true,
+    "skill-creator@claude-plugins-official": true
   }
 }

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback, type PropsWithChildren, type 
 
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { ActivityIndicator, Alert, Animated, Easing, Image, PanResponder, Pressable, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Animated, Easing, Image, Modal, PanResponder, Pressable, ScrollView, TextInput, View } from 'react-native';
 
 import type { VoiceInputState } from '../../lib/use-voice-input';
 
@@ -26,6 +26,7 @@ import {
 } from '../../lib/chat-characters';
 import type {
   ChatShellAction,
+  ChatShellImageMessage,
   ChatShellMessage,
   ChatShellTextMessage,
 } from '../../lib/chat-shell';
@@ -40,6 +41,7 @@ import { FadeUpWords, StoryRevealMessage } from '../story-chat-animations';
 import { FortuneCookieCard } from '../fortune-cookie/fortune-cookie-card';
 import { SajuPreviewCard } from '../fortune-cookie/saju-preview-card';
 import { MySajuContextCard } from './my-saju-context-card';
+import { ProgressMessageCard } from './progress-message-card';
 import type { ChatSurveyStep } from '../chat-survey/types';
 import { TarotDrawWidget } from '../chat-survey/tarot-draw-widget';
 
@@ -392,6 +394,8 @@ function extractMessagePreview(message: ChatShellMessage): string {
       return '📜 사주 요약';
     case 'story-reveal':
       return '✨ 새 장면';
+    case 'progress':
+      return message.error ? `⚠️ ${message.phase}` : `⏳ ${message.phase}`;
     default:
       return '';
   }
@@ -825,9 +829,132 @@ function EmbeddedResultMessage({
   );
 }
 
+/**
+ * Slice 2: proactive 사진 버블 — loading skeleton, onError fallback, tap → fullscreen.
+ * PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.8 (A8 + T3).
+ */
+function ProactiveImageBubble({
+  imageUrl,
+  caption,
+}: {
+  imageUrl: string;
+  caption?: string;
+}) {
+  const [loadState, setLoadState] = useState<'loading' | 'loaded' | 'error'>(
+    'loading',
+  );
+  const [fullscreenOpen, setFullscreenOpen] = useState(false);
+
+  if (loadState === 'error') {
+    return (
+      <View
+        style={{
+          width: 200,
+          padding: fortuneTheme.spacing.sm,
+          backgroundColor: fortuneTheme.colors.surfaceSecondary,
+          borderRadius: fortuneTheme.radius.card,
+        }}
+      >
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          어 사진 안 갔다… 다시 보낼게
+        </AppText>
+      </View>
+    );
+  }
+
+  return (
+    <View style={{ gap: 4 }}>
+      <Pressable
+        onPress={() => setFullscreenOpen(true)}
+        accessibilityRole="imagebutton"
+        accessibilityLabel="사진 크게 보기"
+      >
+        <View
+          style={{
+            width: 200,
+            height: 200,
+            borderRadius: fortuneTheme.radius.card,
+            overflow: 'hidden',
+            backgroundColor: fortuneTheme.colors.surfaceSecondary,
+          }}
+        >
+          <Image
+            source={{ uri: imageUrl }}
+            style={{ width: '100%', height: '100%' }}
+            resizeMode="cover"
+            onLoadStart={() => setLoadState('loading')}
+            onLoad={() => setLoadState('loaded')}
+            onError={() => setLoadState('error')}
+          />
+          {loadState === 'loading' ? (
+            <View
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <ActivityIndicator
+                size="small"
+                color={fortuneTheme.colors.textSecondary}
+              />
+            </View>
+          ) : null}
+        </View>
+      </Pressable>
+      {caption ? (
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          {caption}
+        </AppText>
+      ) : null}
+
+      <Modal
+        visible={fullscreenOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setFullscreenOpen(false)}
+      >
+        <Pressable
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.92)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          onPress={() => setFullscreenOpen(false)}
+          accessibilityRole="button"
+          accessibilityLabel="닫기"
+        >
+          <ScrollView
+            maximumZoomScale={4}
+            minimumZoomScale={1}
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            style={{ flex: 1, width: '100%' }}
+          >
+            <Image
+              source={{ uri: imageUrl }}
+              style={{ width: '100%', aspectRatio: 1 }}
+              resizeMode="contain"
+            />
+          </ScrollView>
+        </Pressable>
+      </Modal>
+    </View>
+  );
+}
+
 function ChatThreadMessage({
   character,
   message,
+  showProactiveCaption,
   onDeleteUserMessage,
   ttsControllerStatus,
   ttsActiveMessageId,
@@ -837,6 +964,8 @@ function ChatThreadMessage({
 }: {
   character: ChatCharacterSpec;
   message: ChatShellMessage;
+  /** Slice 2: 연속된 proactive run 의 첫 메시지일 때만 true → "먼저 톡 보냄" 캡션 표시. */
+  showProactiveCaption?: boolean;
   /** 본인이 보낸 텍스트 메시지를 길게 눌러 삭제할 수 있게 하는 핸들러. */
   onDeleteUserMessage?: (messageId: string) => void;
   /** TTS controller 상태 — assistant text 메시지 아래 SpeakerButton 표시용. */
@@ -852,7 +981,8 @@ function ChatThreadMessage({
     message.kind === 'fortune-cookie' ||
     message.kind === 'saju-preview' ||
     message.kind === 'story-reveal' ||
-    message.kind === 'my-saju-context';
+    message.kind === 'my-saju-context' ||
+    message.kind === 'progress';
   const isImage = message.kind === 'image';
 
   // Apple 5.2.3 — assistant 텍스트 메시지 long-press로 신고 시트 오픈.
@@ -919,24 +1049,18 @@ function ChatThreadMessage({
           <MySajuContextCard message={message} />
         </View>
       );
+    if (message.kind === 'progress')
+      return (
+        <View style={{ width: '100%' }}>
+          <ProgressMessageCard message={message} />
+        </View>
+      );
     if (isImage)
       return (
-        <View style={{ gap: 4 }}>
-          <Image
-            source={{ uri: message.imageUrl }}
-            style={{
-              width: 200,
-              height: 200,
-              borderRadius: fortuneTheme.radius.card,
-            }}
-            resizeMode="cover"
-          />
-          {message.caption ? (
-            <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-              {message.caption}
-            </AppText>
-          ) : null}
-        </View>
+        <ProactiveImageBubble
+          imageUrl={message.imageUrl}
+          caption={message.caption}
+        />
       );
     return (
       <MessageBubble
@@ -946,8 +1070,32 @@ function ChatThreadMessage({
     );
   })();
 
+  // Slice 2: proactive 첫 메시지에 "먼저 톡 보냄 · HH:MM" 1-line 캡션.
+  // PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.7 (A7).
+  const proactiveMeta = (message.kind === 'text' || message.kind === 'image')
+    ? (message as ChatShellTextMessage | ChatShellImageMessage).proactive
+    : undefined;
+  const proactiveCaptionLabel = (() => {
+    if (!showProactiveCaption || !proactiveMeta?.generatedAt) return null;
+    const ts = Date.parse(proactiveMeta.generatedAt);
+    if (Number.isNaN(ts)) return '먼저 톡 보냄';
+    const d = new Date(ts);
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    return `먼저 톡 보냄 · ${hh}:${mm}`;
+  })();
+
   return (
     <View style={{ width: '100%' }}>
+      {proactiveCaptionLabel ? (
+        <AppText
+          variant="bodySmall"
+          color={fortuneTheme.colors.textTertiary}
+          style={{ marginBottom: 4, marginLeft: 8 }}
+        >
+          {proactiveCaptionLabel}
+        </AppText>
+      ) : null}
       <View style={{ width: isFullWidth ? '100%' : undefined }}>
         {reportable ? (
           <Pressable
@@ -1973,10 +2121,12 @@ function SurveyImagePicker({
 
       const result = await launchFn({
         mediaTypes: ['images'],
-        quality: 0.7,
+        // 0.9 = 시각적 무손실에 가까우면서 base64 size 합리적 유지.
+        quality: 0.9,
         base64: true,
-        allowsEditing: true,
-        aspect: [1, 1],
+        // iOS 기본 1:1 강제 크롭 비활성 (위아래 잘림 방지).
+        // 손금/얼굴/전신 모두 원본 비율 유지 — Edge Function 이 알아서 처리.
+        allowsEditing: false,
       });
 
       if (result.canceled || !result.assets?.[0]) {
@@ -2454,19 +2604,37 @@ export function ActiveCharacterChatSurface({
       <ScenarioCard character={character} />
 
       <View style={{ gap: fortuneTheme.spacing.sm }}>
-        {previewMessages.map((message) => (
-          <ChatThreadMessage
-            key={message.id}
-            character={character}
-            message={message}
-            onDeleteUserMessage={onDeleteUserMessage}
-            ttsControllerStatus={ttsControllerStatus}
-            ttsActiveMessageId={ttsActiveMessageId}
-            ttsError={ttsError}
-            onPlayTts={onPlayTts}
-            onStopTts={onStopTts}
-          />
-        ))}
+        {previewMessages.map((message, idx) => {
+          // Slice 2: 연속된 proactive run 의 첫 메시지에만 "먼저 톡 보냄" 캡션 표시.
+          // 이전 메시지가 proactive 가 아니거나 user 메시지면 첫 run 시작.
+          const prev = idx > 0 ? previewMessages[idx - 1] : null;
+          const messageHasProactive =
+            (message.kind === 'text' || message.kind === 'image') &&
+            'proactive' in message &&
+            message.proactive != null;
+          const prevHasProactive =
+            prev != null &&
+            (prev.kind === 'text' || prev.kind === 'image') &&
+            'proactive' in prev &&
+            prev.proactive != null &&
+            prev.sender === 'assistant';
+          const showProactiveCaption =
+            messageHasProactive && !prevHasProactive;
+          return (
+            <ChatThreadMessage
+              key={message.id}
+              character={character}
+              message={message}
+              showProactiveCaption={showProactiveCaption}
+              onDeleteUserMessage={onDeleteUserMessage}
+              ttsControllerStatus={ttsControllerStatus}
+              ttsActiveMessageId={ttsActiveMessageId}
+              ttsError={ttsError}
+              onPlayTts={onPlayTts}
+              onStopTts={onStopTts}
+            />
+          );
+        })}
         {isTyping ? (
           <TypingIndicatorBubble
             character={character}

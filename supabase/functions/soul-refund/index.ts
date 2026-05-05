@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { FORTUNE_TOKEN_COSTS } from '../_shared/types.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,28 +10,25 @@ const corsHeaders = {
  * 토큰 환불 Edge Function
  *
  * POST /soul-refund
- * Body: { fortuneType: string, reason?: string }
- *
- * 운세 생성 실패 시 선차감된 토큰을 환불합니다.
+ * Body: {
+ *   fortuneType: string,
+ *   referenceId: string (필수 — 원본 consume 의 reference_id),
+ *   reason?: string,
+ *   idempotencyKey?: string (PR-0a — 환불 자체의 키. 없으면 reference_id 만으로 중복 방지)
+ * }
  *
  * Response:
  * {
- *   "balance": {
- *     "totalTokens": 500,
- *     "usedTokens": 14,
- *     "remainingTokens": 486,
- *     "lastUpdated": "2025-12-21T10:00:00Z",
- *     "hasUnlimitedAccess": false
- *   }
+ *   "balance": { ... },
+ *   "refunded": bool,    -- 신규 환불 수행 여부
+ *   "replayed": bool     -- 이미 환불됨 (idempotent 응답)
  * }
  */
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
-  // POST only
   if (req.method !== 'POST') {
     return new Response(
       JSON.stringify({ error: 'Method not allowed' }),
@@ -44,7 +40,6 @@ serve(async (req) => {
   }
 
   try {
-    // Auth
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
       return new Response(
@@ -56,9 +51,13 @@ serve(async (req) => {
       )
     }
 
-    // Body
     const body = await req.json()
-    const { fortuneType, reason } = body
+    const { fortuneType, reason, referenceId, idempotencyKey } = body as {
+      fortuneType?: string
+      reason?: string
+      referenceId?: string
+      idempotencyKey?: string | null
+    }
 
     if (!fortuneType) {
       return new Response(
@@ -69,10 +68,21 @@ serve(async (req) => {
         }
       )
     }
+    if (!referenceId || typeof referenceId !== 'string' || referenceId.length === 0) {
+      return new Response(
+        JSON.stringify({ error: 'Missing referenceId — soul-consume 호출 시 발급된 id 필요' }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
+    }
 
-    console.log(`🔄 Soul refund request: fortuneType=${fortuneType}, reason=${reason}`)
+    console.log(
+      `🔄 Soul refund: fortuneType=${fortuneType}, reason=${reason}, ` +
+      `referenceId=${referenceId}, hasIdempotencyKey=${!!idempotencyKey}`,
+    )
 
-    // Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
@@ -83,7 +93,6 @@ serve(async (req) => {
       }
     })
 
-    // User
     const token = authHeader.replace('Bearer ', '')
     const { data: { user }, error: userError } = await supabase.auth.getUser(token)
 
@@ -99,7 +108,7 @@ serve(async (req) => {
 
     console.log(`👤 User: ${user.id}`)
 
-    // 1. 구독 유저는 환불 불필요 (토큰 차감 안됨)
+    // 1. 무제한 구독자는 환불 불필요. RPC 밖 — 토큰 차감 자체가 없었음.
     const { data: subscription } = await supabase
       .from('subscriptions')
       .select('id')
@@ -111,7 +120,6 @@ serve(async (req) => {
 
     if (subscription) {
       console.log(`⏭️ Subscriber — no refund needed`)
-      // 현재 잔액 조회하여 반환
       const { data: tokenData } = await supabase
         .from('token_balance')
         .select('balance, total_earned, total_spent')
@@ -126,42 +134,37 @@ serve(async (req) => {
             remainingTokens: tokenData?.balance ?? 0,
             lastUpdated: new Date().toISOString(),
             hasUnlimitedAccess: true
-          }
+          },
+          refunded: false,
+          replayed: false,
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    // 2. 환불할 토큰 수 계산
-    const refundAmount = FORTUNE_TOKEN_COSTS[fortuneType as keyof typeof FORTUNE_TOKEN_COSTS] ?? 1
+    // 2. atomic RPC 호출
+    const { data: rpcResult, error: rpcError } = await supabase.rpc(
+      'refund_token_atomic',
+      {
+        p_user_id: user.id,
+        p_consume_reference_id: referenceId,
+        p_description: `${fortuneType} 환불 (${reason || 'fortune_generation_failed'})`,
+        p_reference_type: 'fortune_refund',
+        p_idempotency_key: idempotencyKey ?? null,
+      },
+    )
 
-    // 3. 현재 잔액 조회
-    const { data: tokenData } = await supabase
-      .from('token_balance')
-      .select('balance, total_earned, total_spent')
-      .eq('user_id', user.id)
-      .single()
+    if (rpcError) {
+      // NO_MATCHING_CONSUME = SQLSTATE P0002
+      if (rpcError.code === 'P0002') {
+        console.log(`❌ No matching consume: ${rpcError.details ?? rpcError.message}`)
+        return new Response(
+          JSON.stringify({ error: 'No matching consume transaction for this referenceId' }),
+          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
 
-    const currentBalance = tokenData?.balance ?? 0
-    const totalEarned = tokenData?.total_earned ?? 0
-    const totalSpent = tokenData?.total_spent ?? 0
-
-    // 4. 잔액 복구
-    const newBalance = currentBalance + refundAmount
-    const newTotalSpent = Math.max(0, totalSpent - refundAmount)
-
-    const { error: updateError } = await supabase
-      .from('token_balance')
-      .upsert({
-        user_id: user.id,
-        balance: newBalance,
-        total_earned: totalEarned,
-        total_spent: newTotalSpent,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'user_id' })
-
-    if (updateError) {
-      console.error(`❌ Refund balance update failed: ${updateError.message}`)
+      console.error('❌ refund_token_atomic RPC failed:', rpcError)
       return new Response(
         JSON.stringify({ error: 'Failed to refund tokens' }),
         {
@@ -171,34 +174,40 @@ serve(async (req) => {
       )
     }
 
-    // 5. 환불 거래 이력 기록
-    const { error: txError } = await supabase
-      .from('token_transactions')
-      .insert({
-        user_id: user.id,
-        transaction_type: 'refund',
-        amount: refundAmount,
-        balance_after: newBalance,
-        description: `${fortuneType} 환불 (${reason || 'fortune_generation_failed'})`,
-        reference_type: 'fortune_refund',
-        reference_id: null
-      })
-
-    if (txError) {
-      console.error(`⚠️ Refund transaction record failed: ${txError.message}`)
+    const result = rpcResult as {
+      balance: number
+      total_earned: number
+      total_spent: number
+      refunded: boolean
+      replayed: boolean
+      refund_transaction_id: string
+      original_transaction_id?: string
+      refund_amount?: number
     }
 
-    console.log(`✅ Token refunded: ${currentBalance} → ${newBalance} (refund: ${refundAmount})`)
+    if (result.replayed) {
+      console.log(
+        `🔁 Already refunded: txn=${result.refund_transaction_id}, balance=${result.balance}`,
+      )
+    } else {
+      console.log(
+        `✅ Token refunded: amount=${result.refund_amount}, ` +
+        `balance=${result.balance}, txn=${result.refund_transaction_id}`,
+      )
+    }
 
     return new Response(
       JSON.stringify({
         balance: {
-          totalTokens: totalEarned,
-          usedTokens: newTotalSpent,
-          remainingTokens: newBalance,
+          totalTokens: result.total_earned,
+          usedTokens: result.total_spent,
+          remainingTokens: result.balance,
           lastUpdated: new Date().toISOString(),
           hasUnlimitedAccess: false
-        }
+        },
+        refunded: result.refunded,
+        replayed: result.replayed,
+        refundTransactionId: result.refund_transaction_id,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )

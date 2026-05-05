@@ -1,15 +1,6 @@
-# Monorepo .easignore — strips everything EAS Build doesn't need from the upload.
-# apps/mobile-rn also has its own .easignore for app-scoped excludes.
+# EAS .easignore — strips everything EAS Build doesn't need from the upload.
 
-# --- VCS / tooling ---
-.git
-.github
-.vscode
-.idea
-.claude
-.cursor
-
-# --- Legacy Flutter tree (root-level duplicates) ---
+# --- Flutter (legacy, not needed for RN build) ---
 /android
 /ios
 /lib
@@ -17,45 +8,41 @@
 /windows
 /linux
 /test
+/build
 /.dart_tool
 /.flutter-plugins
 /.flutter-plugins-dependencies
 
-# --- Data dumps & large local assets ---
-namuwiki*.7z
-*.7z
-*.zip
-*.tar.gz
-/Ondo Design System
-/fortune-transfer-bundle-*
-pencil-profile-export.png
-upload-success.png
+# --- Native folders 전체 — EAS 가 매 빌드 fresh prebuild 하도록 강제. ---
+# 핵심 fix: 이전엔 ios/Pods, ios/build 만 제외하고 ios/ 통째로 업로드 →
+# EAS 가 stale Info.plist (GADApplicationIdentifier 누락) 사용해서 prebuild 스킵.
+# AdMob SDK 가 init 시 GADApplicationIdentifier 검증 못해 SIGABRT (TestFlight #55, #56).
+# .gitignore 는 .easignore 에 영향 없음 — EAS 는 untracked 도 업로드.
+apps/mobile-rn/ios
+apps/mobile-rn/android
 
-# --- Generated / scratch artifacts ---
-/artifacts
-/export
+# --- Design & docs ---
+*.pen
 /screenshots
-/google_play_assets
-/dist
-/build
-/coverage
-/testsprite_tests
+/export
+*.tar.gz
 
-# --- Docs (not bundled) ---
-/docs
+# --- Dev tools ---
+.claude
+.git
+.vscode
 *.md
 !README.md
 
-# --- Past RN build outputs living in the monorepo ---
+# --- Large artifacts ---
+/fortune-transfer-bundle-*
+/pencil*
+
+# --- Past RN build outputs ---
 apps/mobile-rn/build-*.ipa
 apps/mobile-rn/dist
-apps/mobile-rn/ios/Pods
-apps/mobile-rn/ios/build
-apps/mobile-rn/android/build
-apps/mobile-rn/android/.gradle
-apps/mobile-rn/android/app/build
 
-# --- Supabase local state (not needed on build server) ---
+# --- Supabase local state ---
 supabase/.temp
 supabase/.branches
 

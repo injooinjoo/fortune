@@ -67,21 +67,10 @@ lib/features/chat/                      # 46개 파일
 │   │   ├── ai_recommendation.dart      # AI 추천 모델
 │   │   └── fortune_survey_config.dart  # 설문 설정 모델
 │   ├── configs/
-│   │   └── survey_configs.dart         # 39개 인사이트 설문 설정
+│   │   └── survey_configs.dart         # 39개 인사이트 설문 설정 (Flutter 시절 경로)
 │   └── services/
-│       └── intent_detector.dart        # 의도 분석 서비스
-├── presentation/
-│   ├── providers/
-│   │   ├── chat_messages_provider.dart     # 메인 StateNotifier
-│   │   ├── chat_survey_provider.dart       # 설문 상태 관리
-│   │   └── onboarding_chat_provider.dart   # 온보딩 채팅
-│   ├── pages/
-│   │   └── chat_home_page.dart         # 메인 채팅 페이지
-│   └── widgets/
-│       ├── chat_message_bubble.dart    # 메시지 버블
-│       ├── chat_message_list.dart      # 메시지 리스트
-│       ├── fortune_chip_grid.dart      # 추천 칩 그리드
-│       ├── chat_welcome_view.dart      # 환영 화면
+│       └── intent_detector.dart        # 의도 분석 서비스 (Flutter 시절 경로)
+└── (RN 현행 구현은 apps/mobile-rn/src/features/chat-surface/, src/lib/chat-shell.ts 참고)
 │       ├── guest_login_banner.dart     # 게스트 로그인 배너
 │       ├── profile_bottom_sheet.dart   # 프로필 바텀시트
 │       ├── month_highlight_detail_bottom_sheet.dart  # 월별 하이라이트
@@ -516,7 +505,6 @@ String? analyzeIntent(String message) {
 |------|------|
 | [02-architecture.md](02-architecture.md) | 전체 아키텍처 |
 | [03-ui-design-system.md](03-ui-design-system.md) | 채팅 UI 스타일 |
-| [04-state-management.md](04-state-management.md) | StateNotifier 패턴 |
 | [05-fortune-system.md](05-fortune-system.md) | 인사이트 조회 프로세스 |
 
 ---
