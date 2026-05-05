@@ -78,6 +78,35 @@ Ondo의 운세/인사이트 시스템은 사용자 노출 surface, 카테고리 
 | 가족/주거 | `fortune-family-*`, `fortune-naming`, `fortune-moving`, `fortune-home-fengshui` | 가족 구성원, 주거 정보, 예정일 |
 | 성격/프로필 | `fortune-mbti`, `fortune-blood-type`, `fortune-constellation`, `fortune-zodiac-animal`, `personality-dna` | MBTI, 혈액형, 별자리, 띠 |
 
+## 토큰 소비 정책
+
+운세 타입별 토큰 차감량은 입력 복잡도와 LLM 사용량에 따라 4단계로 분류합니다.
+
+| 레벨 | 토큰 | 적용 대상 | 예시 |
+|------|------|----------|------|
+| Simple | 1 | 단순 결과 | 오늘의 운세, 행운색, 행운숫자 |
+| Medium | 2 | 분석 포함 | 연애운, 재물운, 타로 1장 |
+| Complex | 3 | 심층 분석 | 사주, 토정비결, 타로 3장 |
+| Premium | 5 | 고급 분석 | 스타트업운, 셀럽 궁합, 인생 로드맵 |
+
+### 결정 기준
+
+- 입력 필드 수: 3개 이하 → Simple/Medium, 4개 이상 → Complex
+- 결과 섹션 수: 4개 이하 → Simple, 5–7개 → Medium, 8개 이상 → Complex
+- LLM 토큰 사용량: 2K 이하 → Simple, 4K 이하 → Medium, 8K+ → Complex/Premium
+
+### 입력 필드 패밀리 보강
+
+`fortune-*` 함수 입력은 위 패밀리 표 + 아래 특수 필드로 구성됩니다.
+
+| 운세 유형 | 추가 필드 |
+|----------|----------|
+| 해몽 | `dreamDescription: string` |
+| 타로 | `selectedCards: number[]` |
+| 관상 | `faceImageUrl: string` |
+| 펫궁합 | `petType`, `petBirthDate` |
+| 궁합 | `partnerBirthDate`, `partnerGender` |
+
 ## 결과 스키마 원칙
 
 문서상 모든 운세 응답은 아래 envelope로 해석합니다.

@@ -53,8 +53,6 @@ export function FortuneResultLayout({
       </View>
 
       <View style={{ gap: fortuneTheme.spacing.md }}>{children}</View>
-
-      <CTAFooter />
     </Screen>
   );
 }

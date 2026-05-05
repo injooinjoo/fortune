@@ -235,17 +235,17 @@ export function ProfileNotificationsScreen() {
           paddingHorizontal: fortuneTheme.spacing.md,
         }}
       >
-        알림 권한이 꺼져 있으면 테스트 알림은 동작하지 않습니다.
+        알림 권한이 꺼져 있으면 푸시가 동작하지 않습니다.
       </AppText>
 
-      {/* Test notification CTA */}
+      {/* Save preferences */}
       <PrimaryButton
         onPress={() => {
           formSubmit();
           void handleSave();
         }}
       >
-        테스트 알림 보내기
+        저장
       </PrimaryButton>
     </Screen>
   );

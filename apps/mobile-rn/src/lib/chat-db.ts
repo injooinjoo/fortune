@@ -42,7 +42,35 @@ import type { ChatShellMessage } from './chat-shell';
 
 const DB_NAME = 'fortune-chat.db';
 const MIGRATION_FLAG_KEY = 'fortune.chat.db.migrated.v1';
+const ANIMATE_STRIP_FLAG_KEY = 'fortune.chat.db.animate-stripped.v1';
 const LEGACY_CACHE_PREFIX = 'fortune.chat.msgs.v1';
+
+/**
+ * 영속 직렬화 직전에 메시지에서 transient UI 플래그를 제거.
+ *
+ * `animate: true` 는 "방금 생성된 어시스턴트 메시지에 일회성 fade-up 애니메이션
+ * 적용" 용도의 휘발성 신호다. 디스크에 박히면 채팅방을 나갔다 다시 들어올 때
+ * 마지막 메시지가 또 애니메이션되어버리므로, payload_json 으로 stringify 하기
+ * 전에 false 로 강제한다. 메모리 상태(setMessagesByCharacterId 의 객체)는 건드
+ * 리지 않으므로 현재 세션 동안의 신규 버블 애니메이션은 그대로 재생된다.
+ */
+function sanitizeForPersistence(message: ChatShellMessage): ChatShellMessage {
+  if (message.kind === 'text' && message.animate) {
+    return { ...message, animate: false };
+  }
+  return message;
+}
+
+/**
+ * 영속 대상이 아닌 transient kind 식별.
+ *
+ * `progress` 카드는 long-running job 진행상황 표시 용도로, 결과 도착 시 결과
+ * 카드로 교체되거나 사라진다. 디스크에 박히면 재진입 시 이미 끝난 작업의
+ * 진행카드가 살아있는 듯 보이므로 영속 대상에서 제외한다.
+ */
+function isTransientKind(kind: ChatShellMessage['kind']): boolean {
+  return kind === 'progress';
+}
 
 export const isChatDbAvailable = Platform.OS !== 'web';
 
@@ -80,6 +108,13 @@ export async function openChatDb(): Promise<SQLite.SQLiteDatabase> {
       await runOneTimeBackfill(db).catch((error: unknown) => {
         captureError(error, {
           surface: 'chat-db:backfill',
+        }).catch(() => undefined);
+      });
+      // 1회 정리: sanitizeForPersistence 도입(2026-05-02) 이전에 박힌
+      // animate:true payload 를 false 로 갱신. 신규 사용자에겐 no-op.
+      await runOneTimeAnimateStrip(db).catch((error: unknown) => {
+        captureError(error, {
+          surface: 'chat-db:animate-strip',
         }).catch(() => undefined);
       });
       return db;
@@ -170,16 +205,18 @@ export async function appendMessages(
     let nextSeq = (maxRow?.max_seq ?? 0) + 1;
     const now = Date.now();
     for (const message of messages) {
+      if (isTransientKind(message.kind)) continue;
+      const sanitized = sanitizeForPersistence(message);
       await db.runAsync(
         `INSERT OR IGNORE INTO chat_messages
            (id, character_id, kind, sender, payload_json, created_at, seq)
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
-          message.id,
+          sanitized.id,
           characterId,
-          message.kind,
-          message.sender,
-          JSON.stringify(message),
+          sanitized.kind,
+          sanitized.sender,
+          JSON.stringify(sanitized),
           now,
           nextSeq,
         ],
@@ -209,16 +246,18 @@ export async function replaceAllMessages(
     let seq = 1;
     const now = Date.now();
     for (const message of messages) {
+      if (isTransientKind(message.kind)) continue;
+      const sanitized = sanitizeForPersistence(message);
       await db.runAsync(
         `INSERT INTO chat_messages
            (id, character_id, kind, sender, payload_json, created_at, seq)
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
-          message.id,
+          sanitized.id,
           characterId,
-          message.kind,
-          message.sender,
-          JSON.stringify(message),
+          sanitized.kind,
+          sanitized.sender,
+          JSON.stringify(sanitized),
           now,
           seq,
         ],
@@ -237,11 +276,13 @@ export async function updateMessage(
   message: ChatShellMessage,
 ): Promise<void> {
   if (!isChatDbAvailable) return;
+  if (isTransientKind(message.kind)) return;
   const db = await openChatDb();
+  const sanitized = sanitizeForPersistence(message);
   await db.runAsync(
     `UPDATE chat_messages SET payload_json = ?
      WHERE id = ? AND character_id = ?`,
-    [JSON.stringify(message), message.id, characterId],
+    [JSON.stringify(sanitized), sanitized.id, characterId],
   );
 }
 
@@ -356,16 +397,17 @@ async function runOneTimeBackfill(db: SQLite.SQLiteDatabase): Promise<void> {
       let seq = 1;
       const now = Date.now();
       for (const message of messages) {
+        const sanitized = sanitizeForPersistence(message);
         await db.runAsync(
           `INSERT OR IGNORE INTO chat_messages
              (id, character_id, kind, sender, payload_json, created_at, seq)
            VALUES (?, ?, ?, ?, ?, ?, ?)`,
           [
-            message.id,
+            sanitized.id,
             characterId,
-            message.kind,
-            message.sender,
-            JSON.stringify(message),
+            sanitized.kind,
+            sanitized.sender,
+            JSON.stringify(sanitized),
             now,
             seq,
           ],
@@ -390,4 +432,25 @@ async function runOneTimeBackfill(db: SQLite.SQLiteDatabase): Promise<void> {
     // logger 가 없으므로 console 로 — 운영에선 무음.
     console.log(`[chat-db] backfilled ${migratedCount} character(s) from SecureStore`);
   }
+}
+
+// ---------------------------------------------------------------------------
+// 1회 정리: 기존에 영속된 `animate: true` 어시스턴트 메시지를 false 로 갱신
+// (sanitizeForPersistence 도입 이전에 박힌 데이터 정리용)
+// ---------------------------------------------------------------------------
+
+async function runOneTimeAnimateStrip(db: SQLite.SQLiteDatabase): Promise<void> {
+  const flag = await getSecureItem(ANIMATE_STRIP_FLAG_KEY);
+  if (flag === '1') return;
+
+  // payload_json 안에 `"animate":true` 가 박혀 있는 행만 골라 갱신.
+  // SQLite REPLACE 는 첫 매치만 바꾸지만, payload_json 안에 같은 시그니처가
+  // 두 번 등장할 일은 없으므로 안전.
+  await db.runAsync(
+    `UPDATE chat_messages
+        SET payload_json = REPLACE(payload_json, '"animate":true', '"animate":false')
+      WHERE payload_json LIKE '%"animate":true%'`,
+  );
+
+  await setSecureItem(ANIMATE_STRIP_FLAG_KEY, '1');
 }

@@ -1,7 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
-import * as Updates from 'expo-updates';
 import { router, useFocusEffect } from 'expo-router';
 import { Alert, Linking, Platform, Pressable, View } from 'react-native';
 import type { Href } from 'expo-router';
@@ -17,12 +16,9 @@ import {
 } from '../lib/build-identity';
 import { captureError } from '../lib/error-reporting';
 import { deactivateCurrentPushToken } from '../lib/push-notifications';
-import { deleteSecureItem } from '../lib/secure-store-storage';
 import { supabase } from '../lib/supabase';
 import { isTestAccountEmail } from '../lib/test-accounts';
-import { updateRemoteUserProfile } from '../lib/user-profile-remote';
 import { fortuneTheme } from '../lib/theme';
-import { WELCOME_SEEN_KEY } from '../lib/welcome-state';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { onDeviceLLMEngine, type ModelStatus } from '../lib/on-device-llm';
 import {
@@ -30,8 +26,6 @@ import {
   type DeviceTier,
 } from '../lib/device-tier';
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
-
-const DISCLAIMER_STORAGE_KEY = 'fortune.disclaimer-accepted.v1';
 
 function formatBytesLabel(bytes: number): string {
   if (bytes <= 0) return '';
@@ -172,125 +166,6 @@ export function ProfileScreen() {
   const initial = savedName.charAt(0).toUpperCase() || 'U';
 
   const isTestAccount = isTestAccountEmail(email);
-
-  async function runResetSteps(): Promise<string[]> {
-    const failures: string[] = [];
-
-    async function step(label: string, fn: () => Promise<unknown>) {
-      try {
-        await fn();
-        console.log(`[reset-onboarding] ok: ${label}`);
-      } catch (error) {
-        console.warn(`[reset-onboarding] fail: ${label}`, error);
-        failures.push(label);
-        await captureError(error, {
-          surface: `profile:reset-onboarding:${label}`,
-        }).catch(() => undefined);
-      }
-    }
-
-    const userId = session?.user.id ?? null;
-
-    // 1. Wipe remote profile so re-login hydrates into empty state.
-    //    NOTE: `name` is NOT NULL in user_profiles — use empty string instead
-    //    of null, remoteProfileToPatch coalesces '' → '' so it reads as empty.
-    if (session) {
-      await step('clear-remote', () =>
-        updateRemoteUserProfile(session.user.id, {
-          name: '',
-          birth_date: null,
-          birth_time: null,
-          mbti: null,
-          blood_type: null,
-          fortune_preferences: { category_weights: {}, showPersonalized: true },
-          onboarding_completed: false,
-        }),
-      );
-    }
-
-    // 2. Sign out — clears Supabase auth tokens and makes session null on
-    //    next boot, which puts the app into the real first-launch flow.
-    //    푸시 토큰은 sign-out 전에 비활성화해야 한다. signOut 이후엔 Supabase
-    //    invoke 가 401 로 떨어져 fcm_tokens 행을 정리할 수 없게 된다.
-    await step('deactivate-push-token', () => deactivateCurrentPushToken());
-    await step('sign-out', async () => {
-      await supabase?.auth.signOut();
-    });
-
-    // 3. Nuke every local SecureStore key we know about so the next launch
-    //    looks exactly like a fresh install.
-    await step('clear-onboarding-progress', () =>
-      deleteSecureItem('unified_onboarding_progress_v1'),
-    );
-    await step('clear-welcome-seen', () => deleteSecureItem(WELCOME_SEEN_KEY));
-    await step('clear-disclaimer', () =>
-      deleteSecureItem(DISCLAIMER_STORAGE_KEY),
-    );
-    await step('clear-app-state-user', () =>
-      deleteSecureItem(
-        userId
-          ? `fortune.mobile-app-state.v1.${userId}`
-          : 'fortune.mobile-app-state.v1.guest',
-      ),
-    );
-    await step('clear-app-state-guest', () =>
-      deleteSecureItem('fortune.mobile-app-state.v1.guest'),
-    );
-    await step('clear-last-auth', () =>
-      deleteSecureItem('fortune.last-auth-user-id.v1'),
-    );
-    await step('clear-pending-deeplink', () =>
-      deleteSecureItem('pending_deep_link_fortune_type'),
-    );
-    await step('clear-created-friends', () =>
-      deleteSecureItem('fortune.created-friends.v1'),
-    );
-    await step('clear-favorite-celebrities', () =>
-      deleteSecureItem('fortune.favorite-celebrities.v1'),
-    );
-
-    return failures;
-  }
-
-  function handleResetOnboarding() {
-    Alert.alert(
-      '앱 초기화 (테스트)',
-      '서버 프로필, 로컬 캐시, 로그인 세션까지 모두 지우고 앱을 재시작합니다. 앱을 처음 설치한 상태로 돌아가며, 재시작 후 직접 다시 로그인해야 합니다. 프로필 데이터는 복구되지 않습니다.',
-      [
-        { text: '취소', style: 'cancel' },
-        {
-          text: '초기화 후 재시작',
-          style: 'destructive',
-          onPress: async () => {
-            const failures = await runResetSteps();
-            if (failures.length > 0) {
-              Alert.alert(
-                '일부 단계 실패',
-                `다음 단계에서 오류: ${failures.join(', ')}\n그래도 재시작을 진행합니다. Metro 콘솔에서 상세 에러를 확인하세요.`,
-                [
-                  {
-                    text: '확인',
-                    onPress: () => {
-                      void Updates.reloadAsync().catch(() =>
-                        router.replace('/onboarding'),
-                      );
-                    },
-                  },
-                ],
-              );
-              return;
-            }
-            try {
-              await Updates.reloadAsync();
-            } catch {
-              // dev builds may not support reloadAsync reliably → fallback
-              router.replace('/onboarding');
-            }
-          },
-        },
-      ],
-    );
-  }
 
   function handleSignOut() {
     Alert.alert('로그아웃', '정말 로그아웃 하시겠어요?', [
@@ -810,15 +685,15 @@ export function ProfileScreen() {
 
       {isTestAccount ? (
         <Card>
-          <AppText variant="heading4">테스트 도구</AppText>
+          <AppText variant="heading4">개발자 도구</AppText>
           <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            테스트 계정에만 노출됩니다. 서버 프로필·로컬 캐시·로그인 세션까지 모두 지우고 앱을 재시작해, 처음 설치한 상태에서부터 온보딩을 다시 검증할 수 있어요.
+            테스트 계정에만 노출됩니다. 로컬 푸시 발사, 푸시 토큰 확인, 앱 초기화, 빌드 정보 dump 등 디버그 도구가 한 곳에 모여 있어요.
           </AppText>
           <PrimaryButton
-            onPress={handleResetOnboarding}
+            onPress={() => router.push('/profile/dev-tools')}
             tone="secondary"
           >
-            앱 초기화 (Factory Reset)
+            개발자 도구 열기
           </PrimaryButton>
         </Card>
       ) : null}
