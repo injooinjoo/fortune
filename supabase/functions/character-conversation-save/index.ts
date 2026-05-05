@@ -165,32 +165,32 @@ serve(async (req: Request) => {
       );
     }
 
-    // 최근 50개만 저장 (오래된 메시지 제거)
+    // 클라가 보낸 messages 를 cap 으로 자르기 (legacy 안전장치). 실제 머지/
+    // dedup/cap 트림은 RPC merge_character_conversation_messages 가 처리.
     const limitedMessages = messages.slice(-MAX_MESSAGES);
 
-    // UPSERT: 기존 대화 업데이트 또는 새로 생성
-    const { error: upsertError } = await supabase
-      .from("character_conversations")
-      .upsert(
-        {
-          user_id: user.id,
-          character_id: characterId,
-          messages: limitedMessages,
-          runtime_state: runtimeState ?? {},
-          last_message_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "user_id,character_id" },
-      );
+    // RPC: advisory lock + id-dedup 머지 + cap 트림 (atomic). 동시 호출 (cron
+    // deliver-due-replies + 빠른 연속 send) 시에도 메시지 손실 0 보장.
+    // SECURITY DEFINER 함수 안에서 auth.uid() 가 user.id 와 일치하는지 검증.
+    const { data: mergedCount, error: rpcError } = await supabase.rpc(
+      "merge_character_conversation_messages",
+      {
+        p_user_id: user.id,
+        p_character_id: characterId,
+        p_incoming_messages: limitedMessages,
+        p_runtime_state: runtimeState ?? null,
+        p_max_messages: MAX_MESSAGES,
+      },
+    );
 
-    if (upsertError) {
-      console.error("Upsert error:", upsertError);
+    if (rpcError) {
+      console.error("[character-conversation-save] merge RPC error:", rpcError);
       return new Response(
         JSON.stringify(
           {
             success: false,
             messageCount: 0,
-            error: upsertError.message,
+            error: rpcError.message,
           } as SaveResponse,
         ),
         {
@@ -199,6 +199,10 @@ serve(async (req: Request) => {
         },
       );
     }
+
+    const persistedCount = typeof mergedCount === "number"
+      ? mergedCount
+      : limitedMessages.length;
 
     // 장기 메모리 요약 갱신 (soft-fail: 저장 성공을 막지 않음)
     try {
@@ -232,12 +236,12 @@ serve(async (req: Request) => {
     }
 
     console.log(
-      `[character-conversation-save] User ${user.id} saved ${limitedMessages.length} messages for character ${characterId}`,
+      `[character-conversation-save] User ${user.id} saved ${persistedCount} messages for character ${characterId} (incoming=${limitedMessages.length})`,
     );
 
     return new Response(
       JSON.stringify(
-        { success: true, messageCount: limitedMessages.length } as SaveResponse,
+        { success: true, messageCount: persistedCount } as SaveResponse,
       ),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );

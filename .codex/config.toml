@@ -1,0 +1,11 @@
+personality = "friendly"
+
+[features]
+codex_hooks = true
+
+[mcp_servers.ios-simulator]
+args = [
+    "-y",
+    "ios-simulator-mcp",
+]
+command = "npx"

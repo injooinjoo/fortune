@@ -26,7 +26,7 @@ const PAGES: Record<string, { title: string; sections: Array<{ title: string; bo
       },
       {
         title: '6. 이용자의 권리',
-        body: '사용자는 언제든지 자신의 개인정보를 조회·수정·삭제할 수 있으며, 앱 내 프로필 설정 또는 고객센터(injoo1222@naver.com)를 통해 처리 가능합니다. 계정 삭제를 요청하면 관련 데이터를 지체 없이 파기합니다.',
+        body: '사용자는 언제든지 자신의 개인정보를 조회·수정·삭제할 수 있으며, 앱 내 프로필 설정 또는 고객센터(injooinjoo@gmail.com)를 통해 처리 가능합니다. 계정 삭제를 요청하면 관련 데이터를 지체 없이 파기합니다.',
       },
       {
         title: '7. 자동 수집 장치의 설치·운영 및 거부',
@@ -34,7 +34,7 @@ const PAGES: Record<string, { title: string; sections: Array<{ title: string; bo
       },
       {
         title: '8. 개인정보 보호책임자',
-        body: '성명: 김인주 / 이메일: injoo1222@naver.com. 개인정보 관련 문의사항은 위 연락처로 접수해 주시기 바랍니다.',
+        body: '성명: 김인주 / 이메일: injooinjoo@gmail.com. 개인정보 관련 문의사항은 위 연락처로 접수해 주시기 바랍니다.',
       },
       {
         title: '9. 시행일',

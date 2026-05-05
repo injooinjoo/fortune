@@ -44,6 +44,19 @@ export function invalidateFortuneResultCache(): void {
   fortuneResultCache.clear();
 }
 
+/**
+ * 클라이언트 캐시 체크 — 같은 fortuneType + 동일 user + 같은 날 (UTC) 30분 TTL.
+ * 동기 호출 (`fetchEmbeddedEdgeResultPayload`) 은 내부적으로 본 캐시를 자동
+ * 사용하지만, 비동기 큐 경로 (long_running_jobs) 는 캐시를 우회하므로 chat-screen
+ * 에서 명시적으로 체크해 큐 적체/대기시간 회피 — 동기 흐름과 UX 동일성 유지.
+ */
+export function lookupCachedFortuneResult(
+  fortuneType: FortuneTypeId,
+  userId?: string | null,
+): EmbeddedResultPayload | null {
+  return getCachedResult(buildCacheKey(fortuneType, userId));
+}
+
 function getCachedResult(key: string): EmbeddedResultPayload | null {
   const entry = fortuneResultCache.get(key);
   if (!entry) return null;
@@ -132,10 +145,12 @@ export async function fetchEmbeddedEdgeResultPayload(
   }
 
   const functionName = endpoint.replace(/^\//u, '');
-  // W10: 30s hard timeout. AbortController 로 오프라인/hanging 응답 단절.
-  // 실제 edge function timeout 은 서버측 25~30s 이므로 클라 35s 여유.
+  // 타임아웃: gpt-image-2 기반 poster-guide (palm-reading 등) 은 20-40s 걸림
+  // → 90s 여유. 일반 텍스트 fortune 은 보통 5s 안에 끝나므로 timeout 큼은 무해.
+  const isLongRunning = endpoint === '/generate-poster-guide';
+  const timeoutMs = isLongRunning ? 90_000 : 35_000;
   const controller = new AbortController();
-  const timeoutHandle = setTimeout(() => controller.abort(), 35_000);
+  const timeoutHandle = setTimeout(() => controller.abort(), timeoutMs);
   let data: unknown;
   let error: unknown;
   try {
@@ -181,6 +196,130 @@ export async function fetchEmbeddedEdgeResultPayload(
   }
 
   return result;
+}
+
+/**
+ * Async poster-job 시작 — palm-reading 등 gpt-image-2 기반 무거운 운세를
+ * 백그라운드 큐에 등록한다. 즉시 반환 (~200ms) — 결과는 push 알림으로 도착.
+ *
+ * @returns
+ *   - `{ jobId: string }` 성공
+ *   - `null` 실패 (auth 누락 / supabase 미설정 / endpoint 누락 / 큐 초과)
+ *
+ * @sideEffect
+ *   서버측 start-poster-job 이 character_conversations 에 placeholder
+ *   text 메시지 ("분석 시작했어!") 를 INSERT 함. 클라이언트는 별도로 동일
+ *   메시지를 local appendMessages 해도 무방 — merge RPC 가 id dedup 처리.
+ */
+export async function startAsyncPosterJob(params: {
+  fortuneType: FortuneTypeId;
+  characterId: string;
+  characterName: string;
+  imageBase64?: string;
+  contextText?: string;
+}): Promise<{ jobId: string } | null> {
+  if (!supabase) return null;
+
+  const { data, error } = await supabase.functions.invoke('start-poster-job', {
+    body: {
+      posterType: params.fortuneType,
+      characterId: params.characterId,
+      characterName: params.characterName,
+      imageBase64: params.imageBase64,
+      contextText: params.contextText,
+    },
+  });
+
+  if (error) {
+    console.warn('[start-poster-job] failed:', error);
+    return null;
+  }
+
+  const result = data as { success?: boolean; jobId?: string };
+  if (!result?.success || !result.jobId) {
+    return null;
+  }
+
+  return { jobId: result.jobId };
+}
+
+/**
+ * fortuneType 이 비동기 poster-guide 큐 (palm-reading 등) 대상인지.
+ * `/generate-poster-guide` 엔드포인트에 매핑되는 타입만 true.
+ */
+export function isAsyncPosterFortuneType(fortuneType: FortuneTypeId): boolean {
+  const endpoint = resolveFortuneEndpoint(fortuneType, {});
+  return endpoint === '/generate-poster-guide';
+}
+
+/**
+ * fortuneType 이 비동기 long_running_jobs 큐 대상인지.
+ * tarot/dream/compatibility/traditional-saju 4종 — 동기 직접 호출 시 20-40s
+ * 블록 → 사용자 진행상태 미가시. 큐로 이전해 progress 카드로 노출.
+ *
+ * 향후 다른 30s+ 텍스트 운세 추가 시 본 set 에 fortuneType 추가 + 서버측
+ * start-long-running-job ALLOWED_JOB_TYPES + handlers.ts JOB_HANDLERS 등록.
+ */
+const ASYNC_LONG_RUNNING_FORTUNE_TYPES = new Set<FortuneTypeId>([
+  'tarot',
+  'dream',
+  'compatibility',
+  'traditional-saju',
+]);
+
+export function isAsyncLongRunningFortuneType(
+  fortuneType: FortuneTypeId,
+): boolean {
+  return ASYNC_LONG_RUNNING_FORTUNE_TYPES.has(fortuneType);
+}
+
+/**
+ * Async long-running job 시작 — tarot/dream/compatibility/traditional-saju.
+ * `start-long-running-job` Edge Function 에 enqueue, jobId 즉시 반환.
+ * 결과는 push 알림으로 도착, RN 은 progress 카드를 phase realtime UPDATE 로 갱신.
+ */
+export async function startAsyncLongRunningJob(params: {
+  fortuneType: FortuneTypeId;
+  characterId: string;
+  characterName: string;
+  context: EmbeddedResultBuildContext;
+  userId?: string | null;
+  estimatedSeconds?: number;
+}): Promise<{ jobId: string } | null> {
+  if (!supabase) return null;
+
+  // payload 는 직접 호출 시와 동일한 fortune-* request body — worker 가 그대로
+  // forward 하므로 동일 LLMFactory 로직이 두 호출자를 구분하지 않는다.
+  const requestBody = buildFortuneRequestBody(
+    params.fortuneType,
+    params.context,
+    params.userId,
+  );
+  if (!requestBody) {
+    return null;
+  }
+
+  const { data, error } = await supabase.functions.invoke('start-long-running-job', {
+    body: {
+      jobType: params.fortuneType,
+      characterId: params.characterId,
+      characterName: params.characterName,
+      payload: requestBody,
+      estimatedSeconds: params.estimatedSeconds,
+    },
+  });
+
+  if (error) {
+    console.warn('[start-long-running-job] failed:', error);
+    return null;
+  }
+
+  const result = data as { success?: boolean; jobId?: string };
+  if (!result?.success || !result.jobId) {
+    return null;
+  }
+
+  return { jobId: result.jobId };
 }
 
 function buildFortuneRequestBody(
@@ -394,6 +533,74 @@ function buildFortuneRequestBody(
       }
 
       payload.userName = profile.displayName || 'user';
+      break;
+    }
+    case 'palm-reading': {
+      // Generic poster-guide Edge Function expects:
+      //   { posterType, userId, imageBase64?, contextText? }
+      // Survey field id is `palmImage` (defined in chat-survey/registry.ts).
+      payload.posterType = 'palm-reading';
+      const imageData = readString(answers.palmImage);
+      if (imageData) {
+        payload.imageBase64 = imageData;
+      }
+      // Drop the raw `palmImage` key to avoid shipping the same base64 twice.
+      delete payload.palmImage;
+      break;
+    }
+    case 'beauty-simulation':
+    case 'hair-style-guide':
+    case 'face-reading-guide': {
+      // photoKind: 'face' — survey field id is `faceImage`.
+      payload.posterType = fortuneType;
+      const imageData = readString(answers.faceImage);
+      if (imageData) {
+        payload.imageBase64 = imageData;
+      }
+      delete payload.faceImage;
+      break;
+    }
+    case 'ootd-guide': {
+      // photoKind: 'face-and-body' — survey field id is `bodyImage`.
+      // Optional contextText: lookContext label (work/date/daily/special).
+      payload.posterType = 'ootd-guide';
+      const imageData = readString(answers.bodyImage);
+      if (imageData) {
+        payload.imageBase64 = imageData;
+      }
+      const lookContextLabel = labels.lookContext ?? readString(answers.lookContext);
+      if (lookContextLabel) {
+        payload.contextText = lookContextLabel;
+      }
+      delete payload.bodyImage;
+      delete payload.lookContext;
+      break;
+    }
+    case 'blind-date-guide': {
+      // photoKind: 'face' + optional contextText.
+      payload.posterType = 'blind-date-guide';
+      const imageData = readString(answers.faceImage);
+      if (imageData) {
+        payload.imageBase64 = imageData;
+      }
+      const contextText = readString(answers.contextText);
+      if (contextText) {
+        payload.contextText = contextText;
+      }
+      delete payload.faceImage;
+      // contextText already in payload via generic loop — keep it as-is.
+      break;
+    }
+    case 'past-life-guide': {
+      // photoKind: 'none' — text-only survey. eraVibe + optional contextText.
+      payload.posterType = 'past-life-guide';
+      const eraLabel = labels.eraVibe ?? readString(answers.eraVibe);
+      const ctxText = readString(answers.contextText);
+      const merged = [eraLabel, ctxText].filter(Boolean).join(' / ');
+      if (merged) {
+        payload.contextText = merged;
+      }
+      delete payload.eraVibe;
       break;
     }
     case 'past-life': {
