@@ -1,6 +1,7 @@
 export * from './analytics';
 export * from './characters';
 export * from './deep-links';
+export * from './feature-flags';
 export * from './fortune-result-normalizer';
 export * from './fortunes';
 export * from './onboarding';
