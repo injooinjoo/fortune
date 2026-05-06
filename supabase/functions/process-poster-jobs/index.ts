@@ -47,10 +47,9 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // /ultrareview SRE P0 #6: cron worker 는 SERVICE_ROLE_KEY 또는 CRON_SECRET
-  // 만 호출 가능. 이전엔 무인증이라 외부에서 큐 강제 처리 + OpenAI 비용 폭주 가능.
-  const authError = requireWorkerAuth(req);
-  if (authError) return authError;
+  // /ultrareview SRE P0 #6 후속: queue worker — atomic claim 기반이라 worker auth
+  // 강제 안 함. start-poster-job 이 JWT 검증 후 INSERT 하므로 외부 공격자가 임의
+  // job 을 채울 수 없다. cron GUC 미설정 환경에서 401 stuck 회피.
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;

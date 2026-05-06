@@ -3611,21 +3611,32 @@ export function ChatScreen() {
       scrollViewRef={chatScrollRef}
       header={
         gate === 'ready' && surfaceMode === 'chat' ? (
-          <ActiveCharacterChatHeader
-            character={selectedCharacter}
-            affinity={selectedStorySnapshot?.romanceState?.emotionalTemperature}
-            presenceLine={presenceLine}
-            onBack={() => {
-              setSurfaceMode('list');
-              setActiveFortuneType(null);
-            }}
-            onOpenProfile={() =>
-              router.push({
-                pathname: '/character/[id]',
-                params: { id: selectedCharacter.id, returnTo: '/chat' },
-              })
-            }
-          />
+          <View>
+            <ActiveCharacterChatHeader
+              character={selectedCharacter}
+              affinity={selectedStorySnapshot?.romanceState?.emotionalTemperature}
+              presenceLine={presenceLine}
+              onBack={() => {
+                setSurfaceMode('list');
+                setActiveFortuneType(null);
+              }}
+              onOpenProfile={() =>
+                router.push({
+                  pathname: '/character/[id]',
+                  params: { id: selectedCharacter.id, returnTo: '/chat' },
+                })
+              }
+            />
+            {/* 하늘이 채팅: 헤더 바로 아래 pinned banner — 카테고리 탭 + quick chips + 전체 보기. */}
+            {selectedCharacter.id === 'haneul_oracle' ? (
+              <HaneulQuickActions
+                activeCategory={haneulCategory}
+                onChangeCategory={setHaneulCategory}
+                onSelectEntry={handleSelectFortuneMenuEntry}
+                onOpenAllFortunes={() => setAllFortunesSheetVisible(true)}
+              />
+            ) : null}
+          </View>
         ) : undefined
       }
       footer={
@@ -3717,17 +3728,6 @@ export function ChatScreen() {
       ) : null}
 
       <OnDeviceTransitionToast />
-
-      {gate === 'ready' &&
-      surfaceMode === 'chat' &&
-      selectedCharacter.id === 'haneul_oracle' ? (
-        <HaneulQuickActions
-          activeCategory={haneulCategory}
-          onChangeCategory={setHaneulCategory}
-          onSelectEntry={handleSelectFortuneMenuEntry}
-          onOpenAllFortunes={() => setAllFortunesSheetVisible(true)}
-        />
-      ) : null}
 
       {gate === 'ready' ? (
         surfaceMode === 'chat' ? (

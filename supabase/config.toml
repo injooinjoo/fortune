@@ -12,3 +12,44 @@ verify_jwt = false
 
 [functions.feature-flag-exposure-log]
 verify_jwt = false
+
+# Cron-only queue workers — pg_cron 이 net.http_post 로 호출. atomic claim
+# 기반이라 외부 호출되어도 안전 (start-* edge function 이 JWT 로 큐 INSERT 검증).
+[functions.process-long-running-jobs]
+verify_jwt = false
+
+[functions.process-poster-jobs]
+verify_jwt = false
+
+[functions.deliver-due-replies]
+verify_jwt = false
+
+[functions.proactive-message-dispatch]
+verify_jwt = false
+
+# fortune-* 함수: 클라가 직접 호출 (실 user JWT) + 워커가 호출 (service_role +
+# X-Internal-User-Id 헤더). 게이트웨이 verify_jwt 가 신형 service_role 키
+# 형식을 거부하므로 비활성. 진짜 auth 는 함수 안 deriveUserIdFromJwt 가 담당.
+[functions.fortune-tarot]
+verify_jwt = false
+
+[functions.fortune-dream]
+verify_jwt = false
+
+[functions.fortune-compatibility]
+verify_jwt = false
+
+[functions.fortune-traditional-saju]
+verify_jwt = false
+
+[functions.fortune-health-document]
+verify_jwt = false
+
+[functions.fortune-face-reading]
+verify_jwt = false
+
+[functions.fortune-ootd]
+verify_jwt = false
+
+[functions.fortune-palm-reading]
+verify_jwt = false

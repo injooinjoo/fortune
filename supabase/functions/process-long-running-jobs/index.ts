@@ -35,9 +35,10 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // /ultrareview SRE P0 #6: cron worker 인증 강제.
-  const authError = requireWorkerAuth(req);
-  if (authError) return authError;
+  // /ultrareview SRE P0 #6 후속: queue worker 는 atomic claim 기반이라 worker
+  // auth 강제 안 함. start-long-running-job 이 JWT 검증 후 INSERT 하므로 외부
+  // 공격자가 임의 job 을 채울 수 없다. cron GUC (app.settings.service_role_key)
+  // 미설정 환경에서 401 stuck 회피.
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
