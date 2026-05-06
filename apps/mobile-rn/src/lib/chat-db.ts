@@ -46,6 +46,24 @@ const ANIMATE_STRIP_FLAG_KEY = 'fortune.chat.db.animate-stripped.v1';
 const LEGACY_CACHE_PREFIX = 'fortune.chat.msgs.v1';
 
 /**
+ * Module-level transaction queue — expo-sqlite 의 `withTransactionAsync` 가
+ * 같은 connection 에서 nested transaction 시도하면
+ * "cannot start a transaction within a transaction" 으로 fail. 사용자가
+ * chip 빠르게 탭하거나 append/replace/update 가 동시에 호출되면 발생.
+ *
+ * 모든 transaction 함수가 이 queue 를 통과하면 직렬화되어 race 0.
+ * 이전 transaction 이 reject 되어도 queue 자체는 끊지 않는다.
+ */
+let txQueue: Promise<unknown> = Promise.resolve();
+
+async function runTx<T>(body: () => Promise<T>): Promise<T> {
+  const next = txQueue.then(() => body());
+  // queue 는 다음 작업 chain 용 — body 가 throw 해도 다음 tx 는 진행되어야 함.
+  txQueue = next.catch(() => undefined);
+  return next;
+}
+
+/**
  * 영속 직렬화 직전에 메시지에서 transient UI 플래그를 제거.
  *
  * `animate: true` 는 "방금 생성된 어시스턴트 메시지에 일회성 fade-up 애니메이션
@@ -197,7 +215,7 @@ export async function appendMessages(
 ): Promise<void> {
   if (!isChatDbAvailable || messages.length === 0) return;
   const db = await openChatDb();
-  await db.withTransactionAsync(async () => {
+  await runTx(() => db.withTransactionAsync(async () => {
     const maxRow = await db.getFirstAsync<{ max_seq: number | null }>(
       'SELECT MAX(seq) AS max_seq FROM chat_messages WHERE character_id = ?',
       [characterId],
@@ -223,7 +241,7 @@ export async function appendMessages(
       );
       nextSeq += 1;
     }
-  });
+  }));
 }
 
 /**
@@ -239,7 +257,7 @@ export async function replaceAllMessages(
 ): Promise<void> {
   if (!isChatDbAvailable) return;
   const db = await openChatDb();
-  await db.withTransactionAsync(async () => {
+  await runTx(() => db.withTransactionAsync(async () => {
     await db.runAsync('DELETE FROM chat_messages WHERE character_id = ?', [
       characterId,
     ]);
@@ -264,7 +282,7 @@ export async function replaceAllMessages(
       );
       seq += 1;
     }
-  });
+  }));
 }
 
 /**
@@ -393,7 +411,7 @@ async function runOneTimeBackfill(db: SQLite.SQLiteDatabase): Promise<void> {
 
     // SQLite 로 INSERT. INSERT OR IGNORE 라 같은 캐릭터에 대한 부분 백필이
     // 이미 있어도 안전.
-    await db.withTransactionAsync(async () => {
+    await runTx(() => db.withTransactionAsync(async () => {
       let seq = 1;
       const now = Date.now();
       for (const message of messages) {
@@ -414,7 +432,7 @@ async function runOneTimeBackfill(db: SQLite.SQLiteDatabase): Promise<void> {
         );
         seq += 1;
       }
-    });
+    }));
 
     // SQLite 에 안전하게 들어갔으므로 SecureStore 키 정리. chunked layout 의
     // 모든 보조 키 (active pointer, __v0/__v1 chunks, legacy chunks) 까지 한
