@@ -1035,6 +1035,12 @@ export function ChatScreen() {
   // "내가 마지막인 채로 멈춘 자리에서 자연스럽게 답장이 이어져야" 하므로
   // 진입 시 한 번만 자동으로 send 핸들러를 호출 (skipOptimistic=true 로
   // user 메시지 중복 추가 방지).
+  //
+  // 서버측 안전망(pending_character_reply_jobs cron, 30초 grace)이 추가된 후엔
+  // 이 hook 은 보조 트리거 — 보통 cron 이 먼저 처리해 push 로 답장 도착, 진입
+  // 시 last 가 이미 assistant. last 가 여전히 user 인 케이스(앱이 cron 보다
+  // 먼저 살아남, 최근 send 직후 진입 등)에서 enqueue RPC 가 idempotent (same
+  // user_message_id) 라 중복 row 없이 안전하게 invoke 만 트리거.
   const autoResumedUserMessageIdsRef = useRef<Set<string>>(new Set());
   useEffect(() => {
     if (gate !== 'ready') return;
@@ -1655,6 +1661,11 @@ export function ChatScreen() {
       }
 
       if (session) {
+        // 설문 완료 후 LLM 호출 직전 cost confirm. catalog entry 없으면 통과.
+        const ok = await confirmCostForFortune(completed.fortuneType);
+        if (!ok) {
+          return;
+        }
         try {
           // PR-0a: idempotencyKey 호출 단위 unique. reference_id 도 같은 값으로
           // 두어 같은 운세 결과의 환불이 필요할 때 단일 키로 추적 가능.
@@ -1780,6 +1791,10 @@ export function ChatScreen() {
 
     // 토큰 차감 — 큐 등록 성공이라 차감 OK (cron 이 처리할 것)
     if (session) {
+      const ok = await confirmCostForFortune(completed.fortuneType);
+      if (!ok) {
+        return;
+      }
       try {
         // PR-0a: jobId 가 이미 unique — referenceId/idempotencyKey 동일 값으로 사용.
         const jobConsumeKey = `fortune:${character.id}:${completed.fortuneType}:${result.jobId}`;
@@ -1871,6 +1886,10 @@ export function ChatScreen() {
     }
 
     if (session) {
+      const ok = await confirmCostForFortune(completed.fortuneType);
+      if (!ok) {
+        return;
+      }
       try {
         // PR-0a: jobId 가 이미 unique — referenceId/idempotencyKey 동일 값으로 사용.
         const longRunConsumeKey = `fortune:${character.id}:${completed.fortuneType}:${result.jobId}`;
@@ -2033,42 +2052,74 @@ export function ChatScreen() {
     handleCharacterActionPress(selectedCharacter.id, fortuneType);
   }
 
-  // PR-B2: 하늘이 운세 메뉴 entry 탭 — cost confirmation modal 띄우고 확인 시
-  // 기존 fortune flow 로 라우팅. cancel / 부족 시 충전 페이지.
+  // 운세 cost confirm modal — UX 결정: entry 선택 직후가 아니라 LLM 호출 직전
+  // (설문 완료 후 마지막 단계) 에 노출. 사용자가 설문 매몰된 상태라 거부감 ↓.
+  // entry 선택 시점엔 modal 안 띄우고 흐름만 시작. consumeRemoteTokens 호출
+  // 직전에 showCostConfirm(entry) 으로 동의 받음.
   const [pendingMenuEntry, setPendingMenuEntry] =
     useState<FortuneCatalogEntry | null>(null);
   const [costSheetVisible, setCostSheetVisible] = useState(false);
+  const costConfirmResolverRef = useRef<((ok: boolean) => void) | null>(null);
 
   // 하늘이 "모든 운세" bottom sheet — view-all chip 또는 외부 트리거로 열림.
   const [allFortunesSheetVisible, setAllFortunesSheetVisible] = useState(false);
 
-  const handleSelectFortuneMenuEntry = useCallback(
-    (entry: FortuneCatalogEntry) => {
+  // Promise 기반 cost confirm. 호출자는 await 으로 동의 여부 받아 흐름 분기.
+  // resolver 는 ref 에 저장 — modal confirm/cancel 핸들러에서 resolve.
+  const showCostConfirm = useCallback(
+    (entry: FortuneCatalogEntry): Promise<boolean> => {
       setPendingMenuEntry(entry);
       setCostSheetVisible(true);
+      return new Promise<boolean>((resolve) => {
+        costConfirmResolverRef.current = resolve;
+      });
     },
     [],
   );
 
-  const handleConfirmCostSheet = useCallback(() => {
-    if (pendingMenuEntry) {
+  // catalog 에 entry 가 있으면 cost confirm 받기, 없으면 그냥 통과.
+  // fortuneType 별로 catalog 에 등록된 운세는 cost confirm, 아니면 (예: 'view-all',
+  // 'character-chat', 채팅 차감 등) 무모달 진행.
+  const confirmCostForFortune = useCallback(
+    async (fortuneType: FortuneTypeId): Promise<boolean> => {
+      const entry = findCatalogEntry(fortuneType);
+      if (!entry) return true;
+      return showCostConfirm(entry);
+    },
+    [showCostConfirm],
+  );
+
+  // entry 선택 — modal 안 띄움. 바로 fortune 흐름 시작 (설문 등). 차감 동의는
+  // 설문 끝나고 LLM 호출 직전 (consumeRemoteTokens 직전) 에 받는다.
+  const handleSelectFortuneMenuEntry = useCallback(
+    (entry: FortuneCatalogEntry) => {
       handleCharacterActionPress(
         selectedCharacter.id,
-        pendingMenuEntry.id as FortuneTypeId,
+        entry.id as FortuneTypeId,
       );
-    }
+    },
+    [selectedCharacter.id],
+  );
+
+  const handleConfirmCostSheet = useCallback(() => {
     setCostSheetVisible(false);
     setPendingMenuEntry(null);
-  }, [pendingMenuEntry, selectedCharacter.id]);
+    costConfirmResolverRef.current?.(true);
+    costConfirmResolverRef.current = null;
+  }, []);
 
   const handleCancelCostSheet = useCallback(() => {
     setCostSheetVisible(false);
     setPendingMenuEntry(null);
+    costConfirmResolverRef.current?.(false);
+    costConfirmResolverRef.current = null;
   }, []);
 
   const handleTopUpFromCostSheet = useCallback(() => {
     setCostSheetVisible(false);
     setPendingMenuEntry(null);
+    costConfirmResolverRef.current?.(false);
+    costConfirmResolverRef.current = null;
     router.push('/premium' as Href);
   }, []);
 
@@ -2571,6 +2622,11 @@ export function ChatScreen() {
       if (sendOptions?.imageBase64) {
         invokeOptions.imageBase64 = sendOptions.imageBase64;
       }
+      // pending_character_reply_jobs 큐 enqueue 키 — invokeStoryChat 의 cloud
+      // 경로에서 사용. 자동 재개/재시도가 같은 user 메시지로 들어와도 idempotent.
+      if (effectiveUserMessageId) {
+        invokeOptions.userMessageId = effectiveUserMessageId;
+      }
 
       const invokeWithRetry = async () => {
         let lastError: unknown;
@@ -2968,24 +3024,58 @@ export function ChatScreen() {
       // 서버는 이 id 로 reveal claim (race-free).
       const pendingProactiveMessageId = consumePendingProactiveMessageId(character.id);
 
+      const characterChatBody = {
+        characterId: character.id,
+        characterName: character.name,
+        characterTraits: character.shortDescription,
+        conceptType,
+        systemPrompt: customFriend
+          ? `너는 "${character.name}"이다. AI 어시스턴트가 아니라 실제 감정을 가진 사람이다. ${customFriend.scenario ? `상황: ${customFriend.scenario}. ` : ''}성격: ${customFriend.personalityTags.join(', ')}. ${customFriend.memoryNote ? `기억: ${customFriend.memoryNote}. ` : ''}스타일: ${customFriend.stylePreset || '자연스러운 대화'}. 사용자와 ${customFriend.relationship === 'friend' ? '친구' : customFriend.relationship === 'crush' ? '썸 상대' : customFriend.relationship === 'partner' ? '연인' : '동료'} 관계야.${personaSuffix}`
+          : `너는 "${character.name}"이다. ${character.shortDescription}.${personaSuffix}`,
+        userDescription: customPersona ? `[유저 커스텀 성격 요청] ${customPersona}` : undefined,
+        messages: recentMessages,
+        userMessage: trimmed,
+        userName:
+          (session?.user.user_metadata.name as string | undefined) ||
+          (session?.user.user_metadata.full_name as string | undefined) ||
+          mobileAppState.profile.displayName ||
+          'user',
+        ...(pendingProactiveMessageId ? { pendingProactiveMessageId } : {}),
+      };
+
+      // 답장 생성 큐 enqueue — 앱이 이 라인 이후 어느 시점에 죽어도 cron 이
+      // 30초 grace 후 같은 페이로드로 character-chat 재호출 → 답장 도달 보장.
+      // 회귀 안전: enqueue 실패해도 invoke 는 그대로 진행 (jobId 없이) — 기존 동작.
+      let pendingReplyJobId: string | undefined;
+      if (session && effectiveUserMessageId) {
+        try {
+          const { data: enqueueData, error: enqueueError } = await supabase.rpc(
+            'enqueue_pending_reply_job',
+            {
+              p_character_id: character.id,
+              p_character_name: character.name,
+              p_user_message_id: effectiveUserMessageId,
+              p_user_message: trimmed,
+              p_request_payload: characterChatBody,
+            },
+          );
+          if (enqueueError) {
+            console.warn(
+              '[chat] enqueue_pending_reply_job 실패:',
+              enqueueError.message,
+            );
+          } else if (Array.isArray(enqueueData) && enqueueData[0]?.job_id) {
+            pendingReplyJobId = enqueueData[0].job_id as string;
+          }
+        } catch (jobEnqueueErr) {
+          console.warn('[chat] enqueue_pending_reply_job 예외:', jobEnqueueErr);
+        }
+      }
+
       const { data, error } = await supabase.functions.invoke('character-chat', {
         body: {
-          characterId: character.id,
-          characterName: character.name,
-          characterTraits: character.shortDescription,
-          conceptType,
-          systemPrompt: customFriend
-            ? `너는 "${character.name}"이다. AI 어시스턴트가 아니라 실제 감정을 가진 사람이다. ${customFriend.scenario ? `상황: ${customFriend.scenario}. ` : ''}성격: ${customFriend.personalityTags.join(', ')}. ${customFriend.memoryNote ? `기억: ${customFriend.memoryNote}. ` : ''}스타일: ${customFriend.stylePreset || '자연스러운 대화'}. 사용자와 ${customFriend.relationship === 'friend' ? '친구' : customFriend.relationship === 'crush' ? '썸 상대' : customFriend.relationship === 'partner' ? '연인' : '동료'} 관계야.${personaSuffix}`
-            : `너는 "${character.name}"이다. ${character.shortDescription}.${personaSuffix}`,
-          userDescription: customPersona ? `[유저 커스텀 성격 요청] ${customPersona}` : undefined,
-          messages: recentMessages,
-          userMessage: trimmed,
-          userName:
-            (session?.user.user_metadata.name as string | undefined) ||
-            (session?.user.user_metadata.full_name as string | undefined) ||
-            mobileAppState.profile.displayName ||
-            'user',
-          ...(pendingProactiveMessageId ? { pendingProactiveMessageId } : {}),
+          ...characterChatBody,
+          ...(pendingReplyJobId ? { jobId: pendingReplyJobId } : {}),
         },
       });
 
