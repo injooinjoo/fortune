@@ -9,10 +9,6 @@ import {
 import * as Crypto from 'expo-crypto';
 import { type FortuneTypeId } from '@fortune/product-contracts';
 import { AllFortunesSheet } from '../features/haneul/all-fortunes-sheet';
-import {
-  HaneulQuickActions,
-  type HaneulCategoryId,
-} from '../features/haneul/haneul-quick-actions';
 import { Alert, Dimensions, Keyboard, Modal, Pressable, ScrollView, TextInput, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
@@ -90,7 +86,7 @@ import {
 } from '../lib/chat-characters';
 import { useFeatureFlag } from '../lib/feature-flags';
 import { CostConfirmationSheet } from '../features/fortune-results/cost-confirmation-sheet';
-import type { FortuneCatalogEntry } from '@fortune/product-contracts';
+import { findCatalogEntry, type FortuneCatalogEntry } from '@fortune/product-contracts';
 import { setChatLastSeenForCharacter } from '../lib/storage';
 import { getSecureItem, setSecureItem } from '../lib/secure-store-storage';
 import { supabase } from '../lib/supabase';
@@ -1979,13 +1975,28 @@ export function ChatScreen() {
     fortuneType: FortuneTypeId,
   ) {
     const character = findChatCharacterById(characterId, createdFriends) ?? selectedCharacter;
+
+    // 'view-all' 메타 — 결과 화면 매핑 없음. AllFortunesSheet 열고 종료.
+    if (fortuneType === 'view-all') {
+      setAllFortunesSheetVisible(true);
+      return;
+    }
+
     const action = buildSuggestedActions(character).find(
       (candidate) => candidate.fortuneType === fortuneType,
     );
+    // 카탈로그 fallback — buildSuggestedActions 에 없는 fortuneType (대다수 catalog
+    // entry) 도 cost confirm 후 진행되도록. 이전엔 silent return 으로 무동작.
+    const catalogEntry = action ? null : findCatalogEntry(fortuneType);
 
-    if (!action) {
+    if (!action && !catalogEntry) {
       return;
     }
+
+    const prompt =
+      action?.prompt ?? `${catalogEntry!.displayName} 부탁해요.`;
+    const reply =
+      action?.reply ?? `${catalogEntry!.displayName} 흐름 같이 짚어볼게.`;
 
     setSelectedCharacterId(character.id);
     setActiveTab(character.kind);
@@ -1994,8 +2005,8 @@ export function ChatScreen() {
     setSurfaceMode('chat');
     setComposerTrayOpen(false);
     appendMessages(character, [
-      buildUserMessage(action.prompt),
-      buildAssistantTextMessage(action.reply),
+      buildUserMessage(prompt),
+      buildAssistantTextMessage(reply),
     ]);
     recordChatIntent({
       characterId: character.id,
@@ -2028,10 +2039,8 @@ export function ChatScreen() {
     useState<FortuneCatalogEntry | null>(null);
   const [costSheetVisible, setCostSheetVisible] = useState(false);
 
-  // 하늘이 "모든 운세" bottom sheet — composer 위에 슬라이드업, 카탈로그 그리드.
+  // 하늘이 "모든 운세" bottom sheet — view-all chip 또는 외부 트리거로 열림.
   const [allFortunesSheetVisible, setAllFortunesSheetVisible] = useState(false);
-  // 하늘이 quick-actions 카테고리 — sheet 와 chat 위 banner 가 공유.
-  const [haneulCategory, setHaneulCategory] = useState<HaneulCategoryId>('today');
 
   const handleSelectFortuneMenuEntry = useCallback(
     (entry: FortuneCatalogEntry) => {
@@ -3627,15 +3636,6 @@ export function ChatScreen() {
                 })
               }
             />
-            {/* 하늘이 채팅: 헤더 바로 아래 pinned banner — 카테고리 탭 + quick chips + 전체 보기. */}
-            {selectedCharacter.id === 'haneul_oracle' ? (
-              <HaneulQuickActions
-                activeCategory={haneulCategory}
-                onChangeCategory={setHaneulCategory}
-                onSelectEntry={handleSelectFortuneMenuEntry}
-                onOpenAllFortunes={() => setAllFortunesSheetVisible(true)}
-              />
-            ) : null}
           </View>
         ) : undefined
       }
@@ -3798,7 +3798,6 @@ export function ChatScreen() {
       <AllFortunesSheet
         visible={allFortunesSheetVisible}
         onClose={() => setAllFortunesSheetVisible(false)}
-        initialCategory={haneulCategory}
         onSelect={(entry) => {
           setAllFortunesSheetVisible(false);
           handleSelectFortuneMenuEntry(entry);
