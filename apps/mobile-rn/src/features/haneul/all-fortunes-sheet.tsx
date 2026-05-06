@@ -212,15 +212,21 @@ export function AllFortunesSheet({
             </Pressable>
           </View>
 
-          {/* 카테고리 chip 가로 스크롤 */}
+          {/* 카테고리 chip 가로 스크롤. alignItems:'center' 없으면 부모 고정
+              높이 + ScrollView 디폴트 stretch 로 chip 이 세로로 늘어남. */}
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{
               gap: fortuneTheme.spacing.xs,
               paddingVertical: fortuneTheme.spacing.xs,
+              alignItems: 'center',
             }}
-            style={{ marginBottom: fortuneTheme.spacing.sm }}
+            style={{
+              marginBottom: fortuneTheme.spacing.sm,
+              flexGrow: 0,
+              flexShrink: 0,
+            }}
           >
             {FILTER_PILLS.map((pill) => {
               const isActive = activeFilter === pill.id;
