@@ -37,6 +37,13 @@ jobs:
             exit 1
           fi
 
+      - name: Check edge pricing SoT sync
+        run: |
+          if ! npm run check:edge-pricing; then
+            echo "::error::Edge pricing drift detected — supabase/functions/_shared/fortune-pricing-generated.ts is not in sync with packages/product-contracts/src/fortune-pricing.ts. Run 'pnpm sync:edge-pricing' and commit the generated file."
+            exit 1
+          fi
+
       - name: Check Paper design contract drift
         run: npm run paper:guard
 

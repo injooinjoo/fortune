@@ -33,6 +33,8 @@
     "test:codegen": "playwright codegen",
     "rn:typecheck": "npm run typecheck --workspace @fortune/product-contracts --workspace @fortune/design-tokens --workspace @fortune/mobile-rn",
     "rn:test": "npm run test --workspace @fortune/product-contracts",
+    "sync:edge-pricing": "bash scripts/sync-edge-pricing.sh",
+    "check:edge-pricing": "bash scripts/sync-edge-pricing.sh && git diff --exit-code -- supabase/functions/_shared/fortune-pricing-generated.ts",
     "lighthouse": "lhci autorun",
     "serve:build": "npx serve build/web -l 3000 --single",
     "paper:guard": "node scripts/design/paper_sync_guard.js",

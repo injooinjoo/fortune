@@ -53,12 +53,16 @@ const TODAY_FORTUNE_IDS: ReadonlyArray<string> = [
 // 카테고리별 chip 색 — 디자인의 dot 색감과 일치.
 const GROUP_BULLET_COLORS: Record<FortuneCatalogGroupId, string> = {
   tarot_saju: '#A78BFA',
+  love: '#EC4899',
+  career_money: '#FBBF24',
+  lifestyle: '#34D399',
+  premium_guide: '#F59E0B',
   health: '#F472B6',
   sports_game: '#60A5FA',
   meditation: '#22D3EE',
-  personality: '#FBBF24',
-  coaching: '#34D399',
-  past_life: '#F59E0B',
+  personality: '#C084FC',
+  coaching: '#14B8A6',
+  past_life: '#DC2626',
 };
 
 const FILTER_PILLS: ReadonlyArray<FilterPill> = [
@@ -73,20 +77,64 @@ const FILTER_PILLS: ReadonlyArray<FilterPill> = [
 // 카탈로그 entry 의 fortune type id → Ionicons 이름. 미지정은 sparkles.
 function iconForFortune(id: string): keyof typeof Ionicons.glyphMap {
   const map: Record<string, keyof typeof Ionicons.glyphMap> = {
+    // tarot_saju
     daily: 'sunny-outline',
-    biorhythm: 'pulse-outline',
-    'lucky-items': 'gift-outline',
-    'fortune-cookie': 'sparkles-outline',
     tarot: 'albums-outline',
     'traditional-saju': 'grid-outline',
+    'daily-calendar': 'calendar-outline',
+    naming: 'create-outline',
+    'new-year': 'star-outline',
+    // love
+    love: 'heart-outline',
+    compatibility: 'people-outline',
+    'blind-date': 'cafe-outline',
+    'ex-lover': 'arrow-undo-outline',
+    'avoid-people': 'shield-outline',
+    'yearly-encounter': 'sparkles-outline',
+    celebrity: 'star-half-outline',
+    'blind-date-guide': 'shirt-outline',
+    family: 'home-outline',
+    'pet-compatibility': 'paw-outline',
+    // career_money
+    career: 'briefcase-outline',
+    exam: 'school-outline',
+    talent: 'rocket-outline',
+    wealth: 'cash-outline',
+    // lifestyle
+    moving: 'business-outline',
+    'lucky-items': 'gift-outline',
+    'ootd-evaluation': 'shirt-outline',
+    'fortune-cookie': 'sparkles-outline',
+    birthstone: 'diamond-outline',
+    // premium_guide
+    'face-reading': 'eye-outline',
+    'palm-reading': 'hand-left-outline',
+    'beauty-simulation': 'color-wand-outline',
+    'hair-style-guide': 'cut-outline',
+    'face-reading-guide': 'happy-outline',
+    'ootd-guide': 'shirt-outline',
+    'past-life-guide': 'time-outline',
+    wish: 'flash-outline',
+    // health
     health: 'heart-circle-outline',
+    biorhythm: 'pulse-outline',
+    exercise: 'barbell-outline',
+    // sports_game
     'match-insight': 'trophy-outline',
     'game-enhance': 'game-controller-outline',
+    // meditation
     breathing: 'leaf-outline',
+    // personality
     'personality-dna': 'person-outline',
     mbti: 'text-outline',
+    'blood-type': 'water-outline',
+    'zodiac-animal': 'globe-outline',
+    // coaching
     coaching: 'compass-outline',
     'daily-review': 'moon-outline',
+    'weekly-review': 'calendar-clear-outline',
+    decision: 'options-outline',
+    // past_life
     'past-life': 'infinite-outline',
   };
   return map[id] ?? 'sparkles-outline';
@@ -137,17 +185,24 @@ export function AllFortunesSheet({
       transparent
       onRequestClose={onClose}
     >
-      <Pressable
-        onPress={onClose}
-        accessibilityRole="button"
-        accessibilityLabel="닫기"
-        style={{
-          flex: 1,
-          backgroundColor: 'rgba(0,0,0,0.55)',
-          justifyContent: 'flex-end',
-        }}
-      >
-        {/* 시트 본체. 내부 탭은 stopPropagation 효과 — Pressable wrap 없이. */}
+      {/* 컨테이너: backdrop 과 sheet 본체를 분리. backdrop 은 absolute Pressable.
+          sheet 본체는 일반 View 라 자식 ScrollView 의 horizontal swipe 가 살아 있음.
+          이전 onStartShouldSetResponder 패턴은 모든 touch 를 가로채 chip 가로 스크롤 차단. */}
+      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+        <Pressable
+          onPress={onClose}
+          accessibilityRole="button"
+          accessibilityLabel="닫기"
+          // eslint-disable-next-line react-native/no-inline-styles
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.55)',
+          }}
+        />
         <View
           // eslint-disable-next-line react-native/no-inline-styles
           style={{
@@ -160,7 +215,6 @@ export function AllFortunesSheet({
             // 사용자 결정: 컨텐츠 양과 무관하게 고정 높이. 아래쪽 여백 남는 건 OK.
             height: 620,
           }}
-          onStartShouldSetResponder={() => true}
         >
           {/* drag handle */}
           <View
@@ -315,7 +369,7 @@ export function AllFortunesSheet({
             </View>
           </ScrollView>
         </View>
-      </Pressable>
+      </View>
     </Modal>
   );
 }
