@@ -12,7 +12,7 @@
  * SoT: FORTUNE_CATALOG (PR-A) — 13 entries × 7 groups + synthetic "오늘".
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
 import {
@@ -110,14 +110,24 @@ export interface AllFortunesSheetProps {
   visible: boolean;
   onClose: () => void;
   onSelect: (entry: FortuneCatalogEntry) => void;
+  /** 시트 열릴 때 동기화할 초기 카테고리. quick-actions banner 와 공유. */
+  initialCategory?: SelectableGroupId;
 }
 
 export function AllFortunesSheet({
   visible,
   onClose,
   onSelect,
+  initialCategory = 'today',
 }: AllFortunesSheetProps) {
-  const [activeFilter, setActiveFilter] = useState<SelectableGroupId>('today');
+  const [activeFilter, setActiveFilter] =
+    useState<SelectableGroupId>(initialCategory);
+
+  // sheet 열릴 때마다 banner 의 활성 카테고리와 동기화.
+  useEffect(() => {
+    if (visible) setActiveFilter(initialCategory);
+  }, [visible, initialCategory]);
+
   const entries = entriesForFilter(activeFilter);
 
   return (
@@ -147,7 +157,8 @@ export function AllFortunesSheet({
             paddingTop: fortuneTheme.spacing.sm,
             paddingHorizontal: fortuneTheme.spacing.md,
             paddingBottom: fortuneTheme.spacing.xl,
-            maxHeight: '88%',
+            // 사용자 결정: 컨텐츠 양과 무관하게 고정 높이. 아래쪽 여백 남는 건 OK.
+            height: 620,
           }}
           onStartShouldSetResponder={() => true}
         >

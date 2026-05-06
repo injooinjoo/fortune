@@ -8,8 +8,11 @@ import {
 } from 'expo-router';
 import * as Crypto from 'expo-crypto';
 import { type FortuneTypeId } from '@fortune/product-contracts';
-import { Ionicons } from '@expo/vector-icons';
 import { AllFortunesSheet } from '../features/haneul/all-fortunes-sheet';
+import {
+  HaneulQuickActions,
+  type HaneulCategoryId,
+} from '../features/haneul/haneul-quick-actions';
 import { Alert, Dimensions, Keyboard, Modal, Pressable, ScrollView, TextInput, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
@@ -2027,6 +2030,8 @@ export function ChatScreen() {
 
   // 하늘이 "모든 운세" bottom sheet — composer 위에 슬라이드업, 카탈로그 그리드.
   const [allFortunesSheetVisible, setAllFortunesSheetVisible] = useState(false);
+  // 하늘이 quick-actions 카테고리 — sheet 와 chat 위 banner 가 공유.
+  const [haneulCategory, setHaneulCategory] = useState<HaneulCategoryId>('today');
 
   const handleSelectFortuneMenuEntry = useCallback(
     (entry: FortuneCatalogEntry) => {
@@ -3713,6 +3718,17 @@ export function ChatScreen() {
 
       <OnDeviceTransitionToast />
 
+      {gate === 'ready' &&
+      surfaceMode === 'chat' &&
+      selectedCharacter.id === 'haneul_oracle' ? (
+        <HaneulQuickActions
+          activeCategory={haneulCategory}
+          onChangeCategory={setHaneulCategory}
+          onSelectEntry={handleSelectFortuneMenuEntry}
+          onOpenAllFortunes={() => setAllFortunesSheetVisible(true)}
+        />
+      ) : null}
+
       {gate === 'ready' ? (
         surfaceMode === 'chat' ? (
           <ActiveCharacterChatSurface
@@ -3779,46 +3795,10 @@ export function ChatScreen() {
         )
       ) : null}
 
-      {/* 하늘이 "모든 운세" sheet — selectedCharacter 가 haneul_oracle 이면
-           composer 위 floating 트리거 + sheet 노출. */}
-      {selectedCharacter.id === 'haneul_oracle' && surfaceMode === 'chat' && gate === 'ready' ? (
-        <View
-          pointerEvents="box-none"
-          style={{
-            position: 'absolute',
-            right: 16,
-            bottom: 96,
-            zIndex: 100,
-          }}
-        >
-          <Pressable
-            onPress={() => setAllFortunesSheetVisible(true)}
-            accessibilityRole="button"
-            accessibilityLabel="모든 운세 보기"
-            style={({ pressed }) => ({
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 6,
-              paddingHorizontal: 14,
-              paddingVertical: 10,
-              borderRadius: 999,
-              backgroundColor: 'rgba(245,158,11,0.18)',
-              borderWidth: 1,
-              borderColor: '#F59E0B',
-              opacity: pressed ? 0.84 : 1,
-            })}
-          >
-            <Ionicons name="grid-outline" size={16} color="#F59E0B" />
-            <AppText variant="labelMedium" color="#F59E0B">
-              모든 운세
-            </AppText>
-          </Pressable>
-        </View>
-      ) : null}
-
       <AllFortunesSheet
         visible={allFortunesSheetVisible}
         onClose={() => setAllFortunesSheetVisible(false)}
+        initialCategory={haneulCategory}
         onSelect={(entry) => {
           setAllFortunesSheetVisible(false);
           handleSelectFortuneMenuEntry(entry);

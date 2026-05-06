@@ -346,6 +346,42 @@ export function buildSuggestedActions(
     return [];
   }
 
+  // 하늘이 통합: FORTUNE_CATALOG 가 메뉴 SoT 라 specialties 가 비어있음.
+  // 빈 리스트가 아니라 cold-start 추천 칩 4개 (메타 1 + direct 3) 노출.
+  if (character.id === 'haneul_oracle') {
+    return [
+      {
+        // 메타 칩 — view-all 은 chat-screen 이 fortune-menu 카드 발행으로 분기
+        id: 'haneul_oracle:menu',
+        fortuneType: 'view-all' as const,
+        label: '하늘이가 뭘 보는지 보여줘',
+        prompt: '하늘이가 뭘 볼 수 있어?',
+        reply: '내가 같이 봐줄 수 있는 거 펼쳐 볼게.',
+      },
+      {
+        id: 'haneul_oracle:tarot',
+        fortuneType: 'tarot' as const,
+        label: '오늘 타로 한 장',
+        prompt: '오늘 타로 한 장만 봐줘.',
+        reply: '한 장 뽑아볼게.',
+      },
+      {
+        id: 'haneul_oracle:traditional-saju',
+        fortuneType: 'traditional-saju' as const,
+        label: '사주 한 줄',
+        prompt: '내 사주 한 줄로 정리해줘.',
+        reply: '사주 흐름 짚어볼게.',
+      },
+      {
+        id: 'haneul_oracle:health',
+        fortuneType: 'health' as const,
+        label: '요즘 컨디션 흐름',
+        prompt: '요즘 컨디션 흐름 어때?',
+        reply: '몸·마음 흐름 같이 봐줄게.',
+      },
+    ];
+  }
+
   return character.specialties.map((fortuneType) => ({
     id: `${character.id}:${fortuneType}`,
     fortuneType,

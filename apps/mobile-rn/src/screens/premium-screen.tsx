@@ -141,12 +141,18 @@ export function PremiumScreen() {
     session != null &&
     selectedProduct.isSubscription &&
     state.premium.activeProductId === selectedProduct.id;
+  // 선택 상품의 스토어 가격이 로드되지 않았다면 (SKU 미등록 / Paid Apps Agreement
+   // 미체결 / 샌드박스 상품 누락) 결제 시작 자체가 실패한다. 이 경우 버튼을
+   // 비활성으로 두면 grayed out 만 보여 Apple 2.1(b) 거절(2026-04-28) 패턴으로
+   // 보이므로, 가격 미로드 시 명시 메시지를 띄우는 별도 핸들러로 라우팅한다.
+  const isStoreProductReady =
+    storeStatus === 'ready' && Boolean(storePriceLabels[selectedProductId]);
   const canTriggerPurchase =
     session != null &&
     !canManageSelectedSubscription &&
     actionState === 'idle' &&
     !isPurchasePending &&
-    storeStatus === 'ready';
+    isStoreProductReady;
 
   async function handleRefresh() {
     if (actionState !== 'idle') {
@@ -309,7 +315,10 @@ export function PremiumScreen() {
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
           {storeStatus === 'loading'
             ? '스토어 상품 정보를 불러오는 중이에요.'
-            : storeError ?? 'App Store에 등록된 현재 판매 상품만 보여드려요.'}
+            : storeStatus === 'error'
+              ? storeError ??
+                '스토어 연결에 실패했어요. 네트워크 상태를 확인하고 새로고침해 주세요.'
+              : 'App Store에 등록된 현재 판매 상품만 보여드려요.'}
         </AppText>
         {subscriptions.map((product) => (
           <ProductOption
@@ -483,11 +492,15 @@ export function PremiumScreen() {
           >
             {isPurchasePending
               ? '결제 진행 중...'
-              : selectedProduct.isSubscription
-                ? '구독 시작하기'
-                : selectedProduct.points > 0
-                  ? '토큰 충전하기'
-                  : '평생 소장 구매하기'}
+              : storeStatus === 'loading'
+                ? '스토어 준비 중...'
+                : !isStoreProductReady
+                  ? '스토어 상품 확인 필요'
+                  : selectedProduct.isSubscription
+                    ? '구독 시작하기'
+                    : selectedProduct.points > 0
+                      ? '토큰 충전하기'
+                      : '평생 소장 구매하기'}
           </PrimaryButton>
         )}
         <PrimaryButton

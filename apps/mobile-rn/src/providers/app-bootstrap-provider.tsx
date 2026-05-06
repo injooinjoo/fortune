@@ -280,12 +280,28 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
         }
 
         if (supabase) {
-          const { data } = await supabase.auth.getSession();
+          // 약한 네트워크/DNS 실패 시 getSession() 이 indefinite hang 가능 →
+          // bootstrap 이 'ready' 로 진입 못 해 cold-start UI 멈춤 (Apple 2.1(a)
+          // "Network connection error" 거절 패턴). 8s timeout 으로 강제 종료
+          // 후 세션 없는 상태로 진행, 사용자에게 raw 메시지 노출 안 함.
+          const sessionResult = await Promise.race([
+            supabase.auth.getSession().then((res) => ({ ok: true as const, data: res.data })),
+            new Promise<{ ok: false }>((resolve) =>
+              setTimeout(() => resolve({ ok: false }), 8000),
+            ),
+          ]);
 
           if (!mounted) {
             return;
           }
 
+          if (!sessionResult.ok) {
+            captureError(new Error('bootstrap:getSession-timeout'), {
+              surface: 'bootstrap:init',
+            }).catch(() => undefined);
+          }
+
+          const data = sessionResult.ok ? sessionResult.data : { session: null };
           setSession(data.session);
 
           if (data.session) {
