@@ -2244,6 +2244,96 @@ export function ActiveSurveyFooter({
     );
   }
 
+  if (step.inputKind === 'deck-picker') {
+    // 비주얼 덱 picker — 2-열 그리드. 카드 표지 그라데이션 + 이름 + 1줄 설명.
+    return (
+      <View style={{ gap: fortuneTheme.spacing.sm }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            gap: fortuneTheme.spacing.sm,
+          }}
+        >
+          {(step.options ?? []).map((option) => {
+            const cover = option.coverColors ?? {
+              primary: '#1F1B4D',
+              secondary: '#E0A76B',
+            };
+            return (
+              <Pressable
+                key={option.id}
+                accessibilityRole="button"
+                accessibilityLabel={option.label}
+                onPress={() => onPickSingle(option.id)}
+                style={({ pressed }) => ({
+                  flexBasis: '48%',
+                  flexGrow: 1,
+                  borderRadius: fortuneTheme.radius.lg,
+                  borderWidth: 1,
+                  borderColor: cover.secondary,
+                  backgroundColor: fortuneTheme.colors.surfaceSecondary,
+                  overflow: 'hidden',
+                  opacity: pressed ? 0.84 : 1,
+                })}
+              >
+                {/* 카드 표지 (그라데이션 대용 — 2색 stacked) */}
+                <View
+                  style={{
+                    height: 88,
+                    backgroundColor: cover.primary,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderBottomWidth: 1,
+                    borderBottomColor: cover.secondary,
+                  }}
+                >
+                  <View
+                    style={{
+                      width: 44,
+                      height: 64,
+                      borderRadius: 6,
+                      borderWidth: 1.5,
+                      borderColor: cover.secondary,
+                      backgroundColor: 'rgba(0,0,0,0.25)',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <AppText
+                      variant="bodyLarge"
+                      color={cover.secondary}
+                    >
+                      ✦
+                    </AppText>
+                  </View>
+                </View>
+                <View style={{ padding: fortuneTheme.spacing.sm, gap: 2 }}>
+                  <AppText
+                    variant="labelLarge"
+                    color={fortuneTheme.colors.textPrimary}
+                    numberOfLines={1}
+                  >
+                    {option.label}
+                  </AppText>
+                  {option.description ? (
+                    <AppText
+                      variant="bodySmall"
+                      color={fortuneTheme.colors.textSecondary}
+                      numberOfLines={2}
+                    >
+                      {option.description}
+                    </AppText>
+                  ) : null}
+                </View>
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
+    );
+  }
+
   if (step.inputKind === 'date') {
     return (
       <SurveyDatePicker onSelect={(isoDate) => onPickSingle(isoDate)} />
@@ -2251,13 +2341,19 @@ export function ActiveSurveyFooter({
   }
 
   if (step.inputKind === 'card-draw') {
+    // 8 덱 — supabase/functions/fortune-tarot/tarotCatalog.ts 매핑.
     const deckColorMap: Record<string, { primary: string; secondary: string; label: string }> = {
-      classic: { primary: '#4A5568', secondary: '#ECC94B', label: '클래식' },
-      moonlight: { primary: '#1A1A4E', secondary: '#A78BFA', label: '문라이트' },
-      gold: { primary: '#5C3D1E', secondary: '#FFD700', label: '골드' },
+      rider_waite: { primary: '#1F1B4D', secondary: '#E0A76B', label: '라이더-웨이트' },
+      thoth: { primary: '#311B5E', secondary: '#A78BFA', label: '토트' },
+      ancient_italian: { primary: '#5C2A1B', secondary: '#FBBF24', label: '고대 이탈리아' },
+      before_tarot: { primary: '#0F3D3E', secondary: '#22D3EE', label: '비포' },
+      after_tarot: { primary: '#3D0F2E', secondary: '#EC4899', label: '애프터' },
+      golden_dawn_cicero: { primary: '#3F3000', secondary: '#FFD700', label: '골든 던 매지컬' },
+      golden_dawn_wang: { primary: '#1A2B4D', secondary: '#60A5FA', label: '골든 던' },
+      grand_etteilla: { primary: '#3A1F1F', secondary: '#DC2626', label: '그랑 에테이야' },
     };
-    const selectedDeckId = typeof surveyAnswers?.deckId === 'string' ? surveyAnswers.deckId : 'classic';
-    const deck = deckColorMap[selectedDeckId] ?? deckColorMap.classic;
+    const selectedDeckId = typeof surveyAnswers?.deckId === 'string' ? surveyAnswers.deckId : 'rider_waite';
+    const deck = deckColorMap[selectedDeckId] ?? deckColorMap.rider_waite;
     const deckColors = { primary: deck.primary, secondary: deck.secondary };
     const deckName = deck.label;
     const requiredCount = step.maxSelections ?? 3;

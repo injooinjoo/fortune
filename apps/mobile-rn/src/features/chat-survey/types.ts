@@ -8,12 +8,20 @@ export type ChatSurveyInputKind =
   | 'date'
   | 'card-draw'
   | 'image'
-  | 'mbti-axis';
+  | 'mbti-axis'
+  | 'deck-picker';
 
 export interface ChatSurveyOption {
   id: string;
   label: string;
   emoji?: string;
+  /** 'deck-picker' inputKind 에서 카드 하단에 1줄로 표시되는 부가 설명. */
+  description?: string;
+  /** 'deck-picker' / 'card-draw' 에서 카드 표지 그라데이션 색상. */
+  coverColors?: {
+    primary: string;
+    secondary: string;
+  };
 }
 
 export interface ChatSurveyStep {

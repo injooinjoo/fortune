@@ -1000,13 +1000,60 @@ const tarotSurvey: ChatSurveyDefinition = {
   submitReply: '좋아요. 펼친 카드 해석을 같은 채팅 안에 바로 정리해드릴게요.',
   steps: [
     {
+      // 8개 덱은 supabase/functions/fortune-tarot/tarotCatalog.ts 의
+      // TAROT_DECK_DISPLAY_NAMES 와 1:1 매핑. id 가 어긋나면 서버가 random fallback.
       id: 'deckId',
       question: '어떤 덱으로 열까요?',
-      inputKind: 'chips',
+      inputKind: 'deck-picker',
       options: [
-        { id: 'classic', label: '클래식' },
-        { id: 'moonlight', label: '문라이트' },
-        { id: 'gold', label: '골드' },
+        {
+          id: 'rider_waite',
+          label: '라이더-웨이트-스미스',
+          description: '가장 널리 쓰이는 표준 덱. 입문자도 의미가 잘 와닿아요.',
+          coverColors: { primary: '#1F1B4D', secondary: '#E0A76B' },
+        },
+        {
+          id: 'thoth',
+          label: '토트 타로',
+          description: '크롤리·해리스의 신비주의 상징. 직관과 깊은 해석에 강해요.',
+          coverColors: { primary: '#311B5E', secondary: '#A78BFA' },
+        },
+        {
+          id: 'ancient_italian',
+          label: '고대 이탈리아 타로',
+          description: '르네상스 회화 스타일. 서사적이고 클래식한 톤이에요.',
+          coverColors: { primary: '#5C2A1B', secondary: '#FBBF24' },
+        },
+        {
+          id: 'before_tarot',
+          label: '비포 타로',
+          description: '카드 이전의 순간을 그린 덱. "지금 직전 흐름" 보기 좋아요.',
+          coverColors: { primary: '#0F3D3E', secondary: '#22D3EE' },
+        },
+        {
+          id: 'after_tarot',
+          label: '애프터 타로',
+          description: '카드 이후의 순간을 그린 덱. "다음 흐름"을 가늠하기 좋아요.',
+          coverColors: { primary: '#3D0F2E', secondary: '#EC4899' },
+        },
+        {
+          id: 'golden_dawn_cicero',
+          label: '골든 던 매지컬 타로',
+          description: '시세로 부부가 정리한 마술 의식 기반. 상징·원리에 강해요.',
+          coverColors: { primary: '#3F3000', secondary: '#FFD700' },
+        },
+        {
+          id: 'golden_dawn_wang',
+          label: '골든 던 타로',
+          description: '왕(Wang)의 골든 던 정통 해석. 관계·상황 분석에 자주 써요.',
+          coverColors: { primary: '#1A2B4D', secondary: '#60A5FA' },
+        },
+        {
+          id: 'grand_etteilla',
+          label: '그랑 에테이야',
+          description: '에테이야의 점술 전통 덱. 키워드가 분명해 답이 빨라요.',
+          coverColors: { primary: '#3A1F1F', secondary: '#DC2626' },
+        },
       ],
     },
     {
