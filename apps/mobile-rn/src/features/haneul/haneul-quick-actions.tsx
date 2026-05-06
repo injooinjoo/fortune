@@ -180,49 +180,60 @@ export function HaneulQuickActions({
         })}
       </ScrollView>
 
-      {/* quick-action chips (활성 카테고리의 entries + 전체 보기) */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{
+      {/* quick-action chips: ScrollView (entries) + 우측 고정 "전체 보기" pill.
+          항상 우측에 보이도록 ScrollView 밖에 둔다 (스크롤로 가려지지 않음). */}
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
           gap: fortuneTheme.spacing.xs,
           paddingVertical: 4,
         }}
       >
-        {entries.map((entry) => (
-          <Pressable
-            key={entry.id}
-            onPress={() => onSelectEntry(entry)}
-            accessibilityRole="button"
-            accessibilityLabel={`${entry.displayName}, ${
-              entry.costPoints === 0 ? '무료' : `${entry.costPoints} 포인트`
-            }`}
-            style={({ pressed }) => ({
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 6,
-              paddingHorizontal: fortuneTheme.spacing.sm,
-              paddingVertical: 8,
-              borderRadius: 999,
-              borderWidth: 1,
-              borderColor: fortuneTheme.colors.borderOpaque,
-              backgroundColor: fortuneTheme.colors.surfaceSecondary,
-              opacity: pressed ? 0.84 : 1,
-            })}
-          >
-            <Ionicons
-              name={iconForFortune(entry.id)}
-              size={14}
-              color={fortuneTheme.colors.accentTertiary}
-            />
-            <AppText
-              variant="labelMedium"
-              color={fortuneTheme.colors.textPrimary}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            gap: fortuneTheme.spacing.xs,
+            paddingRight: fortuneTheme.spacing.xs,
+          }}
+          style={{ flexShrink: 1, flexGrow: 1 }}
+        >
+          {entries.map((entry) => (
+            <Pressable
+              key={entry.id}
+              onPress={() => onSelectEntry(entry)}
+              accessibilityRole="button"
+              accessibilityLabel={`${entry.displayName}, ${
+                entry.costPoints === 0 ? '무료' : `${entry.costPoints} 포인트`
+              }`}
+              style={({ pressed }) => ({
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 6,
+                paddingHorizontal: fortuneTheme.spacing.sm,
+                paddingVertical: 8,
+                borderRadius: 999,
+                borderWidth: 1,
+                borderColor: fortuneTheme.colors.borderOpaque,
+                backgroundColor: fortuneTheme.colors.surfaceSecondary,
+                opacity: pressed ? 0.84 : 1,
+              })}
             >
-              {entry.displayName}
-            </AppText>
-          </Pressable>
-        ))}
+              <Ionicons
+                name={iconForFortune(entry.id)}
+                size={14}
+                color={fortuneTheme.colors.accentTertiary}
+              />
+              <AppText
+                variant="labelMedium"
+                color={fortuneTheme.colors.textPrimary}
+              >
+                {entry.displayName}
+              </AppText>
+            </Pressable>
+          ))}
+        </ScrollView>
 
         <Pressable
           onPress={onOpenAllFortunes}
@@ -237,23 +248,24 @@ export function HaneulQuickActions({
             borderRadius: 999,
             borderWidth: 1,
             borderStyle: 'dashed',
-            borderColor: fortuneTheme.colors.borderOpaque,
+            borderColor: fortuneTheme.colors.accentTertiary,
+            backgroundColor: 'rgba(245,158,11,0.08)',
             opacity: pressed ? 0.84 : 1,
           })}
         >
           <Ionicons
             name="add"
             size={14}
-            color={fortuneTheme.colors.textSecondary}
+            color={fortuneTheme.colors.accentTertiary}
           />
           <AppText
             variant="labelMedium"
-            color={fortuneTheme.colors.textSecondary}
+            color={fortuneTheme.colors.accentTertiary}
           >
             전체 보기
           </AppText>
         </Pressable>
-      </ScrollView>
+      </View>
     </View>
   );
 }
