@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback, type PropsWithChildren, type 
 
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { ActivityIndicator, Alert, Animated, Easing, Image, Modal, PanResponder, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Animated, Dimensions, Easing, Image, Modal, PanResponder, Pressable, ScrollView, TextInput, View } from 'react-native';
 
 import type { VoiceInputState } from '../../lib/use-voice-input';
 
@@ -45,6 +45,7 @@ import { MySajuContextCard } from './my-saju-context-card';
 import { ProgressMessageCard } from './progress-message-card';
 import type { ChatSurveyStep } from '../chat-survey/types';
 import { TarotDrawWidget } from '../chat-survey/tarot-draw-widget';
+import { getDeckCoverSource } from '../haneul/tarot-deck-covers';
 
 function formatChatHeaderTimestamp(date: Date): string {
   const hour = date.getHours();
@@ -2245,9 +2246,19 @@ export function ActiveSurveyFooter({
   }
 
   if (step.inputKind === 'deck-picker') {
-    // 비주얼 덱 picker — 2-열 그리드. 카드 표지 그라데이션 + 이름 + 1줄 설명.
+    // 비주얼 덱 picker — 2-열 그리드. 8개 덱이 viewport 보다 길어서 ScrollView 로 감싸 스크롤 가능.
+    // Screen footer 슬롯은 height 제약이 없어서 ScrollView 가 content 만큼 늘어남 → maxHeight 로 viewport 기준 cap.
+    // cover 이미지: assets/tarot-decks/{deck_id}/major/00_fool.webp.
+    const deckPickerMaxHeight = Math.round(Dimensions.get('window').height * 0.6);
     return (
-      <View style={{ gap: fortuneTheme.spacing.sm }}>
+      <ScrollView
+        style={{ maxHeight: deckPickerMaxHeight }}
+        contentContainerStyle={{
+          gap: fortuneTheme.spacing.sm,
+          paddingBottom: fortuneTheme.spacing.lg,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
         <View
           style={{
             flexDirection: 'row',
@@ -2260,6 +2271,7 @@ export function ActiveSurveyFooter({
               primary: '#1F1B4D',
               secondary: '#E0A76B',
             };
+            const coverImage = getDeckCoverSource(option.id);
             return (
               <Pressable
                 key={option.id}
@@ -2277,10 +2289,9 @@ export function ActiveSurveyFooter({
                   opacity: pressed ? 0.84 : 1,
                 })}
               >
-                {/* 카드 표지 (그라데이션 대용 — 2색 stacked) */}
                 <View
                   style={{
-                    height: 88,
+                    height: 140,
                     backgroundColor: cover.primary,
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -2288,25 +2299,30 @@ export function ActiveSurveyFooter({
                     borderBottomColor: cover.secondary,
                   }}
                 >
-                  <View
-                    style={{
-                      width: 44,
-                      height: 64,
-                      borderRadius: 6,
-                      borderWidth: 1.5,
-                      borderColor: cover.secondary,
-                      backgroundColor: 'rgba(0,0,0,0.25)',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <AppText
-                      variant="bodyLarge"
-                      color={cover.secondary}
+                  {coverImage ? (
+                    <Image
+                      source={coverImage}
+                      style={{ width: 84, height: 124, borderRadius: 6 }}
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <View
+                      style={{
+                        width: 56,
+                        height: 80,
+                        borderRadius: 6,
+                        borderWidth: 1.5,
+                        borderColor: cover.secondary,
+                        backgroundColor: 'rgba(0,0,0,0.25)',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
                     >
-                      ✦
-                    </AppText>
-                  </View>
+                      <AppText variant="bodyLarge" color={cover.secondary}>
+                        ✦
+                      </AppText>
+                    </View>
+                  )}
                 </View>
                 <View style={{ padding: fortuneTheme.spacing.sm, gap: 2 }}>
                   <AppText
@@ -2330,7 +2346,7 @@ export function ActiveSurveyFooter({
             );
           })}
         </View>
-      </View>
+      </ScrollView>
     );
   }
 
