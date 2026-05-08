@@ -168,5 +168,5 @@ function LuckyCell({
 
 function headerDate(): string {
   const d = new Date();
-  return `오늘의 운세 · ${d.getMonth() + 1}월 ${d.getDate()}일`;
+  return `오늘의 인사이트 · ${d.getMonth() + 1}월 ${d.getDate()}일`;
 }

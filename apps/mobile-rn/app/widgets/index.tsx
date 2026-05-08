@@ -65,7 +65,7 @@ export default function WidgetsShowcaseScreen() {
             textAlign: 'center',
           }}
         >
-          하루의 운세, 오늘의 카드, 스토리 캐릭터와의 대화{'\n'}
+          하루의 인사이트, 오늘의 카드, 스토리 캐릭터와의 대화{'\n'}
           — Ondo의 경험을 iPhone 위젯으로 가져왔어요.
         </AppText>
       </View>
@@ -73,7 +73,7 @@ export default function WidgetsShowcaseScreen() {
       {/* iPhone 3대 */}
       <View style={{ paddingHorizontal: 16, gap: 40, alignItems: 'center' }}>
         <IPhonePreview
-          label="홈스크린 — 운세 위주"
+          label="홈스크린 — 인사이트 위주"
           description="매일 눈에 들어오는 점수·타로·4운과 안 읽은 대화"
         >
           <IPhoneFrame>
@@ -83,7 +83,7 @@ export default function WidgetsShowcaseScreen() {
 
         <IPhonePreview
           label="잠금화면"
-          description="점수·별자리·안읽음 + 오늘의 운세 / 타로 2단"
+          description="점수·별자리·안읽음 + 오늘의 인사이트 / 타로 2단"
         >
           <IPhoneFrame showHomeIndicator>
             <LockScreen />

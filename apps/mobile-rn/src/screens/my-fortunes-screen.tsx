@@ -67,9 +67,9 @@ export function MyFortunesScreen() {
   return (
     <Screen header={<RouteBackHeader fallbackHref={'/profile' as Href} label="돌아가기" />}>
       <View style={{ gap: fortuneTheme.spacing.sm }}>
-        <AppText variant="displaySmall">내 운세</AppText>
+        <AppText variant="displaySmall">내 인사이트</AppText>
         <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
-          이전에 본 운세 결과를 다시 볼 수 있어요.
+          이전에 본 인사이트 결과를 다시 볼 수 있어요.
         </AppText>
       </View>
 
@@ -81,9 +81,9 @@ export function MyFortunesScreen() {
         </Card>
       ) : entries.length === 0 ? (
         <Card style={{ marginTop: fortuneTheme.spacing.md, gap: 4 }}>
-          <AppText variant="labelLarge">아직 본 운세가 없어요</AppText>
+          <AppText variant="labelLarge">아직 본 인사이트가 없어요</AppText>
           <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            채팅에서 운세를 본 뒤 다시 와봐.
+            채팅에서 인사이트를 본 뒤 다시 와봐.
           </AppText>
         </Card>
       ) : (

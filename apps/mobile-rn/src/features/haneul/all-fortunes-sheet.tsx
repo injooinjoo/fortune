@@ -242,7 +242,7 @@ export function AllFortunesSheet({
                 variant="heading2"
                 color={fortuneTheme.colors.textPrimary}
               >
-                모든 운세
+                모든 인사이트
               </AppText>
               <AppText
                 variant="bodySmall"

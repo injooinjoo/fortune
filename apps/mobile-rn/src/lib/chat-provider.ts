@@ -4,7 +4,7 @@ import {
   type StoryChatResponse,
   type StoryChatThreadSnapshot,
 } from './story-chat-runtime';
-import { type AiMode } from './mobile-app-state';
+import { type AiMode, type CloudModelPreference } from './mobile-app-state';
 import { OnDeviceChatProvider } from './on-device-chat-provider';
 import { onDeviceLLMEngine } from './on-device-llm';
 
@@ -18,6 +18,18 @@ export interface ChatProviderOptions {
    * Edge Function 경로로 감).
    */
   imageBase64?: string;
+  /**
+   * 클라이언트가 부여한 user 메시지 id. cloud 경로에서 invokeStoryChat 가
+   * pending_character_reply_jobs 큐 enqueue 시 (user_id, character_id,
+   * user_message_id) 유니크 키로 사용 → 자동 재개/재시도가 중복 enqueue 안 함.
+   * On-device 경로에선 무시.
+   */
+  userMessageId?: string;
+  /**
+   * 클라우드 모델 선호. cloud 경로에서 invokeStoryChat 의 modelPreference 로 전달.
+   * On-device 경로에선 무시. 'default' / undefined → DB 설정 (gemini-2.5-flash-lite).
+   */
+  modelPreference?: CloudModelPreference;
 }
 
 export interface IChatProvider {
@@ -46,6 +58,8 @@ class CloudChatProvider implements IChatProvider {
     return invokeStoryChat(character, userMessage, thread, {
       userDescription: options?.userDescription,
       imageBase64: options?.imageBase64,
+      userMessageId: options?.userMessageId,
+      modelPreference: options?.modelPreference,
     });
   }
 

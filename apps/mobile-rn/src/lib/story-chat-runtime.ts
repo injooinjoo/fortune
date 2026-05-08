@@ -208,7 +208,7 @@ function extractCardPreviewText(message: ChatShellMessage): string {
   // 옛 클라 fallback 표시용 — 새 클라는 cardPayload 를 보고 카드로 렌더.
   switch (message.kind) {
     case 'embedded-result':
-      return `[운세 결과 — ${message.fortuneType ?? ''}]`;
+      return `[인사이트 결과 — ${message.fortuneType ?? ''}]`;
     case 'fortune-cookie':
       return '[포춘쿠키]';
     case 'saju-preview':
@@ -1080,7 +1080,12 @@ export async function invokeStoryChat(
   character: ChatCharacterSpec,
   userMessage: string,
   thread: StoryChatThreadSnapshot | null,
-  options?: { userDescription?: string; imageBase64?: string },
+  options?: {
+    userDescription?: string;
+    imageBase64?: string;
+    userMessageId?: string;
+    modelPreference?: 'default' | 'grok-fast' | 'grok';
+  },
 ): Promise<StoryChatResponse> {
   const request = buildStoryChatRequest(character, userMessage, thread);
 
@@ -1101,6 +1106,9 @@ export async function invokeStoryChat(
   const bodyWithImage = options?.imageBase64
     ? { ...bodyWithDesc, imageBase64: options.imageBase64 }
     : bodyWithDesc;
+  const bodyWithModel = options?.modelPreference && options.modelPreference !== 'default'
+    ? { ...bodyWithImage, modelPreference: options.modelPreference }
+    : bodyWithImage;
 
   // Slice 2: hookForReveal hook 의 push payload 에 동봉된 pendingProactiveMessageId
   // 가 있으면 이번 호출에 포함 → 서버는 이 id 로 reveal claim (race-free).
@@ -1108,11 +1116,43 @@ export async function invokeStoryChat(
   const pendingProactiveMessageId =
     consumePendingProactiveMessageId(character.id);
   const body = pendingProactiveMessageId
-    ? { ...bodyWithImage, pendingProactiveMessageId }
-    : bodyWithImage;
+    ? { ...bodyWithModel, pendingProactiveMessageId }
+    : bodyWithModel;
+
+  // 답장 생성 큐 enqueue — 앱이 invoke 도중 죽거나 HTTP 가 도달 못 해도 cron
+  // 이 30초 grace 후 같은 페이로드로 재호출. 회귀 안전: 실패해도 invoke 진행.
+  let pendingReplyJobId: string | undefined;
+  if (options?.userMessageId) {
+    try {
+      const { data: enqueueData, error: enqueueError } = await supabase.rpc(
+        'enqueue_pending_reply_job',
+        {
+          p_character_id: character.id,
+          p_character_name: character.name,
+          p_user_message_id: options.userMessageId,
+          p_user_message: userMessage,
+          p_request_payload: body,
+        },
+      );
+      if (enqueueError) {
+        console.warn(
+          '[invokeStoryChat] enqueue_pending_reply_job 실패:',
+          enqueueError.message,
+        );
+      } else if (Array.isArray(enqueueData) && enqueueData[0]?.job_id) {
+        pendingReplyJobId = enqueueData[0].job_id as string;
+      }
+    } catch (enqueueErr) {
+      console.warn('[invokeStoryChat] enqueue_pending_reply_job 예외:', enqueueErr);
+    }
+  }
+
+  const finalBody = pendingReplyJobId
+    ? { ...body, jobId: pendingReplyJobId }
+    : body;
 
   const { data, error } = await supabase.functions.invoke('character-chat', {
-    body,
+    body: finalBody,
   });
 
   if (error) {

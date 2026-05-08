@@ -494,6 +494,10 @@ export function buildDraftReply(
 }
 
 export function buildUserMessage(text: string): ChatShellMessage {
+  // readAt 은 의도적으로 비워둠. 진짜 사람 흐름:
+  //   send (1 유지) → 답장 직전 10~30초 전 markRead (1 사라짐 = 캐릭터 "읽음")
+  //   → 타이핑 5~15초 → 답장 도착.
+  // chat-screen.tsx send 핸들러가 단계별 sleep + markRead/setTyping 으로 처리.
   return {
     id: createMessageId('user'),
     kind: 'text',

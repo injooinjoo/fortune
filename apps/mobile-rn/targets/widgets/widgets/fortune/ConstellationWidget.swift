@@ -38,7 +38,7 @@ struct ConstellationWidget: Widget {
             ConstellationWidgetView(entry: entry)
                 .containerBackground(OndoPalette.bg, for: .widget)
         }
-        .configurationDisplayName("별자리 운세")
+        .configurationDisplayName("별자리 인사이트")
         .description("별이 속삭이는 오늘의 순위와 메시지.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
@@ -68,7 +68,7 @@ private struct ConstellationSmall: View {
             StarFieldLayer(count: 12)
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text("별자리 운세")
+                    Text("별자리 인사이트")
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundColor(OndoPalette.sky.opacity(0.65))
                     Spacer()
@@ -128,7 +128,7 @@ private struct ConstellationMedium: View {
                         .foregroundColor(OndoPalette.amber)
                 }
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("별자리 운세")
+                    Text("별자리 인사이트")
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundColor(OndoPalette.sky.opacity(0.65))
                     Text(data?.sign ?? "—")

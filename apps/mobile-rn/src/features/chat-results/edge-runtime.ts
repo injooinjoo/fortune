@@ -252,76 +252,6 @@ export function isAsyncPosterFortuneType(fortuneType: FortuneTypeId): boolean {
   return endpoint === '/generate-poster-guide';
 }
 
-/**
- * fortuneType 이 비동기 long_running_jobs 큐 대상인지.
- * tarot/dream/compatibility/traditional-saju 4종 — 동기 직접 호출 시 20-40s
- * 블록 → 사용자 진행상태 미가시. 큐로 이전해 progress 카드로 노출.
- *
- * 향후 다른 30s+ 텍스트 운세 추가 시 본 set 에 fortuneType 추가 + 서버측
- * start-long-running-job ALLOWED_JOB_TYPES + handlers.ts JOB_HANDLERS 등록.
- */
-const ASYNC_LONG_RUNNING_FORTUNE_TYPES = new Set<FortuneTypeId>([
-  'tarot',
-  'dream',
-  'compatibility',
-  'traditional-saju',
-]);
-
-export function isAsyncLongRunningFortuneType(
-  fortuneType: FortuneTypeId,
-): boolean {
-  return ASYNC_LONG_RUNNING_FORTUNE_TYPES.has(fortuneType);
-}
-
-/**
- * Async long-running job 시작 — tarot/dream/compatibility/traditional-saju.
- * `start-long-running-job` Edge Function 에 enqueue, jobId 즉시 반환.
- * 결과는 push 알림으로 도착, RN 은 progress 카드를 phase realtime UPDATE 로 갱신.
- */
-export async function startAsyncLongRunningJob(params: {
-  fortuneType: FortuneTypeId;
-  characterId: string;
-  characterName: string;
-  context: EmbeddedResultBuildContext;
-  userId?: string | null;
-  estimatedSeconds?: number;
-}): Promise<{ jobId: string } | null> {
-  if (!supabase) return null;
-
-  // payload 는 직접 호출 시와 동일한 fortune-* request body — worker 가 그대로
-  // forward 하므로 동일 LLMFactory 로직이 두 호출자를 구분하지 않는다.
-  const requestBody = buildFortuneRequestBody(
-    params.fortuneType,
-    params.context,
-    params.userId,
-  );
-  if (!requestBody) {
-    return null;
-  }
-
-  const { data, error } = await supabase.functions.invoke('start-long-running-job', {
-    body: {
-      jobType: params.fortuneType,
-      characterId: params.characterId,
-      characterName: params.characterName,
-      payload: requestBody,
-      estimatedSeconds: params.estimatedSeconds,
-    },
-  });
-
-  if (error) {
-    console.warn('[start-long-running-job] failed:', error);
-    return null;
-  }
-
-  const result = data as { success?: boolean; jobId?: string };
-  if (!result?.success || !result.jobId) {
-    return null;
-  }
-
-  return { jobId: result.jobId };
-}
-
 function buildFortuneRequestBody(
   fortuneType: FortuneTypeId,
   context: EmbeddedResultBuildContext,
@@ -501,6 +431,33 @@ function buildFortuneRequestBody(
       copyLabeledValue(payload, readString(answers.dreamContent), 'dreamContent', 'dream_content');
       copyLabeledValue(payload, labels.emotion, 'emotion');
       break;
+    case 'tarot': {
+      // TarotDrawWidget 은 12개 슬롯 중 N장을 1-indexed 슬롯 번호 콤마 문자열로
+      // (`"3,7,11"`) 넘긴다. fortune-tarot Edge Function 은 78장 덱 인덱스
+      // (0~77) 의 selectedCards 를 기대 — 슬롯 번호와 무관. 슬롯 선택은 셔플
+      // 시뮬레이션이고 실제 카드 인덱스는 클라가 random 으로 결정한다.
+      //
+      // 슬롯 번호를 고정 시드로 deterministic 한 random 을 돌려, 같은 슬롯을
+      // 다시 골랐을 때 같은 카드가 나오게 한다 (사용자 입장의 일관성).
+      // 본 매핑이 누락돼 6회 연속 "필수 필드 누락: selectedCards" 400 발생.
+      const slotsRaw = readString(answers.tarotSelection);
+      const slots = (slotsRaw ?? '')
+        .split(',')
+        .map((token) => token.trim())
+        .filter((token) => token.length > 0)
+        .map((token) => Number(token))
+        .filter((value) => Number.isFinite(value));
+
+      // 사용자가 슬롯 선택을 끝내지 않은 비정상 진입에 대비해 최소 1장 보장.
+      const draw = drawTarotCardsFromSlots(slots.length > 0 ? slots : [1, 2, 3]);
+      payload.selectedCards = draw;
+      payload.selectedCardIndices = draw.map((card) => card.index);
+      copyLabeledValue(payload, readString(answers.deckId), 'deckId', 'deck_id');
+      copyLabeledValue(payload, readString(answers.spreadType), 'spreadType', 'spread_type');
+      copyLabeledValue(payload, readString(answers.purpose), 'purpose');
+      copyLabeledValue(payload, readString(answers.questionText), 'questionText', 'question_text', 'question');
+      break;
+    }
     case 'talisman':
       copyLabeledValue(
         payload,
@@ -800,6 +757,39 @@ function normalizeAnswerValue(value: unknown) {
   }
 
   return value;
+}
+
+/**
+ * 사용자가 셔플된 fan 위에서 고른 슬롯 번호(1~12)를 78장 덱의 카드 인덱스로
+ * 변환. 슬롯 번호 자체를 deterministic seed 로 써서 같은 슬롯 → 항상 같은 카드
+ * 가 나오게 한다 (사용자 입장의 일관성). isReversed 도 같은 시드로 결정.
+ *
+ * fortune-tarot Edge Function 의 selectedCards/selectedCardIndices 가 이 출력
+ * 형태를 직접 받는다.
+ */
+function drawTarotCardsFromSlots(
+  slots: number[],
+): Array<{ index: number; isReversed: boolean }> {
+  const used = new Set<number>();
+  const result: Array<{ index: number; isReversed: boolean }> = [];
+
+  for (const slot of slots) {
+    // mulberry32-like 32-bit hash of slot number — deterministic per slot.
+    const seed = (Math.imul(slot | 0, 2654435769) ^ 0x9e3779b9) >>> 0;
+    let candidate = seed % 78;
+
+    // 같은 카드가 이미 뽑혔으면 다음 빈 슬롯으로 (선형 탐색).
+    while (used.has(candidate)) {
+      candidate = (candidate + 1) % 78;
+    }
+    used.add(candidate);
+    result.push({
+      index: candidate,
+      isReversed: ((seed >>> 16) & 1) === 1,
+    });
+  }
+
+  return result;
 }
 
 function requiresBirthDate(fortuneType: FortuneTypeId) {

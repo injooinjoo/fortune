@@ -37,8 +37,8 @@ struct LockFortuneRectWidget: Widget {
             LockFortuneRectView(entry: entry)
                 .containerBackground(for: .widget) { Color.clear }
         }
-        .configurationDisplayName("ONDO · 오늘의 운세")
-        .description("잠금화면에 운세 level과 점수.")
+        .configurationDisplayName("ONDO · 오늘의 인사이트")
+        .description("잠금화면에 인사이트 level과 점수.")
         .supportedFamilies([.accessoryRectangular])
     }
 }
@@ -48,7 +48,7 @@ struct LockFortuneRectView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text("ONDO · 오늘의 운세")
+            Text("ONDO · 오늘의 인사이트")
                 .font(.system(size: 9))
                 .tracking(1)
                 .foregroundColor(.white.opacity(0.6))

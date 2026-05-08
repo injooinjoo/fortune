@@ -286,7 +286,7 @@ export function HaneulQuickActions({
         <Pressable
           onPress={onOpenAllFortunes}
           accessibilityRole="button"
-          accessibilityLabel="전체 운세 보기"
+          accessibilityLabel="전체 인사이트 보기"
           style={({ pressed }) => ({
             flexDirection: 'row',
             alignItems: 'center',

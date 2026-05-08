@@ -70,18 +70,18 @@ export function GalleryGrid() {
         color="rgba(245,246,251,0.55)"
         style={{ fontSize: 12, lineHeight: 18, marginBottom: 32 }}
       >
-        Ondo의 운세·스토리 위젯을 iOS의 모든 사이즈에 맞춰 설계했어요.{'\n'}
+        Ondo의 인사이트·스토리 위젯을 iOS의 모든 사이즈에 맞춰 설계했어요.{'\n'}
         다크 모드 네이티브, 하나의 강조색만 살린 미니멀한 구성.
       </AppText>
 
-      <Section title="호기심 · 운세 위젯">
-        <GalleryItem label="오늘의 운세" size="SMALL · 155×155">
+      <Section title="호기심 · 인사이트 위젯">
+        <GalleryItem label="오늘의 인사이트" size="SMALL · 155×155">
           <DailyFortuneSmall />
         </GalleryItem>
         <GalleryItem label="타로 한 장" size="SMALL · 155×155">
           <TarotSmall />
         </GalleryItem>
-        <GalleryItem label="별자리 운세" size="SMALL · 155×155">
+        <GalleryItem label="별자리 인사이트" size="SMALL · 155×155">
           <ConstellationSmall />
         </GalleryItem>
         <GalleryItem label="연애운" size="SMALL · 155×155">
@@ -105,7 +105,7 @@ export function GalleryGrid() {
       </Section>
 
       <Section title="미디움 · 정보 밀도">
-        <GalleryItem label="오늘의 운세 · 4운" size="MEDIUM · 330×155">
+        <GalleryItem label="오늘의 인사이트 · 4운" size="MEDIUM · 330×155">
           <DailyFortuneMedium />
         </GalleryItem>
         <GalleryItem label="타로 · 리딩" size="MEDIUM · 330×155">
@@ -114,7 +114,7 @@ export function GalleryGrid() {
         <GalleryItem label="별자리 · 리딩" size="MEDIUM · 330×155">
           <ConstellationMedium />
         </GalleryItem>
-        <GalleryItem label="주간 운세" size="MEDIUM · 330×155">
+        <GalleryItem label="주간 인사이트" size="MEDIUM · 330×155">
           <WeeklyMedium />
         </GalleryItem>
         <GalleryItem label="안 읽은 메시지" size="MEDIUM · 330×155">
@@ -126,7 +126,7 @@ export function GalleryGrid() {
       </Section>
 
       <Section title="라지 · 몰입형">
-        <GalleryItem label="오늘의 운세 · 풀뷰" size="LARGE · 330×330">
+        <GalleryItem label="오늘의 인사이트 · 풀뷰" size="LARGE · 330×330">
           <DailyFortuneLarge />
         </GalleryItem>
         <GalleryItem label="타로 뽑기 (인터랙티브)" size="LARGE · 330×330">
@@ -135,7 +135,7 @@ export function GalleryGrid() {
       </Section>
 
       <Section title="잠금화면 · Lock Screen">
-        <GalleryItem label="운세 점수" size="CIRCULAR · 58×58">
+        <GalleryItem label="인사이트 점수" size="CIRCULAR · 58×58">
           <LockScoreCircle />
         </GalleryItem>
         <GalleryItem label="별자리 순위" size="CIRCULAR · 58×58">
@@ -144,7 +144,7 @@ export function GalleryGrid() {
         <GalleryItem label="안읽음 뱃지" size="CIRCULAR · 58×58">
           <LockUnreadCircle />
         </GalleryItem>
-        <GalleryItem label="오늘의 운세" size="RECTANGULAR · 158×72">
+        <GalleryItem label="오늘의 인사이트" size="RECTANGULAR · 158×72">
           <LockFortuneRect />
         </GalleryItem>
         <GalleryItem label="오늘의 카드" size="RECTANGULAR · 158×72">

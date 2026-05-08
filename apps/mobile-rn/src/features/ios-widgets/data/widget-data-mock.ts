@@ -22,7 +22,7 @@ export const CHARACTERS: Readonly<Record<string, CharacterMock>> = {
   rose:    { id: 'rose',    ko: '로즈',     role: '연애 카운슬러',  tint: '#FFB8C8', avatar: 'R' },
   lucky:   { id: 'lucky',   ko: '럭키',     role: '데일리 가이드',  tint: '#FFE8D6', avatar: 'L' },
   luna:    { id: 'luna',    ko: '루나',     role: '꿈 해몽가',      tint: '#B8B0FF', avatar: '🌙' },
-  marco:   { id: 'marco',   ko: '마르코',   role: '여행 운세',      tint: '#A8E5FF', avatar: 'M' },
+  marco:   { id: 'marco',   ko: '마르코',   role: '여행 인사이트',  tint: '#A8E5FF', avatar: 'M' },
 };
 
 export interface StoryMock {

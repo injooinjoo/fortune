@@ -14,6 +14,7 @@ import { Alert, Dimensions, Keyboard, Modal, Pressable, ScrollView, TextInput, V
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { OnDeviceTransitionToast } from '../components/on-device-transition-toast';
+import { PushDeniedBanner } from '../components/push-denied-banner';
 import { Screen } from '../components/screen';
 import {
   ActiveChatComposer,
@@ -38,10 +39,8 @@ import {
 import type { ActiveChatSurvey } from '../features/chat-survey/types';
 import {
   fetchEmbeddedEdgeResultPayload,
-  isAsyncLongRunningFortuneType,
   isAsyncPosterFortuneType,
   lookupCachedFortuneResult,
-  startAsyncLongRunningJob,
   startAsyncPosterJob,
 } from '../features/chat-results/edge-runtime';
 import { resolveResultKindFromFortuneType } from '../features/fortune-results/mapping';
@@ -65,12 +64,7 @@ import {
   type ChatShellMessage,
   type ChatShellTextMessage,
 } from '../lib/chat-shell';
-import {
-  describeLlmTextPhase,
-  LLM_TEXT_PHASE_STEPS,
-  POSTER_PHASE_STEPS,
-  trackJob as trackLongRunningJob,
-} from '../lib/long-running-jobs';
+import { POSTER_PHASE_STEPS } from '../lib/long-running-jobs';
 import {
   buildChatCharactersWithCustomFriends,
   buildStoryCharactersWithCustomFriends,
@@ -84,7 +78,6 @@ import {
   type ChatCharacterSpec,
   type ChatCharacterTab,
 } from '../lib/chat-characters';
-import { useFeatureFlag } from '../lib/feature-flags';
 import { CostConfirmationSheet } from '../features/fortune-results/cost-confirmation-sheet';
 import { findCatalogEntry, type FortuneCatalogEntry } from '@fortune/product-contracts';
 import { setChatLastSeenForCharacter } from '../lib/storage';
@@ -119,11 +112,13 @@ import {
   markUserMessagesAsReadInStore,
   useStoreMessages,
 } from '../lib/message-store';
+import { setTyping as setGlobalTyping } from '../lib/typing-store';
 import { useMessageQueue } from '../features/chat-surface/hooks/use-message-queue';
 import {
   ackScheduledReplyIfPresent,
   clearActiveChatCharacterId,
   consumePendingProactiveMessageId,
+  maybePromptPushPermissionForCharacter,
   setActiveChatCharacterId,
   setAppIconBadgeCount,
 } from '../lib/push-notifications';
@@ -178,8 +173,12 @@ const PENDING_SENDS_STORAGE_KEY = 'fortune.pending-sends.v1';
 // 화면에 렌더되기까지 최소 보장 시간.
 const BATCH_IDLE_WINDOW_MS = 5000;
 const REPLY_FLOOR_MS = 10000;
-const FALLBACK_REPLY_MAX_SEC = 3;
-const FALLBACK_REPLY_MIN_SEC = 1;
+// 서버 (supabase/functions/_shared/reply_delay.ts) 가 항상 30~600초 범위의
+// delaySec 를 내려준다. 만약 (장애로) delaySec 가 0/missing 으로 오면 사용자
+// 체감을 위해 30~120초 사이 랜덤 — 옛 1~3초 즉답 fallback 은 "왜 답장이
+// 즉시 옴?" 회귀의 한 원인이라 폐기.
+const FALLBACK_REPLY_MIN_SEC = 30;
+const FALLBACK_REPLY_MAX_SEC = 120;
 
 /**
  * 미읽음 user kind='text' 메시지 전부에 `readAt`을 도장찍어 돌려준다.
@@ -490,10 +489,30 @@ export function ChatScreen() {
     if (storeMessagesForActive.length === 0) return;
     setMessagesByCharacterId((prev) => {
       const existing = prev[selectedCharacterId] ?? [];
-      // store 가 더 많은 메시지를 가진 경우만 업데이트. 같거나 적으면 useState
-      // 가 더 fresh (chat-screen 이 직접 append 한 직후) — 덮어쓰지 않음.
-      if (storeMessagesForActive.length <= existing.length) return prev;
-      return { ...prev, [selectedCharacterId]: storeMessagesForActive };
+
+      // store 가 더 길거나 같으면 (신규 메시지 도착·push hydrate) store 권위.
+      // 동일 id 시퀀스면 no-op 으로 reference 유지.
+      if (storeMessagesForActive.length >= existing.length) {
+        if (
+          existing.length === storeMessagesForActive.length &&
+          existing.every((m, i) => m.id === storeMessagesForActive[i]?.id)
+        ) {
+          return prev;
+        }
+        return { ...prev, [selectedCharacterId]: storeMessagesForActive };
+      }
+
+      // store 가 짧아진 경우: 원래 grow-only 라 in-flight send/append truncate
+      // race 를 방어하던 자리. 단 ProgressMessageCard.useSelfReconcile 이 자기
+      // 자신을 store 에서 deleteMessages 한 케이스는 반영돼야 한다 (그래야 진행
+      // 카드가 화면에서 사라짐). 따라서 'progress' kind 만 prune, 다른 kind 는
+      // 기존대로 보존.
+      const storeIds = new Set(storeMessagesForActive.map((m) => m.id));
+      const pruned = existing.filter(
+        (m) => storeIds.has(m.id) || m.kind !== 'progress',
+      );
+      if (pruned.length === existing.length) return prev;
+      return { ...prev, [selectedCharacterId]: pruned };
     });
   }, [storeSnapshot, selectedCharacterId]);
 
@@ -843,17 +862,18 @@ export function ChatScreen() {
     }
   }, [gate, surfaceMode, hydrateStoryCharacter]);
 
-  // PR-B1: haneul_enabled flag 가 true 인 사용자에게만 하늘이 노출.
-  // 사용자가 사용자별 sticky ramp 안에 들어가면 항상 보이고, 밖이면 안 보임.
-  const haneulEnabledFlag = useFeatureFlag<boolean>('haneul_enabled');
+  // 하늘이는 fortune 탭 폐지 이후 운세 진입의 단일 통합 캐릭터다.
+  // chat-characters.ts:147 의 정리("haneul_enabled flag 게이팅이 있었지만 fortune
+  // 탭 자체가 사라져서 단순화") 에 맞춰 채팅 리스트에서 항상 노출.
+  // 이전 flag 게이트는 flag fetch 실패 / 새 cold start timing 으로 false 가 흘러
+  // 들어가면 채팅 리스트에서 하늘이가 사라지고 + 버튼(allChatCharacters) 에서만
+  // 보이는 회귀의 원인이었다. allChatCharacters 와 동일하게 항상 포함.
   const allStoryCharacters = useMemo(
-    () => {
-      const base = buildStoryCharactersWithCustomFriends(createdFriends);
-      return haneulEnabledFlag.value
-        ? [...base, haneulOracleCharacter]
-        : base;
-    },
-    [createdFriends, haneulEnabledFlag.value],
+    () => [
+      ...buildStoryCharactersWithCustomFriends(createdFriends),
+      haneulOracleCharacter,
+    ],
+    [createdFriends],
   );
   const allChatCharacters = useMemo(
     () => buildChatCharactersWithCustomFriends(createdFriends),
@@ -1640,15 +1660,16 @@ export function ChatScreen() {
         return;
       }
 
-      // 비동기 long-running 텍스트 운세 (tarot/dream/compatibility/traditional-saju).
-      // 동기 호출 시 20-40s 블록 → progress 카드로 진행단계 가시화.
-      if (isAsyncLongRunningFortuneType(completed.fortuneType)) {
-        await handleAsyncLongRunningFortune(character, completed);
-        return;
+      // 설문 완료 후 LLM 호출 전 cost confirm. cancel 시 API 비용 0.
+      // catalog entry 없으면 통과.
+      if (session) {
+        const ok = await confirmCostForFortune(completed.fortuneType);
+        if (!ok) {
+          return;
+        }
       }
 
-      // C1 fix: Edge Function 호출 → 성공 시에만 토큰 차감.
-      // 이전 순서(차감 먼저)는 Edge 실패 시 토큰만 소실되는 빌링 버그.
+      // 동의 받은 후 Edge Function 호출 → 성공 시에만 토큰 차감.
       // 차감 실패(insufficient/race) 시 결과는 이미 생성됐으므로 보여주고 로그만.
       const embeddedResult = await resolveFortuneResultMessage(
         completed.fortuneType,
@@ -1661,11 +1682,6 @@ export function ChatScreen() {
       }
 
       if (session) {
-        // 설문 완료 후 LLM 호출 직전 cost confirm. catalog entry 없으면 통과.
-        const ok = await confirmCostForFortune(completed.fortuneType);
-        if (!ok) {
-          return;
-        }
         try {
           // PR-0a: idempotencyKey 호출 단위 unique. reference_id 도 같은 값으로
           // 두어 같은 운세 결과의 환불이 필요할 때 단일 키로 추적 가능.
@@ -1736,7 +1752,7 @@ export function ChatScreen() {
       case 'past-life-guide':
         return '전생 리포트';
       default:
-        return '운세';
+        return '인사이트';
     }
   }
 
@@ -1771,6 +1787,15 @@ export function ChatScreen() {
           ? answers.scenario
           : undefined;
 
+    // 큐 등록 전 cost confirm. cancel 시 cron 이 처리할 잡 자체가 안 만들어져
+    // LLM 비용 0. catalog entry 없으면 통과.
+    if (session) {
+      const ok = await confirmCostForFortune(completed.fortuneType);
+      if (!ok) {
+        return;
+      }
+    }
+
     const result = await startAsyncPosterJob({
       fortuneType: completed.fortuneType,
       characterId: character.id,
@@ -1791,10 +1816,6 @@ export function ChatScreen() {
 
     // 토큰 차감 — 큐 등록 성공이라 차감 OK (cron 이 처리할 것)
     if (session) {
-      const ok = await confirmCostForFortune(completed.fortuneType);
-      if (!ok) {
-        return;
-      }
       try {
         // PR-0a: jobId 가 이미 unique — referenceId/idempotencyKey 동일 값으로 사용.
         const jobConsumeKey = `fortune:${character.id}:${completed.fortuneType}:${result.jobId}`;
@@ -1824,13 +1845,10 @@ export function ChatScreen() {
       }
     }
 
-    // 진행상황 카드 로컬 INSERT — 단계별 phase 텍스트 + 경과시간 표시.
+    // 진행 카드 로컬 INSERT — 카드 컴포넌트(ProgressMessageCard)가 mount 되면
+    // 자기 jobId 의 status 를 직접 polling 해서 done/failed 시 스스로 사라진다.
     // 서버측 start-poster-job 도 텍스트 placeholder INSERT 하지만 (cross-device
     // hydration 용), 본 디바이스는 progress 카드를 우선 노출.
-    //
-    // jobId 와 message id 를 트래커에 등록 → use-long-running-jobs-realtime hook
-    // 이 scheduled_poster_jobs.phase UPDATE 를 수신하면 카드의 phase 텍스트가
-    // in-place 갱신된다. 결과 push 도착 시 finalizeJob 으로 카드 제거.
     const progressMessage = buildProgressMessage({
       jobId: result.jobId,
       fortuneType: completed.fortuneType,
@@ -1840,95 +1858,6 @@ export function ChatScreen() {
       estimatedSeconds: 60,
     });
     appendMessages(character, [progressMessage]);
-    trackLongRunningJob(result.jobId, character.id, progressMessage.id);
-  }
-
-  /**
-   * 비동기 long-running 텍스트 운세 (tarot/dream/compatibility/traditional-saju).
-   * `handleAsyncPosterFortune` 와 동일한 패턴 — 큐 등록 + 토큰 차감 + progress
-   * 카드 INSERT + 트래커 등록. 차이점은 (1) start-long-running-job 호출, (2)
-   * LLM-text 단계 라벨 사용, (3) 사진 대신 서베이 답변을 payload 로 forward.
-   *
-   * 캐시 게이트: 동일 fortuneType + 같은 날 + 30분 이내 결과가 클라 캐시에 있으면
-   * 큐 우회 → 인라인 즉시 렌더 (동기 경로와 동일 UX). 캐시 미스 시에만 큐 진입.
-   */
-  async function handleAsyncLongRunningFortune(
-    character: ChatCharacterSpec,
-    completed: { fortuneType: FortuneTypeId; answers: Record<string, unknown> },
-  ) {
-    // 30분 클라 캐시 hit → 큐 우회. 동기 흐름이 fetchEmbeddedEdgeResultPayload
-    // 내부에서 자동 처리하던 동작을 비동기 분기에서도 유지.
-    const cached = lookupCachedFortuneResult(
-      completed.fortuneType,
-      session?.user.id,
-    );
-    if (cached) {
-      const cardMessage = buildEmbeddedResultMessageFromPayload(cached);
-      appendMessages(character, [cardMessage]);
-      return;
-    }
-
-    const result = await startAsyncLongRunningJob({
-      fortuneType: completed.fortuneType,
-      characterId: character.id,
-      characterName: character.name,
-      context: buildResultContext(character, completed.answers),
-      userId: session?.user.id,
-    });
-
-    if (!result) {
-      appendMessages(character, [
-        buildAssistantTextMessage(
-          '잠깐, 지금 분석 요청을 받지 못했어. 잠시 후 다시 시도해줘.',
-        ),
-      ]);
-      return;
-    }
-
-    if (session) {
-      const ok = await confirmCostForFortune(completed.fortuneType);
-      if (!ok) {
-        return;
-      }
-      try {
-        // PR-0a: jobId 가 이미 unique — referenceId/idempotencyKey 동일 값으로 사용.
-        const longRunConsumeKey = `fortune:${character.id}:${completed.fortuneType}:${result.jobId}`;
-        await consumeRemoteTokens(session, {
-          fortuneType: completed.fortuneType,
-          referenceId: longRunConsumeKey,
-          idempotencyKey: longRunConsumeKey,
-        });
-      } catch (chargeError) {
-        if (
-          chargeError instanceof RemoteTokenConsumeError &&
-          chargeError.code === 'INSUFFICIENT_TOKENS'
-        ) {
-          appendMessages(character, [
-            buildAssistantTextMessage(
-              chargeError.message ||
-                '토큰이 부족해요. 토큰을 충전한 뒤 다시 시도해주세요.',
-            ),
-          ]);
-          return;
-        }
-        await captureError(chargeError, {
-          surface: 'chat:fortune-charge-after-async-long-running',
-        }).catch(() => undefined);
-      }
-    }
-
-    const progressMessage = buildProgressMessage({
-      jobId: result.jobId,
-      fortuneType: completed.fortuneType,
-      phase: '준비 중',
-      phaseSteps: [...LLM_TEXT_PHASE_STEPS],
-      currentStepIndex: 0,
-      estimatedSeconds: 45,
-    });
-    appendMessages(character, [progressMessage]);
-    trackLongRunningJob(result.jobId, character.id, progressMessage.id, {
-      describePhase: describeLlmTextPhase,
-    });
   }
 
   function reopenFortuneResult(
@@ -2052,10 +1981,10 @@ export function ChatScreen() {
     handleCharacterActionPress(selectedCharacter.id, fortuneType);
   }
 
-  // 운세 cost confirm modal — UX 결정: entry 선택 직후가 아니라 LLM 호출 직전
-  // (설문 완료 후 마지막 단계) 에 노출. 사용자가 설문 매몰된 상태라 거부감 ↓.
-  // entry 선택 시점엔 modal 안 띄우고 흐름만 시작. consumeRemoteTokens 호출
-  // 직전에 showCostConfirm(entry) 으로 동의 받음.
+  // 운세 cost confirm modal — UX 결정: entry 선택 직후가 아니라 설문 완료 후
+  // LLM/큐 호출 **직전** 에 노출. 사용자가 설문 매몰된 상태라 거부감 ↓ +
+  // cancel 시 LLM API/큐 잡 자체가 안 만들어져 provider 비용 0.
+  // entry 선택 시점엔 modal 안 띄우고 흐름만 시작.
   const [pendingMenuEntry, setPendingMenuEntry] =
     useState<FortuneCatalogEntry | null>(null);
   const [costSheetVisible, setCostSheetVisible] = useState(false);
@@ -2439,14 +2368,9 @@ export function ChatScreen() {
       flushBatch(character);
     }, BATCH_IDLE_WINDOW_MS);
 
-    setStoryTypingByCharacterId((current) => ({
-      ...current,
-      [character.id]: true,
-    }));
-    // 카톡 표준: 타이핑 인디케이터(...) 가 뜬다 = 캐릭터가 메시지 읽고 답하는 중.
-    // 그러므로 typing=true 설정과 동시에 직전 user 메시지의 "1" unread 배지 클리어.
-    // 이전에는 BATCH_IDLE_WINDOW_MS (5초) 동안 "1" + 타이핑 동시 노출되는 순서 버그.
-    markUserMessageReadImmediately(character.id);
+    // 진짜 사람 흐름 — send 직후엔 "1" 유지 (안 봤음), typing X. markRead 는
+    // 답장 도착 직전 (beforeReadMs sleep 후) sendStoryPilotMessage /
+    // sendCharacterChatMessage 의 wait 단계에서 처리.
     setComposerTrayOpen(false);
     setSurfaceMode('chat');
   }
@@ -2540,13 +2464,9 @@ export function ChatScreen() {
       // Step G: store sync — optimistic user message
       insertStoreMessages(character.id, [userMessage]).catch(() => undefined);
     }
-    setStoryTypingByCharacterId((current) => ({
-      ...current,
-      [character.id]: true,
-    }));
-    // F2 — "읽음 → 답장" 문맥. LLM 호출 전에 노란 unread 뱃지를 즉시 클리어
-    // 한다. 캐릭터가 메시지를 읽고 → (타이핑 인디케이터 노출) → 답장하는 흐름.
-    markUserMessageReadImmediately(character.id);
+    // 진짜 사람 흐름 — send 직후엔 "1" 유지 + typing X. markRead 와 typing 은
+    // replyDelayMs 분기에서 단계별 처리 (beforeReadMs → markRead →
+    // readToTypingMs → setTyping → typingPreviewMs → render).
     setComposerTrayOpen(false);
     setSurfaceMode('chat');
 
@@ -2627,6 +2547,12 @@ export function ChatScreen() {
       if (effectiveUserMessageId) {
         invokeOptions.userMessageId = effectiveUserMessageId;
       }
+      // 글로벌 클라우드 모델 선호 — 프로필 설정에서 그록 fast / 그록 대화형 선택 시.
+      // 'default' 면 서버에 안 보내서 character-chat DB 설정 (gemini) 사용.
+      const cloudModelPref = mobileAppState.settings.cloudModelPreference;
+      if (cloudModelPref && cloudModelPref !== 'default') {
+        invokeOptions.modelPreference = cloudModelPref;
+      }
 
       const invokeWithRetry = async () => {
         let lastError: unknown;
@@ -2687,17 +2613,18 @@ export function ChatScreen() {
         }
       }
 
-      // F2 — 서버 응답 도착. 랜덤 지연 타이머보다 먼저 오면 읽음 즉시 처리.
-      markUserMessageReadImmediately(character.id);
+      // F2 — 서버 응답 도착. markRead 는 단계별 sleep 안 (beforeReadMs 후) 에서
+      // 호출 — 답장 직전 일정 시간 전에만 "1" 사라지도록 (진짜 사람 흐름).
 
       // 최신 assistant emotion 추적 (F4 presence 라인에 반영)
       if (response.emotionTag) {
         lastAssistantEmotionTagRef.current = response.emotionTag;
       }
 
-      // Reply delay — 8초 cap 제거. 서버가 emotion + 길이 + 야간 multiplier
-      // 적용한 delaySec 를 그대로 신뢰. 추가로 batchFirstSendAt 기준 floor
-      // (REPLY_FLOOR_MS) 적용해 첫 send 부터 최소 10초 보장 (AC1).
+      // Reply delay — 서버가 emotion + 길이 + 낮밤 multiplier 적용한 delaySec
+      // 를 그대로 신뢰 (단일 source: supabase/functions/_shared/reply_delay.ts).
+      // 추가로 batchFirstSendAt 기준 floor (REPLY_FLOOR_MS) 적용해 첫 send 부터
+      // 최소 10초 보장 (AC1). 서버 누락 시 30~120초 fallback (FALLBACK_REPLY_*).
       let replyDelayMs = response.delaySec
         ? response.delaySec * 1000
         : (Math.random() * (FALLBACK_REPLY_MAX_SEC - FALLBACK_REPLY_MIN_SEC) +
@@ -2707,7 +2634,33 @@ export function ChatScreen() {
       const minRemaining = Math.max(0, REPLY_FLOOR_MS - elapsedSinceFirstSend);
       replyDelayMs = Math.max(replyDelayMs, minRemaining);
       delete batchFirstSendAtRef.current[character.id];
-      await new Promise((r) => setTimeout(r, replyDelayMs));
+
+      // 진짜 사람 흐름 4단계:
+      //   1. send → "1" 유지 (캐릭터 안 봤음)
+      //   2. beforeReadMs sleep → markRead → "1" 사라짐 (읽었음)
+      //   3. readToTypingMs sleep → setTyping(true) → "..." (입력 중)
+      //   4. typingPreviewMs sleep → 메시지 렌더 + setTyping(false)
+      //
+      // typingPreviewMs (입력 중 노출) 5~15초, readToTypingMs (읽고 → 입력 시작
+      // 사이) 8~25초. silentMs = replyDelayMs - typingPreviewMs 가 "안 봤음 +
+      // 읽음 후 잠깐 뜸" 합. 긴 delay (5~10분) 면 대부분 "1" 유지 → 마지막
+      // 30~40초만 read+typing.
+      const typingPreviewMs = Math.min(
+        replyDelayMs * 0.4,
+        randomInRange(5000, 15000),
+      );
+      const silentMs = Math.max(0, replyDelayMs - typingPreviewMs);
+      const readToTypingMs = Math.min(silentMs, randomInRange(8000, 25000));
+      const beforeReadMs = Math.max(0, silentMs - readToTypingMs);
+      await sleep(beforeReadMs);
+      markUserMessageReadImmediately(character.id);
+      await sleep(readToTypingMs);
+      setStoryTypingByCharacterId((current) => ({
+        ...current,
+        [character.id]: true,
+      }));
+      setGlobalTyping(character.id, true);
+      await sleep(typingPreviewMs);
 
       // 최신 유저 메시지 읽음 처리 — 현재 state 기준으로 찍어야 큐잉된 다음
       // 메시지들을 덮어쓰지 않는다.
@@ -2837,6 +2790,7 @@ export function ChatScreen() {
           ? { ...current, [character.id]: false }
           : current,
       );
+      setGlobalTyping(character.id, false);
       if (shouldClearDraft) {
         setDraft('');
       }
@@ -2874,12 +2828,8 @@ export function ChatScreen() {
       // Step G: store sync — optimistic user message (character chat path)
       insertStoreMessages(character.id, [userMessage]).catch(() => undefined);
     }
-    setStoryTypingByCharacterId((current) => ({
-      ...current,
-      [character.id]: true,
-    }));
-    // F2 — "읽음 → 답장" 문맥. LLM 호출 전에 노란 unread 뱃지를 즉시 클리어.
-    markUserMessageReadImmediately(character.id);
+    // 진짜 사람 흐름 — send 직후 "1" 유지 + typing X. markRead 와 typing 은
+    // replyDelayMs 분기에서 단계별 처리.
     setComposerTrayOpen(false);
     setSurfaceMode('chat');
 
@@ -2919,7 +2869,7 @@ export function ChatScreen() {
                 : undefined,
             );
 
-            markUserMessageReadImmediately(character.id);
+            // markRead 는 단계별 sleep 안 (beforeReadMs 후) 에서 호출.
             if (response.emotionTag) {
               lastAssistantEmotionTagRef.current = response.emotionTag;
             }
@@ -2933,7 +2883,24 @@ export function ChatScreen() {
             const minRemaining = Math.max(0, REPLY_FLOOR_MS - elapsedSinceFirstSend);
             replyDelayMs = Math.max(replyDelayMs, minRemaining);
             delete batchFirstSendAtRef.current[character.id];
-            await new Promise((r) => setTimeout(r, replyDelayMs));
+            // 4단계 진짜 사람 흐름 (위 첫 사이트와 동일 패턴):
+            // 안 봄 → markRead → 읽고 잠시 → typing → 렌더.
+            const typingPreviewMs = Math.min(
+              replyDelayMs * 0.4,
+              randomInRange(5000, 15000),
+            );
+            const silentMs = Math.max(0, replyDelayMs - typingPreviewMs);
+            const readToTypingMs = Math.min(silentMs, randomInRange(8000, 25000));
+            const beforeReadMs = Math.max(0, silentMs - readToTypingMs);
+            await sleep(beforeReadMs);
+            markUserMessageReadImmediately(character.id);
+            await sleep(readToTypingMs);
+            setStoryTypingByCharacterId((current) => ({
+              ...current,
+              [character.id]: true,
+            }));
+            setGlobalTyping(character.id, true);
+            await sleep(typingPreviewMs);
 
             setMessagesByCharacterId((current) => ({
               ...current,
@@ -3134,8 +3101,7 @@ export function ChatScreen() {
         throw new Error(payload?.error ?? 'Character chat response is empty.');
       }
 
-      // F2 — 서버 응답 도착. 읽음 즉시 처리.
-      markUserMessageReadImmediately(character.id);
+      // F2 — 서버 응답 도착. markRead 는 단계별 sleep 안에서 호출 (진짜 사람 흐름).
       if (typeof payload.emotionTag === 'string' && payload.emotionTag.length > 0) {
         lastAssistantEmotionTagRef.current = payload.emotionTag;
       }
@@ -3161,7 +3127,24 @@ export function ChatScreen() {
       const minRemaining = Math.max(0, REPLY_FLOOR_MS - elapsedSinceFirstSend);
       replyDelayMs = Math.max(replyDelayMs, minRemaining);
       delete batchFirstSendAtRef.current[character.id];
-      await new Promise((r) => setTimeout(r, replyDelayMs));
+      // 4단계 진짜 사람 흐름 (위 두 사이트와 동일 패턴):
+      // 안 봄 → markRead → 읽고 잠시 → typing → 렌더.
+      const typingPreviewMs = Math.min(
+        replyDelayMs * 0.4,
+        randomInRange(5000, 15000),
+      );
+      const silentMs = Math.max(0, replyDelayMs - typingPreviewMs);
+      const readToTypingMs = Math.min(silentMs, randomInRange(8000, 25000));
+      const beforeReadMs = Math.max(0, silentMs - readToTypingMs);
+      await sleep(beforeReadMs);
+      markUserMessageReadImmediately(character.id);
+      await sleep(readToTypingMs);
+      setStoryTypingByCharacterId((current) => ({
+        ...current,
+        [character.id]: true,
+      }));
+      setGlobalTyping(character.id, true);
+      await sleep(typingPreviewMs);
 
       setMessagesByCharacterId((current) => ({
         ...current,
@@ -3297,6 +3280,7 @@ export function ChatScreen() {
           ? { ...current, [character.id]: false }
           : current,
       );
+      setGlobalTyping(character.id, false);
       if (shouldClearDraft) {
         setDraft('');
       }
@@ -3307,6 +3291,27 @@ export function ChatScreen() {
   function handleSendDraft() {
     const trimmed = draft.trim();
     const pendingImage = pendingImageByCharacterId[selectedCharacter.id];
+
+    // 이 캐릭터에 유저가 처음 메시지를 보내는 시점이면 푸시 권한 soft-ask.
+    // fire-and-forget — 모달은 비동기로 뜨고, 실제 send 흐름은 절대 막히지 않음.
+    // 이미 granted/denied/soft-asked cooldown 중이면 helper 가 알아서 noop.
+    //
+    // 하늘이(haneul_oracle) 는 운세-only persona — proactive 답장/먼저 말걸기
+    // 없어 푸시 가치 0. 모달 exclude.
+    const existingThread = messagesByCharacterId[selectedCharacter.id] ?? [];
+    const hasPriorUserMessage = existingThread.some(
+      (m) => m.sender === 'user',
+    );
+    const willSendSomething = Boolean(trimmed) || Boolean(pendingImage);
+    const isPushEligibleCharacter =
+      selectedCharacter.id !== haneulOracleCharacter.id;
+    if (
+      !hasPriorUserMessage &&
+      willSendSomething &&
+      isPushEligibleCharacter
+    ) {
+      void maybePromptPushPermissionForCharacter(selectedCharacter.name);
+    }
 
     // 이미지 첨부가 있으면 여기서 먼저 처리. 사진 + 캡션(있으면) 을 한 번에 보낸다.
     // - 스토리 파일럿 캐릭터: 멀티모달 AI 경로로 imageBase64 전달
@@ -3726,6 +3731,9 @@ export function ChatScreen() {
                 })
               }
             />
+            {selectedCharacter.id !== haneulOracleCharacter.id ? (
+              <PushDeniedBanner characterName={selectedCharacter.name} />
+            ) : null}
           </View>
         ) : undefined
       }

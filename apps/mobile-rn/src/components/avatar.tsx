@@ -7,7 +7,7 @@ interface AvatarProps {
   uri?: string;
   /**
    * Fallback shown when `uri` is missing. Only the first two characters are
-   * rendered, so pass the name or 2-char initials directly (e.g. "러츠", "JB").
+   * rendered, so pass the name or 2-char initials directly (e.g. "이서준", "JB").
    */
   initials?: string;
   /**

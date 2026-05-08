@@ -92,7 +92,7 @@ export default function BirthStep() {
       step={2}
       total={6}
       title="생년월일을 알려주세요"
-      caption="사주·운세 해석과 대화 톤에 참고해요"
+      caption="사주·인사이트 해석과 대화 톤에 참고해요"
       onBack={() => router.back()}
       onSkip={goNext}
       onNext={() => {

@@ -16,6 +16,7 @@ import { useEffect, useRef } from 'react';
 import { Animated, Easing, StyleSheet, View } from 'react-native';
 
 import { AppText } from '../../components/app-text';
+import { chatTypingTick } from '../../lib/haptics';
 import { fortuneTheme } from '../../lib/theme';
 
 const WORD_DURATION_MS = 380;
@@ -28,6 +29,12 @@ interface FadeUpWordsProps {
   variant?: Parameters<typeof AppText>[0]['variant'];
   color?: string;
   speed?: number;
+  /**
+   * 단어 reveal 타이밍에 맞춰 가벼운 selection 햅틱을 발사할지 여부.
+   * 호출자가 chatHapticsEnabled 설정을 읽어 prop 으로 전달.
+   * 기본 false — 다른 사용처 (운세 결과 등) 에선 햅틱 없이 동작.
+   */
+  hapticsEnabled?: boolean;
 }
 
 export function FadeUpWords({
@@ -35,6 +42,7 @@ export function FadeUpWords({
   variant = 'bodyMedium',
   color = fortuneTheme.colors.textPrimary,
   speed = 1,
+  hapticsEnabled = false,
 }: FadeUpWordsProps) {
   const tokens = tokenize(text);
 
@@ -59,6 +67,7 @@ export function FadeUpWords({
             durationMs={WORD_DURATION_MS / speed}
             variant={variant}
             color={color}
+            hapticsEnabled={hapticsEnabled}
           />
         );
       })}
@@ -72,12 +81,14 @@ function FadeUpToken({
   durationMs,
   variant,
   color,
+  hapticsEnabled,
 }: {
   text: string;
   delayMs: number;
   durationMs: number;
   variant: Parameters<typeof AppText>[0]['variant'];
   color: string;
+  hapticsEnabled: boolean;
 }) {
   const progress = useRef(new Animated.Value(0)).current;
 
@@ -90,8 +101,17 @@ function FadeUpToken({
       useNativeDriver: true,
     });
     animation.start();
-    return () => animation.stop();
-  }, [delayMs, durationMs, progress]);
+    let hapticTimer: ReturnType<typeof setTimeout> | null = null;
+    if (hapticsEnabled) {
+      hapticTimer = setTimeout(() => {
+        chatTypingTick();
+      }, delayMs);
+    }
+    return () => {
+      animation.stop();
+      if (hapticTimer) clearTimeout(hapticTimer);
+    };
+  }, [delayMs, durationMs, hapticsEnabled, progress]);
 
   const translateY = progress.interpolate({
     inputRange: [0, 1],

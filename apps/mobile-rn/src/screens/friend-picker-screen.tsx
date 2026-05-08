@@ -70,12 +70,12 @@ export function FriendPickerScreen() {
           variant="bodyLarge"
           color={fortuneTheme.colors.textSecondary}
         >
-          운세 캐릭터 중에서 선택하거나, 원하는 친구를 직접 만들 수 있어요.
+          인사이트 캐릭터 중에서 선택하거나, 원하는 친구를 직접 만들 수 있어요.
         </AppText>
       </View>
 
       <View style={{ gap: fortuneTheme.spacing.sm, marginTop: 8 }}>
-        <AppText variant="heading4">운세 캐릭터 선택</AppText>
+        <AppText variant="heading4">인사이트 캐릭터 선택</AppText>
         <AppText
           variant="bodySmall"
           color={fortuneTheme.colors.textSecondary}

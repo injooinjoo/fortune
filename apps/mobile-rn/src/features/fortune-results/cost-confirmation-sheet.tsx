@@ -118,7 +118,7 @@ export function CostConfirmationSheet({
                   오늘 무료
                 </AppText>
                 <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-                  데일리 운세 1일 1회 무료. 다음부터는 {entry.costPoints} 포인트 차감.
+                  데일리 인사이트 1일 1회 무료. 다음부터는 {entry.costPoints} 포인트 차감.
                 </AppText>
               </>
             ) : (

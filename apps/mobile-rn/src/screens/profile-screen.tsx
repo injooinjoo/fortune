@@ -291,10 +291,10 @@ export function ProfileScreen() {
           title="내 만세력"
           onPress={() => router.push('/profile/saju-summary')}
         />
-        {/* PR-B3: 내 운세 — 이전에 본 운세 결과 모음. */}
+        {/* PR-B3: 내 인사이트 — 이전에 본 인사이트 결과 모음. */}
         <IconMenuTile
           icon="bookmark-outline"
-          title="내 운세"
+          title="내 인사이트"
           onPress={() => router.push('/profile/my-fortunes' as Href)}
         />
         <IconMenuTile
@@ -384,6 +384,43 @@ export function ProfileScreen() {
             <ThemeChip label="자동" active={state.settings.aiMode === 'auto'} onPress={() => saveSettings({ aiMode: 'auto' })} />
           </View>
         </View>
+
+        {/* 클라우드 모델 선택 — aiMode 가 cloud / auto 일 때만 노출 */}
+        {state.settings.aiMode !== 'on-device' ? (
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <Ionicons
+                name="cloud-outline"
+                size={18}
+                color={fortuneTheme.colors.textSecondary}
+              />
+              <AppText variant="bodyMedium">클라우드 모델</AppText>
+            </View>
+            <View style={{ flexDirection: 'row', gap: 4 }}>
+              <ThemeChip
+                label="기본"
+                active={state.settings.cloudModelPreference === 'default'}
+                onPress={() => saveSettings({ cloudModelPreference: 'default' })}
+              />
+              <ThemeChip
+                label="그록 fast"
+                active={state.settings.cloudModelPreference === 'grok-fast'}
+                onPress={() => saveSettings({ cloudModelPreference: 'grok-fast' })}
+              />
+              <ThemeChip
+                label="그록 대화형"
+                active={state.settings.cloudModelPreference === 'grok'}
+                onPress={() => saveSettings({ cloudModelPreference: 'grok' })}
+              />
+            </View>
+          </View>
+        ) : null}
 
         {/* 온디바이스 모델 상태 */}
         {state.settings.aiMode !== 'cloud' ? (

@@ -32,7 +32,7 @@ export function LockFortuneRect() {
             color="rgba(255,255,255,0.6)"
             style={{ fontSize: 9, letterSpacing: 1 }}
           >
-            ONDO · 오늘의 운세
+            ONDO · 오늘의 인사이트
           </AppText>
           <OndoMark size={10} color="rgba(255,255,255,0.55)" />
         </View>

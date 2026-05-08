@@ -59,6 +59,16 @@ export function swipeComplete() {
   safe(() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light));
 }
 
+/**
+ * 채팅 어시스턴트 메시지가 단어 단위로 차곡차곡 fadeUp 으로 노출될 때, 각 단어
+ * 등장 타이밍에 맞춰 fire. 가장 약한 selection feedback — 길게 이어져도 부담
+ * 없도록 의도. 호출자가 chatHapticsEnabled 설정을 게이팅해야 한다 (이 함수
+ * 내부에선 검사 X — 설정 의존성 분리 유지).
+ */
+export function chatTypingTick() {
+  safe(() => Haptics.selectionAsync());
+}
+
 // ---------------------------------------------------------------------------
 // Tier 2 — Important Transitions (meaningful state changes)
 // ---------------------------------------------------------------------------

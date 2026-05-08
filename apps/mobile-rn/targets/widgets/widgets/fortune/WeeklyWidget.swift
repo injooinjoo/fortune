@@ -37,7 +37,7 @@ struct WeeklyWidget: Widget {
             WeeklyWidgetView(entry: entry)
                 .containerBackground(OndoPalette.bg, for: .widget)
         }
-        .configurationDisplayName("이번 주의 운세")
+        .configurationDisplayName("이번 주의 인사이트")
         .description("7일의 흐름을 한눈에, 가장 좋은 날을 강조해드려요.")
         .supportedFamilies([.systemMedium])
     }
@@ -65,7 +65,7 @@ struct WeeklyWidgetView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
-                Text("이번 주의 운세")
+                Text("이번 주의 인사이트")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(OndoPalette.fgMuted)
                 Spacer()

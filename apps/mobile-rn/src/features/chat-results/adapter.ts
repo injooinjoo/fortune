@@ -202,6 +202,37 @@ export function buildEmbeddedResultPayloadFromNormalizedResult(
     resultPayload.manseryeok = calculateManseryeok();
   }
 
+  // Tarot: fortune-tarot Edge 응답의 cards[] (cardName/cardNameKr/suit/positionName/
+  // interpretation) 를 HeroTarot 이 기대하는 spread (TarotSpreadCard[]) 로 매핑.
+  // 매핑 안 하면 HeroTarot.extractCards 가 DEFAULT_SPREAD (Empress/Star/Sun 더미)
+  // 로 폴백해서 사용자가 받은 실제 카드 (King of Pentacles 등) 가 안 보인다.
+  if (fortuneType === 'tarot') {
+    const cardsRaw = (payload as { cards?: unknown }).cards;
+    if (Array.isArray(cardsRaw) && cardsRaw.length > 0) {
+      const POSITION_DEFAULTS = ['과거', '현재', '미래'];
+      resultPayload.spread = cardsRaw.slice(0, 3).map((c, i) => {
+        const card = asRecord(c);
+        return {
+          name:
+            (typeof card.cardNameKr === 'string' && card.cardNameKr) ||
+            (typeof card.cardName === 'string' && card.cardName) ||
+            `카드 ${i + 1}`,
+          position:
+            (typeof card.positionName === 'string' && card.positionName) ||
+            POSITION_DEFAULTS[i] ||
+            '',
+          meaning:
+            typeof card.interpretation === 'string'
+              ? card.interpretation
+              : undefined,
+          art: pickTarotArt(
+            typeof card.suit === 'string' ? card.suit : 'major',
+          ),
+        };
+      });
+    }
+  }
+
   // rawApiResponse is attached in edge-runtime.ts with the ORIGINAL API data
   // (before normalization). Only set here as fallback if edge-runtime didn't set it.
   if (!resultPayload.rawApiResponse) {
@@ -1095,3 +1126,16 @@ function asRecord(value: unknown): UnknownRecord {
 
   return {};
 }
+
+const TAROT_SUIT_ART: Record<string, string> = {
+  pentacles: '⭐',
+  cups: '♥',
+  wands: '🔥',
+  swords: '⚔',
+  major: '★',
+};
+
+function pickTarotArt(suit: string): string {
+  return TAROT_SUIT_ART[suit.toLowerCase()] ?? '✦';
+}
+

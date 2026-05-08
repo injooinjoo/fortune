@@ -46,7 +46,7 @@ struct DailyFortuneWidget: Widget {
             DailyFortuneWidgetView(entry: entry)
                 .containerBackground(OndoPalette.bg, for: .widget)
         }
-        .configurationDisplayName("오늘의 운세")
+        .configurationDisplayName("오늘의 인사이트")
         .description("하루의 점수와 한 줄 요약을 바로 확인해요.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
@@ -76,7 +76,7 @@ private struct DailyFortuneSmall: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("오늘의 운세")
+                Text("오늘의 인사이트")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(OndoPalette.fgMuted)
                 Spacer()
@@ -125,7 +125,7 @@ private struct DailyFortuneMedium: View {
     var body: some View {
         HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 6) {
-                Text("오늘의 운세")
+                Text("오늘의 인사이트")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(OndoPalette.fgMuted)
                 Text(data?.level ?? "—")

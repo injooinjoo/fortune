@@ -74,7 +74,6 @@ export function ProfileEditScreen() {
       const userId = session?.user.id ?? null;
 
       // 1. Write directly to SecureStore (bypasses provider's serialized queue)
-      console.log('[profile-edit] saving:', JSON.stringify(nextProfile));
       await patchMobileAppState(
         {
           profile: {
@@ -84,11 +83,9 @@ export function ProfileEditScreen() {
         },
         userId,
       );
-      console.log('[profile-edit] SecureStore write done');
 
       // 2. Sync React state from SecureStore immediately
       await refreshLocalState();
-      console.log('[profile-edit] refreshLocalState done');
 
       // 3. Push to Supabase BEFORE navigating back, so syncRemoteProfile
       //    on the profile screen won't read stale remote data.
@@ -102,7 +99,6 @@ export function ProfileEditScreen() {
             mbti: nextProfile.mbti || null,
             blood_type: nextProfile.bloodType || null,
           });
-          console.log('[profile-edit] Supabase push done');
         } catch (remoteError) {
           console.warn('[profile-edit] Supabase push failed:', remoteError);
         }

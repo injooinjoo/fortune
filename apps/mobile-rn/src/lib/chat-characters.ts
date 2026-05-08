@@ -37,7 +37,7 @@ export const storyChatCharacters: readonly StoryCharacterSpec[] = [
     name: '정태윤',
     kind: 'story',
     category: 'story',
-    shortDescription: '사내 변호사, 정중한 위트로 사람을 무너뜨리는 형',
+    shortDescription: '사내 변호사, 정중한 위트로 사람을 무너뜨리는 오빠',
     specialties: [],
   },
   {
@@ -61,7 +61,7 @@ export const storyChatCharacters: readonly StoryCharacterSpec[] = [
     name: '김지호',
     kind: 'story',
     category: 'story',
-    shortDescription: '교회 청년부 형, 따뜻한 존댓말 + 가끔 형 같은 반말',
+    shortDescription: '교회 청년부 오빠, 따뜻한 존댓말 + 가끔 오빠 같은 반말',
     specialties: [],
   },
   {
@@ -69,7 +69,7 @@ export const storyChatCharacters: readonly StoryCharacterSpec[] = [
     name: '윤도현',
     kind: 'story',
     category: 'story',
-    shortDescription: '어릴 적부터 알던 동네 형, 짧은 반말 + 행동으로 챙김',
+    shortDescription: '어릴 적부터 알던 동네 오빠, 짧은 반말 + 행동으로 챙김',
     specialties: [],
   },
   {

@@ -69,30 +69,258 @@ export type LongRunningJobHandler = (
  */
 const TEXT_FORTUNE_REGISTRY: Record<
   string,
-  { endpoint: string; resultKind: string; label: string; pushBody?: string }
+  {
+    endpoint: string;
+    resultKind: string;
+    label: string;
+    eyebrow: string;
+    subtitle: string;
+    pushBody?: string;
+  }
 > = {
   tarot: {
     endpoint: '/fortune-tarot',
     resultKind: 'tarot',
     label: '타로',
+    eyebrow: '오늘의 카드 흐름',
+    subtitle: '카드 3장이 들려주는 흐름과 행동 힌트',
   },
   dream: {
     endpoint: '/fortune-dream',
     // dream 결과 화면이 tarot UI 를 재사용 (mapping.ts 의 dream→tarot 매핑).
     resultKind: 'tarot',
     label: '꿈 해몽',
+    eyebrow: '오늘의 꿈 메시지',
+    subtitle: '꿈이 전하는 상징과 오늘의 지침',
   },
   compatibility: {
     endpoint: '/fortune-compatibility',
     resultKind: 'compatibility',
     label: '궁합',
+    eyebrow: '오늘의 궁합 흐름',
+    subtitle: '두 사람의 리듬과 관계 포인트',
   },
   'traditional-saju': {
     endpoint: '/fortune-traditional-saju',
     resultKind: 'traditional-saju',
     label: '전통 사주',
+    eyebrow: '오늘의 사주 흐름',
+    subtitle: '사주가 짚어주는 핵심 균형과 조언',
   },
 };
+
+// ---------------------------------------------------------------------------
+// fortune-* 응답 → EmbeddedResultPayload 정규화 helpers (Deno-friendly).
+//
+// 클라 동기 경로 (edge-runtime.ts) 는 normalizeFortuneResult +
+// buildEmbeddedResultPayloadFromNormalizedResult 로 정규화하지만, 비동기
+// 워커는 이를 호출할 수 없어 (RN-only deps) Deno 측에서 같은 모양의 payload
+// 를 직접 빚는다. ResultCardFrame / Hero* 가 직접 읽는 필드만 채우면 OK.
+// ---------------------------------------------------------------------------
+
+const SAJU_ELEMENT_KO_TO_EN: Record<string, string> = {
+  목: 'wood',
+  화: 'fire',
+  토: 'earth',
+  금: 'metal',
+  수: 'water',
+};
+const SAJU_STEM_TO_EL: Record<string, string> = {
+  甲: 'wood', 乙: 'wood', 丙: 'fire', 丁: 'fire', 戊: 'earth',
+  己: 'earth', 庚: 'metal', 辛: 'metal', 壬: 'water', 癸: 'water',
+};
+const SAJU_BRANCH_TO_EL: Record<string, string> = {
+  子: 'water', 丑: 'earth', 寅: 'wood', 卯: 'wood', 辰: 'earth', 巳: 'fire',
+  午: 'fire', 未: 'earth', 申: 'metal', 酉: 'metal', 戌: 'earth', 亥: 'water',
+};
+
+function clip(s: unknown, n: number): string {
+  const str = typeof s === 'string' ? s.trim() : '';
+  if (!str) return '';
+  return str.length > n ? `${str.slice(0, n - 1)}…` : str;
+}
+
+function asStringArray(v: unknown, max = 6): string[] {
+  if (!Array.isArray(v)) return [];
+  return v
+    .map((x) => (typeof x === 'string' ? x.trim() : ''))
+    .filter((x) => x.length > 0)
+    .slice(0, max);
+}
+
+function buildBasePayload(
+  fortuneType: string,
+  resultKind: string,
+  entry: { eyebrow: string; subtitle: string; label: string },
+  generatedAt: string,
+  raw: Record<string, unknown>,
+): Record<string, unknown> {
+  return {
+    widgetType: 'fortune_result_card',
+    kind: resultKind,
+    fortuneType,
+    resultKind,
+    eyebrow: entry.eyebrow,
+    title: entry.label,
+    subtitle: entry.subtitle,
+    summary: '',
+    generatedAt,
+    rawApiResponse: raw,
+  };
+}
+
+function normalizeTarotPayload(
+  raw: Record<string, unknown>,
+  base: Record<string, unknown>,
+): Record<string, unknown> {
+  const cards = Array.isArray(raw.cards) ? (raw.cards as Record<string, unknown>[]) : [];
+  const spread = cards.slice(0, 3).map((c) => ({
+    name: typeof c.cardNameKr === 'string' && c.cardNameKr ? c.cardNameKr : (c.cardName as string) ?? '',
+    suit: typeof c.suit === 'string' ? c.suit : undefined,
+    position: typeof c.positionName === 'string' ? c.positionName : undefined,
+    meaning: typeof c.interpretation === 'string' ? clip(c.interpretation, 200) : undefined,
+  }));
+  const interpretations = cards
+    .map((c) => (typeof c.interpretation === 'string' ? `${c.positionName ?? ''}: ${clip(c.interpretation, 180)}` : ''))
+    .filter(Boolean);
+  return {
+    ...base,
+    title: typeof raw.storyTitle === 'string' && raw.storyTitle ? raw.storyTitle : base.title,
+    summary: clip(raw.overallReading ?? raw.guidance, 220),
+    score: typeof raw.energyLevel === 'number' ? raw.energyLevel : undefined,
+    spread,
+    highlights: interpretations.slice(0, 3),
+    recommendations: [
+      typeof raw.advice === 'string' ? raw.advice : '',
+      typeof raw.guidance === 'string' ? raw.guidance : '',
+    ].filter(Boolean) as string[],
+    luckyItems: asStringArray(raw.keyThemes, 4),
+    specialTip: typeof raw.luckyElement === 'string' ? `행운 원소: ${raw.luckyElement}` : undefined,
+    contextTags: asStringArray(raw.focusAreas, 3),
+  };
+}
+
+function normalizeDreamPayload(
+  raw: Record<string, unknown>,
+  base: Record<string, unknown>,
+): Record<string, unknown> {
+  // dream 은 tarot UI(spread)를 빌리지만 카드 데이터가 없으므로 spread 미설정.
+  // HeroDream 은 motif 필드를 직접 읽음.
+  const symbols = Array.isArray(raw.relatedSymbols) ? (raw.relatedSymbols as string[]) : [];
+  const motif = typeof raw.dreamType === 'string' && raw.dreamType
+    ? raw.dreamType
+    : (symbols[0] ?? '바다');
+  return {
+    ...base,
+    summary: clip(raw.interpretation ?? raw.summary, 220),
+    score: typeof raw.score === 'number' ? raw.score : undefined,
+    motif,
+    dreamMotif: motif,
+    highlights: asStringArray(raw.luckyKeywords, 5),
+    recommendations: asStringArray(raw.actionAdvice, 4),
+    warnings: asStringArray(raw.avoidKeywords, 3),
+    luckyItems: asStringArray(raw.affirmations, 3),
+    specialTip: typeof raw.todayGuidance === 'string' ? clip(raw.todayGuidance, 200) : undefined,
+    contextTags: symbols.slice(0, 3),
+  };
+}
+
+function normalizeCompatPayload(
+  raw: Record<string, unknown>,
+  base: Record<string, unknown>,
+): Record<string, unknown> {
+  const p1 = (raw.person1 ?? {}) as Record<string, unknown>;
+  const p2 = (raw.person2 ?? {}) as Record<string, unknown>;
+  const left = typeof p1.name === 'string' && p1.name ? p1.name : '나';
+  const right = typeof p2.name === 'string' && p2.name ? p2.name : '상대';
+  return {
+    ...base,
+    title: typeof raw.title === 'string' && raw.title ? raw.title : base.title,
+    summary: clip(raw.overall_compatibility ?? raw.summary, 220),
+    score: typeof raw.score === 'number' ? raw.score : undefined,
+    compat: { leftLabel: left, rightLabel: right, metrics: [] },
+    highlights: [
+      typeof raw.personality_match === 'string' ? clip(raw.personality_match, 180) : '',
+      typeof raw.communication_match === 'string' ? clip(raw.communication_match, 180) : '',
+      typeof raw.love_match === 'string' ? clip(raw.love_match, 180) : '',
+    ].filter(Boolean) as string[],
+    recommendations: asStringArray(raw.advice, 4),
+    warnings: asStringArray(raw.cautions, 3),
+    luckyItems: asStringArray(raw.strengths, 4),
+    specialTip: typeof raw.compatibility_keyword === 'string' ? raw.compatibility_keyword : undefined,
+  };
+}
+
+function normalizeSajuPayload(
+  raw: Record<string, unknown>,
+  base: Record<string, unknown>,
+  reqPayload: Record<string, unknown>,
+): Record<string, unknown> {
+  // saju 응답엔 pillars 가 없음 — 요청 본문 sajuData 에서 끌어옴.
+  const sajuData = (reqPayload.sajuData ?? {}) as Record<string, unknown>;
+  const pillarSrc = (sajuData.pillar ?? {}) as Record<string, unknown>;
+  const pillarKeys: Array<[string, string]> = [
+    ['year', '年'], ['month', '月'], ['day', '日'], ['time', '時'],
+  ];
+  const pillars = pillarKeys
+    .map(([k, label]) => {
+      const p = (pillarSrc[k] ?? {}) as Record<string, unknown>;
+      const sky = typeof p.heavenlyStem === 'string' ? p.heavenlyStem : '';
+      const gnd = typeof p.earthlyBranch === 'string' ? p.earthlyBranch : '';
+      if (!sky && !gnd) return null;
+      return {
+        label,
+        sky,
+        gnd,
+        skyEl: SAJU_STEM_TO_EL[sky] ?? 'earth',
+        gndEl: SAJU_BRANCH_TO_EL[gnd] ?? 'earth',
+      };
+    })
+    .filter(Boolean) as Array<Record<string, unknown>>;
+  const elementsKo = (sajuData.elements ?? {}) as Record<string, unknown>;
+  const elements: Record<string, number> = {};
+  for (const [ko, en] of Object.entries(SAJU_ELEMENT_KO_TO_EN)) {
+    const v = elementsKo[ko];
+    if (typeof v === 'number') elements[en] = Math.min(100, Math.max(0, v));
+  }
+  const sections = (raw.sections ?? {}) as Record<string, unknown>;
+  return {
+    ...base,
+    summary: clip(raw.summary ?? sections.analysis ?? raw.content, 220),
+    score: typeof raw.score === 'number' ? raw.score : 75,
+    pillars: pillars.length === 4 ? pillars : undefined,
+    elements: Object.keys(elements).length > 0 ? elements : undefined,
+    highlights: [
+      typeof sections.analysis === 'string' ? clip(sections.analysis, 200) : '',
+      typeof sections.answer === 'string' ? clip(sections.answer, 200) : '',
+    ].filter(Boolean) as string[],
+    recommendations: [
+      typeof sections.advice === 'string' ? clip(sections.advice, 200) : '',
+      typeof raw.advice === 'string' ? clip(raw.advice, 200) : '',
+    ].filter(Boolean) as string[],
+    specialTip: typeof sections.supplement === 'string' ? clip(sections.supplement, 200) : undefined,
+  };
+}
+
+function normalizeFortunePayload(
+  fortuneType: string,
+  raw: Record<string, unknown>,
+  base: Record<string, unknown>,
+  reqPayload: Record<string, unknown>,
+): Record<string, unknown> {
+  switch (fortuneType) {
+    case 'tarot':
+      return normalizeTarotPayload(raw, base);
+    case 'dream':
+      return normalizeDreamPayload(raw, base);
+    case 'compatibility':
+      return normalizeCompatPayload(raw, base);
+    case 'traditional-saju':
+      return normalizeSajuPayload(raw, base, reqPayload);
+    default:
+      return base;
+  }
+}
 
 /**
  * 일반화된 텍스트 운세 worker.
@@ -158,6 +386,23 @@ async function handleTextFortuneJob(
   const messageId = `result-${input.job.id}`;
   const generatedAt = new Date().toISOString();
 
+  // 정규화: ResultCardFrame / Hero* 가 직접 읽는 필드 (eyebrow/title/summary/
+  // score/spread/pillars/compat/...) 를 빚어 박는다. 빈 슬롯 + 뒷면 카드 더미
+  // 렌더링 회피. rawApiResponse 도 디버깅/하위 컴포넌트 fallback 용 보존.
+  const base = buildBasePayload(
+    input.job.job_type,
+    entry.resultKind,
+    entry,
+    generatedAt,
+    rawApiResponse,
+  );
+  const normalizedPayload = normalizeFortunePayload(
+    input.job.job_type,
+    rawApiResponse,
+    base,
+    input.job.payload ?? {},
+  );
+
   const cardPayload: LongRunningJobCardPayload = {
     id: messageId,
     kind: 'embedded-result',
@@ -166,13 +411,7 @@ async function handleTextFortuneJob(
     fortuneType: input.job.job_type,
     resultKind: entry.resultKind,
     title: entry.label,
-    payload: {
-      kind: entry.resultKind,
-      fortuneType: input.job.job_type,
-      resultKind: entry.resultKind,
-      generatedAt,
-      rawApiResponse,
-    },
+    payload: normalizedPayload,
   };
 
   return {

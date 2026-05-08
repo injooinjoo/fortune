@@ -23,7 +23,7 @@ const OPTIONS: ReadonlyArray<{
   { id: '멘토', title: '멘토', caption: '깊게 통찰해주는 멘토', icon: '師' },
   {
     id: '전문가',
-    title: '운세 전문가',
+    title: '인사이트 전문가',
     caption: '사주·타로로 흐름을 읽어주는 사람',
     icon: '占',
   },

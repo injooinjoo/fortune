@@ -39,7 +39,7 @@ struct LockScoreCircleWidget: Widget {
             LockScoreCircleView(entry: entry)
                 .containerBackground(for: .widget) { Color.clear }
         }
-        .configurationDisplayName("오늘의 운세 점수")
+        .configurationDisplayName("오늘의 인사이트 점수")
         .description("잠금화면에 점수 ring.")
         .supportedFamilies([.accessoryCircular])
     }
@@ -60,7 +60,7 @@ struct LockScoreCircleView: View {
                 Text("\(entry.score)")
                     .font(.system(size: 14, weight: .heavy))
                     .foregroundColor(.white)
-                Text("운세")
+                Text("인사이트")
                     .font(.system(size: 7))
                     .tracking(0.5)
                     .foregroundColor(.white.opacity(0.7))

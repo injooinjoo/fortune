@@ -94,7 +94,7 @@ highlights 에 매력 포인트, recommendations 에 대화 주제/행동 팁, w
   daily: {
     systemPrompt: `${FORTUNE_BASE_INSTRUCTIONS}
 [오늘의 운세] 생년/성별/띠 기반으로 오늘의 전반운, 연애/금전/업무/건강 한 줄씩, 행운 아이템을 담아라.`,
-    eyebrow: '오늘의 운세',
+    eyebrow: '오늘의 인사이트',
     temperature: 0.8,
     maxTokens: 768,
   },
@@ -143,7 +143,7 @@ highlights 에 매력 포인트, recommendations 에 대화 주제/행동 팁, w
   'zodiac-animal': {
     systemPrompt: `${FORTUNE_BASE_INSTRUCTIONS}
 [띠별 운세] 12지 띠 기반 오늘의 운세 + 추천/주의 + 행운 방향.`,
-    eyebrow: '띠별 운세',
+    eyebrow: '띠별 인사이트',
     temperature: 0.85,
     maxTokens: 768,
   },
@@ -334,7 +334,7 @@ highlights 에 추천 이름 3개, recommendations 에 작명 철학 팁.`,
     systemPrompt: `${FORTUNE_BASE_INSTRUCTIONS}
 [가족 운세] 가족 구성/관심 이슈(화목/변화/자녀/건강/관계/재물)를 종합적으로 다뤄 조언.
 highlights 에 강점, recommendations 에 실행 팁, warnings 에 조심할 부분.`,
-    eyebrow: '가족 운세',
+    eyebrow: '가족 인사이트',
     temperature: 0.85,
     maxTokens: 1024,
   },
@@ -500,7 +500,7 @@ function assembleEmbeddedPayload(
       ? v.filter((x): x is string => typeof x === 'string' && x.length > 0)
       : [];
 
-  const title = asString(parsed.title, '오늘의 운세');
+  const title = asString(parsed.title, '오늘의 인사이트');
   const subtitle = asString(parsed.subtitle) || (spec.eyebrow ?? 'Ondo');
   const summary = asString(parsed.summary) || title;
   const score = asNumber(parsed.score, 72);

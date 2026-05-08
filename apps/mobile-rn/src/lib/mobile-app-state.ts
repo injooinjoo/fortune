@@ -42,8 +42,18 @@ export interface ChatSurfaceState {
 
 export type AiMode = 'cloud' | 'on-device' | 'auto';
 
+/**
+ * 클라우드 모델 선호. 모든 캐릭터 채팅에 글로벌 적용.
+ * - 'default': character-chat DB 설정 (현재 gemini-2.5-flash-lite)
+ * - 'grok-fast': grok-3-mini-fast (저지연, reasoning 최소)
+ * - 'grok': grok-3-mini (대화형)
+ * 백엔드 (supabase/functions/character-chat/index.ts) 의 modelPreference 와 1:1 매핑.
+ */
+export type CloudModelPreference = 'default' | 'grok-fast' | 'grok';
+
 export interface AppSettings {
   aiMode: AiMode;
+  cloudModelPreference: CloudModelPreference;
   /**
    * 채팅 도착 시 햅틱 피드백 ON/OFF. 기본 true.
    * 캐릭터 메시지가 렌더될 때 tapLight / loveHeartbeat / scoreReveal 호출을 제어.
@@ -117,6 +127,7 @@ export const emptyMobileAppState: MobileAppState = {
     // 있어?" 같은 어색한 번역체) 사용자 체감 회귀를 일으킨다. 데이터 절약/
     // 오프라인 사용을 원하는 사용자는 프로필 설정에서 명시적으로 전환 가능.
     aiMode: 'cloud',
+    cloudModelPreference: 'default',
     chatHapticsEnabled: true,
   },
   updatedAt: null,
@@ -144,6 +155,10 @@ function isFortuneTypeId(value: unknown): value is FortuneTypeId {
 
 function isAiMode(value: unknown): value is AiMode {
   return value === 'cloud' || value === 'on-device' || value === 'auto';
+}
+
+function isCloudModelPreference(value: unknown): value is CloudModelPreference {
+  return value === 'default' || value === 'grok-fast' || value === 'grok';
 }
 
 export function normalizeMobileAppState(raw: Record<string, unknown>): MobileAppState {
@@ -218,6 +233,9 @@ export function normalizeMobileAppState(raw: Record<string, unknown>): MobileApp
       const shouldMigrate = !migrated && persistedAiMode === 'on-device';
       return {
         aiMode: shouldMigrate ? 'cloud' : persistedAiMode,
+        cloudModelPreference: isCloudModelPreference(settings.cloudModelPreference)
+          ? settings.cloudModelPreference
+          : emptyMobileAppState.settings.cloudModelPreference,
         chatHapticsEnabled: asBoolean(
           settings.chatHapticsEnabled,
           emptyMobileAppState.settings.chatHapticsEnabled,

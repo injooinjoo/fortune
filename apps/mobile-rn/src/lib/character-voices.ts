@@ -23,7 +23,7 @@ export type GeminiVoiceId =
   | 'Achird';
 
 const STORY_CHARACTER_VOICES: Record<string, GeminiVoiceId> = {
-  // 명탐정 / 위장결혼 — 깊고 절제된 남성 톤
+  // 직장 사수 — 깊고 절제된 남성 톤
   luts: 'Charon',
   // 사기결혼 / 복수 — 친근하고 날카로운 남성 톤
   jung_tae_yoon: 'Puck',
@@ -31,9 +31,9 @@ const STORY_CHARACTER_VOICES: Record<string, GeminiVoiceId> = {
   seo_yoonjae: 'Fenrir',
   // 비서 / 그림자 — 부드럽고 음악적인 여성
   kang_harin: 'Aoede',
-  // 천사 / 구원 — 다른 세계 같은 음색
+  // 교회 청년부 오빠 — 따뜻하고 차분한 음색
   jayden_angel: 'Achernar',
-  // 집사 — 정중하고 차분한 톤
+  // 동네 오빠 — 단단하고 짧은 남성 톤
   ciel_butler: 'Enceladus',
   // 미정 — 중성적 차분
   lee_doyoon: 'Achird',

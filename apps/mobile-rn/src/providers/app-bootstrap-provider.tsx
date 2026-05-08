@@ -26,7 +26,7 @@ import { chatCharacters } from '../lib/chat-characters';
 import type { ChatShellMessage } from '../lib/chat-shell';
 import { loadCachedCharacterMessagesBatch } from '../lib/character-conversation-cache';
 import { hydrateBatch as hydrateMessageStoreBatch } from '../lib/message-store';
-import { subscribeToPosterJobs } from '../lib/long-running-jobs';
+import { resumePendingReplies } from '../lib/pending-reply-resumer';
 import { appEnv } from '../lib/env';
 import { captureError } from '../lib/error-reporting';
 import {
@@ -329,6 +329,11 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
             registerPushTokenForSignedInUser().catch((error) => {
               console.warn('[bootstrap] push token 등록 실패:', error);
             });
+            // 콜드스타트 시 미응답 답장 잡 즉시 재개. cron 의 30s grace + 1m
+            // polling 을 기다리지 않아 채팅창 진입 전에 응답이 도착하기 시작함.
+            resumePendingReplies().catch((error) => {
+              console.warn('[bootstrap] pending reply resume 실패:', error);
+            });
           } else if (storedProgress.authCompleted) {
             await syncProgress({
               authCompleted: false,
@@ -410,6 +415,10 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
             registerPushTokenForSignedInUser().catch((error) => {
               console.warn('[bootstrap] push token 등록 실패:', error);
             });
+            // 인증 변경(다른 계정 로그인) 시점에도 그 사용자의 pending 잡 재개.
+            resumePendingReplies().catch((error) => {
+              console.warn('[bootstrap] pending reply resume 실패:', error);
+            });
           } else {
             syncProgress({
               authCompleted: false,
@@ -437,6 +446,12 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
         // 세션이 없으면 등록할 user 도 없음 → 함수 내부에서 silent skip.
         registerPushTokenForSignedInUser().catch((error) => {
           console.warn('[bootstrap] push token resume sync 실패:', error);
+        });
+        // 백그라운드에서 보낸 메시지의 답장이 LLM 호출 중 끊겼을 가능성
+        // → 포그라운드 복귀 시점에도 pending 잡 재개. 인플라이트 dedup 으로
+        // 빠른 토글에도 중복 LLM 호출 안 됨.
+        resumePendingReplies().catch((error) => {
+          console.warn('[bootstrap] pending reply resume 실패:', error);
         });
       },
     );
@@ -505,17 +520,6 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       appStateSubscription.remove();
     };
   }, []);
-
-  // Long-running job (poster-guide phase) realtime 구독.
-  // session 이 바뀌거나 sign-out 되면 채널 재구성. 미인증 상태에선 noop.
-  useEffect(() => {
-    const userId = session?.user.id;
-    if (!userId) return;
-    const unsubscribe = subscribeToPosterJobs(userId);
-    return () => {
-      unsubscribe();
-    };
-  }, [session?.user.id]);
 
   async function markGuestBrowse() {
     const next = await patchUnifiedOnboardingProgress({

@@ -31,7 +31,7 @@ export function useShareSaju() {
       `일간: ${saju.dayMaster.korean} (${saju.dayMaster.element})\n` +
       `오행: 木${e.wood} 火${e.fire} 土${e.earth} 金${e.metal} 水${e.water}\n` +
       `강한 오행: ${e.strongest} · 약한 오행: ${e.weakest}\n\n` +
-      `Ondo에서 확인한 내 운세`;
+      `Ondo에서 확인한 내 인사이트`;
 
     try {
       await Share.share({ message });

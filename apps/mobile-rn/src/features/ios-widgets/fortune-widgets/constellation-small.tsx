@@ -23,7 +23,7 @@ export function ConstellationSmall() {
       <StarField />
       <CornerGlow color={WIDGET_COLORS.sky} opacity={0.3} />
       <WidgetHeader
-        label="별자리 운세"
+        label="별자리 인사이트"
         color="rgba(143,184,255,0.65)"
         right={<OndoMark color="rgba(143,184,255,0.55)" />}
       />

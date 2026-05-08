@@ -288,11 +288,11 @@ const TERM_INFO: Record<string, TermEntry> = {
   },
   세운: {
     title: '세운 (歲運)',
-    description: '1년 단위의 흐름. 그 해의 운세를 말해요.',
+    description: '1년 단위의 흐름. 그 해의 인사이트를 말해요.',
   },
   월운: {
     title: '월운 (月運)',
-    description: '1개월 단위의 흐름. 그 달의 운세예요.',
+    description: '1개월 단위의 흐름. 그 달의 인사이트예요.',
   },
 
   // ── 오행 ──────────────────────────────────

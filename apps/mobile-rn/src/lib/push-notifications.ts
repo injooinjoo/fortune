@@ -1,8 +1,7 @@
-import { Platform } from 'react-native';
+import { Alert, Linking, Platform } from 'react-native';
 import Constants from 'expo-constants';
 
 import type { ChatShellMessage } from './chat-shell';
-import { finalizeJob } from './long-running-jobs';
 import { insertMessages } from './message-store';
 import {
   deleteSecureItem,
@@ -156,6 +155,8 @@ export async function insertMessageFromPushIfPresent(
   // Long-running 결과 push (poster_result | long_running_result) — 두 큐
   // 테이블 모두 같은 cardPayloadJson 형식으로 발송하므로 동일 처리.
   // process-poster-jobs / process-long-running-jobs cron worker 가 발송.
+  // 진행 카드 정리는 ProgressMessageCard 의 self-polling 이 알아서 처리한다
+  // (3초 안에 status='done' 감지 → 카드 자동 제거).
   const isLongRunningResult =
     payload.type === 'poster_result' || payload.type === 'long_running_result';
   if (isLongRunningResult && payload.cardPayloadJson) {
@@ -163,12 +164,6 @@ export async function insertMessageFromPushIfPresent(
       const card = JSON.parse(payload.cardPayloadJson) as ChatShellMessage;
       if (card && typeof card === 'object' && 'id' in card && 'kind' in card) {
         await insertMessages(payload.characterId, [card]);
-        // 진행 카드 제거 — realtime UPDATE(status=done) 가 이미 finalizeJob 을
-        // 호출했더라도 untrackJob/deleteMessages 는 멱등 (no-op safe). 푸시가
-        // realtime 보다 먼저 도착한 경우(드물지만 가능) 여기서 정리.
-        if (payload.scheduledId) {
-          finalizeJob(payload.scheduledId, { status: 'done' });
-        }
         return;
       }
     } catch (e) {
@@ -741,4 +736,201 @@ export async function deactivateCurrentPushToken(): Promise<void> {
   }
   lastRegisteredToken = null;
   await deleteSecureItem(PENDING_PUSH_TOKEN_KEY).catch(() => undefined);
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// JIT 푸시 권한 — 캐릭터 첫 메시지 send 시점에 부드럽게 prompt.
+// ────────────────────────────────────────────────────────────────────────────
+// 콜드스타트 silent 등록 (W9 정책) 만으로는 권한 요청 자체가 발생 안 해서 푸시
+// 도달률이 0 에 가까웠음. 사용자가 캐릭터에게 첫 메시지를 보내는 순간 — 가장
+// 의도가 명확한 시점 — soft-ask 로 한 번만 묻고, 거절하면 7일 cooldown.
+
+const PUSH_JIT_STATE_KEY = 'fortune.push.jit.state.v1';
+const PUSH_JIT_DECLINE_COUNT_KEY = 'fortune.push.jit.softDeclineCount.v1';
+const PUSH_JIT_LAST_ASK_KEY = 'fortune.push.jit.lastSoftAskAt.v1';
+const PUSH_JIT_SOFT_DECLINE_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
+const PUSH_JIT_SOFT_DECLINE_MAX = 2;
+
+// Send 버튼 빠른 연타 가드 — Alert 모달이 비동기로 뜨는 동안 두 번째 호출이
+// 동일 상태(soft-asked 직전)를 보고 또 모달을 띄우면 declineCount 가 두 번
+// 증가하거나 사용자가 같은 alert 를 두 번 보게 된다. 모듈 스코프 single
+// in-flight bool 로 동시성 차단. 정상 종료 / 예외 / 캔슬 모두 finally 에서 해제.
+let pushJitPromptInFlight = false;
+
+type PushJitState =
+  | 'untriggered'
+  | 'soft-asked'
+  | 'os-prompted'
+  | 'granted'
+  | 'denied';
+
+// SecureStore 가 일시적으로 실패해도 같은 세션 안에서 JIT 상태머신이 자기
+// 자신과 모순되지 않도록 메모리 mirror 를 유지. read 는 메모리 → 디스크 폴백,
+// write 는 메모리 즉시 + 디스크 best-effort. 콜드스타트 시 메모리는 비어있고
+// 디스크가 source of truth.
+let jitStateCache: PushJitState | null = null;
+let jitDeclineCountCache: number | null = null;
+let jitLastAskMsCache: number | null = null;
+
+function normalizeJitState(raw: string | null | undefined): PushJitState {
+  switch (raw) {
+    case 'soft-asked':
+    case 'os-prompted':
+    case 'granted':
+    case 'denied':
+      return raw;
+    default:
+      return 'untriggered';
+  }
+}
+
+async function getPushJitState(): Promise<PushJitState> {
+  if (jitStateCache !== null) return jitStateCache;
+  const raw = await getSecureItem(PUSH_JIT_STATE_KEY).catch(() => null);
+  const next = normalizeJitState(raw);
+  jitStateCache = next;
+  return next;
+}
+
+async function setPushJitState(next: PushJitState): Promise<void> {
+  // 메모리 즉시 반영 — SecureStore 실패해도 같은 세션 내 일관성.
+  jitStateCache = next;
+  await setSecureItem(PUSH_JIT_STATE_KEY, next).catch(() => undefined);
+}
+
+async function getSoftDeclineCount(): Promise<number> {
+  if (jitDeclineCountCache !== null) return jitDeclineCountCache;
+  const raw = await getSecureItem(PUSH_JIT_DECLINE_COUNT_KEY).catch(() => null);
+  const n = raw ? Number.parseInt(raw, 10) : 0;
+  const next = Number.isFinite(n) && n >= 0 ? n : 0;
+  jitDeclineCountCache = next;
+  return next;
+}
+
+async function bumpSoftDeclineCount(): Promise<void> {
+  const next = (await getSoftDeclineCount()) + 1;
+  jitDeclineCountCache = next;
+  jitLastAskMsCache = Date.now();
+  await setSecureItem(PUSH_JIT_DECLINE_COUNT_KEY, String(next)).catch(
+    () => undefined,
+  );
+  await setSecureItem(PUSH_JIT_LAST_ASK_KEY, new Date().toISOString()).catch(
+    () => undefined,
+  );
+}
+
+async function getLastSoftAskMs(): Promise<number | null> {
+  if (jitLastAskMsCache !== null) return jitLastAskMsCache;
+  const raw = await getSecureItem(PUSH_JIT_LAST_ASK_KEY).catch(() => null);
+  if (!raw) return null;
+  const t = Date.parse(raw);
+  const next = Number.isFinite(t) ? t : null;
+  if (next !== null) jitLastAskMsCache = next;
+  return next;
+}
+
+/**
+ * 캐릭터 첫 메시지 send 직전에 호출. OS 권한이 이미 granted 면 noop.
+ * untriggered/cooldown 충족 시 React Native Alert 로 soft-ask → 사용자가
+ * 동의하면 OS prompt + 토큰 등록까지 자동 진행. fire-and-forget 으로 호출
+ * 하면 send 흐름은 절대 막히지 않는다.
+ */
+export async function maybePromptPushPermissionForCharacter(
+  characterName: string,
+): Promise<'granted' | 'denied' | 'deferred' | 'skipped'> {
+  // C2 방어: 빠른 send 연타로 helper 가 동시 호출되면 첫 번째가 모달을 띄우기
+  // 전에 두 번째도 진입해 두 번 prompt → declineCount 이중 증가 / 중복 alert.
+  // 모듈-스코프 bool 로 한 번에 한 prompt 만.
+  if (pushJitPromptInFlight) return 'deferred';
+  pushJitPromptInFlight = true;
+  try {
+    const Notifications = loadNotifications();
+    if (!Notifications) return 'skipped';
+    const Device = loadDevice();
+    if (!Device || !Device.isDevice) return 'skipped';
+
+    const current = await Notifications.getPermissionsAsync();
+    if (current.granted) {
+      await setPushJitState('granted');
+      return 'granted';
+    }
+    // OS 가 다시 묻기 거부 (사용자가 시스템에서 명시적으로 차단) → JIT 도 침묵.
+    if (!current.canAskAgain) {
+      await setPushJitState('denied');
+      return 'denied';
+    }
+
+    const state = await getPushJitState();
+    if (state === 'granted') return 'granted';
+    if (state === 'denied') return 'denied';
+
+    // soft-asked + cooldown 안 지났으면 침묵.
+    if (state === 'soft-asked') {
+      const declines = await getSoftDeclineCount();
+      if (declines >= PUSH_JIT_SOFT_DECLINE_MAX) return 'deferred';
+      const last = await getLastSoftAskMs();
+      if (last && Date.now() - last < PUSH_JIT_SOFT_DECLINE_COOLDOWN_MS) {
+        return 'deferred';
+      }
+    }
+
+    // soft-ask 모달 (Alert) — 사용자 응답을 Promise 로 wrap.
+    const userAccepted = await new Promise<boolean>((resolve) => {
+      Alert.alert(
+        `${characterName}이(가) 가끔 먼저 말 걸어도 될까요?`,
+        `알림을 켜면 ${characterName}이(가) 생각날 때 먼저 메시지를 보내요. 답하지 않아도 괜찮아요.`,
+        [
+          {
+            text: '다음에',
+            style: 'cancel',
+            onPress: () => resolve(false),
+          },
+          {
+            text: '알림 켜기',
+            style: 'default',
+            onPress: () => resolve(true),
+          },
+        ],
+        { cancelable: true, onDismiss: () => resolve(false) },
+      );
+    });
+
+    if (!userAccepted) {
+      await setPushJitState('soft-asked');
+      await bumpSoftDeclineCount();
+      return 'deferred';
+    }
+
+    await setPushJitState('os-prompted');
+    const result = await registerPushTokenForSignedInUser({
+      promptIfNotGranted: true,
+    });
+    if ('token' in result) {
+      await setPushJitState('granted');
+      return 'granted';
+    }
+    await setPushJitState('denied');
+    return 'denied';
+  } finally {
+    pushJitPromptInFlight = false;
+  }
+}
+
+/**
+ * 거절 후 헤더 배너에서 사용. iOS/Android 의 앱 알림 설정 페이지로 직접 이동.
+ */
+export function openPushNotificationSettings(): void {
+  Linking.openSettings().catch(() => undefined);
+}
+
+/**
+ * 헤더 배너 노출 여부 결정용. denied 상태이면서 OS 가 다시 묻지 못하는 경우만
+ * 배너를 띄워 설정 deep-link 를 안내한다.
+ */
+export async function shouldShowPushDeniedBanner(): Promise<boolean> {
+  const Notifications = loadNotifications();
+  if (!Notifications) return false;
+  const current = await Notifications.getPermissionsAsync();
+  if (current.granted) return false;
+  return !current.canAskAgain;
 }

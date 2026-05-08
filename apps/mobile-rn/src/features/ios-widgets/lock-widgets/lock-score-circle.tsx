@@ -42,7 +42,7 @@ export function LockScoreCircle() {
               color="rgba(255,255,255,0.7)"
               style={{ fontSize: 7, marginTop: 1, letterSpacing: 0.5 }}
             >
-              운세
+              인사이트
             </AppText>
           </View>
         </Ring>

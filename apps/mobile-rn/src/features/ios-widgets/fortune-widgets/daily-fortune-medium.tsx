@@ -29,7 +29,7 @@ export function DailyFortuneMedium() {
       <CornerGlow color={WIDGET_COLORS.violet} opacity={0.4} />
       <View style={{ flexDirection: 'row', gap: 14, height: '100%' }}>
         <View style={{ width: 130, flexDirection: 'column' }}>
-          <WidgetHeader label="오늘의 운세" right={<OndoMark />} />
+          <WidgetHeader label="오늘의 인사이트" right={<OndoMark />} />
           <View style={{ marginTop: 2 }}>
             <AppText
               color={WIDGET_COLORS.amber}

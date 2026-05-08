@@ -24,6 +24,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { LLMFactory } from "../_shared/llm/factory.ts";
 import { UsageLogger } from "../_shared/llm/usage-logger.ts";
+import { computeReplyDelay } from "../_shared/reply_delay.ts";
 import {
   AFFINITY_EVALUATION_PROMPT,
   MULTI_BUBBLE_PROMPT,
@@ -105,7 +106,7 @@ interface CharacterChatRequest {
    * 메시지를 멀티파트로 변환해 vision-capable LLM 에 전달. */
   imageBase64?: string;
   shouldSendPush?: boolean;
-  modelPreference?: "default" | "grok-fast";
+  modelPreference?: "default" | "grok-fast" | "grok";
   userName?: string;
   userDescription?: string;
   oocInstructions?: string;
@@ -136,6 +137,19 @@ interface CharacterChatRequest {
    * PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.5 (A10).
    */
   pendingProactiveMessageId?: string;
+  /**
+   * 답장 생성 큐 (pending_character_reply_jobs) 의 row id.
+   * 클라가 send 시 enqueue_pending_reply_job RPC 로 만든 job 의 id 또는 cron 이
+   * claim 한 row id. 있으면 이 함수가 처리 시작 시 atomic claim 후 진행, 완료
+   * 시 status='done' / 실패 시 'failed' 마킹. 없으면 기존 동작 (legacy 호환).
+   */
+  jobId?: string;
+  /**
+   * 내부 worker (process-pending-reply-jobs cron) 가 service_role 토큰으로 호출
+   * 할 때 사용자 식별용. 일반 클라이언트의 user JWT 가 없을 때 character-chat
+   * 의 userId 를 이 값으로 채움. service_role 토큰이 아닌 경우 무시.
+   */
+  trustedUserId?: string;
 }
 
 interface AffinityDelta {
@@ -236,49 +250,9 @@ function extractSegments(text: string): string[] {
   return pieces;
 }
 
-// AC2 — 응답 지연 상황별 multiplier 상수.
-// EMOTION_CONFIG base 값을 곱한 뒤 [MIN, MAX]로 clamp 한다.
-const LONG_MESSAGE_CHAR_THRESHOLD = 200;
-const LONG_MESSAGE_DELAY_MULTIPLIER = 1.3;
-const NIGHT_DELAY_MULTIPLIER = 1.5;
-// KST 야간 구간: [start, end). end 가 start 보다 작으면 자정 가로지름 (23,7) → 23–24 + 0–7.
-const NIGHT_KST_HOUR_START = 23;
-const NIGHT_KST_HOUR_END = 7;
-const MAX_DELAY_SEC_CAP = 600;
-const MIN_DELAY_SEC_FLOOR = 10;
-
-// 감정 설정: { keywords, minDelay(초), maxDelay(초) }
-const EMOTION_CONFIG: Record<
-  string,
-  { keywords: string[]; minDelay: number; maxDelay: number }
-> = {
-  "당황": {
-    keywords: ["어?", "뭐?", "어라?", "...?!", "헉", "에?", "뭐라고"],
-    minDelay: 60,
-    maxDelay: 300,
-  },
-  "고민": {
-    keywords: ["음...", "흠...", "생각해보니", "글쎄", "어떻게", "모르겠"],
-    minDelay: 40,
-    maxDelay: 180,
-  },
-  "분노": {
-    keywords: ["뭐하는", "화가", "짜증", "싫어", "나가", "꺼져"],
-    minDelay: 30,
-    maxDelay: 120,
-  },
-  "애정": {
-    keywords: ["좋아", "사랑", "소중", "예쁘", "귀여", "보고싶"],
-    minDelay: 15,
-    maxDelay: 60,
-  },
-  "기쁨": {
-    keywords: ["하하", "ㅋㅋ", "재밌", "신나", "좋겠", "대박"],
-    minDelay: 10,
-    maxDelay: 25,
-  },
-  "일상": { keywords: [], minDelay: 10, maxDelay: 30 },
-};
+// 답장 지연/감정 계산은 _shared/reply_delay.ts 의 computeReplyDelay 가
+// 단일 source. 옛 EMOTION_CONFIG / *_DELAY_MULTIPLIER / MIN_DELAY_SEC_FLOOR
+// 등 상수는 그쪽으로 이동됐다.
 
 // OOC 상태 블록 제거 (사용자에게 보이지 않도록)
 // 기존 대화 히스토리에서 로드된 메타 정보 제거용 안전장치
@@ -394,67 +368,22 @@ function extractAffinityDelta(
   }
 }
 
-// Deno Edge runtime은 UTC. KST 야간 multiplier 판정용으로 Asia/Seoul wall-clock
-// hour 만 추출한다. line ~530 buildTimeContextPrompt 와 동일한 패턴.
-function getKstHour(now: Date): number {
-  const fmt = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Seoul",
-    hour: "numeric",
-    hour12: false,
-  });
-  const parts = fmt.formatToParts(now);
-  const hourStr = parts.find((p) => p.type === "hour")?.value ?? "0";
-  const hour = parseInt(hourStr, 10);
-  // hour12:false + en-US 가 자정에 "24"를 돌려주는 케이스 방어.
-  return Number.isFinite(hour) ? hour % 24 : 0;
-}
+// KST 야간 판정 helper (옛 getKstHour / isKstNightHour) 는 _shared/reply_delay.ts
+// 로 이동. character-chat 안에서 더는 직접 호출하지 않는다.
 
-function isKstNightHour(hour: number): boolean {
-  if (NIGHT_KST_HOUR_START < NIGHT_KST_HOUR_END) {
-    return hour >= NIGHT_KST_HOUR_START && hour < NIGHT_KST_HOUR_END;
-  }
-  // 자정 가로지르는 구간 (예: 23..7) — start 이상 이거나 end 미만.
-  return hour >= NIGHT_KST_HOUR_START || hour < NIGHT_KST_HOUR_END;
-}
-
-// 응답 텍스트에서 감정 추출 + 상황별 지연 계산 (AC1, AC2)
+// 응답 텍스트에서 감정 추출 + 상황별 지연 계산.
+// delay 계산 본체는 _shared/reply_delay.ts 의 computeReplyDelay (단일 source).
+// 이 함수는 호환을 위한 thin wrapper — character-chat 가 기존 호출 자리에서
+// 그대로 쓸 수 있도록.
 function extractEmotion(
   text: string,
   opts: { userMessageLength: number; nowUtc: Date },
 ): { emotionTag: string; delaySec: number } {
-  // 우선순위: 당황 > 고민 > 분노 > 애정 > 기쁨 > 일상
-  const priorities = ["당황", "고민", "분노", "애정", "기쁨"];
-
-  let emotionTag = "일상";
-  let baseConfig = EMOTION_CONFIG["일상"];
-  for (const emotion of priorities) {
-    const config = EMOTION_CONFIG[emotion];
-    const found = config.keywords.some((kw) => text.includes(kw));
-    if (found) {
-      emotionTag = emotion;
-      baseConfig = config;
-      break;
-    }
-  }
-
-  const baseDelay =
-    Math.floor(Math.random() * (baseConfig.maxDelay - baseConfig.minDelay + 1)) +
-    baseConfig.minDelay;
-
-  let multiplier = 1;
-  if (opts.userMessageLength > LONG_MESSAGE_CHAR_THRESHOLD) {
-    multiplier *= LONG_MESSAGE_DELAY_MULTIPLIER;
-  }
-  if (isKstNightHour(getKstHour(opts.nowUtc))) {
-    multiplier *= NIGHT_DELAY_MULTIPLIER;
-  }
-
-  const adjusted = baseDelay * multiplier;
-  const clamped = Math.min(
-    Math.max(adjusted, MIN_DELAY_SEC_FLOOR),
-    MAX_DELAY_SEC_CAP,
-  );
-  return { emotionTag, delaySec: Math.floor(clamped) };
+  return computeReplyDelay({
+    text,
+    userMessageLength: opts.userMessageLength,
+    nowUtc: opts.nowUtc,
+  });
 }
 
 // 시스템 프롬프트 조합
@@ -1548,7 +1477,12 @@ interface CharacterVoiceProfile {
     greeting: string;
     gratitude: string;
     shortReply: string;
-    generic: string;
+    /**
+     * generic intent fallback. 단일 문자열 또는 풀(랜덤 선택) — 풀로 두면
+     * 가드 트립 (AI_DISCLOSURE / SERVICE_TONE) 이 연속해서 발생해도 사용자가
+     * 같은 문장 반복으로 즉시 깨닫지 않게 한다.
+     */
+    generic: string | string[];
   }>>;
   /**
    * 짧은 인사 첫 턴에 LLM 이 답변 못 만들면 흘러나오는 "이름 묻는" fallback
@@ -1575,13 +1509,28 @@ const CHARACTER_VOICE_PROFILES: Record<string, CharacterVoiceProfile> = {
         greeting: "...왔어요? 늦었네.",
         gratitude: "별거 아닙니다.",
         shortReply: "...네.",
-        generic: "...듣고 있어요.",
+        // 단일 라인이던 시절 — 가드 (AI_DISCLOSURE / SERVICE_TONE) 가 트립할
+        // 때마다 동일한 "...듣고 있어요." 만 출력되어 사용자가 "쟤 같은 말만
+        // 함" 으로 체감하던 회귀. 풀로 다양화. 이서준 동거탐정 톤 유지.
+        generic: [
+          "...듣고 있어요.",
+          "...뭐. 일단 앉아요.",
+          "...됐고. 점심은 챙겼어요?",
+          "...뭐가 그렇게 급해요. 천천히.",
+          "...무슨 말이야. 와서 앉기나 해.",
+          "...그게 중요해? 일이나 해요.",
+        ],
       },
       acquaintance: {
         greeting: "오셨네요. ...오늘은 좀 늦으셨어요.",
         gratitude: "별거 아니에요. 신경 쓰지 마요.",
         shortReply: "네, 그래요.",
-        generic: "음. ...계속 하세요.",
+        generic: [
+          "음. ...계속 하세요.",
+          "...됐어요. 일단 밥부터 먹어요.",
+          "...뭐, 그럴 수도 있죠.",
+          "...너무 신경 쓰지 마요.",
+        ],
       },
     },
   },
@@ -2191,6 +2140,17 @@ function removeLutsServiceTone(text: string): string {
     .trim();
 }
 
+/**
+ * fallback 라인이 풀(string[]) 이면 랜덤 1개 반환, 단일 string 이면 그대로.
+ * 가드 트립이 연속 발생해도 동일 문장이 반복되어 "쟤 같은 말만 함" 으로 체감
+ * 되던 회귀 fix. (luts stranger.generic 등 풀이 정의된 phase 만 영향.)
+ */
+function pickFallbackLine(line: string | string[]): string {
+  if (typeof line === "string") return line;
+  if (line.length === 0) return "";
+  return line[Math.floor(Math.random() * line.length)];
+}
+
 function defaultLutsReply(
   profile: LutsToneProfile,
   relationshipPhase: RelationshipPhase,
@@ -2237,7 +2197,7 @@ function defaultLutsReply(
       if (profile.turnIntent === "greeting") return phaseLines.greeting;
       if (profile.turnIntent === "gratitude") return phaseLines.gratitude;
       if (profile.turnIntent === "shortReply") return phaseLines.shortReply;
-      return phaseLines.generic;
+      return pickFallbackLine(phaseLines.generic);
     }
   }
 
@@ -2729,6 +2689,11 @@ serve(async (req: Request) => {
 
   const startTime = Date.now();
 
+  // catch 블록에서 pending_character_reply_jobs 실패 마킹용 — try 내부 claim
+  // 성공 시에만 set. supabase client 는 catch 안에서 새로 만든다 (try 변수
+  // 캡처 시 deno 타입 추론 충돌 회피).
+  let bodyJobId: string | null = null;
+
   try {
     const {
       characterId,
@@ -2758,6 +2723,8 @@ serve(async (req: Request) => {
       maxContentTier,
       profanityLevel,
       pendingProactiveMessageId,
+      jobId,
+      trustedUserId,
     }: CharacterChatRequest = await req.json();
 
     // PR-B2: 하늘이 (haneul_oracle) 는 클라 systemPrompt 무시하고 server-side
@@ -2802,13 +2769,14 @@ serve(async (req: Request) => {
     if (
       modelPreference &&
       modelPreference !== "default" &&
-      modelPreference !== "grok-fast"
+      modelPreference !== "grok-fast" &&
+      modelPreference !== "grok"
     ) {
       return new Response(
         JSON.stringify({
           success: false,
           response: "",
-          error: "modelPreference는 default | grok-fast만 허용됩니다",
+          error: "modelPreference는 default | grok-fast | grok만 허용됩니다",
         } as CharacterChatResponse),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -2839,6 +2807,130 @@ serve(async (req: Request) => {
       }
     }
 
+    // 내부 worker (cron) 가 service_role 토큰으로 호출하면 auth.getUser 가 user
+    // 못 찾음. token 이 service_role_key 와 일치할 때만 trustedUserId 인정.
+    if (!userId && trustedUserId) {
+      const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+      if (token && serviceRoleKey && token === serviceRoleKey) {
+        userId = trustedUserId;
+        console.log(
+          "[character-chat] internal caller trusted userId:",
+          trustedUserId,
+        );
+      } else {
+        console.warn(
+          "[character-chat] trustedUserId 무시 (service_role 토큰 아님)",
+        );
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // proactive_message_log.user_replied 마킹
+    // ─────────────────────────────────────────────────────────────────────
+    // 유저가 답장하면 최근 48h 내 미응답 proactive 로그를 모두 replied 로 마킹.
+    // dispatcher 의 cooldown 로직(proactive-message-dispatch:880-902)이 unanswered
+    // 카운트로 캐릭터를 차단하는 걸 풀어주기 위함.
+    //
+    // ⚠️ Deno Edge Function 은 response 반환 후 in-flight Promise 가 GC 될 수
+    // 있어 fire-and-forget 으로 두면 UPDATE 가 drop 될 위험. 이 UPDATE 는 단일
+    // row 키 매칭 (user_id+character_id+user_replied=false+created_at) 으로
+    // ms 단위라 LLM 호출 직전에 await 해도 latency 영향 무시 가능.
+    if (userId && characterId && supabase) {
+      const since = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+      try {
+        const { error: markErr } = await supabase
+          .from("proactive_message_log")
+          .update({
+            user_replied: true,
+            user_replied_at: new Date().toISOString(),
+          })
+          .eq("user_id", userId)
+          .eq("character_id", characterId)
+          .eq("user_replied", false)
+          .gte("created_at", since);
+        if (markErr) {
+          console.warn(
+            "[character-chat] proactive user_replied 마킹 실패:",
+            markErr.message,
+          );
+        }
+      } catch (markEx) {
+        // 마킹 실패해도 LLM 응답 흐름은 막지 않음 — 다음 답장 또는 서버 cron
+        // 회수 로직이 결국 일관성 회복.
+        console.warn(
+          "[character-chat] proactive user_replied 마킹 예외:",
+          markEx,
+        );
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // pending_character_reply_jobs claim (jobId 가 들어왔을 때만)
+    // ─────────────────────────────────────────────────────────────────────
+    // 클라 send 또는 process-pending-reply-jobs cron 이 jobId 와 함께 호출한
+    // 경우, atomic 으로 status pending → processing 마킹. 이미 다른 워커가
+    // 가져갔거나 cancel 됐으면 NULL 반환 → 즉시 noop 응답으로 종료 (LLM 비용 절약).
+    let claimedJobId: string | null = null;
+    if (jobId && supabase) {
+      try {
+        const { data: claimedJob, error: claimErr } = await supabase
+          .rpc("claim_pending_reply_job_by_id", { p_job_id: jobId });
+        if (claimErr) {
+          console.warn(
+            "[character-chat] claim_pending_reply_job_by_id 실패:",
+            claimErr.message,
+          );
+        } else if (!claimedJob) {
+          // 이미 다른 워커가 처리 중이거나 cancel/done. LLM 호출 안 함.
+          console.log(
+            "[character-chat] jobId already claimed/canceled, skipping LLM:",
+            jobId,
+          );
+          return new Response(
+            JSON.stringify({
+              success: true,
+              response: "",
+              segments: [],
+              emotionTag: "일상",
+              delaySec: 0,
+              affinityDelta: { points: 0, reason: "noop_already_claimed", quality: "neutral" },
+              romanceStatePatch: null,
+              followUpHint: null,
+              meta: {
+                provider: "noop",
+                model: "noop",
+                latencyMs: Date.now() - startTime,
+                fallbackUsed: false,
+              },
+            } as CharacterChatResponse),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+          );
+        } else {
+          claimedJobId = jobId;
+          bodyJobId = jobId;
+        }
+      } catch (claimException) {
+        console.warn("[character-chat] job claim 예외:", claimException);
+      }
+    }
+
+    // 정상 응답 경로마다 호출. claimedJobId 가 없으면 noop. 클로저로 캡처.
+    const markJobAsDone = async () => {
+      if (claimedJobId && supabase) {
+        try {
+          await supabase
+            .from("pending_character_reply_jobs")
+            .update({
+              status: "done",
+              completed_at: new Date().toISOString(),
+            })
+            .eq("id", claimedJobId);
+        } catch (markErr) {
+          console.warn("[character-chat] markJobAsDone 실패:", markErr);
+        }
+      }
+    };
+
     // Slice 2 — proactive hookForReveal Stage 2.
     // pendingProactiveMessageId 가 있거나 직전 assistant 가 lunch_share proactive 면
     // reveal claim 시도. 성공 시 LLM 호출 없이 사진 메시지 발송.
@@ -2853,7 +2945,10 @@ serve(async (req: Request) => {
         shouldSendPush,
         startTime,
       });
-      if (revealResponse) return revealResponse;
+      if (revealResponse) {
+        await markJobAsDone();
+        return revealResponse;
+      }
     }
 
     // [5.2.3 Moderation] 사용자 입력 선필터 — LLM 호출 전에 fail-open으로
@@ -2866,6 +2961,7 @@ serve(async (req: Request) => {
     });
     if (userModeration.flagged) {
       const fallbackSegments = [SAFETY_BLOCK_FALLBACK_RESPONSE];
+      await markJobAsDone();
       return new Response(
         JSON.stringify({
           success: true,
@@ -2920,6 +3016,8 @@ serve(async (req: Request) => {
             streakError,
           );
         } else if (streakResult && !streakResult.allowed) {
+          // 일일 한도 도달 — 답장 생성 안 했지만 큐에서 빼야 cron 재시도 안 됨.
+          await markJobAsDone();
           return new Response(
             JSON.stringify({
               success: false,
@@ -3158,14 +3256,19 @@ serve(async (req: Request) => {
     // 운세 요청 시 더 긴 응답을 위해 maxTokens 증가
     const fortuneMaxTokens = isFortuneRequest ? 4096 : 2048;
 
-    const isLutsGrokFastMode = characterId === LUTS_CHARACTER_ID &&
-      modelPreference === "grok-fast";
+    // 글로벌 모델 선호 — 사용자가 프로필에서 "그록 fast" / "그록 대화형" 선택 시
+    // 모든 캐릭터에 적용. 기본은 character-chat DB 설정 (gemini-2.5-flash-lite).
+    const grokVariantModel = modelPreference === "grok-fast"
+      ? "grok-3-mini-fast"
+      : modelPreference === "grok"
+      ? "grok-3-mini"
+      : null;
     let fallbackUsed = false;
     let llmResponse: LLMResponse;
 
-    if (isLutsGrokFastMode) {
+    if (grokVariantModel) {
       try {
-        const grokLlm = LLMFactory.create("grok", "grok-3-mini-fast");
+        const grokLlm = LLMFactory.create("grok", grokVariantModel);
         llmResponse = await grokLlm.generate(chatMessages, {
           temperature: 0.6,
           maxTokens: fortuneMaxTokens,
@@ -3173,7 +3276,7 @@ serve(async (req: Request) => {
       } catch (grokError) {
         fallbackUsed = true;
         console.warn(
-          "[character-chat] grok-fast failed, fallback to Gemini:",
+          `[character-chat] ${grokVariantModel} failed, fallback to Gemini:`,
           grokError,
         );
         const geminiFallbackLlm = LLMFactory.create(
@@ -3344,13 +3447,13 @@ serve(async (req: Request) => {
     // 같은 (user, character) 의 미처리 row 가 있다면(이전 답장 대기 중)
     // canceled_at 으로 마킹 → 새 답장으로 합쳐서 진행 (옵션 1A: 후속 메시지
     // 도착 시 이전 답장 취소 + 새 LLM 답장으로 통합).
-    const replyDelayEnabled =
-      Deno.env.get("REPLY_DELAY_ENABLED")?.toLowerCase() === "true";
-
+    // 답장 지연은 항상 ON. env REPLY_DELAY_ENABLED 분기는 폐기 — "왜 답장이
+    // 즉시 옴?" 회귀의 한 원인 (env 안 켜져 있으면 즉시 푸시) 이었다. delaySec
+    // 계산은 _shared/reply_delay.ts 가 단일 source.
     let scheduledId: string | undefined;
     let deliverAtIso: string | undefined;
 
-    if (replyDelayEnabled && userId && supabase) {
+    if (userId && supabase) {
       try {
         // 이전 pending row cancel — 같은 캐릭터에 답장 대기 중인 게 있으면
         // 새 메시지로 인해 무효화. cron 이 이 row 처리 안 하도록 canceled_at set.
@@ -3420,6 +3523,9 @@ serve(async (req: Request) => {
       }
     }
 
+    // 답장 큐 job 종료 마킹 — 이 시점에서 답장 생성/스케줄/푸시 모두 끝.
+    await markJobAsDone();
+
     return new Response(
       JSON.stringify({
         success: true,
@@ -3443,6 +3549,50 @@ serve(async (req: Request) => {
     );
   } catch (error) {
     console.error("character-chat 에러:", error);
+
+    // 답장 큐 job 실패 마킹 (있을 때만). attempt_count 가 3 미만이면 pending 으로
+    // 되돌려 backoff 후 cron 이 재시도, 3 이상이면 failed 종료.
+    // catch 안에서 supabase client 새로 생성 (try 변수 capture 시 타입 추론 충돌).
+    if (bodyJobId) {
+      try {
+        const sbUrl = Deno.env.get("SUPABASE_URL");
+        const sbKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+        if (sbUrl && sbKey) {
+          const sb = createClient(sbUrl, sbKey);
+          const { data: row } = await sb
+            .from("pending_character_reply_jobs")
+            .select("attempt_count")
+            .eq("id", bodyJobId)
+            .single();
+          const attempts =
+            ((row as { attempt_count?: number } | null)?.attempt_count) ?? 0;
+          const errMsg = error instanceof Error ? error.message : String(error);
+          if (attempts >= 3) {
+            await sb
+              .from("pending_character_reply_jobs")
+              .update({
+                status: "failed",
+                error_message: errMsg.slice(0, 500),
+                completed_at: new Date().toISOString(),
+              })
+              .eq("id", bodyJobId);
+          } else {
+            // backoff: 1 → 5min, 2 → 15min
+            const delayMin = attempts === 1 ? 5 : 15;
+            await sb
+              .from("pending_character_reply_jobs")
+              .update({
+                status: "pending",
+                next_attempt_at: new Date(Date.now() + delayMin * 60_000).toISOString(),
+                error_message: errMsg.slice(0, 500),
+              })
+              .eq("id", bodyJobId);
+          }
+        }
+      } catch (markErr) {
+        console.warn("[character-chat] job 실패 마킹 자체가 실패:", markErr);
+      }
+    }
 
     return new Response(
       JSON.stringify({

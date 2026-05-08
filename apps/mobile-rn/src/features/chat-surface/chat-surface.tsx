@@ -34,6 +34,8 @@ import { buildSuggestedActions, formatFortuneTypeLabel } from '../../lib/chat-sh
 import { resolveChatCharacterAvatarSource } from '../../lib/chat-character-avatar';
 import { confirmAction } from '../../lib/haptics';
 import { fortuneTheme, romanceTintBackground } from '../../lib/theme';
+import { useIsTyping } from '../../lib/typing-store';
+import { useMobileAppState } from '../../providers/mobile-app-state-provider';
 
 import { MessageReportSheet } from './message-report-sheet';
 import { EmbeddedResultCard } from '../chat-results/embedded-result-card';
@@ -449,6 +451,9 @@ function CharacterListRow({
   const swipeX = useRef(new Animated.Value(0)).current;
   const DELETE_WIDTH = 80;
   const DELETE_THRESHOLD = -50;
+  // typing-store 글로벌 read — 채팅창에 진입 안 해도 다른 surface (예: 콜드
+  // 스타트 펜딩 답장 재개) 에서 set true 면 list 행에 "입력 중…" 노출.
+  const isTyping = useIsTyping(character.id);
 
   const panResponder = useRef(
     onDelete
@@ -531,13 +536,19 @@ function CharacterListRow({
           numberOfLines={1}
           variant="bodySmall"
           color={
-            meta?.unread
-              ? fortuneTheme.colors.textPrimary
-              : fortuneTheme.colors.textSecondary
+            isTyping
+              ? fortuneTheme.colors.accentSecondary
+              : meta?.unread
+                ? fortuneTheme.colors.textPrimary
+                : fortuneTheme.colors.textSecondary
           }
-          style={meta?.unread ? { fontWeight: '600' } : undefined}
+          style={
+            isTyping || meta?.unread ? { fontWeight: '600' } : undefined
+          }
         >
-          {meta?.lastMessagePreview ?? character.shortDescription}
+          {isTyping
+            ? '입력 중…'
+            : (meta?.lastMessagePreview ?? character.shortDescription)}
         </AppText>
       </View>
     </Pressable>
@@ -611,6 +622,9 @@ function MessageBubble({
 
   // 새로 도착한 어시스턴트 메시지만 단어 단위 fadeUp 애니메이션.
   const shouldAnimate = isAssistant && message.animate === true;
+  // 단어 reveal 마다 가벼운 selection 햅틱 — 프로필 chatHapticsEnabled 게이트.
+  const { state: mobileAppState } = useMobileAppState();
+  const chatHapticsEnabled = mobileAppState.settings.chatHapticsEnabled;
 
   if (isSystem) {
     return (
@@ -646,6 +660,7 @@ function MessageBubble({
             text={message.text}
             variant={applyOracle ? 'oracleBody' : 'bodyMedium'}
             color={textColor}
+            hapticsEnabled={chatHapticsEnabled}
           />
         ) : (
           <AppText
@@ -1030,7 +1045,7 @@ function ChatThreadMessage({
     if (message.kind === 'progress')
       return (
         <View style={{ width: '100%' }}>
-          <ProgressMessageCard message={message} />
+          <ProgressMessageCard message={message} characterId={character.id} />
         </View>
       );
     if (isImage)
@@ -2437,8 +2452,8 @@ export function ActiveSurveyFooter({
  * Story 캐릭터의 상황극(worldview) 설정을 채팅방 진입 시점에 사용자에게 노출.
  *
  * 이전엔 worldview 가 `프로필 보기` 안쪽에만 있어서, 사용자가 인트로
- * 메시지("...러츠입니다.") 만 보고 들어와 LLM 답변에 당황 ("아츠와의
- * 결혼은..." 같은 헛소리에 "이게 뭐지?"). 채팅방 상단에 항상 표시되는
+ * 메시지("...이서준입니다.") 만 보고 들어와 LLM 답변에 당황 ("회사 OJT
+ * 사수와의..." 같은 컨텍스트에 "이게 뭐지?"). 채팅방 상단에 항상 표시되는
  * 상황 카드로 사용자가 들어가는 세계 + 자신의 역할 + 톤 (태그) 을 한눈에
  * 파악하게 한다.
  *

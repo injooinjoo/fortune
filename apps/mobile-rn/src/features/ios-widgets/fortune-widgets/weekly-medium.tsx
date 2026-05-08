@@ -21,7 +21,7 @@ export function WeeklyMedium() {
   return (
     <WidgetFrame size="medium" tint={WIDGET_COLORS.surfaceOpaque}>
       <CornerGlow color={WIDGET_COLORS.violet} opacity={0.25} />
-      <WidgetHeader label="이번 주의 운세" right={<OndoMark />} />
+      <WidgetHeader label="이번 주의 인사이트" right={<OndoMark />} />
       <View
         style={{
           flexDirection: 'row',
