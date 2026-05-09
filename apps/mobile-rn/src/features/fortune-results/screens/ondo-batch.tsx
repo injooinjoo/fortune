@@ -18,7 +18,6 @@ import HeroCoach from '../heroes/hero-coach';
 import HeroCompat from '../heroes/hero-compat';
 import HeroDate from '../heroes/hero-date';
 import HeroDecision from '../heroes/hero-decision';
-import HeroDream from '../heroes/hero-dream';
 import HeroEx from '../heroes/hero-ex';
 import HeroExam from '../heroes/hero-exam';
 import HeroExercise from '../heroes/hero-exercise';
@@ -112,15 +111,6 @@ export function OndoOotdResult({ payload }: FortuneResultComponentProps) {
   return (
     <ResultCardFrame kind="ootd-evaluation" data={payload}>
       <HeroOotd data={payload} />
-    </ResultCardFrame>
-  );
-}
-
-export function OndoDreamResult({ payload }: FortuneResultComponentProps) {
-  if (!payload) return null;
-  return (
-    <ResultCardFrame kind="dream" data={payload}>
-      <HeroDream data={payload} />
     </ResultCardFrame>
   );
 }

@@ -245,6 +245,22 @@ highlights 에 매력 포인트, recommendations 에 대화 주제/행동 팁, w
     temperature: 0.85,
     maxTokens: 640,
   },
+  'weekly-review': {
+    systemPrompt: `${FORTUNE_BASE_INSTRUCTIONS}
+[주간 회고] 한 주의 흐름/잘된 점/아쉬운 점 정리 + 다음 주 한 가지 포커스.
+highlights 에 잘된 점 3가지, recommendations 에 다음 주 액션, warnings 에 반복 안 할 패턴.`,
+    eyebrow: '주간 회고',
+    temperature: 0.85,
+    maxTokens: 768,
+  },
+  breathing: {
+    systemPrompt: `${FORTUNE_BASE_INSTRUCTIONS}
+[호흡·명상] 현재 상태(스트레스/피로/집중 필요 등)로 적합한 호흡 패턴과 짧은 명상 가이드.
+highlights 에 호흡 단계 3가지(들숨/멈춤/날숨 초 단위), recommendations 에 명상 자세/시간, specialTip 에 한 문장 마음챙김.`,
+    eyebrow: '호흡·명상',
+    temperature: 0.7,
+    maxTokens: 640,
+  },
   'avoid-people': {
     systemPrompt: `${FORTUNE_BASE_INSTRUCTIONS}
 [오늘 경계] 환경/기분/스트레스로 오늘 조심할 사람 타입/색상/방향/시간.`,
