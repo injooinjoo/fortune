@@ -100,20 +100,34 @@ jobs:
         working-directory: .
     steps:
       - uses: actions/checkout@v4
+
+      - name: Detect Flutter project
+        id: flutter-project
+        run: |
+          if [ -f pubspec.yaml ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Skipping Flutter security analysis because pubspec.yaml is not present in this RN mainline checkout."
+          fi
       
       - uses: subosito/flutter-action@v2
+        if: steps.flutter-project.outputs.present == 'true'
         with:
           flutter-version: '3.38.0'
           cache: true
           channel: 'stable'
 
       - name: Install dependencies
+        if: steps.flutter-project.outputs.present == 'true'
         run: flutter pub get
 
       - name: Run Flutter analyze
+        if: steps.flutter-project.outputs.present == 'true'
         run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
       - name: Check for hardcoded secrets in Dart
+        if: steps.flutter-project.outputs.present == 'true'
         run: |
           # Check for hardcoded API keys
           if grep -r "AIza\|sk_live_\|sk_test_" --include="*.dart" .; then

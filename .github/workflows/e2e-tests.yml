@@ -44,17 +44,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Detect Flutter project
+        id: flutter-project
+        run: |
+          if [ -f pubspec.yaml ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Skipping Flutter Web smoke test because pubspec.yaml is not present in this RN mainline checkout."
+          fi
+
       - name: Setup Node.js
+        if: steps.flutter-project.outputs.present == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Enable pnpm
+        if: steps.flutter-project.outputs.present == 'true'
         run: |
           corepack enable
           corepack prepare pnpm@10.33.1 --activate
 
       - name: Setup Flutter
+        if: steps.flutter-project.outputs.present == 'true'
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -62,12 +75,15 @@ jobs:
           cache: true
 
       - name: Install Node dependencies
+        if: steps.flutter-project.outputs.present == 'true'
         run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Install Playwright browsers
+        if: steps.flutter-project.outputs.present == 'true'
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Setup test environment
+        if: steps.flutter-project.outputs.present == 'true'
         run: |
           cat > .env << 'ENVEOF'
           FLUTTER_TEST_MODE=true
@@ -92,15 +108,37 @@ jobs:
           touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
 
       - name: Get Flutter dependencies
+        if: steps.flutter-project.outputs.present == 'true'
         run: flutter pub get
 
       - name: Build Flutter Web
+        if: steps.flutter-project.outputs.present == 'true'
         run: flutter build web --release
 
       - name: Run Playwright suite
         id: e2e-run
         run: |
           set -uo pipefail
+
+          if [ "${FLUTTER_PROJECT_PRESENT:-false}" != "true" ]; then
+            mkdir -p artifacts
+            SUMMARY_FILE='artifacts/run-summary.md'
+            {
+              echo "# Playwright Smoke Retry Log"
+              echo ""
+              echo "Skipped: pubspec.yaml is not present in this RN mainline checkout."
+            } > "$SUMMARY_FILE"
+            echo "attempts=0" >> "$GITHUB_OUTPUT"
+            echo "run1_exit=0" >> "$GITHUB_OUTPUT"
+            echo "run1_passed=0" >> "$GITHUB_OUTPUT"
+            echo "run1_failed=0" >> "$GITHUB_OUTPUT"
+            echo "run2_exit=0" >> "$GITHUB_OUTPUT"
+            echo "run2_passed=0" >> "$GITHUB_OUTPUT"
+            echo "run2_failed=0" >> "$GITHUB_OUTPUT"
+            echo "run_summary_file=$SUMMARY_FILE" >> "$GITHUB_OUTPUT"
+            cat "$SUMMARY_FILE"
+            exit 0
+          fi
 
           TEST_TYPE="${TEST_TYPE:-smoke}"
           case "$TEST_TYPE" in
@@ -228,6 +266,7 @@ jobs:
           BASE_URL: http://localhost:3000
           CI: true
           TEST_TYPE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.test_type || 'smoke' }}
+          FLUTTER_PROJECT_PRESENT: ${{ steps.flutter-project.outputs.present }}
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
