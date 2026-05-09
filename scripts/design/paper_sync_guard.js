@@ -20,7 +20,6 @@ const designReadmePath = 'docs/design/README.md';
 const rootReadmePath = 'README.md';
 const workflowPath = '.github/workflows/ci.yml';
 const packageJsonPath = 'package.json';
-const mcpConfigPath = '.mcp.json';
 
 const contractFiles = [
   inventoryPath,
@@ -34,7 +33,6 @@ const contractFiles = [
   rootReadmePath,
   workflowPath,
   packageJsonPath,
-  mcpConfigPath,
 ];
 
 const strictContractFiles = [
@@ -47,7 +45,6 @@ const strictContractFiles = [
   rootReadmePath,
   workflowPath,
   packageJsonPath,
-  mcpConfigPath,
   'docs/README.md',
   'docs/testing/TESTING_GUIDE.md',
   'docs/development/MCP_SETUP_GUIDE.md',
@@ -67,7 +64,6 @@ const designContractPatterns = [
   /^docs\/design\/README\.md$/,
   /^package\.json$/,
   /^\.github\/workflows\/ci\.yml$/,
-  /^\.mcp\.json$/,
 ];
 
 function ensureDir(dirPath) {

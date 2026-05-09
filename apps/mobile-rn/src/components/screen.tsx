@@ -1,6 +1,6 @@
 import type { PropsWithChildren, ReactNode, RefObject } from 'react';
 
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { fortuneTheme } from '../lib/theme';
@@ -14,6 +14,8 @@ interface ScreenProps extends PropsWithChildren {
   onScrollContentSizeChange?: (width: number, height: number) => void;
   contentBottomInset?: number;
   centerContent?: boolean;
+  /** Dismisses the keyboard on empty-space taps and scroll drags. */
+  dismissKeyboardOnTap?: boolean;
 }
 
 export function Screen({
@@ -26,6 +28,7 @@ export function Screen({
   onScrollContentSizeChange,
   contentBottomInset = 0,
   centerContent = false,
+  dismissKeyboardOnTap = false,
 }: ScreenProps) {
   const insets = useSafeAreaInsets();
   const content = (
@@ -58,14 +61,28 @@ export function Screen({
           width: '100%',
           ...(centerContent
             ? { flexGrow: 1, justifyContent: 'center' }
-            : null),
+            : dismissKeyboardOnTap
+              ? { flexGrow: 1 }
+              : null),
         }}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode={dismissKeyboardOnTap ? 'on-drag' : 'none'}
         onContentSizeChange={onScrollContentSizeChange}
         ref={scrollViewRef}
         style={{ flex: 1 }}
       >
-        <View style={{ gap: fortuneTheme.spacing.md }}>{children}</View>
+        {dismissKeyboardOnTap ? (
+          <Pressable
+            onPress={() => Keyboard.dismiss()}
+            style={{ flexGrow: 1 }}
+          >
+            <View style={{ flexGrow: 1, gap: fortuneTheme.spacing.md }}>
+              {children}
+            </View>
+          </Pressable>
+        ) : (
+          <View style={{ gap: fortuneTheme.spacing.md }}>{children}</View>
+        )}
       </ScrollView>
       {footer ? (
         <View
