@@ -25,6 +25,11 @@
 import { type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { sendCharacterDmPush } from "./notification_push.ts";
+import {
+  buildScheduledReplyMessages,
+  persistScheduledReplyMessages,
+  type ScheduledReplyMessage,
+} from "./scheduled_reply_message.ts";
 
 export interface CharacterProactiveMeta {
   slotKey: string;
@@ -90,6 +95,8 @@ export interface PersistAndPushResult {
   pushSkipReason?: string;
   /** merge RPC 가 fail 한 경우 에러 메시지. */
   persistError?: string;
+  /** Canonical messages persisted/pushed for scheduled replies. */
+  messages?: ScheduledReplyMessage[];
 }
 
 const DEFAULT_MAX_MESSAGES = 200;
@@ -153,5 +160,59 @@ export async function persistAndPushCharacterMessage(
     pushSkipped: pushResult.skipped,
     pushSkipReason: pushResult.reason,
     persistError,
+  };
+}
+
+export interface PersistAndPushScheduledReplyInput {
+  supabase: SupabaseClient;
+  userId: string;
+  characterId: string;
+  characterName: string;
+  scheduledId: string;
+  content: string;
+  segments?: string[] | null;
+  emotionTag?: string | null;
+  roomState?: string;
+  maxMessages?: number;
+}
+
+export async function persistAndPushScheduledReply(
+  input: PersistAndPushScheduledReplyInput,
+): Promise<PersistAndPushResult> {
+  const messages = buildScheduledReplyMessages({
+    scheduledId: input.scheduledId,
+    content: input.content,
+    segments: input.segments,
+    emotionTag: input.emotionTag,
+  });
+
+  const persistResult = await persistScheduledReplyMessages({
+    supabase: input.supabase,
+    userId: input.userId,
+    characterId: input.characterId,
+    messages,
+    maxMessages: input.maxMessages,
+  });
+
+  const pushResult = await sendCharacterDmPush({
+    supabase: input.supabase,
+    userId: input.userId,
+    characterId: input.characterId,
+    characterName: input.characterName,
+    messageText: input.content,
+    messageId: messages[0]?.id,
+    scheduledId: input.scheduledId,
+    scheduledMessagesJson: JSON.stringify(messages),
+    type: "character_dm",
+    roomState: input.roomState ?? "character_chat",
+  });
+
+  return {
+    persistedCount: persistResult.persistedCount,
+    pushSentCount: pushResult.sentCount,
+    pushSkipped: pushResult.skipped,
+    pushSkipReason: pushResult.reason,
+    persistError: persistResult.persistError,
+    messages,
   };
 }

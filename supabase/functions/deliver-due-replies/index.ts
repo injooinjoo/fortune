@@ -23,7 +23,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
-import { persistAndPushCharacterMessage } from "../_shared/character_message_helper.ts";
+import { persistAndPushScheduledReply } from "../_shared/character_message_helper.ts";
 import { requireWorkerAuth } from "../_shared/worker_auth.ts";
 
 interface ScheduledReplyRow {
@@ -127,16 +127,15 @@ serve(async (req: Request) => {
         // scheduledId 별도 필드: 클라가 받자마자 ack-scheduled-reply 호출 →
         // client_acked_at 마킹 → 같은 row 재처리 방지. messageId 는 옛 OTA
         // 클라 호환을 위해 1 릴리스 유지 (helper 내부에서 messageId 로 전달).
-        const result = await persistAndPushCharacterMessage({
+        const result = await persistAndPushScheduledReply({
           supabase,
           userId: row.user_id,
           characterId: row.character_id,
           characterName: row.character_name,
-          messageContent: row.content,
-          messageId: `scheduled-${row.id}`,
-          emotionTag: row.emotion_tag ?? undefined,
           scheduledId: row.id,
-          pushType: "character_dm",
+          content: row.content,
+          segments: row.segments,
+          emotionTag: row.emotion_tag ?? undefined,
           roomState: "character_chat",
         });
         if (result.persistError) {

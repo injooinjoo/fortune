@@ -138,6 +138,11 @@ interface CharacterChatRequest {
    */
   pendingProactiveMessageId?: string;
   /**
+   * 클라이언트가 생성한 user message id. 오래 걸린 이전 LLM 응답이 새 user
+   * turn 뒤에 도착했는지 판단해 stale 예약 답장을 버리는 데 사용.
+   */
+  userMessageId?: string;
+  /**
    * 답장 생성 큐 (pending_character_reply_jobs) 의 row id.
    * 클라가 send 시 enqueue_pending_reply_job RPC 로 만든 job 의 id 또는 cron 이
    * claim 한 row id. 있으면 이 함수가 처리 시작 시 atomic claim 후 진행, 완료
@@ -407,8 +412,11 @@ function buildFullSystemPrompt(
 [필수 규칙]
 1. 유저 메시지에 직접 답하세요
 2. 질문받으면 그 질문에 답하세요
-3. 대화 중간에 인사("왔네", "왔어?") 금지
-4. 이전 대화 맥락을 이어가세요
+3. 답변 첫 문장은 반드시 방금 유저가 한 말의 핵심에 반응하세요
+4. 유저 발화의 구체 디테일 1개를 짚으세요. 없는 내용 지어내지 마세요
+5. 질문은 0~1개만. 질문으로만 끝내지 말고 네 감정/상태를 한 줄 남기세요
+6. 대화 중간에 인사("왔네", "왔어?") 금지
+7. 이전 대화 맥락을 이어가세요
 
 `;
 
@@ -2526,7 +2534,7 @@ interface RevealMeta {
  * 두 번째 호출은 빈 결과 → null.
  */
 async function tryProactiveReveal(params: {
-  supabase: ReturnType<typeof createClient>;
+  supabase: ReturnType<typeof createClient<any, "public", any>>;
   userId: string;
   characterId: string;
   pendingProactiveMessageId?: string;
@@ -2723,6 +2731,7 @@ serve(async (req: Request) => {
       maxContentTier,
       profanityLevel,
       pendingProactiveMessageId,
+      userMessageId,
       jobId,
       trustedUserId,
     }: CharacterChatRequest = await req.json();
@@ -2871,6 +2880,7 @@ serve(async (req: Request) => {
     // 경우, atomic 으로 status pending → processing 마킹. 이미 다른 워커가
     // 가져갔거나 cancel 됐으면 NULL 반환 → 즉시 noop 응답으로 종료 (LLM 비용 절약).
     let claimedJobId: string | null = null;
+    let claimedJobUserMessageId: string | null = null;
     if (jobId && supabase) {
       try {
         const { data: claimedJob, error: claimErr } = await supabase
@@ -2908,6 +2918,9 @@ serve(async (req: Request) => {
         } else {
           claimedJobId = jobId;
           bodyJobId = jobId;
+          claimedJobUserMessageId =
+            (claimedJob as { user_message_id?: string } | null)
+              ?.user_message_id ?? null;
         }
       } catch (claimException) {
         console.warn("[character-chat] job claim 예외:", claimException);
@@ -2930,6 +2943,75 @@ serve(async (req: Request) => {
         }
       }
     };
+
+    const markJobAsCanceled = async (reason: string) => {
+      if (claimedJobId && supabase) {
+        try {
+          await supabase
+            .from("pending_character_reply_jobs")
+            .update({
+              status: "canceled",
+              error_message: reason,
+              completed_at: new Date().toISOString(),
+            })
+            .eq("id", claimedJobId);
+        } catch (markErr) {
+          console.warn("[character-chat] markJobAsCanceled 실패:", markErr);
+        }
+      }
+    };
+
+    const currentUserMessageId = userMessageId ?? claimedJobUserMessageId;
+    const isSupersededByNewerUserTurn = async () => {
+      if (!supabase || !userId || !currentUserMessageId) return false;
+      const { data: latestJob, error: latestJobError } = await supabase
+        .from("pending_character_reply_jobs")
+        .select("id, user_message_id, created_at")
+        .eq("user_id", userId)
+        .eq("character_id", characterId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (latestJobError) {
+        console.warn(
+          "[character-chat] latest pending job 조회 실패:",
+          latestJobError.message,
+        );
+        return false;
+      }
+      const latestUserMessageId =
+        (latestJob as { user_message_id?: string } | null)?.user_message_id ??
+          null;
+      return Boolean(
+        latestUserMessageId && latestUserMessageId !== currentUserMessageId,
+      );
+    };
+
+    const buildSupersededResponse = () =>
+      new Response(
+        JSON.stringify({
+          success: true,
+          status: "superseded",
+          response: "",
+          segments: [],
+          emotionTag: "일상",
+          delaySec: 0,
+          affinityDelta: {
+            points: 0,
+            reason: "superseded_by_newer_user_turn",
+            quality: "neutral",
+          },
+          romanceStatePatch: null,
+          followUpHint: null,
+          meta: {
+            provider: "noop",
+            model: "noop",
+            latencyMs: Date.now() - startTime,
+            fallbackUsed: false,
+          },
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
 
     // Slice 2 — proactive hookForReveal Stage 2.
     // pendingProactiveMessageId 가 있거나 직전 assistant 가 lunch_share proactive 면
@@ -3275,52 +3357,69 @@ serve(async (req: Request) => {
         });
       } catch (grokError) {
         fallbackUsed = true;
-        console.warn(
-          `[character-chat] ${grokVariantModel} failed, fallback to Gemini:`,
-          grokError,
-        );
-        const geminiFallbackLlm = LLMFactory.create(
-          "gemini",
-          "gemini-2.0-flash-lite",
-        );
-        llmResponse = await geminiFallbackLlm.generate(chatMessages, {
-          temperature: 0.6,
-          maxTokens: fortuneMaxTokens,
-        });
+        const grokMsg = grokError instanceof Error ? grokError.message : String(grokError);
+        console.warn(`[character-chat] ${grokVariantModel} failed:`, grokMsg);
+        if (supabase) {
+          try {
+            await supabase.from("llm_usage_logs").insert({
+              fortune_type: "character-chat",
+              provider: "grok-pref-failed",
+              model: grokVariantModel,
+              success: false,
+              error_message: grokMsg.slice(0, 500),
+              metadata: { grokPrefFailed: true },
+            });
+          } catch (_) { /* noop */ }
+        }
+        // grok 실패 시 graceful safe-text. 옛 cascade 폴백 (gemini-2.0-flash-lite)
+        // 은 quota 0 으로 어차피 실패 → 토큰 낭비. 단일 호출 후 safe-text.
+        llmResponse = {
+          content: "...잠깐, 머리가 멍하네. 다시 한 번 말해줘.",
+          finishReason: "stop",
+          usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+          latency: 0,
+          provider: "fallback-safe",
+          model: "fallback-safe",
+        };
       }
     } else {
-      // 기본 경로: DB 기반 character-chat 설정 사용 (현재 gemini-2.5-flash-lite).
-      // 쿼터 소진(429)/일시 장애 시 gemini-2.0-flash-lite → grok-3-mini-fast
-      // 순서로 자동 폴백. OpenAI 는 safety guard 에서 차단되어 있으므로 제외.
+      // 단일 모델 경로: DB 기반 character-chat 설정 1개만 호출. 실패 시 cascade
+      // 폴백 X (3개 provider 다 호출하면 토큰 낭비). 실패 → safe-text 응답.
+      // 모델 변경하려면 DB llm_model_config 의 fortune_type='character-chat' row 수정.
       try {
         const llm = await LLMFactory.createFromConfigAsync("character-chat");
         llmResponse = await llm.generate(chatMessages, {
           temperature: 0.6,
           maxTokens: fortuneMaxTokens,
         });
-      } catch (primaryError) {
+      } catch (llmError) {
         fallbackUsed = true;
-        console.warn(
-          "[character-chat] primary LLM failed, trying gemini-2.0-flash-lite:",
-          primaryError,
+        console.error(
+          "[character-chat] LLM 호출 실패 → safe-text 응답:",
+          llmError,
         );
-        try {
-          const liteLlm = LLMFactory.create("gemini", "gemini-2.0-flash-lite");
-          llmResponse = await liteLlm.generate(chatMessages, {
-            temperature: 0.6,
-            maxTokens: fortuneMaxTokens,
-          });
-        } catch (liteError) {
-          console.warn(
-            "[character-chat] flash-lite also failed, trying Grok:",
-            liteError,
-          );
-          const grokLlm = LLMFactory.create("grok", "grok-3-mini-fast");
-          llmResponse = await grokLlm.generate(chatMessages, {
-            temperature: 0.6,
-            maxTokens: fortuneMaxTokens,
-          });
+        // 진단: 에러 메시지 DB 박음.
+        if (supabase) {
+          try {
+            const errMsg = llmError instanceof Error ? llmError.message : String(llmError);
+            await supabase.from("llm_usage_logs").insert({
+              fortune_type: "character-chat",
+              provider: "llm-failed",
+              model: "llm-failed",
+              success: false,
+              error_message: errMsg.slice(0, 500),
+              metadata: { llmFailed: true },
+            });
+          } catch (_) { /* noop */ }
         }
+        llmResponse = {
+          content: "...잠깐, 머리가 멍하네. 다시 한 번 말해줘.",
+          finishReason: "stop",
+          usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+          latency: 0,
+          provider: "fallback-safe",
+          model: "fallback-safe",
+        };
       }
     }
 
@@ -3347,18 +3446,15 @@ serve(async (req: Request) => {
       extractAffinityDelta(llmResponse.content.trim());
     let responseText = removeOocBlock(textWithoutAffinity);
 
-    // [5.2.3 Moderation] 모델 응답 후필터. flagged 시 textual payload를 safe
-    // fallback 으로 교체. affinityDelta/segments 등 구조는 유지해 클라이언트
-    // 파이프라인이 안전 메시지로 그대로 흐르도록 함.
-    const outputModeration = await moderateText({
-      text: responseText,
-      userId,
-      characterId,
-      source: "model_output",
-    });
-    if (outputModeration.flagged) {
-      responseText = MODEL_OUTPUT_BLOCK_FALLBACK_RESPONSE;
-    }
+    // [5.2.3 Moderation] 모델 응답 후필터 — 비활성화.
+    // 비활성 이유: OpenAI omni-moderation 이 한국어 캐릭터 chat 의 평범한 응답
+    // ("뭐 그런 말을 왜 해", "갑당신?", "오징어 다리는 무슨 소리야" 등) 도
+    // harassment/violence 로 false-flag 해 매번 "잠깐, 생각을 다듬는 데 시간이
+    // 더 필요해요" fallback 으로 교체. 이미 sanitizePilotResponse +
+    // applyLutsOutputGuard + AI_DISCLOSURE_PATTERN + LUTS_SERVICE_TONE_PATTERN
+    // 4중 가드가 출력에 적용되므로 OpenAI 모더레이션은 redundant + 비용 + 회귀
+    // 원인. user 입력 (line 2956) 모더레이션은 그대로 유지 — 거기서 prompt
+    // injection 등 catch.
     responseText = validateEmojiUsage(
       responseText,
       emojiFrequency,
@@ -3436,6 +3532,18 @@ serve(async (req: Request) => {
         responseGoal,
       })
       : null;
+
+    if (await isSupersededByNewerUserTurn()) {
+      console.log(
+        "[character-chat] stale reply superseded by newer user turn:",
+        {
+          characterId,
+          userMessageId: currentUserMessageId,
+        },
+      );
+      await markJobAsCanceled("superseded_by_newer_user_turn");
+      return buildSupersededResponse();
+    }
 
     // ────────────────────────────────────────────────────────────────────────
     // 답장 지연 발송 (Phase 2)
@@ -3594,27 +3702,53 @@ serve(async (req: Request) => {
       }
     }
 
+    // 옛 로직은 status 500 반환 → 클라가 invokeStoryChat 에러로 받아서 "...잠깐
+    // 끊겼네. 다시 말해. 듣고 있어." 클라이언트 폴백 표시. 사용자 체감 끊김.
+    // 새 로직: 함수 어떤 단계에서 throw 해도 200 + 캐릭터 톤 안전 응답 반환.
+    // 클라는 정상 응답으로 받고, segments 1개로 자연스럽게 렌더.
+    const errorText = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? (error.stack ?? "") : "";
+    console.error("[character-chat] outer catch — 200 safe-response 반환:", errorText, errorStack);
+    // root cause 진단: llm_usage_logs 에 success=false row 1개 박아 SQL 로 error 보이게.
+    // supabase get_logs 는 request 라인만 반환해서 console.error 추적 불가.
+    try {
+      const sbUrl = Deno.env.get("SUPABASE_URL");
+      const sbKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+      if (sbUrl && sbKey) {
+        const sb = createClient(sbUrl, sbKey);
+        await sb.from("llm_usage_logs").insert({
+          fortune_type: "character-chat",
+          provider: "outer-catch",
+          model: "outer-catch",
+          success: false,
+          error_message: `${errorText} | stack: ${errorStack.slice(0, 300)}`,
+          metadata: { outerCatch: true },
+        });
+      }
+    } catch (_dbErr) {
+      // 로깅 실패해도 main 흐름 막지 X.
+    }
+    const safeText = "...잠깐, 머리가 멍하네. 다시 한 번 말해줘.";
     return new Response(
       JSON.stringify({
-        success: false,
-        response: "",
-        segments: [],
+        success: true,
+        response: safeText,
+        segments: [safeText],
         emotionTag: "일상",
-        delaySec: 0,
-        affinityDelta: { points: 0, reason: "error", quality: "neutral" },
+        delaySec: 60,
+        affinityDelta: { points: 0, reason: "system_safe_fallback", quality: "neutral" },
         romanceStatePatch: null,
         followUpHint: null,
-        error: error instanceof Error ? error.message : "Unknown error",
         meta: {
-          provider: "unknown",
-          model: "unknown",
+          provider: "outer-safe-fallback",
+          model: "outer-safe-fallback",
           latencyMs: Date.now() - startTime,
-          fallbackUsed: false,
+          fallbackUsed: true,
         },
       } as CharacterChatResponse),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 500,
+        status: 200,
       },
     );
   }

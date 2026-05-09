@@ -53,6 +53,9 @@ export interface StoryChatResponse {
   segments?: string[];
   emotionTag?: string;
   delaySec?: number;
+  scheduledId?: string;
+  deliverAt?: string;
+  superseded?: boolean;
   affinityDelta?: {
     points: number;
     reason: string;
@@ -93,7 +96,7 @@ export interface StoryChatThreadSnapshot {
   updatedAt: string;
 }
 
-interface PersistedStoryMessage {
+export interface PersistedStoryMessage {
   id: string;
   type: 'user' | 'character' | 'system' | 'narration';
   content: string;
@@ -104,6 +107,8 @@ interface PersistedStoryMessage {
    * "뒤에 AI/system 응답이 있으면 그 시점에 읽혔다"로 추론 보강된다.
    */
   readAt?: string;
+  /** Assistant emotion tag from character-chat. Used for haptics/TTS style. */
+  emotionTag?: string;
   /**
    * 카드(embedded-result/fortune-cookie/saju-preview/image/story-reveal/
    * my-saju-context) 메시지를 원격 저장하기 위한 sentinel + raw payload.
@@ -258,6 +263,9 @@ function toPersistedStoryMessages(
         if (textMessage.sender === 'user' && textMessage.readAt) {
           base.readAt = textMessage.readAt;
         }
+        if (textMessage.sender === 'assistant' && textMessage.emotionTag) {
+          base.emotionTag = textMessage.emotionTag;
+        }
         return base;
       }
 
@@ -307,7 +315,7 @@ function tryRestoreCardMessage(
   return cardPayload as ChatShellMessage;
 }
 
-function fromPersistedStoryMessages(
+export function fromPersistedStoryMessages(
   messages: unknown,
 ): ChatShellMessage[] {
   if (!Array.isArray(messages)) {
@@ -354,6 +362,9 @@ function fromPersistedStoryMessages(
 
       if (sender === 'user' && typeof candidate.readAt === 'string') {
         message.readAt = candidate.readAt;
+      }
+      if (sender === 'assistant' && typeof candidate.emotionTag === 'string') {
+        message.emotionTag = candidate.emotionTag;
       }
 
       return message;
@@ -594,6 +605,21 @@ function normalizeStoryChatResponse(raw: unknown): StoryChatResponse {
   }
 
   const candidate = raw as Record<string, unknown>;
+  if (
+    candidate.status === 'superseded' ||
+    candidate.superseded === true ||
+    ((candidate.meta as Record<string, unknown> | undefined)?.provider === 'noop' &&
+      typeof candidate.response !== 'string')
+  ) {
+    return {
+      success: true,
+      response: '',
+      segments: [],
+      emotionTag: '일상',
+      delaySec: 0,
+      superseded: true,
+    };
+  }
   const affinityDeltaCandidate =
     candidate.affinityDelta && typeof candidate.affinityDelta === 'object'
       ? (candidate.affinityDelta as Record<string, unknown>)
@@ -603,6 +629,20 @@ function normalizeStoryChatResponse(raw: unknown): StoryChatResponse {
       ? (candidate.meta as Record<string, unknown>)
       : null;
   if (typeof candidate.response !== 'string' || candidate.response.trim().length === 0) {
+    if (
+      candidate.status === 'superseded' ||
+      candidate.superseded === true ||
+      (metaCandidate?.provider === 'noop')
+    ) {
+      return {
+        success: true,
+        response: '',
+        segments: [],
+        emotionTag: '일상',
+        delaySec: 0,
+        superseded: true,
+      };
+    }
     throw new Error('Story chat response text is missing.');
   }
 
@@ -625,6 +665,16 @@ function normalizeStoryChatResponse(raw: unknown): StoryChatResponse {
       typeof candidate.emotionTag === 'string' ? candidate.emotionTag : undefined,
     delaySec:
       typeof candidate.delaySec === 'number' ? candidate.delaySec : undefined,
+    scheduledId:
+      typeof candidate.scheduledId === 'string'
+        ? candidate.scheduledId
+        : undefined,
+    deliverAt:
+      typeof candidate.deliverAt === 'string' ? candidate.deliverAt : undefined,
+    superseded:
+      candidate.status === 'superseded' || candidate.superseded === true
+        ? true
+        : undefined,
     affinityDelta:
       affinityDeltaCandidate &&
       (typeof affinityDeltaCandidate.points === 'number' ||
@@ -1097,7 +1147,11 @@ export async function invokeStoryChat(
     throw new Error('Supabase is not configured.');
   }
 
-  const baseBody = { ...request, conceptType: 'pilot_romance' as const };
+  const baseBody = {
+    ...request,
+    conceptType: 'pilot_romance' as const,
+    ...(options?.userMessageId ? { userMessageId: options.userMessageId } : {}),
+  };
   const bodyWithDesc = options?.userDescription
     ? { ...baseBody, userDescription: options.userDescription }
     : baseBody;

@@ -24,6 +24,10 @@ export interface CharacterPushPayload {
   // 호출해서 client_acked_at 마킹 → cron 중복 발송 방지.
   // Telegram scheduled-message API 패턴 (별도 필드, 매직 prefix 폐기).
   scheduledId?: string;
+  // canonical scheduled messages. JSON-stringified ScheduledReplyMessage[].
+  // 새 클라는 이 payload 를 그대로 로컬 MessageStore 에 넣고, body/messageId 는
+  // 옛 클라 호환용 fallback 으로만 사용한다.
+  scheduledMessagesJson?: string;
   // proactive_message_log row id (Slice 2). hookForReveal=true 인 메시지일 때만.
   // 클라가 character-chat 호출 시 body 에 동봉 → 서버가 reveal claim 시 race 회피.
   pendingProactiveMessageId?: string;
@@ -86,6 +90,11 @@ export function buildCharacterDmPayload(
     // fallback 안정화되면 한 키로 정리 예정.
     payload["scheduled_id"] = params.scheduledId;
     payload["scheduledId"] = params.scheduledId;
+  }
+
+  if (params.scheduledMessagesJson) {
+    payload["scheduled_messages_json"] = params.scheduledMessagesJson;
+    payload["scheduledMessagesJson"] = params.scheduledMessagesJson;
   }
 
   if (params.pendingProactiveMessageId) {
@@ -371,6 +380,7 @@ export async function sendCharacterDmPush(params: {
   roomState?: string;
   type?: CharacterPushPayload["type"];
   scheduledId?: string;
+  scheduledMessagesJson?: string;
   pendingProactiveMessageId?: string;
 }): Promise<CharacterPushSendResult> {
   const isEnabled = await hasCharacterNotificationEnabled(
@@ -408,6 +418,7 @@ export async function sendCharacterDmPush(params: {
     roomState: params.roomState,
     type: params.type,
     scheduledId: params.scheduledId,
+    scheduledMessagesJson: params.scheduledMessagesJson,
     pendingProactiveMessageId: params.pendingProactiveMessageId,
   });
 

@@ -92,6 +92,7 @@ import {
   loadStoryThreadSnapshot,
   saveCharacterConversation,
   saveStoryThreadSnapshot,
+  type StoryChatResponse,
   type StoryChatThreadSnapshot,
 } from '../lib/story-chat-runtime';
 import {
@@ -106,13 +107,13 @@ import {
   randomInRange,
 } from '../lib/chat-message-utils';
 import {
-  deleteMessage as deleteStoreMessage,
-  deleteMessages as deleteStoreMessages,
   insertMessages as insertStoreMessages,
-  markUserMessagesAsReadInStore,
+  getMessages as getStoreMessages,
   useStoreMessages,
 } from '../lib/message-store';
 import { setTyping as setGlobalTyping } from '../lib/typing-store';
+import { replyDeliveryController } from '../lib/reply-delivery-controller';
+import { useChatMessageController } from '../features/chat-surface/hooks/use-chat-message-controller';
 import { useMessageQueue } from '../features/chat-surface/hooks/use-message-queue';
 import {
   ackScheduledReplyIfPresent,
@@ -179,6 +180,17 @@ const REPLY_FLOOR_MS = 10000;
 // 즉시 옴?" 회귀의 한 원인이라 폐기.
 const FALLBACK_REPLY_MIN_SEC = 30;
 const FALLBACK_REPLY_MAX_SEC = 120;
+
+function computeHumanReplyPhaseDelays(replyDelayMs: number) {
+  const typingPreviewMs = Math.min(
+    replyDelayMs * 0.4,
+    randomInRange(5000, 15000),
+  );
+  const silentMs = Math.max(0, replyDelayMs - typingPreviewMs);
+  const readToTypingMs = Math.min(silentMs, randomInRange(8000, 25000));
+  const beforeReadMs = Math.max(0, silentMs - readToTypingMs);
+  return { beforeReadMs, readToTypingMs, typingPreviewMs };
+}
 
 /**
  * 미읽음 user kind='text' 메시지 전부에 `readAt`을 도장찍어 돌려준다.
@@ -1046,6 +1058,10 @@ export function ChatScreen() {
     selectedCharacterId: selectedCharacter.id,
     chatHapticsEnabled: mobileAppState.settings.chatHapticsEnabled,
   });
+  const chatMessageController = useChatMessageController({
+    setMessagesByCharacterId,
+  });
+  const lastAssistantEmotionTagRef = useRef<string>('일상');
 
   // ---------------------------------------------------------------------------
   // 자동 답장 재개 — 채팅방 진입 시 마지막 메시지가 user 면 AI 응답 트리거
@@ -1118,16 +1134,74 @@ export function ChatScreen() {
 
   const markUserMessageReadImmediately = useCallback(
     (characterId: string) => {
-      // Step G: store 에도 readAt 마킹 — useStoreMessages 구독자 (chat list 등) 즉시 reflect.
-      markUserMessagesAsReadInStore(characterId);
-      setMessagesByCharacterId((current) => ({
-        ...current,
-        [characterId]: markLatestUserMessageAsRead(
-          current[characterId] ?? [],
-        ),
-      }));
+      chatMessageController.markUserMessagesRead(characterId);
     },
-    [],
+    [chatMessageController],
+  );
+
+  const cancelPendingReplyForCharacter = useCallback(
+    (characterId: string) => {
+      if (session) {
+        replyDeliveryController.cancelServerScheduledReplies(characterId);
+      } else {
+        replyDeliveryController.cancelLocal(characterId);
+      }
+      setStoryTypingByCharacterId((current) => {
+        if (current[characterId] !== true) return current;
+        return { ...current, [characterId]: false };
+      });
+      setGlobalTyping(characterId, false);
+    },
+    [session],
+  );
+
+  const scheduleCanonicalScheduledReply = useCallback(
+    (
+      characterId: string,
+      response: Pick<StoryChatResponse, 'scheduledId' | 'deliverAt'>,
+      replyDelayMs: number,
+      onDelivered?: (messages: ChatShellMessage[]) => void,
+    ) => {
+      return replyDeliveryController.scheduleScheduledReply({
+        characterId,
+        response,
+        phaseDelays: computeHumanReplyPhaseDelays(replyDelayMs),
+        onMarkRead: () => markUserMessageReadImmediately(characterId),
+        onTypingChange: (isTyping) => {
+          setStoryTypingByCharacterId((current) => {
+            if (current[characterId] === isTyping) return current;
+            return { ...current, [characterId]: isTyping };
+          });
+          setGlobalTyping(characterId, isTyping);
+        },
+        onMessages: (messages) => {
+          chatMessageController.appendMessages(characterId, messages, {
+            markUserReadBeforeAppend: true,
+          });
+          const emotionTag = messages.find(
+            (message): message is ChatShellTextMessage =>
+              message.kind === 'text' &&
+              message.sender === 'assistant' &&
+              typeof message.emotionTag === 'string',
+          )?.emotionTag;
+          if (emotionTag) {
+            lastAssistantEmotionTagRef.current = emotionTag;
+          }
+          triggerAssistantHaptic(emotionTag);
+          onDelivered?.(messages);
+        },
+        onError: (error) => {
+          captureError(error, {
+            surface: 'chat:claim-scheduled-reply',
+          }).catch(() => undefined);
+        },
+      });
+    },
+    [
+      chatMessageController,
+      markUserMessageReadImmediately,
+      triggerAssistantHaptic,
+    ],
   );
 
   // 부팅 시 큐 복원 — 앱 강제 종료되어도 대기 중이던 유저 메시지를 이어서 처리.
@@ -1236,7 +1310,6 @@ export function ChatScreen() {
   // F4 — 프레전스 라인 ("커피 내리는 중", "네 생각 중..." 등)
   // ---------------------------------------------------------------------------
   const [presenceLine, setPresenceLine] = useState<string>('');
-  const lastAssistantEmotionTagRef = useRef<string>('일상');
 
   const refreshPresenceLine = useCallback(() => {
     const hour = new Date().getHours();
@@ -2062,12 +2135,7 @@ export function ChatScreen() {
     if (!currentThread) return;
     const nextThread = currentThread.filter((m) => m.id !== messageId);
     if (nextThread.length === currentThread.length) return;
-    setMessagesByCharacterId((current) => ({
-      ...current,
-      [characterId]: nextThread,
-    }));
-    // Step G: store 에서도 삭제 — useStoreMessages 구독자 자동 reflect.
-    deleteStoreMessage(characterId, messageId);
+    chatMessageController.removeMessage(characterId, messageId);
     autoResumedUserMessageIdsRef.current.delete(messageId);
     // 디스크에 TTS 캐시가 있으면 정리. user 메시지는 캐시 없으므로 no-op이지만
     // 안전하게 호출 (idempotent).
@@ -2237,44 +2305,20 @@ export function ChatScreen() {
     };
     syncPendingCount(characterId);
     const idsToRemove = queue.map((item) => item.userMessageId);
-    const idsSet = new Set(idsToRemove);
-    setMessagesByCharacterId((current) => {
-      const thread = current[characterId] ?? [];
-      return {
-        ...current,
-        [characterId]: thread.filter((m) => !idsSet.has(m.id)),
-      };
-    });
-    // Step G: store 에서도 일괄 삭제.
-    deleteStoreMessages(characterId, idsToRemove);
+    chatMessageController.removeMessages(characterId, idsToRemove);
   }
 
   // 실패한 전송의 유저 메시지만 thread에서 제거. 뒤늦게 큐잉된 다른 메시지는
   // 건드리지 않는다. id가 없으면 가장 최근 user 메시지 하나를 pop.
   function rollbackUserMessage(characterId: string, userMessageId?: string) {
     let resolvedUserMessageId = userMessageId;
-    setMessagesByCharacterId((current) => {
-      const thread = current[characterId] ?? [];
-      if (userMessageId) {
-        return {
-          ...current,
-          [characterId]: thread.filter((m) => m.id !== userMessageId),
-        };
-      }
-      const lastUserIndex = thread.findLastIndex((m) => m.sender === 'user');
-      if (lastUserIndex < 0) return current;
-      resolvedUserMessageId = thread[lastUserIndex].id;
-      return {
-        ...current,
-        [characterId]: [
-          ...thread.slice(0, lastUserIndex),
-          ...thread.slice(lastUserIndex + 1),
-        ],
-      };
-    });
-    // Step G: store 에서도 제거 — failed transient 메시지여도 store 일관성 유지.
+    if (!resolvedUserMessageId) {
+      const thread = messagesByCharacterId[characterId] ?? [];
+      const lastUser = [...thread].reverse().find((m) => m.sender === 'user');
+      resolvedUserMessageId = lastUser?.id;
+    }
     if (resolvedUserMessageId) {
-      deleteStoreMessage(characterId, resolvedUserMessageId);
+      chatMessageController.removeMessage(characterId, resolvedUserMessageId);
     }
   }
 
@@ -2338,16 +2382,10 @@ export function ChatScreen() {
   // 추가 send 마다 reset. idle 만료되면 누적 큐 한 번에 flush. typing
   // indicator 는 첫 send 부터 응답 렌더 직전까지 계속 표시 (AC3).
   function enqueueStorySend(character: ChatCharacterSpec, text: string) {
+    cancelPendingReplyForCharacter(character.id);
+
     const queuedUserMessage = buildUserMessage(text);
-    setMessagesByCharacterId((current) => ({
-      ...current,
-      [character.id]: [
-        ...(current[character.id] ?? []),
-        queuedUserMessage,
-      ],
-    }));
-    // Step G: store sync — push 도착 등 다른 채널과 같은 store 에 모임.
-    insertStoreMessages(character.id, [queuedUserMessage]).catch(() => undefined);
+    chatMessageController.appendMessages(character.id, [queuedUserMessage]);
     pendingSendsRef.current = {
       ...pendingSendsRef.current,
       [character.id]: [
@@ -2401,6 +2439,9 @@ export function ChatScreen() {
     }
 
     const skipOptimistic = sendOptions?.skipOptimisticUserMessage === true;
+    if (!skipOptimistic) {
+      cancelPendingReplyForCharacter(character.id);
+    }
 
     const existingSnapshot =
       storyThreadSnapshotsByCharacterId[character.id] ??
@@ -2457,12 +2498,7 @@ export function ChatScreen() {
     const effectiveUserMessageId = userMessage?.id ?? sendOptions?.userMessageId;
 
     if (userMessage) {
-      setMessagesByCharacterId((current) => ({
-        ...current,
-        [character.id]: [...(current[character.id] ?? []), userMessage],
-      }));
-      // Step G: store sync — optimistic user message
-      insertStoreMessages(character.id, [userMessage]).catch(() => undefined);
+      chatMessageController.appendMessages(character.id, [userMessage]);
     }
     // 진짜 사람 흐름 — send 직후엔 "1" 유지 + typing X. markRead 와 typing 은
     // replyDelayMs 분기에서 단계별 처리 (beforeReadMs → markRead →
@@ -2615,6 +2651,9 @@ export function ChatScreen() {
 
       // F2 — 서버 응답 도착. markRead 는 단계별 sleep 안 (beforeReadMs 후) 에서
       // 호출 — 답장 직전 일정 시간 전에만 "1" 사라지도록 (진짜 사람 흐름).
+      if (response.superseded) {
+        return;
+      }
 
       // 최신 assistant emotion 추적 (F4 presence 라인에 반영)
       if (response.emotionTag) {
@@ -2635,6 +2674,36 @@ export function ChatScreen() {
       replyDelayMs = Math.max(replyDelayMs, minRemaining);
       delete batchFirstSendAtRef.current[character.id];
 
+      if (response.scheduledId && response.deliverAt) {
+        const scheduled = scheduleCanonicalScheduledReply(
+          character.id,
+          response,
+          replyDelayMs,
+          (deliveredMessages) => {
+            if (deliveredMessages.length === 0) return;
+            const nextMessages = getStoreMessages(character.id);
+            const nextSnapshot = buildNextStoryThreadSnapshot(
+              optimisticSnapshot,
+              character,
+              nextMessages,
+              response,
+              storyRequest,
+            );
+            if (!nextSnapshot) return;
+            setStoryThreadSnapshotsByCharacterId((current) => ({
+              ...current,
+              [character.id]: nextSnapshot,
+            }));
+            saveStoryThreadSnapshot(nextSnapshot).catch((error: unknown) => {
+              captureError(error, {
+                surface: 'chat:story-pilot-save-scheduled',
+              }).catch(() => undefined);
+            });
+          },
+        );
+        if (scheduled) return;
+      }
+
       // 진짜 사람 흐름 4단계:
       //   1. send → "1" 유지 (캐릭터 안 봤음)
       //   2. beforeReadMs sleep → markRead → "1" 사라짐 (읽었음)
@@ -2645,22 +2714,44 @@ export function ChatScreen() {
       // 사이) 8~25초. silentMs = replyDelayMs - typingPreviewMs 가 "안 봤음 +
       // 읽음 후 잠깐 뜸" 합. 긴 delay (5~10분) 면 대부분 "1" 유지 → 마지막
       // 30~40초만 read+typing.
-      const typingPreviewMs = Math.min(
-        replyDelayMs * 0.4,
-        randomInRange(5000, 15000),
+      const { beforeReadMs, readToTypingMs, typingPreviewMs } =
+        computeHumanReplyPhaseDelays(replyDelayMs);
+      const localReplyGeneration = replyDeliveryController.beginLocalReply(
+        character.id,
       );
-      const silentMs = Math.max(0, replyDelayMs - typingPreviewMs);
-      const readToTypingMs = Math.min(silentMs, randomInRange(8000, 25000));
-      const beforeReadMs = Math.max(0, silentMs - readToTypingMs);
       await sleep(beforeReadMs);
+      if (
+        !replyDeliveryController.isLocalReplyCurrent(
+          character.id,
+          localReplyGeneration,
+        )
+      ) {
+        return;
+      }
       markUserMessageReadImmediately(character.id);
       await sleep(readToTypingMs);
+      if (
+        !replyDeliveryController.isLocalReplyCurrent(
+          character.id,
+          localReplyGeneration,
+        )
+      ) {
+        return;
+      }
       setStoryTypingByCharacterId((current) => ({
         ...current,
         [character.id]: true,
       }));
       setGlobalTyping(character.id, true);
       await sleep(typingPreviewMs);
+      if (
+        !replyDeliveryController.isLocalReplyCurrent(
+          character.id,
+          localReplyGeneration,
+        )
+      ) {
+        return;
+      }
 
       // 최신 유저 메시지 읽음 처리 — 현재 state 기준으로 찍어야 큐잉된 다음
       // 메시지들을 덮어쓰지 않는다.
@@ -2810,6 +2901,9 @@ export function ChatScreen() {
     }
 
     const skipOptimistic = sendOptions?.skipOptimisticUserMessage === true;
+    if (!skipOptimistic) {
+      cancelPendingReplyForCharacter(character.id);
+    }
 
     const existingThread =
       messagesByCharacterId[character.id] ?? buildInitialThread(character);
@@ -2821,12 +2915,7 @@ export function ChatScreen() {
 
     const effectiveUserMessageId = userMessage?.id ?? sendOptions?.userMessageId;
     if (userMessage) {
-      setMessagesByCharacterId((current) => ({
-        ...current,
-        [character.id]: [...(current[character.id] ?? []), userMessage],
-      }));
-      // Step G: store sync — optimistic user message (character chat path)
-      insertStoreMessages(character.id, [userMessage]).catch(() => undefined);
+      chatMessageController.appendMessages(character.id, [userMessage]);
     }
     // 진짜 사람 흐름 — send 직후 "1" 유지 + typing X. markRead 와 typing 은
     // replyDelayMs 분기에서 단계별 처리.
@@ -2885,22 +2974,44 @@ export function ChatScreen() {
             delete batchFirstSendAtRef.current[character.id];
             // 4단계 진짜 사람 흐름 (위 첫 사이트와 동일 패턴):
             // 안 봄 → markRead → 읽고 잠시 → typing → 렌더.
-            const typingPreviewMs = Math.min(
-              replyDelayMs * 0.4,
-              randomInRange(5000, 15000),
+            const { beforeReadMs, readToTypingMs, typingPreviewMs } =
+              computeHumanReplyPhaseDelays(replyDelayMs);
+            const localReplyGeneration = replyDeliveryController.beginLocalReply(
+              character.id,
             );
-            const silentMs = Math.max(0, replyDelayMs - typingPreviewMs);
-            const readToTypingMs = Math.min(silentMs, randomInRange(8000, 25000));
-            const beforeReadMs = Math.max(0, silentMs - readToTypingMs);
             await sleep(beforeReadMs);
+            if (
+              !replyDeliveryController.isLocalReplyCurrent(
+                character.id,
+                localReplyGeneration,
+              )
+            ) {
+              return;
+            }
             markUserMessageReadImmediately(character.id);
             await sleep(readToTypingMs);
+            if (
+              !replyDeliveryController.isLocalReplyCurrent(
+                character.id,
+                localReplyGeneration,
+              )
+            ) {
+              return;
+            }
             setStoryTypingByCharacterId((current) => ({
               ...current,
               [character.id]: true,
             }));
             setGlobalTyping(character.id, true);
             await sleep(typingPreviewMs);
+            if (
+              !replyDeliveryController.isLocalReplyCurrent(
+                character.id,
+                localReplyGeneration,
+              )
+            ) {
+              return;
+            }
 
             setMessagesByCharacterId((current) => ({
               ...current,
@@ -3002,6 +3113,7 @@ export function ChatScreen() {
         userDescription: customPersona ? `[유저 커스텀 성격 요청] ${customPersona}` : undefined,
         messages: recentMessages,
         userMessage: trimmed,
+        ...(effectiveUserMessageId ? { userMessageId: effectiveUserMessageId } : {}),
         userName:
           (session?.user.user_metadata.name as string | undefined) ||
           (session?.user.user_metadata.full_name as string | undefined) ||
@@ -3061,6 +3173,8 @@ export function ChatScreen() {
         segments?: unknown;
         scheduledId?: string;
         deliverAt?: string;
+        status?: string;
+        meta?: { provider?: string };
         // Slice 2: 서버가 Stage 2 reveal 한 사진 (있을 때만).
         reveal?: { imageUrl: string; caption: string; category: string };
       } | null;
@@ -3097,6 +3211,10 @@ export function ChatScreen() {
         throw error;
       }
 
+      if (payload?.status === 'superseded' || payload?.meta?.provider === 'noop') {
+        return;
+      }
+
       if (!payload?.response || (payload.success === false)) {
         throw new Error(payload?.error ?? 'Character chat response is empty.');
       }
@@ -3127,24 +3245,76 @@ export function ChatScreen() {
       const minRemaining = Math.max(0, REPLY_FLOOR_MS - elapsedSinceFirstSend);
       replyDelayMs = Math.max(replyDelayMs, minRemaining);
       delete batchFirstSendAtRef.current[character.id];
+
+      if (scheduledId && payload.deliverAt) {
+        const scheduled = scheduleCanonicalScheduledReply(
+          character.id,
+          { scheduledId, deliverAt: payload.deliverAt },
+          replyDelayMs,
+          () => {
+            if (payload.reveal?.imageUrl && payload.reveal.caption) {
+              chatMessageController.appendMessages(character.id, [
+                {
+                  id: `proactive-reveal-${Date.now()}-${Math.random()
+                    .toString(36)
+                    .slice(2, 8)}`,
+                  kind: 'image' as const,
+                  sender: 'assistant' as const,
+                  imageUrl: payload.reveal.imageUrl,
+                  caption: payload.reveal.caption,
+                  proactive: {
+                    slotKey: 'lunch_share',
+                    category: payload.reveal.category,
+                    generatedAt: new Date().toISOString(),
+                  },
+                },
+              ]);
+            }
+          },
+        );
+        if (scheduled) return;
+      }
+
       // 4단계 진짜 사람 흐름 (위 두 사이트와 동일 패턴):
       // 안 봄 → markRead → 읽고 잠시 → typing → 렌더.
-      const typingPreviewMs = Math.min(
-        replyDelayMs * 0.4,
-        randomInRange(5000, 15000),
+      const { beforeReadMs, readToTypingMs, typingPreviewMs } =
+        computeHumanReplyPhaseDelays(replyDelayMs);
+      const localReplyGeneration = replyDeliveryController.beginLocalReply(
+        character.id,
       );
-      const silentMs = Math.max(0, replyDelayMs - typingPreviewMs);
-      const readToTypingMs = Math.min(silentMs, randomInRange(8000, 25000));
-      const beforeReadMs = Math.max(0, silentMs - readToTypingMs);
       await sleep(beforeReadMs);
+      if (
+        !replyDeliveryController.isLocalReplyCurrent(
+          character.id,
+          localReplyGeneration,
+        )
+      ) {
+        return;
+      }
       markUserMessageReadImmediately(character.id);
       await sleep(readToTypingMs);
+      if (
+        !replyDeliveryController.isLocalReplyCurrent(
+          character.id,
+          localReplyGeneration,
+        )
+      ) {
+        return;
+      }
       setStoryTypingByCharacterId((current) => ({
         ...current,
         [character.id]: true,
       }));
       setGlobalTyping(character.id, true);
       await sleep(typingPreviewMs);
+      if (
+        !replyDeliveryController.isLocalReplyCurrent(
+          character.id,
+          localReplyGeneration,
+        )
+      ) {
+        return;
+      }
 
       setMessagesByCharacterId((current) => ({
         ...current,
@@ -3713,6 +3883,7 @@ export function ChatScreen() {
         }
       }}
       scrollViewRef={chatScrollRef}
+      dismissKeyboardOnTap={surfaceMode === 'chat'}
       header={
         gate === 'ready' && surfaceMode === 'chat' ? (
           <View>

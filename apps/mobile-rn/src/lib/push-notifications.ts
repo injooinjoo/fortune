@@ -22,6 +22,33 @@ let handlerInstalled = false;
 type NotificationsModule = typeof import('expo-notifications');
 type DeviceModule = typeof import('expo-device');
 
+function normalizePersistedPushMessages(raw: unknown): ChatShellMessage[] {
+  if (!Array.isArray(raw)) return [];
+  const messages: ChatShellMessage[] = [];
+  for (const item of raw) {
+    if (!item || typeof item !== 'object') continue;
+    const candidate = item as Record<string, unknown>;
+    if (
+      typeof candidate.id !== 'string' ||
+      typeof candidate.content !== 'string' ||
+      candidate.type !== 'character'
+    ) {
+      continue;
+    }
+    const message: ChatShellMessage = {
+      id: candidate.id,
+      kind: 'text',
+      sender: 'assistant',
+      text: candidate.content,
+      ...(typeof candidate.emotionTag === 'string'
+        ? { emotionTag: candidate.emotionTag }
+        : {}),
+    };
+    messages.push(message);
+  }
+  return messages;
+}
+
 // 네이티브 모듈이 현재 빌드에 링크되지 않은 OTA 환경에서 import가 크래시를
 // 내지 않도록 런타임 require + try/catch로 지연 로드.
 function loadNotifications(): NotificationsModule | null {
@@ -172,6 +199,20 @@ export async function insertMessageFromPushIfPresent(
     }
   }
 
+  if (payload.scheduledMessagesJson) {
+    try {
+      const parsed = JSON.parse(payload.scheduledMessagesJson);
+      const messages = normalizePersistedPushMessages(parsed);
+      if (messages.length > 0) {
+        await insertMessages(payload.characterId, messages);
+        return;
+      }
+    } catch (e) {
+      console.warn('[push] scheduledMessagesJson parse 실패:', e);
+      // fall-through to body fallback
+    }
+  }
+
   if (!payload.body) return;
   const id = payload.scheduledId
     ? `scheduled-${payload.scheduledId}`
@@ -283,6 +324,8 @@ export interface PushResponsePayload {
    * 클라가 받자마자 INSERT — hydrate / 추가 fetch 없이 즉시 결과 카드 등장.
    */
   cardPayloadJson?: string;
+  /** JSON-stringified PersistedStoryMessage[] for canonical scheduled replies. */
+  scheduledMessagesJson?: string;
   /** 푸시 타입 — 'poster_result' 면 cardPayloadJson 사용. */
   type?: string;
   /**
@@ -359,6 +402,12 @@ export function installPushNotificationHandlers(handlers: {
         : typeof d.cardPayloadJson === 'string'
           ? (d.cardPayloadJson as string)
           : undefined;
+    const scheduledMessagesJson =
+      typeof d.scheduled_messages_json === 'string'
+        ? (d.scheduled_messages_json as string)
+        : typeof d.scheduledMessagesJson === 'string'
+          ? (d.scheduledMessagesJson as string)
+          : undefined;
     const pendingProactiveMessageId =
       (d.pending_proactive_message_id as string | undefined) ??
       (d.pendingProactiveMessageId as string | undefined);
@@ -371,6 +420,7 @@ export function installPushNotificationHandlers(handlers: {
       route,
       type,
       cardPayloadJson,
+      scheduledMessagesJson,
       pendingProactiveMessageId,
       raw: d,
     };
