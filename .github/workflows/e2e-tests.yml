@@ -48,7 +48,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+
+      - name: Enable pnpm
+        run: corepack enable
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -58,10 +60,10 @@ jobs:
           cache: true
 
       - name: Install Node dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Setup test environment
         run: |

@@ -25,10 +25,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-          cache: 'npm'
+
+      - name: Enable pnpm
+        run: corepack enable
 
       - name: Install Dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Check source inventory drift
         run: |
@@ -72,12 +74,13 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: Install dependencies (root)
-        run: npm ci
+      - name: Enable pnpm
+        run: corepack enable
         working-directory: .
 
-      - name: Install dependencies (mobile-rn)
-        run: npm install --no-audit --no-fund
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+        working-directory: .
 
       - name: tsc --noEmit
         run: npm run typecheck
