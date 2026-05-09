@@ -692,11 +692,12 @@ def build_analysis() -> dict[str, object]:
         if 'zero_incoming_dart' in record['notes'] and record['path'] != 'lib/main.dart'
     )
 
+    assets_root = ROOT / 'assets'
     top_level_asset_dirs = sorted(
         posix_relative(path)
-        for path in (ROOT / 'assets').iterdir()
+        for path in assets_root.iterdir()
         if path.is_dir()
-    )
+    ) if assets_root.exists() else []
     declared_asset_top_levels = {
         '/'.join(entry.split('/')[:2])
         for entry in parse_pubspec_asset_entries(pubspec_text)
