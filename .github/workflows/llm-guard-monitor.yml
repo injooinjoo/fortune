@@ -28,11 +28,12 @@ jobs:
         id: invoke
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           LLM_GUARD_MONITOR_SECRET: ${{ secrets.LLM_GUARD_MONITOR_SECRET }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
-          if [ -z "$SUPABASE_URL" ] || [ -z "$LLM_GUARD_MONITOR_SECRET" ]; then
-            echo "::warning::SUPABASE_URL 또는 LLM_GUARD_MONITOR_SECRET secret이 없어 모니터를 건너뜁니다."
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ] || [ -z "$LLM_GUARD_MONITOR_SECRET" ]; then
+            echo "::warning::SUPABASE_URL, SUPABASE_ANON_KEY 또는 LLM_GUARD_MONITOR_SECRET secret이 없어 모니터를 건너뜁니다."
             cat > monitor-response.json <<'JSON'
           {"success":true,"severity":"healthy","actions":["skipped_missing_secret"],"breachCount":0,"warningCount":0,"snapshot":{"windows":{"topBurstFeatures":[]}}}
           JSON
@@ -47,6 +48,8 @@ jobs:
           STATUS=$(curl -sS -o monitor-response.json -w "%{http_code}" \
             -X POST "$SUPABASE_URL/functions/v1/monitor-llm-usage" \
             -H "Content-Type: application/json" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
             -H "x-llm-monitor-secret: $LLM_GUARD_MONITOR_SECRET" \
             -d "$PAYLOAD")
 

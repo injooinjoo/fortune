@@ -46,13 +46,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Detect Flutter project
+        id: flutter-project
+        run: |
+          if [ -f pubspec.yaml ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Skipping Flutter Web smoke test because pubspec.yaml is not present in this RN mainline checkout."
+          fi
+
       - name: Setup Node.js
+        if: steps.flutter-project.outputs.present == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
       - name: Setup Flutter
+        if: steps.flutter-project.outputs.present == 'true'
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -60,6 +72,7 @@ jobs:
           cache: true
 
       - name: Install dependencies
+        if: steps.flutter-project.outputs.present == 'true'
         run: |
           npm ci
           npx playwright install --with-deps chromium
@@ -88,20 +101,31 @@ jobs:
           flutter pub get
 
       - name: Build Flutter Web
+        if: steps.flutter-project.outputs.present == 'true'
         run: flutter build web --release
 
       - name: Run Smoke Tests
         id: test
         run: |
+          if [ "${FLUTTER_PROJECT_PRESENT:-false}" != "true" ]; then
+            echo "Smoke tests skipped: pubspec.yaml is not present in this RN mainline checkout."
+            exit 0
+          fi
+
           # 스모크 테스트 실행
           npm run test:smoke:ci || true
         env:
           CI: true
+          FLUTTER_PROJECT_PRESENT: ${{ steps.flutter-project.outputs.present }}
 
       - name: Parse test results
         id: results
         run: |
-          if [ -f "test-results/results.json" ]; then
+          if [ "${FLUTTER_PROJECT_PRESENT:-false}" != "true" ]; then
+            PASSED=0
+            FAILED=0
+            TOTAL=0
+          elif [ -f "test-results/results.json" ]; then
             PASSED=$(jq '.stats.expected // 0' test-results/results.json)
             FAILED=$(jq '.stats.unexpected // 0' test-results/results.json)
             TOTAL=$((PASSED + FAILED))
@@ -114,6 +138,8 @@ jobs:
           echo "passed=$PASSED" >> $GITHUB_OUTPUT
           echo "failed=$FAILED" >> $GITHUB_OUTPUT
           echo "total=$TOTAL" >> $GITHUB_OUTPUT
+        env:
+          FLUTTER_PROJECT_PRESENT: ${{ steps.flutter-project.outputs.present }}
 
       - name: Upload results
         uses: actions/upload-artifact@v4
@@ -142,7 +168,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Detect Flutter project
+        id: flutter-project
+        run: |
+          if [ -f pubspec.yaml ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Skipping Lighthouse because pubspec.yaml is not present in this RN mainline checkout."
+          fi
+
       - name: Setup Flutter
+        if: steps.flutter-project.outputs.present == 'true'
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -150,6 +187,7 @@ jobs:
           cache: true
 
       - name: Build Flutter Web
+        if: steps.flutter-project.outputs.present == 'true'
         run: |
           # Setup test environment
           cat > .env << 'ENVEOF'
@@ -177,17 +215,24 @@ jobs:
           flutter build web --release
 
       - name: Setup Node.js
+        if: steps.flutter-project.outputs.present == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install serve
+        if: steps.flutter-project.outputs.present == 'true'
         run: npm install -g serve
 
       - name: Run Lighthouse
         id: lighthouse_run
         continue-on-error: true
         run: |
+          if [ "${FLUTTER_PROJECT_PRESENT:-false}" != "true" ]; then
+            echo "lighthouse_exit_code=0" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
           SERVER_PID=""
           cleanup() {
             if [ -n "$SERVER_PID" ] && kill -0 "$SERVER_PID" 2>/dev/null; then
@@ -218,18 +263,24 @@ jobs:
 
           echo "lighthouse_exit_code=$LIGHTHOUSE_EXIT" >> $GITHUB_OUTPUT
           exit 0
+        env:
+          FLUTTER_PROJECT_PRESENT: ${{ steps.flutter-project.outputs.present }}
 
       - name: Parse Lighthouse report
         id: parse_lighthouse
         if: always()
         run: |
+          FLUTTER_PROJECT_PRESENT="${{ steps.flutter-project.outputs.present }}"
           LIGHTHOUSE_EXIT="${{ steps.lighthouse_run.outputs.lighthouse_exit_code }}"
           PERFORMANCE="NA"
           LCP="NA"
           STATUS="failed"
           ERROR="LIGHTHOUSE_REPORT_MISSING"
 
-          if [ -f "lighthouse-report.json" ]; then
+          if [ "$FLUTTER_PROJECT_PRESENT" != "true" ]; then
+            STATUS="skipped"
+            ERROR="SKIPPED_NO_FLUTTER_PROJECT"
+          elif [ -f "lighthouse-report.json" ]; then
             PERFORMANCE=$(jq -r 'if .categories.performance.score == null then "NA" else (.categories.performance.score * 100 | floor | tostring) end' lighthouse-report.json)
             LCP=$(jq -r 'if .audits["largest-contentful-paint"].numericValue == null then "NA" else (.audits["largest-contentful-paint"].numericValue | floor | tostring) end' lighthouse-report.json)
             ERROR=$(jq -r '.runtimeError.code // .runtimeError.message // .audits["largest-contentful-paint"].errorMessage // .audits.interactive.errorMessage // .audits["total-blocking-time"].errorMessage // ""' lighthouse-report.json)
@@ -397,6 +448,8 @@ jobs:
 
           if [ "$PERF_RESULT" = "skipped" ]; then
             PERFORMANCE_SUMMARY="skipped"
+          elif [ "$PERF_STATUS" = "skipped" ]; then
+            PERFORMANCE_SUMMARY="skipped (no Flutter project)"
           elif [ "$PERF_STATUS" = "ok" ]; then
             PERFORMANCE_SUMMARY="$PERF_SCORE/100"
           elif [ "$PERF_STATUS" = "unavailable" ]; then
@@ -423,6 +476,8 @@ jobs:
 
           if [ "$PERF_RESULT" = "skipped" ]; then
             echo "ℹ️ Performance tests skipped"
+          elif [ "$PERF_STATUS" = "skipped" ]; then
+            echo "ℹ️ Performance tests skipped: no Flutter project"
           elif [ "$PERF_STATUS" != "ok" ]; then
             FAILED=true
             echo "❌ Performance measurement unavailable: $PERFORMANCE_SUMMARY"
