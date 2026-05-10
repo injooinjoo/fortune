@@ -2228,7 +2228,6 @@
         "supabase/functions/fortune-blind-date/index.ts",
         "supabase/functions/fortune-daily/index.ts",
         "supabase/functions/fortune-face-reading/index.ts",
-        "supabase/functions/fortune-health-document/index.ts",
         "supabase/functions/fortune-investment/index.ts",
         "supabase/functions/fortune-ootd/index.ts",
         "supabase/functions/fortune-palm-reading/index.ts",
@@ -2415,6 +2414,32 @@
       "dirty": false,
       "kind": "edge_shared_source",
       "notes": [],
+      "path": "supabase/functions/_shared/fortune_safety_guard.ts",
+      "referenced_by": [
+        "supabase/functions/_shared/fortune_safety_guard.ts",
+        "supabase/functions/fortune-biorhythm/index.ts",
+        "supabase/functions/fortune-blind-date/index.ts",
+        "supabase/functions/fortune-compatibility/index.ts",
+        "supabase/functions/fortune-ex-lover/index.ts",
+        "supabase/functions/fortune-exam/index.ts",
+        "supabase/functions/fortune-family-children/index.ts",
+        "supabase/functions/fortune-family-health/index.ts",
+        "supabase/functions/fortune-family-wealth/index.ts",
+        "supabase/functions/fortune-health/index.ts",
+        "supabase/functions/fortune-investment/index.ts",
+        "supabase/functions/fortune-love/index.ts",
+        "supabase/functions/fortune-wealth/index.ts"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "edge_shared_source",
+      "notes": [],
       "path": "supabase/functions/_shared/haneul_persona.ts",
       "referenced_by": [
         "supabase/functions/character-chat/index.ts"
@@ -2529,7 +2554,6 @@
         "supabase/functions/fortune-family-relationship/index.ts",
         "supabase/functions/fortune-family-wealth/index.ts",
         "supabase/functions/fortune-game-enhance/index.ts",
-        "supabase/functions/fortune-health-document/index.ts",
         "supabase/functions/fortune-health/index.ts",
         "supabase/functions/fortune-home-fengshui/index.ts",
         "supabase/functions/fortune-investment/index.ts",
@@ -2749,7 +2773,6 @@
         "supabase/functions/fortune-family-relationship/index.ts",
         "supabase/functions/fortune-family-wealth/index.ts",
         "supabase/functions/fortune-game-enhance/index.ts",
-        "supabase/functions/fortune-health-document/index.ts",
         "supabase/functions/fortune-health/index.ts",
         "supabase/functions/fortune-home-fengshui/index.ts",
         "supabase/functions/fortune-investment/index.ts",
@@ -3739,21 +3762,6 @@
         "no_inbound_refs"
       ],
       "path": "supabase/functions/fortune-game-enhance/index.ts",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "supabase",
-      "candidate_action": "manual_review",
-      "dirty": false,
-      "kind": "edge_function_source",
-      "notes": [
-        "edge_function_unreferenced:fortune-health-document",
-        "no_inbound_refs"
-      ],
-      "path": "supabase/functions/fortune-health-document/index.ts",
       "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
@@ -6861,18 +6869,18 @@
       "supabase": 301
     },
     "counts_by_candidate_action": {
-      "keep": 50,
+      "keep": 51,
       "keep_generated": 2,
-      "manual_review": 60,
+      "manual_review": 59,
       "phase1_remove_candidate": 2,
       "phase2_review_candidate": 337
     },
     "counts_by_usage_status": {
       "doc_only": 112,
       "generated_excluded": 2,
-      "runtime_used": 50,
+      "runtime_used": 51,
       "tooling_only": 225,
-      "unreferenced": 62
+      "unreferenced": 61
     },
     "declared_asset_dirs_without_runtime_refs": [],
     "generated_outputs": [
@@ -6953,7 +6961,6 @@
       "fortune-family-relationship",
       "fortune-family-wealth",
       "fortune-game-enhance",
-      "fortune-health-document",
       "fortune-home-fengshui",
       "fortune-lucky-items",
       "fortune-match-insight",
