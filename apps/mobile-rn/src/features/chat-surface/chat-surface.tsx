@@ -2317,6 +2317,61 @@ function SurveyImagePicker({
   );
 }
 
+const SURVEY_FOOTER_LIFT = 18;
+
+function SurveyFooterFrame({ children }: PropsWithChildren) {
+  return (
+    <View
+      style={{
+        gap: fortuneTheme.spacing.sm,
+        marginBottom: SURVEY_FOOTER_LIFT,
+      }}
+    >
+      {children}
+    </View>
+  );
+}
+
+function SurveyOptionPill({
+  label,
+  selected = false,
+}: {
+  label: string;
+  selected?: boolean;
+}) {
+  return (
+    <View
+      style={{
+        alignItems: 'center',
+        alignSelf: 'flex-start',
+        backgroundColor: selected
+          ? fortuneTheme.colors.chipLavender
+          : fortuneTheme.colors.surfaceSecondary,
+        borderColor: selected
+          ? fortuneTheme.colors.accentTertiary
+          : fortuneTheme.colors.border,
+        borderRadius: fortuneTheme.radius.full,
+        borderWidth: 1,
+        justifyContent: 'center',
+        minHeight: 46,
+        paddingHorizontal: 18,
+        paddingVertical: 11,
+      }}
+    >
+      <AppText
+        variant="labelLarge"
+        color={
+          selected
+            ? fortuneTheme.colors.chipText
+            : fortuneTheme.colors.textPrimary
+        }
+      >
+        {label}
+      </AppText>
+    </View>
+  );
+}
+
 export function ActiveSurveyFooter({
   step,
   draft,
@@ -2345,8 +2400,8 @@ export function ActiveSurveyFooter({
 
   if (step.inputKind === 'chips') {
     return (
-      <View style={{ gap: fortuneTheme.spacing.sm }}>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+      <SurveyFooterFrame>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
           {(step.options ?? []).map((option) => (
             <Pressable
               key={option.id}
@@ -2354,14 +2409,13 @@ export function ActiveSurveyFooter({
               onPress={() => onPickSingle(option.id)}
               style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
             >
-              <Chip
+              <SurveyOptionPill
                 label={option.emoji ? `${option.emoji} ${option.label}` : option.label}
-                tone="neutral"
               />
             </Pressable>
           ))}
         </View>
-      </View>
+      </SurveyFooterFrame>
     );
   }
 
@@ -2371,14 +2425,15 @@ export function ActiveSurveyFooter({
     // cover 이미지: assets/tarot-decks/{deck_id}/major/00_fool.webp.
     const deckPickerMaxHeight = Math.round(Dimensions.get('window').height * 0.6);
     return (
-      <ScrollView
-        style={{ maxHeight: deckPickerMaxHeight }}
-        contentContainerStyle={{
-          gap: fortuneTheme.spacing.sm,
-          paddingBottom: fortuneTheme.spacing.lg,
-        }}
-        showsVerticalScrollIndicator={false}
-      >
+      <SurveyFooterFrame>
+        <ScrollView
+          style={{ maxHeight: deckPickerMaxHeight }}
+          contentContainerStyle={{
+            gap: fortuneTheme.spacing.sm,
+            paddingBottom: fortuneTheme.spacing.lg,
+          }}
+          showsVerticalScrollIndicator={false}
+        >
         <View
           style={{
             flexDirection: 'row',
@@ -2466,13 +2521,16 @@ export function ActiveSurveyFooter({
             );
           })}
         </View>
-      </ScrollView>
+        </ScrollView>
+      </SurveyFooterFrame>
     );
   }
 
   if (step.inputKind === 'date') {
     return (
-      <SurveyDatePicker onSelect={(isoDate) => onPickSingle(isoDate)} />
+      <SurveyFooterFrame>
+        <SurveyDatePicker onSelect={(isoDate) => onPickSingle(isoDate)} />
+      </SurveyFooterFrame>
     );
   }
 
@@ -2495,31 +2553,34 @@ export function ActiveSurveyFooter({
     const requiredCount = step.maxSelections ?? 3;
 
     return (
-      <TarotDrawWidget
-        requiredCount={requiredCount}
-        deckName={deckName}
-        deckColors={deckColors}
-        onComplete={(cards) => onPickSingle(cards.join(','))}
-      />
+      <SurveyFooterFrame>
+        <TarotDrawWidget
+          requiredCount={requiredCount}
+          deckName={deckName}
+          deckColors={deckColors}
+          onComplete={(cards) => onPickSingle(cards.join(','))}
+        />
+      </SurveyFooterFrame>
     );
   }
 
   if (step.inputKind === 'multi-select') {
     return (
-      <View style={{ gap: fortuneTheme.spacing.sm }}>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+      <SurveyFooterFrame>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
           {(step.options ?? []).map((option) => {
             const selected = selections.includes(option.id);
             return (
               <Pressable
                 key={option.id}
                 accessibilityRole="button"
+                accessibilityState={{ selected }}
                 onPress={() => onToggleSelection(option.id)}
                 style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
               >
-                <Chip
+                <SurveyOptionPill
                   label={option.emoji ? `${option.emoji} ${option.label}` : option.label}
-                  tone={selected ? 'accent' : 'neutral'}
+                  selected={selected}
                 />
               </Pressable>
             );
@@ -2528,28 +2589,36 @@ export function ActiveSurveyFooter({
         <PrimaryButton disabled={!canSubmitSelection} onPress={onSubmitSelection}>
           선택 완료
         </PrimaryButton>
-      </View>
+      </SurveyFooterFrame>
     );
   }
 
   if (step.inputKind === 'image') {
     return (
-      <SurveyImagePicker onPickImage={onPickSingle} />
+      <SurveyFooterFrame>
+        <SurveyImagePicker onPickImage={onPickSingle} />
+      </SurveyFooterFrame>
     );
   }
 
   if (step.inputKind === 'mbti-axis') {
-    return <MbtiAxisPicker onSubmit={onPickSingle} />;
+    return (
+      <SurveyFooterFrame>
+        <MbtiAxisPicker onSubmit={onPickSingle} />
+      </SurveyFooterFrame>
+    );
   }
 
   return (
-    <SurveyComposer
-      value={draft}
-      onChangeText={onDraftChange}
-      onSubmit={onSubmitText}
-      onSkip={step.inputKind === 'text-with-skip' ? onSkip : undefined}
-      placeholder={step.placeholder ?? '답변을 적어주세요.'}
-    />
+    <SurveyFooterFrame>
+      <SurveyComposer
+        value={draft}
+        onChangeText={onDraftChange}
+        onSubmit={onSubmitText}
+        onSkip={step.inputKind === 'text-with-skip' ? onSkip : undefined}
+        placeholder={step.placeholder ?? '답변을 적어주세요.'}
+      />
+    </SurveyFooterFrame>
   );
 }
 
