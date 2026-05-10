@@ -1,4 +1,10 @@
-import type { PropsWithChildren, ReactNode, RefObject } from 'react';
+import {
+  useEffect,
+  useState,
+  type PropsWithChildren,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 
 import { Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -31,6 +37,30 @@ export function Screen({
   dismissKeyboardOnTap = false,
 }: ScreenProps) {
   const insets = useSafeAreaInsets();
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    if (!keyboardAvoiding) {
+      setKeyboardVisible(false);
+      return;
+    }
+
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+    const showSub = Keyboard.addListener(showEvent, () => setKeyboardVisible(true));
+    const hideSub = Keyboard.addListener(hideEvent, () => setKeyboardVisible(false));
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, [keyboardAvoiding]);
+
+  const footerPaddingBottom =
+    keyboardAvoiding && keyboardVisible
+      ? 0
+      : fortuneTheme.spacing.pageVertical + insets.bottom;
+
   const content = (
     <View style={{ flex: 1 }}>
       {header ? (
@@ -90,7 +120,7 @@ export function Screen({
             backgroundColor: fortuneTheme.colors.background,
             // keyboardAvoiding 모드: SafeAreaView 가 bottom 을 빼므로 footer 가 직접
             // insets.bottom 처리. KAV 가 키보드 올라오면 알아서 위로 밀어줌.
-            paddingBottom: fortuneTheme.spacing.pageVertical + insets.bottom,
+            paddingBottom: footerPaddingBottom,
             paddingHorizontal: fortuneTheme.spacing.pageHorizontal,
             paddingTop: fortuneTheme.spacing.sm,
           }}
