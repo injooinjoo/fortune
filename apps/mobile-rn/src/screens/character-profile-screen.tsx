@@ -267,7 +267,9 @@ export function CharacterProfileScreen() {
         </Card>
       )}
 
-      {detail && detail.galleryImages.length > 0 ? (
+      {detail &&
+      (detail.galleryImages.length > 0 ||
+        (detail.galleryAvatars && detail.galleryAvatars.length > 0)) ? (
         <Card>
           <AppText variant="heading4">갤러리</AppText>
           <View
@@ -279,7 +281,7 @@ export function CharacterProfileScreen() {
           >
             {detail.galleryImages.map((src, i) => (
               <Image
-                key={i}
+                key={`uri-${i}`}
                 source={{ uri: src }}
                 style={{
                   width: '31%',
@@ -289,6 +291,22 @@ export function CharacterProfileScreen() {
                 }}
               />
             ))}
+            {detail.galleryAvatars?.map((avatarId) => {
+              const src = resolveChatCharacterAvatarSource(avatarId);
+              if (!src) return null;
+              return (
+                <Image
+                  key={`avatar-${avatarId}`}
+                  source={src}
+                  style={{
+                    width: '31%',
+                    aspectRatio: 1,
+                    borderRadius: fortuneTheme.radius.md,
+                    backgroundColor: fortuneTheme.colors.surfaceSecondary,
+                  }}
+                />
+              );
+            })}
           </View>
         </Card>
       ) : null}

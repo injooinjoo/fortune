@@ -7,13 +7,13 @@ import {
 } from './onboarding';
 
 describe('onboarding contracts', () => {
-  it('sends guests without soft gate completion to auth entry', () => {
+  it('lets guests without soft gate completion enter chat', () => {
     expect(
       resolveChatOnboardingGate({
         hasAuthenticatedUser: false,
         progress: emptyUnifiedOnboardingProgress,
       }),
-    ).toBe('auth-entry');
+    ).toBe('ready');
   });
 
   it('sends authenticated users with incomplete profile data to profile flow', () => {
@@ -31,7 +31,7 @@ describe('onboarding contracts', () => {
     ).toBe('profile-flow');
   });
 
-  it('unlocks chat once guest soft gate is done', () => {
+  it('keeps chat unlocked once guest soft gate is done', () => {
     expect(
       resolveChatOnboardingGate({
         hasAuthenticatedUser: false,

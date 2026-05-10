@@ -22,6 +22,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile } from '../_shared/percentile/calculator.ts'
+import { withFortuneSafetyGuard } from '../_shared/fortune_safety_guard.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -272,7 +273,7 @@ ${Array.from({ length: 7 }, (_, i) => {
 특히 오늘의 최적 활동 시간대와 이번 주 에너지 관리 전략을 중점적으로 분석해주세요.`
 
     const response = await llm.generate([
-      { role: 'system', content: systemPrompt },
+      { role: 'system', content: withFortuneSafetyGuard(systemPrompt, { category: 'health' }) },
       { role: 'user', content: userPrompt }
     ], {
       temperature: 1,

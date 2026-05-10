@@ -31,6 +31,7 @@ import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import { withFortuneSafetyGuard } from '../_shared/fortune_safety_guard.ts'
 import { parseAndValidateLLMResponse, v } from '../_shared/llm/validation.ts'
 import {
   extractCompatibilityCohort,
@@ -368,7 +369,10 @@ serve(async (req) => {
       const response = await llm.generate([
         {
           role: 'system',
-          content: '당신은 연애 상담 잘해주는 절친 같은 궁합 전문가예요! 💕 친구처럼 편하게, 근데 핵심은 정확하게 얘기해줘요. 항상 한국어로, MZ 감성으로!'
+          content: withFortuneSafetyGuard(
+            '당신은 연애 상담 잘해주는 절친 같은 궁합 전문가예요! 💕 친구처럼 편하게, 근데 핵심은 정확하게 얘기해줘요. 항상 한국어로, MZ 감성으로!',
+            { category: 'love' },
+          )
         },
         {
           role: 'user',

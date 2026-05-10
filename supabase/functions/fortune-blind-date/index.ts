@@ -26,6 +26,7 @@ import { deriveUserIdFromJwt } from '../_shared/auth.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import { withFortuneSafetyGuard } from '../_shared/fortune_safety_guard.ts'
 import { extractUsername, fetchInstagramProfileImage, downloadAndEncodeImage } from '../_shared/instagram/scraper.ts'
 import {
   extractBlindDateCohort,
@@ -333,7 +334,8 @@ serve(async (req) => {
       })
 
       // Percentile 적용
-      const percentileData = await calculatePercentile(supabaseClient, 'blind-date', personalizedResult.score || 70)
+      const score = typeof personalizedResult.score === 'number' ? personalizedResult.score : 70
+      const percentileData = await calculatePercentile(supabaseClient, 'blind-date', score)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
       return new Response(
@@ -374,8 +376,8 @@ serve(async (req) => {
       if (analysisType === 'photos' || analysisType === 'comprehensive') {
         // ✅ 우선순위: my_photos/partner_photos (Base64 배열) > photoUrls (URL 배열)
         // ✅ Instagram에서 가져온 이미지도 partnerPhotosWithInstagram에 포함됨
-        const myPhotoData = myPhotos.length > 0 ? myPhotos.map(b64 => `data:image/jpeg;base64,${b64}`) : (photoUrls?.myPhotos || [])
-        const partnerPhotoData = partnerPhotosWithInstagram.length > 0 ? partnerPhotosWithInstagram.map(b64 => `data:image/jpeg;base64,${b64}`) : (photoUrls?.theirPhotos || [])
+        const myPhotoData = myPhotos.length > 0 ? myPhotos.map((b64: string) => `data:image/jpeg;base64,${b64}`) : (photoUrls?.myPhotos || [])
+        const partnerPhotoData = partnerPhotosWithInstagram.length > 0 ? partnerPhotosWithInstagram.map((b64: string) => `data:image/jpeg;base64,${b64}`) : (photoUrls?.theirPhotos || [])
 
         console.log('📸 [BlindDate] Analyzing photos:', {
           myPhotoCount: myPhotoData.length,
@@ -437,7 +439,7 @@ ${chatAnalysisResult.redFlags && Array.isArray(chatAnalysisResult.redFlags) && c
       const response = await llm.generate([
         {
           role: 'system',
-          content: `당신은 연애와 소개팅 전문 상담사입니다. 소개팅의 성공 가능성을 분석하고 실질적인 조언을 제공합니다.
+          content: withFortuneSafetyGuard(`당신은 연애와 소개팅 전문 상담사입니다. 소개팅의 성공 가능성을 분석하고 실질적인 조언을 제공합니다.
 
 다음 JSON 형식으로 응답해주세요. 절대로 "(xx자 이내)" 같은 글자수 지시문을 출력에 포함하지 마세요:
 {
@@ -471,7 +473,7 @@ ${chatAnalysisResult.redFlags && Array.isArray(chatAnalysisResult.redFlags) && c
 - "정보 부족", "알 수 없음", "중립적 평가", "정확한 판단이 어렵습니다" 같은 표현 절대 사용 금지
 - 상대방 사진/정보가 없어도 사용자의 프로필과 상황만으로 긍정적이고 구체적인 조언 제공
 - 모든 예측은 자신감 있게 표현하고, 확률/점수는 반드시 구체적인 숫자로 표현
-- 불확실성을 표현하지 말고, 주어진 정보를 최대한 활용하여 실용적인 조언 제공`
+- 불확실성을 표현하지 말고, 주어진 정보를 최대한 활용하여 실용적인 조언 제공`, { category: 'love' })
         },
         {
           role: 'user',

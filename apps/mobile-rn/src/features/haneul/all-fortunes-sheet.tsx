@@ -19,7 +19,6 @@ import {
   Modal,
   Pressable,
   ScrollView,
-  TextInput,
   View,
 } from 'react-native';
 
@@ -43,7 +42,7 @@ interface FilterPill {
   bulletColor: string;
 }
 
-const TODAY_FORTUNE_IDS: ReadonlyArray<string> = [
+const TODAY_FORTUNE_IDS: readonly string[] = [
   'daily',
   'biorhythm',
   'lucky-items',
@@ -65,7 +64,7 @@ const GROUP_BULLET_COLORS: Record<FortuneCatalogGroupId, string> = {
   past_life: '#DC2626',
 };
 
-const FILTER_PILLS: ReadonlyArray<FilterPill> = [
+const FILTER_PILLS: readonly FilterPill[] = [
   { id: 'today', label: '오늘', bulletColor: '#F59E0B' },
   ...FORTUNE_CATALOG_GROUPS.map((group) => ({
     id: group.id,
@@ -193,7 +192,6 @@ export function AllFortunesSheet({
           onPress={onClose}
           accessibilityRole="button"
           accessibilityLabel="닫기"
-          // eslint-disable-next-line react-native/no-inline-styles
           style={{
             position: 'absolute',
             top: 0,
@@ -204,7 +202,6 @@ export function AllFortunesSheet({
           }}
         />
         <View
-          // eslint-disable-next-line react-native/no-inline-styles
           style={{
             backgroundColor: fortuneTheme.colors.surface,
             borderTopLeftRadius: fortuneTheme.radius.xl,

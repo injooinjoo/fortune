@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { router } from 'expo-router';
-import { ActivityIndicator, Pressable, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, TextInput } from 'react-native';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
@@ -22,7 +22,7 @@ const deletionReasons = [
 ] as const;
 
 export function AccountDeletionScreen() {
-  const { session } = useAppBootstrap();
+  useAppBootstrap();
   const [confirmText, setConfirmText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -52,6 +52,13 @@ export function AccountDeletionScreen() {
         );
       });
 
+      // TODO(P2 Apple revoke): Apple 가이드 5.1.1(v) 권장 — provider==='apple'
+      // 인 사용자는 AppleAuthentication.revokeAsync 호출하여 Apple 측 토큰
+      // 도 함께 폐기. revokeAsync 는 fresh authorizationCode 필요 (재로그인
+      // UX) 또는 server-side Apple /auth/revoke 엔드포인트 호출 필요. 두 경
+      // 로 모두 Apple Developer 키 셋업 + sign-in 시 토큰 저장 흐름 추가 작
+      // 업 필요하여 별도 sprint 로 deferral. 현재는 Supabase 측 데이터 삭제
+      // 만 수행 — Apple 가이드 상 revoke 는 필수가 아닌 권장 사항.
       const invokePromise = supabase.functions.invoke('delete-account', {
         body: {
           reason: selectedReason,
@@ -135,7 +142,7 @@ export function AccountDeletionScreen() {
       <Card>
         <AppText variant="heading4">삭제 확인</AppText>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          계속하려면 아래에 "{CONFIRMATION_KEYWORD}"를 입력해 주세요.
+          계속하려면 아래에 &quot;{CONFIRMATION_KEYWORD}&quot;를 입력해 주세요.
         </AppText>
         <TextInput
           autoCapitalize="none"

@@ -170,25 +170,33 @@ const PENDING_SENDS_STORAGE_KEY = 'fortune.pending-sends.v1';
 
 // AC1, AC3 — 메시지 배칭 및 응답 지연 floor.
 // 첫 send 후 BATCH_IDLE_WINDOW_MS 동안 추가 send 가 없으면 누적 큐를 단일
-// Edge Function 호출로 flush. REPLY_FLOOR_MS 는 send 시점 부터 응답이
-// 화면에 렌더되기까지 최소 보장 시간.
-const BATCH_IDLE_WINDOW_MS = 5000;
-const REPLY_FLOOR_MS = 10000;
-// 서버 (supabase/functions/_shared/reply_delay.ts) 가 항상 30~600초 범위의
-// delaySec 를 내려준다. 만약 (장애로) delaySec 가 0/missing 으로 오면 사용자
-// 체감을 위해 30~120초 사이 랜덤 — 옛 1~3초 즉답 fallback 은 "왜 답장이
-// 즉시 옴?" 회귀의 한 원인이라 폐기.
-const FALLBACK_REPLY_MIN_SEC = 30;
-const FALLBACK_REPLY_MAX_SEC = 120;
+// Edge Function 호출로 flush. 5초 idle + 서버 30~600초 지연 조합은 사용자가
+// "답을 안 한다"고 인지하는 실제 회귀였으므로, 채팅 UX 는 빠른 피드백을
+// 우선한다.
+const BATCH_IDLE_WINDOW_MS = 1500;
+const REPLY_FLOOR_MS = 4000;
+// 서버 (supabase/functions/_shared/reply_delay.ts) 가 보통 4~45초 범위의
+// delaySec 를 내려준다. 만약 (장애로) delaySec 가 0/missing 으로 오면 동일한
+// 체감 범위로 폴백한다.
+const FALLBACK_REPLY_MIN_SEC = 6;
+const FALLBACK_REPLY_MAX_SEC = 18;
+
+function randomFallbackReplyDelayMs() {
+  return (Math.random() * (FALLBACK_REPLY_MAX_SEC - FALLBACK_REPLY_MIN_SEC) +
+    FALLBACK_REPLY_MIN_SEC) * 1000;
+}
 
 function computeHumanReplyPhaseDelays(replyDelayMs: number) {
+  // 읽음 배지가 수십 초~수분 유지되면 네트워크 장애처럼 보인다. 먼저 1~3.5초
+  // 안에 읽음 처리하고, 남은 시간을 "읽고 생각 중 → 입력 중"으로 나눈다.
+  const beforeReadMs = Math.min(replyDelayMs * 0.25, randomInRange(1000, 3500));
+  const remainingAfterRead = Math.max(0, replyDelayMs - beforeReadMs);
   const typingPreviewMs = Math.min(
-    replyDelayMs * 0.4,
-    randomInRange(5000, 15000),
+    remainingAfterRead,
+    replyDelayMs * 0.45,
+    randomInRange(1800, 5000),
   );
-  const silentMs = Math.max(0, replyDelayMs - typingPreviewMs);
-  const readToTypingMs = Math.min(silentMs, randomInRange(8000, 25000));
-  const beforeReadMs = Math.max(0, silentMs - readToTypingMs);
+  const readToTypingMs = Math.max(0, remainingAfterRead - typingPreviewMs);
   return { beforeReadMs, readToTypingMs, typingPreviewMs };
 }
 
@@ -2308,18 +2316,10 @@ export function ChatScreen() {
     chatMessageController.removeMessages(characterId, idsToRemove);
   }
 
-  // 실패한 전송의 유저 메시지만 thread에서 제거. 뒤늦게 큐잉된 다른 메시지는
-  // 건드리지 않는다. id가 없으면 가장 최근 user 메시지 하나를 pop.
-  function rollbackUserMessage(characterId: string, userMessageId?: string) {
-    let resolvedUserMessageId = userMessageId;
-    if (!resolvedUserMessageId) {
-      const thread = messagesByCharacterId[characterId] ?? [];
-      const lastUser = [...thread].reverse().find((m) => m.sender === 'user');
-      resolvedUserMessageId = lastUser?.id;
-    }
-    if (resolvedUserMessageId) {
-      chatMessageController.removeMessage(characterId, resolvedUserMessageId);
-    }
+  function rollbackUserMessages(characterId: string, userMessageIds: string[]) {
+    const idsToRemove = userMessageIds.filter((id) => id.trim().length > 0);
+    if (idsToRemove.length === 0) return;
+    chatMessageController.removeMessages(characterId, idsToRemove);
   }
 
   // pendingSendsRef가 바뀔 때마다 UI 카운트 동기 업데이트 + 디스크 영속화.
@@ -2360,12 +2360,14 @@ export function ChatScreen() {
     syncPendingCount(character.id);
 
     const combinedText = queue.map((item) => item.text).join('\n\n');
-    const headUserMessageId = queue[0].userMessageId;
+    const userMessageIds = queue.map((item) => item.userMessageId);
+    const headUserMessageId = userMessageIds[0];
 
     if (isStoryRomancePilotCharacterId(character.id)) {
       void sendStoryPilotMessage(character, combinedText, {
         skipOptimisticUserMessage: true,
         userMessageId: headUserMessageId,
+        userMessageIds,
       });
       return;
     }
@@ -2374,6 +2376,7 @@ export function ChatScreen() {
       void sendCharacterChatMessage(character, combinedText, {
         skipOptimisticUserMessage: true,
         userMessageId: headUserMessageId,
+        userMessageIds,
       });
     }
   }
@@ -2427,6 +2430,7 @@ export function ChatScreen() {
     sendOptions?: {
       skipOptimisticUserMessage?: boolean;
       userMessageId?: string;
+      userMessageIds?: string[];
       imageBase64?: string;
     },
   ) {
@@ -2481,7 +2485,10 @@ export function ChatScreen() {
       // 큐잉된 메시지가 있으면 모두 thread에서 제거하고 큐 비움 — 안 그러면
       // 유저 메시지만 남고 응답이 영영 오지 않는 스턱 상태가 된다.
       if (skipOptimistic && sendOptions?.userMessageId) {
-        rollbackUserMessage(character.id, sendOptions.userMessageId);
+        rollbackUserMessages(
+          character.id,
+          sendOptions.userMessageIds ?? [sendOptions.userMessageId],
+        );
       }
       flushPendingQueue(character.id);
       return;
@@ -2496,6 +2503,10 @@ export function ChatScreen() {
     );
     let shouldClearDraft = !skipOptimistic;
     const effectiveUserMessageId = userMessage?.id ?? sendOptions?.userMessageId;
+    const effectiveUserMessageIds = userMessage?.id
+      ? [userMessage.id]
+      : (sendOptions?.userMessageIds ??
+        (sendOptions?.userMessageId ? [sendOptions.userMessageId] : []));
 
     if (userMessage) {
       chatMessageController.appendMessages(character.id, [userMessage]);
@@ -2655,6 +2666,35 @@ export function ChatScreen() {
         return;
       }
 
+      // 빈 응답 가드 — segments 전부 strip 되거나 response 가 빈 문자열이면
+      // 타이핑 인디케이터만 떴다가 아무 메시지도 안 나오는 silent fail 발생.
+      // 이 경우 typing 단계 들어가기 전에 Alert + early return 으로 사용자에게
+      // 명확한 신호를 줘서 재전송 유도.
+      const candidateSegments =
+        response.segments?.filter((s) => s.trim().length > 0) ?? [];
+      const hasContent =
+        candidateSegments.length > 0 || (response.response?.trim().length ?? 0) > 0;
+      if (!hasContent) {
+        shouldClearDraft = false;
+        setDraft(trimmed);
+        clearBatchTimer(character.id);
+        clearReadReceiptTimer(character.id);
+        delete batchFirstSendAtRef.current[character.id];
+        rollbackUserMessages(character.id, effectiveUserMessageIds);
+        setStoryThreadSnapshotsByCharacterId((current) => ({
+          ...current,
+          [character.id]: existingSnapshot,
+        }));
+        await captureError(new Error('character-chat empty response'), {
+          surface: 'chat:story-pilot-empty-response',
+        }).catch(() => undefined);
+        Alert.alert(
+          '응답이 끊겼어요',
+          '잠시 후 다시 보내볼까요?',
+        );
+        return;
+      }
+
       // 최신 assistant emotion 추적 (F4 presence 라인에 반영)
       if (response.emotionTag) {
         lastAssistantEmotionTagRef.current = response.emotionTag;
@@ -2662,19 +2702,23 @@ export function ChatScreen() {
 
       // Reply delay — 서버가 emotion + 길이 + 낮밤 multiplier 적용한 delaySec
       // 를 그대로 신뢰 (단일 source: supabase/functions/_shared/reply_delay.ts).
-      // 추가로 batchFirstSendAt 기준 floor (REPLY_FLOOR_MS) 적용해 첫 send 부터
-      // 최소 10초 보장 (AC1). 서버 누락 시 30~120초 fallback (FALLBACK_REPLY_*).
-      let replyDelayMs = response.delaySec
+      // 추가로 batchFirstSendAt 기준 floor (REPLY_FLOOR_MS) 적용. 서버 누락 시
+      // 짧은 fallback (FALLBACK_REPLY_*).
+      let replyDelayMs = typeof response.delaySec === 'number' &&
+          Number.isFinite(response.delaySec)
         ? response.delaySec * 1000
-        : (Math.random() * (FALLBACK_REPLY_MAX_SEC - FALLBACK_REPLY_MIN_SEC) +
-          FALLBACK_REPLY_MIN_SEC) * 1000;
+        : randomFallbackReplyDelayMs();
       const elapsedSinceFirstSend = Date.now() -
         (batchFirstSendAtRef.current[character.id] ?? Date.now());
       const minRemaining = Math.max(0, REPLY_FLOOR_MS - elapsedSinceFirstSend);
       replyDelayMs = Math.max(replyDelayMs, minRemaining);
       delete batchFirstSendAtRef.current[character.id];
 
-      if (response.scheduledId && response.deliverAt) {
+      if (
+        response.scheduledId &&
+        response.deliverAt &&
+        Number.isFinite(Date.parse(response.deliverAt))
+      ) {
         const scheduled = scheduleCanonicalScheduledReply(
           character.id,
           response,
@@ -2710,10 +2754,8 @@ export function ChatScreen() {
       //   3. readToTypingMs sleep → setTyping(true) → "..." (입력 중)
       //   4. typingPreviewMs sleep → 메시지 렌더 + setTyping(false)
       //
-      // typingPreviewMs (입력 중 노출) 5~15초, readToTypingMs (읽고 → 입력 시작
-      // 사이) 8~25초. silentMs = replyDelayMs - typingPreviewMs 가 "안 봤음 +
-      // 읽음 후 잠깐 뜸" 합. 긴 delay (5~10분) 면 대부분 "1" 유지 → 마지막
-      // 30~40초만 read+typing.
+      // 읽음 배지는 빠르게 제거하고, 남은 시간을 "읽고 생각 중 → 입력 중"으로
+      // 나누어 무응답/네트워크 장애처럼 보이지 않게 한다.
       const { beforeReadMs, readToTypingMs, typingPreviewMs } =
         computeHumanReplyPhaseDelays(replyDelayMs);
       const localReplyGeneration = replyDeliveryController.beginLocalReply(
@@ -2762,7 +2804,9 @@ export function ChatScreen() {
         ),
       }));
       // F1 — segments 순차 enqueue. 단일 세그먼트는 하위 호환 동일 동작.
-      const segments = response.segments ?? [response.response.trim()];
+      const segments = candidateSegments.length > 0
+        ? candidateSegments
+        : [response.response.trim()];
       const nextMessages = await enqueueAssistantSegments({
         characterId: character.id,
         segments,
@@ -2798,7 +2842,7 @@ export function ChatScreen() {
         shouldClearDraft = false;
         setDraft(trimmed);
         clearReadReceiptTimer(character.id);
-        rollbackUserMessage(character.id, effectiveUserMessageId);
+        rollbackUserMessages(character.id, effectiveUserMessageIds);
         setStoryThreadSnapshotsByCharacterId((current) => ({
           ...current,
           [character.id]: existingSnapshot,
@@ -2809,7 +2853,7 @@ export function ChatScreen() {
       if (error instanceof RemoteTokenConsumeError) {
         shouldClearDraft = false;
         setDraft(trimmed);
-        rollbackUserMessage(character.id, effectiveUserMessageId);
+        rollbackUserMessages(character.id, effectiveUserMessageIds);
         setStoryThreadSnapshotsByCharacterId((current) => ({
           ...current,
           [character.id]: existingSnapshot,
@@ -2842,39 +2886,21 @@ export function ChatScreen() {
         () => undefined,
       );
 
-      // 에러 폴백에서도 읽음 처리 (더는 기다릴 필요 없음)
-      markUserMessageReadImmediately(character.id);
-      const fallbackMessage = buildStoryFallbackAssistantMessage(character);
-      let nextMessages: ChatShellMessage[] = [];
-      setMessagesByCharacterId((current) => {
-        const thread = current[character.id] ?? [];
-        const merged = [
-          ...markLatestUserMessageAsRead(thread),
-          fallbackMessage,
-        ];
-        nextMessages = merged;
-        return { ...current, [character.id]: merged };
-      });
-      const nextSnapshot = buildNextStoryThreadSnapshot(
-        optimisticSnapshot,
-        character,
-        nextMessages,
-        null,
-        storyRequest,
+      // 네트워크/서버 실패: 가짜 AI 응답을 주입하지 않는다 (페르소나 신뢰도 깨짐).
+      // 사용자 메시지를 롤백하고 입력창에 텍스트 복구 → 재전송 가능.
+      // 기존 OnDeviceNotReadyError 처리와 동일 패턴.
+      shouldClearDraft = false;
+      setDraft(trimmed);
+      clearReadReceiptTimer(character.id);
+      rollbackUserMessages(character.id, effectiveUserMessageIds);
+      setStoryThreadSnapshotsByCharacterId((current) => ({
+        ...current,
+        [character.id]: existingSnapshot,
+      }));
+      Alert.alert(
+        '메시지 전송 실패',
+        '네트워크가 불안정해요. 잠시 후 다시 보내볼까요?',
       );
-
-      if (nextSnapshot) {
-        setStoryThreadSnapshotsByCharacterId((current) => ({
-          ...current,
-          [character.id]: nextSnapshot,
-        }));
-
-        await saveStoryThreadSnapshot(nextSnapshot).catch((saveError: unknown) => {
-          captureError(saveError, {
-            surface: 'chat:story-pilot-save-fallback',
-          }).catch(() => undefined);
-        });
-      }
     } finally {
       setStoryTypingByCharacterId((current) =>
         current[character.id]
@@ -2892,7 +2918,11 @@ export function ChatScreen() {
   async function sendCharacterChatMessage(
     character: ChatCharacterSpec,
     text: string,
-    sendOptions?: { skipOptimisticUserMessage?: boolean; userMessageId?: string },
+    sendOptions?: {
+      skipOptimisticUserMessage?: boolean;
+      userMessageId?: string;
+      userMessageIds?: string[];
+    },
   ) {
     const trimmed = text.trim();
 
@@ -2914,6 +2944,10 @@ export function ChatScreen() {
     let shouldClearDraft = !skipOptimistic;
 
     const effectiveUserMessageId = userMessage?.id ?? sendOptions?.userMessageId;
+    const effectiveUserMessageIds = userMessage?.id
+      ? [userMessage.id]
+      : (sendOptions?.userMessageIds ??
+        (sendOptions?.userMessageId ? [sendOptions.userMessageId] : []));
     if (userMessage) {
       chatMessageController.appendMessages(character.id, [userMessage]);
     }
@@ -2963,10 +2997,10 @@ export function ChatScreen() {
               lastAssistantEmotionTagRef.current = response.emotionTag;
             }
 
-            let replyDelayMs = response.delaySec
+            let replyDelayMs = typeof response.delaySec === 'number' &&
+                Number.isFinite(response.delaySec)
               ? response.delaySec * 1000
-              : (Math.random() * (FALLBACK_REPLY_MAX_SEC - FALLBACK_REPLY_MIN_SEC) +
-                FALLBACK_REPLY_MIN_SEC) * 1000;
+              : randomFallbackReplyDelayMs();
             const elapsedSinceFirstSend = Date.now() -
               (batchFirstSendAtRef.current[character.id] ?? Date.now());
             const minRemaining = Math.max(0, REPLY_FLOOR_MS - elapsedSinceFirstSend);
@@ -3019,7 +3053,11 @@ export function ChatScreen() {
                 current[character.id] ?? [],
               ),
             }));
-            const segments = response.segments ?? [response.response.trim()];
+            const candidateSegments =
+              response.segments?.filter((s) => s.trim().length > 0) ?? [];
+            const segments = candidateSegments.length > 0
+              ? candidateSegments
+              : [response.response.trim()];
             const nextMessages = await enqueueAssistantSegments({
               characterId: character.id,
               segments,
@@ -3215,7 +3253,15 @@ export function ChatScreen() {
         return;
       }
 
-      if (!payload?.response || (payload.success === false)) {
+      const payloadSegments = Array.isArray(payload?.segments)
+        ? payload.segments.filter(
+            (segment): segment is string =>
+              typeof segment === 'string' && segment.trim().length > 0,
+          )
+        : [];
+      const payloadResponse = payload?.response?.trim() ?? '';
+
+      if (!payload || payload.success === false || (payloadSegments.length === 0 && !payloadResponse)) {
         throw new Error(payload?.error ?? 'Character chat response is empty.');
       }
 
@@ -3232,13 +3278,15 @@ export function ChatScreen() {
       const scheduledId = payload.scheduledId;
       if (scheduledId && payload.deliverAt) {
         const deliverAtMs = Date.parse(payload.deliverAt);
-        replyDelayMs = Math.max(0, deliverAtMs - Date.now());
-      } else if (typeof payload.delaySec === 'number') {
+        replyDelayMs = Number.isFinite(deliverAtMs)
+          ? Math.max(0, deliverAtMs - Date.now())
+          : typeof payload.delaySec === 'number' && Number.isFinite(payload.delaySec)
+            ? payload.delaySec * 1000
+            : randomFallbackReplyDelayMs();
+      } else if (typeof payload.delaySec === 'number' && Number.isFinite(payload.delaySec)) {
         replyDelayMs = payload.delaySec * 1000;
       } else {
-        replyDelayMs = (Math.random() *
-          (FALLBACK_REPLY_MAX_SEC - FALLBACK_REPLY_MIN_SEC) +
-          FALLBACK_REPLY_MIN_SEC) * 1000;
+        replyDelayMs = randomFallbackReplyDelayMs();
       }
       const elapsedSinceFirstSend = Date.now() -
         (batchFirstSendAtRef.current[character.id] ?? Date.now());
@@ -3246,7 +3294,11 @@ export function ChatScreen() {
       replyDelayMs = Math.max(replyDelayMs, minRemaining);
       delete batchFirstSendAtRef.current[character.id];
 
-      if (scheduledId && payload.deliverAt) {
+      if (
+        scheduledId &&
+        payload.deliverAt &&
+        Number.isFinite(Date.parse(payload.deliverAt))
+      ) {
         const scheduled = scheduleCanonicalScheduledReply(
           character.id,
           { scheduledId, deliverAt: payload.deliverAt },
@@ -3323,14 +3375,8 @@ export function ChatScreen() {
         ),
       }));
       // F1 — segments 파싱 (없으면 단일 세그먼트로 폴백)
-      const rawSegments = Array.isArray(payload.segments)
-        ? payload.segments.filter(
-            (segment): segment is string =>
-              typeof segment === 'string' && segment.trim().length > 0,
-          )
-        : [];
       const segments =
-        rawSegments.length > 0 ? rawSegments : [payload.response.trim()];
+        payloadSegments.length > 0 ? payloadSegments : [payloadResponse];
       const nextMessages = await enqueueAssistantSegments({
         characterId: character.id,
         segments,
@@ -3358,7 +3404,6 @@ export function ChatScreen() {
           await insertStoreMessages(character.id, [revealImage]);
         } catch (storeErr) {
           // 비치명: 서버 측에 persist 됐으니 reload 시 복구.
-          // eslint-disable-next-line no-console
           console.warn('[chat] reveal image store insert 실패:', storeErr);
         }
       }
@@ -3400,7 +3445,7 @@ export function ChatScreen() {
         shouldClearDraft = false;
         setDraft(trimmed);
         clearReadReceiptTimer(character.id);
-        rollbackUserMessage(character.id, effectiveUserMessageId);
+        rollbackUserMessages(character.id, effectiveUserMessageIds);
 
         await syncRemoteProfile().catch((syncError: unknown) => {
           captureError(syncError, {
@@ -3429,21 +3474,15 @@ export function ChatScreen() {
         () => undefined,
       );
 
-      markUserMessageReadImmediately(character.id);
-      const fallbackMessage = buildDraftReply(character, trimmed);
-
-      setMessagesByCharacterId((current) => {
-        const thread = current[character.id] ?? [];
-        return {
-          ...current,
-          [character.id]: [
-            ...markLatestUserMessageAsRead(thread),
-            fallbackMessage,
-          ],
-        };
-      });
-      // Step G: store sync — error fallback reply
-      insertStoreMessages(character.id, [fallbackMessage]).catch(() => undefined);
+      // 네트워크/서버 실패: 가짜 AI 응답 주입 금지. 사용자 메시지 롤백 + draft 복구.
+      shouldClearDraft = false;
+      setDraft(trimmed);
+      clearReadReceiptTimer(character.id);
+      rollbackUserMessages(character.id, effectiveUserMessageIds);
+      Alert.alert(
+        '메시지 전송 실패',
+        '네트워크가 불안정해요. 잠시 후 다시 보내볼까요?',
+      );
     } finally {
       setStoryTypingByCharacterId((current) =>
         current[character.id]
@@ -4104,7 +4143,7 @@ export function ChatScreen() {
             style={{ marginBottom: 16 }}
           >
             캐릭터에게 원하는 성격이나 말투를 자유롭게 적어주세요.
-            {'\n'}예: "더 츤데레하게", "반말로 해줘", "질투 많이 해줘"
+            {'\n'}예: &quot;더 츤데레하게&quot;, &quot;반말로 해줘&quot;, &quot;질투 많이 해줘&quot;
           </AppText>
           <TextInput
             autoFocus

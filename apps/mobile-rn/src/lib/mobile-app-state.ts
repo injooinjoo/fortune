@@ -44,7 +44,7 @@ export type AiMode = 'cloud' | 'on-device' | 'auto';
 
 /**
  * 클라우드 모델 선호. 모든 캐릭터 채팅에 글로벌 적용.
- * - 'default': character-chat DB 설정 (현재 gemini-2.5-flash-lite)
+ * - 'default': character-chat DB 설정 (현재 grok-3-mini)
  * - 'grok-fast': grok-3-mini-fast (저지연, reasoning 최소)
  * - 'grok': grok-3-mini (대화형)
  * 백엔드 (supabase/functions/character-chat/index.ts) 의 modelPreference 와 1:1 매핑.

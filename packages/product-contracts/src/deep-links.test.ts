@@ -30,13 +30,13 @@ describe('deep link contracts', () => {
     expect(normalizeFortuneTypeForChat('unknown-type')).toBeNull();
   });
 
-  it('routes widget intents with characterId into the right chat thread', () => {
+  it('routes legacy widget fortune character IDs to the Haneul chat thread', () => {
     const resolution = resolveDeepLink(
       'com.beyond.fortune://widget?screen=chat&characterId=fortune_haneul&fortuneType=daily',
     );
 
-    expect(resolution.route).toBe('/chat?characterId=fortune_haneul');
+    expect(resolution.route).toBe('/chat?characterId=haneul_oracle');
     expect(resolution.fortuneType).toBe('daily');
-    expect(resolution.characterId).toBe('fortune_haneul');
+    expect(resolution.characterId).toBe('haneul_oracle');
   });
 });

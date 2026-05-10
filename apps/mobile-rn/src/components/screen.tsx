@@ -88,9 +88,9 @@ export function Screen({
         <View
           style={{
             backgroundColor: fortuneTheme.colors.background,
-            paddingBottom: keyboardAvoiding
-              ? fortuneTheme.spacing.pageVertical
-              : fortuneTheme.spacing.pageVertical + insets.bottom,
+            // keyboardAvoiding 모드: SafeAreaView 가 bottom 을 빼므로 footer 가 직접
+            // insets.bottom 처리. KAV 가 키보드 올라오면 알아서 위로 밀어줌.
+            paddingBottom: fortuneTheme.spacing.pageVertical + insets.bottom,
             paddingHorizontal: fortuneTheme.spacing.pageHorizontal,
             paddingTop: fortuneTheme.spacing.sm,
           }}
@@ -130,6 +130,8 @@ export function Screen({
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{ flex: 1 }}
+          // iOS는 SafeAreaView 가 top inset 처리하므로 KAV 자체 offset 은 0.
+          // bottom 은 SafeAreaView edges 에서 제외했고 footer 가 직접 inset 처리.
           keyboardVerticalOffset={0}
         >
           {content}

@@ -132,13 +132,17 @@ function TarotCard({ card, progress, index }: { card: TarotCardFull; progress: n
       <View
         style={{
           position: 'absolute',
-          inset: 0,
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
           borderRadius: 8,
           backgroundColor: '#2a1f4a',
           borderWidth: 1,
           borderColor: `${VIOLET}55`,
           backfaceVisibility: 'hidden',
           overflow: 'hidden',
+          transform: [{ rotateY: '180deg' }],
         }}
       >
         {/* 대각선 dashed 패턴 근사 — 반복 View 라인들 */}
@@ -161,7 +165,10 @@ function TarotCard({ card, progress, index }: { card: TarotCardFull; progress: n
       <View
         style={{
           position: 'absolute',
-          inset: 0,
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
           borderRadius: 8,
           backgroundColor: '#1A1028',
           borderWidth: 1,
@@ -169,7 +176,6 @@ function TarotCard({ card, progress, index }: { card: TarotCardFull; progress: n
           alignItems: 'center',
           justifyContent: 'center',
           padding: 6,
-          transform: [{ rotateY: '180deg' }],
           backfaceVisibility: 'hidden',
         }}
       >

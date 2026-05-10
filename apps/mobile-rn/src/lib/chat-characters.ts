@@ -1,5 +1,4 @@
 import {
-  fortuneCharacters as contractFortuneCharacters,
   type FortuneCharacterSpec,
   type FortuneTypeId,
 } from '@fortune/product-contracts';
@@ -23,6 +22,9 @@ export interface FortuneChatCharacterSpec extends FortuneCharacterSpec {
 
 export type ChatCharacterSpec = StoryCharacterSpec | FortuneChatCharacterSpec;
 
+// 2026-05-10: 9명 추가 캐릭터 (정태윤/서윤재/강하린/김지호/윤도현/이도윤/한서준/
+// 백현우/민준혁) 제거. 메시지 리스트엔 이서준 + 하늘이 둘만 노출. 다른 9명의
+// 사진은 이서준 프로필 갤러리로 통합 (character-details.ts:luts.galleryAvatars).
 export const storyChatCharacters: readonly StoryCharacterSpec[] = [
   {
     id: 'luts',
@@ -32,85 +34,11 @@ export const storyChatCharacters: readonly StoryCharacterSpec[] = [
     shortDescription: '4년차 사수, 표정은 무서운데 챙김은 쉬지 않음',
     specialties: [],
   },
-  {
-    id: 'jung_tae_yoon',
-    name: '정태윤',
-    kind: 'story',
-    category: 'story',
-    shortDescription: '사내 변호사, 정중한 위트로 사람을 무너뜨리는 오빠',
-    specialties: [],
-  },
-  {
-    id: 'seo_yoonjae',
-    name: '서윤재',
-    kind: 'story',
-    category: 'story',
-    shortDescription: '같은 팀 4차원 개발자, 농담 두 번 던지고 갑자기 진지',
-    specialties: [],
-  },
-  {
-    id: 'kang_harin',
-    name: '강하린',
-    kind: 'story',
-    category: 'story',
-    shortDescription: '직속 비서, 당신이 말하기 전에 이미 준비해두었습니다',
-    specialties: [],
-  },
-  {
-    id: 'jayden_angel',
-    name: '김지호',
-    kind: 'story',
-    category: 'story',
-    shortDescription: '교회 청년부 오빠, 따뜻한 존댓말 + 가끔 오빠 같은 반말',
-    specialties: [],
-  },
-  {
-    id: 'ciel_butler',
-    name: '윤도현',
-    kind: 'story',
-    category: 'story',
-    shortDescription: '어릴 적부터 알던 동네 오빠, 짧은 반말 + 행동으로 챙김',
-    specialties: [],
-  },
-  {
-    id: 'lee_doyoon',
-    name: '이도윤',
-    kind: 'story',
-    category: 'story',
-    shortDescription: '선배, 저 칭찬받으면 꼬리가 나올 것 같아요',
-    specialties: [],
-  },
-  {
-    id: 'han_seojun',
-    name: '한서준',
-    kind: 'story',
-    category: 'story',
-    shortDescription: '무대 위 그는 빛나지만, 무대 아래 그는 당신만 봅니다',
-    specialties: [],
-  },
-  {
-    id: 'baek_hyunwoo',
-    name: '백현우',
-    kind: 'story',
-    category: 'story',
-    shortDescription: '당신의 모든 것을 읽을 수 있어요. 단, 당신 마음만 빼고',
-    specialties: [],
-  },
-  {
-    id: 'min_junhyuk',
-    name: '민준혁',
-    kind: 'story',
-    category: 'story',
-    shortDescription: '힘든 하루 끝, 그가 만든 커피 한 잔이 위로가 됩니다',
-    specialties: [],
-  },
 ] as const;
 
-export const fortuneChatCharacters: readonly FortuneChatCharacterSpec[] =
-  contractFortuneCharacters.map((character) => ({
-    ...character,
-    kind: 'fortune' as const,
-  }));
+// 2026-05-10: contractFortuneCharacters 가 빈 배열로 정리됨. legacy 참조 호환용
+// 빈 배열 export 유지.
+export const fortuneChatCharacters: readonly FortuneChatCharacterSpec[] = [];
 
 /**
  * PR-A: 하늘이 — 모든 운세 카테고리의 단일 진입점 캐릭터.
@@ -130,6 +58,20 @@ export const haneulOracleCharacter: FortuneChatCharacterSpec = {
   shortDescription: '오늘 어떤 흐름이 있는지 같이 봐줄게',
   specialties: [],
 };
+
+export function normalizeChatCharacterId(
+  id: string | null | undefined,
+): string | null {
+  const trimmed = id?.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  // 하늘이 통합 이전 iOS Widget/deep link/local state는 fortune_* 캐릭터 ID를
+  // 보낼 수 있다. 해당 ID를 그대로 lookup 하면 제거된 캐릭터라 null → luts 로
+  // fallback 될 수 있으므로 운세 계열은 모두 하늘이로 정규화한다.
+  return trimmed.startsWith('fortune_') ? haneulOracleCharacter.id : trimmed;
+}
 
 // 하늘이 통합 후: chatCharacters = story 10명 + 하늘이.
 // 기존 fortuneChatCharacters (fortune_haneul, fortune_muhyeon, fortune_stella,
@@ -194,12 +136,13 @@ export function findChatCharacterById(
   id: string | null | undefined,
   customFriends: readonly CreatedFriend[] = [],
 ) {
-  if (!id) {
+  const normalizedId = normalizeChatCharacterId(id);
+  if (!normalizedId) {
     return null;
   }
 
   const allCharacters = buildChatCharactersWithCustomFriends(customFriends);
-  return allCharacters.find((character) => character.id === id) ?? null;
+  return allCharacters.find((character) => character.id === normalizedId) ?? null;
 }
 
 export function isFortuneChatCharacter(

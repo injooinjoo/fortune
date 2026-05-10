@@ -31,6 +31,17 @@ const fortuneTypeAliases: Record<string, FortuneTypeId> = {
   'baby-nickname': 'naming',
 };
 
+export function normalizeChatCharacterIdForChat(
+  input: string | null | undefined,
+): string | null {
+  const trimmed = input?.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  return trimmed.startsWith('fortune_') ? 'haneul_oracle' : trimmed;
+}
+
 export function isAuthCallbackUrl(url: URL): boolean {
   if (
     url.protocol.replace(':', '') === deepLinkConfig.scheme &&
@@ -56,10 +67,10 @@ export function resolveDeepLink(target: string): DeepLinkResolution {
   const fortuneType = normalizeFortuneTypeForChat(
     url.searchParams.get(deepLinkConfig.fortuneTypeParam),
   );
-  const characterIdRaw = url.searchParams
-    .get(deepLinkConfig.characterIdParam)
-    ?.trim();
-  const characterId = characterIdRaw ? characterIdRaw : undefined;
+  const characterId =
+    normalizeChatCharacterIdForChat(
+      url.searchParams.get(deepLinkConfig.characterIdParam),
+    ) ?? undefined;
 
   if (screen === 'chat') {
     const route = characterId

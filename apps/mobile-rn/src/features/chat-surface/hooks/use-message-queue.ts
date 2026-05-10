@@ -78,9 +78,12 @@ export function useMessageQueue(input: UseMessageQueueInput) {
         if (index > 0) {
           // 버블 간 타이핑 인디케이터 유지 — storyTyping/fortuneTyping 은
           // 이미 on 상태 (호출자 책임).
-          const gap = randomInRange(200, 600); // 타이핑 지속
+          // 옛 200~600ms + 600~1800ms = 0.8~2.4초 간격 → "우르르 한꺼번에"
+          // 체감. 진짜 사람처럼 한 줄 보내고 다음 줄 타이핑하는 페이스로 늘림.
+          // 한 줄당 최소 2초, 보통 3~5초 → 멀티버블 3개면 총 6~15초 spread.
+          const gap = randomInRange(800, 2000); // 다음 버블 전 타이핑 인디케이터
           await sleep(gap);
-          const betweenBubbles = randomInRange(600, 1800);
+          const betweenBubbles = randomInRange(1500, 3500);
           await sleep(betweenBubbles);
         }
 

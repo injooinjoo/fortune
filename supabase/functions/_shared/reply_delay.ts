@@ -2,7 +2,7 @@
  * 답장 지연 단일 source.
  *
  * 사용자가 메시지를 보내면 LLM 이 즉시 답을 생성하더라도, "진짜 사람" 같은
- * 페이스를 위해 30초 ~ 10분 사이 랜덤 지연 후 메시지가 도착하도록 한다.
+ * 페이스를 위해 짧은 랜덤 지연 후 메시지가 도착하도록 한다.
  *
  * 옛날엔 character-chat/index.ts 의 extractEmotion 안에 delay 계산이 박혀
  * 있었고, 클라이언트 chat-screen.tsx 에는 별도 fallback (1~3초) 이 있었다.
@@ -12,11 +12,11 @@
  * 그것만 신뢰한다.
  *
  * Tunables:
- * - 감정별 base [min, max] : "기쁨/분노" 빠르게, "당황/고민" 길게
- * - 낮 (KST 8~22시) ×1.2 (느림 — 회사/일과 중)
- * - 밤 (KST 23~7시) ×0.7 (빠름 — 잠 안 자고 폰 보는 시간)
+ * - 감정별 base [min, max] : "기쁨/분노" 빠르게, "당황/고민" 약간 길게
+ * - 낮 (KST 8~22시) ×1.1 (약간 느림 — 회사/일과 중)
+ * - 밤 (KST 23~7시) ×0.85 (약간 빠름 — 잠 안 자고 폰 보는 시간)
  * - 긴 사용자 메시지 (>200자) ×1.2 (읽고 답하는 시간 가산)
- * - 최종 clamp [30, 600] (30초 ~ 10분)
+ * - 최종 clamp [4, 45] (채팅 무응답처럼 보이지 않는 범위)
  */
 
 export type EmotionTag = "당황" | "고민" | "분노" | "애정" | "기쁨" | "일상";
@@ -30,33 +30,33 @@ interface EmotionBand {
 const EMOTION_BANDS: Record<EmotionTag, EmotionBand> = {
   "당황": {
     keywords: ["어?", "뭐?", "어라?", "...?!", "헉", "에?", "뭐라고"],
-    minSec: 120,
-    maxSec: 600,
+    minSec: 10,
+    maxSec: 45,
   },
   "고민": {
     keywords: ["음...", "흠...", "생각해보니", "글쎄", "어떻게", "모르겠"],
-    minSec: 90,
-    maxSec: 420,
+    minSec: 9,
+    maxSec: 35,
   },
   "분노": {
     keywords: ["뭐하는", "화가", "짜증", "싫어", "나가", "꺼져"],
-    minSec: 30,
-    maxSec: 120,
+    minSec: 4,
+    maxSec: 14,
   },
   "애정": {
     keywords: ["좋아", "사랑", "소중", "예쁘", "귀여", "보고싶"],
-    minSec: 45,
-    maxSec: 180,
+    minSec: 5,
+    maxSec: 20,
   },
   "기쁨": {
     keywords: ["하하", "ㅋㅋ", "재밌", "신나", "좋겠", "대박"],
-    minSec: 30,
-    maxSec: 90,
+    minSec: 4,
+    maxSec: 12,
   },
   "일상": {
     keywords: [],
-    minSec: 60,
-    maxSec: 300,
+    minSec: 6,
+    maxSec: 22,
   },
 };
 
@@ -68,17 +68,17 @@ const EMOTION_PRIORITY: EmotionTag[] = [
   "기쁨",
 ];
 
-const FLOOR_SEC = 30;
-const CAP_SEC = 600;
+const FLOOR_SEC = 4;
+const CAP_SEC = 45;
 
 const LONG_MESSAGE_CHAR_THRESHOLD = 200;
 const LONG_MESSAGE_MULTIPLIER = 1.2;
 
-const DAY_MULTIPLIER = 1.2;
-const NIGHT_MULTIPLIER = 0.7;
+const DAY_MULTIPLIER = 1.1;
+const NIGHT_MULTIPLIER = 0.85;
 
 const NIGHT_KST_HOUR_START = 23;
-const NIGHT_KST_HOUR_END = 7;
+const NIGHT_KST_HOUR_END = 8;
 
 function getKstHour(nowUtc: Date): number {
   return (nowUtc.getUTCHours() + 9) % 24;

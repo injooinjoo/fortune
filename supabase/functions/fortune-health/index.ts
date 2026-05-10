@@ -32,6 +32,7 @@ import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import { withFortuneSafetyGuard } from '../_shared/fortune_safety_guard.ts'
 import { parseAndValidateLLMResponse, v } from '../_shared/llm/validation.ts'
 import {
   extractHealthCohort,
@@ -753,7 +754,7 @@ ${elementAnalysis ? `- ${elementAnalysis.lacking} 오행 부족 → ${ELEMENT_OR
 - JSON만 반환 (마크다운 코드블록 없이)`
 
       const response = await llm.generate([
-        { role: 'system', content: systemPrompt },
+        { role: 'system', content: withFortuneSafetyGuard(systemPrompt, { category: 'health' }) },
         { role: 'user', content: userPrompt }
       ], {
         temperature: 1,

@@ -303,24 +303,15 @@ export function formatFortuneTypeLabel(type: FortuneTypeId): string {
   return fortuneTypeLabels[type] ?? type;
 }
 
-// 신규 캐릭터 초기 thread — greeting 한 줄만.
-// 과거에는 fake user + fake assistant 페어를 하드코딩했지만, 이로 인해
-// 1) 대화한 적 없는 캐릭터가 리스트 preview 에 "마지막 메시지 있음" 으로 보였고
-// 2) 메시지 싱크 비교 (shouldAcceptRemoteMessages) 에서 로컬 fake 3개가 실서버
-//    메시지 1~2개보다 길어 "원격이 짧음 → reject" 규칙이 잘못 작동해 원격
-//    실데이터 반영을 막는 부작용이 있었다. greeting 한 줄만 남겨서 두 문제 모두 해소.
+// 신규 캐릭터 초기 thread.
+// 스토리/연애 캐릭터(썸남 페르소나) 는 빈 배열 — 사용자가 말 걸기 전엔 침묵.
+// (메모리 룰: 빈 대화창 자동인사 금지, 콜센터 톤 첫 인사 금지)
+// 포춘 오라클(하늘이) 만 메뉴 안내용 짧은 인사 유지.
 export function buildInitialThread(
   character: ChatCharacterSpec,
 ): ChatShellMessage[] {
   if (!isFortuneChatCharacter(character)) {
-    return [
-      {
-        id: createMessageId('assistant'),
-        kind: 'text',
-        sender: 'assistant',
-        text: `안녕하세요! ${character.name}예요. 오늘은 어떤 이야기부터 나눠볼까요?`,
-      },
-    ];
+    return [];
   }
 
   return [

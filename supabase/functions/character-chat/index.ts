@@ -2885,13 +2885,17 @@ serve(async (req: Request) => {
       try {
         const { data: claimedJob, error: claimErr } = await supabase
           .rpc("claim_pending_reply_job_by_id", { p_job_id: jobId });
+        const claimedJobId_ = (claimedJob as { id?: string } | null)?.id;
         if (claimErr) {
           console.warn(
             "[character-chat] claim_pending_reply_job_by_id 실패:",
             claimErr.message,
           );
-        } else if (!claimedJob) {
+        } else if (!claimedJob || !claimedJobId_) {
           // 이미 다른 워커가 처리 중이거나 cancel/done. LLM 호출 안 함.
+          // PostgREST 는 composite NULL 을 `{id:null, ...}` 로 직렬화 — `!claimedJob`
+          // 만 보면 truthy object 통과해서 같은 jobId 의 retry/auto-resume 이
+          // moderation 블록 두 번 통과 → SAFETY 메시지 중복 append. id 명시 체크 필요.
           console.log(
             "[character-chat] jobId already claimed/canceled, skipping LLM:",
             jobId,

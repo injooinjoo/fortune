@@ -28,10 +28,11 @@
  *   -d '{"userId":"xxx","age":28,"gender":"female","relationshipStatus":"single"}'
  */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import { withFortuneSafetyGuard } from '../_shared/fortune_safety_guard.ts'
 import {
   extractLoveCohort,
   generateCohortHash,
@@ -474,7 +475,7 @@ async function generateLoveFortune(params: LoveFortuneRequest): Promise<any> {
 
 ## 이상형 정보
 - 선호 나이대: ${params.preferredAgeRange?.min || 20}~${params.preferredAgeRange?.max || 30}세
-- 선호 외모상: ${params.idealLooks?.length > 0 ? params.idealLooks.join(', ') : '미지정'}
+- 선호 외모상: ${(params.idealLooks?.length ?? 0) > 0 ? params.idealLooks!.join(', ') : '미지정'}
 - 선호 성격: ${params.preferredPersonality?.length > 0 ? params.preferredPersonality.join(', ') : '미지정'}
 - 선호 만남 장소: ${params.preferredMeetingPlaces?.length > 0 ? params.preferredMeetingPlaces.join(', ') : '미지정'}
 - 원하는 관계: ${params.relationshipGoal || '진지한 연애'}
@@ -503,7 +504,7 @@ ${statusSpecificInstructions[params.relationshipStatus] || statusSpecificInstruc
 
   // ✅ LLM 호출 (Provider 무관)
   const response = await llm.generate([
-    { role: 'system', content: systemPrompt },
+    { role: 'system', content: withFortuneSafetyGuard(systemPrompt, { category: 'love' }) },
     { role: 'user', content: userPrompt }
   ], {
     temperature: 1,
@@ -529,12 +530,12 @@ ${statusSpecificInstructions[params.relationshipStatus] || statusSpecificInstruc
   })
 
   // JSON 파싱 전 후처리: LLM이 예시 이름(철수/영희)을 사용한 경우 실제 이름으로 치환
-  const clientName = params.userName ? `${params.userName}님` : '회원님';
+  const normalizedClientName = params.userName ? `${params.userName}님` : '회원님';
   const cleanedContent = response.content
-    .replace(/철수님/g, clientName)
-    .replace(/영희님/g, clientName)
-    .replace(/철수씨/g, clientName)
-    .replace(/영희씨/g, clientName);
+    .replace(/철수님/g, normalizedClientName)
+    .replace(/영희님/g, normalizedClientName)
+    .replace(/철수씨/g, normalizedClientName)
+    .replace(/영희씨/g, normalizedClientName);
 
   return JSON.parse(cleanedContent)
 }
@@ -692,7 +693,8 @@ serve(async (req) => {
       })
 
       // ✅ Percentile 계산
-      const percentileData = await calculatePercentile(supabase, 'love', personalizedResult.score || 75)
+      const score = typeof personalizedResult.score === 'number' ? personalizedResult.score : 75
+      const percentileData = await calculatePercentile(supabase, 'love', score)
       const resultWithPercentile = addPercentileToResult({
         ...personalizedResult,
         fortuneType: 'love',
@@ -944,12 +946,13 @@ serve(async (req) => {
     )
 
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
     console.error('연애운세 생성 오류:', error)
 
     return new Response(
       JSON.stringify({
         success: false,
-        error: '연애 인사이트 생성 중 오류가 발생했습니다: ' + error.message
+        error: '연애 인사이트 생성 중 오류가 발생했습니다: ' + errorMessage
       }),
       {
         status: 500,

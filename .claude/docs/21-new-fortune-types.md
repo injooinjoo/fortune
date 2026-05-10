@@ -26,7 +26,6 @@
 | **인터랙티브** | 게임 강화운세 | fortune-game-enhance | 0 (무료) |
 | **시즌** | 시험 가이드 | fortune-exam | 4 |
 | **시즌** | 신년 인사이트 | fortune-new-year | 2 |
-| **건강** | 건강 문서 분석 | fortune-health-document | 3 |
 | **환경** | 풍수 인테리어 | fortune-home-fengshui | 5 |
 | **환경** | 오늘의 코디 | fortune-ootd | 5 |
 | **재물** | 재물 인사이트 | fortune-wealth | 5 |
@@ -310,33 +309,6 @@ requiredFields: {
   luckyMonths: number[],
   cautiousMonths: number[],
   yearlyTheme: string
-}
-```
-
----
-
-## 건강 운세 (1개)
-
-### fortune-health-document
-```typescript
-// 건강 문서 분석 - Apple Watch / 건강 데이터 연동
-requiredFields: {
-  saju: SajuData,
-  healthData: {
-    bloodPressure?: { systolic: number, diastolic: number },
-    heartRate?: number,
-    steps?: number,
-    sleep?: { duration: number, quality: string },
-    weight?: number
-  }
-}
-
-// 사주 + 실제 건강 데이터 조합 분석
-{
-  healthInsight: string,       // 건강 인사이트
-  sajuHealthTendency: string,  // 사주 기반 건강 경향
-  recommendations: string[],    // 맞춤 건강 조언
-  riskAreas: string[]          // 주의 영역
 }
 ```
 

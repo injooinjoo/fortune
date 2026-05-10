@@ -45,6 +45,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import { withFortuneSafetyGuard } from '../_shared/fortune_safety_guard.ts'
 import {
   extractFamilyCohort,
   generateCohortHash,
@@ -306,7 +307,7 @@ ${special_question ? `[특별 질문]\n${special_question}` : ''}
 ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함해주세요.' : ''}`
 
     const response = await llm.generate([
-      { role: 'system', content: systemPrompt },
+      { role: 'system', content: withFortuneSafetyGuard(systemPrompt, { category: 'pregnancy' }) },
       { role: 'user', content: userPrompt }
     ], {
       temperature: 0.8,
@@ -423,12 +424,13 @@ ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함�
     )
 
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
     console.error('Error in fortune-family-children:', error)
 
     return new Response(
       JSON.stringify({
-        error: error.message,
-        details: error.toString()
+        error: errorMessage,
+        details: String(error)
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },

@@ -34,6 +34,7 @@ import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import { withFortuneSafetyGuard } from '../_shared/fortune_safety_guard.ts'
 import {
   extractExLoverCohort,
   generateCohortHash,
@@ -319,7 +320,10 @@ async function analyzeScreenshots(screenshots: string[]): Promise<string> {
     const response = await visionLLM.generate([
       {
         role: 'system',
-        content: '당신은 연애 상담 전문가입니다. 카카오톡 대화 스크린샷을 분석하여 두 사람의 관계 상태와 감정을 파악합니다. 솔직하고 통찰력 있는 분석을 제공하세요.'
+        content: withFortuneSafetyGuard(
+          '당신은 연애 상담 전문가입니다. 카카오톡 대화 스크린샷을 분석하여 두 사람의 관계 상태와 감정을 파악합니다. 솔직하고 통찰력 있는 분석을 제공하세요.',
+          { category: 'love' },
+        )
       },
       {
         role: 'user',
@@ -552,7 +556,8 @@ serve(async (req) => {
       })
 
       // Percentile 적용
-      const percentileData = await calculatePercentile(supabase, 'ex-lover', personalizedResult.score || 50)
+      const score = typeof personalizedResult.score === 'number' ? personalizedResult.score : 50
+      const percentileData = await calculatePercentile(supabase, 'ex-lover', score)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
       return new Response(JSON.stringify({
@@ -823,7 +828,7 @@ serve(async (req) => {
       const response = await llm.generate([
         {
           role: 'system',
-          content: systemPrompt
+          content: withFortuneSafetyGuard(systemPrompt, { category: 'love' })
         },
         {
           role: 'user',

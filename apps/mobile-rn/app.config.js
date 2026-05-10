@@ -416,4 +416,23 @@ const config = {
   },
 };
 
+// production 빌드/OTA 에서 핵심 secrets 누락 시 즉시 실패. App Store 심사
+// 2.1 (앱 시작 crash) 방지 — Supabase URL/Key 가 비어 있으면 앱이 부팅 직후
+// 무한 로딩 또는 crash. EAS production 빌드/eas update 채널 production 에서
+// secrets 가 등록되어 있어야 함.
+const _appEnv = config.extra.appEnv;
+const _easChannel = process.env.EAS_BUILD_PROFILE ?? process.env.EAS_UPDATE_CHANNEL;
+const _isProductionBuild = _appEnv === 'production' || _easChannel === 'production';
+if (_isProductionBuild) {
+  const _missing = [];
+  if (!config.extra.supabaseUrl) _missing.push('EXPO_PUBLIC_SUPABASE_URL');
+  if (!config.extra.supabaseAnonKey) _missing.push('EXPO_PUBLIC_SUPABASE_ANON_KEY');
+  if (_missing.length > 0) {
+    throw new Error(
+      `[app.config.js] production build/update missing required secrets: ${_missing.join(', ')}. ` +
+        `register via EAS dashboard or pass through eas.json env.`,
+    );
+  }
+}
+
 module.exports = config;

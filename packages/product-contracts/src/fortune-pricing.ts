@@ -89,7 +89,6 @@ export const FORTUNE_POINT_COSTS = {
   'hair-style-guide': 5,
   'face-reading-guide': 5,
   'blind-date-guide': 5,
-  'health-document': 5,
   'beauty-simulation': 5,
   exercise: 5,
   'match-insight': 5,

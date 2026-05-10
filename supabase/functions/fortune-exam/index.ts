@@ -9,6 +9,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { withFortuneSafetyGuard } from '../_shared/fortune_safety_guard.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 import {
@@ -381,7 +382,10 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
       const response = await llm.generate([
         {
           role: 'system',
-          content: '당신은 시험 앞둔 사람들의 든든한 응원단장이에요! 📝✨ 떨리는 마음 잡아주고, 합격 기운 팍팍 불어넣어줘요. 친구처럼 편하게, 근데 꿀팁은 확실하게!'
+          content: withFortuneSafetyGuard(
+            '당신은 시험 앞둔 사람들의 든든한 응원단장이에요! 📝✨ 떨리는 마음 잡아주고, 합격 기운 팍팍 불어넣어줘요. 친구처럼 편하게, 근데 꿀팁은 확실하게!',
+            { category: 'exam' },
+          )
         },
         {
           role: 'user',
@@ -586,7 +590,7 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
         })
 
       // ===== Cohort Pool 저장 (Fire-and-forget) =====
-      saveToCohortPool(supabase, 'exam', cohortHash, fortuneData)
+      saveToCohortPool(supabase, 'exam', cohortHash, cohortData, fortuneData)
         .then(() => console.log(`[fortune-exam] 💾 Cohort Pool 저장 완료`))
         .catch((err) => console.error(`[fortune-exam] ⚠️ Cohort Pool 저장 실패:`, err))
       } // Close cohort miss else block

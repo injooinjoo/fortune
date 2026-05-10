@@ -154,6 +154,7 @@ ios/build/
 
 # Claude local settings
 .claude/settings.local.json
+.claude/worktrees/
 java_pid*.hprof
 
 # Tool artifacts

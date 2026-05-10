@@ -49,6 +49,35 @@ import type { ChatSurveyStep } from '../chat-survey/types';
 import { TarotDrawWidget } from '../chat-survey/tarot-draw-widget';
 import { getDeckCoverSource } from '../haneul/tarot-deck-covers';
 
+/**
+ * 메시지 ID 에서 unix-ms timestamp 추출. 옛 ID 패턴: `<sender>-<unixMs>-<rand>`.
+ * 매칭 안 되면 0 반환 — 정렬 시 맨 앞으로 가지만 stable sort 라 원래 위치 유지.
+ */
+function extractTimestampFromMessageId(id: string): number {
+  const match = id.match(/-(\d{13})-/);
+  if (!match?.[1]) return 0;
+  const ts = Number(match[1]);
+  return Number.isFinite(ts) ? ts : 0;
+}
+
+/**
+ * 메시지 배열을 ID 내장 timestamp 기준 ascending 정렬.
+ * 빠른 연속 send + remote hydrate 충돌로 array index 가 chronology 와
+ * 어긋날 때 화면 순서가 망가지던 회귀 fix (2026-05-08).
+ */
+function sortMessagesByTimestamp<T extends { id: string }>(messages: T[]): T[] {
+  const indexed = messages.map((message, index) => ({
+    message,
+    timestamp: extractTimestampFromMessageId(message.id),
+    index,
+  }));
+  indexed.sort((a, b) => {
+    if (a.timestamp !== b.timestamp) return a.timestamp - b.timestamp;
+    return a.index - b.index;
+  });
+  return indexed.map((entry) => entry.message);
+}
+
 function formatChatHeaderTimestamp(date: Date): string {
   const hour = date.getHours();
   const minute = date.getMinutes();
@@ -1091,7 +1120,11 @@ function ChatThreadMessage({
       ) : null}
       <View style={{ width: isFullWidth ? '100%' : undefined }}>
         {reportable ? (
+          // alignSelf flex-start — assistant 메시지는 좌측 정렬. Pressable 이
+          // 100% 폭 stretch 되면 우측 빈 공간 탭이 long-press Pressable 에 잡혀
+          // keyboard.dismiss 가 안 됨. 버블 폭 (maxWidth 86%) 만큼만 차지.
           <Pressable
+            style={{ alignSelf: 'flex-start' }}
             onLongPress={() => setReportOpen(true)}
             // delayLongPress 기본 500ms — 스크롤 오작동 최소화
             android_ripple={null}
@@ -1101,7 +1134,9 @@ function ChatThreadMessage({
             {bubble}
           </Pressable>
         ) : userDeletable ? (
+          // user 메시지는 우측 정렬. 좌측 빈 공간이 dismiss 영역.
           <Pressable
+            style={{ alignSelf: 'flex-end' }}
             onLongPress={handleUserLongPress}
             android_ripple={null}
             accessibilityRole="button"
@@ -2607,7 +2642,12 @@ export function ActiveCharacterChatSurface({
   /** PR-B2: 운세 메뉴 entry 탭 시 호출. chat-screen 이 cost modal 띄움. */
   onSelectFortuneMenuEntry?: (entry: import('@fortune/product-contracts').FortuneCatalogEntry) => void;
 }) {
-  const visibleMessages = messages;
+  // 메시지 순서 정렬 — 옛날엔 array index 그대로 렌더했는데, 빠른 연속 send +
+  // 백그라운드 → 포어그라운드 hydrate (SecureStore + remote) 가 겹치면서 user
+  // 메시지가 뒤늦게 array 끝에 append → DB 의 chronological 순서와 어긋남.
+  // ID 에 unix-ms 가 내장 (`user-1778217138036-...`) 되어 있어서 그걸 추출해
+  // ascending 정렬. 안전 — id 패턴 안 맞으면 array index 폴백 (sort stability).
+  const visibleMessages = sortMessagesByTimestamp(messages);
   const promptActions = actions;
   const hasEmbeddedResult = visibleMessages.some(
     (message) =>

@@ -24,6 +24,7 @@ import { deriveUserIdFromJwt } from '../_shared/auth.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import { withFortuneSafetyGuard } from '../_shared/fortune_safety_guard.ts'
 import {
   extractWealthCohort,
   generateCohortHash,
@@ -257,14 +258,19 @@ serve(async (req) => {
       )
 
       // Percentile 계산
-      const percentileData = await calculatePercentile(supabaseClient, 'wealth', personalizedResult.overallScore || personalizedResult.score || 70)
+      const score = typeof personalizedResult.overallScore === 'number'
+        ? personalizedResult.overallScore
+        : typeof personalizedResult.score === 'number'
+          ? personalizedResult.score
+          : 70
+      const percentileData = await calculatePercentile(supabaseClient, 'wealth', score)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
       const finalResult = {
         ...resultWithPercentile,
         elementAnalysis: {
           ...elementAnalysisLocal,
-          ...resultWithPercentile.elementAnalysis,
+          ...(typeof resultWithPercentile.elementAnalysis === 'object' && resultWithPercentile.elementAnalysis !== null ? resultWithPercentile.elementAnalysis : {}),
         },
         userId,
         userName,
@@ -440,7 +446,7 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
 - 사주 정보가 있다면 적극 활용해주세요`
 
     const response = await llm.generate([
-      { role: 'system', content: systemPrompt },
+      { role: 'system', content: withFortuneSafetyGuard(systemPrompt, { category: 'wealth' }) },
       { role: 'user', content: userPrompt }
     ], {
       temperature: 1,
@@ -570,12 +576,13 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
     )
 
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
     console.error('Error in fortune-wealth:', error)
 
     return new Response(
       JSON.stringify({
-        error: error.message,
-        details: error.toString()
+        error: errorMessage,
+        details: String(error)
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },

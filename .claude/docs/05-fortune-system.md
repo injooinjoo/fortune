@@ -74,7 +74,7 @@ Ondo의 운세/인사이트 시스템은 사용자 노출 surface, 카테고리 
 | 관계 | `fortune-love`, `fortune-compatibility`, `fortune-blind-date` | 본인/상대 정보, 관계 상태, 채팅/사진 |
 | 전통 분석 | `fortune-traditional-saju`, `fortune-tarot`, `fortune-dream`, `fortune-face-reading` | 생년월일시, 질문, 카드, 이미지, 자유 텍스트 |
 | 재물/경력 | `fortune-wealth`, `fortune-investment`, `fortune-career`, `fortune-exam` | 직군, 자산/시험 종류, 목표, 시점 |
-| 건강/라이프스타일 | `fortune-health`, `fortune-health-document`, `fortune-exercise`, `fortune-ootd` | 컨디션, 문서/이미지, 생활 패턴 |
+| 건강/라이프스타일 | `fortune-health`, `fortune-exercise`, `fortune-ootd` | 컨디션, 생활 패턴 |
 | 가족/주거 | `fortune-family-*`, `fortune-naming`, `fortune-moving`, `fortune-home-fengshui` | 가족 구성원, 주거 정보, 예정일 |
 | 성격/프로필 | `fortune-mbti`, `fortune-blood-type`, `fortune-constellation`, `fortune-zodiac-animal`, `personality-dna` | MBTI, 혈액형, 별자리, 띠 |
 

@@ -24,6 +24,9 @@ verify_jwt = false
 [functions.deliver-due-replies]
 verify_jwt = false
 
+[functions.process-pending-reply-jobs]
+verify_jwt = false
+
 [functions.proactive-message-dispatch]
 verify_jwt = false
 
@@ -40,9 +43,6 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.fortune-traditional-saju]
-verify_jwt = false
-
-[functions.fortune-health-document]
 verify_jwt = false
 
 [functions.fortune-face-reading]

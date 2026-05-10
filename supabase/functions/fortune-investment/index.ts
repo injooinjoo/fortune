@@ -34,6 +34,7 @@ import { deriveUserIdFromJwt } from '../_shared/auth.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import { withFortuneSafetyGuard } from '../_shared/fortune_safety_guard.ts'
 import {
   extractInvestmentCohort,
   generateCohortHash,
@@ -268,7 +269,12 @@ serve(async (req) => {
       })
 
       // Percentile 적용
-      const percentileData = await calculatePercentile(supabaseClient, 'investment', personalizedResult.overallScore || 70)
+      const score = typeof personalizedResult.overallScore === 'number'
+        ? personalizedResult.overallScore
+        : typeof personalizedResult.score === 'number'
+          ? personalizedResult.score
+          : 70
+      const percentileData = await calculatePercentile(supabaseClient, 'investment', score)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
       return new Response(
@@ -394,7 +400,7 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
 
     console.log('💎 [Step 4] LLM generate 호출 시작')
     const response = await llm.generate([
-      { role: 'system', content: systemPrompt },
+      { role: 'system', content: withFortuneSafetyGuard(systemPrompt, { category: 'wealth' }) },
       { role: 'user', content: userPrompt }
     ], {
       temperature: 1,
@@ -432,7 +438,8 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
     } catch (parseError) {
       console.error('💎 [Step 5] JSON 파싱 실패:', parseError)
       console.error('💎 [Step 5] 원본 응답:', response.content?.substring(0, 500))
-      throw new Error(`JSON 파싱 실패: ${parseError.message}`)
+      const parseErrorMessage = parseError instanceof Error ? parseError.message : String(parseError)
+      throw new Error(`JSON 파싱 실패: ${parseErrorMessage}`)
     }
 
     // C03: 재물운 이미지 프롬프트 (한국 전통 스타일)
@@ -482,8 +489,6 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
       luckyItems: fortuneData.luckyItems,
       lucky_items: fortuneData.luckyItems,
 
-      // ✅ 실제 데이터 반환 (클라이언트에서 블러 처리)
-      advice: fortuneData.advice,
       psychologyTip: fortuneData.psychologyTip,
 
       // ✅ NEW: 면책 문구
@@ -518,7 +523,7 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
       })
 
     // ✅ Cohort Pool에 저장 (비동기, fire-and-forget)
-    saveToCohortPool(supabaseClient, 'investment', cohortHash, cohortData, resultWithPercentile)
+    saveToCohortPool(supabaseClient, 'investment', cohortHash, cohortData, resultWithPercentile as unknown as Record<string, unknown>)
       .catch(e => console.error('[Investment] Cohort 저장 오류:', e))
 
     // ✅ 응답 형식 통일: 캐시와 동일하게 { fortune, cached, tokensUsed }
