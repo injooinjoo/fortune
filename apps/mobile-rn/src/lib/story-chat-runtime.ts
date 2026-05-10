@@ -202,6 +202,21 @@ function createTimestampFromMessageId(messageId: string, fallback: string) {
   return Number.isNaN(timestamp.getTime()) ? fallback : timestamp.toISOString();
 }
 
+function mergeRemoteStoryMessagesPreservingLocal(
+  local: ChatShellMessage[] | undefined,
+  remote: ChatShellMessage[],
+): { messages: ChatShellMessage[]; changed: boolean } {
+  const base = local ?? [];
+  if (remote.length === 0) return { messages: base, changed: false };
+  if (base.length === 0) return { messages: remote, changed: true };
+
+  const existingIds = new Set(base.map((message) => message.id));
+  const remoteOnly = remote.filter((message) => !existingIds.has(message.id));
+  if (remoteOnly.length === 0) return { messages: base, changed: false };
+
+  return { messages: [...base, ...remoteOnly], changed: true };
+}
+
 // 원격 저장 메시지 수 상한. 50 에서 200 으로 상향 — 활성 유저는 세션 몇 개만에도
 // 100+ 메시지가 쌓이고, 그러면 load 때마다 원격이 잘린 상태로 돌아와 focus
 // 재하이드레이션 시 shouldAcceptRemoteMessages 가 reject 하더라도 로컬 SecureStore
@@ -1071,21 +1086,40 @@ export async function loadStoryThreadSnapshot(
     );
 
     if (remoteSnapshot) {
-      // Local-corruption 연쇄 방어: 원격이 로컬보다 짧으면 로컬을 덮어쓰지 않는다.
-      // 배경 — 서버 스키마(character-conversation-save)가 텍스트 전용 +
-      // slice(-200) 제한이라, 비-텍스트 카드(포춘쿠키/사주/이미지/임베디드 결과)
-      // 또는 최근 200개 초과 히스토리는 원격에 누락된다. 이 상태에서 무조건
-      // saveLocalStoryThreadSnapshot(remoteSnapshot) 을 호출하면, load 때마다
-      // 로컬 SecureStore 가 stripped 버전으로 덮어써져 비-텍스트 카드가 영구 소실.
-      // 메모리 쪽은 shouldAcceptRemoteMessages 가이드로 보호되지만 디스크는 매번
-      // 손상되던 치명 버그. 이제 원격이 로컬 이상 길이일 때만 로컬 갱신.
+      // 서버/로컬 중 한쪽만 가진 메시지를 잃지 않는다. 길이 비교만으로
+      // 원격을 버리면, 사용자가 로컬에 미전송/중복 user 메시지를 많이 가진
+      // 상태에서 서버 cron 이 붙인 최신 assistant 답장이 원격에 있어도
+      // 채팅방에서는 영원히 안 보이고 리스트 preview 만 최신으로 보이는
+      // split-brain 이 생긴다.
+      const merged = mergeRemoteStoryMessagesPreservingLocal(
+        localSnapshot?.messages,
+        remoteSnapshot.messages,
+      );
+      if (merged.changed) {
+        const mergedSnapshot: StoryChatThreadSnapshot = {
+          ...remoteSnapshot,
+          messages: merged.messages,
+          updatedAt: remoteSnapshot.updatedAt ?? new Date().toISOString(),
+        };
+        await saveLocalStoryThreadSnapshot(mergedSnapshot);
+        await saveCachedCharacterMessages(characterId, merged.messages).catch(
+          (error: unknown) => {
+            captureError(error, {
+              surface: 'story-chat:save-merged-remote-cache',
+            }).catch(() => undefined);
+          },
+        );
+        return mergedSnapshot;
+      }
+
+      // 원격이 로컬 이상 길이일 때만 로컬 snapshot 을 원격으로 교체한다.
+      // 원격이 더 짧고 새 ID 도 없으면 로컬의 카드/긴 히스토리를 보존한다.
       const localLen = localSnapshot?.messages.length ?? 0;
       const remoteLen = remoteSnapshot.messages.length;
       if (remoteLen >= localLen) {
         await saveLocalStoryThreadSnapshot(remoteSnapshot);
         return remoteSnapshot;
       }
-      // 원격이 짧음 → 로컬이 더 최신/완전한 상태. 로컬 유지.
       return localSnapshot;
     }
   } catch (error) {
