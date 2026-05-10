@@ -23,6 +23,13 @@ const chatCharacterAvatarSources: Record<string, ImageSourcePropType> = {
   fortune_luna: require('../../assets/character/avatars/fortune_luna.webp'),
 };
 
+const chatCharacterAvatarAliases: Record<string, string> = {
+  // 하늘이는 legacy fortune_haneul asset 을 유지한 채 캐릭터 ID 만
+  // haneul_oracle 로 통합되었다. 새 ID 조회가 null 이면 프로필/채팅 헤더가
+  // 텍스트 이니셜로 fallback 되어 실제 사진 교체가 앱에 적용되지 않은 것처럼 보인다.
+  haneul_oracle: 'fortune_haneul',
+};
+
 export function resolveChatCharacterAvatarSource(
   characterId: string | null | undefined,
 ) {
@@ -30,5 +37,22 @@ export function resolveChatCharacterAvatarSource(
     return null;
   }
 
-  return chatCharacterAvatarSources[characterId] ?? null;
+  const sourceId = chatCharacterAvatarAliases[characterId] ?? characterId;
+  return chatCharacterAvatarSources[sourceId] ?? null;
+}
+
+export function resolveChatCharacterAvatarAspectRatio(
+  characterId: string | null | undefined,
+) {
+  const sourceId = characterId
+    ? (chatCharacterAvatarAliases[characterId] ?? characterId)
+    : null;
+
+  // 2026-05-11 교체된 하늘이 사진은 정방형(1254×1254)이라 기존 9:16 portrait
+  // 보정값을 적용하면 원형 썸네일에 상단 일부만 잘려 보인다.
+  if (sourceId === 'fortune_haneul') {
+    return 1;
+  }
+
+  return 9 / 16;
 }

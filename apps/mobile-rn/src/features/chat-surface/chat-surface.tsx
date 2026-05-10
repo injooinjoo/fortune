@@ -31,7 +31,10 @@ import type {
   ChatShellTextMessage,
 } from '../../lib/chat-shell';
 import { buildSuggestedActions, formatFortuneTypeLabel } from '../../lib/chat-shell';
-import { resolveChatCharacterAvatarSource } from '../../lib/chat-character-avatar';
+import {
+  resolveChatCharacterAvatarAspectRatio,
+  resolveChatCharacterAvatarSource,
+} from '../../lib/chat-character-avatar';
 import { confirmAction } from '../../lib/haptics';
 import { fortuneTheme, romanceTintBackground } from '../../lib/theme';
 import { useIsTyping } from '../../lib/typing-store';
@@ -106,12 +109,11 @@ function CharacterAvatar({
 }) {
   const avatarSource = resolveChatCharacterAvatarSource(characterId);
 
-  // webp 원본은 portrait 인물사진(약 576×1024 / 9:16). 정사각형 동그라미에
-  // resizeMode='cover' 디폴트를 그대로 두면 좌우 기준 cover crop 으로 얼굴이
-  // 위로 빠져나가 어깨/가슴이 보인다. 이미지를 컨테이너 폭에 맞추고 비율 유지로
-  // 세로를 늘린 뒤 top:0 으로 align — 얼굴이 동그라미 위쪽에 들어와 보이게.
-  const PORTRAIT_ASPECT = 9 / 16;
-  const imageHeight = size / PORTRAIT_ASPECT;
+  // 대부분의 webp 원본은 portrait 인물사진(약 576×1024 / 9:16)이라 정사각형
+  // 동그라미 안에서 얼굴이 보이도록 원본 비율 보정을 유지한다. 단, 하늘이 교체
+  // 이미지는 정방형이라 별도 aspect ratio 를 사용해야 사진 전체가 적용되어 보인다.
+  const imageAspectRatio = resolveChatCharacterAvatarAspectRatio(characterId);
+  const imageHeight = size / imageAspectRatio;
 
   return (
     <View
