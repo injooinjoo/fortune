@@ -36,6 +36,18 @@ function toStringSegments(value: unknown): string[] | null {
   return value.filter((item): item is string => typeof item === "string");
 }
 
+function buildDeliveredResponse(row: ScheduledReplyRow, timestamp: string) {
+  const messages = buildScheduledReplyMessages({
+    scheduledId: row.id,
+    content: row.content,
+    segments: toStringSegments(row.segments),
+    emotionTag: row.emotion_tag,
+    timestamp,
+  });
+
+  return { messages };
+}
+
 serve(async (req: Request) => {
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
@@ -121,8 +133,19 @@ serve(async (req: Request) => {
   }
 
   if (scheduledRow.delivered_at || scheduledRow.client_acked_at) {
+    // Race-safe foreground delivery: a cron/previous claim may mark the row as
+    // delivered between the client's generated delay and this foreground claim.
+    // Returning no messages here made the client hide the typing indicator and
+    // render nothing ("..." disappears, no reply). The scheduled row still has
+    // canonical content, so return the same message payload idempotently.
+    const deliveredTimestamp = scheduledRow.client_acked_at ??
+      scheduledRow.delivered_at ?? new Date().toISOString();
+    const { messages } = buildDeliveredResponse(
+      scheduledRow,
+      deliveredTimestamp,
+    );
     return new Response(
-      JSON.stringify({ success: true, status: "already_delivered" }),
+      JSON.stringify({ success: true, status: "delivered", messages }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
@@ -162,19 +185,20 @@ serve(async (req: Request) => {
   }
 
   if (!claimed) {
+    const deliveredTimestamp = scheduledRow.client_acked_at ??
+      scheduledRow.delivered_at ??
+      new Date().toISOString();
+    const { messages } = buildDeliveredResponse(
+      scheduledRow,
+      deliveredTimestamp,
+    );
     return new Response(
-      JSON.stringify({ success: true, status: "already_delivered" }),
+      JSON.stringify({ success: true, status: "delivered", messages }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
 
-  const messages = buildScheduledReplyMessages({
-    scheduledId: scheduledRow.id,
-    content: scheduledRow.content,
-    segments: toStringSegments(scheduledRow.segments),
-    emotionTag: scheduledRow.emotion_tag,
-    timestamp: now,
-  });
+  const { messages } = buildDeliveredResponse(scheduledRow, now);
 
   const persistResult = await persistScheduledReplyMessages({
     supabase,
