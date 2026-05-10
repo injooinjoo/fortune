@@ -3609,15 +3609,18 @@ export function ChatScreen() {
       void maybePromptPushPermissionForCharacter(selectedCharacter.name);
     }
 
-    // 이미지 첨부가 있으면 여기서 먼저 처리. 사진 + 캡션(있으면) 을 한 번에 보낸다.
-    // - 스토리 파일럿 캐릭터: 멀티모달 AI 경로로 imageBase64 전달
-    // - 그 외 캐릭터: thread 에 이미지 메시지만 추가 (AI 전달 없음, 기존 동작과 동일)
+    // 이미지 첨부가 있으면 여기서 먼저 처리한다.
+    // 사진 자체에는 캡션을 붙이지 않는다. 스토리 파일럿은 trimmed 를 별도 유저 텍스트로
+    // append 하므로, 이미지 아래 캡션까지 표시하면 같은 문장이 두 번 보인다.
     if (pendingImage) {
-      const imageMessage = buildUserImageMessage(
-        pendingImage.uri,
-        trimmed || undefined,
-      );
-      appendMessages(selectedCharacter, [imageMessage]);
+      const imageMessage = buildUserImageMessage(pendingImage.uri);
+      const isStoryPilotImageSend =
+        pendingImage.base64 && isStoryRomancePilotCharacterId(selectedCharacter.id);
+      const messagesToAppend =
+        trimmed && !isStoryPilotImageSend
+          ? [imageMessage, buildUserMessage(trimmed)]
+          : [imageMessage];
+      appendMessages(selectedCharacter, messagesToAppend);
       setSurfaceMode('chat');
       setComposerTrayOpen(false);
       if (trimmed) setDraft('');

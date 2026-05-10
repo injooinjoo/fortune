@@ -915,7 +915,7 @@ function ImageMessageBubble({
           <Image
             source={{ uri: imageUrl }}
             style={{ width: '100%', height: '100%' }}
-            resizeMode="cover"
+            resizeMode="contain"
             onLoadStart={() => setLoadState('loading')}
             onLoad={() => setLoadState('loaded')}
             onError={() => setLoadState('error')}
