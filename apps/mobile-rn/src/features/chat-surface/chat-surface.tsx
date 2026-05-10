@@ -862,15 +862,17 @@ function EmbeddedResultMessage({
 }
 
 /**
- * Slice 2: proactive 사진 버블 — loading skeleton, onError fallback, tap → fullscreen.
- * PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.8 (A8 + T3).
+ * Chat image bubble — loading skeleton, onError fallback, tap → fullscreen.
+ * Assistant proactive images and user-attached photos share this renderer.
  */
-function ProactiveImageBubble({
+function ImageMessageBubble({
   imageUrl,
   caption,
+  sender,
 }: {
   imageUrl: string;
   caption?: string;
+  sender: ChatShellImageMessage['sender'];
 }) {
   const [loadState, setLoadState] = useState<'loading' | 'loaded' | 'error'>(
     'loading',
@@ -939,7 +941,11 @@ function ProactiveImageBubble({
         </View>
       </Pressable>
       {caption ? (
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+        <AppText
+          variant="bodySmall"
+          color={fortuneTheme.colors.textSecondary}
+          style={{ textAlign: sender === 'user' ? 'right' : 'left' }}
+        >
           {caption}
         </AppText>
       ) : null}
@@ -1092,9 +1098,10 @@ function ChatThreadMessage({
       );
     if (isImage)
       return (
-        <ProactiveImageBubble
+        <ImageMessageBubble
           imageUrl={message.imageUrl}
           caption={message.caption}
+          sender={message.sender}
         />
       );
     return (
@@ -1131,7 +1138,12 @@ function ChatThreadMessage({
           {proactiveCaptionLabel}
         </AppText>
       ) : null}
-      <View style={{ width: isFullWidth ? '100%' : undefined }}>
+      <View
+        style={{
+          alignSelf: isImage ? (isUser ? 'flex-end' : 'flex-start') : undefined,
+          width: isFullWidth ? '100%' : undefined,
+        }}
+      >
         {reportable ? (
           // alignSelf flex-start — assistant 메시지는 좌측 정렬. Pressable 이
           // 100% 폭 stretch 되면 우측 빈 공간 탭이 long-press Pressable 에 잡혀
