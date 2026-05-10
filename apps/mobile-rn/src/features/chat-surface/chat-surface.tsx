@@ -65,7 +65,7 @@ function extractTimestampFromMessageId(id: string): number {
  * 빠른 연속 send + remote hydrate 충돌로 array index 가 chronology 와
  * 어긋날 때 화면 순서가 망가지던 회귀 fix (2026-05-08).
  */
-function sortMessagesByTimestamp<T extends { id: string }>(messages: T[]): T[] {
+function sortMessagesByTimestamp<T extends { id: string }>(messages: readonly T[]): T[] {
   const indexed = messages.map((message, index) => ({
     message,
     timestamp: extractTimestampFromMessageId(message.id),
@@ -76,6 +76,14 @@ function sortMessagesByTimestamp<T extends { id: string }>(messages: T[]): T[] {
     return a.index - b.index;
   });
   return indexed.map((entry) => entry.message);
+}
+
+/**
+ * 채팅 목록 preview 와 대화방 render 가 반드시 같은 canonical thread 를 보도록
+ * 한 곳에서 정렬 기준을 정의한다. 여기서 바꾼 순서가 목록/방 모두에 적용된다.
+ */
+export function getCanonicalVisibleMessages(messages: readonly ChatShellMessage[]): ChatShellMessage[] {
+  return sortMessagesByTimestamp(messages);
 }
 
 function formatChatHeaderTimestamp(date: Date): string {
@@ -414,9 +422,14 @@ export function buildCharacterListMeta(
   if (!messages || messages.length === 0) {
     return { lastMessagePreview: null, unreadCount: 0, unread: false, lastActivityAt: 0 };
   }
-  const last = messages[messages.length - 1];
-  const preview = extractMessagePreview(last);
-  const lastActivityAt = extractActivityFromMessage(last);
+
+  // 대화방 렌더와 동일한 canonical ordering 을 사용한다. 이전 구현은 원본
+  // array tail 을 preview 로 썼고, 대화방은 timestamp 정렬 후 렌더해서 빠른
+  // 전송/원격 hydrate/merge 뒤에 목록 마지막 문구와 방 안 마지막 문구가 갈라졌다.
+  const canonicalMessages = getCanonicalVisibleMessages(messages);
+  const last = canonicalMessages[canonicalMessages.length - 1];
+  const preview = last ? extractMessagePreview(last) : '';
+  const lastActivityAt = last ? extractActivityFromMessage(last) : 0;
 
   // Unread 판정 (일반 메신저 표준):
   //   "lastSeen 이후로 도착한 assistant/system 메시지 개수" 를 센다. 0 이면
@@ -429,21 +442,21 @@ export function buildCharacterListMeta(
     // 한 번도 안 본 캐릭터 — 전체 메시지를 unread 로 카운트.
     startIndex = 0;
   } else {
-    const found = messages.findIndex((m) => m.id === lastSeenMessageId);
+    const found = canonicalMessages.findIndex((m) => m.id === lastSeenMessageId);
     if (found === -1) {
       // 저장된 lastSeen ID 가 현재 메시지 배열에 없음 — 원격 재동기화로 ID
       // 가 바뀌었거나 메시지 prune 등 시스템 사정. lastSeen 이 존재한다는
       // 사실 자체가 "한 번 이상 채팅방을 열었다" 는 증거이므로, 모르는 ID
       // 를 만났을 때 "전부 안 읽음" 으로 해석하면 사용자 체감 회귀가 크다.
       // 보수적으로 "이미 다 읽음" (startIndex = 끝) 으로 처리.
-      startIndex = messages.length;
+      startIndex = canonicalMessages.length;
     } else {
       startIndex = found + 1;
     }
   }
   let unreadCount = 0;
-  for (let i = startIndex; i < messages.length; i += 1) {
-    const m = messages[i];
+  for (let i = startIndex; i < canonicalMessages.length; i += 1) {
+    const m = canonicalMessages[i];
     if (m.sender === 'assistant' || m.sender === 'system') {
       unreadCount += 1;
     }
@@ -2647,7 +2660,7 @@ export function ActiveCharacterChatSurface({
   // 메시지가 뒤늦게 array 끝에 append → DB 의 chronological 순서와 어긋남.
   // ID 에 unix-ms 가 내장 (`user-1778217138036-...`) 되어 있어서 그걸 추출해
   // ascending 정렬. 안전 — id 패턴 안 맞으면 array index 폴백 (sort stability).
-  const visibleMessages = sortMessagesByTimestamp(messages);
+  const visibleMessages = getCanonicalVisibleMessages(messages);
   const promptActions = actions;
   const hasEmbeddedResult = visibleMessages.some(
     (message) =>

@@ -26,6 +26,7 @@ import {
   FloatingCreateButton,
   ProfileFlowGateCard,
   buildCharacterListMeta,
+  getCanonicalVisibleMessages,
   type CharacterListRowMeta,
 } from '../features/chat-surface/chat-surface';
 import {
@@ -249,7 +250,10 @@ function shouldAcceptRemoteMessages(
   if (remote.length === 0) return false;
   if (remote.length < local.length) return false;
   if (remote.length === local.length) {
-    return local[local.length - 1]?.id !== remote[remote.length - 1]?.id;
+    const canonicalLocal = getCanonicalVisibleMessages(local);
+    const canonicalRemote = getCanonicalVisibleMessages(remote);
+    return canonicalLocal[canonicalLocal.length - 1]?.id !==
+      canonicalRemote[canonicalRemote.length - 1]?.id;
   }
   return true;
 }
@@ -590,7 +594,8 @@ export function ChatScreen() {
     if (!charId) return;
     const thread = messagesByCharacterId[charId];
     if (!thread || thread.length === 0) return;
-    const latest = thread[thread.length - 1];
+    const canonicalThread = getCanonicalVisibleMessages(thread);
+    const latest = canonicalThread[canonicalThread.length - 1];
     // user 가 보낸 메시지면 굳이 갱신 필요 없음 (본인이 방금 보낸 것).
     if (latest.sender !== 'assistant' && latest.sender !== 'system') return;
     const currentSeen = lastSeenByCharacterId[charId];
@@ -1115,7 +1120,8 @@ export function ChatScreen() {
     const reconcile = async () => {
       if (stopped || activeRemoteReconcileInFlightRef.current) return;
       const local = messagesByCharacterId[characterId] ?? [];
-      const latest = local[local.length - 1];
+      const canonicalLocal = getCanonicalVisibleMessages(local);
+      const latest = canonicalLocal[canonicalLocal.length - 1];
       const shouldPoll =
         latest?.sender === 'user' ||
         storyTypingByCharacterId[characterId] === true ||
@@ -1213,7 +1219,8 @@ export function ChatScreen() {
     const thread = messagesByCharacterId[selectedCharacter.id];
     if (!thread || thread.length === 0) return;
 
-    const last = thread[thread.length - 1];
+    const canonicalThread = getCanonicalVisibleMessages(thread);
+    const last = canonicalThread[canonicalThread.length - 1];
     if (last.kind !== 'text' || last.sender !== 'user') return;
 
     if (autoResumedUserMessageIdsRef.current.has(last.id)) return;
@@ -1505,9 +1512,9 @@ export function ChatScreen() {
     }
 
     // 최근 메시지가 운세 결과 카드면 카드 상단이 화면 최상단에 보이게 스크롤.
-    const latestThread =
-      messagesByCharacterId[selectedCharacter.id] ?? [];
-    const latestMessage = latestThread[latestThread.length - 1];
+    const latestThread = messagesByCharacterId[selectedCharacter.id] ?? [];
+    const canonicalLatestThread = getCanonicalVisibleMessages(latestThread);
+    const latestMessage = canonicalLatestThread[canonicalLatestThread.length - 1];
     const isResultCardArriving =
       latestMessage?.kind === 'embedded-result' ||
       latestMessage?.kind === 'fortune-cookie' ||
@@ -1645,7 +1652,8 @@ export function ChatScreen() {
     if (gate !== 'ready' || surfaceMode !== 'chat') {
       return;
     }
-    const latestMessage = selectedThread[selectedThread.length - 1];
+    const canonicalSelectedThread = getCanonicalVisibleMessages(selectedThread);
+    const latestMessage = canonicalSelectedThread[canonicalSelectedThread.length - 1];
     const latestIsResultCard =
       latestMessage?.kind === 'embedded-result' ||
       latestMessage?.kind === 'fortune-cookie' ||
@@ -2091,7 +2099,8 @@ export function ChatScreen() {
     setSurfaceMode('chat');
 
     const thread = messagesByCharacterId[characterId] ?? [];
-    const lastMessage = thread[thread.length - 1];
+    const canonicalThread = getCanonicalVisibleMessages(thread);
+    const lastMessage = canonicalThread[canonicalThread.length - 1];
     if (lastMessage) {
       setLastSeenByCharacterId((current) => ({
         ...current,
