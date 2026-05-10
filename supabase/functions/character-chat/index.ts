@@ -3655,20 +3655,17 @@ serve(async (req: Request) => {
     // ────────────────────────────────────────────────────────────────────────
     // 답장 지연 발송 (Phase 2)
     // ────────────────────────────────────────────────────────────────────────
-    // REPLY_DELAY_ENABLED=true 면 메시지를 즉시 푸시하지 않고 scheduled_character_replies
-    // 에 row 만 만들어 둠. 클라이언트는 scheduledId+deliverAt 으로 setTimeout
-    // 후 렌더, 백그라운드는 매분 deliver-due-replies cron 이 푸시 발송.
-    //
-    // 같은 (user, character) 의 미처리 row 가 있다면(이전 답장 대기 중)
-    // canceled_at 으로 마킹 → 새 답장으로 합쳐서 진행 (옵션 1A: 후속 메시지
-    // 도착 시 이전 답장 취소 + 새 LLM 답장으로 통합).
-    // 답장 지연은 항상 ON. env REPLY_DELAY_ENABLED 분기는 폐기 — "왜 답장이
-    // 즉시 옴?" 회귀의 한 원인 (env 안 켜져 있으면 즉시 푸시) 이었다. delaySec
-    // 계산은 _shared/reply_delay.ts 가 단일 source.
+    // REAL-PHONE HOTFIX: scheduledId/claim 경로에서 실폰 active chat 이
+    // "타이핑하다가 bubble 이 사라지는" 회귀를 보이고 있다. 백엔드는 매번
+    // 성공하고 client_acked_at 도 찍히므로, 원인이 완전히 닫힐 때까지 운영 기본은
+    // legacy immediate response 경로로 되돌린다. 명시적으로 서버 feature flag 를
+    // 켠 경우에만 scheduled_character_replies 를 사용한다.
+    const scheduledRepliesEnabled =
+      Deno.env.get("CHARACTER_CHAT_SCHEDULED_REPLIES_ENABLED") === "true";
     let scheduledId: string | undefined;
     let deliverAtIso: string | undefined;
 
-    if (userId && supabase) {
+    if (scheduledRepliesEnabled && userId && supabase) {
       try {
         // 이전 pending row cancel — 같은 캐릭터에 답장 대기 중인 게 있으면
         // 새 메시지로 인해 무효화. cron 이 이 row 처리 안 하도록 canceled_at set.
