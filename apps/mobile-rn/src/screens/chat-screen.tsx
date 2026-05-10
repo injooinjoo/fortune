@@ -110,7 +110,6 @@ import {
 import {
   insertMessages as insertStoreMessages,
   getMessages as getStoreMessages,
-  replaceAllForCharacter as replaceStoreMessagesForCharacter,
   useStoreMessages,
 } from '../lib/message-store';
 import { setTyping as setGlobalTyping } from '../lib/typing-store';
@@ -209,54 +208,6 @@ function computeHumanReplyPhaseDelays(replyDelayMs: number) {
  */
 // markLatestUserMessageAsRead, sleep, randomInRange 는 lib/chat-message-utils.ts
 // 로 이동. import 는 파일 상단 named import 참고.
-
-/**
- * 두 메시지 리스트가 id 기준으로 같은지 얕은 비교. hydrate 결과가 캐시와
- * 동일할 때 불필요한 re-render(= old→new 플래시)를 막기 위해 사용.
- */
-function isSameMessageList(
-  a: ChatShellMessage[] | undefined,
-  b: ChatShellMessage[] | undefined,
-): boolean {
-  if (a === b) return true;
-  if (!a || !b) return false;
-  if (a.length !== b.length) return false;
-  for (let i = 0; i < a.length; i++) {
-    if (a[i]?.id !== b[i]?.id) return false;
-  }
-  return true;
-}
-
-/**
- * 원격 hydrate 결과를 로컬 state에 적용할지 판단.
- *
- * 핵심 원칙: **원격이 더 짧으면 덮어쓰지 않는다**.
- *   → 유저가 방금 보낸 메시지가 remote save 전파되기 전에 focus 재하이드레이션이
- *     트리거되면 remote는 "이전 상태"를 반환한다. 이를 그대로 set하면 방금 보낸
- *     메시지가 사라진다. 즉 truncate race를 방지.
- *
- * 규칙:
- *   - 로컬 없음 → 원격 적용
- *   - 원격 비어있음 → 로컬 유지
- *   - 원격이 로컬보다 짧음 → 로컬 유지 (in-flight 로컬 쓰기 보존)
- *   - 길이 같음 → 마지막 메시지 id 다르면 원격 적용 (server authority)
- *   - 원격이 길면 적용 (서버가 proactive message 등 추가)
- */
-function shouldAcceptRemoteMessages(
-  local: ChatShellMessage[] | undefined,
-  remote: ChatShellMessage[],
-): boolean {
-  if (!local || local.length === 0) return remote.length > 0;
-  if (remote.length === 0) return false;
-  if (remote.length < local.length) return false;
-  if (remote.length === local.length) {
-    const canonicalLocal = getCanonicalVisibleMessages(local);
-    const canonicalRemote = getCanonicalVisibleMessages(remote);
-    return canonicalLocal[canonicalLocal.length - 1]?.id !==
-      canonicalRemote[canonicalRemote.length - 1]?.id;
-  }
-  return true;
-}
 
 function getMessageTimestampMs(message: ChatShellMessage): number {
   if ('timestamp' in message && typeof message.timestamp === 'string') {
@@ -515,10 +466,10 @@ export function ChatScreen() {
       )) {
         if (!cached || cached.length === 0) continue;
         const existing = current[characterId];
-        if (!shouldAcceptRemoteMessages(existing, cached)) continue;
-        if (isSameMessageList(existing, cached)) continue;
+        const merged = mergeRemoteMessagesPreservingLocal(existing, cached);
+        if (!merged.changed) continue;
         if (!next) next = { ...current };
-        next[characterId] = cached;
+        next[characterId] = merged.messages;
       }
       return next ?? current;
     });
@@ -557,16 +508,17 @@ export function ChatScreen() {
     setMessagesByCharacterId((prev) => {
       const existing = prev[selectedCharacterId] ?? [];
 
-      // store 가 더 길거나 같으면 (신규 메시지 도착·push hydrate) store 권위.
-      // 동일 id 시퀀스면 no-op 으로 reference 유지.
-      if (storeMessagesForActive.length >= existing.length) {
-        if (
-          existing.length === storeMessagesForActive.length &&
-          existing.every((m, i) => m.id === storeMessagesForActive[i]?.id)
-        ) {
-          return prev;
-        }
-        return { ...prev, [selectedCharacterId]: storeMessagesForActive };
+      // Store is a mirror, not an authority that may truncate/replace the active
+      // in-memory thread. Real phones can receive a delayed store snapshot after
+      // claim-scheduled-reply already rendered the assistant bubble; replacing by
+      // length/equal-length-different-tail makes the bubble appear while typing,
+      // then disappear. Always union by id and only append store-only messages.
+      const merged = mergeRemoteMessagesPreservingLocal(
+        existing,
+        storeMessagesForActive,
+      );
+      if (merged.changed) {
+        return { ...prev, [selectedCharacterId]: merged.messages };
       }
 
       // store 가 짧아진 경우: 원래 grow-only 라 in-flight send/append truncate
@@ -772,13 +724,14 @@ export function ChatScreen() {
             if (cachedMessages && cachedMessages.length > 0) {
               setMessagesByCharacterId((current) => {
                 const cur = current[characterId];
-                if (!shouldAcceptRemoteMessages(cur, cachedMessages)) {
+                const merged = mergeRemoteMessagesPreservingLocal(
+                  cur,
+                  cachedMessages,
+                );
+                if (!merged.changed) {
                   return current;
                 }
-                if (isSameMessageList(cur, cachedMessages)) {
-                  return current;
-                }
-                return { ...current, [characterId]: cachedMessages };
+                return { ...current, [characterId]: merged.messages };
               });
               // Step G: store sync — 다른 화면 (chat list 등) 도 즉시 reflect.
               // Non-destructive: dedup-append. 절대 REPLACE 금지 — 원격이 in-flight
@@ -793,13 +746,14 @@ export function ChatScreen() {
 
           setMessagesByCharacterId((current) => {
             const cur = current[characterId];
-            if (!shouldAcceptRemoteMessages(cur, snapshot.messages)) {
+            const merged = mergeRemoteMessagesPreservingLocal(
+              cur,
+              snapshot.messages,
+            );
+            if (!merged.changed) {
               return current;
             }
-            if (isSameMessageList(cur, snapshot.messages)) {
-              return current;
-            }
-            return { ...current, [characterId]: snapshot.messages };
+            return { ...current, [characterId]: merged.messages };
           });
           // 원격 hydrate 도 dedup-append. REPLACE 하면 in-flight (push/optimistic)
           // 메시지가 사라진다.
@@ -826,13 +780,14 @@ export function ChatScreen() {
           if (cachedMessages && cachedMessages.length > 0) {
             setMessagesByCharacterId((current) => {
               const cur = current[characterId];
-              if (!shouldAcceptRemoteMessages(cur, cachedMessages)) {
+              const merged = mergeRemoteMessagesPreservingLocal(
+                cur,
+                cachedMessages,
+              );
+              if (!merged.changed) {
                 return current;
               }
-              if (isSameMessageList(cur, cachedMessages)) {
-                return current;
-              }
-              return { ...current, [characterId]: cachedMessages };
+              return { ...current, [characterId]: merged.messages };
             });
             // Non-destructive: dedup-append. REPLACE 하면 in-flight 메시지
             // (push 본문, 막 보낸 user_msg) 가 store/SQLite 에서 사라진다.
@@ -845,13 +800,11 @@ export function ChatScreen() {
 
         setMessagesByCharacterId((current) => {
           const cur = current[characterId];
-          if (!shouldAcceptRemoteMessages(cur, messages)) {
+          const merged = mergeRemoteMessagesPreservingLocal(cur, messages);
+          if (!merged.changed) {
             return current;
           }
-          if (isSameMessageList(cur, messages)) {
-            return current;
-          }
-          return { ...current, [characterId]: messages };
+          return { ...current, [characterId]: merged.messages };
         });
         // 원격 hydrate 도 dedup-append. REPLACE 절대 금지 (Bug 2 회귀 방지).
         insertStoreMessages(characterId, messages).catch(() => undefined);
@@ -1130,9 +1083,12 @@ export function ChatScreen() {
 
       activeRemoteReconcileInFlightRef.current = true;
       try {
-        const remote = isStoryRomancePilotCharacterId(characterId)
-          ? (await loadStoryThreadSnapshot(characterId))?.messages ?? null
-          : await loadCharacterConversation(characterId);
+        // Active-chat reconciliation must read the canonical server conversation
+        // directly. For story-romance pilots (luts 포함), `loadStoryThreadSnapshot`
+        // can involve stale SecureStore snapshots; using it here can make a freshly
+        // rendered scheduled reply disappear on real phones. The server truth for
+        // delivered assistant bubbles is `character_conversations`.
+        const remote = await loadCharacterConversation(characterId);
         if (stopped || !remote || remote.length === 0) return;
 
         const merged = mergeRemoteMessagesPreservingLocal(local, remote);
@@ -1147,7 +1103,11 @@ export function ChatScreen() {
           if (!currentMerged.changed) return current;
           return { ...current, [characterId]: currentMerged.messages };
         });
-        await replaceStoreMessagesForCharacter(characterId, merged.messages);
+        // Never replace SQLite from an async reconcile based on a stale closure:
+        // if the user sent another message while the request was in flight, replace
+        // can erase that in-memory/store message. Append/dedupe the server-only
+        // messages instead.
+        await insertStoreMessages(characterId, remote);
       } catch (error) {
         captureError(error, {
           surface: 'chat:active-remote-reconcile',
