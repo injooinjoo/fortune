@@ -1434,6 +1434,13 @@ export function ChatScreen() {
   // 카드 상단 스크롤은 메시지 하나 당 한 번만 — 이후 카드 내부 애니메이션 등
   // 진행 중 재호출되는 onContentSizeChange 에서 다시 스크롤이 튀지 않도록.
   const cardTopScrolledMessageIdRef = useRef<string | null>(null);
+  // 운세 entry 선택 직후에는 "내가 누른 운세부터 새 흐름이 시작된다"는
+  // 기준점이 보여야 한다. 일반 새 메시지처럼 바닥으로 끌고 내려가면 이전 대화와
+  // 섞여 보이고, 반대로 결과 카드 로직에만 맡기면 설문형 운세 시작에는 적용되지
+  // 않는다. 그래서 다음 content grow 1회에 한해 새로 append 된 운세 시작점
+  // (append 전 content height)을 화면 상단으로 앵커한다.
+  const pendingFortuneStartTopAnchorRef = useRef(false);
+  const suppressNextGenericBottomScrollRef = useRef(false);
 
   function scrollChatToBottom(animated = true) {
     // Single rAF is enough — the caller invokes this after React has scheduled
@@ -1469,6 +1476,16 @@ export function ChatScreen() {
     if (scrollTimerRef.current) {
       clearTimeout(scrollTimerRef.current);
       scrollTimerRef.current = null;
+    }
+
+    if (pendingFortuneStartTopAnchorRef.current) {
+      pendingFortuneStartTopAnchorRef.current = false;
+      scrollTimerRef.current = setTimeout(() => {
+        requestAnimationFrame(() => {
+          chatScrollRef.current?.scrollTo({ y: Math.max(0, prevHeight - 8), animated: true });
+        });
+      }, 80);
+      return;
     }
 
     // 최근 메시지가 운세 결과 카드면 카드 상단이 화면 최상단에 보이게 스크롤.
@@ -1597,12 +1614,13 @@ export function ChatScreen() {
     // hydration 후 첫 content grow 에서 다시 바닥으로 가도록 ref 리셋.
     prevContentHeightRef.current = 0;
     cardTopScrolledMessageIdRef.current = null;
+    pendingFortuneStartTopAnchorRef.current = false;
+    suppressNextGenericBottomScrollRef.current = false;
     scrollChatToBottom(false);
   }, [
     gate,
     surfaceMode,
     selectedCharacter.id,
-    currentSurveyStep?.step.id,
   ]);
 
   // 같은 방에 있는 동안 새 메시지가 도착하면 아래로 스크롤.
@@ -1619,6 +1637,13 @@ export function ChatScreen() {
       latestMessage?.kind === 'fortune-cookie' ||
       latestMessage?.kind === 'saju-preview';
     if (latestIsResultCard) {
+      return;
+    }
+    if (
+      pendingFortuneStartTopAnchorRef.current ||
+      suppressNextGenericBottomScrollRef.current
+    ) {
+      suppressNextGenericBottomScrollRef.current = false;
       return;
     }
     scrollChatToBottom(true);
@@ -2119,6 +2144,8 @@ export function ChatScreen() {
     setLaunchOrigin('user');
     setSurfaceMode('chat');
     setComposerTrayOpen(false);
+    pendingFortuneStartTopAnchorRef.current = true;
+    suppressNextGenericBottomScrollRef.current = true;
     appendMessages(character, [
       buildUserMessage(prompt),
       buildAssistantTextMessage(reply),
