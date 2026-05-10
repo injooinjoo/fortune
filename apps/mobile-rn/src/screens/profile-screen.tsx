@@ -402,23 +402,9 @@ export function ProfileScreen() {
               />
               <AppText variant="bodyMedium">클라우드 모델</AppText>
             </View>
-            <View style={{ flexDirection: 'row', gap: 4 }}>
-              <ThemeChip
-                label="기본"
-                active={state.settings.cloudModelPreference === 'default'}
-                onPress={() => saveSettings({ cloudModelPreference: 'default' })}
-              />
-              <ThemeChip
-                label="그록 fast"
-                active={state.settings.cloudModelPreference === 'grok-fast'}
-                onPress={() => saveSettings({ cloudModelPreference: 'grok-fast' })}
-              />
-              <ThemeChip
-                label="그록 대화형"
-                active={state.settings.cloudModelPreference === 'grok'}
-                onPress={() => saveSettings({ cloudModelPreference: 'grok' })}
-              />
-            </View>
+            <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+              Gemini 3.1 Flash Lite
+            </AppText>
           </View>
         ) : null}
 

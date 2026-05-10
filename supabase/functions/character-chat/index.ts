@@ -3404,13 +3404,19 @@ serve(async (req: Request) => {
     // 운세 요청 시 더 긴 응답을 위해 maxTokens 증가
     const fortuneMaxTokens = isFortuneRequest ? 4096 : 2048;
 
-    // 글로벌 모델 선호 — 사용자가 프로필에서 "그록 fast" / "그록 대화형" 선택 시
-    // 모든 캐릭터에 적용. 기본은 character-chat DB 설정 (gemini-2.5-flash-lite).
-    const grokVariantModel = modelPreference === "grok-fast"
-      ? "grok-3-mini-fast"
-      : modelPreference === "grok"
-      ? "grok-3-mini"
-      : null;
+    // 글로벌 모델 선호. 현재 production 표준은 DB character-chat 설정
+    // (Gemini 3.1 Flash Lite) 이다. Grok API 는 아직 운영에 넣지 않았으므로
+    // 명시적인 서버 feature flag 없이는 클라이언트에 저장된 옛 grok 선호값을
+    // 무시한다. 그렇지 않으면 미설정 Grok 401 때문에 매 턴 불필요한 실패 로그와
+    // 지연이 생긴다.
+    const allowGrokPreference =
+      Deno.env.get("GROK_MODEL_PREFERENCE_ENABLED") === "true";
+    const grokVariantModel =
+      allowGrokPreference && modelPreference === "grok-fast"
+        ? "grok-3-mini-fast"
+        : allowGrokPreference && modelPreference === "grok"
+        ? "grok-3-mini"
+        : null;
     let fallbackUsed = false;
     let llmResponse: LLMResponse;
 

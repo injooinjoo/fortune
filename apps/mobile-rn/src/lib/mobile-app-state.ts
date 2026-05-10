@@ -43,11 +43,9 @@ export interface ChatSurfaceState {
 export type AiMode = 'cloud' | 'on-device' | 'auto';
 
 /**
- * 클라우드 모델 선호. 모든 캐릭터 채팅에 글로벌 적용.
- * - 'default': character-chat DB 설정 (현재 grok-3-mini)
- * - 'grok-fast': grok-3-mini-fast (저지연, reasoning 최소)
- * - 'grok': grok-3-mini (대화형)
- * 백엔드 (supabase/functions/character-chat/index.ts) 의 modelPreference 와 1:1 매핑.
+ * 클라우드 모델 선호. 현재 운영 기본은 character-chat DB 설정
+ * (`gemini-3.1-flash-lite`) 이다. Grok 값은 과거 테스트/향후 옵션과의
+ * 하위 호환 타입으로만 남겨두며, 앱 hydration 시 기본값으로 정규화한다.
  */
 export type CloudModelPreference = 'default' | 'grok-fast' | 'grok';
 
@@ -157,10 +155,6 @@ function isAiMode(value: unknown): value is AiMode {
   return value === 'cloud' || value === 'on-device' || value === 'auto';
 }
 
-function isCloudModelPreference(value: unknown): value is CloudModelPreference {
-  return value === 'default' || value === 'grok-fast' || value === 'grok';
-}
-
 export function normalizeMobileAppState(raw: Record<string, unknown>): MobileAppState {
   const profile = (raw.profile ?? {}) as Record<string, unknown>;
   const notifications = (raw.notifications ?? {}) as Record<string, unknown>;
@@ -233,9 +227,7 @@ export function normalizeMobileAppState(raw: Record<string, unknown>): MobileApp
       const shouldMigrate = !migrated && persistedAiMode === 'on-device';
       return {
         aiMode: shouldMigrate ? 'cloud' : persistedAiMode,
-        cloudModelPreference: isCloudModelPreference(settings.cloudModelPreference)
-          ? settings.cloudModelPreference
-          : emptyMobileAppState.settings.cloudModelPreference,
+        cloudModelPreference: 'default',
         chatHapticsEnabled: asBoolean(
           settings.chatHapticsEnabled,
           emptyMobileAppState.settings.chatHapticsEnabled,

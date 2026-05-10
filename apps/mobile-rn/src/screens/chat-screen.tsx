@@ -2720,8 +2720,9 @@ export function ChatScreen() {
       if (effectiveUserMessageId) {
         invokeOptions.userMessageId = effectiveUserMessageId;
       }
-      // 글로벌 클라우드 모델 선호 — 프로필 설정에서 그록 fast / 그록 대화형 선택 시.
-      // 'default' 면 서버에 안 보내서 character-chat DB 설정 (gemini) 사용.
+      // 현재 production 표준은 서버 DB 설정의 Gemini 3.1 Flash Lite.
+      // 클라이언트에 과거 Grok 선호값이 남아 있어도 normalize 단계에서 default 로
+      // 고정되므로 서버에는 별도 modelPreference 를 보내지 않는다.
       const cloudModelPref = mobileAppState.settings.cloudModelPreference;
       if (cloudModelPref && cloudModelPref !== 'default') {
         invokeOptions.modelPreference = cloudModelPref;
