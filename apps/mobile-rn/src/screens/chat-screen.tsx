@@ -109,6 +109,7 @@ import {
 import {
   insertMessages as insertStoreMessages,
   getMessages as getStoreMessages,
+  replaceAllForCharacter as replaceStoreMessagesForCharacter,
   useStoreMessages,
 } from '../lib/message-store';
 import { setTyping as setGlobalTyping } from '../lib/typing-store';
@@ -251,6 +252,48 @@ function shouldAcceptRemoteMessages(
     return local[local.length - 1]?.id !== remote[remote.length - 1]?.id;
   }
   return true;
+}
+
+function getMessageTimestampMs(message: ChatShellMessage): number {
+  if ('timestamp' in message && typeof message.timestamp === 'string') {
+    const parsed = Date.parse(message.timestamp);
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return 0;
+}
+
+/**
+ * 서버 cron 이 character_conversations 에 assistant 답장을 붙였지만 열린 채팅창의
+ * 로컬 state/SQLite 가 push 또는 foreground claim 을 놓친 경우를 복구한다.
+ *
+ * replace 가 아니라 local+remote id union 이라, 사용자가 방금 보낸 optimistic
+ * 메시지는 보존하면서 서버에만 있는 scheduled assistant 메시지를 즉시 병합한다.
+ */
+function mergeRemoteMessagesPreservingLocal(
+  local: ChatShellMessage[] | undefined,
+  remote: ChatShellMessage[],
+): { messages: ChatShellMessage[]; changed: boolean } {
+  const base = local ?? [];
+  if (remote.length === 0) return { messages: base, changed: false };
+  const byId = new Map<string, ChatShellMessage>();
+  for (const message of base) byId.set(message.id, message);
+  let added = false;
+  for (const message of remote) {
+    if (!byId.has(message.id)) {
+      byId.set(message.id, message);
+      added = true;
+    }
+  }
+  if (!added) return { messages: base, changed: false };
+  const originalIndex = new Map(base.map((message, index) => [message.id, index]));
+  const messages = Array.from(byId.values()).sort((a, b) => {
+    const at = getMessageTimestampMs(a);
+    const bt = getMessageTimestampMs(b);
+    if (at !== bt) return at - bt;
+    return (originalIndex.get(a.id) ?? Number.MAX_SAFE_INTEGER) -
+      (originalIndex.get(b.id) ?? Number.MAX_SAFE_INTEGER);
+  });
+  return { messages, changed: true };
 }
 
 /**
@@ -1053,6 +1096,80 @@ export function ChatScreen() {
   const selectedStoryIsTyping =
     storyTypingByCharacterId[selectedCharacter.id] === true;
   const selectedFortuneIsTyping = fortuneTypingCharacterId === selectedCharacter.id;
+  const activeRemoteReconcileInFlightRef = useRef(false);
+
+  // 열린 채팅방 remote reconcile.
+  // 서버 cron(deliver-due-replies)이 답장을 character_conversations 에 이미 붙였는데
+  // foreground claim/push/store bridge 를 놓치면 사용자는 "계속 대답 안 함"으로 본다.
+  // 리스트로 나갔다 와야만 force hydrate 되던 구멍을, 활성 채팅방에서도 보강한다.
+  useEffect(() => {
+    if (gate !== 'ready') return;
+    if (surfaceMode !== 'chat') return;
+    if (!session) return;
+    if (!selectedCharacter?.id) return;
+    if (isFortuneChatCharacter(selectedCharacter)) return;
+
+    const characterId = selectedCharacter.id;
+    let stopped = false;
+
+    const reconcile = async () => {
+      if (stopped || activeRemoteReconcileInFlightRef.current) return;
+      const local = messagesByCharacterId[characterId] ?? [];
+      const latest = local[local.length - 1];
+      const shouldPoll =
+        latest?.sender === 'user' ||
+        storyTypingByCharacterId[characterId] === true ||
+        selectedCharacterId === characterId;
+      if (!shouldPoll) return;
+
+      activeRemoteReconcileInFlightRef.current = true;
+      try {
+        const remote = isStoryRomancePilotCharacterId(characterId)
+          ? (await loadStoryThreadSnapshot(characterId))?.messages ?? null
+          : await loadCharacterConversation(characterId);
+        if (stopped || !remote || remote.length === 0) return;
+
+        const merged = mergeRemoteMessagesPreservingLocal(local, remote);
+        if (!merged.changed) return;
+
+        setMessagesByCharacterId((current) => {
+          const currentLocal = current[characterId] ?? [];
+          const currentMerged = mergeRemoteMessagesPreservingLocal(
+            currentLocal,
+            remote,
+          );
+          if (!currentMerged.changed) return current;
+          return { ...current, [characterId]: currentMerged.messages };
+        });
+        await replaceStoreMessagesForCharacter(characterId, merged.messages);
+      } catch (error) {
+        captureError(error, {
+          surface: 'chat:active-remote-reconcile',
+        }).catch(() => undefined);
+      } finally {
+        activeRemoteReconcileInFlightRef.current = false;
+      }
+    };
+
+    void reconcile();
+    const interval = setInterval(() => {
+      void reconcile();
+    }, 15_000);
+
+    return () => {
+      stopped = true;
+      clearInterval(interval);
+    };
+  }, [
+    gate,
+    surfaceMode,
+    session,
+    selectedCharacter,
+    selectedCharacter?.id,
+    selectedCharacterId,
+    messagesByCharacterId,
+    storyTypingByCharacterId,
+  ]);
 
   // 캐릭터 음성 재생 (Gemini TTS) + 응답 햅틱.
   // useChatTtsHaptics hook 안에서 useTextToSpeech 인스턴스 1개 + chatHaptics
