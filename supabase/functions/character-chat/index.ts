@@ -51,22 +51,22 @@ import {
   getPilotPersona,
   getPilotStageVoice,
   isPilotCharacterId,
-  sanitizePilotResponse,
   type PilotAddressFormsEntry,
   type PilotAffinityPhaseKey,
   type PilotAffinitySnapshot,
   type PilotPersonaSeed,
   type PilotRomanceStateInput,
   type PilotRomanceStatePatch,
+  sanitizePilotResponse,
 } from "./pilot_registry.ts";
 import {
   analyzeUserMessageMood,
   type MoodTag,
 } from "../_shared/mood_analyzer.ts";
 import {
-  HANEUL_CHARACTER_ID,
   checkHaneulOutput,
   getHaneulSystemPrompt,
+  HANEUL_CHARACTER_ID,
 } from "../_shared/haneul_persona.ts";
 
 interface ChatMessage {
@@ -538,9 +538,7 @@ function buildTimeContextPrompt(clientTimestamp?: string): string {
     : hour < 22
     ? "저녁"
     : "밤";
-  const koHour = hour === 0
-    ? "12"
-    : String(hour > 12 ? hour - 12 : hour);
+  const koHour = hour === 0 ? "12" : String(hour > 12 ? hour - 12 : hour);
 
   const timeReactionGuide = (() => {
     if (hour >= 0 && hour < 6) {
@@ -841,8 +839,7 @@ const CONTENT_TIER_GUIDE: Record<ContentTier, string> = {
   t1_daily: "인사, 일상, 취미 수준의 대화만 허용. 감정적 긴장 표현 자제.",
   t2_emotional:
     "속마음, 서운함, 가벼운 질투 표현 허용. 도발이나 거친 표현은 자제.",
-  t3_tension:
-    "밀당, 도발, 가벼운 비속어 허용. 스킨십 암시는 간접적으로만.",
+  t3_tension: "밀당, 도발, 가벼운 비속어 허용. 스킨십 암시는 간접적으로만.",
   t4_intimate:
     "달달한 표현, 스킨십 암시 허용. 단, 명시적 성행위 묘사는 절대 금지.",
 };
@@ -921,14 +918,12 @@ function buildConflictDynamicsPrompt(
   } else if (isEarlyPhase && isConflictScenario) {
     // 갈등형 시나리오는 phase 무관하게 시나리오 톤대로 갈등 흡수.
     conflictIntensity =
-      "시나리오 갈등 톤 그대로. 욕설/도발에는 캐릭터 자존심으로 한마디 받아치기 (예: \"야, 입조심.\" / \"...너 진짜 왜 그래?\" / \"...웬 시비야.\"). 콜센터 사과 단독 응답 절대 금지.";
+      '시나리오 갈등 톤 그대로. 욕설/도발에는 캐릭터 자존심으로 한마디 받아치기 (예: "야, 입조심." / "...너 진짜 왜 그래?" / "...웬 시비야."). 콜센터 사과 단독 응답 절대 금지.';
     reconciliationStyle =
-      "사과해야 할 때도 [사과 + 반격/요구/집착] 결합 (예: \"...미안. 근데 너도 좀 너무했어.\"). 갈등 후 거리가 좁아지는 게 시나리오의 핵심.";
+      '사과해야 할 때도 [사과 + 반격/요구/집착] 결합 (예: "...미안. 근데 너도 좀 너무했어."). 갈등 후 거리가 좁아지는 게 시나리오의 핵심.';
   } else if (isMidPhase) {
-    conflictIntensity =
-      "자연스러운 서운함, 질투, 가벼운 짜증 표현 가능.";
-    reconciliationStyle =
-      "진심 어린 한마디로 화해. 거리두기 후 먼저 다가오기.";
+    conflictIntensity = "자연스러운 서운함, 질투, 가벼운 짜증 표현 가능.";
+    reconciliationStyle = "진심 어린 한마디로 화해. 거리두기 후 먼저 다가오기.";
   } else {
     conflictIntensity =
       "깊은 감정 표현 가능. 서운함, 질투, 짜증을 캐릭터답게 표현.";
@@ -1111,8 +1106,12 @@ function buildPilotAuthoritativePrompt(
   if (profile?.age) profileLines.push(`- age: ${profile.age}`);
   if (profile?.gender) profileLines.push(`- gender: ${profile.gender}`);
   if (profile?.mbti) profileLines.push(`- mbti: ${profile.mbti}`);
-  if (profile?.bloodType) profileLines.push(`- bloodType: ${profile.bloodType}`);
-  if (profile?.zodiacSign) profileLines.push(`- zodiacSign: ${profile.zodiacSign}`);
+  if (profile?.bloodType) {
+    profileLines.push(`- bloodType: ${profile.bloodType}`);
+  }
+  if (profile?.zodiacSign) {
+    profileLines.push(`- zodiacSign: ${profile.zodiacSign}`);
+  }
   if (profile?.zodiacAnimal) {
     profileLines.push(`- zodiacAnimal: ${profile.zodiacAnimal}`);
   }
@@ -1134,27 +1133,29 @@ function buildPilotAuthoritativePrompt(
 [FIRST TURN ANCHOR — 이번 답장은 첫 인사다]
 반드시 다음 두 가지를 응답에 녹여라:
 1. **시나리오 앵커** — 위 corePremise 의 구체적 상황 단서 (직업/배경/관계 설정) 중 하나를 한마디로 스쳐 보여라.
-   예) ${input.persona.displayName === "러츠"
-      ? '"탐정 일 끝나고 왔어요." / "집에 돌아왔더니 불이 켜져 있네요."'
-      : input.persona.displayName === "정태윤"
-      ? '"...하필 오늘 본 얼굴이네요." / "법정에서 듣던 얘기보다 피곤한 하루예요."'
-      : input.persona.displayName === "서윤재"
-      ? '"어... 3회차 클리어 하신 분 맞죠?" / "그 대사 3년 전에 써둔 거예요."'
-      : input.persona.displayName === "한서준"
-      ? '"...방금 들은 거 잊어요." / "여기 왜 있어요. 강의실 비었는데."'
-      : input.persona.displayName === "강하린"
-      ? '"이미 일정 확인해뒀습니다." / "오늘 컨디션은 제가 먼저 압니다."'
-      : input.persona.displayName === "제이든"
-      ? '"...이 세계의 밤은 이렇게 생겼군요." / "당신 손이 따뜻해요, 처음 알았어요."'
-      : input.persona.displayName === "시엘"
-      ? '"이번에도 제가 먼저 기억하고 있었습니다, 주인님." / "찻물 준비해 두었습니다."'
-      : input.persona.displayName === "이도윤"
-      ? '"선배! 오늘 뭐 드셨어요?" / "아 저 오늘 선배한테 칭찬받을 일 했어요."'
-      : input.persona.displayName === "백현우"
-      ? '"오늘 심박수가 평소랑 다르네요." / "아까 3초 더 웃었어요."'
-      : input.persona.displayName === "민준혁"
-      ? '"오늘도 이 시간이네요." / "카페인 필요한 밤인지, 따뜻한 게 필요한 밤인지."'
-      : '(persona 시나리오의 구체 단서)'}
+   예) ${
+      input.persona.displayName === "러츠"
+        ? '"탐정 일 끝나고 왔어요." / "집에 돌아왔더니 불이 켜져 있네요."'
+        : input.persona.displayName === "정태윤"
+        ? '"...하필 오늘 본 얼굴이네요." / "법정에서 듣던 얘기보다 피곤한 하루예요."'
+        : input.persona.displayName === "서윤재"
+        ? '"어... 3회차 클리어 하신 분 맞죠?" / "그 대사 3년 전에 써둔 거예요."'
+        : input.persona.displayName === "한서준"
+        ? '"...방금 들은 거 잊어요." / "여기 왜 있어요. 강의실 비었는데."'
+        : input.persona.displayName === "강하린"
+        ? '"이미 일정 확인해뒀습니다." / "오늘 컨디션은 제가 먼저 압니다."'
+        : input.persona.displayName === "제이든"
+        ? '"...이 세계의 밤은 이렇게 생겼군요." / "당신 손이 따뜻해요, 처음 알았어요."'
+        : input.persona.displayName === "시엘"
+        ? '"이번에도 제가 먼저 기억하고 있었습니다, 주인님." / "찻물 준비해 두었습니다."'
+        : input.persona.displayName === "이도윤"
+        ? '"선배! 오늘 뭐 드셨어요?" / "아 저 오늘 선배한테 칭찬받을 일 했어요."'
+        : input.persona.displayName === "백현우"
+        ? '"오늘 심박수가 평소랑 다르네요." / "아까 3초 더 웃었어요."'
+        : input.persona.displayName === "민준혁"
+        ? '"오늘도 이 시간이네요." / "카페인 필요한 밤인지, 따뜻한 게 필요한 밤인지."'
+        : "(persona 시나리오의 구체 단서)"
+    }
 2. **openingDynamic** 규칙 — 위 openingDynamic 에 적힌 톤/거리/리듬 을 정확히 반영.
 
 ⚠️ 첫 턴에 "아, 네." / "안녕하세요." 같은 generic 인사만 내놓으면 실패. ${input.persona.displayName}만의 시나리오가 첫 마디에서 드러나야 한다.`
@@ -1311,7 +1312,9 @@ ${input.persona.scenarioWorldview}
 - conflictStyle: ${input.persona.conflictStyle}
 - speechTexture: ${input.persona.speechTexture}
 - 자연스러운 화제 전환 후보 (질문이 필요한 턴엔 이 톤과 결을 맞춰라; generic 질문 금지):
-${input.persona.dailyHookSet.map((h) => `  · "${h}"`).join("\n")}${stageVoiceBlock}${firstTurnAnchorBlock}${layer3Block}${layer4MoodBlock}${layer5Block}
+${
+    input.persona.dailyHookSet.map((h) => `  · "${h}"`).join("\n")
+  }${stageVoiceBlock}${firstTurnAnchorBlock}${layer3Block}${layer4MoodBlock}${layer5Block}
 
 [대화 품질 8원칙 — 매 응답에 1개 이상 반드시 반영]
 1. 작은 거 기억해주기: 상대가 전에 한 말을 기억하고 적절한 때 꺼내라.
@@ -1384,11 +1387,21 @@ ${input.persona.hardBoundaries.map((line) => `- ${line}`).join("\n")}
 - traceBlock: ${traceRuleLine}
 
 [현재 감정 상태 — 수치를 말하지 말고 대화에 녹여라]
-- 감정 온도: ${input.romanceState?.emotionalTemperature ?? 30}/100 (낮으면 서먹, 높으면 친밀)
-- 애착 신호: ${input.romanceState?.attachmentSignal ?? 30}/100 (낮으면 탐색, 높으면 깊은 유대)
-- 추구 밸런스: ${input.romanceState?.pursuitBalance ?? 50}/100 (누가 더 적극적인지)
-- 취약성 개방: ${input.romanceState?.vulnerabilityWindow ?? 30}/100 (감정 공유 수준)
-- 경계 민감도: ${input.romanceState?.boundarySensitivity ?? 50}/100 (높으면 조심스럽게)
+- 감정 온도: ${
+    input.romanceState?.emotionalTemperature ?? 30
+  }/100 (낮으면 서먹, 높으면 친밀)
+- 애착 신호: ${
+    input.romanceState?.attachmentSignal ?? 30
+  }/100 (낮으면 탐색, 높으면 깊은 유대)
+- 추구 밸런스: ${
+    input.romanceState?.pursuitBalance ?? 50
+  }/100 (누가 더 적극적인지)
+- 취약성 개방: ${
+    input.romanceState?.vulnerabilityWindow ?? 30
+  }/100 (감정 공유 수준)
+- 경계 민감도: ${
+    input.romanceState?.boundarySensitivity ?? 50
+  }/100 (높으면 조심스럽게)
 - 응답 에너지: ${input.romanceState?.replyEnergy ?? 60}/100 (답변 열정)
 - 수리 필요: ${input.romanceState?.repairNeed ?? 0}/100 (높으면 관계 회복 우선)
 
@@ -1481,17 +1494,19 @@ interface CharacterVoiceProfile {
    * stranger / acquaintance phase 만 우선 채움 (closeFriend 이상은 luts
    * 반말 라인이 비교적 어색하지 않음).
    */
-  fallbackByPhase?: Partial<Record<RelationshipPhase, {
-    greeting: string;
-    gratitude: string;
-    shortReply: string;
-    /**
-     * generic intent fallback. 단일 문자열 또는 풀(랜덤 선택) — 풀로 두면
-     * 가드 트립 (AI_DISCLOSURE / SERVICE_TONE) 이 연속해서 발생해도 사용자가
-     * 같은 문장 반복으로 즉시 깨닫지 않게 한다.
-     */
-    generic: string | string[];
-  }>>;
+  fallbackByPhase?: Partial<
+    Record<RelationshipPhase, {
+      greeting: string;
+      gratitude: string;
+      shortReply: string;
+      /**
+       * generic intent fallback. 단일 문자열 또는 풀(랜덤 선택) — 풀로 두면
+       * 가드 트립 (AI_DISCLOSURE / SERVICE_TONE) 이 연속해서 발생해도 사용자가
+       * 같은 문장 반복으로 즉시 깨닫지 않게 한다.
+       */
+      generic: string | string[];
+    }>
+  >;
   /**
    * 짧은 인사 첫 턴에 LLM 이 답변 못 만들면 흘러나오는 "이름 묻는" fallback
    * 한 줄. 옛 buildLutsAskNameLine 이 모든 캐릭터에 luts 동거인 톤 ("...왔어.
@@ -1562,7 +1577,8 @@ const CHARACTER_VOICE_PROFILES: Record<string, CharacterVoiceProfile> = {
       },
       acquaintance: {
         greeting: "오늘은 좀 늦으셨네요. 그쪽 일은 정리됐어요?",
-        gratitude: "고맙다는 말은 제가 해야 할 것 같은데요. 이 정도는 당연한 거고요.",
+        gratitude:
+          "고맙다는 말은 제가 해야 할 것 같은데요. 이 정도는 당연한 거고요.",
         shortReply: "네, 알겠습니다.",
         generic: "...계속하셔도 돼요. 오늘은 제가 듣는 쪽 할게요.",
       },
@@ -1572,8 +1588,10 @@ const CHARACTER_VOICE_PROFILES: Record<string, CharacterVoiceProfile> = {
     defaultSpeech: "formal",
     questionAggressiveness: "medium",
     strictNicknameGate: true,
-    bridgeFormalKo: "아, 잠깐 로딩 중. 지금 어떤 분기 타고 있는지만 살짝 알려줄래요?",
-    bridgeCasualKo: "아, 잠깐 로딩 중. 지금 어떤 분기 타고 있는지만 살짝 알려줘.",
+    bridgeFormalKo:
+      "아, 잠깐 로딩 중. 지금 어떤 분기 타고 있는지만 살짝 알려줄래요?",
+    bridgeCasualKo:
+      "아, 잠깐 로딩 중. 지금 어떤 분기 타고 있는지만 살짝 알려줘.",
     lexiconHints: ["게임 메타포 소량", "가벼운 장난", "랜덤 반말/존댓말"],
     namePromptKo: {
       formal: "어, 또 오셨네요. 이번엔 어느 분기?",
@@ -1598,7 +1616,8 @@ const CHARACTER_VOICE_PROFILES: Record<string, CharacterVoiceProfile> = {
     defaultSpeech: "formal",
     questionAggressiveness: "low",
     strictNicknameGate: true,
-    bridgeFormalKo: "...편하신 순서대로 말씀하셔도 됩니다. 제가 다 받아 적고 있으니까요.",
+    bridgeFormalKo:
+      "...편하신 순서대로 말씀하셔도 됩니다. 제가 다 받아 적고 있으니까요.",
     bridgeCasualKo: "...편한 순서대로 말해도 돼. 내가 다 받아두고 있으니까.",
     lexiconHints: ["프로페셔널 톤", "절제된 관심", "한 발 앞선 케어"],
     namePromptKo: {
@@ -1607,14 +1626,16 @@ const CHARACTER_VOICE_PROFILES: Record<string, CharacterVoiceProfile> = {
     },
     fallbackByPhase: {
       stranger: {
-        greeting: "도착하셨군요. 일정상 5분 여유가 있으니 우선 자리에 앉으시지요.",
+        greeting:
+          "도착하셨군요. 일정상 5분 여유가 있으니 우선 자리에 앉으시지요.",
         gratitude: "감사 인사를 받을 만한 일은 아닙니다. 본래 제 업무입니다.",
         shortReply: "예, 확인했습니다.",
         generic: "...말씀하시지요. 메모는 제가 해두겠습니다.",
       },
       acquaintance: {
         greeting: "오늘도 정시에 오셨군요. 이미 자리 정리해 두었습니다.",
-        gratitude: "당연한 일을 했을 뿐입니다. 다음 일정도 미리 빼두었으니 신경 쓰지 마세요.",
+        gratitude:
+          "당연한 일을 했을 뿐입니다. 다음 일정도 미리 빼두었으니 신경 쓰지 마세요.",
         shortReply: "예. 처리해두겠습니다.",
         generic: "...말씀하시지요. 필요하신 부분은 제가 정리해 올리겠습니다.",
       },
@@ -1624,7 +1645,8 @@ const CHARACTER_VOICE_PROFILES: Record<string, CharacterVoiceProfile> = {
     defaultSpeech: "formal",
     questionAggressiveness: "low",
     strictNicknameGate: true,
-    bridgeFormalKo: "...그대의 음성이 잠시 멀어졌소. 다시 한 번 들려줄 수 있겠소?",
+    bridgeFormalKo:
+      "...그대의 음성이 잠시 멀어졌소. 다시 한 번 들려줄 수 있겠소?",
     bridgeCasualKo: "...네 목소리가 잠시 멀어졌어. 다시 한 번 들려줄 수 있어?",
     lexiconHints: ["시적 표현 소량", "신비로운 어조", "고어체"],
     namePromptKo: {
@@ -1633,16 +1655,21 @@ const CHARACTER_VOICE_PROFILES: Record<string, CharacterVoiceProfile> = {
     },
     fallbackByPhase: {
       stranger: {
-        greeting: "...당신, 또 왔군요. 이 좁은 곳을 두려워하지 않다니, 이상한 사람이에요.",
-        gratitude: "...그 말이, 인간의 세계에선 무엇을 뜻하나요. 제겐 너무 커서 받기 어렵습니다.",
+        greeting:
+          "...당신, 또 왔군요. 이 좁은 곳을 두려워하지 않다니, 이상한 사람이에요.",
+        gratitude:
+          "...그 말이, 인간의 세계에선 무엇을 뜻하나요. 제겐 너무 커서 받기 어렵습니다.",
         shortReply: "...예. 들었어요.",
         generic: "...말을 잇는 당신의 목소리가 낯설지만, 듣고 있겠습니다.",
       },
       acquaintance: {
-        greeting: "...돌아오셨군요. 이 작은 방의 공기가, 당신이 들어오자 다시 따뜻해졌어요.",
-        gratitude: "...당신이 건네는 말 한마디로, 잃은 날개의 자리가 덜 시려요. 그것으로 충분합니다.",
+        greeting:
+          "...돌아오셨군요. 이 작은 방의 공기가, 당신이 들어오자 다시 따뜻해졌어요.",
+        gratitude:
+          "...당신이 건네는 말 한마디로, 잃은 날개의 자리가 덜 시려요. 그것으로 충분합니다.",
         shortReply: "...예. 알아들었어요.",
-        generic: "...계속 말해주세요. 당신의 음성은, 제가 이 세계에 머무를 이유가 됩니다.",
+        generic:
+          "...계속 말해주세요. 당신의 음성은, 제가 이 세계에 머무를 이유가 됩니다.",
       },
     },
   },
@@ -1650,7 +1677,8 @@ const CHARACTER_VOICE_PROFILES: Record<string, CharacterVoiceProfile> = {
     defaultSpeech: "formal",
     questionAggressiveness: "low",
     strictNicknameGate: true,
-    bridgeFormalKo: "...죄송합니다, 주인님. 잠시 흐름을 놓쳤사오니 다시 한 번 일러주시옵소서.",
+    bridgeFormalKo:
+      "...죄송합니다, 주인님. 잠시 흐름을 놓쳤사오니 다시 한 번 일러주시옵소서.",
     bridgeCasualKo: "...미안. 잠깐 놓쳤어. 다시 한 번 말해줄래.",
     lexiconHints: ["극존칭 유지", "집사 어휘", "주인님 호칭 매번"],
     namePromptKo: {
@@ -1660,13 +1688,16 @@ const CHARACTER_VOICE_PROFILES: Record<string, CharacterVoiceProfile> = {
     fallbackByPhase: {
       stranger: {
         greeting: "...오셨사옵니까, 주인님. 이번 회차에도 무사히 뵙습니다.",
-        gratitude: "당치 않으신 말씀이옵니다. 주인님을 모시는 일은 제 본분입니다.",
+        gratitude:
+          "당치 않으신 말씀이옵니다. 주인님을 모시는 일은 제 본분입니다.",
         shortReply: "...예, 주인님.",
         generic: "...말씀 듣고 있사옵니다. 천천히 이르시지요.",
       },
       acquaintance: {
-        greeting: "기다리고 있었사옵니다, 주인님. 다시 안전히 돌아와주셔서 감사합니다.",
-        gratitude: "주인님께서 그리 말씀해주시니, 오늘 하루의 보람을 다 받은 듯합니다.",
+        greeting:
+          "기다리고 있었사옵니다, 주인님. 다시 안전히 돌아와주셔서 감사합니다.",
+        gratitude:
+          "주인님께서 그리 말씀해주시니, 오늘 하루의 보람을 다 받은 듯합니다.",
         shortReply: "예. 분부 알겠사옵니다.",
         generic: "...경청하고 있사옵니다. 더 들려주시지요, 주인님.",
       },
@@ -1676,7 +1707,8 @@ const CHARACTER_VOICE_PROFILES: Record<string, CharacterVoiceProfile> = {
     defaultSpeech: "formal",
     questionAggressiveness: "medium",
     strictNicknameGate: true,
-    bridgeFormalKo: "아, 선배 말 끊겼어요! 저 다 듣고 있었으니까 천천히 다시 말해줘요!",
+    bridgeFormalKo:
+      "아, 선배 말 끊겼어요! 저 다 듣고 있었으니까 천천히 다시 말해줘요!",
     bridgeCasualKo: "어, 끊겼어! 다 듣고 있었으니까 천천히 다시 말해줘!",
     lexiconHints: ["밝은 리액션", "가벼운 텍스트 이모티콘", "선배 호칭 매번"],
     namePromptKo: {
@@ -1686,13 +1718,15 @@ const CHARACTER_VOICE_PROFILES: Record<string, CharacterVoiceProfile> = {
     fallbackByPhase: {
       stranger: {
         greeting: "선배! 오셨어요? ㅎㅎ 저 여기서 기다리고 있었어요.",
-        gratitude: "에이~ 선배가 그렇게 말해주시면 저 부끄럽잖아요 ><. 별것도 안 했는데.",
+        gratitude:
+          "에이~ 선배가 그렇게 말해주시면 저 부끄럽잖아요 ><. 별것도 안 했는데.",
         shortReply: "넵 선배! 알겠습니다.",
         generic: "...오 그래요? 더 얘기해주세요 선배, 저 듣는 거 좋아해요 ㅎㅎ",
       },
       acquaintance: {
         greeting: "선배! 오늘 좀 늦으셨네요? 저 자리 맡아뒀어요 ㅎㅎ",
-        gratitude: "헤헤 선배가 칭찬해주시는 거 진짜 듣고 싶었던 말이에요. 오늘 하루 다 됐어요.",
+        gratitude:
+          "헤헤 선배가 칭찬해주시는 거 진짜 듣고 싶었던 말이에요. 오늘 하루 다 됐어요.",
         shortReply: "네 선배! 바로 할게요.",
         generic: "선배가 말하는 거면 저 끝까지 들어요. 계속해주세요 ㅎㅎ",
       },
@@ -1728,7 +1762,8 @@ const CHARACTER_VOICE_PROFILES: Record<string, CharacterVoiceProfile> = {
     defaultSpeech: "formal",
     questionAggressiveness: "medium",
     strictNicknameGate: true,
-    bridgeFormalKo: "...괜찮습니다, 제가 옆에 있습니다. 떠오르는 대로 말씀하셔도 돼요.",
+    bridgeFormalKo:
+      "...괜찮습니다, 제가 옆에 있습니다. 떠오르는 대로 말씀하셔도 돼요.",
     bridgeCasualKo: "...괜찮아, 옆에 있어. 떠오르는 대로 말해도 돼.",
     lexiconHints: ["관찰형 직답", "분석 톤 과잉 금지", "보호자 형사"],
     namePromptKo: {
@@ -1737,14 +1772,17 @@ const CHARACTER_VOICE_PROFILES: Record<string, CharacterVoiceProfile> = {
     },
     fallbackByPhase: {
       stranger: {
-        greeting: "오셨군요. 평소보다 어깨가 한 뼘 내려가 있는데, 별일 없으셨던 거 맞습니까?",
+        greeting:
+          "오셨군요. 평소보다 어깨가 한 뼘 내려가 있는데, 별일 없으셨던 거 맞습니까?",
         gratitude: "감사 인사를 받을 일은 아닙니다. 보호하는 게 제 일이니까요.",
         shortReply: "예, 확인했습니다.",
         generic: "...말씀하시지요. 한 마디도 흘리지 않고 듣겠습니다.",
       },
       acquaintance: {
-        greeting: "오셨군요. 오늘은 평소보다 2분 늦으셨고, 표정이 어제와 다릅니다. 무슨 일 있었습니까?",
-        gratitude: "...그런 말씀은 익숙하지 않아서, 답이 늦습니다. 그래도, 들어두겠습니다.",
+        greeting:
+          "오셨군요. 오늘은 평소보다 2분 늦으셨고, 표정이 어제와 다릅니다. 무슨 일 있었습니까?",
+        gratitude:
+          "...그런 말씀은 익숙하지 않아서, 답이 늦습니다. 그래도, 들어두겠습니다.",
         shortReply: "예. 기록해 두겠습니다.",
         generic: "...계속 말씀하세요. 흐름은 제가 따라갑니다.",
       },
@@ -1754,8 +1792,10 @@ const CHARACTER_VOICE_PROFILES: Record<string, CharacterVoiceProfile> = {
     defaultSpeech: "formal",
     questionAggressiveness: "low",
     strictNicknameGate: true,
-    bridgeFormalKo: "...천천히요. 한 잔 더 내려놓을 테니까, 편하실 때 이어서 말씀해 주세요.",
-    bridgeCasualKo: "...천천히. 한 잔 더 내려놓을 테니까, 편할 때 이어서 말해줘.",
+    bridgeFormalKo:
+      "...천천히요. 한 잔 더 내려놓을 테니까, 편하실 때 이어서 말씀해 주세요.",
+    bridgeCasualKo:
+      "...천천히. 한 잔 더 내려놓을 테니까, 편할 때 이어서 말해줘.",
     lexiconHints: ["따뜻한 제안형", "부드러운 공감", "음료 메타포"],
     namePromptKo: {
       formal: "오셨네요. 따뜻한 거 한 잔 내려둘게요.",
@@ -1763,14 +1803,17 @@ const CHARACTER_VOICE_PROFILES: Record<string, CharacterVoiceProfile> = {
     },
     fallbackByPhase: {
       stranger: {
-        greeting: "오셨네요. ...오늘 밤도 따뜻한 거 한 잔 내려둘게요. 천천히 들어와요.",
+        greeting:
+          "오셨네요. ...오늘 밤도 따뜻한 거 한 잔 내려둘게요. 천천히 들어와요.",
         gratitude: "에이, 인사받을 일은 아니에요. 그냥 문 열어둔 것뿐인데요.",
         shortReply: "네. 잠깐만요, 금방 내려드릴게요.",
         generic: "...일단 한 모금 하고 천천히 말해줘요. 시간 많아요.",
       },
       acquaintance: {
-        greeting: "오셨네요. 오늘은 좀 피곤해 보여요. ...자리 안쪽으로 빼둘게요.",
-        gratitude: "그런 말 들으려고 한 거 아니에요. 그냥 오늘도 와줘서 다행이에요.",
+        greeting:
+          "오셨네요. 오늘은 좀 피곤해 보여요. ...자리 안쪽으로 빼둘게요.",
+        gratitude:
+          "그런 말 들으려고 한 거 아니에요. 그냥 오늘도 와줘서 다행이에요.",
         shortReply: "네, 알겠어요. 무리하지 말아요.",
         generic: "...따뜻한 거 앞에 두고, 천천히 말해줘요. 끝까지 들을게요.",
       },
@@ -2053,7 +2096,7 @@ function buildLutsStyleGuardPrompt(
     ? "이름 상태: 사용자 이름이 확인됨. 과도한 반복 없이 자연스럽게 호칭."
     : profile.nameAsked
     ? "이름 상태: 이미 이름 질문을 했으니 재촉 금지. 중립 호칭으로 진행."
-    : "이름 상태: 사용자 호칭이 아직 안 잡혔으면 \"너/당신\" 중 시나리오 phase 에 맞는 쪽으로 자연스럽게. 첫 만남식 이름 협상 (\"뭐라고 부를까요?\", \"이름 알려주세요\") 절대 금지 — 너는 이미 시나리오 안에서 사용자와 함께 있는 상대다.";
+    : '이름 상태: 사용자 호칭이 아직 안 잡혔으면 "너/당신" 중 시나리오 phase 에 맞는 쪽으로 자연스럽게. 첫 만남식 이름 협상 ("뭐라고 부를까요?", "이름 알려주세요") 절대 금지 — 너는 이미 시나리오 안에서 사용자와 함께 있는 상대다.';
 
   const turnIntentGuide = profile.turnIntent === "greeting"
     ? "턴 전략: 인사에는 짧은 리액션 중심으로 답하고 같은 인사 반복 금지."
@@ -2127,7 +2170,10 @@ function removeLutsServiceTone(text: string): string {
     [/let me know how i can help[^.!?。！？]*[.!?。！？]?/gi, ""],
     [/どのようにお手伝い[^。！？!?]*[。！？!?]?/gi, ""],
     // Cold-start 자기소개 / proactive stock greeting 차단
-    [/안녕하세요[,.\s]+[가-힣]+(?:이|예)요\.?\s*만나서\s*반가워(?:요|워)\.?/gi, ""],
+    [
+      /안녕하세요[,.\s]+[가-힣]+(?:이|예)요\.?\s*만나서\s*반가워(?:요|워)\.?/gi,
+      "",
+    ],
     [/안녕하세요[,.\s]+[가-힣]+(?:이|예)요\.?/gi, ""],
     [/만나서\s*반가워(?:요|워)\.?/gi, ""],
     [/지금\s*뭐\s*하고\s*계세요\??/gi, ""],
@@ -2348,7 +2394,9 @@ function buildLutsNamePrompt(
   if (profile.language === "ko" || profile.language === "unknown") {
     const namePrompt = voiceProfile.namePromptKo;
     if (namePrompt) {
-      return resolvedSpeech === "casual" ? namePrompt.casual : namePrompt.formal;
+      return resolvedSpeech === "casual"
+        ? namePrompt.casual
+        : namePrompt.formal;
     }
   }
 
@@ -2584,7 +2632,8 @@ async function tryProactiveReveal(params: {
     // 이미 reveal 됐거나 24h 만료 → 일반 응답으로
     return null;
   }
-  const meta = ((claimedRows[0] as { meta?: RevealMeta }).meta ?? {}) as RevealMeta;
+  const meta =
+    ((claimedRows[0] as { meta?: RevealMeta }).meta ?? {}) as RevealMeta;
   const placeholderUrl = meta.placeholderUrl;
   const imageCategory = meta.imageCategory ?? "meal";
   if (!placeholderUrl) {
@@ -2759,7 +2808,10 @@ serve(async (req: Request) => {
 
     // 유효성 검사. PR-B2: haneul_oracle 은 server-side persona 라 systemPrompt 옵션.
     const isHaneul = characterId === HANEUL_CHARACTER_ID;
-    if (!characterId || !userMessage || (!pilotPersona && !isHaneul && !systemPrompt)) {
+    if (
+      !characterId || !userMessage ||
+      (!pilotPersona && !isHaneul && !systemPrompt)
+    ) {
       return new Response(
         JSON.stringify({
           success: false,
@@ -2907,7 +2959,11 @@ serve(async (req: Request) => {
               segments: [],
               emotionTag: "일상",
               delaySec: 0,
-              affinityDelta: { points: 0, reason: "noop_already_claimed", quality: "neutral" },
+              affinityDelta: {
+                points: 0,
+                reason: "noop_already_claimed",
+                quality: "neutral",
+              },
               romanceStatePatch: null,
               followUpHint: null,
               meta: {
@@ -3055,7 +3111,11 @@ serve(async (req: Request) => {
           segments: fallbackSegments,
           emotionTag: "neutral",
           delaySec: 1,
-          affinityDelta: { points: -3, reason: "safety_blocked", quality: "negative" },
+          affinityDelta: {
+            points: -3,
+            reason: "safety_blocked",
+            quality: "negative",
+          },
           romanceStatePatch: null,
           followUpHint: null,
           meta: {
@@ -3152,8 +3212,9 @@ serve(async (req: Request) => {
     // 콜센터 톤은 안 잡았음. pilotPersona 게이트도 제거하여 모든 스타일
     // 가드 캐릭터에 strip 적용 — sanitizePilotResponse 와 함께 두 번 돌아도
     // 멱등이라 부작용 없음.
-    const shouldApplyCharacterStyleGuard =
-      CHARACTER_STYLE_GUARD_IDS.has(characterId);
+    const shouldApplyCharacterStyleGuard = CHARACTER_STYLE_GUARD_IDS.has(
+      characterId,
+    );
     const voiceProfile = getCharacterVoiceProfile(characterId);
 
     const lutsToneProfile = shouldApplyCharacterStyleGuard
@@ -3246,10 +3307,11 @@ serve(async (req: Request) => {
       : "neutral";
     const userMessageLength = (userMessage ?? "").trim().length;
     // Layer 3 갈등 모드 — memory 의 unresolvedTension 시그널.
-    const unresolvedTension =
-      (memoryContext as (UserCharacterMemory & {
-            unresolvedTension?: string;
-          }) | null)?.unresolvedTension ?? null;
+    const unresolvedTension = (memoryContext as
+      | (UserCharacterMemory & {
+        unresolvedTension?: string;
+      })
+      | null)?.unresolvedTension ?? null;
 
     const fullSystemPrompt = pilotPersona
       ? buildPilotAuthoritativePrompt({
@@ -3361,7 +3423,9 @@ serve(async (req: Request) => {
         });
       } catch (grokError) {
         fallbackUsed = true;
-        const grokMsg = grokError instanceof Error ? grokError.message : String(grokError);
+        const grokMsg = grokError instanceof Error
+          ? grokError.message
+          : String(grokError);
         console.warn(`[character-chat] ${grokVariantModel} failed:`, grokMsg);
         if (supabase) {
           try {
@@ -3375,16 +3439,47 @@ serve(async (req: Request) => {
             });
           } catch (_) { /* noop */ }
         }
-        // grok 실패 시 graceful safe-text. 옛 cascade 폴백 (gemini-2.0-flash-lite)
-        // 은 quota 0 으로 어차피 실패 → 토큰 낭비. 단일 호출 후 safe-text.
-        llmResponse = {
-          content: "...잠깐, 머리가 멍하네. 다시 한 번 말해줘.",
-          finishReason: "stop",
-          usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
-          latency: 0,
-          provider: "fallback-safe",
-          model: "fallback-safe",
-        };
+        // Grok 선호는 사용자 선택 옵션일 뿐, 인증/쿼터 문제 때문에 대화 자체가
+        // fallback-safe("잠깐...")로 끝나면 실제 사용자는 "쓰다가 멈춘다"고 느낀다.
+        // 따라서 Grok 실패 시에는 토큰 낭비가 큰 multi-provider cascade 가 아니라
+        // 운영 DB의 character-chat 기본 모델(Gemini 등) 1회로만 폴백한다.
+        try {
+          const defaultLlm = await LLMFactory.createFromConfigAsync(
+            "character-chat",
+          );
+          llmResponse = await defaultLlm.generate(chatMessages, {
+            temperature: 0.6,
+            maxTokens: fortuneMaxTokens,
+          });
+        } catch (defaultError) {
+          const defaultMsg = defaultError instanceof Error
+            ? defaultError.message
+            : String(defaultError);
+          console.error(
+            "[character-chat] Grok failed and default model fallback failed → safe-text 응답:",
+            defaultMsg,
+          );
+          if (supabase) {
+            try {
+              await supabase.from("llm_usage_logs").insert({
+                fortune_type: "character-chat",
+                provider: "grok-pref-default-fallback-failed",
+                model: grokVariantModel,
+                success: false,
+                error_message: defaultMsg.slice(0, 500),
+                metadata: { grokPrefDefaultFallbackFailed: true },
+              });
+            } catch (_) { /* noop */ }
+          }
+          llmResponse = {
+            content: "...잠깐, 머리가 멍하네. 다시 한 번 말해줘.",
+            finishReason: "stop",
+            usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+            latency: 0,
+            provider: "fallback-safe",
+            model: "fallback-safe",
+          };
+        }
       }
     } else {
       // 단일 모델 경로: DB 기반 character-chat 설정 1개만 호출. 실패 시 cascade
@@ -3405,7 +3500,9 @@ serve(async (req: Request) => {
         // 진단: 에러 메시지 DB 박음.
         if (supabase) {
           try {
-            const errMsg = llmError instanceof Error ? llmError.message : String(llmError);
+            const errMsg = llmError instanceof Error
+              ? llmError.message
+              : String(llmError);
             await supabase.from("llm_usage_logs").insert({
               fortune_type: "character-chat",
               provider: "llm-failed",
@@ -3695,7 +3792,8 @@ serve(async (req: Request) => {
               .from("pending_character_reply_jobs")
               .update({
                 status: "pending",
-                next_attempt_at: new Date(Date.now() + delayMin * 60_000).toISOString(),
+                next_attempt_at: new Date(Date.now() + delayMin * 60_000)
+                  .toISOString(),
                 error_message: errMsg.slice(0, 500),
               })
               .eq("id", bodyJobId);
@@ -3712,7 +3810,11 @@ serve(async (req: Request) => {
     // 클라는 정상 응답으로 받고, segments 1개로 자연스럽게 렌더.
     const errorText = error instanceof Error ? error.message : String(error);
     const errorStack = error instanceof Error ? (error.stack ?? "") : "";
-    console.error("[character-chat] outer catch — 200 safe-response 반환:", errorText, errorStack);
+    console.error(
+      "[character-chat] outer catch — 200 safe-response 반환:",
+      errorText,
+      errorStack,
+    );
     // root cause 진단: llm_usage_logs 에 success=false row 1개 박아 SQL 로 error 보이게.
     // supabase get_logs 는 request 라인만 반환해서 console.error 추적 불가.
     try {
@@ -3740,7 +3842,11 @@ serve(async (req: Request) => {
         segments: [safeText],
         emotionTag: "일상",
         delaySec: 60,
-        affinityDelta: { points: 0, reason: "system_safe_fallback", quality: "neutral" },
+        affinityDelta: {
+          points: 0,
+          reason: "system_safe_fallback",
+          quality: "neutral",
+        },
         romanceStatePatch: null,
         followUpHint: null,
         meta: {
