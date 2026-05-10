@@ -74,10 +74,10 @@ export function SpeakerButton({
       hitSlop={8}
       onPress={handlePress}
       style={({ pressed }) => ({
-        // alignSelf flex-start — 부모 View 의 alignItems:stretch 디폴트로
-        // Pressable 이 100% 폭으로 확장돼서 아이콘 옆 빈 공간 탭에도 TTS
-        // 발동하던 버그 fix. 아이콘 + 패딩만큼만 차지.
-        alignSelf: 'flex-start',
+        // alignSelf flex-end — 메시지 흐름을 중간에서 끊지 않도록 우측에 두되,
+        // Pressable 이 100% 폭으로 확장돼서 빈 공간 탭에도 TTS가 발동하지 않게
+        // 아이콘 + 패딩만큼만 차지한다.
+        alignSelf: 'flex-end',
         alignItems: 'center',
         flexDirection: 'row',
         gap: 4,
