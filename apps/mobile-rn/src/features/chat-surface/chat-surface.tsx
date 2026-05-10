@@ -861,6 +861,31 @@ function EmbeddedResultMessage({
   );
 }
 
+const CHAT_IMAGE_THUMBNAIL_MAX_WIDTH = 200;
+const CHAT_IMAGE_THUMBNAIL_MAX_HEIGHT = 300;
+
+function calculateChatImageThumbnailSize(
+  sourceWidth: number,
+  sourceHeight: number,
+): { width: number; height: number } {
+  if (sourceWidth <= 0 || sourceHeight <= 0) {
+    return {
+      width: CHAT_IMAGE_THUMBNAIL_MAX_WIDTH,
+      height: CHAT_IMAGE_THUMBNAIL_MAX_WIDTH,
+    };
+  }
+
+  const scale = Math.min(
+    CHAT_IMAGE_THUMBNAIL_MAX_WIDTH / sourceWidth,
+    CHAT_IMAGE_THUMBNAIL_MAX_HEIGHT / sourceHeight,
+  );
+
+  return {
+    width: Math.round(sourceWidth * scale),
+    height: Math.round(sourceHeight * scale),
+  };
+}
+
 /**
  * Chat image bubble — loading skeleton, onError fallback, tap → fullscreen.
  * Assistant proactive images and user-attached photos share this renderer.
@@ -877,7 +902,19 @@ function ImageMessageBubble({
   const [loadState, setLoadState] = useState<'loading' | 'loaded' | 'error'>(
     'loading',
   );
+  const [thumbnailSize, setThumbnailSize] = useState({
+    width: CHAT_IMAGE_THUMBNAIL_MAX_WIDTH,
+    height: CHAT_IMAGE_THUMBNAIL_MAX_WIDTH,
+  });
   const [fullscreenOpen, setFullscreenOpen] = useState(false);
+
+  useEffect(() => {
+    setThumbnailSize({
+      width: CHAT_IMAGE_THUMBNAIL_MAX_WIDTH,
+      height: CHAT_IMAGE_THUMBNAIL_MAX_WIDTH,
+    });
+    setLoadState('loading');
+  }, [imageUrl]);
 
   if (loadState === 'error') {
     return (
@@ -905,8 +942,8 @@ function ImageMessageBubble({
       >
         <View
           style={{
-            width: 200,
-            height: 200,
+            width: thumbnailSize.width,
+            height: thumbnailSize.height,
             borderRadius: fortuneTheme.radius.card,
             overflow: 'hidden',
             backgroundColor: fortuneTheme.colors.surfaceSecondary,
@@ -915,9 +952,15 @@ function ImageMessageBubble({
           <Image
             source={{ uri: imageUrl }}
             style={{ width: '100%', height: '100%' }}
-            resizeMode="contain"
+            resizeMode="cover"
             onLoadStart={() => setLoadState('loading')}
-            onLoad={() => setLoadState('loaded')}
+            onLoad={(event) => {
+              const { width, height } = event.nativeEvent.source;
+              if (typeof width === 'number' && typeof height === 'number') {
+                setThumbnailSize(calculateChatImageThumbnailSize(width, height));
+              }
+              setLoadState('loaded');
+            }}
             onError={() => setLoadState('error')}
           />
           {loadState === 'loading' ? (
