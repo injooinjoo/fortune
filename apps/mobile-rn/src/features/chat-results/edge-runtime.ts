@@ -27,6 +27,51 @@ import type {
 
 type UnknownRecord = Record<string, unknown>;
 
+export function isAbortError(error: unknown): boolean {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    ((error as { name?: string }).name === 'AbortError' ||
+      (error as { code?: string }).code === 'ABORT_ERR')
+  );
+}
+
+function createAbortError(message: string): Error {
+  const error = new Error(message);
+  error.name = 'AbortError';
+  return error;
+}
+
+function throwIfAborted(signal?: AbortSignal): void {
+  if (signal?.aborted) {
+    throw createAbortError('fortune generation cancelled');
+  }
+}
+
+function createLinkedAbortSignal(
+  externalSignal: AbortSignal | undefined,
+  timeoutMs: number,
+): { signal: AbortSignal; dispose: () => void } {
+  const controller = new AbortController();
+  const abortFromExternal = () => controller.abort();
+
+  if (externalSignal?.aborted) {
+    controller.abort();
+  } else {
+    externalSignal?.addEventListener('abort', abortFromExternal, { once: true });
+  }
+
+  const timeoutHandle = setTimeout(() => controller.abort(), timeoutMs);
+
+  return {
+    signal: controller.signal,
+    dispose: () => {
+      clearTimeout(timeoutHandle);
+      externalSignal?.removeEventListener('abort', abortFromExternal);
+    },
+  };
+}
+
 // ── Client-side fortune result cache ──────────────────────────
 // Same fortune type + same day + same user → skip Edge Function entirely.
 // Cache is keyed by `fortuneType:YYYY-MM-DD:userId` and holds up to 50 entries.
@@ -76,14 +121,34 @@ function setCachedResult(key: string, payload: EmbeddedResultPayload): void {
   fortuneResultCache.set(key, { payload, ts: Date.now() });
 }
 
+function readNestedString(record: unknown, path: string[]): string | undefined {
+  let current: unknown = record;
+  for (const key of path) {
+    if (!current || typeof current !== 'object') return undefined;
+    current = (current as UnknownRecord)[key];
+  }
+  return typeof current === 'string' && current.trim() ? current.trim() : undefined;
+}
+
+function hasPastLifePortrait(payload: EmbeddedResultPayload): boolean {
+  return Boolean(
+    readNestedString(payload, ['portraitUrl']) ??
+      readNestedString(payload.rawApiResponse, ['portraitUrl']) ??
+      readNestedString(payload.rawApiResponse, ['fortune', 'portraitUrl']) ??
+      readNestedString(payload.rawApiResponse, ['data', 'portraitUrl']),
+  );
+}
+
 export async function fetchEmbeddedEdgeResultPayload(
   fortuneType: FortuneTypeId,
   context: EmbeddedResultBuildContext = {},
   options: {
     userId?: string | null;
     aiMode?: AiMode;
+    signal?: AbortSignal;
   } = {},
 ): Promise<EmbeddedResultPayload | null> {
+  throwIfAborted(options.signal);
   const resultKind = resolveResultKindFromFortuneType(fortuneType);
   if (!resultKind) {
     return null;
@@ -93,10 +158,17 @@ export async function fetchEmbeddedEdgeResultPayload(
   const cacheKey = buildCacheKey(fortuneType, options.userId);
   const cached = getCachedResult(cacheKey);
   if (cached) {
-    if (__DEV__) {
-      console.log(`[fortune-cache] HIT: ${fortuneType} (skipping Edge Function)`);
+    if (fortuneType === 'past-life' && !hasPastLifePortrait(cached)) {
+      // 이전 on-device 텍스트 결과가 30분 캐시에 남아 있으면 계속 🏯 placeholder 를
+      // 재사용한다. 전생은 초상화가 핵심이므로 이미지 없는 캐시는 무시하고
+      // 서버 이미지 생성 경로로 다시 간다.
+      fortuneResultCache.delete(cacheKey);
+    } else {
+      if (__DEV__) {
+        console.log(`[fortune-cache] HIT: ${fortuneType} (skipping Edge Function)`);
+      }
+      return cached;
     }
-    return cached;
   }
 
   // On-device 라우팅 — aiMode='on-device' 이거나 'auto' 이고 모델이 ready 면
@@ -111,12 +183,16 @@ export async function fetchEmbeddedEdgeResultPayload(
         fortuneType,
         context,
       );
+      throwIfAborted(options.signal);
       setCachedResult(cacheKey, onDevicePayload);
       if (__DEV__) {
         console.log(`[fortune-on-device] SUCCESS: ${fortuneType}`);
       }
       return onDevicePayload;
     } catch (e) {
+      if (isAbortError(e) && options.signal?.aborted) {
+        throw e;
+      }
       if (__DEV__) {
         console.warn(
           `[fortune-on-device] failed for ${fortuneType}, falling back to cloud:`,
@@ -145,12 +221,13 @@ export async function fetchEmbeddedEdgeResultPayload(
   }
 
   const functionName = endpoint.replace(/^\//u, '');
-  // 타임아웃: gpt-image-2 기반 poster-guide (palm-reading 등) 은 20-40s 걸림
-  // → 90s 여유. 일반 텍스트 fortune 은 보통 5s 안에 끝나므로 timeout 큼은 무해.
-  const isLongRunning = endpoint === '/generate-poster-guide';
-  const timeoutMs = isLongRunning ? 90_000 : 35_000;
-  const controller = new AbortController();
-  const timeoutHandle = setTimeout(() => controller.abort(), timeoutMs);
+  // 타임아웃: gpt-image-2 / Gemini image 기반 poster-guide 및 전생 초상화는
+  // 이미지 생성 + Storage upload 때문에 20-60s 걸릴 수 있음 → 90s 여유.
+  // 일반 텍스트 fortune 은 보통 5s 안에 끝나므로 timeout 큼은 무해.
+  const isImageGeneratingFortune =
+    endpoint === '/generate-poster-guide' || fortuneType === 'past-life';
+  const timeoutMs = isImageGeneratingFortune ? 90_000 : 35_000;
+  const { signal, dispose } = createLinkedAbortSignal(options.signal, timeoutMs);
   let data: unknown;
   let error: unknown;
   try {
@@ -158,17 +235,21 @@ export async function fetchEmbeddedEdgeResultPayload(
       body,
       // supabase-js v2 는 signal 옵션을 fetch 에 pass-through 한다.
       // 타입 선언은 signal 을 아직 안 가지고 있어 캐스트.
-      ...({ signal: controller.signal } as { signal?: AbortSignal }),
+      ...({ signal } as { signal?: AbortSignal }),
     });
+    throwIfAborted(options.signal);
     data = invoke.data;
     error = invoke.error;
   } catch (err) {
-    if ((err as { name?: string })?.name === 'AbortError') {
-      throw new Error('edge-runtime timeout (35s)');
+    if (isAbortError(err) && options.signal?.aborted) {
+      throw createAbortError('edge-runtime aborted by user');
+    }
+    if (isAbortError(err)) {
+      throw new Error(`edge-runtime timeout (${timeoutMs / 1000}s)`);
     }
     throw err;
   } finally {
-    clearTimeout(timeoutHandle);
+    dispose();
   }
 
   if (error) {
@@ -182,6 +263,8 @@ export async function fetchEmbeddedEdgeResultPayload(
     normalized,
     context,
   );
+
+  throwIfAborted(options.signal);
 
   // Attach the ORIGINAL API response (before normalization) so result
   // components can access deep fields like fortune.portraitUrl, chapters, etc.
@@ -217,18 +300,35 @@ export async function startAsyncPosterJob(params: {
   characterName: string;
   imageBase64?: string;
   contextText?: string;
+  signal?: AbortSignal;
 }): Promise<{ jobId: string } | null> {
   if (!supabase) return null;
 
-  const { data, error } = await supabase.functions.invoke('start-poster-job', {
-    body: {
-      posterType: params.fortuneType,
-      characterId: params.characterId,
-      characterName: params.characterName,
-      imageBase64: params.imageBase64,
-      contextText: params.contextText,
-    },
-  });
+  throwIfAborted(params.signal);
+
+  let data: unknown;
+  let error: unknown;
+  try {
+    const response = await supabase.functions.invoke('start-poster-job', {
+      body: {
+        posterType: params.fortuneType,
+        characterId: params.characterId,
+        characterName: params.characterName,
+        imageBase64: params.imageBase64,
+        contextText: params.contextText,
+      },
+      ...({ signal: params.signal } as { signal?: AbortSignal }),
+    });
+    data = response.data;
+    error = response.error;
+  } catch (invokeError) {
+    if (isAbortError(invokeError) || params.signal?.aborted) {
+      throw createAbortError('async poster job registration cancelled');
+    }
+    throw invokeError;
+  }
+
+  throwIfAborted(params.signal);
 
   if (error) {
     console.warn('[start-poster-job] failed:', error);

@@ -79,6 +79,8 @@ export function ProfileEditScreen() {
           profile: {
             ...nextProfile,
             interestIds: state.profile.interestIds,
+            relationship: state.profile.relationship,
+            conversationTone: state.profile.conversationTone,
           },
         },
         userId,

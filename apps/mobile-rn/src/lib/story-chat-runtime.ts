@@ -7,6 +7,7 @@ import {
   type ChatShellTextMessage,
 } from './chat-shell';
 import { captureError } from './error-reporting';
+import { type MobileProfileState } from './mobile-app-state';
 import { consumePendingProactiveMessageId } from './push-notifications';
 import { getSecureItem, setSecureItem } from './secure-store-storage';
 import { supabase } from './supabase';
@@ -41,6 +42,11 @@ export interface StoryChatRequest {
   responseGoal: StoryResponseGoal;
   safeAffectionCap: number;
 }
+
+type StoryChatUserProfile = Pick<
+  MobileProfileState,
+  'displayName' | 'birthDate' | 'mbti' | 'relationship' | 'conversationTone' | 'interestIds'
+>;
 
 export interface StoryChatResponse {
   success?: boolean;
@@ -1169,6 +1175,7 @@ export async function invokeStoryChat(
     imageBase64?: string;
     userMessageId?: string;
     modelPreference?: 'default' | 'grok-fast' | 'grok';
+    userProfile?: StoryChatUserProfile;
   },
 ): Promise<StoryChatResponse> {
   const request = buildStoryChatRequest(character, userMessage, thread);
@@ -1197,6 +1204,18 @@ export async function invokeStoryChat(
   const bodyWithModel = options?.modelPreference && options.modelPreference !== 'default'
     ? { ...bodyWithImage, modelPreference: options.modelPreference }
     : bodyWithImage;
+  const bodyWithProfile = options?.userProfile
+    ? {
+        ...bodyWithModel,
+        userProfile: {
+          name: options.userProfile.displayName,
+          mbti: options.userProfile.mbti,
+          relationship: options.userProfile.relationship,
+          tone: options.userProfile.conversationTone ?? undefined,
+          topics: options.userProfile.interestIds,
+        },
+      }
+    : bodyWithModel;
 
   // Slice 2: hookForReveal hook 의 push payload 에 동봉된 pendingProactiveMessageId
   // 가 있으면 이번 호출에 포함 → 서버는 이 id 로 reveal claim (race-free).
@@ -1204,8 +1223,8 @@ export async function invokeStoryChat(
   const pendingProactiveMessageId =
     consumePendingProactiveMessageId(character.id);
   const body = pendingProactiveMessageId
-    ? { ...bodyWithModel, pendingProactiveMessageId }
-    : bodyWithModel;
+    ? { ...bodyWithProfile, pendingProactiveMessageId }
+    : bodyWithProfile;
 
   // 답장 생성 큐 enqueue — 앱이 invoke 도중 죽거나 HTTP 가 도달 못 해도 cron
   // 이 30초 grace 후 같은 페이로드로 재호출. 회귀 안전: 실패해도 invoke 진행.

@@ -2196,6 +2196,14 @@ function SurveyImagePicker({
 }) {
   const [previewUri, setPreviewUri] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   async function pickFromSource(source: 'camera' | 'gallery') {
     setIsLoading(true);
@@ -2207,7 +2215,9 @@ function SurveyImagePicker({
           : await ImagePicker.requestMediaLibraryPermissionsAsync();
 
       if (!permissionResult.granted) {
-        setIsLoading(false);
+        if (mountedRef.current) {
+          setIsLoading(false);
+        }
         return;
       }
 
@@ -2227,18 +2237,26 @@ function SurveyImagePicker({
       });
 
       if (result.canceled || !result.assets?.[0]) {
-        setIsLoading(false);
+        if (mountedRef.current) {
+          setIsLoading(false);
+        }
+        return;
+      }
+
+      if (!mountedRef.current) {
         return;
       }
 
       const asset = result.assets[0];
       setPreviewUri(asset.uri);
 
-      if (asset.base64) {
+      if (asset.base64 && mountedRef.current) {
         onPickImage(asset.base64);
       }
     } catch {
-      setIsLoading(false);
+      if (mountedRef.current) {
+        setIsLoading(false);
+      }
     }
   }
 
@@ -2319,7 +2337,10 @@ function SurveyImagePicker({
 
 const SURVEY_FOOTER_LIFT = 18;
 
-function SurveyFooterFrame({ children }: PropsWithChildren) {
+function SurveyFooterFrame({
+  children,
+  onCancel,
+}: PropsWithChildren<{ onCancel?: () => void }>) {
   return (
     <View
       style={{
@@ -2327,6 +2348,18 @@ function SurveyFooterFrame({ children }: PropsWithChildren) {
         marginBottom: SURVEY_FOOTER_LIFT,
       }}
     >
+      {onCancel ? (
+        <Pressable
+          accessibilityLabel="운세 보기 취소"
+          accessibilityRole="button"
+          onPress={onCancel}
+          style={({ pressed }) => ({ alignSelf: 'flex-end', opacity: pressed ? 0.72 : 1 })}
+        >
+          <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>
+            취소
+          </AppText>
+        </Pressable>
+      ) : null}
       {children}
     </View>
   );
@@ -2383,6 +2416,7 @@ export function ActiveSurveyFooter({
   onSubmitSelection,
   onSubmitText,
   onSkip,
+  onCancel,
 }: {
   step: ChatSurveyStep;
   draft: string;
@@ -2394,13 +2428,13 @@ export function ActiveSurveyFooter({
   onSubmitSelection: () => void;
   onSubmitText: () => void;
   onSkip: () => void;
+  onCancel?: () => void;
 }) {
-  const canSubmitText = draft.trim().length > 0;
   const canSubmitSelection = selections.length > 0;
 
   if (step.inputKind === 'chips') {
     return (
-      <SurveyFooterFrame>
+      <SurveyFooterFrame onCancel={onCancel}>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
           {(step.options ?? []).map((option) => (
             <Pressable
@@ -2425,7 +2459,7 @@ export function ActiveSurveyFooter({
     // cover 이미지: assets/tarot-decks/{deck_id}/major/00_fool.webp.
     const deckPickerMaxHeight = Math.round(Dimensions.get('window').height * 0.6);
     return (
-      <SurveyFooterFrame>
+      <SurveyFooterFrame onCancel={onCancel}>
         <ScrollView
           style={{ maxHeight: deckPickerMaxHeight }}
           contentContainerStyle={{
@@ -2528,7 +2562,7 @@ export function ActiveSurveyFooter({
 
   if (step.inputKind === 'date') {
     return (
-      <SurveyFooterFrame>
+      <SurveyFooterFrame onCancel={onCancel}>
         <SurveyDatePicker onSelect={(isoDate) => onPickSingle(isoDate)} />
       </SurveyFooterFrame>
     );
@@ -2553,7 +2587,7 @@ export function ActiveSurveyFooter({
     const requiredCount = step.maxSelections ?? 3;
 
     return (
-      <SurveyFooterFrame>
+      <SurveyFooterFrame onCancel={onCancel}>
         <TarotDrawWidget
           requiredCount={requiredCount}
           deckName={deckName}
@@ -2566,7 +2600,7 @@ export function ActiveSurveyFooter({
 
   if (step.inputKind === 'multi-select') {
     return (
-      <SurveyFooterFrame>
+      <SurveyFooterFrame onCancel={onCancel}>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
           {(step.options ?? []).map((option) => {
             const selected = selections.includes(option.id);
@@ -2595,7 +2629,7 @@ export function ActiveSurveyFooter({
 
   if (step.inputKind === 'image') {
     return (
-      <SurveyFooterFrame>
+      <SurveyFooterFrame onCancel={onCancel}>
         <SurveyImagePicker onPickImage={onPickSingle} />
       </SurveyFooterFrame>
     );
@@ -2603,14 +2637,14 @@ export function ActiveSurveyFooter({
 
   if (step.inputKind === 'mbti-axis') {
     return (
-      <SurveyFooterFrame>
+      <SurveyFooterFrame onCancel={onCancel}>
         <MbtiAxisPicker onSubmit={onPickSingle} />
       </SurveyFooterFrame>
     );
   }
 
   return (
-    <SurveyFooterFrame>
+    <SurveyFooterFrame onCancel={onCancel}>
       <SurveyComposer
         value={draft}
         onChangeText={onDraftChange}
