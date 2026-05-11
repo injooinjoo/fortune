@@ -26,6 +26,7 @@ import {
 } from '../../lib/chat-characters';
 import type {
   ChatShellAction,
+  ChatShellAudioMessage,
   ChatShellImageMessage,
   ChatShellMessage,
   ChatShellTextMessage,
@@ -402,6 +403,8 @@ function extractMessagePreview(message: ChatShellMessage): string {
       return message.text.replace(/\s+/g, ' ').trim();
     case 'image':
       return message.caption?.trim() ? `📷 ${message.caption}` : '📷 사진';
+    case 'audio':
+      return message.caption?.trim() ? `🎤 ${message.caption}` : '🎤 음성 메시지';
     case 'embedded-result':
       return `📌 ${message.title ?? '결과 카드'}`;
     case 'fortune-cookie':
@@ -1034,6 +1037,122 @@ function ImageMessageBubble({
   );
 }
 
+function formatAudioDuration(durationMillis?: number): string {
+  if (!durationMillis || durationMillis <= 0) return '0:00';
+  const totalSeconds = Math.max(0, Math.round(durationMillis / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${String(seconds).padStart(2, '0')}`;
+}
+
+function AudioMessageBubble({
+  audioUrl,
+  durationMillis,
+  caption,
+  sender,
+}: {
+  audioUrl: string;
+  durationMillis?: number;
+  caption?: string;
+  sender: ChatShellAudioMessage['sender'];
+}) {
+  const [playing, setPlaying] = useState(false);
+  const soundRef = useRef<import('expo-av').Audio.Sound | null>(null);
+
+  useEffect(() => {
+    return () => {
+      soundRef.current?.unloadAsync().catch(() => undefined);
+      soundRef.current = null;
+    };
+  }, []);
+
+  const handleTogglePlay = useCallback(async () => {
+    try {
+      if (soundRef.current && playing) {
+        await soundRef.current.pauseAsync();
+        setPlaying(false);
+        return;
+      }
+
+      if (!soundRef.current) {
+        const { Audio } = await import('expo-av');
+        const { sound } = await Audio.Sound.createAsync({ uri: audioUrl });
+        sound.setOnPlaybackStatusUpdate((status) => {
+          if ('didJustFinish' in status && status.didJustFinish) {
+            setPlaying(false);
+            sound.setPositionAsync(0).catch(() => undefined);
+          }
+        });
+        soundRef.current = sound;
+      }
+
+      await soundRef.current.playAsync();
+      setPlaying(true);
+    } catch {
+      Alert.alert('재생 실패', '음성 메시지를 재생할 수 없습니다.');
+      setPlaying(false);
+    }
+  }, [audioUrl, playing]);
+
+  return (
+    <View style={{ gap: 4 }}>
+      <Pressable
+        accessibilityLabel={playing ? '음성 메시지 일시정지' : '음성 메시지 재생'}
+        accessibilityRole="button"
+        onPress={handleTogglePlay}
+        style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
+      >
+        <View
+          style={{
+            alignItems: 'center',
+            backgroundColor: sender === 'user' ? 'rgba(232, 236, 255, 0.96)' : fortuneTheme.colors.surfaceSecondary,
+            borderRadius: 18,
+            flexDirection: 'row',
+            gap: 10,
+            minWidth: 168,
+            paddingHorizontal: 14,
+            paddingVertical: 10,
+          }}
+        >
+          <Ionicons
+            color={sender === 'user' ? fortuneTheme.colors.background : fortuneTheme.colors.textPrimary}
+            name={playing ? 'pause' : 'play'}
+            size={18}
+          />
+          <View style={{ flex: 1, gap: 2 }}>
+            <AppText
+              variant="labelLarge"
+              color={sender === 'user' ? fortuneTheme.colors.background : fortuneTheme.colors.textPrimary}
+            >
+              음성 메시지
+            </AppText>
+            <AppText
+              variant="caption"
+              color={sender === 'user' ? fortuneTheme.colors.background : fortuneTheme.colors.textSecondary}
+            >
+              {formatAudioDuration(durationMillis)}
+            </AppText>
+          </View>
+          <Ionicons
+            color={sender === 'user' ? fortuneTheme.colors.background : fortuneTheme.colors.textSecondary}
+            name="mic-outline"
+            size={16}
+          />
+        </View>
+      </Pressable>
+      {caption ? (
+        <AppText
+          variant="bodySmall"
+          color={fortuneTheme.colors.textSecondary}
+          style={{ textAlign: sender === 'user' ? 'right' : 'left' }}
+        >
+          {caption}
+        </AppText>
+      ) : null}
+    </View>
+  );
+}
+
 function ChatThreadMessage({
   character,
   message,
@@ -1070,6 +1189,7 @@ function ChatThreadMessage({
     message.kind === 'my-saju-context' ||
     message.kind === 'progress';
   const isImage = message.kind === 'image';
+  const isAudio = message.kind === 'audio';
 
   // Apple 5.2.3 — assistant 텍스트 메시지 long-press로 신고 시트 오픈.
   // text 이외 타입(결과 카드/서베이/사주 프리뷰 등)은 시스템-생성 혹은 위젯이라
@@ -1149,6 +1269,15 @@ function ChatThreadMessage({
           sender={message.sender}
         />
       );
+    if (isAudio)
+      return (
+        <AudioMessageBubble
+          audioUrl={message.audioUrl}
+          durationMillis={message.durationMillis}
+          caption={message.caption}
+          sender={message.sender}
+        />
+      );
     return (
       <MessageBubble
         message={message}
@@ -1159,8 +1288,8 @@ function ChatThreadMessage({
 
   // Slice 2: proactive 첫 메시지에 "먼저 톡 보냄 · HH:MM" 1-line 캡션.
   // PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.7 (A7).
-  const proactiveMeta = (message.kind === 'text' || message.kind === 'image')
-    ? (message as ChatShellTextMessage | ChatShellImageMessage).proactive
+  const proactiveMeta = (message.kind === 'text' || message.kind === 'image' || message.kind === 'audio')
+    ? (message as ChatShellTextMessage | ChatShellImageMessage | ChatShellAudioMessage).proactive
     : undefined;
   const proactiveCaptionLabel = (() => {
     if (!showProactiveCaption || !proactiveMeta?.generatedAt) return null;
@@ -1559,6 +1688,7 @@ export function ActiveChatComposer({
   onDraftChange,
   onSend,
   onOpenPhotoPicker,
+  onToggleAudioMessageRecording,
   onOpenPersonaSettings,
   onToggleVoiceInput,
   voiceInputState = 'idle',
@@ -1572,11 +1702,15 @@ export function ActiveChatComposer({
   hasCustomPersona = false,
   pendingImageUri,
   onRemovePendingImage,
+  pendingAudioDurationMillis,
+  onRemovePendingAudio,
+  audioMessageRecording = false,
 }: {
   draft: string;
   onDraftChange: (value: string) => void;
   onSend: () => void;
   onOpenPhotoPicker: () => void;
+  onToggleAudioMessageRecording?: () => void;
   onOpenPersonaSettings?: () => void;
   onToggleVoiceInput: () => void;
   voiceInputState?: VoiceInputState;
@@ -1594,11 +1728,15 @@ export function ActiveChatComposer({
   hasCustomPersona?: boolean;
   pendingImageUri?: string;
   onRemovePendingImage?: () => void;
+  pendingAudioDurationMillis?: number;
+  onRemovePendingAudio?: () => void;
+  audioMessageRecording?: boolean;
 }) {
   const composerHasDraft = draft.trim().length > 0;
   const hasPendingImage = Boolean(pendingImageUri);
+  const hasPendingAudio = pendingAudioDurationMillis != null;
   // 텍스트가 비어도 이미지가 첨부돼 있으면 전송 버튼이 활성화된다.
-  const canSend = composerHasDraft || hasPendingImage;
+  const canSend = composerHasDraft || hasPendingImage || hasPendingAudio;
   const safeQuickActions = Array.isArray(quickActions) ? quickActions : [];
   const trayActions = safeQuickActions.slice(0, 12);
   const voiceRecording = voiceInputState === 'recording';
@@ -1683,6 +1821,38 @@ export function ActiveChatComposer({
                 <AppText variant="labelLarge">사진 보내기</AppText>
               </View>
             </Pressable>
+            {onToggleAudioMessageRecording ? (
+              <Pressable
+                accessibilityLabel={audioMessageRecording ? '음성 녹음 완료' : '음성 보내기'}
+                accessibilityRole="button"
+                onPress={onToggleAudioMessageRecording}
+                style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
+              >
+                <View
+                  style={{
+                    alignItems: 'center',
+                    backgroundColor: audioMessageRecording ? '#EF4444' : fortuneTheme.colors.backgroundTertiary,
+                    borderRadius: 999,
+                    flexDirection: 'row',
+                    gap: 8,
+                    paddingHorizontal: 14,
+                    paddingVertical: 8,
+                  }}
+                >
+                  <Ionicons
+                    color={audioMessageRecording ? '#FFFFFF' : fortuneTheme.colors.textPrimary}
+                    name={audioMessageRecording ? 'stop-circle-outline' : 'mic-circle-outline'}
+                    size={16}
+                  />
+                  <AppText
+                    variant="labelLarge"
+                    color={audioMessageRecording ? '#FFFFFF' : undefined}
+                  >
+                    {audioMessageRecording ? '녹음 완료' : '음성 보내기'}
+                  </AppText>
+                </View>
+              </Pressable>
+            ) : null}
             {onOpenPersonaSettings ? (
               <Pressable
                 accessibilityLabel="성격 설정"
@@ -1816,6 +1986,32 @@ export function ActiveChatComposer({
                 name="close"
                 size={14}
               />
+            </Pressable>
+          </View>
+        </View>
+      ) : null}
+      {hasPendingAudio ? (
+        <View style={{ paddingBottom: 8, flexDirection: 'row', alignItems: 'center' }}>
+          <View
+            style={{
+              alignItems: 'center',
+              backgroundColor: fortuneTheme.colors.surfaceElevated,
+              borderRadius: 14,
+              flexDirection: 'row',
+              gap: 8,
+              paddingHorizontal: 12,
+              paddingVertical: 9,
+            }}
+          >
+            <Ionicons color={fortuneTheme.colors.textPrimary} name="mic-outline" size={16} />
+            <AppText variant="labelLarge">음성 {formatAudioDuration(pendingAudioDurationMillis)}</AppText>
+            <Pressable
+              accessibilityLabel="첨부 음성 취소"
+              accessibilityRole="button"
+              hitSlop={8}
+              onPress={onRemovePendingAudio}
+            >
+              <Ionicons color={fortuneTheme.colors.textSecondary} name="close" size={16} />
             </Pressable>
           </View>
         </View>

@@ -241,6 +241,8 @@ function extractCardPreviewText(message: ChatShellMessage): string {
       return '[사주 프리뷰]';
     case 'image':
       return '[사진]';
+    case 'audio':
+      return '[음성]';
     case 'story-reveal':
       return '[스토리]';
     case 'my-saju-context':
@@ -311,6 +313,7 @@ const VALID_CARD_KINDS: ReadonlySet<string> = new Set([
   'fortune-cookie',
   'saju-preview',
   'image',
+  'audio',
   'story-reveal',
   'my-saju-context',
 ]);

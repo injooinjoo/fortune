@@ -90,6 +90,16 @@ export interface ChatShellImageMessage {
   proactive?: ProactiveMessageMeta;
 }
 
+export interface ChatShellAudioMessage {
+  id: string;
+  kind: 'audio';
+  sender: 'assistant' | 'user';
+  audioUrl: string;
+  durationMillis?: number;
+  caption?: string;
+  proactive?: ProactiveMessageMeta;
+}
+
 // Story-reveal payloads — drive the 6 cinematic scenes ported from the Ondo
 // Design System's story_chat prototype. Each variant maps 1:1 to a component
 // in `features/story-chat-animations/`. The message itself is a normal chat
@@ -229,6 +239,7 @@ export type ChatShellMessage =
   | ChatShellFortuneCookieMessage
   | ChatShellSajuPreviewMessage
   | ChatShellImageMessage
+  | ChatShellAudioMessage
   | ChatShellStoryRevealMessage
   | ChatShellMySajuContextMessage
   | ChatShellProgressMessage;
@@ -550,6 +561,21 @@ export function buildUserImageMessage(
     kind: 'image',
     sender: 'user',
     imageUrl,
+    caption,
+  };
+}
+
+export function buildUserAudioMessage(
+  audioUrl: string,
+  durationMillis?: number,
+  caption?: string,
+): ChatShellAudioMessage {
+  return {
+    id: createMessageId('user'),
+    kind: 'audio',
+    sender: 'user',
+    audioUrl,
+    durationMillis,
     caption,
   };
 }

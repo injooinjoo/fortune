@@ -58,6 +58,7 @@ import {
   buildInitialThread,
   buildLaunchMessages,
   buildSuggestedActions,
+  buildUserAudioMessage,
   buildUserImageMessage,
   buildUserMessage,
   formatFortuneTypeLabel,
@@ -345,6 +346,11 @@ export function ChatScreen() {
   const [pendingImageByCharacterId, setPendingImageByCharacterId] = useState<
     Record<string, { uri: string; base64?: string; mimeType?: string }>
   >({});
+  const [pendingAudioByCharacterId, setPendingAudioByCharacterId] = useState<
+    Record<string, { uri: string; durationMillis?: number }>
+  >({});
+  const audioRecordingRef = useRef<import('expo-av').Audio.Recording | null>(null);
+  const [recordingAudioForCharacterId, setRecordingAudioForCharacterId] = useState<string | null>(null);
   const [personaModalOpen, setPersonaModalOpen] = useState(false);
   const [personaDraft, setPersonaDraft] = useState('');
   const [personaByCharacterId, setPersonaByCharacterId] = useState<
@@ -2506,6 +2512,69 @@ export function ChatScreen() {
     });
   }
 
+  function handleClearPendingAudio() {
+    setPendingAudioByCharacterId((current) => {
+      if (!(selectedCharacter.id in current)) return current;
+      const next = { ...current };
+      delete next[selectedCharacter.id];
+      return next;
+    });
+  }
+
+  async function handleToggleAudioMessageRecording() {
+    setComposerTrayOpen(false);
+    const characterId = selectedCharacter.id;
+
+    if (audioRecordingRef.current) {
+      const recording = audioRecordingRef.current;
+      audioRecordingRef.current = null;
+      setRecordingAudioForCharacterId(null);
+      try {
+        const status = await recording.stopAndUnloadAsync();
+        const uri = recording.getURI();
+        if (!uri) {
+          Alert.alert('음성 메시지', '녹음 파일을 만들지 못했어요. 다시 시도해 주세요.');
+          return;
+        }
+        setPendingAudioByCharacterId((current) => ({
+          ...current,
+          [characterId]: {
+            uri,
+            durationMillis: 'durationMillis' in status ? status.durationMillis : undefined,
+          },
+        }));
+        setSurfaceMode('chat');
+      } catch (error) {
+        captureError(error, { surface: 'chat:audio-message-stop' }).catch(() => undefined);
+        Alert.alert('음성 메시지', '녹음을 저장하지 못했어요. 다시 시도해 주세요.');
+      }
+      return;
+    }
+
+    try {
+      const { Audio } = await import('expo-av');
+      const permission = await Audio.requestPermissionsAsync();
+      if (!permission.granted) {
+        Alert.alert('마이크 권한', '음성 메시지를 보내려면 마이크 권한이 필요해요.');
+        return;
+      }
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+      const { recording } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY,
+      );
+      audioRecordingRef.current = recording;
+      setRecordingAudioForCharacterId(characterId);
+    } catch (error) {
+      captureError(error, { surface: 'chat:audio-message-start' }).catch(() => undefined);
+      Alert.alert('음성 메시지', '녹음을 시작할 수 없어요. 다시 시도해 주세요.');
+      setRecordingAudioForCharacterId(null);
+      audioRecordingRef.current = null;
+    }
+  }
+
   function handleToggleVoiceInput() {
     void toggleVoiceRecording();
   }
@@ -3790,6 +3859,7 @@ export function ChatScreen() {
   function handleSendDraft() {
     const trimmed = draft.trim();
     const pendingImage = pendingImageByCharacterId[selectedCharacter.id];
+    const pendingAudio = pendingAudioByCharacterId[selectedCharacter.id];
 
     // 이 캐릭터에 유저가 처음 메시지를 보내는 시점이면 푸시 권한 soft-ask.
     // fire-and-forget — 모달은 비동기로 뜨고, 실제 send 흐름은 절대 막히지 않음.
@@ -3801,7 +3871,7 @@ export function ChatScreen() {
     const hasPriorUserMessage = existingThread.some(
       (m) => m.sender === 'user',
     );
-    const willSendSomething = Boolean(trimmed) || Boolean(pendingImage);
+    const willSendSomething = Boolean(trimmed) || Boolean(pendingImage) || Boolean(pendingAudio);
     const isPushEligibleCharacter =
       selectedCharacter.id !== haneulOracleCharacter.id;
     if (
@@ -3850,6 +3920,38 @@ export function ChatScreen() {
         void sendStoryPilotMessage(selectedCharacter, trimmed, {
           imageBase64: dataUrl,
         });
+      }
+      return;
+    }
+
+    if (pendingAudio) {
+      const audioMessage = buildUserAudioMessage(
+        pendingAudio.uri,
+        pendingAudio.durationMillis,
+      );
+      const messagesToAppend = trimmed
+        ? [audioMessage, buildUserMessage(trimmed)]
+        : [audioMessage];
+      appendMessages(selectedCharacter, messagesToAppend);
+      setSurfaceMode('chat');
+      setComposerTrayOpen(false);
+      if (trimmed) setDraft('');
+      handleClearPendingAudio();
+
+      recordChatIntent({
+        characterId: selectedCharacter.id,
+        fortuneType: activeFortuneType,
+        incrementMessages: true,
+      }).catch((error) => {
+        captureError(error, { surface: 'chat:record-audio-send' }).catch(
+          () => undefined,
+        );
+      });
+
+      // Raw audio is a user-visible attachment for now. LLM context still receives
+      // caption text only until the backend accepts audioBase64/audio_url parts.
+      if (selectedCharacter.kind === 'story' && trimmed) {
+        enqueueStorySend(selectedCharacter, trimmed);
       }
       return;
     }
@@ -4318,6 +4420,7 @@ export function ChatScreen() {
               draft={draft}
               onDraftChange={setDraft}
               onOpenPhotoPicker={handleOpenPhotoPicker}
+              onToggleAudioMessageRecording={handleToggleAudioMessageRecording}
               onOpenPersonaSettings={handleOpenPersonaSettings}
               onPickAction={handleActionPress}
               onSend={handleSendDraft}
@@ -4332,6 +4435,13 @@ export function ChatScreen() {
                 pendingImageByCharacterId[selectedCharacter.id]?.uri
               }
               onRemovePendingImage={handleClearPendingImage}
+              pendingAudioDurationMillis={
+                pendingAudioByCharacterId[selectedCharacter.id]
+                  ? (pendingAudioByCharacterId[selectedCharacter.id]?.durationMillis ?? 0)
+                  : undefined
+              }
+              onRemovePendingAudio={handleClearPendingAudio}
+              audioMessageRecording={recordingAudioForCharacterId === selectedCharacter.id}
               auxiliaryAction={{
                 label: '프로필 보기',
                 onPress: () =>
