@@ -94,3 +94,17 @@
 - Optional network note:
   - second network type
   - NAT64 / IPv6-only if available
+
+## 11. 2026-05-11 EAS Production Build / ASC Upload Evidence
+
+| check_id | severity | check_item | result | evidence | status |
+|---|---|---|---|---|---|
+| IOS-BUILD-004 | P0 | Fresh EAS iOS production build created from frozen SHA | pass | EAS build `758211db-3ba7-4c29-b41b-d3b1939a1cc5`; version `1.0.14`; build number `61`; runtimeVersion `1.0.14`; gitCommitHash `8b7d6adb582cbc8ac0c6d6b1e18a1bf1b61ec3e1`; artifact `https://expo.dev/artifacts/eas/fvAZ2A1TedP1PuCGaDKqEz.ipa` | done |
+| IOS-BUILD-005 | P0 | Binary uploaded to App Store Connect via EAS Submit | pass | EAS submission `455c2055-0142-4321-a77d-57c37d32c552`; ASC App ID `6749496180`; TestFlight processing URL `https://appstoreconnect.apple.com/apps/6749496180/testflight/ios` | done |
+| IOS-BUILD-006 | P0 | App Store Connect build processing / review submission completed | pending | ASC browser session required; current automation reached login page, no local ASC session available | blocked |
+
+Notes:
+- EAS credentials were ready for all iOS targets: `com.beyond.fortune`, `com.beyond.fortune.widgets`, `com.beyond.fortune.notification-service`.
+- EAS Submit reported: “Submitted your app to Apple App Store Connect!” and “Your binary has been successfully uploaded to App Store Connect.”
+- Apple processing typically takes 5-10 minutes before the build can be selected for TestFlight/App Review.
+

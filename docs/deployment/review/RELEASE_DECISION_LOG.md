@@ -109,14 +109,17 @@ Copy this section for each release candidate.
 ### Entry 2026-05-11-IOS-RC-PREP
 - release_candidate: `ios-review-submission-prep`
 - jira_issue: `TBD / Paperclip issue pending if available`
-- frozen_commit_sha: `pending clean commit and push`
+- frozen_commit_sha: `8b7d6adb582cbc8ac0c6d6b1e18a1bf1b61ec3e1`
 - created_at: `2026-05-11`
-- evaluator: `Hermes + delegated release agents + OpenClaw pending final cross-check`
-- p0_open_count: `>=2`
+- evaluator: `Hermes + delegated release agents + OpenClaw`
+- p0_open_count: `>=1`
 - p1_open_count: `>=2`
-- unresolved_issue_keys: `release-freeze`, `real-device-evidence`, `iap-evidence`, `ipad-evidence`
-- unresolved_check_ids: `DEC-001`, `DEC-002`, `DEC-003`, `DEC-004`, `DEC-007`, `DEC-008`
-- decision: `NO-GO`
-- reason_summary: `Dependency blockers were remediated locally and review notes were aligned to the actual guest/account-gated app behavior, but final submission still requires a clean frozen SHA, pushed CI-visible release commit, fresh EAS iOS production build from that SHA, and real-device evidence for iPhone clean install, iPad, IAP success/cancel/restore, and optional NAT64/IPv6.`
+- unresolved_issue_keys: `real-device-evidence`, `iap-evidence`, `ipad-evidence`, `asc-review-submit`
+- unresolved_check_ids: `DEC-004`, `DEC-007`, `DEC-008`, `IOS-RUNTIME-002`, `IOS-RUNTIME-003`, `IOS-IAP-001`, `IOS-IAP-002`, `IOS-IAP-003`, `IOS-BUILD-006`
+- decision: `NO-GO for final App Review submission until ASC login/processing + required evidence are complete; binary upload complete`
+- reason_summary: `Dependency blockers were remediated, review notes were aligned, frozen SHA was pushed with CI/E2E/Security green, fresh EAS iOS production build 758211db-3ba7-4c29-b41b-d3b1939a1cc5 was created from 8b7d6adb, and EAS Submit uploaded build 61 to App Store Connect. Final App Review submission remains blocked by ASC browser login/build processing visibility and required real-device/IAP/iPad evidence/risk sign-off.`
+- eas_build: `758211db-3ba7-4c29-b41b-d3b1939a1cc5`
+- eas_submission: `455c2055-0142-4321-a77d-57c37d32c552`
+- asc_app_id: `6749496180`
 - risk_approver: `TBD`
 - approved_at: `TBD`
