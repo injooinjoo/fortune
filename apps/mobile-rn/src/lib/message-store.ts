@@ -449,6 +449,45 @@ export function useStoreMessages(
   );
 }
 
+/** 여러 캐릭터 메시지를 한 번에 구독하는 read hook.
+ *
+ * 채팅 리스트/배지/방 화면이 각자 다른 state snapshot 을 보면 push payload 는
+ * 도착했는데 리스트 미리보기나 채팅방 본문이 어긋난다. 이 hook 은 MessageStore
+ * 하나만 읽어서 list row, unread, active thread 가 같은 배열을 보게 한다.
+ */
+export function useStoreMessagesMap(
+  characterIds: readonly string[],
+): Record<string, ChatShellMessage[]> {
+  const key = useMemo(() => characterIds.join('\u0000'), [characterIds]);
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    const ids = Array.from(new Set(characterIds.filter(Boolean)));
+    if (ids.length === 0) return;
+    hydrateBatch(ids).catch(() => undefined);
+    const unsubscribers = ids.map((id) =>
+      subscribe(id, () => {
+        setTick((t) => t + 1);
+      }),
+    );
+    return () => {
+      unsubscribers.forEach((unsubscribe) => unsubscribe());
+    };
+    // `key` 는 characterIds 내용 변화만 추적한다. 배열 reference 변화만으로
+    // 전체 재구독하지 않도록 한다.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+
+  return useMemo(() => {
+    const result: Record<string, ChatShellMessage[]> = {};
+    for (const id of characterIds) {
+      result[id] = getMessages(id);
+    }
+    return result;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, tick]);
+}
+
 /**
  * 테스트용 — 캐시 전체 초기화. dev-tools / factory-reset 에서 호출.
  */

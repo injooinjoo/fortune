@@ -24,6 +24,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
+import { deliverImmediateReplyIfNeeded } from "../_shared/pending_reply_delivery.ts";
 import { requireWorkerAuth } from "../_shared/worker_auth.ts";
 
 const BATCH_LIMIT = 5;
@@ -80,12 +81,17 @@ serve(async (req: Request) => {
         { p_grace_seconds: GRACE_SECONDS },
       );
       if (error) {
-        console.error("[process-pending-reply-jobs] claim 실패:", error.message);
+        console.error(
+          "[process-pending-reply-jobs] claim 실패:",
+          error.message,
+        );
         break;
       }
       // RPC 가 RETURNS pending_character_reply_jobs (record). 클레임할 row 없으면
       // 모든 컬럼 NULL row 가 나옴 — id 없으면 노op 처리.
-      claimed = data && (data as { id?: string }).id ? (data as PendingJobRow) : null;
+      claimed = data && (data as { id?: string }).id
+        ? (data as PendingJobRow)
+        : null;
     } catch (claimEx) {
       console.error("[process-pending-reply-jobs] claim 예외:", claimEx);
       break;
@@ -110,6 +116,9 @@ serve(async (req: Request) => {
         // 또한 service_role 토큰으로 invoke 하면 character-chat 의 auth.getUser
         // 가 user 못 찾으므로 trustedUserId 로 식별.
         trustedUserId: claimed.user_id,
+        // This worker owns canonical delivery for pending jobs. Disabling the
+        // legacy character-chat push prevents duplicate/non-serialized pushes.
+        shouldSendPush: false,
       };
       delete payload.jobId;
 
@@ -135,7 +144,8 @@ serve(async (req: Request) => {
             .from("pending_character_reply_jobs")
             .update({
               status: "pending",
-              next_attempt_at: new Date(Date.now() + delayMin * 60_000).toISOString(),
+              next_attempt_at: new Date(Date.now() + delayMin * 60_000)
+                .toISOString(),
               error_message: errMsg.slice(0, 500),
             })
             .eq("id", jobId);
@@ -145,8 +155,69 @@ serve(async (req: Request) => {
       }
 
       // 정상 — character-chat 가 success/segments 또는 noop/safety 응답을 줬을 것.
-      // 어느 쪽이든 큐 관점에선 처리 완료.
-      const responseSuccess = (chatData as { success?: boolean })?.success ?? true;
+      // scheduledId 가 없는 immediate-response 모드에서는 이 worker 가 응답을
+      // 받는 유일한 클라이언트다. 여기서 canonical conversation + push 로
+      // 배달하지 않으면 row 는 done 이지만 실제 채팅방에는 답장이 없다.
+      const responseSuccess = (chatData as { success?: boolean })?.success ??
+        true;
+      if (responseSuccess) {
+        const delivery = await deliverImmediateReplyIfNeeded({
+          supabase,
+          userId: claimed.user_id,
+          characterId: claimed.character_id,
+          characterName: claimed.character_name,
+          // Pending job id is the deterministic delivered-message id. The
+          // helper serializes the same canonical message into the push payload,
+          // and merge_character_conversation_messages dedupes retry delivery.
+          jobId,
+          chatData,
+          roomState: "character_chat",
+        });
+        if (
+          delivery.shouldDeliver &&
+          delivery.pushSkipped &&
+          delivery.pushSkipReason === "no ticket succeeded"
+        ) {
+          console.warn(
+            "[process-pending-reply-jobs] direct reply push 실패; canonical store persisted:",
+            delivery.pushSkipReason,
+          );
+        }
+        const deliveryNeedsRetry = delivery.shouldDeliver &&
+          Boolean(delivery.persistError);
+        if (deliveryNeedsRetry) {
+          const reason = `persist_failed:${delivery.persistError ?? "unknown"}`;
+          console.warn(
+            "[process-pending-reply-jobs] direct reply delivery 실패:",
+            reason,
+          );
+          if (claimed.attempt_count >= 3) {
+            await supabase
+              .from("pending_character_reply_jobs")
+              .update({
+                status: "failed",
+                error_message: reason.slice(0, 500),
+                completed_at: new Date().toISOString(),
+              })
+              .eq("id", jobId);
+            results.push({ jobId, status: "error", reason: "max_attempts" });
+          } else {
+            const delayMin = claimed.attempt_count >= 2 ? 15 : 5;
+            await supabase
+              .from("pending_character_reply_jobs")
+              .update({
+                status: "pending",
+                next_attempt_at: new Date(Date.now() + delayMin * 60_000)
+                  .toISOString(),
+                error_message: reason.slice(0, 500),
+              })
+              .eq("id", jobId);
+            results.push({ jobId, status: "error", reason: "retry_scheduled" });
+          }
+          continue;
+        }
+      }
+
       await supabase
         .from("pending_character_reply_jobs")
         .update({

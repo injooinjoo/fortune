@@ -112,6 +112,7 @@ import {
   insertMessages as insertStoreMessages,
   getMessages as getStoreMessages,
   useStoreMessages,
+  useStoreMessagesMap,
 } from '../lib/message-store';
 import { setTyping as setGlobalTyping } from '../lib/typing-store';
 import { replyDeliveryController } from '../lib/reply-delivery-controller';
@@ -545,7 +546,11 @@ export function ChatScreen() {
     if (surfaceMode !== 'chat') return;
     const charId = selectedCharacterId;
     if (!charId) return;
-    const thread = messagesByCharacterId[charId];
+    const storeThread =
+      storeSnapshot.characterId === charId ? storeSnapshot.messages : [];
+    const thread = storeThread.length > 0
+      ? storeThread
+      : messagesByCharacterId[charId];
     if (!thread || thread.length === 0) return;
     const canonicalThread = getCanonicalVisibleMessages(thread);
     const latest = canonicalThread[canonicalThread.length - 1];
@@ -565,6 +570,7 @@ export function ChatScreen() {
   }, [
     surfaceMode,
     selectedCharacterId,
+    storeSnapshot,
     messagesByCharacterId,
     lastSeenByCharacterId,
   ]);
@@ -943,6 +949,27 @@ export function ChatScreen() {
     selectedCharacterId,
   ]);
 
+  const storeMessageCharacterIds = useMemo(
+    () => Array.from(new Set(tabCharacters.map((character) => character.id))),
+    [tabCharacters],
+  );
+  const storeMessagesByCharacterId = useStoreMessagesMap(storeMessageCharacterIds);
+
+  // 화면 read 모델은 MessageStore 를 우선한다. push/list/chat/badge 가 같은
+  // 배열을 보도록 하고, 아직 store 에 실제 대화가 없는 신규 캐릭터만 기존
+  // intro/useState fallback 을 쓴다.
+  const displayMessagesByCharacterId = useMemo(() => {
+    const next: Record<string, ChatShellMessage[]> = { ...messagesByCharacterId };
+    for (const [characterId, storeMessages] of Object.entries(
+      storeMessagesByCharacterId,
+    )) {
+      if (storeMessages.length > 0) {
+        next[characterId] = storeMessages;
+      }
+    }
+    return next;
+  }, [messagesByCharacterId, storeMessagesByCharacterId]);
+
   // 자동 라우팅 마운트 1회만 — 한번 라우팅 결정한 후엔 사용자 탭 전환 등으로
   // 재실행되어 강제 복귀되지 않도록 ref 가드. 회귀: 사용자가 스토리 탭 chip 을
   // 눌러 list 모드로 가려고 해도 highlightedExpert 가 남아있으면 effect 재실행
@@ -1021,7 +1048,7 @@ export function ChatScreen() {
     }
   }, [createdFriends, messagesByCharacterId]);
 
-  const selectedThread = messagesByCharacterId[selectedCharacter.id] ?? [];
+  const selectedThread = displayMessagesByCharacterId[selectedCharacter.id] ?? [];
   const selectedStorySnapshot =
     storyThreadSnapshotsByCharacterId[selectedCharacter.id] ?? null;
 
@@ -1079,7 +1106,7 @@ export function ChatScreen() {
 
     const reconcile = async () => {
       if (stopped || activeRemoteReconcileInFlightRef.current) return;
-      const local = messagesByCharacterId[characterId] ?? [];
+      const local = displayMessagesByCharacterId[characterId] ?? [];
       const canonicalLocal = getCanonicalVisibleMessages(local);
       const latest = canonicalLocal[canonicalLocal.length - 1];
       const shouldPoll =
@@ -1140,7 +1167,7 @@ export function ChatScreen() {
     selectedCharacter,
     selectedCharacter?.id,
     selectedCharacterId,
-    messagesByCharacterId,
+    displayMessagesByCharacterId,
     storyTypingByCharacterId,
   ]);
 
@@ -1183,7 +1210,7 @@ export function ChatScreen() {
     // 타이핑 중이면 이미 응답 진행 중 — 중복 트리거 금지.
     if (selectedStoryIsTyping || selectedFortuneIsTyping) return;
 
-    const thread = messagesByCharacterId[selectedCharacter.id];
+    const thread = displayMessagesByCharacterId[selectedCharacter.id];
     if (!thread || thread.length === 0) return;
 
     const canonicalThread = getCanonicalVisibleMessages(thread);
@@ -1212,7 +1239,7 @@ export function ChatScreen() {
     gate,
     surfaceMode,
     selectedCharacter,
-    messagesByCharacterId,
+    displayMessagesByCharacterId,
     selectedStoryIsTyping,
     selectedFortuneIsTyping,
   ]);
@@ -1496,7 +1523,7 @@ export function ChatScreen() {
     }
 
     // 최근 메시지가 운세 결과 카드면 카드 상단이 화면 최상단에 보이게 스크롤.
-    const latestThread = messagesByCharacterId[selectedCharacter.id] ?? [];
+    const latestThread = displayMessagesByCharacterId[selectedCharacter.id] ?? [];
     const canonicalLatestThread = getCanonicalVisibleMessages(latestThread);
     const latestMessage = canonicalLatestThread[canonicalLatestThread.length - 1];
     const isResultCardArriving =
@@ -1569,12 +1596,12 @@ export function ChatScreen() {
     const result: Record<string, CharacterListRowMeta> = {};
     for (const character of firstRunCharacters) {
       result[character.id] = buildCharacterListMeta(
-        messagesByCharacterId[character.id],
+        displayMessagesByCharacterId[character.id],
         lastSeenByCharacterId[character.id],
       );
     }
     return result;
-  }, [firstRunCharacters, messagesByCharacterId, lastSeenByCharacterId]);
+  }, [firstRunCharacters, displayMessagesByCharacterId, lastSeenByCharacterId]);
 
   // 채팅 목록 정렬 (메신저 표준):
   //   1) 안 읽은 메시지 있는 캐릭터 그룹 (unreadCount > 0) 이 항상 위
@@ -1596,20 +1623,20 @@ export function ChatScreen() {
     return arr;
   }, [firstRunCharacters, characterListMetaById]);
 
-  // 앱 아이콘 배지 = 전 캐릭터 unread 합산. messagesByCharacterId /
+  // 앱 아이콘 배지 = 전 캐릭터 unread 합산. displayMessagesByCharacterId /
   // lastSeenByCharacterId 가 바뀔 때마다 재계산해 OS 배지와 동기화.
   // 메신저 앱 표준 — iMessage / WhatsApp / KakaoTalk 모두 홈스크린에 숫자.
   useEffect(() => {
     let total = 0;
-    for (const characterId of Object.keys(messagesByCharacterId)) {
+    for (const characterId of Object.keys(displayMessagesByCharacterId)) {
       const meta = buildCharacterListMeta(
-        messagesByCharacterId[characterId],
+        displayMessagesByCharacterId[characterId],
         lastSeenByCharacterId[characterId],
       );
       total += meta.unreadCount;
     }
     void setAppIconBadgeCount(total);
-  }, [messagesByCharacterId, lastSeenByCharacterId]);
+  }, [displayMessagesByCharacterId, lastSeenByCharacterId]);
 
   // 입장(캐릭터 진입) 시에는 항상 맨 아래로.
   // 결과 카드가 마지막이더라도, 진입 시점에서 사용자가 기대하는 위치는
@@ -2017,7 +2044,7 @@ export function ChatScreen() {
       appendMessages(character, [resultReply, embeddedResult]);
 
       // Persist fortune conversation to remote (text messages only)
-      const currentMessages = messagesByCharacterId[character.id] ?? [];
+      const currentMessages = displayMessagesByCharacterId[character.id] ?? [];
       saveCharacterConversation(character.id, [
         ...currentMessages,
         resultReply,
@@ -2198,6 +2225,10 @@ export function ChatScreen() {
     }
 
     setActiveSurvey(character.id, null);
+    // 기존 결과 재표시는 운세 entry 선택 시점이 기준점이다. 방금 만든 카드 ID를
+    // 이미 상단 스크롤 처리된 카드로 표시해, 뒤따르는 카드 mount/content grow가
+    // 사용자 요청 메시지를 위로 밀어내지 않게 한다.
+    cardTopScrolledMessageIdRef.current = embeddedResult.id;
     appendMessages(character, [
       buildAssistantTextMessage(prefixText),
       embeddedResult,
@@ -2212,7 +2243,7 @@ export function ChatScreen() {
     setActiveTab(character?.kind ?? 'story');
     setSurfaceMode('chat');
 
-    const thread = messagesByCharacterId[characterId] ?? [];
+    const thread = displayMessagesByCharacterId[characterId] ?? [];
     const canonicalThread = getCanonicalVisibleMessages(thread);
     const lastMessage = canonicalThread[canonicalThread.length - 1];
     if (lastMessage) {
@@ -2381,7 +2412,7 @@ export function ChatScreen() {
   // 같이 정리해서 같은 메시지가 다음 진입 시 fantom 트리거 되지 않도록.
   async function handleDeleteUserMessage(messageId: string) {
     const characterId = selectedCharacter.id;
-    const currentThread = messagesByCharacterId[characterId];
+    const currentThread = displayMessagesByCharacterId[characterId];
     if (!currentThread) return;
     const nextThread = currentThread.filter((m) => m.id !== messageId);
     if (nextThread.length === currentThread.length) return;
@@ -2693,7 +2724,7 @@ export function ChatScreen() {
       storyThreadSnapshotsByCharacterId[character.id] ??
       buildStoryThreadSnapshot(character);
     const existingThread =
-      messagesByCharacterId[character.id] ??
+      displayMessagesByCharacterId[character.id] ??
       existingSnapshot?.messages ??
       buildInitialThread(character);
     // 큐에서 drain되어 재진입한 경우, 유저 메시지는 이미 thread에 들어있다.
@@ -3188,7 +3219,7 @@ export function ChatScreen() {
     }
 
     const existingThread =
-      messagesByCharacterId[character.id] ?? buildInitialThread(character);
+      displayMessagesByCharacterId[character.id] ?? buildInitialThread(character);
     const userMessage = skipOptimistic ? null : buildUserMessage(trimmed);
     const optimisticThread = userMessage
       ? [...existingThread, userMessage]
@@ -3766,7 +3797,7 @@ export function ChatScreen() {
     //
     // 하늘이(haneul_oracle) 는 운세-only persona — proactive 답장/먼저 말걸기
     // 없어 푸시 가치 0. 모달 exclude.
-    const existingThread = messagesByCharacterId[selectedCharacter.id] ?? [];
+    const existingThread = displayMessagesByCharacterId[selectedCharacter.id] ?? [];
     const hasPriorUserMessage = existingThread.some(
       (m) => m.sender === 'user',
     );
@@ -3907,7 +3938,7 @@ export function ChatScreen() {
     setSurfaceMode('chat');
 
     // Persist fortune conversation to remote
-    const currentMessages = messagesByCharacterId[selectedCharacter.id] ?? [];
+    const currentMessages = displayMessagesByCharacterId[selectedCharacter.id] ?? [];
     saveCharacterConversation(selectedCharacter.id, [
       ...currentMessages,
       userMsg,
@@ -4016,7 +4047,7 @@ export function ChatScreen() {
     characterId: string,
     fortuneType: FortuneTypeId,
   ): ChatShellEmbeddedResultMessage | null {
-    const thread = messagesByCharacterId[characterId] ?? [];
+    const thread = displayMessagesByCharacterId[characterId] ?? [];
 
     for (let index = thread.length - 1; index >= 0; index -= 1) {
       const message = thread[index];
