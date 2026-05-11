@@ -160,12 +160,16 @@ java_pid*.hprof
 # Tool artifacts
 .agent/
 .agents/skills/
+.hermes/
 .claude/skills/
 .cursor/
 .kiro/
 .playwright-cli/
 .testsprite/
 skills/
+
+# Local QA run artifacts (commit curated docs/evidence explicitly instead)
+artifacts/qa/
 
 # Root screenshots (debug)
 appstore-connect-check.png

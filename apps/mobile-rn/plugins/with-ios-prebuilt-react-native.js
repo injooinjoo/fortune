@@ -1,4 +1,4 @@
-const { withPodfileProperties } = require('@expo/config-plugins');
+const { withPodfileProperties } = require('expo/config-plugins');
 
 module.exports = function withIosPrebuiltReactNative(config) {
   return withPodfileProperties(config, (configWithProps) => {
