@@ -362,6 +362,25 @@ serve(async (req) => {
     // 요청 데이터 파싱
     console.log('🔍 [Step 1] Parsing JSON...')
     const requestData: DreamFortuneRequest = JSON.parse(bodyText)
+
+    // 헬스체크 요청 처리
+    if ((requestData as any).healthCheck === true) {
+      return new Response(
+        JSON.stringify({
+          success: true,
+          status: 'healthy',
+          fortuneType: 'dream',
+          timestamp: new Date().toISOString(),
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+          },
+          status: 200,
+        }
+      )
+    }
     const { inputType = 'text', date, isPremium = false } = requestData
     const dream = requestData.dream?.trim() ||
       requestData.dream_content?.trim() ||

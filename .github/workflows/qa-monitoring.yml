@@ -574,11 +574,12 @@ jobs:
             const edgeSkipped = '${{ needs.edge-function-health.outputs.skipped }}' === 'true';
 
             const smokeStatus = smokeResults.failed === '0' ? '✅' : '❌';
-            const perfMeasured = perfResult !== 'skipped' && perfStatusValue === 'ok';
+            const perfSkipped = perfResult === 'skipped' || perfStatusValue === 'skipped';
+            const perfMeasured = !perfSkipped && perfStatusValue === 'ok';
             const perfUnavailable = perfStatusValue === 'unavailable';
-            const perfStatus = perfResult === 'skipped' ? '⏭️' : perfBelowThreshold ? '⚠️' : perfMeasured ? '✅' : '❌';
-            const perfSummary = perfResult === 'skipped'
-              ? 'skipped'
+            const perfStatus = perfSkipped ? '⏭️' : perfBelowThreshold ? '⚠️' : perfMeasured ? '✅' : '❌';
+            const perfSummary = perfSkipped
+              ? 'skipped (no Flutter project)'
               : perfMeasured
               ? `${perfScore}/100`
               : perfUnavailable

@@ -237,6 +237,25 @@ serve(async (req) => {
     // 요청 데이터 파싱
     const requestData = await req.json()
 
+    // 헬스체크 요청 처리
+    if (requestData.healthCheck === true) {
+      return new Response(
+        JSON.stringify({
+          success: true,
+          status: 'healthy',
+          fortuneType: 'compatibility',
+          timestamp: new Date().toISOString(),
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+          },
+          status: 200,
+        }
+      )
+    }
+
     // 두 가지 형식 지원: flat fields (person1_name) 또는 nested objects (person1.name)
     const person1_name = requestData.person1_name || requestData.person1?.name || ''
     const person1_birth_date = requestData.person1_birth_date || requestData.person1?.birth_date || ''
