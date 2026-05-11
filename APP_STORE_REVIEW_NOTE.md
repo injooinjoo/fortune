@@ -1,35 +1,36 @@
-# App Store Review Reply Draft - Ondo
+# App Store Review Note Source - Ondo
 
-Hello App Review Team,
+> Current submission source. Use this file together with `apps/mobile-rn/appstore-metadata.md` and `metadata/review_information/notes.txt`. Do **not** use older review-reply drafts that described sign-in as the primary review path.
 
-We addressed both issues from the review dated February 23, 2026 for submission `e77d128e-763f-4670-b865-efbbc1fa39c2`.
+## Current review strategy
 
-## Guideline 2.1 - Sign in with Apple
+- **Primary path:** guest-first review path.
+- **App Store Connect Sign-in required:** `NO`.
+- **Optional test account:** provide for account-gated flows such as profile sync, purchase verification, purchase restore, subscription/token balance sync, and account deletion.
+- **Current release decision:** `NO-GO` until clean frozen SHA, fresh EAS iOS production build, and required iPhone/iPad/IAP evidence are captured.
 
-We fixed the iPad Sign in with Apple flow.
+## Review notes to paste into App Store Connect
 
-### What changed
-- Deep link handling for OAuth callbacks is now initialized before app startup completes, so cold-start callback links are no longer missed.
-- The Apple login flow now uses explicit auth result states, so an OAuth fallback launched from iPad native sign-in is treated as an in-progress authentication flow instead of a silent failure.
-- Native Sign in with Apple remains enabled, and iPad fallback to OAuth is handled explicitly when needed.
+Ondo is an AI-powered entertainment and lifestyle app for fortune-style insights and interactive AI character chat. All fortune/insight content is AI-generated for entertainment purposes only and does not provide medical, legal, financial, or factual prediction advice.
 
-### Review path
-- Primary review path: sign in with the review test account
-  - Email: `test@zpzg.com`
-  - Password: `TestPassword123!`
-- Optional validation path: Sign in with Apple is also available on iPhone and iPad.
+Login is not required to launch the app or review the core guest experience. On a clean install, the app opens through the splash screen and allows access to the main chat/fortune experience without creating an account.
 
-## Guideline 3.1.2 - Subscription Metadata
+Account sign-in is optional for profile sync, saved history across devices, purchase verification, purchase restore, subscription/token balance sync, and account deletion. For review of these account-gated flows, please use:
 
-We updated the App Store metadata to include the required policy links.
+Email: test@zpzg.com
+Password: TestPassword123!
 
-### Policy links
-- Terms of Use (EULA): `https://zpzg.co.kr/terms`
-- Privacy Policy: `https://zpzg.co.kr/privacy`
+In-app purchases are available from Profile > Subscription and Tokens, or from the Premium screen. Guest users can view product information, but purchase, restore, and subscription status sync require sign-in so purchases can be linked to an account.
 
-### Metadata update
-- The Privacy Policy field now uses the canonical privacy URL.
-- The App Description includes the Terms of Use (EULA) link.
-- Review notes now direct review through the provided test account first.
+Sign in with Apple is available on iPhone and iPad as an optional authentication method.
 
-Thank you for your review.
+Terms of Use: https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages/terms-of-service
+Privacy Policy: https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages/privacy-policy
+Support: https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages
+
+## Evidence required before GO
+
+- iPhone clean install guest path and Apple sign-in start/cancel/success behavior.
+- iPad clean install and Apple sign-in path.
+- IAP product listing, purchase success, purchase cancellation recovery, and restore purchases.
+- Optional but recommended: NAT64/IPv6-only network smoke test.

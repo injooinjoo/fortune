@@ -1,25 +1,41 @@
 ENTERTAINMENT APP DECLARATION
 
-Ondo is an entertainment and lifestyle app that provides AI-generated daily conversation and lifestyle insight content.
+Ondo is an entertainment and lifestyle app that provides AI-generated fortune-style insights and interactive AI character chat. The content is for entertainment and lifestyle reference only and does not provide medical, legal, financial, or factual prediction advice.
 
-PRIMARY REVIEW PATH
+PRIMARY REVIEW PATH - GUEST
+
 1. Launch the app.
-2. Sign in with the review test account:
-   - Email: test@zpzg.com
-   - Password: TestPassword123!
-3. This review account is configured with test entitlements so the primary chat and insight flows can be reviewed without completing a purchase.
-4. Explore the main experiences: Face AI, Daily Insights, Personality Analysis, and account deletion from Profile > Delete Account.
+2. On a clean install, the app opens through the splash screen and allows access to the main chat/fortune experience without creating an account.
+3. Review the core chat and fortune-style insight flows as a guest.
 
-OPTIONAL AUTH VALIDATION
-- Sign in with Apple is also available on iPhone and iPad as an optional authentication method.
+OPTIONAL ACCOUNT-GATED REVIEW PATHS
+
+Some flows require an account because they are tied to profile sync, purchase verification, restore purchases, subscription/token balance sync, or account deletion.
+
+Test account:
+Email: test@zpzg.com
+Password: TestPassword123!
+
+Suggested account-gated checks:
+1. Sign in from Profile or the login/signup entry.
+2. Review Profile > account sync / account deletion.
+3. Open Profile > Subscription and Tokens or the Premium screen.
+4. Verify product listing, purchase start, purchase cancellation recovery, and restore purchases.
+
+SIGN IN WITH APPLE
+
+Sign in with Apple is available on iPhone and iPad as an optional authentication method.
 
 OPTIONAL NOTIFICATION VALIDATION
-- Push notifications are optional for review and are requested only from Profile > Notification Settings or the in-app test notification action.
+
+Push notifications are optional for review and are requested only from Profile > Notification Settings or the in-app test notification action.
 
 SUBSCRIPTION / POLICY LINKS
-- Terms of Use (EULA): https://zpzg.co.kr/terms
-- Privacy Policy: https://zpzg.co.kr/privacy
+
+Terms of Use (EULA): https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages/terms-of-service
+Privacy Policy: https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages/privacy-policy
+Support: https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages
 
 IMPORTANT DISCLAIMER
-- All content is AI-generated for entertainment and lifestyle reference only.
-- The app does not provide factual predictions, medical advice, legal advice, or financial advice.
+
+All AI fortune/insight content is generated for entertainment purposes only.

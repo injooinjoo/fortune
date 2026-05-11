@@ -105,3 +105,18 @@ Copy this section for each release candidate.
 - reason_summary: `Apple code/policy/metadata blockers are closed, but App Review re-submission still requires real-device evidence for the 2026-03-21 rejection path, IAP success/cancel/restore, iPad review path, and optional NAT64/IPv6 validation. Cross-platform release also remains blocked by Play console tasks.`
 - risk_approver: `TBD`
 - approved_at: `TBD`
+
+### Entry 2026-05-11-IOS-RC-PREP
+- release_candidate: `ios-review-submission-prep`
+- jira_issue: `TBD / Paperclip issue pending if available`
+- frozen_commit_sha: `pending clean commit and push`
+- created_at: `2026-05-11`
+- evaluator: `Hermes + delegated release agents + OpenClaw pending final cross-check`
+- p0_open_count: `>=2`
+- p1_open_count: `>=2`
+- unresolved_issue_keys: `release-freeze`, `real-device-evidence`, `iap-evidence`, `ipad-evidence`
+- unresolved_check_ids: `DEC-001`, `DEC-002`, `DEC-003`, `DEC-004`, `DEC-007`, `DEC-008`
+- decision: `NO-GO`
+- reason_summary: `Dependency blockers were remediated locally and review notes were aligned to the actual guest/account-gated app behavior, but final submission still requires a clean frozen SHA, pushed CI-visible release commit, fresh EAS iOS production build from that SHA, and real-device evidence for iPhone clean install, iPad, IAP success/cancel/restore, and optional NAT64/IPv6.`
+- risk_approver: `TBD`
+- approved_at: `TBD`

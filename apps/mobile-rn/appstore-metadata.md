@@ -49,14 +49,28 @@
 - Violence: None
 
 ## App Review Notes
-This is an AI-powered fortune telling and interactive story app. All fortune content is AI-generated entertainment and is clearly labeled as such. The app includes a disclaimer visible to users.
+Ondo is an AI-powered entertainment and lifestyle app for fortune-style insights and interactive AI character chat. All fortune/insight content is AI-generated for entertainment purposes only and does not provide medical, legal, financial, or factual prediction advice. The app includes in-app policy/disclaimer pages.
 
-No login required. Users land directly on the main chat/fortune screen upon launch. All fortune features (30+ categories) are freely accessible without creating an account. Login is available optionally via the profile screen for saving history and syncing across devices.
+Login is not required to launch the app or review the core guest experience. On a clean install, users go through the splash screen and can enter the main chat/fortune experience without creating an account.
+
+Account sign-in is optional for profile sync, saved history across devices, purchase verification, purchase restore, subscription/token balance sync, and account deletion. For review of account-gated flows, please use the test account below:
+Email: test@zpzg.com
+Password: TestPassword123!
+
+In-app purchases are available from Profile > Subscription and Tokens, or from the Premium screen. Guest users can view product information, but purchase, restore, and subscription status sync require sign-in so purchases can be linked to an account.
+
+Sign in with Apple is available on iPhone and iPad as an optional authentication method.
+
+Terms of Use: https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages/terms-of-service
+Privacy Policy: https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages/privacy-policy
+Support: https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages
 
 ## App Review Info (App Store Connect)
 - Sign-in required: NO (uncheck the box)
-- Demo account: Not needed
-- Review notes: "No login required to access fortune features. Users land directly on the main screen."
+- Demo account: Provide optional test credentials for account-gated review paths:
+  - Email: test@zpzg.com
+  - Password: TestPassword123!
+- Review notes: Use the full notes above. Do not claim every paid/account-linked flow works without login.
 
 ## Screenshots (6.7" iPhone 16 Pro Max, 1320x2868)
 1. 16promax-chat-home.png - Main message/character list
