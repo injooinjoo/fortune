@@ -441,6 +441,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "docs/deployment/review/KAN_OPEN_ISSUES_EVIDENCE_MATRIX_2026-03-22.md",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -486,6 +500,7 @@
       "path": "docs/deployment/review/STORE_REVIEW_MASTER_CHECKLIST.md",
       "referenced_by": [
         "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
+        "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md",
         "docs/development/reports/2026-02-16_store_review_strategy_discovery.md",
         "docs/development/reports/2026-02-16_store_review_strategy_verify.md"
       ],
@@ -1340,6 +1355,34 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "docs/qa/haneul-fortune-e2e-progress-2026-05-11.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/qa/haneul-fortune-e2e-qa-2026-05-11.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "docs/qa/proactive-fixes-test-plan.md",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -2015,6 +2058,20 @@
       "area": "scripts",
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
+      "kind": "script_mjs",
+      "notes": [],
+      "path": "scripts/qa/haneul-fortune-edge-smoke.mjs",
+      "referenced_by": [
+        "docs/qa/haneul-fortune-e2e-progress-2026-05-11.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "scripts",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
       "kind": "script_sh",
       "notes": [],
       "path": "scripts/quick-test.sh",
@@ -2284,6 +2341,7 @@
       "notes": [],
       "path": "supabase/functions/_shared/character_message_helper.ts",
       "referenced_by": [
+        "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md",
         "supabase/functions/deliver-due-replies/index.ts",
         "supabase/functions/proactive-message-dispatch/index.ts"
       ],
@@ -2304,6 +2362,36 @@
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "edge_shared_source",
+      "notes": [],
+      "path": "supabase/functions/_shared/character_user_preferences.ts",
+      "referenced_by": [
+        "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md",
+        "supabase/functions/_shared/character_user_preferences_test.ts",
+        "supabase/functions/character-chat/index.ts"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "edge_shared_source",
+      "notes": [],
+      "path": "supabase/functions/_shared/character_user_preferences_test.ts",
+      "referenced_by": [
+        "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
     },
     {
       "area": "supabase",
@@ -2887,9 +2975,12 @@
       "notes": [],
       "path": "supabase/functions/_shared/notification_push.ts",
       "referenced_by": [
+        "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md",
         "docs/features/HANEUL_AUDIT_RESULTS.md",
         "supabase/functions/_shared/character_message_helper.ts",
         "supabase/functions/_shared/llm/alerts.ts",
+        "supabase/functions/_shared/notification_push_test.ts",
+        "supabase/functions/_shared/pending_reply_delivery.ts",
         "supabase/functions/character-chat/index.ts",
         "supabase/functions/process-long-running-jobs/index.ts",
         "supabase/functions/process-poster-jobs/index.ts"
@@ -2897,6 +2988,49 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "edge_shared_source",
+      "notes": [],
+      "path": "supabase/functions/_shared/notification_push_test.ts",
+      "referenced_by": [
+        "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "edge_shared_source",
+      "notes": [],
+      "path": "supabase/functions/_shared/pending_reply_delivery.ts",
+      "referenced_by": [
+        "supabase/functions/_shared/pending_reply_delivery_test.ts",
+        "supabase/functions/process-pending-reply-jobs/index.ts"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase1_remove_candidate",
+      "dirty": false,
+      "kind": "edge_shared_source",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "supabase/functions/_shared/pending_reply_delivery_test.ts",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "unreferenced"
     },
     {
       "area": "supabase",
@@ -2959,6 +3093,36 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "edge_shared_source",
+      "notes": [],
+      "path": "supabase/functions/_shared/proactive_message_rules.ts",
+      "referenced_by": [
+        "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md",
+        "supabase/functions/_shared/proactive_message_rules_test.ts",
+        "supabase/functions/proactive-message-dispatch/index.ts"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "edge_shared_source",
+      "notes": [],
+      "path": "supabase/functions/_shared/proactive_message_rules_test.ts",
+      "referenced_by": [
+        "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
     },
     {
       "area": "supabase",
@@ -3106,6 +3270,7 @@
       "path": "supabase/functions/_shared/scheduled_reply_message.ts",
       "referenced_by": [
         "supabase/functions/_shared/character_message_helper.ts",
+        "supabase/functions/_shared/pending_reply_delivery.ts",
         "supabase/functions/_shared/scheduled_reply_message_test.ts",
         "supabase/functions/claim-scheduled-reply/index.ts"
       ],
@@ -3246,6 +3411,7 @@
       ],
       "path": "supabase/functions/character-chat/index.ts",
       "referenced_by": [
+        "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md",
         "docs/features/HANEUL_UNIFIED_FORTUNE_PLAN.md",
         "docs/features/PROACTIVE_MESSAGING_PLAN.md",
         "docs/qa/proactive-fixes-test-plan.md",
@@ -4163,6 +4329,7 @@
       ],
       "path": "supabase/functions/generate-character-proactive-image/index.ts",
       "referenced_by": [
+        "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md",
         "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md",
         "docs/features/PROACTIVE_MESSAGING_PLAN.md"
       ],
@@ -4210,6 +4377,7 @@
       ],
       "path": "supabase/functions/generate-poster-guide/index.ts",
       "referenced_by": [
+        "scripts/qa/haneul-fortune-edge-smoke.mjs",
         "supabase/functions/process-poster-jobs/index.ts"
       ],
       "runtime_reachable": true,
@@ -4282,18 +4450,19 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:legal-pages",
-        "no_inbound_refs"
+        "edge_function_non_runtime_ref:legal-pages"
       ],
       "path": "supabase/functions/legal-pages/index.ts",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "supabase",
@@ -4433,6 +4602,7 @@
       ],
       "path": "supabase/functions/proactive-message-dispatch/index.ts",
       "referenced_by": [
+        "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md",
         "docs/features/PROACTIVE_MESSAGING_PLAN.md",
         "supabase/migrations/20260426000004_proactive_dispatch_cron.sql",
         "supabase/migrations/20260505110000_proactive_cron_use_service_role.sql"
@@ -6864,22 +7034,22 @@
   ],
   "meta": {
     "counts_by_area": {
-      "docs": 98,
-      "scripts": 52,
-      "supabase": 301
+      "docs": 101,
+      "scripts": 53,
+      "supabase": 308
     },
     "counts_by_candidate_action": {
-      "keep": 51,
+      "keep": 52,
       "keep_generated": 2,
-      "manual_review": 59,
-      "phase1_remove_candidate": 2,
-      "phase2_review_candidate": 337
+      "manual_review": 58,
+      "phase1_remove_candidate": 3,
+      "phase2_review_candidate": 347
     },
     "counts_by_usage_status": {
-      "doc_only": 112,
+      "doc_only": 119,
       "generated_excluded": 2,
-      "runtime_used": 51,
-      "tooling_only": 225,
+      "runtime_used": 52,
+      "tooling_only": 228,
       "unreferenced": 61
     },
     "declared_asset_dirs_without_runtime_refs": [],
@@ -6929,7 +7099,7 @@
       "generate-poster-guide",
       "grant-ad-reward"
     ],
-    "total_files": 451,
+    "total_files": 462,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "ack-scheduled-reply",
@@ -6977,7 +7147,6 @@
       "generate-fortune-story",
       "generate-friend-avatar",
       "kakao-oauth",
-      "legal-pages",
       "manseryeok-interpret",
       "mbti-energy-tracker",
       "naver-oauth",
