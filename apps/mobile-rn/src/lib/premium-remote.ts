@@ -329,6 +329,7 @@ export async function activateRemoteSubscription(
 export async function consumeRemoteTokens(
   session: Session,
   payload: RemoteTokenConsumePayload,
+  options: { signal?: AbortSignal } = {},
 ): Promise<RemoteTokenConsumeResult> {
   // Invalidate cached balance — consumption changes it
   invalidateTokenBalanceCache();
@@ -352,6 +353,7 @@ export async function consumeRemoteTokens(
       referenceId: payload.referenceId ?? null,
       idempotencyKey: payload.idempotencyKey ?? null,
     }),
+    signal: options.signal,
   });
 
   const result = (await response.json()) as TokenConsumeResponse;

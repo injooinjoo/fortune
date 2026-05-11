@@ -14,6 +14,12 @@ export interface MobileProfileState {
   mbti: string;
   bloodType: string;
   interestIds: string[];
+  relationship: string;
+  conversationTone: {
+    formality: 0 | 1 | 2;
+    warmth: 0 | 1 | 2;
+    length: 0 | 1 | 2;
+  } | null;
 }
 
 export interface NotificationPreferences {
@@ -96,6 +102,8 @@ export const emptyMobileAppState: MobileAppState = {
     mbti: '',
     bloodType: '',
     interestIds: [],
+    relationship: '',
+    conversationTone: null,
   },
   notifications: {
     push: true,
@@ -155,6 +163,23 @@ function isAiMode(value: unknown): value is AiMode {
   return value === 'cloud' || value === 'on-device' || value === 'auto';
 }
 
+function asToneLevel(value: unknown, fallback: 0 | 1 | 2): 0 | 1 | 2 {
+  return value === 0 || value === 1 || value === 2 ? value : fallback;
+}
+
+function asConversationTone(value: unknown): MobileProfileState['conversationTone'] {
+  if (!value || typeof value !== 'object') {
+    return null;
+  }
+
+  const tone = value as Record<string, unknown>;
+  return {
+    formality: asToneLevel(tone.formality, 1),
+    warmth: asToneLevel(tone.warmth, 1),
+    length: asToneLevel(tone.length, 1),
+  };
+}
+
 export function normalizeMobileAppState(raw: Record<string, unknown>): MobileAppState {
   const profile = (raw.profile ?? {}) as Record<string, unknown>;
   const notifications = (raw.notifications ?? {}) as Record<string, unknown>;
@@ -175,6 +200,8 @@ export function normalizeMobileAppState(raw: Record<string, unknown>): MobileApp
             (value): value is string => typeof value === 'string',
           )
         : [],
+      relationship: asString(profile.relationship),
+      conversationTone: asConversationTone(profile.conversationTone),
     },
     notifications: {
       push: asBoolean(notifications.push, emptyMobileAppState.notifications.push),

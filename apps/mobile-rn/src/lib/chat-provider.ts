@@ -4,7 +4,11 @@ import {
   type StoryChatResponse,
   type StoryChatThreadSnapshot,
 } from './story-chat-runtime';
-import { type AiMode, type CloudModelPreference } from './mobile-app-state';
+import {
+  type AiMode,
+  type CloudModelPreference,
+  type MobileProfileState,
+} from './mobile-app-state';
 import { OnDeviceChatProvider } from './on-device-chat-provider';
 import { onDeviceLLMEngine } from './on-device-llm';
 
@@ -30,6 +34,10 @@ export interface ChatProviderOptions {
    * On-device 경로에선 무시. 'default' / undefined → DB 설정 (gemini-2.5-flash-lite).
    */
   modelPreference?: CloudModelPreference;
+  userProfile?: Pick<
+    MobileProfileState,
+    'displayName' | 'birthDate' | 'mbti' | 'relationship' | 'conversationTone' | 'interestIds'
+  >;
 }
 
 export interface IChatProvider {
@@ -60,6 +68,7 @@ class CloudChatProvider implements IChatProvider {
       imageBase64: options?.imageBase64,
       userMessageId: options?.userMessageId,
       modelPreference: options?.modelPreference,
+      userProfile: options?.userProfile,
     });
   }
 

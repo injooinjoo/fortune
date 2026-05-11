@@ -40,6 +40,7 @@ import {
 import type { ActiveChatSurvey } from '../features/chat-survey/types';
 import {
   fetchEmbeddedEdgeResultPayload,
+  isAbortError,
   isAsyncPosterFortuneType,
   lookupCachedFortuneResult,
   startAsyncPosterJob,
@@ -1051,9 +1052,15 @@ export function ChatScreen() {
     [storyThreadSnapshotsByCharacterId],
   );
   const [fortuneTypingCharacterId, setFortuneTypingCharacterId] = useState<string | null>(null);
+  const [fortuneGenerationCancellableByCharacterId, setFortuneGenerationCancellableByCharacterId] =
+    useState<Record<string, boolean>>({});
+  const fortuneGenerationCancellableRef = useRef<Record<string, boolean>>({});
+  const fortuneGenerationControllersRef = useRef<Record<string, AbortController | undefined>>({});
   const selectedStoryIsTyping =
     storyTypingByCharacterId[selectedCharacter.id] === true;
   const selectedFortuneIsTyping = fortuneTypingCharacterId === selectedCharacter.id;
+  const selectedFortuneGenerationCanCancel =
+    fortuneGenerationCancellableByCharacterId[selectedCharacter.id] === true;
   const activeRemoteReconcileInFlightRef = useRef(false);
 
   // 열린 채팅방 remote reconcile.
@@ -1690,6 +1697,72 @@ export function ChatScreen() {
     setSurveySelections([]);
   }
 
+  function setFortuneGenerationCancellable(characterId: string, cancellable: boolean) {
+    fortuneGenerationCancellableRef.current[characterId] = cancellable;
+    setFortuneGenerationCancellableByCharacterId((current) => {
+      if (current[characterId] === cancellable) return current;
+      return { ...current, [characterId]: cancellable };
+    });
+  }
+
+  function startFortuneGenerationController(characterId: string): AbortController | null {
+    const previousController = fortuneGenerationControllersRef.current[characterId];
+    if (previousController && fortuneGenerationCancellableRef.current[characterId] === false) {
+      return null;
+    }
+    previousController?.abort();
+    const controller = new AbortController();
+    fortuneGenerationControllersRef.current[characterId] = controller;
+    setFortuneGenerationCancellable(characterId, true);
+    return controller;
+  }
+
+  function isCurrentFortuneGeneration(
+    characterId: string,
+    controller: AbortController,
+  ): boolean {
+    return (
+      !controller.signal.aborted &&
+      fortuneGenerationControllersRef.current[characterId] === controller
+    );
+  }
+
+  function clearFortuneGenerationController(
+    characterId: string,
+    controller?: AbortController,
+  ) {
+    if (controller && fortuneGenerationControllersRef.current[characterId] === controller) {
+      delete fortuneGenerationControllersRef.current[characterId];
+      setFortuneGenerationCancellable(characterId, false);
+    }
+  }
+
+  function cancelFortuneFlow(character: ChatCharacterSpec) {
+    const controller = fortuneGenerationControllersRef.current[character.id];
+    const canCancelGeneration =
+      fortuneGenerationCancellableRef.current[character.id] === true;
+    if (controller && !canCancelGeneration) {
+      // Ref 기반 hard gate: React state/UI가 한 프레임 늦어도 차감/큐 등록 이후에는 abort 하지 않는다.
+      appendMessages(character, [
+        buildAssistantTextMessage(
+          '이미 결과를 마무리하는 단계라 여기서 끊지는 않을게요. 잠시만 기다려 주세요.',
+        ),
+      ]);
+      return;
+    }
+    controller?.abort();
+    clearFortuneGenerationController(character.id, controller);
+    setActiveSurvey(character.id, null);
+    if (fortuneTypingCharacterId === character.id) {
+      setFortuneTypingCharacterId(null);
+    }
+    appendMessages(character, [
+      buildAssistantTextMessage(
+        '좋아요, 이번 운세 보기는 취소했어요. 언제든 다시 시작해도 돼요.',
+      ),
+    ]);
+  }
+
   function beginFortuneRuntime(
     character: ChatCharacterSpec,
     fortuneType: FortuneTypeId,
@@ -1820,6 +1893,15 @@ export function ChatScreen() {
     },
   ) {
     const definition = getChatSurveyDefinition(completed.fortuneType);
+    const generationController = startFortuneGenerationController(character.id);
+    if (!generationController) {
+      appendMessages(character, [
+        buildAssistantTextMessage(
+          '이전 운세 결과가 마무리되는 중이에요. 잠시만 기다린 뒤 다시 시작해 주세요.',
+        ),
+      ]);
+      return;
+    }
     setActiveSurvey(character.id, null);
     setFortuneTypingCharacterId(character.id);
 
@@ -1847,7 +1929,7 @@ export function ChatScreen() {
       // 즉시 큐 등록 + placeholder 메시지 → push 알림으로 결과 도착.
       // 사용자 자유롭게 다른 채팅 / 앱 종료 가능.
       if (isAsyncPosterFortuneType(completed.fortuneType)) {
-        await handleAsyncPosterFortune(character, completed);
+        await handleAsyncPosterFortune(character, completed, generationController.signal);
         return;
       }
 
@@ -1855,7 +1937,7 @@ export function ChatScreen() {
       // catalog entry 없으면 통과.
       if (session) {
         const ok = await confirmCostForFortune(completed.fortuneType);
-        if (!ok) {
+        if (!ok || !isCurrentFortuneGeneration(character.id, generationController)) {
           return;
         }
       }
@@ -1866,13 +1948,20 @@ export function ChatScreen() {
         completed.fortuneType,
         buildResultContext(character, completed.answers),
         'chat:complete-survey',
+        generationController.signal,
       );
 
-      if (!embeddedResult) {
+      if (!embeddedResult || !isCurrentFortuneGeneration(character.id, generationController)) {
         return;
       }
 
+      let tokensConsumedForResult = false;
+      let shouldRenderResult = true;
       if (session) {
+        if (!isCurrentFortuneGeneration(character.id, generationController)) {
+          return;
+        }
+        setFortuneGenerationCancellable(character.id, false);
         try {
           // PR-0a: idempotencyKey 호출 단위 unique. reference_id 도 같은 값으로
           // 두어 같은 운세 결과의 환불이 필요할 때 단일 키로 추적 가능.
@@ -1881,8 +1970,15 @@ export function ChatScreen() {
             fortuneType: completed.fortuneType,
             referenceId: consumeKey,
             idempotencyKey: consumeKey,
+          }, {
+            signal: generationController.signal,
           });
+          tokensConsumedForResult = true;
         } catch (chargeError) {
+          if (isAbortError(chargeError) && generationController.signal.aborted) {
+            shouldRenderResult = false;
+            return;
+          }
           if (
             chargeError instanceof RemoteTokenConsumeError &&
             chargeError.code === 'INSUFFICIENT_TOKENS'
@@ -1892,11 +1988,13 @@ export function ChatScreen() {
                 chargeError.message || '토큰이 부족해요. 토큰을 충전한 뒤 다시 시도해주세요.',
               ),
             ]);
+            shouldRenderResult = false;
             return;
           }
           await captureError(chargeError, {
             surface: 'chat:fortune-charge-after-success',
           }).catch(() => undefined);
+          shouldRenderResult = isCurrentFortuneGeneration(character.id, generationController);
         }
       }
 
@@ -1904,6 +2002,17 @@ export function ChatScreen() {
         definition?.submitReply ??
           '좋아요. 결과를 같은 채팅 안에서 바로 보여드릴게요.',
       );
+
+      if (!shouldRenderResult) {
+        return;
+      }
+
+      if (
+        !tokensConsumedForResult &&
+        !isCurrentFortuneGeneration(character.id, generationController)
+      ) {
+        return;
+      }
 
       appendMessages(character, [resultReply, embeddedResult]);
 
@@ -1919,10 +2028,16 @@ export function ChatScreen() {
         }).catch(() => undefined);
       });
     } catch (error) {
+      if (isAbortError(error) && generationController.signal.aborted) {
+        return;
+      }
       // Edge Function 실패 (resolveFortuneResultMessage throw). 토큰 차감 X.
       throw error;
     } finally {
-      setFortuneTypingCharacterId(null);
+      clearFortuneGenerationController(character.id, generationController);
+      if (fortuneGenerationControllersRef.current[character.id] === undefined) {
+        setFortuneTypingCharacterId(null);
+      }
     }
   }
 
@@ -1958,6 +2073,7 @@ export function ChatScreen() {
   async function handleAsyncPosterFortune(
     character: ChatCharacterSpec,
     completed: { fortuneType: FortuneTypeId; answers: Record<string, unknown> },
+    signal?: AbortSignal,
   ) {
     // 사진 base64 추출 (어느 키든 — palm/face/body)
     const answers = completed.answers ?? {};
@@ -1982,7 +2098,7 @@ export function ChatScreen() {
     // LLM 비용 0. catalog entry 없으면 통과.
     if (session) {
       const ok = await confirmCostForFortune(completed.fortuneType);
-      if (!ok) {
+      if (!ok || signal?.aborted) {
         return;
       }
     }
@@ -1993,6 +2109,7 @@ export function ChatScreen() {
       characterName: character.name,
       imageBase64,
       contextText,
+      signal,
     });
 
     if (!result) {
@@ -2005,7 +2122,11 @@ export function ChatScreen() {
       return;
     }
 
-    // 토큰 차감 — 큐 등록 성공이라 차감 OK (cron 이 처리할 것)
+    // 큐 등록 성공 시점부터는 서버 cron 이 처리할 side effect 가 생긴 상태다.
+    // 이 이후에는 사용자 cancel/AbortSignal 을 billing 단계에 전달하지 않는다.
+    // 그래야 "queued server work + client cancel + no charge" orphan race 를 막는다.
+    setFortuneGenerationCancellable(character.id, false);
+    let tokensConsumedForJob = false;
     if (session) {
       try {
         // PR-0a: jobId 가 이미 unique — referenceId/idempotencyKey 동일 값으로 사용.
@@ -2015,7 +2136,11 @@ export function ChatScreen() {
           referenceId: jobConsumeKey,
           idempotencyKey: jobConsumeKey,
         });
+        tokensConsumedForJob = true;
       } catch (chargeError) {
+        if (isAbortError(chargeError) && signal?.aborted) {
+          return;
+        }
         if (
           chargeError instanceof RemoteTokenConsumeError &&
           chargeError.code === 'INSUFFICIENT_TOKENS'
@@ -2034,6 +2159,10 @@ export function ChatScreen() {
           surface: 'chat:fortune-charge-after-async-queue',
         }).catch(() => undefined);
       }
+    }
+
+    if (signal?.aborted && !tokensConsumedForJob) {
+      return;
     }
 
     // 진행 카드 로컬 INSERT — 카드 컴포넌트(ProgressMessageCard)가 mount 되면
@@ -2695,7 +2824,16 @@ export function ChatScreen() {
       });
 
       const customPersona = personaByCharacterId[character.id];
-      const invokeOptions: import('../lib/chat-provider').ChatProviderOptions = {};
+      const invokeOptions: import('../lib/chat-provider').ChatProviderOptions = {
+        userProfile: {
+          displayName: mobileAppState.profile.displayName,
+          birthDate: mobileAppState.profile.birthDate,
+          mbti: mobileAppState.profile.mbti,
+          relationship: mobileAppState.profile.relationship,
+          conversationTone: mobileAppState.profile.conversationTone,
+          interestIds: mobileAppState.profile.interestIds,
+        },
+      };
       if (customPersona) {
         invokeOptions.userDescription = `[유저 커스텀 성격 요청] ${customPersona}`;
       }
@@ -3271,6 +3409,13 @@ export function ChatScreen() {
           (session?.user.user_metadata.full_name as string | undefined) ||
           mobileAppState.profile.displayName ||
           'user',
+        userProfile: {
+          name: mobileAppState.profile.displayName,
+          mbti: mobileAppState.profile.mbti,
+          relationship: mobileAppState.profile.relationship,
+          tone: mobileAppState.profile.conversationTone ?? undefined,
+          topics: mobileAppState.profile.interestIds,
+        },
         ...(pendingProactiveMessageId ? { pendingProactiveMessageId } : {}),
       };
 
@@ -3907,15 +4052,25 @@ export function ChatScreen() {
     character: ChatCharacterSpec,
     fortuneType: FortuneTypeId,
   ) {
+    const generationController = startFortuneGenerationController(character.id);
+    if (!generationController) {
+      appendMessages(character, [
+        buildAssistantTextMessage(
+          '이전 운세 결과가 마무리되는 중이에요. 잠시만 기다린 뒤 다시 시작해 주세요.',
+        ),
+      ]);
+      return;
+    }
     setFortuneTypingCharacterId(character.id);
     try {
       const embeddedResult = await resolveFortuneResultMessage(
         fortuneType,
         buildResultContext(character),
         'chat:begin-runtime',
+        generationController.signal,
       );
 
-      if (!embeddedResult) {
+      if (!embeddedResult || !isCurrentFortuneGeneration(character.id, generationController)) {
         return;
       }
 
@@ -3924,7 +4079,10 @@ export function ChatScreen() {
         embeddedResult,
       ]);
     } finally {
-      setFortuneTypingCharacterId(null);
+      clearFortuneGenerationController(character.id, generationController);
+      if (fortuneGenerationControllersRef.current[character.id] === undefined) {
+        setFortuneTypingCharacterId(null);
+      }
     }
   }
 
@@ -3932,6 +4090,7 @@ export function ChatScreen() {
     fortuneType: FortuneTypeId,
     context: ReturnType<typeof buildResultContext>,
     surface: string,
+    signal?: AbortSignal,
   ) {
     try {
       const payload = await fetchEmbeddedEdgeResultPayload(
@@ -3940,13 +4099,17 @@ export function ChatScreen() {
         {
           userId: session?.user.id ?? null,
           aiMode: mobileAppState.settings.aiMode,
+          signal,
         },
       );
 
       if (payload) {
         return buildEmbeddedResultMessageFromPayload(payload);
       }
-    } catch {
+    } catch (error) {
+      if (isAbortError(error) && signal?.aborted) {
+        return null;
+      }
       // Edge Function 실패 시 로컬 fallback으로 자동 전환 — 에러 무시
     }
 
@@ -4072,6 +4235,7 @@ export function ChatScreen() {
               onDraftChange={setSurveyDraft}
               onPickSingle={(value) => submitSurveyAnswer(value)}
               onSkip={handleSurveySkip}
+              onCancel={() => cancelFortuneFlow(selectedCharacter)}
               onSubmitSelection={handleSurveySubmitSelection}
               onSubmitText={handleSurveySubmitText}
               onToggleSelection={handleSurveyToggleSelection}
@@ -4079,6 +4243,45 @@ export function ChatScreen() {
               step={currentSurveyStep.step}
               surveyAnswers={activeSurvey?.answers}
             />
+          ) : selectedFortuneIsTyping ? (
+            <View
+              style={{
+                alignItems: 'center',
+                backgroundColor: fortuneTheme.colors.surfaceSecondary,
+                borderColor: fortuneTheme.colors.border,
+                borderRadius: fortuneTheme.radius.inputArea,
+                borderWidth: 1,
+                gap: 8,
+                marginBottom: 18,
+                paddingHorizontal: 14,
+                paddingVertical: 12,
+              }}
+            >
+              <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+                {selectedFortuneGenerationCanCancel
+                  ? '운세 결과를 준비하고 있어요. 원하면 지금 취소할 수 있어요.'
+                  : '운세 결과를 마무리하고 있어요. 잠시만 기다려 주세요.'}
+              </AppText>
+              {selectedFortuneGenerationCanCancel ? (
+                <Pressable
+                  accessibilityLabel="운세 생성 취소"
+                  accessibilityRole="button"
+                  onPress={() => cancelFortuneFlow(selectedCharacter)}
+                  style={({ pressed }) => ({ opacity: pressed ? 0.72 : 1 })}
+                >
+                  <View
+                    style={{
+                      backgroundColor: fortuneTheme.colors.backgroundTertiary,
+                      borderRadius: 999,
+                      paddingHorizontal: 18,
+                      paddingVertical: 10,
+                    }}
+                  >
+                    <AppText variant="labelLarge">운세 보기 취소</AppText>
+                  </View>
+                </Pressable>
+              ) : null}
+            </View>
           ) : (
             <ActiveChatComposer
               draft={draft}
