@@ -16,6 +16,7 @@ import {
   SectionCard,
 } from '../fortune-results/primitives';
 import { ResultCardFrame } from '../fortune-results/primitives/result-card-frame';
+import { HaneulFortuneReadingModal } from '../fortune-results/fullscreen/haneul-fortune-reading-modal';
 import {
   HeroCalendar,
   HeroCompat,
@@ -50,6 +51,7 @@ const HEROED_RESULT_KINDS: Partial<Record<ResultKind, React.ComponentType<any>>>
 
 const REVEAL_DURATION_MS = 2400;
 const TAP_PROGRESS_THRESHOLD = 0.9;
+const RESULT_PAYLOAD_URL_LIMIT = 1800;
 
 export function EmbeddedResultCard({
   message,
@@ -61,6 +63,7 @@ export function EmbeddedResultCard({
   const Hero = resultKind ? HEROED_RESULT_KINDS[resultKind] : undefined;
   const { state: mobileAppState } = useMobileAppState();
   const hapticsEnabled = mobileAppState.settings.chatHapticsEnabled;
+  const [isHaneulReadingVisible, setHaneulReadingVisible] = useState(false);
 
   // 결과 카드가 채팅에 "등장"하는 순간 한 번 햅틱 재생 (fortune type 별 맞춤 패턴).
   // message.id 기반 ref 가드로 리렌더 시 재발화 방지.
@@ -71,6 +74,23 @@ export function EmbeddedResultCard({
     firedRef.current = message.id;
     resultReveal(message.fortuneType, payload.score);
   }, [hapticsEnabled, message.id, message.fortuneType, payload.score]);
+
+  if (resultKind === 'daily-calendar') {
+    return (
+      <>
+        <HaneulReadingEntryCard
+          payload={payload}
+          onPress={() => setHaneulReadingVisible(true)}
+        />
+        <HaneulFortuneReadingModal
+          visible={isHaneulReadingVisible}
+          payload={payload}
+          onClose={() => setHaneulReadingVisible(false)}
+          onOpenDetail={() => pushResultDetail(resultKind, payload)}
+        />
+      </>
+    );
+  }
 
   if (resultKind && Hero) {
     return (
@@ -88,24 +108,7 @@ export function EmbeddedResultCard({
   if (resultKind) {
     return (
       <Pressable
-        onPress={() => {
-          // payload 를 URL params 로 전달 — 결과 화면이 동일 데이터로 풀뷰 렌더.
-          // payload 없이 navigate 하면 결과 화면이 fetch 못해서 fallback 표시.
-          // poster-guide (손금/관상 등) 의 imageUrl 도 payload 안에 있어 카드와
-          // 풀뷰가 같은 이미지 보장.
-          let payloadJson: string | undefined;
-          try {
-            payloadJson = JSON.stringify(payload);
-          } catch {
-            // payload 직렬화 실패 시 resultKind 만 전달 — 기존 동작 폴백.
-          }
-          router.push({
-            pathname: '/result/[resultKind]',
-            params: payloadJson
-              ? { resultKind, payload: payloadJson }
-              : { resultKind },
-          });
-        }}
+        onPress={() => pushResultDetail(resultKind, payload)}
         style={({ pressed }) => [
           { width: '100%' },
           pressed ? { opacity: 0.98, transform: [{ scale: 0.995 }] } : null,
@@ -191,6 +194,73 @@ export function EmbeddedResultCard({
         </View>
       </Card>
     </View>
+  );
+}
+
+function pushResultDetail(
+  resultKind: ResultKind,
+  payload?: ChatShellEmbeddedResultMessage['payload'],
+) {
+  // payload 를 URL params 로 전달 — 결과 화면이 동일 데이터로 풀뷰 렌더.
+  // payload 없이 navigate 하면 결과 화면이 fetch 못해서 fallback 표시.
+  let payloadJson: string | undefined;
+  try {
+    payloadJson = payload ? JSON.stringify(payload) : undefined;
+    if (payloadJson && payloadJson.length > RESULT_PAYLOAD_URL_LIMIT) {
+      payloadJson = undefined;
+    }
+  } catch {
+    // payload 직렬화 실패 시 resultKind 만 전달 — 기존 동작 폴백.
+  }
+
+  router.push({
+    pathname: '/result/[resultKind]',
+    params: payloadJson ? { resultKind, payload: payloadJson } : { resultKind },
+  });
+}
+
+function HaneulReadingEntryCard({
+  payload,
+  onPress,
+}: {
+  payload: ChatShellEmbeddedResultMessage['payload'];
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel="하늘이 운세 풀스크린으로 보기"
+      onPress={onPress}
+      style={({ pressed }) => [
+        { width: '100%' },
+        pressed ? { opacity: 0.92, transform: [{ scale: 0.995 }] } : null,
+      ]}
+    >
+      <Card>
+        <View style={{ gap: fortuneTheme.spacing.sm }}>
+          <AppText variant="caption" color={fortuneTheme.colors.accentTertiary}>
+            오늘의 흐름을 읽어봤어요
+          </AppText>
+          <AppText variant="oracleTitle">하늘이가 조용히 하나씩 보여드릴게요</AppText>
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            {payload.subtitle || '운세 문장을 한 줄씩 천천히 열어볼게요.'}
+          </AppText>
+          <View
+            style={{
+              alignSelf: 'flex-start',
+              borderRadius: fortuneTheme.radius.full,
+              backgroundColor: fortuneTheme.colors.backgroundTertiary,
+              paddingHorizontal: 12,
+              paddingVertical: 8,
+            }}
+          >
+            <AppText variant="labelMedium" color={fortuneTheme.colors.textSubtitle}>
+              탭해서 풀화면으로 보기
+            </AppText>
+          </View>
+        </View>
+      </Card>
+    </Pressable>
   );
 }
 
