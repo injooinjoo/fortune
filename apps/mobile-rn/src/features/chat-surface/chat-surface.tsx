@@ -1990,6 +1990,63 @@ export function ActiveChatComposer({
           </View>
         </View>
       ) : null}
+      {audioMessageRecording && onToggleAudioMessageRecording ? (
+        <View style={{ paddingBottom: 8 }}>
+          <Pressable
+            accessibilityLabel="음성 녹음 종료"
+            accessibilityRole="button"
+            onPress={onToggleAudioMessageRecording}
+            style={({ pressed }) => ({ opacity: pressed ? 0.86 : 1 })}
+          >
+            <View
+              style={{
+                alignItems: 'center',
+                backgroundColor: 'rgba(239, 68, 68, 0.16)',
+                borderColor: '#EF4444',
+                borderRadius: 16,
+                borderWidth: 1,
+                flexDirection: 'row',
+                gap: 10,
+                paddingHorizontal: 12,
+                paddingVertical: 10,
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor: '#EF4444',
+                  borderRadius: 999,
+                  height: 8,
+                  width: 8,
+                }}
+              />
+              <View style={{ flex: 1 }}>
+                <AppText variant="labelLarge" color="#FFFFFF">
+                  음성 녹음 중
+                </AppText>
+                <AppText variant="caption" color={fortuneTheme.colors.textSecondary}>
+                  여기를 누르면 녹음이 끝나고 첨부돼요
+                </AppText>
+              </View>
+              <View
+                style={{
+                  alignItems: 'center',
+                  backgroundColor: '#EF4444',
+                  borderRadius: 999,
+                  flexDirection: 'row',
+                  gap: 6,
+                  paddingHorizontal: 12,
+                  paddingVertical: 7,
+                }}
+              >
+                <Ionicons color="#FFFFFF" name="stop" size={14} />
+                <AppText variant="labelLarge" color="#FFFFFF">
+                  종료
+                </AppText>
+              </View>
+            </View>
+          </Pressable>
+        </View>
+      ) : null}
       {hasPendingAudio ? (
         <View style={{ paddingBottom: 8, flexDirection: 'row', alignItems: 'center' }}>
           <View
