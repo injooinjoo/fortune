@@ -59,6 +59,8 @@ export default function TopicsStep() {
         birthDate,
         mbti: data.mbti ?? '',
         interestIds: selected,
+        relationship: data.relationship ?? '',
+        conversationTone: data.tone,
       });
       await updateOnboardingProgress({
         birthCompleted: birthDate.length > 0,

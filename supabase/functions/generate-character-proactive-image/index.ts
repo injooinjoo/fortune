@@ -52,7 +52,10 @@ interface GenerateCharacterProactiveImageRequest {
   locationHint?: string;
 }
 
-type GenerateCharacterProactiveImageErrorCode = "safety_blocked" | "unknown";
+type GenerateCharacterProactiveImageErrorCode =
+  | "disabled_for_slice_2"
+  | "safety_blocked"
+  | "unknown";
 
 interface GenerateCharacterProactiveImageResponse {
   success: boolean;
@@ -197,7 +200,7 @@ serve(async (req: Request) => {
         error:
           "이 함수는 Slice 2 기간 비활성화됨. character-proactive-images 버킷의 정적 placeholder 를 사용하세요. (PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.4)",
         errorCode: "disabled_for_slice_2",
-      } satisfies GenerateCharacterProactiveImageResponse & { errorCode: string },
+      } satisfies GenerateCharacterProactiveImageResponse,
     ),
     {
       status: 410,
@@ -210,8 +213,9 @@ serve(async (req: Request) => {
   const startedAt = Date.now();
 
   try {
-    const { user, error: authError } = await authenticateUser(req);
-    if (authError || !user) {
+    const authResult = await authenticateUser(req);
+    const { error: authError } = authResult;
+    if (authError || !authResult.user) {
       return authError ?? new Response(
         JSON.stringify(
           {
@@ -225,6 +229,7 @@ serve(async (req: Request) => {
         },
       );
     }
+    const authenticatedUserId = authResult.user!.id;
 
     const request =
       (await req.json()) as GenerateCharacterProactiveImageRequest;
@@ -290,7 +295,7 @@ serve(async (req: Request) => {
     };
     const charge = await chargeTokens(
       supabase,
-      user.id,
+      authenticatedUserId,
       PROACTIVE_IMAGE_TOKEN_COST,
       chargeCtx,
     );
@@ -322,15 +327,16 @@ serve(async (req: Request) => {
       );
       storagePath = buildStoragePath(request.characterId, request.category);
 
-      const { error: uploadError } = await supabase.storage
+      const uploadResult = await supabase.storage
         .from(BUCKET_NAME)
         .upload(storagePath, imageBytes, {
           contentType: "image/png",
           upsert: false,
         });
+      const uploadError = uploadResult.error;
 
       if (uploadError) {
-        throw new Error(`이미지 업로드 실패: ${uploadError.message}`);
+        throw new Error(`이미지 업로드 실패: ${uploadError!.message}`);
       }
 
       const { data: publicUrlData } = supabase.storage
@@ -341,7 +347,7 @@ serve(async (req: Request) => {
       if (charge.charged) {
         await refundTokens(
           supabase,
-          user.id,
+          authenticatedUserId,
           PROACTIVE_IMAGE_TOKEN_COST,
           charge.balanceBeforeCharge,
           chargeCtx,
@@ -365,16 +371,14 @@ serve(async (req: Request) => {
       },
     );
   } catch (error) {
-    const isSafetyBlocked = error instanceof Error &&
-      error.name === "SafetyBlockedError";
+    const errorRecord = error as { name?: string; message?: string };
+    const isSafetyBlocked = errorRecord.name === "SafetyBlockedError";
 
     const body: GenerateCharacterProactiveImageResponse = {
       success: false,
       error: isSafetyBlocked
         ? "안전 정책으로 인해 이미지 생성이 차단됐어요."
-        : error instanceof Error
-        ? error.message
-        : "Unknown error",
+        : errorRecord.message ?? "Unknown error",
       errorCode: isSafetyBlocked ? "safety_blocked" : "unknown",
       meta: {
         provider: "gemini",

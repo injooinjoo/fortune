@@ -18,7 +18,7 @@ export interface CharacterPushPayload {
   messageId?: string;
   conversationId?: string;
   roomState?: string;
-  type?: "character_dm" | "character_follow_up";
+  type?: "character_dm" | "character_proactive" | "character_follow_up";
   route?: string;
   // scheduled_character_replies row id. 클라가 받자마자 ack-scheduled-reply
   // 호출해서 client_acked_at 마킹 → cron 중복 발송 방지.
@@ -120,9 +120,18 @@ export function buildCharacterDmPayload(
  * 두 컬럼은 의도적으로 분리되어 있다. 사용자가 답장은 받고 싶지만 선톡은 받기
  * 싫은 경우, 또는 그 반대 케이스를 지원한다. 한 컬럼으로 합치지 말 것.
  */
+export function getCharacterNotificationPreferenceColumn(
+  type: CharacterPushPayload["type"] = "character_dm",
+): "character_dm" | "character_proactive" {
+  return type === "character_proactive" || type === "character_follow_up"
+    ? "character_proactive"
+    : "character_dm";
+}
+
 async function hasCharacterNotificationEnabled(
   supabase: SupabaseClient,
   userId: string,
+  type: CharacterPushPayload["type"] = "character_dm",
 ): Promise<boolean> {
   const { data, error } = await supabase
     .from("user_notification_preferences")
@@ -149,9 +158,11 @@ async function hasCharacterNotificationEnabled(
     return false;
   }
 
-  if ("character_dm" in row) {
-    const characterDm = row["character_dm"] as boolean | undefined;
-    if (characterDm === false) {
+  const preferenceColumn = getCharacterNotificationPreferenceColumn(type);
+
+  if (preferenceColumn in row) {
+    const channelEnabled = row[preferenceColumn] as boolean | undefined;
+    if (channelEnabled === false) {
       return false;
     }
   }
@@ -287,7 +298,9 @@ async function sendExpoPushToTokens(
   const responseText = await response.text();
   if (!response.ok) {
     console.error(
-      `[notification_push] Expo Push HTTP ${response.status}: ${responseText.slice(0, 500)}`,
+      `[notification_push] Expo Push HTTP ${response.status}: ${
+        responseText.slice(0, 500)
+      }`,
     );
     return 0;
   }
@@ -319,7 +332,9 @@ async function sendExpoPushToTokens(
     }
     const errCode = ticket.details?.error;
     console.warn(
-      `[notification_push] Expo 티켓 실패 token=${params.tokens[index]?.slice(0, 20)}... code=${errCode} msg=${ticket.message}`,
+      `[notification_push] Expo 티켓 실패 token=${
+        params.tokens[index]?.slice(0, 20)
+      }... code=${errCode} msg=${ticket.message}`,
     );
     if (
       errCode === "DeviceNotRegistered" ||
@@ -386,6 +401,7 @@ export async function sendCharacterDmPush(params: {
   const isEnabled = await hasCharacterNotificationEnabled(
     params.supabase,
     params.userId,
+    params.type,
   );
 
   if (!isEnabled) {

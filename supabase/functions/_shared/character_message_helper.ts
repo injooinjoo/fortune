@@ -70,10 +70,11 @@ export interface PersistAndPushInput {
   pendingProactiveMessageId?: string;
   /**
    * character_dm: 사용자 메시지에 대한 답장 (deliver-due-replies)
-   * character_follow_up: 캐릭터 선톡 (proactive-message-dispatch)
+   * character_proactive: 캐릭터 선톡 (proactive-message-dispatch)
+   * character_follow_up: 과거 payload 호환 alias. 새 proactive 발송에는 사용하지 않는다.
    * 클라 측 알림 토글 (character_dm vs character_proactive) 별도라 유의.
    */
-  pushType: "character_dm" | "character_follow_up";
+  pushType: "character_dm" | "character_proactive" | "character_follow_up";
   /**
    * 클라가 push 탭 시 어느 화면으로 갈지 hint. 'character_chat' = 채팅창.
    */
@@ -135,9 +136,7 @@ export async function persistAndPushCharacterMessage(
       p_max_messages: input.maxMessages ?? DEFAULT_MAX_MESSAGES,
     },
   );
-  const persistedCount = typeof mergedCount === "number" && !mergeErr
-    ? 1
-    : 0;
+  const persistedCount = typeof mergedCount === "number" && !mergeErr ? 1 : 0;
   const persistError = mergeErr ? mergeErr.message : undefined;
 
   // 2) push 발송 — sendCharacterDmPush 가 토글 + 토큰 + Expo API 처리.

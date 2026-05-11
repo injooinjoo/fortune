@@ -35,6 +35,10 @@ import {
   SAFETY_BLOCK_FALLBACK_RESPONSE,
 } from "../_shared/moderation.ts";
 import { SERVICE_TONE_PATTERN as LUTS_SERVICE_TONE_PATTERN } from "../_shared/service_tone_guard.ts";
+import {
+  buildConversationPreferencePrompt,
+  type ConversationTonePreference,
+} from "../_shared/character_user_preferences.ts";
 import type { LLMResponse } from "../_shared/llm/types.ts";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -82,6 +86,9 @@ interface UserProfileInfo {
   bloodType?: string; // 혈액형
   zodiacSign?: string; // 별자리
   zodiacAnimal?: string; // 띠 (12간지)
+  relationship?: string; // 온보딩 관계 기대값
+  tone?: ConversationTonePreference; // 온보딩 대화 톤
+  topics?: string[]; // 온보딩 관심 주제
 }
 
 interface AffinityContextPayload {
@@ -423,9 +430,14 @@ function buildFullSystemPrompt(
   const parts: string[] = [conversationRules, basePrompt];
 
   // 사용자 프로필 정보 추가 (개인화용)
+  const preferencePrompt = buildConversationPreferencePrompt({
+    relationship: userProfile?.relationship,
+    tone: userProfile?.tone,
+    topics: userProfile?.topics,
+  });
   const hasProfile = userProfile &&
     (userProfile.name || userProfile.age || userProfile.mbti ||
-      userProfile.zodiacSign);
+      userProfile.zodiacSign || preferencePrompt.length > 0);
   if (userName || userDescription || hasProfile) {
     parts.push("\n\n[USER INFO - 대화에 자연스럽게 활용]");
 
@@ -466,6 +478,9 @@ function buildFullSystemPrompt(
     // 기타 설명
     if (userDescription) {
       parts.push(`- 추가 정보: ${userDescription}`);
+    }
+    if (preferencePrompt) {
+      parts.push(preferencePrompt);
     }
 
     parts.push(
@@ -1102,6 +1117,11 @@ function buildPilotAuthoritativePrompt(
   const userDescriptionLine = input.userDescription
     ? `- userDescription: ${input.userDescription}`
     : "";
+  const preferencePrompt = buildConversationPreferencePrompt({
+    relationship: profile?.relationship,
+    tone: profile?.tone,
+    topics: profile?.topics,
+  });
   const profileLines: string[] = [];
   if (profile?.age) profileLines.push(`- age: ${profile.age}`);
   if (profile?.gender) profileLines.push(`- gender: ${profile.gender}`);
@@ -1408,6 +1428,7 @@ ${input.persona.hardBoundaries.map((line) => `- ${line}`).join("\n")}
 ${userNameLine}
 ${userDescriptionLine}
 ${profileLines.join("\n")}
+${preferencePrompt}
 
 ${input.timeContext || ""}
 ${input.conversationContext || ""}
@@ -2607,6 +2628,7 @@ async function tryProactiveReveal(params: {
       .eq("user_id", params.userId)
       .eq("character_id", params.characterId)
       .filter("meta->>hookForReveal", "eq", "true")
+      .filter("meta->>hookAbandoned", "is", null)
       .is("revealed_at", null)
       .gte("scheduled_at", since24h)
       .order("scheduled_at", { ascending: false })
@@ -2621,6 +2643,10 @@ async function tryProactiveReveal(params: {
     .from("proactive_message_log")
     .update({ revealed_at: new Date().toISOString() })
     .eq("id", targetId)
+    .eq("user_id", params.userId)
+    .eq("character_id", params.characterId)
+    .filter("meta->>hookForReveal", "eq", "true")
+    .filter("meta->>hookAbandoned", "is", null)
     .is("revealed_at", null)
     .gte("scheduled_at", since24h)
     .select("meta, message_id");
@@ -2682,7 +2708,9 @@ async function tryProactiveReveal(params: {
     const { error: rollbackErr } = await params.supabase
       .from("proactive_message_log")
       .update({ revealed_at: null })
-      .eq("id", targetId);
+      .eq("id", targetId)
+      .eq("user_id", params.userId)
+      .eq("character_id", params.characterId);
     if (rollbackErr) {
       console.error(
         `[reveal] rollback 실패 id=${targetId} (사진 영구 누락):`,
@@ -2702,7 +2730,7 @@ async function tryProactiveReveal(params: {
         characterName: params.characterName,
         messageText: "[사진]",
         messageId: revealMessageId,
-        type: "character_follow_up",
+        type: "character_proactive",
       });
     } catch (e) {
       console.warn(`[reveal] Stage 2 push 실패:`, e);

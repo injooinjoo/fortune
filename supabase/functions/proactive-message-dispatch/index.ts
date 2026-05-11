@@ -36,23 +36,19 @@ import {
   type ProactiveCharacterId,
 } from "../_shared/character_proactive_persona.ts";
 import { SERVICE_TONE_PATTERN as PROACTIVE_SERVICE_TONE_PATTERN } from "../_shared/service_tone_guard.ts";
+import {
+  determineSlotForLocalHour,
+  getImageBearingPlanForSlot,
+  type ProactiveSlotKey,
+  SLOT_WINDOWS,
+} from "../_shared/proactive_message_rules.ts";
 import { requireWorkerAuth } from "../_shared/worker_auth.ts";
 
 // =============================================================================
 // 타입
 // =============================================================================
 
-type SlotKey =
-  | "morning_greet"
-  | "commute_chat"
-  | "lunch_share"
-  | "afternoon_break"
-  | "after_work"
-  | "evening_chat"
-  | "goodnight"
-  | "absence_6h"
-  | "absence_24h"
-  | "absence_72h";
+type SlotKey = ProactiveSlotKey;
 
 interface DispatchRequest {
   forceSlotKey?: SlotKey;
@@ -101,36 +97,6 @@ interface PreferenceRow {
 // 슬롯 윈도우 (사용자 local hour 기준)
 // =============================================================================
 
-interface SlotWindow {
-  startHour: number; // 시작 시 (포함)
-  endHour: number; // 끝 시 (미포함)
-}
-
-const SLOT_WINDOWS: Record<SlotKey, SlotWindow> = {
-  morning_greet: { startHour: 7, endHour: 9 },
-  commute_chat: { startHour: 8, endHour: 10 },
-  lunch_share: { startHour: 11, endHour: 14 }, // 11:00-14:00 (디자인은 11:30-13:30이지만 hour 단위)
-  afternoon_break: { startHour: 14, endHour: 17 },
-  after_work: { startHour: 18, endHour: 20 },
-  evening_chat: { startHour: 20, endHour: 22 },
-  goodnight: { startHour: 22, endHour: 24 },
-  // 부재 트리거는 시간 슬롯 무관 (Slice 3+)
-  absence_6h: { startHour: 0, endHour: 24 },
-  absence_24h: { startHour: 0, endHour: 24 },
-  absence_72h: { startHour: 0, endHour: 24 },
-};
-
-// 자동 활성화 슬롯 (cron 호출 시 dispatcher 가 사용자별 local time 으로 결정).
-// 부재 트리거(absence_*) 는 시간 무관이라 별도 경로(forceSlotKey) 로만 호출.
-//
-// Slice 2 (2026-05-05): luts 파일럿용으로 3 슬롯만 활성. 나머지 4 슬롯은 미활성.
-// PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.2. Slice 3 진입 시 7 슬롯 복구.
-const AUTO_ACTIVE_SLOTS: SlotKey[] = [
-  "lunch_share",
-  "evening_chat",
-  "goodnight",
-];
-
 // Slice 2 파일럿 캐릭터 화이트리스트. D10 결정 — luts 1명만.
 // Slice 3 에서 9명 캐릭터 확장 시 이 배열 또는 환경변수로 토글.
 const SLICE_2_PILOT_CHARACTER_IDS: ProactiveCharacterId[] = ["luts"];
@@ -144,34 +110,9 @@ const PLACEHOLDER_CATEGORY_TOTAL: Record<string, number> = {
 // Storage 버킷명 — generate-character-proactive-image 와 동일.
 const PLACEHOLDER_BUCKET = "character-proactive-images";
 
-function determineSlotForLocalHour(localHour: number): SlotKey | null {
-  for (const slotKey of AUTO_ACTIVE_SLOTS) {
-    const w = SLOT_WINDOWS[slotKey];
-    if (localHour >= w.startHour && localHour < w.endHour) return slotKey;
-  }
-  return null;
-}
-
 // =============================================================================
 // Slice 2 — 일별 image-bearing 결정 + LRU placeholder 선택
 // =============================================================================
-
-// 단순 hash — 같은 (userId, localDate) 입력은 항상 같은 출력. cron 5min 재시도가
-// 동일 사용자에게 슬롯 결정을 뒤집지 않도록 deterministic 보장.
-function simpleHash(s: string): number {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) {
-    h = ((h << 5) - h + s.charCodeAt(i)) | 0;
-  }
-  return Math.abs(h);
-}
-
-// 오늘 lunch_share 가 image-bearing 인지 결정. ~33% 확률 (3일 중 1일).
-// Slice 2 는 meal 사진만 큐레이션됐으므로 lunch_share 만 image-bearing 가능.
-// Slice 3 에서 selfie/night 추가 시 이 함수가 (slot, category) 쌍을 반환하는 형태로 확장.
-function isLunchImageBearing(userId: string, localDate: string): boolean {
-  return simpleHash(`${userId}::${localDate}::lunch_image`) % 3 === 0;
-}
 
 // LRU: 최근 5개 placeholderIndex 제외하고 랜덤 선택. 5장 무중복 보장 (총 7장 중 5 제외 = 2 후보).
 async function pickPlaceholderIndexLRU(
@@ -191,7 +132,9 @@ async function pickPlaceholderIndexLRU(
     .limit(20);
 
   const recentIndices = new Set<number>();
-  for (const row of (recentLogs ?? []) as Array<{ meta?: Record<string, unknown> }>) {
+  for (
+    const row of (recentLogs ?? []) as Array<{ meta?: Record<string, unknown> }>
+  ) {
     const meta = row.meta;
     if (!meta) continue;
     const idx = meta.placeholderIndex;
@@ -213,15 +156,30 @@ async function pickPlaceholderIndexLRU(
   return candidates[Math.floor(Math.random() * candidates.length)];
 }
 
-// Storage 의 character-proactive-images 버킷은 public — getPublicUrl 만으로 충분.
-// signed URL 불요 (PROACTIVE_MESSAGING_PLAN.md Slice 2 A2 결정).
-function getPlaceholderPublicUrl(
+// Storage 의 character-proactive-images 버킷은 public — 존재 확인 후 public URL 생성.
+// getPublicUrl 은 파일이 없어도 URL 문자열을 만들기 때문에 list 로 먼저 검증한다.
+async function getExistingPlaceholderPublicUrl(
   supabase: SupabaseClient,
   characterId: string,
   category: string,
   index: number,
-): string {
-  const path = `${characterId}/${category}/${index}.png`;
+): Promise<string | null> {
+  const fileName = `${index}.png`;
+  const dir = `${characterId}/${category}`;
+  const { data: files, error } = await supabase.storage
+    .from(PLACEHOLDER_BUCKET)
+    .list(dir, { limit: 1, search: fileName });
+  if (error) {
+    console.warn(
+      `[dispatch] placeholder list 실패 ${dir}/${fileName}: ${error.message}`,
+    );
+    return null;
+  }
+  if (!files?.some((file) => file.name === fileName)) {
+    return null;
+  }
+
+  const path = `${dir}/${fileName}`;
   const { data } = supabase.storage.from(PLACEHOLDER_BUCKET).getPublicUrl(path);
   return data.publicUrl;
 }
@@ -246,7 +204,8 @@ const SLOT_COMPOSE_HINTS: Record<SlotKey, SlotComposeHint> = {
   },
   commute_chat: {
     label: "출근/등교 길",
-    guideline: "사용자가 이동 중일 가능성. 짧고 가벼운 응원 또는 너 자신의 출근 풍경 한 컷.",
+    guideline:
+      "사용자가 이동 중일 가능성. 짧고 가벼운 응원 또는 너 자신의 출근 풍경 한 컷.",
   },
   lunch_share: {
     label: "점심",
@@ -263,7 +222,8 @@ const SLOT_COMPOSE_HINTS: Record<SlotKey, SlotComposeHint> = {
   },
   evening_chat: {
     label: "저녁 대화",
-    guideline: "오늘 하루 정리하는 분위기. 사용자가 답하기 편한 작은 질문 하나.",
+    guideline:
+      "오늘 하루 정리하는 분위기. 사용자가 답하기 편한 작은 질문 하나.",
   },
   goodnight: {
     label: "잠자기 전",
@@ -281,7 +241,8 @@ const SLOT_COMPOSE_HINTS: Record<SlotKey, SlotComposeHint> = {
   },
   absence_72h: {
     label: "사흘 부재 후",
-    guideline: "사용자가 며칠 만에 돌아올 가능성. '오랜만이네' 톤. 부담 주지 않고 가볍게.",
+    guideline:
+      "사용자가 며칠 만에 돌아올 가능성. '오랜만이네' 톤. 부담 주지 않고 가볍게.",
   },
 };
 
@@ -802,7 +763,8 @@ serve(async (req: Request) => {
       if (forcedSlot && !withinSlotWindow(localHour, slotKey)) {
         skipped.push({
           userId: pref.user_id,
-          reason: `outside slot window for forced slot ${slotKey} (local hour=${localHour})`,
+          reason:
+            `outside slot window for forced slot ${slotKey} (local hour=${localHour})`,
         });
         continue;
       }
@@ -909,10 +871,10 @@ serve(async (req: Request) => {
         .eq("character_id", chosenCharId)
         .maybeSingle();
 
-      const existingMessages = ((convoRow?.messages ?? []) as Array<{
+      const existingMessages = (convoRow?.messages ?? []) as Array<{
         type?: string;
         content?: string;
-      }>);
+      }>;
 
       // 빈 대화방 자동 인사 차단: 사용자가 한 번도 발화하지 않은 채팅방엔
       // proactive 발송 금지. 그렇지 않으면 사용자가 처음 진입할 때 LLM 이
@@ -981,29 +943,42 @@ serve(async (req: Request) => {
         meta: composeResult.meta,
       };
 
-      // Slice 2: 오늘 lunch_share 가 image-bearing 인지 deterministic 결정.
-      // image-bearing 이면 텍스트는 hooking, character-chat 이 다음 user turn 에서
-      // 사진 reveal. PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.4.
+      // Slice 2: 사용자/날짜별로 3개 활성 슬롯 중 정확히 1개를 image-bearing 으로 결정.
+      // 선택 슬롯에서는 텍스트 hook 을 먼저 보내고, character-chat 이 다음 user turn 에서
+      // 사진을 reveal 한다. Storage 파일이 없으면 텍스트 선톡으로 graceful fallback.
       let hookForReveal = false;
       let plannedImageCategory: string | null = null;
       let plannedPlaceholderIndex: number | null = null;
       let plannedPlaceholderUrl: string | null = null;
 
-      if (slotKey === "lunch_share" && isLunchImageBearing(pref.user_id, localDate)) {
-        plannedImageCategory = "meal";
-        plannedPlaceholderIndex = await pickPlaceholderIndexLRU(
+      const imagePlan = getImageBearingPlanForSlot(
+        pref.user_id,
+        localDate,
+        slotKey,
+      );
+      if (imagePlan) {
+        const candidateIndex = await pickPlaceholderIndexLRU(
           supabase,
           pref.user_id,
           chosenCharId,
-          plannedImageCategory,
+          imagePlan.category,
         );
-        plannedPlaceholderUrl = getPlaceholderPublicUrl(
+        const candidateUrl = await getExistingPlaceholderPublicUrl(
           supabase,
           chosenCharId,
-          plannedImageCategory,
-          plannedPlaceholderIndex,
+          imagePlan.category,
+          candidateIndex,
         );
-        hookForReveal = true;
+        if (candidateUrl) {
+          plannedImageCategory = imagePlan.category;
+          plannedPlaceholderIndex = candidateIndex;
+          plannedPlaceholderUrl = candidateUrl;
+          hookForReveal = true;
+        } else {
+          console.warn(
+            `[dispatch] placeholder missing; text-only fallback user=${pref.user_id} character=${chosenCharId} category=${imagePlan.category} index=${candidateIndex}`,
+          );
+        }
       }
 
       const messageId =
@@ -1128,7 +1103,7 @@ serve(async (req: Request) => {
           characterName: persona.name,
           messageContent: composed.text,
           messageId,
-          pushType: "character_follow_up",
+          pushType: "character_proactive",
           proactive: proactiveMeta,
           // Slice 2: hookForReveal 인 메시지일 때만 push 에 logRowId 동봉.
           // character-chat 이 다음 user turn 에서 이 id 로 reveal claim.
