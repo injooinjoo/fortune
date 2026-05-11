@@ -2198,6 +2198,10 @@ export function ChatScreen() {
     }
 
     setActiveSurvey(character.id, null);
+    // 기존 결과 재표시는 운세 entry 선택 시점이 기준점이다. 방금 만든 카드 ID를
+    // 이미 상단 스크롤 처리된 카드로 표시해, 뒤따르는 카드 mount/content grow가
+    // 사용자 요청 메시지를 위로 밀어내지 않게 한다.
+    cardTopScrolledMessageIdRef.current = embeddedResult.id;
     appendMessages(character, [
       buildAssistantTextMessage(prefixText),
       embeddedResult,
