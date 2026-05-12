@@ -13,6 +13,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
 import {
+  Animated,
   Modal,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -37,6 +38,7 @@ import {
   FORTUNE_CATALOG_GROUPS,
   type FortuneCatalogEntry,
   type FortuneCatalogGroupId,
+  type FortuneTypeId,
 } from '@fortune/product-contracts';
 
 import { AppText } from '../../components/app-text';
@@ -53,7 +55,7 @@ interface FilterPill {
   accent: string;
 }
 
-const TODAY_FORTUNE_IDS: readonly string[] = [
+const TODAY_FORTUNE_IDS: readonly FortuneTypeId[] = [
   'daily',
   'biorhythm',
   'lucky-items',
@@ -203,18 +205,48 @@ function iconForFortune(id: string): keyof typeof Ionicons.glyphMap {
   return map[id] ?? 'sparkles-outline';
 }
 
-function entriesForFilter(filter: SelectableGroupId): FortuneCatalogEntry[] {
-  if (filter === 'today') {
-    const ordered: FortuneCatalogEntry[] = [];
-    for (const id of TODAY_FORTUNE_IDS) {
-      const entry = FORTUNE_CATALOG.find((item) => item.id === id);
-      if (entry) ordered.push(entry);
-    }
-    return ordered;
+const GROUP_ORDER = new Map<FortuneCatalogGroupId, number>(
+  FORTUNE_CATALOG_GROUPS.map((group, index) => [group.id, index]),
+);
+
+function allCarouselEntries(): FortuneCatalogEntry[] {
+  const byId = new Map(FORTUNE_CATALOG.map((entry) => [entry.id, entry]));
+  const todayEntries: FortuneCatalogEntry[] = [];
+
+  for (const id of TODAY_FORTUNE_IDS) {
+    const entry = byId.get(id);
+    if (entry) todayEntries.push(entry);
   }
-  return FORTUNE_CATALOG.filter((entry) => entry.group === filter)
+
+  const todaySet = new Set(TODAY_FORTUNE_IDS);
+  const restEntries = FORTUNE_CATALOG.filter((entry) => !todaySet.has(entry.id))
     .slice()
-    .sort((a, b) => a.order - b.order);
+    .sort((a, b) => {
+      const groupDelta =
+        (GROUP_ORDER.get(a.group) ?? 999) - (GROUP_ORDER.get(b.group) ?? 999);
+      if (groupDelta !== 0) return groupDelta;
+      return a.order - b.order;
+    });
+
+  return [...todayEntries, ...restEntries];
+}
+
+function filterForCarouselIndex(
+  entries: readonly FortuneCatalogEntry[],
+  index: number,
+): SelectableGroupId {
+  const entry = entries[index];
+  if (!entry) return 'today';
+  return TODAY_FORTUNE_IDS.includes(entry.id) ? 'today' : entry.group;
+}
+
+function firstIndexForFilter(
+  entries: readonly FortuneCatalogEntry[],
+  filter: SelectableGroupId,
+): number {
+  if (filter === 'today') return 0;
+  const index = entries.findIndex((entry) => entry.group === filter);
+  return index >= 0 ? index : 0;
 }
 
 function pillForFilter(filter: SelectableGroupId): FilterPill {
@@ -241,11 +273,12 @@ export function AllFortunesSheet({
 }: AllFortunesSheetProps) {
   const { width, height } = useWindowDimensions();
   const scrollRef = useRef<ScrollView | null>(null);
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const [activeIndex, setActiveIndex] = useState(0);
   const [activeFilter, setActiveFilter] =
     useState<SelectableGroupId>(initialCategory);
-  const [activeIndex, setActiveIndex] = useState(0);
 
-  const entries = useMemo(() => entriesForFilter(activeFilter), [activeFilter]);
+  const entries = useMemo(() => allCarouselEntries(), []);
   const currentPill = pillForFilter(activeFilter);
   const sheetHeight = Math.min(Math.round(height * 0.82), 720);
   const cardWidth = Math.min(Math.round(width * 0.62), 252);
@@ -256,19 +289,23 @@ export function AllFortunesSheet({
 
   useEffect(() => {
     if (!visible) return;
-    if (activeFilter === initialCategory) return;
-    setActiveFilter(initialCategory);
-  }, [visible, initialCategory, activeFilter]);
-
-  useEffect(() => {
-    if (!visible) return;
-    setActiveIndex(0);
-    requestAnimationFrame(() => scrollRef.current?.scrollTo({ x: 0, animated: false }));
-  }, [visible, activeFilter]);
+    const nextIndex = firstIndexForFilter(entries, initialCategory);
+    const nextX = nextIndex * snapInterval;
+    setActiveIndex(nextIndex);
+    setActiveFilter(filterForCarouselIndex(entries, nextIndex));
+    scrollX.setValue(nextX);
+    requestAnimationFrame(() =>
+      scrollRef.current?.scrollTo({ x: nextX, animated: false }),
+    );
+  }, [visible, initialCategory, entries, snapInterval, scrollX]);
 
   const updateActiveIndexFromOffset = (offsetX: number) => {
-    const nextIndex = Math.round(offsetX / snapInterval);
-    setActiveIndex(Math.max(0, Math.min(entries.length - 1, nextIndex)));
+    const nextIndex = Math.max(
+      0,
+      Math.min(entries.length - 1, Math.round(offsetX / snapInterval)),
+    );
+    setActiveIndex(nextIndex);
+    setActiveFilter(filterForCarouselIndex(entries, nextIndex));
   };
 
   const onCarouselScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -394,7 +431,13 @@ export function AllFortunesSheet({
               return (
                 <Pressable
                   key={pill.id}
-                  onPress={() => setActiveFilter(pill.id)}
+                  onPress={() => {
+                    const nextIndex = firstIndexForFilter(entries, pill.id);
+                    const nextX = nextIndex * snapInterval;
+                    setActiveIndex(nextIndex);
+                    setActiveFilter(filterForCarouselIndex(entries, nextIndex));
+                    scrollRef.current?.scrollTo({ x: nextX, animated: true });
+                  }}
                   accessibilityRole="tab"
                   accessibilityState={{ selected: isActive }}
                   accessibilityLabel={pill.label}
@@ -445,12 +488,16 @@ export function AllFortunesSheet({
                 </AppText>
               </View>
             ) : (
-              <ScrollView
+              <Animated.ScrollView
                 ref={scrollRef}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 snapToInterval={snapInterval}
                 decelerationRate="fast"
+                onScroll={Animated.event(
+                  [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+                  { useNativeDriver: true },
+                )}
                 onMomentumScrollEnd={onCarouselScrollEnd}
                 onScrollEndDrag={onCarouselScrollEnd}
                 scrollEventThrottle={16}
@@ -468,6 +515,9 @@ export function AllFortunesSheet({
                       entry={entry}
                       width={cardWidth}
                       height={cardHeight}
+                      scrollX={scrollX}
+                      index={index}
+                      snapInterval={snapInterval}
                       active={isActive}
                       onPress={() => {
                         if (isActive) {
@@ -479,11 +529,12 @@ export function AllFortunesSheet({
                           animated: true,
                         });
                         setActiveIndex(index);
+                        setActiveFilter(filterForCarouselIndex(entries, index));
                       }}
                     />
                   );
                 })}
-              </ScrollView>
+              </Animated.ScrollView>
             )}
           </View>
 
@@ -551,49 +602,79 @@ function HeroFortuneCard({
   entry,
   width,
   height,
+  scrollX,
+  index,
+  snapInterval,
   active,
   onPress,
 }: {
   entry: FortuneCatalogEntry;
   width: number;
   height: number;
+  scrollX: Animated.Value;
+  index: number;
+  snapInterval: number;
   active: boolean;
   onPress: () => void;
 }) {
   const category = pillForEntry(entry);
   const iconName = iconForFortune(entry.id);
   const subtitle = POETIC_COPY[entry.id] ?? entry.shortDesc;
-  const scale = active ? 1 : 0.86;
+  const inputRange = [
+    (index - 1) * snapInterval,
+    index * snapInterval,
+    (index + 1) * snapInterval,
+  ];
+  const scale = scrollX.interpolate({
+    inputRange,
+    outputRange: [0.88, 1, 0.88],
+    extrapolate: 'clamp',
+  });
+  const opacity = scrollX.interpolate({
+    inputRange,
+    outputRange: [0.58, 1, 0.58],
+    extrapolate: 'clamp',
+  });
+  const translateY = scrollX.interpolate({
+    inputRange,
+    outputRange: [18, 0, 18],
+    extrapolate: 'clamp',
+  });
 
   return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={`${entry.displayName}, ${
-        entry.costPoints === 0 ? '무료' : `${entry.costPoints} 포인트`
-      }`}
-      accessibilityHint={
-        active ? '운세를 시작합니다' : '이 운세 카드를 가운데로 이동합니다'
-      }
-      style={({ pressed }) => ({
+    <Animated.View
+      style={{
         width,
         height,
-        borderRadius: 24,
-        overflow: 'hidden',
-        borderWidth: 1,
-        borderColor: active
-          ? withAlpha(category.accent, 0.62)
-          : fortuneTheme.colors.borderOpaque,
-        transform: [{ scale: pressed ? scale * 0.98 : scale }],
-        opacity: active ? 1 : 0.74,
-        backgroundColor: '#15131E',
-        shadowColor: active ? category.accent : 'transparent',
-        shadowOpacity: active ? 0.3 : 0,
+        opacity,
+        transform: [{ translateY }, { scale }],
+        shadowColor: category.accent,
+        shadowOpacity: 0.26,
         shadowRadius: 28,
         shadowOffset: { width: 0, height: 18 },
-      })}
+      }}
     >
-      <SceneBackground accent={category.accent} active={active} idSuffix={entry.id} />
+      <Pressable
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={`${entry.displayName}, ${
+          entry.costPoints === 0 ? '무료' : `${entry.costPoints} 포인트`
+        }`}
+        accessibilityHint={
+          active ? '운세를 시작합니다' : '이 운세 카드를 가운데로 이동합니다'
+        }
+        style={({ pressed }) => ({
+          width: '100%',
+          height: '100%',
+          borderRadius: 24,
+          overflow: 'hidden',
+          borderWidth: 1,
+          borderColor: withAlpha(category.accent, 0.44),
+          opacity: pressed ? 0.92 : 1,
+          backgroundColor: '#15131E',
+        })}
+      >
+      <SceneBackground accent={category.accent} active idSuffix={entry.id} />
 
       <View
         style={{
@@ -697,7 +778,8 @@ function HeroFortuneCard({
           </View>
         ) : null}
       </View>
-    </Pressable>
+      </Pressable>
+    </Animated.View>
   );
 }
 
