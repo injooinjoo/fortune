@@ -1,12 +1,10 @@
-import {
-  assertEquals,
-  assertNotEquals,
-} from "https://deno.land/std@0.168.0/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std@0.168.0/testing/asserts.ts";
 import {
   ACTIVE_PROACTIVE_SLOT_KEYS,
   chooseDailyImageBearingPlan,
   determineSlotForLocalHour,
   getImageBearingPlanForSlot,
+  IMAGE_BEARING_PROACTIVE_SLOT_KEYS,
 } from "./proactive_message_rules.ts";
 
 Deno.test("determineSlotForLocalHour maps Slice 2 luts slots", () => {
@@ -21,10 +19,11 @@ Deno.test("determineSlotForLocalHour maps Slice 2 luts slots", () => {
   assertEquals(determineSlotForLocalHour(24), null);
 });
 
-Deno.test("chooseDailyImageBearingPlan chooses exactly one active slot per user-day", () => {
+Deno.test("chooseDailyImageBearingPlan keeps meal photo hooks on lunch", () => {
   const plan = chooseDailyImageBearingPlan("user-1", "2026-05-11");
-  assertEquals(ACTIVE_PROACTIVE_SLOT_KEYS.includes(plan.slotKey), true);
+  assertEquals(plan.slotKey, "lunch_share");
   assertEquals(plan.category, "meal");
+  assertEquals(IMAGE_BEARING_PROACTIVE_SLOT_KEYS, ["lunch_share"]);
 
   let matchCount = 0;
   for (const slotKey of ACTIVE_PROACTIVE_SLOT_KEYS) {
@@ -35,14 +34,17 @@ Deno.test("chooseDailyImageBearingPlan chooses exactly one active slot per user-
   assertEquals(matchCount, 1);
 });
 
-Deno.test("daily image-bearing plan is deterministic and date-sensitive", () => {
+Deno.test("daily image-bearing plan is deterministic and user/date stable", () => {
   const first = chooseDailyImageBearingPlan("user-1", "2026-05-11");
   const second = chooseDailyImageBearingPlan("user-1", "2026-05-11");
   assertEquals(second, first);
-
-  const seen = new Set<string>();
-  for (let day = 11; day <= 25; day += 1) {
-    seen.add(chooseDailyImageBearingPlan("user-1", `2026-05-${day}`).slotKey);
-  }
-  assertNotEquals(seen.size, 1);
+  assertEquals(chooseDailyImageBearingPlan("user-2", "2026-05-12"), first);
+  assertEquals(
+    getImageBearingPlanForSlot("user-1", "2026-05-11", "evening_chat"),
+    null,
+  );
+  assertEquals(
+    getImageBearingPlanForSlot("user-1", "2026-05-11", "goodnight"),
+    null,
+  );
 });

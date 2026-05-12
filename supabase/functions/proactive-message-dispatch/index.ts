@@ -85,12 +85,26 @@ interface DispatchResponse {
 
 interface PreferenceRow {
   user_id: string;
+  enabled?: boolean;
   timezone: string;
   frequency_tier: "low" | "moderate" | "high";
   enabled_character_ids: string[];
   disabled_slot_keys: string[];
   quiet_hours_start: number;
   quiet_hours_end: number;
+}
+
+function defaultPreferenceRow(userId: string): PreferenceRow {
+  return {
+    user_id: userId,
+    enabled: true,
+    timezone: "Asia/Seoul",
+    frequency_tier: "moderate",
+    enabled_character_ids: [...SLICE_2_PILOT_CHARACTER_IDS],
+    disabled_slot_keys: [],
+    quiet_hours_start: 22,
+    quiet_hours_end: 9,
+  };
 }
 
 // =============================================================================
@@ -674,9 +688,8 @@ serve(async (req: Request) => {
   let prefQuery = supabase
     .from("user_proactive_preferences")
     .select(
-      "user_id, timezone, frequency_tier, enabled_character_ids, disabled_slot_keys, quiet_hours_start, quiet_hours_end",
-    )
-    .eq("enabled", true);
+      "user_id, enabled, timezone, frequency_tier, enabled_character_ids, disabled_slot_keys, quiet_hours_start, quiet_hours_end",
+    );
 
   if (request.forceUserId) {
     prefQuery = prefQuery.eq("user_id", request.forceUserId);
@@ -700,19 +713,44 @@ serve(async (req: Request) => {
     );
   }
 
-  const preferences = (prefRows ?? []) as PreferenceRow[];
+  const allPreferenceRows = (prefRows ?? []) as PreferenceRow[];
+  const explicitPreferenceUserIds = new Set(
+    allPreferenceRows.map((row) => row.user_id),
+  );
+  const preferences = allPreferenceRows.filter((row) => row.enabled !== false);
+  const errors: Array<{ userId: string; characterId?: string; error: string }> =
+    [];
 
-  // forceUserId 인데 row 가 없으면 디폴트 prefs 로 fallback (D1: opt-out — 모든 사용자 디폴트 ON).
-  if (request.forceUserId && preferences.length === 0) {
-    preferences.push({
-      user_id: request.forceUserId,
-      timezone: "Asia/Seoul",
-      frequency_tier: "moderate",
-      enabled_character_ids: [],
-      disabled_slot_keys: [],
-      quiet_hours_start: 22,
-      quiet_hours_end: 9,
-    });
+  // forceUserId 인데 명시 row 자체가 없으면 디폴트 prefs 로 fallback (D1: opt-out — 모든 사용자 디폴트 ON).
+  // 명시 enabled=false row 는 forceUserId 에서도 존중한다.
+  if (request.forceUserId && allPreferenceRows.length === 0) {
+    preferences.push(defaultPreferenceRow(request.forceUserId));
+  }
+
+  // V1/Slice 2 product rule: Settings UI 가 아직 없어도 DB row가 없으면 기본 ON.
+  // 기존 구현은 user_proactive_preferences INNER 후보만 순회해서, row 없는 실사용자는
+  // cron에서 완전히 누락됐다. 명시 row가 없는 luts 대화 사용자는 기본 설정으로 합성한다.
+  // 명시 disabled row는 explicitPreferenceUserIds에 포함되므로 절대 재활성화하지 않는다.
+  if (!request.forceUserId) {
+    const { data: convoUsers, error: convoUsersErr } = await supabase
+      .from("character_conversations")
+      .select("user_id")
+      .in("character_id", SLICE_2_PILOT_CHARACTER_IDS)
+      .order("last_message_at", { ascending: false })
+      .limit(1000);
+    if (convoUsersErr) {
+      errors.push({
+        userId: "*",
+        error: `default proactive 후보 조회 실패: ${convoUsersErr.message}`,
+      });
+    } else {
+      for (const row of (convoUsers ?? []) as Array<{ user_id?: string }>) {
+        const userId = row.user_id;
+        if (!userId || explicitPreferenceUserIds.has(userId)) continue;
+        explicitPreferenceUserIds.add(userId);
+        preferences.push(defaultPreferenceRow(userId));
+      }
+    }
   }
 
   // 2. 활성 슬롯 결정 — forceSlotKey 면 모든 사용자에게 동일 슬롯, 아니면 사용자별 local time으로 결정.
@@ -720,8 +758,6 @@ serve(async (req: Request) => {
 
   const sent: DispatchSent[] = [];
   const skipped: DispatchSkipped[] = [];
-  const errors: Array<{ userId: string; characterId?: string; error: string }> =
-    [];
 
   // 3. 후보 사용자 순회
   for (const pref of preferences) {

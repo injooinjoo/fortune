@@ -20,6 +20,10 @@ export interface ImageBearingPlan {
   category: "meal";
 }
 
+export const IMAGE_BEARING_PROACTIVE_SLOT_KEYS: readonly ProactiveSlotKey[] = [
+  "lunch_share",
+];
+
 export const SLOT_WINDOWS: Record<ProactiveSlotKey, SlotWindow> = {
   morning_greet: { startHour: 7, endHour: 9 },
   commute_chat: { startHour: 8, endHour: 10 },
@@ -51,22 +55,18 @@ export function determineSlotForLocalHour(
   return null;
 }
 
-export function simpleHash(input: string): number {
-  let hash = 0;
-  for (let i = 0; i < input.length; i += 1) {
-    hash = ((hash << 5) - hash + input.charCodeAt(i)) | 0;
-  }
-  return Math.abs(hash);
-}
-
 export function chooseDailyImageBearingPlan(
   userId: string,
   localDate: string,
 ): ImageBearingPlan {
-  const slotIndex = simpleHash(`${userId}::${localDate}::daily_image_slot`) %
-    ACTIVE_PROACTIVE_SLOT_KEYS.length;
+  // Slice 2 product rule: meal/photo hook belongs to lunch. Evening/goodnight may
+  // proactively text first, but must not consume the day's photo slot; otherwise
+  // users expecting "점심 먹는 척하면서 사진" receive no lunch photo hook.
+  // Keep userId/localDate parameters for API stability and future category splits.
+  void userId;
+  void localDate;
   return {
-    slotKey: ACTIVE_PROACTIVE_SLOT_KEYS[slotIndex],
+    slotKey: "lunch_share",
     category: "meal",
   };
 }
@@ -76,6 +76,7 @@ export function getImageBearingPlanForSlot(
   localDate: string,
   slotKey: ProactiveSlotKey,
 ): ImageBearingPlan | null {
+  if (!IMAGE_BEARING_PROACTIVE_SLOT_KEYS.includes(slotKey)) return null;
   const plan = chooseDailyImageBearingPlan(userId, localDate);
   return plan.slotKey === slotKey ? plan : null;
 }
