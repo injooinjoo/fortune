@@ -77,7 +77,7 @@ export function SurveyComposer({
           ? '#EF4444'
           : isActive
             ? fortuneTheme.colors.ctaBackground
-            : fortuneTheme.colors.border,
+            : 'transparent',
         borderRadius: fortuneTheme.radius.inputArea,
         borderWidth: 1,
         paddingHorizontal: 12,

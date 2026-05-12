@@ -1777,7 +1777,7 @@ export function ActiveChatComposer({
           ? '#EF4444'
           : voiceActive
             ? fortuneTheme.colors.ctaBackground
-            : fortuneTheme.colors.border,
+            : 'transparent',
         borderRadius: fortuneTheme.radius.inputArea,
         borderWidth: 1,
         paddingHorizontal: 12,
