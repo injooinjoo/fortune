@@ -123,7 +123,7 @@ export function Screen({
           <View
             pointerEvents="none"
             style={{
-              height: 44,
+              height: 28,
               left: 0,
               position: 'absolute',
               right: 0,
@@ -131,15 +131,15 @@ export function Screen({
               zIndex: 8,
             }}
           >
-            <Svg height="44" preserveAspectRatio="none" width="100%">
+            <Svg height="28" preserveAspectRatio="none" width="100%">
               <Defs>
                 <LinearGradient id="screenTopBoundaryFade" x1="0" y1="0" x2="0" y2="1">
-                  <Stop offset="0" stopColor={fortuneTheme.colors.background} stopOpacity={1} />
-                  <Stop offset="0.58" stopColor={fortuneTheme.colors.background} stopOpacity={0.82} />
+                  <Stop offset="0" stopColor={fortuneTheme.colors.background} stopOpacity={0.62} />
+                  <Stop offset="0.42" stopColor={fortuneTheme.colors.background} stopOpacity={0.24} />
                   <Stop offset="1" stopColor={fortuneTheme.colors.background} stopOpacity={0} />
                 </LinearGradient>
               </Defs>
-              <Rect x="0" y="0" width="100%" height="44" fill="url(#screenTopBoundaryFade)" />
+              <Rect x="0" y="0" width="100%" height="28" fill="url(#screenTopBoundaryFade)" />
             </Svg>
           </View>
         ) : null}
