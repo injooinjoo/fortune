@@ -4605,7 +4605,8 @@
         "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md",
         "docs/features/PROACTIVE_MESSAGING_PLAN.md",
         "supabase/migrations/20260426000004_proactive_dispatch_cron.sql",
-        "supabase/migrations/20260505110000_proactive_cron_use_service_role.sql"
+        "supabase/migrations/20260505110000_proactive_cron_use_service_role.sql",
+        "supabase/migrations/20260512155000_proactive_dispatch_default_prefs_and_lunch_photo.sql"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -6773,6 +6774,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "supabase/migrations/20260512155000_proactive_dispatch_default_prefs_and_lunch_photo.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "supabase/migrations/_archived/20260214000001_add_character_dm_notification_preference.sql",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -7036,20 +7051,20 @@
     "counts_by_area": {
       "docs": 101,
       "scripts": 53,
-      "supabase": 308
+      "supabase": 309
     },
     "counts_by_candidate_action": {
       "keep": 52,
       "keep_generated": 2,
       "manual_review": 58,
       "phase1_remove_candidate": 3,
-      "phase2_review_candidate": 347
+      "phase2_review_candidate": 348
     },
     "counts_by_usage_status": {
       "doc_only": 119,
       "generated_excluded": 2,
       "runtime_used": 52,
-      "tooling_only": 228,
+      "tooling_only": 229,
       "unreferenced": 61
     },
     "declared_asset_dirs_without_runtime_refs": [],
@@ -7099,7 +7114,7 @@
       "generate-poster-guide",
       "grant-ad-reward"
     ],
-    "total_files": 462,
+    "total_files": 463,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "ack-scheduled-reply",
