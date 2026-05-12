@@ -3330,14 +3330,20 @@ export function ActiveCharacterChatHeader({
             size={22}
           />
         </Pressable>
-        <View
-          style={{
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`${character.name} 프로필 보기`}
+          accessibilityHint="탭하면 캐릭터 프로필이 열립니다"
+          onPress={onOpenProfile}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          style={({ pressed }) => ({
             alignItems: 'center',
             flex: 1,
             flexDirection: 'row',
             gap: 10,
             justifyContent: 'center',
-          }}
+            opacity: pressed ? 0.72 : 1,
+          })}
         >
           <CharacterAvatar characterId={character.id} name={character.name} size={34} />
           <View style={{ alignItems: 'center', gap: 2 }}>
@@ -3350,23 +3356,12 @@ export function ActiveCharacterChatHeader({
                   : 'AI 스토리 캐릭터 · 관계를 이어보세요'}
             </AppText>
           </View>
-        </View>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="캐릭터 프로필 보기"
-          onPress={onOpenProfile}
-          hitSlop={{ top: 16, bottom: 16, left: 16, right: 16 }}
-          style={({ pressed }) => ({
-            opacity: pressed ? 0.6 : 1,
-            padding: 8,
-          })}
-        >
-          <Ionicons
-            color={fortuneTheme.colors.textPrimary}
-            name="information-circle-outline"
-            size={22}
-          />
         </Pressable>
+        <View
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+          style={{ width: 38 }}
+        />
       </View>
       {showAffinity ? (
         <View style={{ alignItems: 'center', gap: 4, paddingHorizontal: 40 }}>
