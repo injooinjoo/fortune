@@ -52,6 +52,7 @@ import { ProgressMessageCard } from './progress-message-card';
 import type { ChatSurveyStep } from '../chat-survey/types';
 import { TarotDrawWidget } from '../chat-survey/tarot-draw-widget';
 import { getDeckCoverSource } from '../haneul/tarot-deck-covers';
+import { buildChatRenderItems } from './chat-time-divider';
 
 /**
  * 메시지 ID 에서 unix-ms timestamp 추출. 옛 ID 패턴: `<sender>-<unixMs>-<rand>`.
@@ -88,15 +89,6 @@ function sortMessagesByTimestamp<T extends { id: string }>(messages: readonly T[
  */
 export function getCanonicalVisibleMessages(messages: readonly ChatShellMessage[]): ChatShellMessage[] {
   return sortMessagesByTimestamp(messages);
-}
-
-function formatChatHeaderTimestamp(date: Date): string {
-  const hour = date.getHours();
-  const minute = date.getMinutes();
-  const isAfternoon = hour >= 12;
-  const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-  const paddedMinute = minute.toString().padStart(2, '0');
-  return `${isAfternoon ? '오후' : '오전'} ${displayHour}:${paddedMinute}`;
 }
 
 function CharacterAvatar({
@@ -792,6 +784,31 @@ function TypingIndicatorBubble(_props: {
   );
 }
 
+function TimeDivider({
+  label,
+  accessibilityLabel,
+}: {
+  label: string;
+  accessibilityLabel: string;
+}) {
+  return (
+    <View
+      accessible
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="text"
+      style={{
+        alignItems: 'center',
+        marginBottom: 8,
+        marginTop: 18,
+      }}
+    >
+      <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+        {label}
+      </AppText>
+    </View>
+  );
+}
+
 /**
  * ondo-design-system story-chat-player `Typing` 포트.
  *   @keyframes typing {
@@ -1157,6 +1174,7 @@ function ChatThreadMessage({
   character,
   message,
   showProactiveCaption,
+  timeDividerShownBefore,
   onDeleteUserMessage,
   ttsControllerStatus,
   ttsActiveMessageId,
@@ -1169,6 +1187,8 @@ function ChatThreadMessage({
   message: ChatShellMessage;
   /** Slice 2: 연속된 proactive run 의 첫 메시지일 때만 true → "먼저 톡 보냄" 캡션 표시. */
   showProactiveCaption?: boolean;
+  /** 중앙 시간 라벨이 바로 위에 표시됐으면 proactive 캡션의 시간 중복을 줄인다. */
+  timeDividerShownBefore?: boolean;
   /** 본인이 보낸 텍스트 메시지를 길게 눌러 삭제할 수 있게 하는 핸들러. */
   onDeleteUserMessage?: (messageId: string) => void;
   /** TTS controller 상태 — assistant text 메시지 아래 SpeakerButton 표시용. */
@@ -1294,7 +1314,7 @@ function ChatThreadMessage({
   const proactiveCaptionLabel = (() => {
     if (!showProactiveCaption || !proactiveMeta?.generatedAt) return null;
     const ts = Date.parse(proactiveMeta.generatedAt);
-    if (Number.isNaN(ts)) return '먼저 톡 보냄';
+    if (Number.isNaN(ts) || timeDividerShownBefore) return '먼저 톡 보냄';
     const d = new Date(ts);
     const hh = String(d.getHours()).padStart(2, '0');
     const mm = String(d.getMinutes()).padStart(2, '0');
@@ -3074,6 +3094,7 @@ export function ActiveCharacterChatSurface({
   // ID 에 unix-ms 가 내장 (`user-1778217138036-...`) 되어 있어서 그걸 추출해
   // ascending 정렬. 안전 — id 패턴 안 맞으면 array index 폴백 (sort stability).
   const visibleMessages = getCanonicalVisibleMessages(messages);
+  const renderItems = buildChatRenderItems(visibleMessages);
   const promptActions = actions;
   const hasEmbeddedResult = visibleMessages.some(
     (message) =>
@@ -3092,8 +3113,6 @@ export function ActiveCharacterChatSurface({
   // 빈 상태에서도 chat-screen useState 초기화에서 캐릭터 인트로 1개 (story
   // 캐릭터의 경우 buildPilotStoryInitialThread) 가 들어 있어 화면이 비지
   // 않는다.
-  const previewMessages = visibleMessages;
-
   const chatTintBg = romanceScore > 5 ? romanceTintBackground(romanceScore) : undefined;
 
   return (
@@ -3158,46 +3177,29 @@ export function ActiveCharacterChatSurface({
         </View>
       ) : null}
 
-      <View
-        style={{
-          alignItems: 'center',
-          paddingTop: 2,
-          gap: 4,
-        }}
-      >
-        <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-          {formatChatHeaderTimestamp(new Date())}
-        </AppText>
-        {surveyActive && surveyEyebrow ? (
+      {surveyActive && surveyEyebrow ? (
+        <View style={{ alignItems: 'center', paddingTop: 2 }}>
           <Chip label={surveyEyebrow} tone="accent" />
-        ) : null}
-      </View>
+        </View>
+      ) : null}
 
       <ScenarioCard character={character} />
 
       <View style={{ gap: fortuneTheme.spacing.sm }}>
-        {previewMessages.map((message, idx) => {
-          // Slice 2: 연속된 proactive run 의 첫 메시지에만 "먼저 톡 보냄" 캡션 표시.
-          // 이전 메시지가 proactive 가 아니거나 user 메시지면 첫 run 시작.
-          const prev = idx > 0 ? previewMessages[idx - 1] : null;
-          const messageHasProactive =
-            (message.kind === 'text' || message.kind === 'image') &&
-            'proactive' in message &&
-            message.proactive != null;
-          const prevHasProactive =
-            prev != null &&
-            (prev.kind === 'text' || prev.kind === 'image') &&
-            'proactive' in prev &&
-            prev.proactive != null &&
-            prev.sender === 'assistant';
-          const showProactiveCaption =
-            messageHasProactive && !prevHasProactive;
-          return (
+        {renderItems.map((item) =>
+          item.kind === 'time-divider' ? (
+            <TimeDivider
+              key={item.id}
+              label={item.label}
+              accessibilityLabel={item.accessibilityLabel}
+            />
+          ) : (
             <ChatThreadMessage
-              key={message.id}
+              key={item.message.id}
               character={character}
-              message={message}
-              showProactiveCaption={showProactiveCaption}
+              message={item.message}
+              showProactiveCaption={item.showProactiveCaption}
+              timeDividerShownBefore={item.timeDividerShownBefore}
               onDeleteUserMessage={onDeleteUserMessage}
               ttsControllerStatus={ttsControllerStatus}
               ttsActiveMessageId={ttsActiveMessageId}
@@ -3205,8 +3207,8 @@ export function ActiveCharacterChatSurface({
               onPlayTts={onPlayTts}
               onStopTts={onStopTts}
             />
-          );
-        })}
+          ),
+        )}
         {isTyping ? (
           <TypingIndicatorBubble
             character={character}

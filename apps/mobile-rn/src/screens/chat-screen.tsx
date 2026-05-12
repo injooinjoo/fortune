@@ -4336,6 +4336,7 @@ export function ChatScreen() {
       }}
       scrollViewRef={chatScrollRef}
       dismissKeyboardOnTap={surfaceMode === 'chat'}
+      topBoundaryFade={gate === 'ready' && surfaceMode === 'chat'}
       header={
         gate === 'ready' && surfaceMode === 'chat' ? (
           <View>

@@ -8,6 +8,7 @@ import {
 
 import { Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
 import { fortuneTheme } from '../lib/theme';
 
@@ -22,6 +23,8 @@ interface ScreenProps extends PropsWithChildren {
   centerContent?: boolean;
   /** Dismisses the keyboard on empty-space taps and scroll drags. */
   dismissKeyboardOnTap?: boolean;
+  /** Header 아래 스크롤 콘텐츠가 스르르 사라지도록 덮는 상단 fade 경계. */
+  topBoundaryFade?: boolean;
 }
 
 export function Screen({
@@ -35,6 +38,7 @@ export function Screen({
   contentBottomInset = 0,
   centerContent = false,
   dismissKeyboardOnTap = false,
+  topBoundaryFade = false,
 }: ScreenProps) {
   const insets = useSafeAreaInsets();
   const [keyboardVisible, setKeyboardVisible] = useState(false);
@@ -76,44 +80,70 @@ export function Screen({
           {header}
         </View>
       ) : null}
-      <ScrollView
-        contentContainerStyle={{
-          paddingHorizontal: fortuneTheme.spacing.pageHorizontal,
-          paddingTop: header
-            ? fortuneTheme.spacing.sm
-            : fortuneTheme.spacing.pageVertical,
-          paddingBottom:
-            (footer ? fortuneTheme.spacing.md : fortuneTheme.spacing.pageVertical) +
-            contentBottomInset,
-          gap: fortuneTheme.spacing.md,
-          maxWidth: 600,
-          alignSelf: 'center',
-          width: '100%',
-          ...(centerContent
-            ? { flexGrow: 1, justifyContent: 'center' }
-            : dismissKeyboardOnTap
-              ? { flexGrow: 1 }
-              : null),
-        }}
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode={dismissKeyboardOnTap ? 'on-drag' : 'none'}
-        onContentSizeChange={onScrollContentSizeChange}
-        ref={scrollViewRef}
-        style={{ flex: 1 }}
-      >
-        {dismissKeyboardOnTap ? (
-          <Pressable
-            onPress={() => Keyboard.dismiss()}
-            style={{ flexGrow: 1 }}
+      <View style={{ flex: 1 }}>
+        <ScrollView
+          contentContainerStyle={{
+            paddingHorizontal: fortuneTheme.spacing.pageHorizontal,
+            paddingTop: header
+              ? fortuneTheme.spacing.sm
+              : fortuneTheme.spacing.pageVertical,
+            paddingBottom:
+              (footer ? fortuneTheme.spacing.md : fortuneTheme.spacing.pageVertical) +
+              contentBottomInset,
+            gap: fortuneTheme.spacing.md,
+            maxWidth: 600,
+            alignSelf: 'center',
+            width: '100%',
+            ...(centerContent
+              ? { flexGrow: 1, justifyContent: 'center' }
+              : dismissKeyboardOnTap
+                ? { flexGrow: 1 }
+                : null),
+          }}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode={dismissKeyboardOnTap ? 'on-drag' : 'none'}
+          onContentSizeChange={onScrollContentSizeChange}
+          ref={scrollViewRef}
+          style={{ flex: 1 }}
+        >
+          {dismissKeyboardOnTap ? (
+            <Pressable
+              onPress={() => Keyboard.dismiss()}
+              style={{ flexGrow: 1 }}
+            >
+              <View style={{ flexGrow: 1, gap: fortuneTheme.spacing.md }}>
+                {children}
+              </View>
+            </Pressable>
+          ) : (
+            <View style={{ gap: fortuneTheme.spacing.md }}>{children}</View>
+          )}
+        </ScrollView>
+        {topBoundaryFade ? (
+          <View
+            pointerEvents="none"
+            style={{
+              height: 44,
+              left: 0,
+              position: 'absolute',
+              right: 0,
+              top: 0,
+              zIndex: 8,
+            }}
           >
-            <View style={{ flexGrow: 1, gap: fortuneTheme.spacing.md }}>
-              {children}
-            </View>
-          </Pressable>
-        ) : (
-          <View style={{ gap: fortuneTheme.spacing.md }}>{children}</View>
-        )}
-      </ScrollView>
+            <Svg height="44" preserveAspectRatio="none" width="100%">
+              <Defs>
+                <LinearGradient id="screenTopBoundaryFade" x1="0" y1="0" x2="0" y2="1">
+                  <Stop offset="0" stopColor={fortuneTheme.colors.background} stopOpacity={1} />
+                  <Stop offset="0.58" stopColor={fortuneTheme.colors.background} stopOpacity={0.82} />
+                  <Stop offset="1" stopColor={fortuneTheme.colors.background} stopOpacity={0} />
+                </LinearGradient>
+              </Defs>
+              <Rect x="0" y="0" width="100%" height="44" fill="url(#screenTopBoundaryFade)" />
+            </Svg>
+          </View>
+        ) : null}
+      </View>
       {footer ? (
         <View
           style={{
