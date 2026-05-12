@@ -64,16 +64,73 @@ export function Screen({
     keyboardAvoiding && keyboardVisible
       ? 0
       : fortuneTheme.spacing.pageVertical + insets.bottom;
+  const floatingHeader = Boolean(header && topBoundaryFade);
+  const [headerChromeHeight, setHeaderChromeHeight] = useState(96);
+  const floatingHeaderHeight = Math.max(headerChromeHeight, 96);
+  const topFadeHeight = floatingHeader ? floatingHeaderHeight + 28 : 28;
 
   const content = (
     <View style={{ flex: 1 }}>
+      {topBoundaryFade ? (
+        <View
+          pointerEvents="none"
+          style={{
+            height: topFadeHeight,
+            left: 0,
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            zIndex: 8,
+          }}
+        >
+          <Svg height={topFadeHeight} preserveAspectRatio="none" width="100%">
+            <Defs>
+              {floatingHeader ? (
+                <LinearGradient id="screenTopBoundaryFade" x1="0" y1="0" x2="0" y2="1">
+                  <Stop offset="0" stopColor={fortuneTheme.colors.background} stopOpacity={0.78} />
+                  <Stop offset="0.54" stopColor={fortuneTheme.colors.background} stopOpacity={0.44} />
+                  <Stop offset="0.78" stopColor={fortuneTheme.colors.background} stopOpacity={0.16} />
+                  <Stop offset="1" stopColor={fortuneTheme.colors.background} stopOpacity={0} />
+                </LinearGradient>
+              ) : (
+                <LinearGradient id="screenTopBoundaryFade" x1="0" y1="0" x2="0" y2="1">
+                  <Stop offset="0" stopColor={fortuneTheme.colors.background} stopOpacity={0.62} />
+                  <Stop offset="0.42" stopColor={fortuneTheme.colors.background} stopOpacity={0.24} />
+                  <Stop offset="1" stopColor={fortuneTheme.colors.background} stopOpacity={0} />
+                </LinearGradient>
+              )}
+            </Defs>
+            <Rect
+              x="0"
+              y="0"
+              width="100%"
+              height={topFadeHeight}
+              fill="url(#screenTopBoundaryFade)"
+            />
+          </Svg>
+        </View>
+      ) : null}
       {header ? (
         <View
+          pointerEvents={floatingHeader ? 'box-none' : 'auto'}
+          onLayout={({ nativeEvent }) => {
+            if (!floatingHeader) {
+              return;
+            }
+            const nextHeight = Math.ceil(nativeEvent.layout.height);
+            if (nextHeight > 0 && Math.abs(nextHeight - headerChromeHeight) > 1) {
+              setHeaderChromeHeight(nextHeight);
+            }
+          }}
           style={{
-            backgroundColor: fortuneTheme.colors.background,
+            backgroundColor: floatingHeader ? 'transparent' : fortuneTheme.colors.background,
+            left: floatingHeader ? 0 : undefined,
             paddingHorizontal: fortuneTheme.spacing.pageHorizontal,
             paddingTop: fortuneTheme.spacing.pageVertical,
             paddingBottom: fortuneTheme.spacing.sm,
+            position: floatingHeader ? 'absolute' : undefined,
+            right: floatingHeader ? 0 : undefined,
+            top: floatingHeader ? 0 : undefined,
             zIndex: 10,
           }}
         >
@@ -85,7 +142,9 @@ export function Screen({
           contentContainerStyle={{
             paddingHorizontal: fortuneTheme.spacing.pageHorizontal,
             paddingTop: header
-              ? fortuneTheme.spacing.sm
+              ? floatingHeader
+                ? floatingHeaderHeight
+                : fortuneTheme.spacing.sm
               : fortuneTheme.spacing.pageVertical,
             paddingBottom:
               (footer ? fortuneTheme.spacing.md : fortuneTheme.spacing.pageVertical) +
@@ -119,30 +178,6 @@ export function Screen({
             <View style={{ gap: fortuneTheme.spacing.md }}>{children}</View>
           )}
         </ScrollView>
-        {topBoundaryFade ? (
-          <View
-            pointerEvents="none"
-            style={{
-              height: 28,
-              left: 0,
-              position: 'absolute',
-              right: 0,
-              top: 0,
-              zIndex: 8,
-            }}
-          >
-            <Svg height="28" preserveAspectRatio="none" width="100%">
-              <Defs>
-                <LinearGradient id="screenTopBoundaryFade" x1="0" y1="0" x2="0" y2="1">
-                  <Stop offset="0" stopColor={fortuneTheme.colors.background} stopOpacity={0.62} />
-                  <Stop offset="0.42" stopColor={fortuneTheme.colors.background} stopOpacity={0.24} />
-                  <Stop offset="1" stopColor={fortuneTheme.colors.background} stopOpacity={0} />
-                </LinearGradient>
-              </Defs>
-              <Rect x="0" y="0" width="100%" height="28" fill="url(#screenTopBoundaryFade)" />
-            </Svg>
-          </View>
-        ) : null}
       </View>
       {footer ? (
         <View
