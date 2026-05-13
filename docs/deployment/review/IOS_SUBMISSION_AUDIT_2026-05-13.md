@@ -192,3 +192,40 @@ Remaining final-submission blockers:
 4. `IOS-IAP-001~003`: IAP success, cancel/error recovery, and restore purchases evidence remains pending.
 5. `IOS-RUNTIME-003`: iPad review-path evidence remains pending.
 6. `DEC-008`: explicit risk approver sign-off remains pending.
+
+## 2026-05-13 22:09 KST EAS Submit Update
+
+User explicitly asked to finish the submission path. I ran EAS Submit for the latest iOS production build.
+
+Command:
+
+- `eas submit --platform ios --profile production --latest --non-interactive`
+
+Result:
+
+- EAS submission ID: `d2ced764-68c4-4cae-9902-49dea5b9157f`
+- Submission URL: `https://expo.dev/accounts/injooinjoo/projects/ondo-mobile-rn/submissions/d2ced764-68c4-4cae-9902-49dea5b9157f`
+- ASC App ID: `6749496180`
+- Uploaded EAS build: `5737a653-3030-464c-914e-613b673c150d`
+- App version/build: `1.0.14` / `62`
+- EAS output: `Submitted your app to Apple App Store Connect!`
+- EAS output: `Your binary has been successfully uploaded to App Store Connect!`
+- Apple processing URL: `https://appstoreconnect.apple.com/apps/6749496180/testflight/ios`
+
+Post-submit ASC browser check:
+
+- Browser redirected to `https://appstoreconnect.apple.com/login?targetUrl=%2Fapps%2F6749496180%2Ftestflight%2Fios&authResult=FAILED`.
+
+Updated status:
+
+- **Binary upload to App Store Connect: DONE for build 62.**
+- **Final App Review submission button flow: NOT VERIFIED / NOT COMPLETED by this automation, because ASC login/session is unavailable.**
+
+Remaining manual finalization in ASC:
+
+1. Log in to App Store Connect.
+2. Wait until build `1.0.14 (62)` finishes Apple processing.
+3. Open the App Store version page for app `6749496180`.
+4. Select build `62` for the version submission.
+5. Confirm review notes, support/privacy URLs, sign-in-required setting, and IAP review details.
+6. Click `Submit for Review` and capture the confirmation evidence.

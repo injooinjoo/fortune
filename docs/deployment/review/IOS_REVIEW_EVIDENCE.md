@@ -1,6 +1,6 @@
 # iOS Review Evidence (App Store)
 
-최종 업데이트: 2026-05-13
+최종 업데이트: 2026-05-13 22:09 KST
 
 ## 1. Scope
 - Platform: iOS
@@ -114,10 +114,10 @@ Notes:
 |---|---|---|---|---|---|
 | IOS-BUILD-007 | P0 | Current repository release candidate is clean, pushed, and CI-green | pass | frozen SHA `b30096f9f6e6e6eabed49b3e19de0a3d348818f7`; `git status --short --branch` clean; GitHub Actions for SHA `b30096f9`: `CI Pipeline` `25796724955` success, `E2E Tests` `25796724963` success, `Security Scan` `25796725010` success | done |
 | IOS-BUILD-008 | P0 | Fresh EAS iOS production build created from current frozen SHA | pass | EAS build `5737a653-3030-464c-914e-613b673c150d`; version `1.0.14`; build number `62`; runtimeVersion `1.0.14`; channel `production`; distribution `STORE`; gitCommitHash `b30096f9f6e6e6eabed49b3e19de0a3d348818f7`; artifact `https://expo.dev/artifacts/eas/bLEcc1bNAmF4RwnkSRQvAV.ipa`; completed `2026-05-13T11:48:40.958Z` | done |
-| IOS-BUILD-009 | P0 | Current build uploaded to App Store Connect via EAS Submit | pending | Not run yet because final App Review GO still requires manual real-device/IAP/iPad evidence and/or explicit risk sign-off under the release decision rule. Prior uploaded binary remains build `61`; current EAS build is build `62`. | open |
-| IOS-BUILD-010 | P0 | App Store Connect build processing / final review submission completed for build 62 | pending | ASC browser session and final `Submit for Review` evidence required | blocked |
+| IOS-BUILD-009 | P0 | Current build uploaded to App Store Connect via EAS Submit | pass | EAS submission `d2ced764-68c4-4cae-9902-49dea5b9157f`; ASC App ID `6749496180`; uploaded build `5737a653-3030-464c-914e-613b673c150d` / version `1.0.14` / build `62`; EAS output: “Submitted your app to Apple App Store Connect!” and “Your binary has been successfully uploaded to App Store Connect!”; submission URL `https://expo.dev/accounts/injooinjoo/projects/ondo-mobile-rn/submissions/d2ced764-68c4-4cae-9902-49dea5b9157f`; TestFlight processing URL `https://appstoreconnect.apple.com/apps/6749496180/testflight/ios` | done |
+| IOS-BUILD-010 | P0 | App Store Connect build processing / final review submission completed for build 62 | pending | Build 62 binary uploaded and Apple processing started via EAS Submit. Browser verification still redirects to `appstoreconnect.apple.com/login?...authResult=FAILED`, so ASC build selection / final `Submit for Review` evidence requires logged-in ASC session | blocked |
 
 Notes:
 - Local gates passed before build: `npm run rn:typecheck`, `npm run rn:test`, `pnpm --filter @fortune/mobile-rn exec expo install --check`, `pnpm dlx expo-doctor --verbose` (17/17 checks passed). `expo lint` exits 0 with pre-existing warnings.
 - Technical blockers from the 2026-05-13 audit were remediated: dirty tree cleared, typecheck fixed, source inventory drift fixed, frozen SHA pushed, CI/E2E/Security green, and a new current-SHA EAS iOS production build was produced.
-- Remaining blockers are manual/submission evidence: iPhone clean-install rejection-path verification, IAP success/cancel/restore, iPad path, risk approver sign-off, ASC processing/build selection/final review submission.
+- Remaining blockers are manual/final ASC evidence: iPhone clean-install rejection-path verification, IAP success/cancel/restore, iPad path, risk approver sign-off, ASC processing/build selection/final review submission.
