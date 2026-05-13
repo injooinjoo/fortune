@@ -767,6 +767,7 @@
       ],
       "path": "docs/development/FILE_INVENTORY.md",
       "referenced_by": [
+        "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-13.md",
         "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
         "docs/development/reports/2026-03-21_release_risk_audit_verify.md",
         "scripts/source_inventory.py"
@@ -901,6 +902,7 @@
       ],
       "path": "docs/development/UNUSED_CANDIDATES.md",
       "referenced_by": [
+        "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-13.md",
         "docs/deployment/review/KAN_OPEN_ISSUES_EVIDENCE_MATRIX_2026-03-22.md",
         "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
         "docs/development/reports/2026-03-21_release_risk_audit_verify.md",
