@@ -14,6 +14,12 @@ export interface StoryCharacterSpec {
   category: 'story';
   shortDescription: string;
   specialties: readonly FortuneTypeId[];
+  avatarUrl?: string | null;
+  relationshipLabel?: string;
+  personalityTags?: readonly string[];
+  interestTags?: readonly string[];
+  scenario?: string;
+  memoryNote?: string;
 }
 
 export interface FortuneChatCharacterSpec extends FortuneCharacterSpec {
@@ -112,8 +118,14 @@ export function createdFriendToStoryCharacter(
     name: friend.name,
     kind: 'story',
     category: 'story',
-    shortDescription: `${relationshipLabel} · ${friend.personalityTags.slice(0, 2).join(', ')}`,
+    shortDescription: `${relationshipLabel} · ${friend.personalityTags.slice(0, 2).join(', ')} · ${friend.interestTags.slice(0, 1).join(', ')}`,
     specialties: [],
+    avatarUrl: friend.avatarUrl,
+    relationshipLabel,
+    personalityTags: friend.personalityTags,
+    interestTags: friend.interestTags,
+    scenario: friend.scenario,
+    memoryNote: friend.memoryNote,
   };
 }
 

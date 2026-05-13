@@ -16,6 +16,7 @@ import { resolveChatCharacterAvatarSource } from '../lib/chat-character-avatar';
 import { getCharacterDetail } from '../lib/character-details';
 import { findChatCharacterById, isFortuneChatCharacter } from '../lib/chat-characters';
 import { fortuneTheme } from '../lib/theme';
+import { useFriendCreation } from '../providers/friend-creation-provider';
 
 // ---------------------------------------------------------------------------
 // Tag pill colours — cycle through chip palette
@@ -38,9 +39,13 @@ function tagColor(index: number) {
 
 export function CharacterProfileScreen() {
   const params = useLocalSearchParams<{ id?: string; returnTo?: string | string[] }>();
-  const character = findChatCharacterById(params.id);
+  const { createdFriends } = useFriendCreation();
+  const character = findChatCharacterById(params.id, createdFriends);
+  const createdFriend = createdFriends.find((friend) => friend.id === params.id) ?? null;
   const detail = getCharacterDetail(params.id);
-  const avatarSource = resolveChatCharacterAvatarSource(params.id);
+  const avatarSource = createdFriend?.avatarUrl
+    ? { uri: createdFriend.avatarUrl, cache: 'force-cache' as const }
+    : resolveChatCharacterAvatarSource(params.id);
 
   const returnTo =
     typeof params.returnTo === 'string' && params.returnTo.startsWith('/')
@@ -49,6 +54,13 @@ export function CharacterProfileScreen() {
   const backDestinationLabel = resolveBackDestinationLabel(returnTo as Href);
 
   const isFortune = character ? isFortuneChatCharacter(character) : false;
+  const profileTags = detail?.tags ?? [
+    ...(createdFriend?.personalityTags ?? []),
+    ...(createdFriend?.interestTags ?? []),
+  ];
+  const firstMessage = detail?.firstMessage ?? (createdFriend
+    ? `${createdFriend.name}, 오늘 네 하루 온도는 어땠어? ${createdFriend.memoryNote || createdFriend.scenario}`
+    : null);
 
   // -------------------------------------------------------------------------
   // Not found
@@ -156,7 +168,7 @@ export function CharacterProfileScreen() {
       {/* ----------------------------------------------------------------- */}
       {/* Tags                                                              */}
       {/* ----------------------------------------------------------------- */}
-      {detail && detail.tags.length > 0 && (
+      {profileTags.length > 0 && (
         <View
           style={{
             flexDirection: 'row',
@@ -164,7 +176,7 @@ export function CharacterProfileScreen() {
             gap: fortuneTheme.spacing.sm,
           }}
         >
-          {detail.tags.map((tag, i) => (
+          {profileTags.map((tag, i) => (
             <View
               key={tag}
               style={{
@@ -185,14 +197,27 @@ export function CharacterProfileScreen() {
       {/* ----------------------------------------------------------------- */}
       {/* First message                                                     */}
       {/* ----------------------------------------------------------------- */}
-      {detail?.firstMessage ? (
+      {firstMessage ? (
         <Card>
           <AppText variant="heading4">첫 인사</AppText>
           <AppText
             variant="bodyMedium"
             color={fortuneTheme.colors.textSecondary}
           >
-            {detail.firstMessage}
+            {firstMessage}
+          </AppText>
+        </Card>
+      ) : null}
+
+      {createdFriend ? (
+        <Card>
+          <AppText variant="heading4">처음의 기억</AppText>
+          <AppText
+            variant="bodyMedium"
+            color={fortuneTheme.colors.textSecondary}
+            style={{ lineHeight: 24 }}
+          >
+            {createdFriend.memoryNote || createdFriend.scenario}
           </AppText>
         </Card>
       ) : null}

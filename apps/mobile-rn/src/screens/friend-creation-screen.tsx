@@ -13,6 +13,7 @@ import { fortuneTheme } from '../lib/theme';
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
 import {
   type FriendCreationDraft,
+  type CreatedFriend,
   type FriendDraftGender,
   type FriendDraftRelationship,
   type FriendDraftStylePreset,
@@ -356,6 +357,19 @@ function reviewLines(draft: FriendCreationDraft) {
   };
 }
 
+function buildFirstGreetingPreview(draft: FriendCreationDraft) {
+  const personality = draft.personalityTags.slice(0, 2).join('하고 ');
+  const interest = draft.interestTags[0];
+  const memory = draft.memoryNote.trim() || draft.scenario.trim();
+
+  return [
+    '있잖아, 오늘 네 하루 온도는 어땠어?',
+    personality ? `나는 ${personality} 다가가는 사람으로 기억되고 싶어.` : null,
+    interest ? `${interest} 얘기 나오면 나도 모르게 오래 붙잡고 있을지도 몰라.` : null,
+    memory ? `그리고 우리 시작은 “${memory}” 이 기억에서 이어가고 싶어.` : null,
+  ].filter(Boolean).join(' ');
+}
+
 function normalizeReturnTo(value: string | string[] | undefined) {
   const nextValue = Array.isArray(value) ? value[0] : value;
   return nextValue && nextValue.startsWith('/') ? nextValue : '/chat';
@@ -379,7 +393,7 @@ export function FriendCreationBasicScreen() {
 
   return (
     <FriendWizardScaffold
-      description="이름, 성별, 관계를 먼저 정하면 이후 페르소나와 스토리 단계가 안정적으로 이어집니다."
+      description="이 친구가 당신에게 어떤 사람으로 기억되면 좋을지, 가장 처음의 온도부터 정해볼게요."
       footer={
         <FooterRow
           onPrimary={() =>
@@ -394,17 +408,17 @@ export function FriendCreationBasicScreen() {
       }
       onBack={() => router.replace(returnTo as Href)}
 
-      step="1/5"
-      title="기본 정보"
+      step="관계의 씨앗"
+      title="누가 찾아오면 좋을까요?"
     >
       <FriendSection
-        subtitle="대화에서 보일 친구 이름을 정하세요."
-        title="표시 이름"
+        subtitle="채팅방에서 부르고 싶은 이름을 적어주세요."
+        title="이름"
       >
         <TextInput
           autoFocus
           onChangeText={(value) => updateBasic({ name: value })}
-          placeholder="이름을 입력하세요"
+          placeholder="예: 서하, 민준, 하루"
           placeholderTextColor={fortuneTheme.colors.textTertiary}
           returnKeyType="done"
           style={inputStyle()}
@@ -412,7 +426,7 @@ export function FriendCreationBasicScreen() {
         />
       </FriendSection>
 
-      <FriendSection title="성별">
+      <FriendSection title="이 친구의 결">
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           {genderOptions.map((option) => (
             <TokenChip
@@ -425,7 +439,7 @@ export function FriendCreationBasicScreen() {
         </View>
       </FriendSection>
 
-      <FriendSection title="나와의 관계">
+      <FriendSection title="나와의 거리감">
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           {relationshipOptions.map((option) => (
             <TokenChip
@@ -454,7 +468,7 @@ export function FriendCreationPersonaScreen() {
 
   return (
     <FriendWizardScaffold
-      description="대표 분위기와 성격, 관심사를 고르면 새 친구의 말투와 첫 인상이 정리됩니다."
+      description="말은 툭툭대도 챙겨주는 사람인지, 조용히 오래 곁에 있는 사람인지 골라볼게요."
       footer={
         <FooterRow
           onPrimary={() =>
@@ -471,12 +485,12 @@ export function FriendCreationPersonaScreen() {
       }
       onBack={() => router.back()}
 
-      step="2/5"
-      title="캐릭터 설정"
+      step="성격과 말투"
+      title="어떤 온도로 다가오면 좋을까요?"
     >
       <FriendSection
-        subtitle="대표 이미지를 대신할 기본 느낌입니다."
-        title="분위기"
+        subtitle="프로필과 첫 인상의 바탕이 되는 색이에요."
+        title="첫인상"
       >
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           {stylePresetOptions.map((option) => (
@@ -490,7 +504,7 @@ export function FriendCreationPersonaScreen() {
         </View>
       </FriendSection>
 
-      <FriendSection subtitle="2~3개 선택" title="성격 태그">
+      <FriendSection subtitle="2~3개 선택" title="함께 있을 때 느껴지는 점">
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           {personalityOptions.map((option) => (
             <TokenChip
@@ -507,7 +521,7 @@ export function FriendCreationPersonaScreen() {
         </View>
       </FriendSection>
 
-      <FriendSection subtitle="2~3개 선택" title="관심사 태그">
+      <FriendSection subtitle="2~3개 선택" title="대화가 길어지는 주제">
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           {interestOptions.map((option) => (
             <TokenChip
@@ -554,7 +568,7 @@ export function FriendCreationStoryScreen() {
 
   return (
     <FriendWizardScaffold
-      description="어떤 배경에서 시작하는지 정하면 review 단계에서 대화 방향을 자연스럽게 확인할 수 있습니다."
+      description="처음 만난 순간과 기억 하나를 심어두면, 이 친구가 더 사람처럼 이어져요."
       footer={
         <FooterRow
           onPrimary={() =>
@@ -571,12 +585,12 @@ export function FriendCreationStoryScreen() {
       }
       onBack={() => router.back()}
 
-      step="3/5"
-      title="관계 설정"
+      step="첫 기억"
+      title="둘 사이는 어디서 시작됐나요?"
     >
       <FriendSection
-        subtitle="어떤 배경에서 시작할지 정하세요."
-        title="관계 시나리오"
+        subtitle="처음 가까워진 장면을 골라주세요."
+        title="처음 만난 순간"
       >
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           {scenarioPresets.map((preset) => (
@@ -591,24 +605,24 @@ export function FriendCreationStoryScreen() {
         <VoiceTextInput
           multiline
           onChangeText={(value) => updateStory({ scenario: value })}
-          placeholder="관계 배경을 직접 적어보세요 (마이크로 말해도 돼요)"
+          placeholder="예: 비 오는 퇴근길에 같은 우산을 쓴 사이"
           value={draft.scenario}
         />
       </FriendSection>
 
       <FriendSection
-        subtitle="말투나 분위기에 반영될 메모입니다."
-        title="기억 노트"
+        subtitle="이 친구가 오래 기억해줬으면 하는 작은 장면이에요."
+        title="우리만 아는 기억"
       >
         <VoiceTextInput
           multiline
           onChangeText={(value) => updateStory({ memoryNote: value })}
-          placeholder="예: 퇴근길마다 같이 산책하는 사이예요"
+          placeholder="예: 힘들던 날 아무 말 없이 옆에 있어줬어요"
           value={draft.memoryNote}
         />
       </FriendSection>
 
-      <FriendSection title="시간 설정">
+      <FriendSection title="답장이 흐르는 속도">
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           {timeModeOptions.map((option) => (
             <TokenChip
@@ -650,7 +664,7 @@ export function FriendCreationReviewScreen() {
 
   return (
     <FriendWizardScaffold
-      description="문서 기준으로 생성 전 확인 단계입니다. 기본 정보, 캐릭터 설정, 관계 설정을 한 번 더 검토하세요."
+      description="이 친구가 첫 대화에서 어떤 결로 다가올지 마지막으로 느껴보세요."
       footer={
         <FooterRow
           onPrimary={() =>
@@ -661,18 +675,26 @@ export function FriendCreationReviewScreen() {
           }
           onSecondary={() => router.back()}
           primaryDisabled={!canProceed}
-          primaryLabel="다음"
+          primaryLabel="얼굴도 정해볼래요"
           secondaryLabel="이전"
         />
       }
       onBack={() => router.back()}
 
-      step="4/5"
-      title="확인하기"
+      step="미리보기"
+      title="이런 사람으로 남겨둘까요?"
     >
-      <SummaryCard lines={lines.basic} title="기본 정보" />
-      <SummaryCard lines={lines.persona} title="캐릭터 설정" />
-      <SummaryCard lines={lines.story} title="관계 설정" />
+      <Card style={{ backgroundColor: fortuneTheme.colors.surfaceSecondary }}>
+        <AppText variant="heading4" color={fortuneTheme.colors.accentSecondary}>
+          첫 인사 미리보기
+        </AppText>
+        <AppText variant="bodyLarge" color={fortuneTheme.colors.textPrimary}>
+          “{buildFirstGreetingPreview(draft)}”
+        </AppText>
+      </Card>
+      <SummaryCard lines={lines.basic} title="관계의 씨앗" />
+      <SummaryCard lines={lines.persona} title="성격과 말투" />
+      <SummaryCard lines={lines.story} title="첫 기억" />
     </FriendWizardScaffold>
   );
 }
@@ -827,7 +849,7 @@ export function FriendCreationAvatarScreen() {
 
   return (
     <FriendWizardScaffold
-      description={`${draft.name || '친구'}의 외모를 묘사하면 AI가 프로필 이미지를 만들어줘요. 건너뛰어도 괜찮아요.`}
+      description={`${draft.name || '친구'}의 얼굴을 상상해볼까요? 머릿속 장면이 없다면 건너뛰어도 괜찮아요.`}
       footer={
         status === 'done' && previewUrl ? (
           <FooterRow
@@ -847,17 +869,17 @@ export function FriendCreationAvatarScreen() {
         )
       }
       onBack={() => router.back()}
-      step="5/5"
-      title="얼굴 만들기"
+      step="프로필 얼굴"
+      title="어떤 표정으로 기억될까요?"
     >
       <FriendSection
-        subtitle="외모 특징을 자유롭게 적어주세요."
-        title="외모 묘사"
+        subtitle="헤어스타일, 눈빛, 분위기처럼 일반적인 특징으로 적어주세요."
+        title="얼굴의 단서"
       >
         <VoiceTextInput
           multiline
           onChangeText={setPromptText}
-          placeholder="예: 짧은 머리, 날카로운 눈매, 부드러운 미소"
+          placeholder="예: 흐트러진 검은 머리, 조용한 눈빛, 웃을 때만 부드러운 표정"
           value={promptText}
         />
       </FriendSection>
@@ -951,6 +973,7 @@ export function FriendCreationCreatingScreen() {
   const { state: mobileAppState } = useMobileAppState();
   const params = useLocalSearchParams<{ returnTo?: string | string[] }>();
   const [status, setStatus] = useState<CreatingStatus>('saving');
+  const [createdFriend, setCreatedFriend] = useState<CreatedFriend | null>(null);
   const returnTo = normalizeReturnTo(params.returnTo);
   const attemptedRef = useRef(false);
 
@@ -987,7 +1010,8 @@ export function FriendCreationCreatingScreen() {
     async function createFriend() {
       try {
         setStatus('saving');
-        await saveFriend(draft);
+        const friend = await saveFriend(draft);
+        setCreatedFriend(friend);
         setStatus('success');
       } catch {
         setStatus('error');
@@ -1004,7 +1028,17 @@ export function FriendCreationCreatingScreen() {
   ]);
 
   function handleFinish() {
+    const nextFriendId = createdFriend?.id;
     resetDraft();
+
+    if (nextFriendId) {
+      router.replace({
+        pathname: '/chat',
+        params: { characterId: nextFriendId },
+      });
+      return;
+    }
+
     router.replace(returnTo as Href);
   }
 
@@ -1012,18 +1046,19 @@ export function FriendCreationCreatingScreen() {
     setStatus('saving');
 
     saveFriend(draft)
-      .then(() => setStatus('success'))
+      .then((friend) => {
+        setCreatedFriend(friend);
+        setStatus('success');
+      })
       .catch(() => setStatus('error'));
   }
 
   const statusLabel =
     status === 'saving'
-      ? '친구 생성 설정을 저장하고 있어요.'
+      ? '친구의 기억을 저장하고 있어요.'
       : status === 'success'
-        ? '준비가 끝났어요. 채팅 허브로 돌아가 새 친구 흐름을 이어갈 수 있습니다.'
+        ? '이제 바로 새 친구의 채팅방으로 들어갈 수 있어요.'
         : '저장 중 문제가 발생했어요. 다시 시도해주세요.';
-
-  const statusEmoji = status === 'error' ? '!' : '✦';
 
   return (
     <Screen>
@@ -1086,11 +1121,7 @@ export function FriendCreationCreatingScreen() {
           color={fortuneTheme.colors.textSecondary}
           style={{ maxWidth: 280, textAlign: 'center' }}
         >
-          {status === 'error'
-            ? '다시 시도해주세요.'
-            : status === 'success'
-              ? '채팅에서 바로 대화를 시작할 수 있어요.'
-              : '성격과 관계를 바탕으로 대화를 준비하고 있어요.'}
+          {statusLabel}
         </AppText>
 
         {/* Action */}

@@ -427,7 +427,8 @@
         "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/deployment/review/KAN_OPEN_ISSUES_EVIDENCE_MATRIX_2026-03-22.md",
         "docs/development/reports/2026-02-16_store_review_strategy_discovery.md",
-        "docs/development/reports/2026-02-16_store_review_strategy_verify.md"
+        "docs/development/reports/2026-02-16_store_review_strategy_verify.md",
+        "docs/qa/ondo-audit/2026-05-12-cycle-1.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -485,7 +486,8 @@
       "referenced_by": [
         "docs/development/reports/2026-02-16_store_review_strategy_discovery.md",
         "docs/development/reports/2026-02-16_store_review_strategy_verify.md",
-        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md"
+        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
+        "docs/qa/ondo-audit/2026-05-12-cycle-1.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -502,7 +504,8 @@
         "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md",
         "docs/development/reports/2026-02-16_store_review_strategy_discovery.md",
-        "docs/development/reports/2026-02-16_store_review_strategy_verify.md"
+        "docs/development/reports/2026-02-16_store_review_strategy_verify.md",
+        "docs/qa/ondo-audit/2026-05-12-cycle-1.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -1370,6 +1373,34 @@
         "no_inbound_refs"
       ],
       "path": "docs/qa/haneul-fortune-e2e-qa-2026-05-11.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/qa/ondo-audit/2026-05-12-cycle-1-architecture-addendum.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/qa/ondo-audit/2026-05-12-cycle-1.md",
       "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
@@ -2488,6 +2519,7 @@
       "path": "supabase/functions/_shared/fortune-pricing-generated.ts",
       "referenced_by": [
         ".github/workflows/ci.yml",
+        "docs/qa/ondo-audit/2026-05-12-cycle-1-architecture-addendum.md",
         "scripts/sync-edge-pricing.sh",
         "supabase/functions/_shared/fortune-pricing-generated.ts",
         "supabase/functions/_shared/types.ts"
@@ -3316,6 +3348,7 @@
       "notes": [],
       "path": "supabase/functions/_shared/token_charge.ts",
       "referenced_by": [
+        "docs/qa/ondo-audit/2026-05-12-cycle-1.md",
         "supabase/functions/generate-character-proactive-image/index.ts",
         "supabase/functions/generate-friend-avatar/index.ts"
       ],
@@ -3414,6 +3447,8 @@
         "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md",
         "docs/features/HANEUL_UNIFIED_FORTUNE_PLAN.md",
         "docs/features/PROACTIVE_MESSAGING_PLAN.md",
+        "docs/qa/ondo-audit/2026-05-12-cycle-1-architecture-addendum.md",
+        "docs/qa/ondo-audit/2026-05-12-cycle-1.md",
         "docs/qa/proactive-fixes-test-plan.md",
         "supabase/functions/process-pending-reply-jobs/index.ts"
       ],
@@ -3744,6 +3779,7 @@
       ],
       "path": "supabase/functions/fortune-daily/index.ts",
       "referenced_by": [
+        "docs/qa/ondo-audit/2026-05-12-cycle-1-architecture-addendum.md",
         "supabase/functions/fortune-daily/index.ts"
       ],
       "runtime_reachable": true,
@@ -4136,7 +4172,8 @@
       "path": "supabase/functions/fortune-past-life/index.ts",
       "referenced_by": [
         "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md",
-        "docs/development/reports/2026-03-21_release_risk_register.md"
+        "docs/development/reports/2026-03-21_release_risk_register.md",
+        "docs/qa/ondo-audit/2026-05-12-cycle-1-architecture-addendum.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -4411,6 +4448,7 @@
       ],
       "path": "supabase/functions/grant-ad-reward/index.ts",
       "referenced_by": [
+        "docs/qa/ondo-audit/2026-05-12-cycle-1.md",
         "supabase/functions/grant-ad-reward/index.ts"
       ],
       "runtime_reachable": true,
@@ -4571,7 +4609,9 @@
       "referenced_by": [
         "docs/development/reports/2026-02-16_store_review_gate_blockers_verify.md",
         "docs/development/reports/2026-02-16_store_review_strategy_discovery.md",
-        "docs/development/reports/2026-02-16_store_review_strategy_verify.md"
+        "docs/development/reports/2026-02-16_store_review_strategy_verify.md",
+        "docs/qa/ondo-audit/2026-05-12-cycle-1-architecture-addendum.md",
+        "docs/qa/ondo-audit/2026-05-12-cycle-1.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -4639,6 +4679,7 @@
       ],
       "path": "supabase/functions/process-long-running-jobs/index.ts",
       "referenced_by": [
+        "docs/qa/ondo-audit/2026-05-12-cycle-1-architecture-addendum.md",
         "supabase/migrations/20260504030200_cron_process_long_running_jobs.sql"
       ],
       "runtime_reachable": false,
@@ -4671,6 +4712,7 @@
       ],
       "path": "supabase/functions/process-poster-jobs/index.ts",
       "referenced_by": [
+        "docs/qa/ondo-audit/2026-05-12-cycle-1-architecture-addendum.md",
         "supabase/migrations/20260504010200_cron_process_poster_jobs.sql"
       ],
       "runtime_reachable": false,
@@ -4717,7 +4759,8 @@
       ],
       "path": "supabase/functions/soul-consume/index.ts",
       "referenced_by": [
-        "docs/features/HANEUL_AUDIT_RESULTS.md"
+        "docs/features/HANEUL_AUDIT_RESULTS.md",
+        "docs/qa/ondo-audit/2026-05-12-cycle-1.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -4786,33 +4829,35 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:start-poster-job",
-        "no_inbound_refs"
+        "edge_function_unreferenced:start-poster-job"
       ],
       "path": "supabase/functions/start-poster-job/index.ts",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/qa/ondo-audit/2026-05-12-cycle-1-architecture-addendum.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:subscription-activate",
-        "no_inbound_refs"
+        "edge_function_unreferenced:subscription-activate"
       ],
       "path": "supabase/functions/subscription-activate/index.ts",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/qa/ondo-audit/2026-05-12-cycle-1.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "supabase",
@@ -4846,18 +4891,19 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:token-balance",
-        "no_inbound_refs"
+        "edge_function_unreferenced:token-balance"
       ],
       "path": "supabase/functions/token-balance/index.ts",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/qa/ondo-audit/2026-05-12-cycle-1.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "supabase",
@@ -6421,11 +6467,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "supabase_migration",
-      "notes": [
-        "no_inbound_refs"
-      ],
+      "notes": [],
       "path": "supabase/migrations/20260503193000_ad_reward_log.sql",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/qa/ondo-audit/2026-05-12-cycle-1.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "tooling_only"
@@ -6589,11 +6635,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "supabase_migration",
-      "notes": [
-        "no_inbound_refs"
-      ],
+      "notes": [],
       "path": "supabase/migrations/20260505120000_token_transactions_purchase_unique.sql",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/qa/ondo-audit/2026-05-12-cycle-1.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "tooling_only"
@@ -7049,23 +7095,23 @@
   ],
   "meta": {
     "counts_by_area": {
-      "docs": 101,
+      "docs": 103,
       "scripts": 53,
       "supabase": 309
     },
     "counts_by_candidate_action": {
       "keep": 52,
       "keep_generated": 2,
-      "manual_review": 58,
+      "manual_review": 55,
       "phase1_remove_candidate": 3,
-      "phase2_review_candidate": 348
+      "phase2_review_candidate": 353
     },
     "counts_by_usage_status": {
-      "doc_only": 119,
+      "doc_only": 124,
       "generated_excluded": 2,
       "runtime_used": 52,
       "tooling_only": 229,
-      "unreferenced": 61
+      "unreferenced": 58
     },
     "declared_asset_dirs_without_runtime_refs": [],
     "generated_outputs": [
@@ -7114,7 +7160,7 @@
       "generate-poster-guide",
       "grant-ad-reward"
     ],
-    "total_files": 463,
+    "total_files": 465,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "ack-scheduled-reply",

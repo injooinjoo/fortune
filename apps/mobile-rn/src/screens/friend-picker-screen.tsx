@@ -1,5 +1,7 @@
+import { useEffect } from 'react';
+
 import { router, useLocalSearchParams, type Href } from 'expo-router';
-import { Pressable, View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
@@ -22,11 +24,16 @@ export function FriendPickerScreen() {
 
   function handleGoToCustom() {
     resetDraft();
-    router.push({
+    router.replace({
       pathname: '/friends/new/basic',
       params: { reset: '1', returnTo },
     });
   }
+
+  useEffect(() => {
+    handleGoToCustom();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Screen
@@ -35,43 +42,22 @@ export function FriendPickerScreen() {
       }
     >
       <View style={{ gap: fortuneTheme.spacing.sm }}>
-        <AppText variant="displaySmall">새 친구 만들기</AppText>
+        <AppText variant="displaySmall">새로운 온도를 준비하고 있어요</AppText>
         <AppText
           variant="bodyLarge"
           color={fortuneTheme.colors.textSecondary}
         >
-          이름, 성격, 관계를 직접 설정해서 나만의 친구를 만들 수 있어요.
+          한 번 더 고르게 하지 않고, 바로 친구의 첫 기억부터 만들게요.
         </AppText>
       </View>
 
       <Card style={{ marginTop: 12 }}>
-        <AppText variant="heading4">직접 만들기</AppText>
-        <AppText
-          variant="bodySmall"
-          color={fortuneTheme.colors.textSecondary}
-        >
-          원하는 이름, 성격, 관계로 새 친구를 만드세요.
-        </AppText>
-        <Pressable
-          accessibilityRole="button"
-          onPress={handleGoToCustom}
-          style={({ pressed }) => ({
-            backgroundColor: fortuneTheme.colors.ctaBackground,
-            borderRadius: fortuneTheme.radius.full,
-            paddingVertical: 14,
-            paddingHorizontal: 18,
-            opacity: pressed ? 0.82 : 1,
-            marginTop: 8,
-          })}
-        >
-          <AppText
-            variant="labelLarge"
-            color={fortuneTheme.colors.ctaForeground}
-            style={{ textAlign: 'center' }}
-          >
-            직접 만들러 가기
+        <View style={{ alignItems: 'center', gap: fortuneTheme.spacing.md }}>
+          <ActivityIndicator color={fortuneTheme.colors.ctaBackground} />
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            관계의 씨앗으로 이동 중이에요.
           </AppText>
-        </Pressable>
+        </View>
       </Card>
     </Screen>
   );
