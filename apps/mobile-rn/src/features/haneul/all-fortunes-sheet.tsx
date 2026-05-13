@@ -786,7 +786,7 @@ function HeroFortuneCard({
       >
       <SceneBackground
         accent={category.accent}
-        active
+        active={active}
         idSuffix={entry.id}
         motif={visual.motif}
       />
@@ -944,7 +944,7 @@ function MeaningSymbolCluster({
       pointerEvents="none"
       accessible={false}
       importantForAccessibility="no-hide-descendants"
-      style={{ position: 'absolute', inset: 0 }}
+      style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
     >
       <View
         style={{
@@ -995,13 +995,17 @@ function MotifBackdrop({
   accent: string;
   active: boolean;
 }) {
-  const opacity = active ? 0.23 : 0.16;
+  const opacity = 0.23;
+
+  if (!active) {
+    return null;
+  }
 
   if (['cards', 'study', 'review', 'choice', 'name'].includes(motif)) {
     return (
       <G opacity={opacity} stroke={accent} strokeWidth={1.4} fill="none">
-        <Rect x="38" y="88" width="54" height="76" rx="10" transform="rotate(-11 65 126)" />
-        <Rect x="76" y="72" width="54" height="76" rx="10" transform="rotate(8 103 110)" opacity={0.72} />
+        <Rect x="42" y="86" width="50" height="72" rx="10" />
+        <Rect x="78" y="74" width="50" height="72" rx="10" opacity={0.72} />
         <Path d="M54 116 H78 M54 130 H72 M93 103 H116 M93 117 H109" opacity={0.68} />
       </G>
     );
@@ -1084,7 +1088,7 @@ function SceneBackground({
   const floorId = `cardFloor-${idSuffix}`;
 
   return (
-    <View pointerEvents="none" style={{ position: 'absolute', inset: 0 }}>
+    <View pointerEvents="none" style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}>
       <Svg width="100%" height="100%" preserveAspectRatio="none">
         <Defs>
           <RadialGradient id={glowId} cx="72%" cy="18%" r="90%">
