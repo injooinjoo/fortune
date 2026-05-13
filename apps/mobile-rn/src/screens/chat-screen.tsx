@@ -199,8 +199,8 @@ function computeHumanReplyPhaseDelays(replyDelayMs: number) {
   const remainingAfterRead = Math.max(0, replyDelayMs - beforeReadMs);
   const typingPreviewMs = Math.min(
     remainingAfterRead,
-    replyDelayMs * 0.45,
-    randomInRange(1800, 5000),
+    replyDelayMs * 0.6,
+    randomInRange(2800, 6500),
   );
   const readToTypingMs = Math.max(0, remainingAfterRead - typingPreviewMs);
   return { beforeReadMs, readToTypingMs, typingPreviewMs };
@@ -283,7 +283,6 @@ export function ChatScreen() {
   const params = useLocalSearchParams<{ characterId?: string | string[]; showList?: string | string[] }>();
   const directCharacterId = readSearchParam(params.characterId);
   const forceListMode = readSearchParam(params.showList) === '1';
-  const directCharacter = findChatCharacterById(directCharacterId);
   const {
     cachedCharacterConversations,
     cachedLastSeenByCharacterId,
@@ -305,6 +304,10 @@ export function ChatScreen() {
     syncRemoteProfile,
   } = useMobileAppState();
   const { createdFriends, resetDraft, removeFriend } = useFriendCreation();
+  const directCharacter = useMemo(
+    () => findChatCharacterById(directCharacterId, createdFriends),
+    [createdFriends, directCharacterId],
+  );
   const { isSupported, startSocialAuth } = useSocialAuth();
   // 한도 도달 paywall 에서 "광고 보고 토큰" 옵션 제공. 광고 비활성 / 미준비
   // 시 isReady=false 라 alert 분기에서 자동 숨김.
@@ -2461,10 +2464,26 @@ export function ChatScreen() {
   }
 
   function handleCreateFriend() {
+    const freeCharacterLimit = 1;
+    const isPremium = mobileAppState.premium.isUnlimited ||
+      (mobileAppState.premium.tokenBalance ?? 0) > 0;
+
+    if (!isPremium && createdFriends.length >= freeCharacterLimit) {
+      Alert.alert(
+        '친구 슬롯이 꽉 찼어요',
+        '무료 플랜은 직접 만든 친구 1명까지 저장할 수 있어요. 새 친구를 만들려면 기존 친구를 삭제하거나 프리미엄을 확인해 주세요.',
+        [
+          { text: '닫기', style: 'cancel' },
+          { text: '프리미엄 보기', onPress: () => router.push('/premium') },
+        ],
+      );
+      return;
+    }
+
     resetDraft();
     router.push({
-      pathname: '/friends/new',
-      params: { returnTo: '/chat' },
+      pathname: '/friends/new/basic',
+      params: { reset: '1', returnTo: '/chat' },
     });
   }
 
@@ -3930,45 +3949,68 @@ export function ChatScreen() {
       const audioMessage = buildUserAudioMessage(
         pendingAudio.uri,
         pendingAudio.durationMillis,
+        trimmed || undefined,
       );
-      const messagesToAppend = trimmed
-        ? [audioMessage, buildUserMessage(trimmed)]
-        : [audioMessage];
-      appendMessages(selectedCharacter, messagesToAppend);
+      appendMessages(selectedCharacter, [audioMessage]);
       setSurfaceMode('chat');
       setComposerTrayOpen(false);
       if (trimmed) setDraft('');
       handleClearPendingAudio();
 
-      recordChatIntent({
-        characterId: selectedCharacter.id,
-        fortuneType: activeFortuneType,
-        incrementMessages: true,
-      }).catch((error) => {
-        captureError(error, { surface: 'chat:record-audio-send' }).catch(
-          () => undefined,
-        );
-      });
+      // If the user sends audio while a text batch is still inside the 1.5s
+      // idle window, fold that text into this single reply request instead of
+      // letting a second delayed request fire later.
+      clearBatchTimer(selectedCharacter.id);
+      const queuedSends = pendingSendsRef.current[selectedCharacter.id] ?? [];
+      if (queuedSends.length > 0) {
+        pendingSendsRef.current = {
+          ...pendingSendsRef.current,
+          [selectedCharacter.id]: [],
+        };
+        syncPendingCount(selectedCharacter.id);
+      }
 
-      // Raw audio is a user-visible attachment for now. Until the backend accepts
-      // audioBase64/audio_url parts, trigger the normal reply pipeline with either
-      // the user's caption or an explicit "audio-only" context prompt. Do not add a
-      // second visible user text bubble for audio-only sends.
+      const visiblePrompt = trimmed || AUDIO_ONLY_STORY_PROMPT;
+      const replyPrompt = [...queuedSends.map((item) => item.text), visiblePrompt].join('\n\n');
+      const queuedMessageIds = queuedSends.map((item) => item.userMessageId);
+      const replyOptions = {
+        skipOptimisticUserMessage: true,
+        userMessageId: queuedMessageIds[0] ?? audioMessage.id,
+        userMessageIds: [...queuedMessageIds, audioMessage.id],
+      };
+
+      // Raw audio is visible as a single user attachment. The reply pipeline still
+      // needs a text prompt, but it must reuse the visible user message id(s) and
+      // skip a second optimistic text bubble; otherwise audio-only sends can
+      // persist locally without a matching pending reply job, or captioned audio
+      // can show duplicate user messages.
       if (selectedCharacter.kind === 'story') {
-        const replyPrompt = trimmed || AUDIO_ONLY_STORY_PROMPT;
-        if (trimmed) {
-          enqueueStorySend(selectedCharacter, trimmed);
-        } else if (isStoryRomancePilotCharacterId(selectedCharacter.id)) {
-          void sendStoryPilotMessage(selectedCharacter, replyPrompt, {
-            skipOptimisticUserMessage: true,
-            userMessageId: audioMessage.id,
-          });
+        if (isStoryRomancePilotCharacterId(selectedCharacter.id)) {
+          void sendStoryPilotMessage(selectedCharacter, replyPrompt, replyOptions);
         } else {
-          void sendCharacterChatMessage(selectedCharacter, replyPrompt, {
-            skipOptimisticUserMessage: true,
-            userMessageId: audioMessage.id,
-          });
+          void sendCharacterChatMessage(selectedCharacter, replyPrompt, replyOptions);
         }
+      } else {
+        const draftMsg = buildDraftReply(selectedCharacter, replyPrompt);
+        appendMessages(selectedCharacter, [draftMsg]);
+        saveCharacterConversation(selectedCharacter.id, [
+          ...(displayMessagesByCharacterId[selectedCharacter.id] ?? []),
+          audioMessage,
+          draftMsg,
+        ]).catch((saveError: unknown) => {
+          captureError(saveError, {
+            surface: 'chat:fortune-audio-save-conversation',
+          }).catch(() => undefined);
+        });
+        recordChatIntent({
+          characterId: selectedCharacter.id,
+          fortuneType: activeFortuneType,
+          incrementMessages: true,
+        }).catch((error) => {
+          captureError(error, { surface: 'chat:record-audio-send' }).catch(
+            () => undefined,
+          );
+        });
       }
       return;
     }

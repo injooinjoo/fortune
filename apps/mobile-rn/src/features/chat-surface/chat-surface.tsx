@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, type PropsWithChildren, type ReactNode } from 'react';
+import { useState, useEffect, useRef, useCallback, type PropsWithChildren } from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -31,7 +31,7 @@ import type {
   ChatShellMessage,
   ChatShellTextMessage,
 } from '../../lib/chat-shell';
-import { buildSuggestedActions, formatFortuneTypeLabel } from '../../lib/chat-shell';
+import { formatFortuneTypeLabel } from '../../lib/chat-shell';
 import {
   resolveChatCharacterAvatarAspectRatio,
   resolveChatCharacterAvatarSource,
@@ -43,7 +43,6 @@ import { useMobileAppState } from '../../providers/mobile-app-state-provider';
 
 import { MessageReportSheet } from './message-report-sheet';
 import { EmbeddedResultCard } from '../chat-results/embedded-result-card';
-import { FortuneMenuCard } from '../fortune-results/fortune-menu-card';
 import { FadeUpWords, StoryRevealMessage } from '../story-chat-animations';
 import { FortuneCookieCard } from '../fortune-cookie/fortune-cookie-card';
 import { SajuPreviewCard } from '../fortune-cookie/saju-preview-card';
@@ -91,21 +90,27 @@ export function getCanonicalVisibleMessages(messages: readonly ChatShellMessage[
   return sortMessagesByTimestamp(messages);
 }
 
+function getCharacterAvatarUrl(character: ChatCharacterSpec) {
+  return character.kind === 'story' ? character.avatarUrl : undefined;
+}
+
 function CharacterAvatar({
+  avatarUrl,
   characterId,
   name,
   size = 48,
 }: {
+  avatarUrl?: string | null;
   characterId: string;
   name: string;
   size?: number;
 }) {
-  const avatarSource = resolveChatCharacterAvatarSource(characterId);
+  const avatarSource = avatarUrl ? { uri: avatarUrl, cache: 'force-cache' as const } : resolveChatCharacterAvatarSource(characterId);
 
   // 대부분의 webp 원본은 portrait 인물사진(약 576×1024 / 9:16)이라 정사각형
   // 동그라미 안에서 얼굴이 보이도록 원본 비율 보정을 유지한다. 단, 하늘이 교체
   // 이미지는 정방형이라 별도 aspect ratio 를 사용해야 사진 전체가 적용되어 보인다.
-  const imageAspectRatio = resolveChatCharacterAvatarAspectRatio(characterId);
+  const imageAspectRatio = avatarUrl ? 1 : resolveChatCharacterAvatarAspectRatio(characterId);
   const imageHeight = size / imageAspectRatio;
 
   return (
@@ -534,7 +539,7 @@ function CharacterListRow({
       })}
     >
       <View>
-        <CharacterAvatar characterId={character.id} name={character.name} size={60} />
+        <CharacterAvatar avatarUrl={getCharacterAvatarUrl(character)} characterId={character.id} name={character.name} size={60} />
         {meta && meta.unreadCount > 0 ? (
           <View
             style={{
@@ -758,21 +763,19 @@ function MessageBubble({
   );
 }
 
-function TypingIndicatorBubble(_props: {
+function TypingIndicatorBubble({ character }: {
   character: ChatCharacterSpec;
   /** @deprecated 배칭은 사용자에게 투명. 호출자 호환을 위해 시그니처만 유지. */
   queuedCount?: number;
 }) {
-  // ondo story-chat-player `Typing` 원본: 말풍선 없음. 3점만.
-  //   padding: '6px 0', gap 4, dots 7×7, background ST.fg2
   return (
     <View
       style={{
-        flexDirection: 'row',
         alignItems: 'center',
+        alignSelf: 'flex-start',
+        flexDirection: 'row',
         gap: 8,
         paddingVertical: 6,
-        alignSelf: 'flex-start',
       }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
@@ -780,6 +783,9 @@ function TypingIndicatorBubble(_props: {
         <WaveDot delay={150} />
         <WaveDot delay={300} />
       </View>
+      <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+        {character.name} 생각 중
+      </AppText>
     </View>
   );
 }
@@ -1062,6 +1068,42 @@ function formatAudioDuration(durationMillis?: number): string {
   return `${minutes}:${String(seconds).padStart(2, '0')}`;
 }
 
+function StaticAudioSpectrum({
+  active,
+  color,
+}: {
+  active: boolean;
+  color: string;
+}) {
+  const bars = active ? [0.35, 0.72, 0.52, 0.86, 0.44, 0.68, 0.38, 0.78, 0.56] : [0.28, 0.48, 0.36, 0.58, 0.32, 0.52, 0.3, 0.46, 0.34];
+
+  return (
+    <View
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      style={{
+        alignItems: 'center',
+        flexDirection: 'row',
+        gap: 3,
+        height: 26,
+      }}
+    >
+      {bars.map((ratio, index) => (
+        <View
+          key={`audio-spectrum-${index}`}
+          style={{
+            backgroundColor: color,
+            borderRadius: 999,
+            height: Math.max(5, 26 * ratio),
+            opacity: active ? 0.95 : 0.58,
+            width: 3,
+          }}
+        />
+      ))}
+    </View>
+  );
+}
+
 function AudioMessageBubble({
   audioUrl,
   durationMillis,
@@ -1075,6 +1117,10 @@ function AudioMessageBubble({
 }) {
   const [playing, setPlaying] = useState(false);
   const soundRef = useRef<import('expo-av').Audio.Sound | null>(null);
+  const isUser = sender === 'user';
+  const foreground = isUser ? fortuneTheme.colors.background : fortuneTheme.colors.textPrimary;
+  const screenWidth = Dimensions.get('window').width;
+  const bubbleWidth = Math.min(236, Math.max(178, screenWidth * 0.5));
 
   useEffect(() => {
     return () => {
@@ -1112,7 +1158,7 @@ function AudioMessageBubble({
   }, [audioUrl, playing]);
 
   return (
-    <View style={{ gap: 4 }}>
+    <View style={{ alignSelf: isUser ? 'flex-end' : 'flex-start', gap: 4 }}>
       <Pressable
         accessibilityLabel={playing ? '음성 메시지 일시정지' : '음성 메시지 재생'}
         accessibilityRole="button"
@@ -1122,46 +1168,49 @@ function AudioMessageBubble({
         <View
           style={{
             alignItems: 'center',
-            backgroundColor: sender === 'user' ? 'rgba(232, 236, 255, 0.96)' : fortuneTheme.colors.surfaceSecondary,
-            borderRadius: 18,
+            backgroundColor: isUser ? 'rgba(232, 236, 255, 0.96)' : fortuneTheme.colors.surfaceSecondary,
+            borderRadius: 22,
+            borderBottomRightRadius: isUser ? 8 : 22,
+            borderBottomLeftRadius: isUser ? 22 : 8,
             flexDirection: 'row',
             gap: 10,
-            minWidth: 168,
-            paddingHorizontal: 14,
+            paddingHorizontal: 12,
             paddingVertical: 10,
+            width: bubbleWidth,
           }}
         >
-          <Ionicons
-            color={sender === 'user' ? fortuneTheme.colors.background : fortuneTheme.colors.textPrimary}
-            name={playing ? 'pause' : 'play'}
-            size={18}
-          />
-          <View style={{ flex: 1, gap: 2 }}>
-            <AppText
-              variant="labelLarge"
-              color={sender === 'user' ? fortuneTheme.colors.background : fortuneTheme.colors.textPrimary}
-            >
-              음성 메시지
-            </AppText>
+          <View
+            style={{
+              alignItems: 'center',
+              backgroundColor: isUser ? 'rgba(11, 12, 18, 0.12)' : 'rgba(255, 255, 255, 0.08)',
+              borderRadius: 999,
+              height: 32,
+              justifyContent: 'center',
+              width: 32,
+            }}
+          >
+            <Ionicons
+              color={foreground}
+              name={playing ? 'pause' : 'play'}
+              size={16}
+            />
+          </View>
+          <View style={{ flex: 1, gap: 4 }}>
+            <StaticAudioSpectrum active={playing} color={foreground} />
             <AppText
               variant="caption"
-              color={sender === 'user' ? fortuneTheme.colors.background : fortuneTheme.colors.textSecondary}
+              color={isUser ? fortuneTheme.colors.background : fortuneTheme.colors.textSecondary}
             >
               {formatAudioDuration(durationMillis)}
             </AppText>
           </View>
-          <Ionicons
-            color={sender === 'user' ? fortuneTheme.colors.background : fortuneTheme.colors.textSecondary}
-            name="mic-outline"
-            size={16}
-          />
         </View>
       </Pressable>
       {caption ? (
         <AppText
           variant="bodySmall"
           color={fortuneTheme.colors.textSecondary}
-          style={{ textAlign: sender === 'user' ? 'right' : 'left' }}
+          style={{ maxWidth: bubbleWidth, textAlign: isUser ? 'right' : 'left' }}
         >
           {caption}
         </AppText>
@@ -1169,7 +1218,6 @@ function AudioMessageBubble({
     </View>
   );
 }
-
 function ChatThreadMessage({
   character,
   message,
@@ -3135,6 +3183,7 @@ export function ActiveCharacterChatSurface({
           }}
         >
           <CharacterAvatar
+            avatarUrl={getCharacterAvatarUrl(character)}
             characterId={character.id}
             name={character.name}
             size={72}
@@ -3347,7 +3396,7 @@ export function ActiveCharacterChatHeader({
             opacity: pressed ? 0.72 : 1,
           })}
         >
-          <CharacterAvatar characterId={character.id} name={character.name} size={34} />
+          <CharacterAvatar avatarUrl={getCharacterAvatarUrl(character)} characterId={character.id} name={character.name} size={34} />
           <View style={{ alignItems: 'center', gap: 2 }}>
             <AppText variant="labelLarge">{character.name}</AppText>
             <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>

@@ -61,8 +61,8 @@ function assert(condition: unknown, message: string): asserts condition {
   const dividers = items.filter((item) => item.kind === 'time-divider');
 
   assert(
-    dividers.some((divider) => divider.label === '오전 12:05'),
-    '날짜가 바뀐 첫 메시지 위에는 오늘 시간 포맷의 중앙 라벨이 필요하다',
+    dividers.some((divider) => divider.label === '오늘 오전 12:05'),
+    '오늘로 날짜가 바뀐 첫 메시지 위에는 오늘 + 시간 중앙 라벨이 필요하다',
   );
 }
 

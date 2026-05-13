@@ -69,12 +69,17 @@ function formatKoreanMeridiemTime(kstDate: Date): string {
   return `${hour >= 12 ? '오후' : '오전'} ${displayHour}:${paddedMinute}`;
 }
 
-export function formatChatTimeDividerLabel(timestamp: number, nowTimestamp = Date.now()): string {
+export function formatChatTimeDividerLabel(
+  timestamp: number,
+  nowTimestamp = Date.now(),
+  options?: { includeTodayPrefix?: boolean },
+): string {
   const kstDate = getKstDate(timestamp);
   const nowKstDate = getKstDate(nowTimestamp);
 
   if (isSameKstDay(timestamp, nowTimestamp)) {
-    return formatKoreanMeridiemTime(kstDate);
+    const time = formatKoreanMeridiemTime(kstDate);
+    return options?.includeTodayPrefix ? `오늘 ${time}` : time;
   }
 
   if (isYesterdayKst(timestamp, nowTimestamp)) {
@@ -92,8 +97,12 @@ export function formatChatTimeDividerLabel(timestamp: number, nowTimestamp = Dat
   return `${kstDate.getUTCFullYear()}년 ${month}월 ${day}일 ${time}`;
 }
 
-export function formatChatTimeDividerAccessibilityLabel(timestamp: number, nowTimestamp = Date.now()): string {
-  return `시간 구분: ${formatChatTimeDividerLabel(timestamp, nowTimestamp)}`;
+export function formatChatTimeDividerAccessibilityLabel(
+  timestamp: number,
+  nowTimestamp = Date.now(),
+  options?: { includeTodayPrefix?: boolean },
+): string {
+  return `시간 구분: ${formatChatTimeDividerLabel(timestamp, nowTimestamp, options)}`;
 }
 
 function shouldShowTimeDivider(
@@ -124,12 +133,17 @@ export function buildChatRenderItems(
     const showDivider = shouldShowTimeDivider(timestamp, previousTimestamp);
 
     if (showDivider) {
+      const crossedIntoToday =
+        previousTimestamp != null &&
+        !isSameKstDay(previousTimestamp, timestamp) &&
+        isSameKstDay(timestamp, nowTimestamp);
+      const labelOptions = { includeTodayPrefix: crossedIntoToday };
       items.push({
         kind: 'time-divider',
         id: `time-divider-${message.id}`,
         timestamp,
-        label: formatChatTimeDividerLabel(timestamp, nowTimestamp),
-        accessibilityLabel: formatChatTimeDividerAccessibilityLabel(timestamp, nowTimestamp),
+        label: formatChatTimeDividerLabel(timestamp, nowTimestamp, labelOptions),
+        accessibilityLabel: formatChatTimeDividerAccessibilityLabel(timestamp, nowTimestamp, labelOptions),
       });
     }
 
