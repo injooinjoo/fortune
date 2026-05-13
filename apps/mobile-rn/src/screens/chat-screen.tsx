@@ -184,6 +184,8 @@ const REPLY_FLOOR_MS = 4000;
 // 체감 범위로 폴백한다.
 const FALLBACK_REPLY_MIN_SEC = 6;
 const FALLBACK_REPLY_MAX_SEC = 18;
+const AUDIO_ONLY_STORY_PROMPT =
+  '[사용자가 음성 메시지를 보냈어요. 아직 음성 내용은 텍스트로 변환되지 않았으니, 들은 척하지 말고 자연스럽게 짧게 반응해 주세요.]';
 
 function randomFallbackReplyDelayMs() {
   return (Math.random() * (FALLBACK_REPLY_MAX_SEC - FALLBACK_REPLY_MIN_SEC) +
@@ -3948,10 +3950,25 @@ export function ChatScreen() {
         );
       });
 
-      // Raw audio is a user-visible attachment for now. LLM context still receives
-      // caption text only until the backend accepts audioBase64/audio_url parts.
-      if (selectedCharacter.kind === 'story' && trimmed) {
-        enqueueStorySend(selectedCharacter, trimmed);
+      // Raw audio is a user-visible attachment for now. Until the backend accepts
+      // audioBase64/audio_url parts, trigger the normal reply pipeline with either
+      // the user's caption or an explicit "audio-only" context prompt. Do not add a
+      // second visible user text bubble for audio-only sends.
+      if (selectedCharacter.kind === 'story') {
+        const replyPrompt = trimmed || AUDIO_ONLY_STORY_PROMPT;
+        if (trimmed) {
+          enqueueStorySend(selectedCharacter, trimmed);
+        } else if (isStoryRomancePilotCharacterId(selectedCharacter.id)) {
+          void sendStoryPilotMessage(selectedCharacter, replyPrompt, {
+            skipOptimisticUserMessage: true,
+            userMessageId: audioMessage.id,
+          });
+        } else {
+          void sendCharacterChatMessage(selectedCharacter, replyPrompt, {
+            skipOptimisticUserMessage: true,
+            userMessageId: audioMessage.id,
+          });
+        }
       }
       return;
     }
