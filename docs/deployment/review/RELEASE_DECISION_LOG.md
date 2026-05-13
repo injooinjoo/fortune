@@ -123,3 +123,23 @@ Copy this section for each release candidate.
 - asc_app_id: `6749496180`
 - risk_approver: `TBD`
 - approved_at: `TBD`
+
+### Entry 2026-05-13-IOS-CURRENT-HEAD-RC
+- release_candidate: `ios-current-head-build-62`
+- jira_issue: `TBD / Paperclip issue pending if available`
+- frozen_commit_sha: `b30096f9f6e6e6eabed49b3e19de0a3d348818f7`
+- created_at: `2026-05-13 20:49 KST`
+- evaluator: `Hermes`
+- p0_open_count: `>=5`
+- p1_open_count: `>=2`
+- unresolved_issue_keys: `real-device-evidence`, `iap-evidence`, `ipad-evidence`, `asc-review-submit`, `risk-signoff`
+- unresolved_check_ids: `DEC-004`, `DEC-007`, `DEC-008`, `IOS-RUNTIME-002`, `IOS-RUNTIME-003`, `IOS-RUNTIME-004`, `IOS-IAP-001`, `IOS-IAP-002`, `IOS-IAP-003`, `IOS-BUILD-009`, `IOS-BUILD-010`
+- decision: `NO-GO for final App Review submission; technical RC blockers remediated and current EAS build 62 is ready for ASC upload after manual evidence/sign-off`
+- reason_summary: `The 2026-05-13 technical blockers were fixed: dirty tree was committed, TypeScript and source-inventory CI blockers were resolved, local gates passed, master is clean at b30096f9, and GitHub CI/E2E/Security are green. A fresh EAS iOS production build 5737a653-3030-464c-914e-613b673c150d was created from b30096f9 as version 1.0.14 build 62. Final App Review submission remains blocked by required real-device/IAP/iPad evidence, risk sign-off, ASC build selection/processing evidence, and final Submit for Review evidence.`
+- local_gates: `npm run rn:typecheck` pass; `npm run rn:test` pass; `pnpm --filter @fortune/mobile-rn exec expo install --check` pass; `pnpm dlx expo-doctor --verbose` pass; `expo lint` exit 0 with warnings
+- github_actions: `CI Pipeline 25796724955` success; `E2E Tests 25796724963` success; `Security Scan 25796725010` success
+- eas_build: `5737a653-3030-464c-914e-613b673c150d` (`1.0.14` build `62`, runtimeVersion `1.0.14`, channel `production`, artifact `https://expo.dev/artifacts/eas/bLEcc1bNAmF4RwnkSRQvAV.ipa`)
+- eas_submission: `pending for build 62`
+- asc_app_id: `6749496180`
+- risk_approver: `TBD`
+- approved_at: `TBD`

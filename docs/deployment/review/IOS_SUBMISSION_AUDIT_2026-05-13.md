@@ -159,3 +159,36 @@ Safe completion status today:
 5. Capture or explicitly risk-accept required real-device evidence: iPhone clean install/rejection path, IAP success/cancel/restore, iPad review path, and NAT64/IPv6 if applicable.
 6. Update `IOS_REVIEW_EVIDENCE.md` and `RELEASE_DECISION_LOG.md` from NO-GO/pending to GO/pass with exact evidence.
 7. Complete App Store Connect final `Submit for Review` with review notes matching the selected build.
+
+## 2026-05-13 20:49 KST Remediation Update
+
+Technical blockers from this audit were remediated:
+
+- Dirty release tree resolved: staged/unstaged work was classified, committed, and pushed.
+- TypeScript CI blocker resolved: `mobile-rn typecheck` now passes locally and in GitHub Actions.
+- Source inventory CI blocker resolved: `npm run repo:sync` regenerated `docs/development/FILE_INVENTORY.md`, `docs/development/UNUSED_CANDIDATES.md`, and `artifacts/file_inventory.json`; the regenerated outputs were committed and pushed.
+- Current frozen SHA: `b30096f9f6e6e6eabed49b3e19de0a3d348818f7`.
+- Git state after remediation: `master...origin/master`, clean.
+- GitHub Actions for frozen SHA `b30096f9`: `CI Pipeline` run `25796724955` success; `E2E Tests` run `25796724963` success; `Security Scan` run `25796725010` success.
+- Local gates passed: `npm run rn:typecheck`, `npm run rn:test`, `pnpm --filter @fortune/mobile-rn exec expo install --check`, `pnpm dlx expo-doctor --verbose` (17/17). `expo lint` exits 0 with warnings.
+- Fresh current-SHA EAS iOS production build created:
+  - Build ID: `5737a653-3030-464c-914e-613b673c150d`
+  - Version/build: `1.0.14` / `62`
+  - runtimeVersion: `1.0.14`
+  - Channel/distribution: `production` / `STORE`
+  - Commit: `b30096f9f6e6e6eabed49b3e19de0a3d348818f7`
+  - Artifact: `https://expo.dev/artifacts/eas/bLEcc1bNAmF4RwnkSRQvAV.ipa`
+
+Updated verdict after remediation:
+
+- **Technical RC status: GO for current-SHA build artifact creation.**
+- **Final App Review submission status: still NO-GO until the remaining manual/submission evidence is closed.**
+
+Remaining final-submission blockers:
+
+1. `IOS-BUILD-009`: build 62 has not yet been uploaded to App Store Connect via EAS Submit.
+2. `IOS-BUILD-010`: ASC build processing/build selection/final `Submit for Review` evidence is still pending and requires an ASC session.
+3. `IOS-RUNTIME-002`: real iPhone clean-install / previous rejection-path verification remains pending.
+4. `IOS-IAP-001~003`: IAP success, cancel/error recovery, and restore purchases evidence remains pending.
+5. `IOS-RUNTIME-003`: iPad review-path evidence remains pending.
+6. `DEC-008`: explicit risk approver sign-off remains pending.
