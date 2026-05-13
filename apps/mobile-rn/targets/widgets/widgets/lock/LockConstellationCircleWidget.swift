@@ -60,6 +60,6 @@ struct LockConstellationCircleView: View {
                 .font(.system(size: 9, weight: .heavy))
                 .foregroundColor(.white)
         }
-        .widgetURL(URL(string: "com.beyond.fortune://widget?screen=chat&characterId=fortune_stella&fortuneType=zodiac"))
+        .widgetURL(URL(string: "com.beyond.fortune://widget?screen=chat&characterId=fortune_stella&fortuneType=constellation"))
     }
 }

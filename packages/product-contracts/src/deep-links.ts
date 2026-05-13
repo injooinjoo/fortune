@@ -19,7 +19,6 @@ export interface DeepLinkResolution {
 const fortuneTypeAliases: Record<string, FortuneTypeId> = {
   time: 'daily',
   'daily-calendar': 'daily',
-  health: 'daily',
   saju: 'traditional-saju',
   traditional: 'traditional-saju',
   yearly: 'new-year',

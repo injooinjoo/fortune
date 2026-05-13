@@ -106,7 +106,7 @@ private struct ConstellationSmall: View {
             }
             .padding(14)
         }
-        .widgetURL(URL(string: "com.beyond.fortune://widget?screen=chat&characterId=fortune_stella&fortuneType=zodiac"))
+        .widgetURL(URL(string: "com.beyond.fortune://widget?screen=chat&characterId=fortune_stella&fortuneType=constellation"))
     }
 }
 
@@ -147,7 +147,7 @@ private struct ConstellationMedium: View {
             }
             .padding(14)
         }
-        .widgetURL(URL(string: "com.beyond.fortune://widget?screen=chat&characterId=fortune_stella&fortuneType=zodiac"))
+        .widgetURL(URL(string: "com.beyond.fortune://widget?screen=chat&characterId=fortune_stella&fortuneType=constellation"))
     }
 }
 

@@ -24,9 +24,10 @@ describe('deep link contracts', () => {
     expect(resolution.fortuneType).toBe('love');
   });
 
-  it('normalizes legacy fortune aliases used by Flutter deep links', () => {
+  it('normalizes legacy fortune aliases used by Flutter deep links without overriding valid current types', () => {
     expect(normalizeFortuneTypeForChat('sports-game')).toBe('match-insight');
     expect(normalizeFortuneTypeForChat('investment')).toBe('wealth');
+    expect(normalizeFortuneTypeForChat('health')).toBe('health');
     expect(normalizeFortuneTypeForChat('unknown-type')).toBeNull();
   });
 
@@ -38,5 +39,29 @@ describe('deep link contracts', () => {
     expect(resolution.route).toBe('/chat?characterId=haneul_oracle');
     expect(resolution.fortuneType).toBe('daily');
     expect(resolution.characterId).toBe('haneul_oracle');
+  });
+
+  it('preserves all iOS widget result fortune types when routing to Haneul', () => {
+    const widgetLinks = [
+      ['daily', 'daily'],
+      ['love', 'love'],
+      ['tarot', 'tarot'],
+      ['constellation', 'constellation'],
+      ['dream', 'dream'],
+      ['health', 'health'],
+      ['lucky-items', 'lucky-items'],
+      ['wealth', 'wealth'],
+      ['weekly-review', 'weekly-review'],
+    ] as const;
+
+    for (const [input, expected] of widgetLinks) {
+      const resolution = resolveDeepLink(
+        `com.beyond.fortune://widget?screen=chat&characterId=fortune_haneul&fortuneType=${input}`,
+      );
+
+      expect(resolution.route).toBe('/chat?characterId=haneul_oracle');
+      expect(resolution.fortuneType).toBe(expected);
+      expect(resolution.characterId).toBe('haneul_oracle');
+    }
   });
 });

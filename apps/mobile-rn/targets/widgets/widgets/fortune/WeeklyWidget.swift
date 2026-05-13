@@ -115,7 +115,7 @@ struct WeeklyWidgetView: View {
             }
         }
         .padding(14)
-        .widgetURL(URL(string: "com.beyond.fortune://widget?screen=chat&characterId=fortune_haneul&fortuneType=daily"))
+        .widgetURL(URL(string: "com.beyond.fortune://widget?screen=chat&characterId=fortune_haneul&fortuneType=weekly-review"))
     }
 
     private func barHeight(_ score: Int) -> CGFloat {
