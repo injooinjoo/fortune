@@ -46,6 +46,48 @@ import { fortuneTheme, withAlpha } from '../../lib/theme';
 
 type SyntheticGroupId = 'today';
 type SelectableGroupId = FortuneCatalogGroupId | SyntheticGroupId;
+type FortuneIconName = keyof typeof Ionicons.glyphMap;
+type VisualMotif =
+  | 'sun'
+  | 'cards'
+  | 'grid'
+  | 'calendar'
+  | 'name'
+  | 'orbit'
+  | 'heart'
+  | 'people'
+  | 'cup'
+  | 'return'
+  | 'shield'
+  | 'home'
+  | 'paw'
+  | 'work'
+  | 'study'
+  | 'rocket'
+  | 'money'
+  | 'place'
+  | 'gift'
+  | 'style'
+  | 'cookie'
+  | 'gem'
+  | 'face'
+  | 'palm'
+  | 'beauty'
+  | 'hair'
+  | 'talisman'
+  | 'health'
+  | 'wave'
+  | 'fitness'
+  | 'trophy'
+  | 'game'
+  | 'breath'
+  | 'dna'
+  | 'drop'
+  | 'animal'
+  | 'compass'
+  | 'review'
+  | 'choice'
+  | 'past';
 
 interface FilterPill {
   id: SelectableGroupId;
@@ -53,6 +95,13 @@ interface FilterPill {
   /** 시트 안에서는 긴 group label 대신 짧은 라벨을 사용한다. */
   shortLabel: string;
   accent: string;
+}
+
+interface FortuneVisualIdentity {
+  primary: FortuneIconName;
+  secondary: FortuneIconName;
+  tertiary: FortuneIconName;
+  motif: VisualMotif;
 }
 
 const TODAY_FORTUNE_IDS: readonly FortuneTypeId[] = [
@@ -151,8 +200,8 @@ const POETIC_COPY: Record<string, string> = {
   'past-life': '다른 시간선의 나',
 };
 
-function iconForFortune(id: string): keyof typeof Ionicons.glyphMap {
-  const map: Record<string, keyof typeof Ionicons.glyphMap> = {
+function iconForFortune(id: string): FortuneIconName {
+  const map: Record<string, FortuneIconName> = {
     daily: 'sunny-outline',
     tarot: 'albums-outline',
     'traditional-saju': 'grid-outline',
@@ -203,6 +252,67 @@ function iconForFortune(id: string): keyof typeof Ionicons.glyphMap {
     'past-life': 'infinite-outline',
   };
   return map[id] ?? 'sparkles-outline';
+}
+
+const FORTUNE_VISUALS: Record<string, Omit<FortuneVisualIdentity, 'primary'>> = {
+  daily: { secondary: 'sunny', tertiary: 'time-outline', motif: 'sun' },
+  tarot: { secondary: 'albums', tertiary: 'sparkles', motif: 'cards' },
+  'traditional-saju': { secondary: 'grid', tertiary: 'leaf-outline', motif: 'grid' },
+  'daily-calendar': { secondary: 'calendar', tertiary: 'moon-outline', motif: 'calendar' },
+  naming: { secondary: 'create', tertiary: 'text-outline', motif: 'name' },
+  'new-year': { secondary: 'sparkles', tertiary: 'calendar-clear-outline', motif: 'orbit' },
+  love: { secondary: 'heart', tertiary: 'chatbubble-ellipses-outline', motif: 'heart' },
+  compatibility: { secondary: 'people', tertiary: 'heart-outline', motif: 'people' },
+  'blind-date': { secondary: 'cafe', tertiary: 'rose-outline', motif: 'cup' },
+  'ex-lover': { secondary: 'arrow-undo', tertiary: 'heart-dislike-outline', motif: 'return' },
+  'avoid-people': { secondary: 'shield', tertiary: 'warning-outline', motif: 'shield' },
+  'yearly-encounter': { secondary: 'walk', tertiary: 'location-outline', motif: 'orbit' },
+  celebrity: { secondary: 'star', tertiary: 'mic-outline', motif: 'orbit' },
+  'blind-date-guide': { secondary: 'shirt', tertiary: 'chatbubbles-outline', motif: 'style' },
+  family: { secondary: 'home', tertiary: 'people-outline', motif: 'home' },
+  'pet-compatibility': { secondary: 'paw', tertiary: 'heart-outline', motif: 'paw' },
+  career: { secondary: 'briefcase', tertiary: 'trending-up-outline', motif: 'work' },
+  exam: { secondary: 'school', tertiary: 'timer-outline', motif: 'study' },
+  talent: { secondary: 'rocket', tertiary: 'bulb-outline', motif: 'rocket' },
+  wealth: { secondary: 'cash', tertiary: 'trending-up-outline', motif: 'money' },
+  moving: { secondary: 'business', tertiary: 'navigate-outline', motif: 'place' },
+  'lucky-items': { secondary: 'gift', tertiary: 'color-palette-outline', motif: 'gift' },
+  'ootd-evaluation': { secondary: 'shirt', tertiary: 'checkmark-circle-outline', motif: 'style' },
+  'fortune-cookie': { secondary: 'restaurant', tertiary: 'sparkles', motif: 'cookie' },
+  birthstone: { secondary: 'diamond', tertiary: 'calendar-outline', motif: 'gem' },
+  'face-reading': { secondary: 'eye', tertiary: 'person-circle-outline', motif: 'face' },
+  'palm-reading': { secondary: 'hand-left', tertiary: 'git-branch-outline', motif: 'palm' },
+  'beauty-simulation': { secondary: 'color-wand', tertiary: 'camera-outline', motif: 'beauty' },
+  'hair-style-guide': { secondary: 'cut', tertiary: 'sparkles-outline', motif: 'hair' },
+  'face-reading-guide': { secondary: 'happy', tertiary: 'eye-outline', motif: 'face' },
+  'ootd-guide': { secondary: 'shirt', tertiary: 'color-palette-outline', motif: 'style' },
+  'past-life-guide': { secondary: 'time', tertiary: 'document-text-outline', motif: 'past' },
+  wish: { secondary: 'flash', tertiary: 'ribbon-outline', motif: 'talisman' },
+  health: { secondary: 'heart-circle', tertiary: 'medical-outline', motif: 'health' },
+  biorhythm: { secondary: 'pulse', tertiary: 'analytics-outline', motif: 'wave' },
+  exercise: { secondary: 'barbell', tertiary: 'body-outline', motif: 'fitness' },
+  'match-insight': { secondary: 'trophy', tertiary: 'football-outline', motif: 'trophy' },
+  'game-enhance': { secondary: 'game-controller', tertiary: 'flash-outline', motif: 'game' },
+  breathing: { secondary: 'leaf', tertiary: 'water-outline', motif: 'breath' },
+  'personality-dna': { secondary: 'finger-print', tertiary: 'person-outline', motif: 'dna' },
+  mbti: { secondary: 'text', tertiary: 'shapes-outline', motif: 'dna' },
+  'blood-type': { secondary: 'water', tertiary: 'heart-outline', motif: 'drop' },
+  'zodiac-animal': { secondary: 'paw', tertiary: 'globe-outline', motif: 'animal' },
+  coaching: { secondary: 'compass', tertiary: 'chatbubbles-outline', motif: 'compass' },
+  'daily-review': { secondary: 'moon', tertiary: 'journal-outline', motif: 'review' },
+  'weekly-review': { secondary: 'calendar-clear', tertiary: 'bar-chart-outline', motif: 'review' },
+  decision: { secondary: 'options', tertiary: 'checkmark-done-outline', motif: 'choice' },
+  'past-life': { secondary: 'infinite', tertiary: 'hourglass-outline', motif: 'past' },
+};
+
+function visualIdentityForFortune(id: string): FortuneVisualIdentity {
+  const visual = FORTUNE_VISUALS[id];
+  return {
+    primary: iconForFortune(id),
+    secondary: visual?.secondary ?? 'sparkles-outline',
+    tertiary: visual?.tertiary ?? 'ellipse-outline',
+    motif: visual?.motif ?? 'orbit',
+  };
 }
 
 const GROUP_ORDER = new Map<FortuneCatalogGroupId, number>(
@@ -618,8 +728,8 @@ function HeroFortuneCard({
   onPress: () => void;
 }) {
   const category = pillForEntry(entry);
-  const iconName = iconForFortune(entry.id);
-  const subtitle = POETIC_COPY[entry.id] ?? entry.shortDesc;
+  const visual = visualIdentityForFortune(entry.id);
+  const semanticHint = POETIC_COPY[entry.id] ?? entry.shortDesc;
   const inputRange = [
     (index - 1) * snapInterval,
     index * snapInterval,
@@ -657,7 +767,7 @@ function HeroFortuneCard({
       <Pressable
         onPress={onPress}
         accessibilityRole="button"
-        accessibilityLabel={`${entry.displayName}, ${
+        accessibilityLabel={`${entry.displayName}, ${semanticHint}, ${
           entry.costPoints === 0 ? '무료' : `${entry.costPoints} 포인트`
         }`}
         accessibilityHint={
@@ -674,7 +784,12 @@ function HeroFortuneCard({
           backgroundColor: '#15131E',
         })}
       >
-      <SceneBackground accent={category.accent} active idSuffix={entry.id} />
+      <SceneBackground
+        accent={category.accent}
+        active
+        idSuffix={entry.id}
+        motif={visual.motif}
+      />
 
       <View
         style={{
@@ -728,9 +843,15 @@ function HeroFortuneCard({
           <Circle cx="48" cy="48" r="48" fill={`url(#glyphGlow-${entry.id})`} />
         </Svg>
         <View style={{ position: 'absolute' }}>
-          <Ionicons name={iconName} size={54} color={category.accent} />
+          <Ionicons name={visual.primary} size={54} color={category.accent} />
         </View>
       </View>
+
+      <MeaningSymbolCluster
+        visual={visual}
+        accent={category.accent}
+        compact={height < 320}
+      />
 
       <ElementsRing accent={category.accent} />
 
@@ -751,14 +872,33 @@ function HeroFortuneCard({
         >
           {entry.displayName}
         </AppText>
-        <AppText
-          variant="bodySmall"
-          color={fortuneTheme.colors.textSecondary}
-          numberOfLines={2}
-          style={{ marginTop: 8, lineHeight: 19 }}
+        <View
+          pointerEvents="none"
+          style={{
+            marginTop: 12,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 8,
+          }}
         >
-          {subtitle}
-        </AppText>
+          {[visual.secondary, visual.tertiary].map((name, visualIndex) => (
+            <View
+              key={`${entry.id}-${name}-${visualIndex}`}
+              style={{
+                width: 30,
+                height: 30,
+                borderRadius: 15,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: withAlpha(category.accent, visualIndex === 0 ? 0.16 : 0.1),
+                borderWidth: 1,
+                borderColor: withAlpha(category.accent, visualIndex === 0 ? 0.36 : 0.24),
+              }}
+            >
+              <Ionicons name={name} size={16} color={category.accent} />
+            </View>
+          ))}
+        </View>
         {entry.costPoints > 0 ? (
           <View
             style={{
@@ -783,14 +923,162 @@ function HeroFortuneCard({
   );
 }
 
+function MeaningSymbolCluster({
+  visual,
+  accent,
+  compact,
+}: {
+  visual: FortuneVisualIdentity;
+  accent: string;
+  compact: boolean;
+}) {
+  const mainSize = compact ? 54 : 74;
+  const mainTop = compact ? 64 : 122;
+  const mainIconSize = compact ? 28 : 38;
+  const smallSize = compact ? 34 : 42;
+  const smallTop = compact ? 78 : 104;
+  const smallLeft = compact ? 76 : 92;
+
+  return (
+    <View
+      pointerEvents="none"
+      accessible={false}
+      importantForAccessibility="no-hide-descendants"
+      style={{ position: 'absolute', inset: 0 }}
+    >
+      <View
+        style={{
+          position: 'absolute',
+          top: mainTop,
+          left: 24,
+          width: mainSize,
+          height: mainSize,
+          borderRadius: mainSize / 2,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: withAlpha(accent, compact ? 0.09 : 0.11),
+          borderWidth: 1,
+          borderColor: withAlpha(accent, 0.28),
+          transform: [{ rotate: '-9deg' }],
+        }}
+      >
+        <Ionicons name={visual.secondary} size={mainIconSize} color={accent} />
+      </View>
+      <View
+        style={{
+          position: 'absolute',
+          top: smallTop,
+          left: smallLeft,
+          width: smallSize,
+          height: smallSize,
+          borderRadius: smallSize / 2,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: withAlpha(accent, compact ? 0.13 : 0.16),
+          borderWidth: 1,
+          borderColor: withAlpha(accent, 0.34),
+          transform: [{ rotate: '8deg' }],
+        }}
+      >
+        <Ionicons name={visual.tertiary} size={compact ? 18 : 22} color={accent} />
+      </View>
+    </View>
+  );
+}
+
+function MotifBackdrop({
+  motif,
+  accent,
+  active,
+}: {
+  motif: VisualMotif;
+  accent: string;
+  active: boolean;
+}) {
+  const opacity = active ? 0.23 : 0.16;
+
+  if (['cards', 'study', 'review', 'choice', 'name'].includes(motif)) {
+    return (
+      <G opacity={opacity} stroke={accent} strokeWidth={1.4} fill="none">
+        <Rect x="38" y="88" width="54" height="76" rx="10" transform="rotate(-11 65 126)" />
+        <Rect x="76" y="72" width="54" height="76" rx="10" transform="rotate(8 103 110)" opacity={0.72} />
+        <Path d="M54 116 H78 M54 130 H72 M93 103 H116 M93 117 H109" opacity={0.68} />
+      </G>
+    );
+  }
+
+  if (['heart', 'people', 'cup', 'return', 'home', 'paw'].includes(motif)) {
+    return (
+      <G opacity={opacity} stroke={accent} strokeWidth={1.5} fill="none">
+        <Path d="M58 128 C26 98 48 66 75 88 C102 66 124 98 92 128 L75 144 Z" />
+        <Circle cx="128" cy="92" r="18" opacity={0.58} />
+        <Path d="M115 133 C124 122 143 122 152 133" opacity={0.58} />
+      </G>
+    );
+  }
+
+  if (['money', 'work', 'rocket', 'trophy', 'game', 'fitness'].includes(motif)) {
+    return (
+      <G opacity={opacity} stroke={accent} strokeWidth={1.5} fill="none">
+        <Path d="M50 148 L78 112 L104 132 L138 82" />
+        <Path d="M126 82 H138 V94" />
+        <Circle cx="78" cy="112" r="10" />
+        <Circle cx="104" cy="132" r="10" opacity={0.72} />
+        <Circle cx="138" cy="82" r="10" opacity={0.58} />
+      </G>
+    );
+  }
+
+  if (['health', 'wave', 'breath', 'drop'].includes(motif)) {
+    return (
+      <G opacity={opacity} stroke={accent} strokeWidth={1.5} fill="none">
+        <Path d="M34 128 C54 94 76 158 96 122 S132 82 154 124" />
+        <Path d="M52 96 C72 70 112 70 132 96" opacity={0.52} />
+        <Path d="M64 154 C84 176 118 176 138 154" opacity={0.52} />
+      </G>
+    );
+  }
+
+  if (['face', 'palm', 'beauty', 'hair', 'style', 'gem'].includes(motif)) {
+    return (
+      <G opacity={opacity} stroke={accent} strokeWidth={1.4} fill="none">
+        <Circle cx="94" cy="112" r="46" />
+        <Path d="M62 108 C76 96 88 96 101 108 C114 96 128 96 142 108" />
+        <Path d="M74 136 C88 146 110 146 124 136" opacity={0.64} />
+        <Path d="M94 62 L108 96 L144 112 L108 128 L94 164 L80 128 L44 112 L80 96 Z" opacity={0.34} />
+      </G>
+    );
+  }
+
+  if (['past', 'talisman', 'animal', 'dna', 'compass', 'place'].includes(motif)) {
+    return (
+      <G opacity={opacity} stroke={accent} strokeWidth={1.4} fill="none">
+        <Circle cx="96" cy="116" r="54" />
+        <Circle cx="96" cy="116" r="28" opacity={0.62} />
+        <Path d="M96 52 V180 M32 116 H160" opacity={0.32} />
+        <Path d="M96 72 L112 116 L96 160 L80 116 Z" />
+      </G>
+    );
+  }
+
+  return (
+    <G opacity={opacity} stroke={accent} strokeWidth={1.5} fill="none">
+      <Circle cx="98" cy="112" r="52" />
+      <Path d="M98 48 L112 98 L162 112 L112 126 L98 176 L84 126 L34 112 L84 98 Z" />
+    </G>
+  );
+}
+
 function SceneBackground({
   accent,
   active,
   idSuffix,
+  motif,
 }: {
   accent: string;
   active: boolean;
   idSuffix: string;
+  motif: VisualMotif;
 }) {
   const glowId = `cardGlow-${idSuffix}`;
   const floorId = `cardFloor-${idSuffix}`;
@@ -812,6 +1100,7 @@ function SceneBackground({
         <Rect x="0" y="0" width="100%" height="100%" fill="#15131E" />
         <Rect x="0" y="0" width="100%" height="100%" fill={`url(#${glowId})`} />
         <Rect x="0" y="0" width="100%" height="100%" fill={`url(#${floorId})`} />
+        <MotifBackdrop motif={motif} accent={accent} active={active} />
         {STAR_POINTS.map((point, index) => (
           <Circle
             key={`${point.x}-${point.y}-${index}`}
