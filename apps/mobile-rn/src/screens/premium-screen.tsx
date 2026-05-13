@@ -147,12 +147,11 @@ export function PremiumScreen() {
    // 보이므로, 가격 미로드 시 명시 메시지를 띄우는 별도 핸들러로 라우팅한다.
   const isStoreProductReady =
     storeStatus === 'ready' && Boolean(storePriceLabels[selectedProductId]);
-  const canTriggerPurchase =
+  const canPressPurchaseCta =
     session != null &&
     !canManageSelectedSubscription &&
     actionState === 'idle' &&
-    !isPurchasePending &&
-    isStoreProductReady;
+    !isPurchasePending;
 
   async function handleRefresh() {
     if (actionState !== 'idle') {
@@ -214,7 +213,25 @@ export function PremiumScreen() {
   }
 
   async function handlePurchase() {
-    if (!canTriggerPurchase) {
+    if (!canPressPurchaseCta) {
+      return;
+    }
+
+    if (!isStoreProductReady) {
+      Alert.alert(
+        '스토어 상품 확인 필요',
+        storeError ??
+          'App Store 상품 정보를 아직 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',
+        [
+          { text: '닫기', style: 'cancel' },
+          {
+            text: '다시 확인',
+            onPress: () => {
+              void handleRefresh();
+            },
+          },
+        ],
+      );
       return;
     }
 
@@ -486,7 +503,7 @@ export function PremiumScreen() {
           </PrimaryButton>
         ) : (
           <PrimaryButton
-            disabled={!canTriggerPurchase}
+            disabled={!canPressPurchaseCta}
             onPress={() => void handlePurchase()}
             tone="primary"
           >
