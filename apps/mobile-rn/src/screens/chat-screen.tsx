@@ -22,6 +22,7 @@ import {
   ActiveCharacterChatSurface,
   ActiveSurveyFooter,
   ChatFirstRunSurface,
+  ChatListHeader,
   ChatSoftGate,
   FloatingCreateButton,
   ProfileFlowGateCard,
@@ -4418,6 +4419,8 @@ export function ChatScreen() {
               <PushDeniedBanner characterName={selectedCharacter.name} />
             ) : null}
           </View>
+        ) : gate === 'ready' && surfaceMode === 'list' ? (
+          <ChatListHeader onOpenProfile={() => router.push(session ? '/profile' : '/signup')} />
         ) : undefined
       }
       footer={
@@ -4599,7 +4602,6 @@ export function ChatScreen() {
             characters={sortedFirstRunCharacters}
             lastFortuneType={mobileAppState.chat.lastFortuneType}
             onChangeTab={setActiveTab}
-            onOpenProfile={() => router.push(session ? '/profile' : '/signup')}
             onOpenRecentResult={handleOpenRecentResult}
             onDeleteFriend={(id) => {
               Alert.alert(

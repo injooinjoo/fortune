@@ -1654,13 +1654,33 @@ export function ChatSoftGate({
   );
 }
 
+export function ChatListHeader({ onOpenProfile }: { onOpenProfile: () => void }) {
+  return (
+    <View
+      style={{
+        alignItems: 'flex-start',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+      }}
+    >
+      <View style={{ gap: fortuneTheme.spacing.xs }}>
+        <AppText variant="displaySmall">메시지</AppText>
+      </View>
+      <HeaderActionButton
+        kind="profile"
+        label="프로필 열기"
+        onPress={onOpenProfile}
+      />
+    </View>
+  );
+}
+
 export function ChatFirstRunSurface({
   activeTab,
   characters,
   lastFortuneType,
   selectedCharacterId,
   onChangeTab,
-  onOpenProfile,
   onOpenRecentResult,
   onSelectCharacter,
   onPickCharacterAction,
@@ -1673,7 +1693,6 @@ export function ChatFirstRunSurface({
   lastFortuneType: FortuneTypeId | null;
   selectedCharacterId: string | null;
   onChangeTab: (tab: ChatCharacterTab) => void;
-  onOpenProfile: () => void;
   onOpenRecentResult: (fortuneType: FortuneTypeId) => void;
   onSelectCharacter: (characterId: string) => void;
   onPickCharacterAction: (characterId: string, fortuneType: FortuneTypeId) => void;
@@ -1687,23 +1706,6 @@ export function ChatFirstRunSurface({
 
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
-      <View
-        style={{
-          alignItems: 'flex-start',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}
-      >
-        <View style={{ gap: fortuneTheme.spacing.xs }}>
-          <AppText variant="displaySmall">메시지</AppText>
-        </View>
-        <HeaderActionButton
-          kind="profile"
-          label="프로필 열기"
-          onPress={onOpenProfile}
-        />
-      </View>
-
       {activeTab === 'story' ? (
         <View style={{ marginHorizontal: -20 }}>
           {visibleCharacters.map((character) => (
