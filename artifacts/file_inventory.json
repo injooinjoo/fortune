@@ -6852,6 +6852,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "supabase/migrations/20260514043000_character_audio_messages.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "supabase/migrations/_archived/20260214000001_add_character_dm_notification_preference.sql",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -7115,20 +7129,20 @@
     "counts_by_area": {
       "docs": 104,
       "scripts": 53,
-      "supabase": 309
+      "supabase": 310
     },
     "counts_by_candidate_action": {
       "keep": 52,
       "keep_generated": 2,
       "manual_review": 55,
       "phase1_remove_candidate": 3,
-      "phase2_review_candidate": 354
+      "phase2_review_candidate": 355
     },
     "counts_by_usage_status": {
       "doc_only": 125,
       "generated_excluded": 2,
       "runtime_used": 52,
-      "tooling_only": 229,
+      "tooling_only": 230,
       "unreferenced": 58
     },
     "declared_asset_dirs_without_runtime_refs": [],
@@ -7178,7 +7192,7 @@
       "generate-poster-guide",
       "grant-ad-reward"
     ],
-    "total_files": 466,
+    "total_files": 467,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "ack-scheduled-reply",
