@@ -32,6 +32,7 @@ import type {
   ChatShellTextMessage,
 } from '../../lib/chat-shell';
 import { formatFortuneTypeLabel } from '../../lib/chat-shell';
+import { resolvePlayableAudioUri } from '../../lib/audio-message-assets';
 import {
   resolveChatCharacterAvatarAspectRatio,
   resolveChatCharacterAvatarSource,
@@ -1105,12 +1106,12 @@ function StaticAudioSpectrum({
 }
 
 function AudioMessageBubble({
-  audioUrl,
+  message,
   durationMillis,
   caption,
   sender,
 }: {
-  audioUrl: string;
+  message: ChatShellAudioMessage;
   durationMillis?: number;
   caption?: string;
   sender: ChatShellAudioMessage['sender'];
@@ -1138,8 +1139,18 @@ function AudioMessageBubble({
       }
 
       if (!soundRef.current) {
+        const resolved = await resolvePlayableAudioUri(message);
+        if (!resolved.uri) {
+          Alert.alert(
+            '재생할 수 없음',
+            resolved.expired
+              ? '이 음성 파일은 보관 기간이 지나 재생할 수 없어요.'
+              : '음성 메시지 파일을 찾을 수 없어요.',
+          );
+          return;
+        }
         const { Audio } = await import('expo-av');
-        const { sound } = await Audio.Sound.createAsync({ uri: audioUrl });
+        const { sound } = await Audio.Sound.createAsync({ uri: resolved.uri });
         sound.setOnPlaybackStatusUpdate((status) => {
           if ('didJustFinish' in status && status.didJustFinish) {
             setPlaying(false);
@@ -1155,7 +1166,7 @@ function AudioMessageBubble({
       Alert.alert('재생 실패', '음성 메시지를 재생할 수 없습니다.');
       setPlaying(false);
     }
-  }, [audioUrl, playing]);
+  }, [message, playing]);
 
   return (
     <View style={{ alignSelf: isUser ? 'flex-end' : 'flex-start', gap: 4 }}>
@@ -1340,9 +1351,9 @@ function ChatThreadMessage({
     if (isAudio)
       return (
         <AudioMessageBubble
-          audioUrl={message.audioUrl}
-          durationMillis={message.durationMillis}
-          caption={message.caption}
+          message={message as ChatShellAudioMessage}
+          durationMillis={(message as ChatShellAudioMessage).durationMillis}
+          caption={(message as ChatShellAudioMessage).caption}
           sender={message.sender}
         />
       );

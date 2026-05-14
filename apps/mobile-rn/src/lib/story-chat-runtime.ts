@@ -2,6 +2,7 @@ import { type Session } from '@supabase/supabase-js';
 
 import { type ChatCharacterSpec } from './chat-characters';
 import { saveCachedCharacterMessages } from './character-conversation-cache';
+import { stripLocalAudioFieldsForRemote } from './audio-message-assets';
 import {
   type ChatShellMessage,
   type ChatShellTextMessage,
@@ -294,15 +295,20 @@ function toPersistedStoryMessages(
 
       // 카드 메시지: 원본 JSON 을 cardPayload 에 보존. 옛 클라는 content
       // (preview) 만 보고, 새 클라는 cardKind+cardPayload 로 카드 복원.
+      // audioLocalUri 는 디바이스 내부 file:// 이라 원격 DB에 저장하면 다른
+      // 기기에서 깨진 경로가 되므로 서버 저장 payload 에서는 제거한다.
       const id = (message as { id?: unknown }).id;
       if (typeof id !== 'string') return null;
+      const cardPayload = message.kind === 'audio'
+        ? stripLocalAudioFieldsForRemote(message)
+        : message;
       return {
         id,
         type: 'character',
         content: extractCardPreviewText(message),
         timestamp: createTimestampFromMessageId(id, new Date().toISOString()),
         cardKind: message.kind,
-        cardPayload: message,
+        cardPayload,
       };
     })
     .filter((m): m is PersistedStoryMessage => m !== null);

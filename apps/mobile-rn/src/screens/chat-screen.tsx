@@ -88,6 +88,10 @@ import { setChatLastSeenForCharacter } from '../lib/storage';
 import { getSecureItem, setSecureItem } from '../lib/secure-store-storage';
 import { supabase } from '../lib/supabase';
 import {
+  persistAudioMessageLocally,
+  uploadAudioMessageAsset,
+} from '../lib/audio-message-assets';
+import {
   buildNextStoryThreadSnapshot,
   buildStoryFallbackAssistantMessage,
   buildStoryChatRequest,
@@ -356,6 +360,7 @@ export function ChatScreen() {
     Record<string, { uri: string; durationMillis?: number }>
   >({});
   const audioRecordingRef = useRef<import('expo-av').Audio.Recording | null>(null);
+  const sendingAudioMessageRef = useRef(false);
   const [recordingAudioForCharacterId, setRecordingAudioForCharacterId] = useState<string | null>(null);
   const [personaModalOpen, setPersonaModalOpen] = useState(false);
   const [personaDraft, setPersonaDraft] = useState('');
@@ -3878,7 +3883,7 @@ export function ChatScreen() {
     }
   }
 
-  function handleSendDraft() {
+  async function handleSendDraft() {
     const trimmed = draft.trim();
     const pendingImage = pendingImageByCharacterId[selectedCharacter.id];
     const pendingAudio = pendingAudioByCharacterId[selectedCharacter.id];
@@ -3947,11 +3952,44 @@ export function ChatScreen() {
     }
 
     if (pendingAudio) {
+      if (sendingAudioMessageRef.current) {
+        return;
+      }
+      sendingAudioMessageRef.current = true;
       const audioMessage = buildUserAudioMessage(
         pendingAudio.uri,
         pendingAudio.durationMillis,
         trimmed || undefined,
       );
+      try {
+        const localUri = await persistAudioMessageLocally({
+          sourceUri: pendingAudio.uri,
+          messageId: audioMessage.id,
+        });
+        audioMessage.audioUrl = localUri;
+        audioMessage.audioLocalUri = localUri;
+        audioMessage.mimeType = 'audio/mp4';
+
+        const uploaded = await uploadAudioMessageAsset({
+          characterId: selectedCharacter.id,
+          messageId: audioMessage.id,
+          localUri,
+          mimeType: audioMessage.mimeType,
+          durationMillis: pendingAudio.durationMillis,
+        });
+        if (uploaded) {
+          audioMessage.audioStoragePath = uploaded.storagePath;
+          audioMessage.expiresAt = uploaded.expiresAt;
+          audioMessage.sizeBytes = uploaded.sizeBytes;
+        }
+      } catch (error) {
+        captureError(error, { surface: 'chat:audio-message-persist' }).catch(
+          () => undefined,
+        );
+        Alert.alert('음성 메시지', '음성 파일을 저장하지 못했어요. 다시 시도해 주세요.');
+        sendingAudioMessageRef.current = false;
+        return;
+      }
       appendMessages(selectedCharacter, [audioMessage]);
       setSurfaceMode('chat');
       setComposerTrayOpen(false);
@@ -4013,6 +4051,7 @@ export function ChatScreen() {
           );
         });
       }
+      sendingAudioMessageRef.current = false;
       return;
     }
 

@@ -94,7 +94,16 @@ export interface ChatShellAudioMessage {
   id: string;
   kind: 'audio';
   sender: 'assistant' | 'user';
+  /** Legacy/fallback playable URI. Older rows may contain a file:// cache URI here. */
   audioUrl: string;
+  /** Stable on-device copy under documentDirectory; never send this field to remote DB. */
+  audioLocalUri?: string;
+  /** Supabase Storage object path used for cross-device restore within retention. */
+  audioStoragePath?: string;
+  /** Server copy expiry. Local file may remain playable after this date. */
+  expiresAt?: string;
+  mimeType?: string;
+  sizeBytes?: number;
   durationMillis?: number;
   caption?: string;
   proactive?: ProactiveMessageMeta;
@@ -569,12 +578,23 @@ export function buildUserAudioMessage(
   audioUrl: string,
   durationMillis?: number,
   caption?: string,
+  options?: Partial<
+    Pick<
+      ChatShellAudioMessage,
+      'audioLocalUri' | 'audioStoragePath' | 'expiresAt' | 'mimeType' | 'sizeBytes'
+    >
+  >,
 ): ChatShellAudioMessage {
   return {
     id: createMessageId('user'),
     kind: 'audio',
     sender: 'user',
     audioUrl,
+    audioLocalUri: options?.audioLocalUri,
+    audioStoragePath: options?.audioStoragePath,
+    expiresAt: options?.expiresAt,
+    mimeType: options?.mimeType,
+    sizeBytes: options?.sizeBytes,
     durationMillis,
     caption,
   };
