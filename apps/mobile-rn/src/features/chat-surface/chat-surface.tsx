@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback, type PropsWithChildren } from
 
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { ActivityIndicator, Alert, Animated, Dimensions, Easing, Image, Modal, PanResponder, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { AccessibilityInfo, ActivityIndicator, Alert, Animated, Dimensions, Easing, Image, Modal, PanResponder, Pressable, ScrollView, TextInput, View } from 'react-native';
 
 import type { VoiceInputState } from '../../lib/use-voice-input';
 
@@ -37,14 +37,14 @@ import {
   resolveChatCharacterAvatarAspectRatio,
   resolveChatCharacterAvatarSource,
 } from '../../lib/chat-character-avatar';
-import { confirmAction } from '../../lib/haptics';
+import { confirmAction, chatTypingTick } from '../../lib/haptics';
 import { fortuneTheme, romanceTintBackground } from '../../lib/theme';
 import { useIsTyping } from '../../lib/typing-store';
 import { useMobileAppState } from '../../providers/mobile-app-state-provider';
 
 import { MessageReportSheet } from './message-report-sheet';
 import { EmbeddedResultCard } from '../chat-results/embedded-result-card';
-import { FadeUpWords, StoryRevealMessage } from '../story-chat-animations';
+import { StoryRevealMessage } from '../story-chat-animations';
 import { FortuneCookieCard } from '../fortune-cookie/fortune-cookie-card';
 import { SajuPreviewCard } from '../fortune-cookie/saju-preview-card';
 import { MySajuContextCard } from './my-saju-context-card';
@@ -89,6 +89,164 @@ function sortMessagesByTimestamp<T extends { id: string }>(messages: readonly T[
  */
 export function getCanonicalVisibleMessages(messages: readonly ChatShellMessage[]): ChatShellMessage[] {
   return sortMessagesByTimestamp(messages);
+}
+
+const HERO_TOKEN_STEP_MS = 260;
+const HERO_TOKEN_DURATION_MS = 240;
+const HERO_REDUCED_MOTION_MS = 520;
+const playedHeroReplyMessageIds = new Set<string>();
+
+function tokenizeHeroReply(text: string): string[] {
+  return text
+    .split(/\s+/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function CharacterReplyHeroOverlay({
+  messages,
+  hapticsEnabled,
+}: {
+  messages: ChatShellTextMessage[];
+  hapticsEnabled: boolean;
+}) {
+  const progress = useRef(new Animated.Value(0)).current;
+  const [activeMessage, setActiveMessage] = useState<ChatShellTextMessage | null>(null);
+  const [tokenIndex, setTokenIndex] = useState(0);
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const tokens = activeMessage ? tokenizeHeroReply(activeMessage.text) : [];
+  const currentToken = tokens[tokenIndex] ?? '';
+
+  useEffect(() => {
+    let mounted = true;
+    AccessibilityInfo.isReduceMotionEnabled()
+      .then((enabled) => {
+        if (mounted) setReduceMotion(enabled);
+      })
+      .catch(() => undefined);
+    const subscription = AccessibilityInfo.addEventListener(
+      'reduceMotionChanged',
+      setReduceMotion,
+    );
+    return () => {
+      mounted = false;
+      subscription.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (activeMessage) return;
+    const nextMessage = messages.find(
+      (candidate) =>
+        !playedHeroReplyMessageIds.has(candidate.id) &&
+        tokenizeHeroReply(candidate.text).length > 0,
+    );
+    if (!nextMessage) return;
+
+    playedHeroReplyMessageIds.add(nextMessage.id);
+    setActiveMessage(nextMessage);
+    setTokenIndex(0);
+    progress.setValue(0);
+  }, [activeMessage, messages, progress]);
+
+  useEffect(() => {
+    if (!activeMessage || tokens.length === 0) return;
+
+    if (reduceMotion) {
+      Animated.timing(progress, {
+        toValue: 1,
+        duration: HERO_REDUCED_MOTION_MS,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }).start();
+      const closeTimer = setTimeout(() => setActiveMessage(null), HERO_REDUCED_MOTION_MS);
+      return () => {
+        progress.stopAnimation();
+        clearTimeout(closeTimer);
+      };
+    }
+
+    progress.setValue(0);
+    Animated.timing(progress, {
+      toValue: 1,
+      duration: HERO_TOKEN_DURATION_MS,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+
+    if (hapticsEnabled) chatTypingTick();
+
+    const timer = setTimeout(() => {
+      if (tokenIndex >= tokens.length - 1) {
+        setActiveMessage(null);
+      } else {
+        setTokenIndex((index) => index + 1);
+      }
+    }, HERO_TOKEN_STEP_MS);
+
+    return () => {
+      progress.stopAnimation();
+      clearTimeout(timer);
+    };
+  }, [activeMessage, hapticsEnabled, progress, reduceMotion, tokenIndex, tokens.length]);
+
+  if (!activeMessage) return null;
+
+  const opacity = reduceMotion
+    ? progress.interpolate({ inputRange: [0, 0.2, 1], outputRange: [0, 1, 1] })
+    : progress.interpolate({
+        inputRange: [0, 0.18, 0.72, 1],
+        outputRange: [0, 1, 1, 0],
+      });
+  const scale = reduceMotion
+    ? 1
+    : progress.interpolate({
+        inputRange: [0, 0.42, 1],
+        outputRange: [0.86, 1.14, 1],
+      });
+  const translateY = reduceMotion
+    ? 0
+    : progress.interpolate({ inputRange: [0, 1], outputRange: [14, -8] });
+
+  return (
+    <Modal visible transparent animationType="none" statusBarTranslucent>
+      <View
+        accessible
+        accessibilityRole="text"
+        accessibilityLabel={activeMessage.text}
+        style={{
+          alignItems: 'center',
+          backgroundColor: 'rgba(0,0,0,0.92)',
+          flex: 1,
+          justifyContent: 'center',
+          paddingHorizontal: 28,
+        }}
+      >
+        <AppText
+          variant="caption"
+          color={fortuneTheme.colors.textTertiary}
+          style={{ marginBottom: 18, textAlign: 'center' }}
+        >
+          새 답장
+        </AppText>
+        <Animated.View
+          importantForAccessibility="no-hide-descendants"
+          style={{
+            opacity,
+            transform: [{ scale }, { translateY }],
+          }}
+        >
+          <AppText
+            variant="heading1"
+            color={fortuneTheme.colors.textPrimary}
+            style={{ textAlign: 'center' }}
+          >
+            {reduceMotion ? activeMessage.text : currentToken}
+          </AppText>
+        </Animated.View>
+      </View>
+    </Modal>
+  );
 }
 
 function getCharacterAvatarUrl(character: ChatCharacterSpec) {
@@ -665,11 +823,9 @@ function MessageBubble({
   const applyOracle = Boolean(useOracleVoice) && isAssistant;
   const showUnreadBadge = isUser && !message.readAt;
 
-  // 새로 도착한 어시스턴트 메시지만 단어 단위 fadeUp 애니메이션.
-  const shouldAnimate = isAssistant && message.animate === true;
-  // 단어 reveal 마다 가벼운 selection 햅틱 — 프로필 chatHapticsEnabled 게이트.
-  const { state: mobileAppState } = useMobileAppState();
-  const chatHapticsEnabled = mobileAppState.settings.chatHapticsEnabled;
+  // 새 assistant 답변의 강조 연출은 ActiveCharacterChatSurface 의
+  // CharacterReplyHeroOverlay 에서 담당한다. 버블 내부는 재생 후 읽기 상태로
+  // 고정해 overlay 와 inline reveal/haptic 이 중복되지 않게 한다.
 
   if (isSystem) {
     return (
@@ -700,22 +856,13 @@ function MessageBubble({
     const textColor = fortuneTheme.colors.textPrimary;
     return (
       <View style={{ maxWidth: '86%', alignSelf: 'flex-start' }}>
-        {shouldAnimate ? (
-          <FadeUpWords
-            text={message.text}
-            variant={applyOracle ? 'oracleBody' : 'bodyMedium'}
-            color={textColor}
-            hapticsEnabled={chatHapticsEnabled}
-          />
-        ) : (
-          <AppText
-            variant={applyOracle ? 'oracleBody' : 'bodyMedium'}
-            color={textColor}
-            style={{ lineHeight: 25.5 }}
-          >
-            {message.text}
-          </AppText>
-        )}
+        <AppText
+          variant={applyOracle ? 'oracleBody' : 'bodyMedium'}
+          color={textColor}
+          style={{ lineHeight: 25.5 }}
+        >
+          {message.text}
+        </AppText>
       </View>
     );
   }
@@ -3155,6 +3302,14 @@ export function ActiveCharacterChatSurface({
   // ID 에 unix-ms 가 내장 (`user-1778217138036-...`) 되어 있어서 그걸 추출해
   // ascending 정렬. 안전 — id 패턴 안 맞으면 array index 폴백 (sort stability).
   const visibleMessages = getCanonicalVisibleMessages(messages);
+  const { state: mobileAppState } = useMobileAppState();
+  const heroReplyMessages = visibleMessages.filter(
+    (message): message is ChatShellTextMessage =>
+      message.kind === 'text' &&
+      message.sender === 'assistant' &&
+      message.animate === true &&
+      message.text.trim().length > 0,
+  );
   const renderItems = buildChatRenderItems(visibleMessages);
   const promptActions = actions;
   const hasEmbeddedResult = visibleMessages.some(
@@ -3178,6 +3333,10 @@ export function ActiveCharacterChatSurface({
 
   return (
     <View style={{ gap: fortuneTheme.spacing.md, backgroundColor: chatTintBg }}>
+      <CharacterReplyHeroOverlay
+        messages={heroReplyMessages}
+        hapticsEnabled={mobileAppState.settings.chatHapticsEnabled}
+      />
       {showHeader ? (
         <ActiveCharacterChatHeader
           character={character}
