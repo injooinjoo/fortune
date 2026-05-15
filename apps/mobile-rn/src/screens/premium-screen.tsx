@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { router, useLocalSearchParams } from 'expo-router';
 import {
@@ -8,6 +8,7 @@ import {
   storefrontConsumableProductIds,
   storefrontNonConsumableProductIds,
   storefrontSubscriptionProductIds,
+  type ProductInfo,
   type ProductId,
 } from '@fortune/product-contracts';
 import { Alert, Linking, Platform, Pressable, View } from 'react-native';
@@ -22,7 +23,7 @@ import { RouteBackHeader } from '../components/route-back-header';
 import { Screen } from '../components/screen';
 import { captureError } from '../lib/error-reporting';
 import { purchaseSuccess } from '../lib/haptics';
-import { fortuneTheme } from '../lib/theme';
+import { fortuneTheme, withAlpha } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
 
@@ -76,6 +77,45 @@ function readRouteParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
+const strongFitTopUpProductIds = [
+  'com.beyond.fortune.tokens.starter',
+  'com.beyond.fortune.tokens.popular',
+  'com.beyond.fortune.tokens.heavy',
+] as const satisfies readonly ProductId[];
+
+const strongFitRecommendedProductId = 'com.beyond.fortune.tokens.popular' as const;
+
+function getTopUpPackageLabel(productId: ProductId) {
+  if (productId === 'com.beyond.fortune.tokens.starter') {
+    return '가볍게';
+  }
+
+  if (productId === strongFitRecommendedProductId) {
+    return '추천';
+  }
+
+  return '집중 사용';
+}
+
+function getTopUpPackagePurpose(productId: ProductId) {
+  if (productId === 'com.beyond.fortune.tokens.starter') {
+    return '잠깐 이어보기';
+  }
+
+  if (productId === strongFitRecommendedProductId) {
+    return '며칠간 넉넉히';
+  }
+
+  return '오래 쓸 여유분';
+}
+
+function getUsagePreview(product: ProductInfo) {
+  return [
+    { label: '긴 답변', value: Math.max(1, Math.floor(product.points / 5)), unit: '회' },
+    { label: '심층 분석', value: Math.max(1, Math.floor(product.points / 30)), unit: '회' },
+  ];
+}
+
 export function PremiumScreen() {
   const params = useLocalSearchParams<{ intent?: string | string[]; ts?: string | string[] }>();
   const premiumIntent = readRouteParam(params.intent);
@@ -95,16 +135,18 @@ export function PremiumScreen() {
   } = useMobileAppState();
   const [selectedProductId, setSelectedProductId] = useState<ProductId>(() =>
     premiumIntent === 'top-up'
-      ? storefrontConsumableProductIds[0]
+      ? strongFitRecommendedProductId
       : storefrontSubscriptionProductIds[0],
   );
+  const [openTrustIndex, setOpenTrustIndex] = useState<number | null>(null);
 
   useEffect(() => {
     if (premiumIntent !== 'top-up') {
       return;
     }
     setShowAllProducts(false);
-    setSelectedProductId(storefrontConsumableProductIds[0]);
+    setSelectedProductId(strongFitRecommendedProductId);
+    setOpenTrustIndex(null);
   }, [premiumIntent, topUpEntryKey]);
 
   const rewardedAd = useRewardedAd({
@@ -172,6 +214,15 @@ export function PremiumScreen() {
     !canManageSelectedSubscription &&
     actionState === 'idle' &&
     !isPurchasePending;
+  const strongFitTopUpProducts = useMemo(
+    () => strongFitTopUpProductIds.map((id) => productCatalog[id]),
+    [],
+  );
+  const selectedTopUpUsage =
+    selectedProduct.points > 0 ? getUsagePreview(selectedProduct) : [];
+  const selectedTopUpAfterBalance = state.premium.isUnlimited
+    ? null
+    : state.premium.tokenBalance + selectedProduct.points;
 
   async function handleRefresh() {
     if (actionState !== 'idle') {
@@ -272,8 +323,84 @@ export function PremiumScreen() {
     }
   }
 
+  const topUpFooter = focusTopUpOnly ? (
+    <View style={{ gap: fortuneTheme.spacing.sm }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: fortuneTheme.spacing.sm }}>
+        <View style={{
+          alignItems: 'center',
+          backgroundColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.14),
+          borderColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.32),
+          borderRadius: fortuneTheme.radius.full,
+          borderWidth: 1,
+          height: 34,
+          justifyContent: 'center',
+          width: 34,
+        }}>
+          <AppText variant="labelLarge" color={fortuneTheme.colors.ctaBackground}>온</AppText>
+        </View>
+        <View style={{ flex: 1 }}>
+          <AppText variant="labelLarge">{getTopUpPackageLabel(selectedProduct.id)}</AppText>
+          <AppText variant="labelSmall" color={fortuneTheme.colors.textSecondary}>
+            {selectedProduct.points.toLocaleString('ko-KR')} 토큰 · {selectedProductDeliveryLabel}
+          </AppText>
+        </View>
+        <AppText variant="heading4">{selectedProductPriceLabel}</AppText>
+      </View>
+
+      {!session ? (
+        <PrimaryButton
+          disabled={actionState !== 'idle' || isPurchasePending}
+          onPress={() =>
+            router.push({
+              pathname: '/signup',
+              params: { returnTo: '/premium?intent=top-up' },
+            })
+          }
+          tone="primary"
+        >
+          로그인하고 계속하기
+        </PrimaryButton>
+      ) : (
+        <PrimaryButton
+          disabled={!canPressPurchaseCta}
+          onPress={() => void handlePurchase()}
+          tone="primary"
+        >
+          {isPurchasePending
+            ? '결제 진행 중...'
+            : storeStatus === 'loading'
+              ? '스토어 준비 중...'
+              : !isStoreProductReady
+                ? '스토어 상품 확인 필요'
+                : '토큰 충전하기'}
+        </PrimaryButton>
+      )}
+
+      <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: fortuneTheme.spacing.md }}>
+        <Pressable
+          disabled={actionState !== 'idle' || isPurchasePending}
+          onPress={() => void handleRestore()}
+        >
+          <AppText variant="caption" color={fortuneTheme.colors.textSecondary}>
+            구매 복원
+          </AppText>
+        </Pressable>
+        <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>·</AppText>
+        <Pressable onPress={() => setShowAllProducts(true)}>
+          <AppText variant="caption" color={fortuneTheme.colors.textSecondary}>
+            구독 상품도 보기
+          </AppText>
+        </Pressable>
+      </View>
+    </View>
+  ) : null;
+
   return (
-    <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
+    <Screen
+      contentBottomInset={focusTopUpOnly ? fortuneTheme.spacing.lg : 0}
+      footer={topUpFooter}
+      header={<RouteBackHeader fallbackHref="/profile" />}
+    >
       <AppText variant="displaySmall">
         {premiumIntent === 'top-up' ? '토큰 충전' : '프리미엄'}
       </AppText>
@@ -283,26 +410,172 @@ export function PremiumScreen() {
           : '현재 판매 중인 상품과 구독 상태를 한곳에서 확인할 수 있어요.'}
       </AppText>
 
-      {premiumIntent === 'top-up' ? (
-        <Card>
-          <AppText variant="heading4">토큰이 부족해요</AppText>
-          <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
-            지금은 토큰 상품만 고르면 됩니다. 구독·평생소장 상품은 숨겨서 결제 흐름을
-            단순하게 보여드려요.
-          </AppText>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-            <Chip label={tokenBalanceLabel} tone="accent" />
-            <Chip label={storeStatus === 'loading' ? '스토어 확인 중' : '충전 가능'} />
-          </View>
-          {focusTopUpOnly ? (
-            <PrimaryButton
-              onPress={() => setShowAllProducts(true)}
-              tone="secondary"
+      {focusTopUpOnly ? (
+        <>
+          <View
+            style={{
+              alignItems: 'center',
+              marginTop: fortuneTheme.spacing.sm,
+              overflow: 'hidden',
+              paddingBottom: fortuneTheme.spacing.sm,
+              paddingTop: fortuneTheme.spacing.md,
+            }}
+          >
+            <View
+              pointerEvents="none"
+              style={{
+                backgroundColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.24),
+                borderRadius: fortuneTheme.radius.full,
+                height: 180,
+                opacity: 0.72,
+                position: 'absolute',
+                top: -56,
+                width: 300,
+              }}
+            />
+            <AppText variant="displayLarge">
+              {state.premium.isUnlimited
+                ? '무제한'
+                : state.premium.tokenBalance.toLocaleString('ko-KR')}
+            </AppText>
+            <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>
+              보유 토큰
+            </AppText>
+            <AppText
+              variant="oracleBody"
+              color={fortuneTheme.colors.textSubtitle}
+              style={{ marginTop: fortuneTheme.spacing.sm, textAlign: 'center' }}
             >
-              구독 상품도 보기
-            </PrimaryButton>
-          ) : null}
-        </Card>
+              조금만 더 이어가볼까요?
+            </AppText>
+            <AppText
+              variant="bodySmall"
+              color={fortuneTheme.colors.textSecondary}
+              style={{ maxWidth: 300, textAlign: 'center' }}
+            >
+              토큰은 메시지·심층 분석·운세 풀이를 이어가는 데 쓰여요
+            </AppText>
+            {selectedTopUpAfterBalance != null ? (
+              <View
+                style={{
+                  alignItems: 'center',
+                  backgroundColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.1),
+                  borderColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.3),
+                  borderRadius: fortuneTheme.radius.full,
+                  borderWidth: 1,
+                  flexDirection: 'row',
+                  gap: fortuneTheme.spacing.xs,
+                  marginTop: fortuneTheme.spacing.sm,
+                  paddingHorizontal: fortuneTheme.spacing.md,
+                  paddingVertical: fortuneTheme.spacing.sm,
+                }}
+              >
+                <AppText variant="labelSmall" color={fortuneTheme.colors.ctaBackground}>
+                  충전 후
+                </AppText>
+                <AppText variant="labelLarge">
+                  {selectedTopUpAfterBalance.toLocaleString('ko-KR')} 토큰
+                </AppText>
+              </View>
+            ) : null}
+          </View>
+
+          <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.sm }}>
+            {strongFitTopUpProducts.map((product) => (
+              <TopUpPackageTile
+                key={product.id}
+                isRecommended={product.id === strongFitRecommendedProductId}
+                isSelected={selectedProductId === product.id}
+                onPress={() => setSelectedProductId(product.id)}
+                priceLabel={storePriceLabels[product.id] ?? formatPrice(product.price)}
+                product={product}
+              />
+            ))}
+          </View>
+
+          <Card style={{ backgroundColor: fortuneTheme.colors.surfaceElevated }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: fortuneTheme.spacing.sm }}>
+              <View style={{ flex: 1 }}>
+                <AppText variant="labelLarge">
+                  {getTopUpPackageLabel(selectedProduct.id)} 패키지로 할 수 있는 것
+                </AppText>
+                <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+                  {getTopUpPackagePurpose(selectedProduct.id)} 기준으로 대략 계산했어요.
+                </AppText>
+              </View>
+              <AppText variant="labelSmall" color={fortuneTheme.colors.textTertiary}>
+                {selectedProduct.points.toLocaleString('ko-KR')} 토큰
+              </AppText>
+            </View>
+            <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.sm }}>
+              {selectedTopUpUsage.map((item) => (
+                <View
+                  key={item.label}
+                  style={{
+                    backgroundColor: withAlpha(fortuneTheme.colors.accent, 0.03),
+                    borderColor: withAlpha(fortuneTheme.colors.accent, 0.05),
+                    borderRadius: fortuneTheme.radius.md,
+                    borderWidth: 1,
+                    flex: 1,
+                    padding: fortuneTheme.spacing.md,
+                  }}
+                >
+                  <AppText variant="labelSmall" color={fortuneTheme.colors.textSecondary}>
+                    {item.label}
+                  </AppText>
+                  <View style={{ alignItems: 'baseline', flexDirection: 'row', gap: fortuneTheme.spacing.xs }}>
+                    <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>약</AppText>
+                    <AppText variant="heading2">{item.value.toLocaleString('ko-KR')}</AppText>
+                    <AppText variant="labelSmall" color={fortuneTheme.colors.textSecondary}>{item.unit}</AppText>
+                  </View>
+                </View>
+              ))}
+            </View>
+          </Card>
+
+          <View style={{ gap: fortuneTheme.spacing.sm }}>
+            <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.sm }}>
+              {[
+                { title: '즉시 반영', detail: '결제 직후 계정에 바로 충전돼요.' },
+                { title: '만료 없음', detail: '쓰지 않은 토큰은 계속 보관됩니다.' },
+                { title: '안전 결제', detail: 'App Store · Google Play 결제로 처리돼요.' },
+              ].map((item, index) => (
+                <Pressable
+                  key={item.title}
+                  accessibilityRole="button"
+                  onPress={() => setOpenTrustIndex(openTrustIndex === index ? null : index)}
+                  style={({ pressed }) => ({
+                    alignItems: 'center',
+                    backgroundColor: openTrustIndex === index
+                      ? withAlpha(fortuneTheme.colors.accent, 0.05)
+                      : withAlpha(fortuneTheme.colors.accent, 0.02),
+                    borderColor: openTrustIndex === index
+                      ? withAlpha(fortuneTheme.colors.accent, 0.14)
+                      : withAlpha(fortuneTheme.colors.accent, 0.05),
+                    borderRadius: fortuneTheme.radius.md,
+                    borderWidth: 1,
+                    flex: 1,
+                    minHeight: 58,
+                    opacity: pressed ? 0.84 : 1,
+                    padding: fortuneTheme.spacing.sm,
+                    justifyContent: 'center',
+                  })}
+                >
+                  <AppText variant="labelSmall">{item.title}</AppText>
+                </Pressable>
+              ))}
+            </View>
+            {openTrustIndex != null ? (
+              <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+                {[
+                  '결제 직후 계정에 바로 충전돼요.',
+                  '쓰지 않은 토큰은 계속 보관됩니다.',
+                  'App Store · Google Play 결제로 처리돼요.',
+                ][openTrustIndex]}
+              </AppText>
+            ) : null}
+          </View>
+        </>
       ) : null}
 
       {!focusTopUpOnly ? (
@@ -404,22 +677,24 @@ export function PremiumScreen() {
         </>
       ) : null}
 
-      <Card>
-        <AppText variant="heading4">토큰 충전</AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          현재 스토어에서 판매 중인 토큰 상품만 보여드려요.
-        </AppText>
-        {tokens.map((product) => (
-          <ProductOption
-            key={product.id}
-            isSelected={selectedProductId === product.id}
-            onPress={() => setSelectedProductId(product.id)}
-            title={getProductDisplayTitle(product.id)}
-            subtitle={`${product.points.toLocaleString('ko-KR')} 토큰 · ${product.description}`}
-            trailing={storePriceLabels[product.id] ?? formatPrice(product.price)}
-          />
-        ))}
-      </Card>
+      {!focusTopUpOnly ? (
+        <Card>
+          <AppText variant="heading4">토큰 충전</AppText>
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            현재 스토어에서 판매 중인 토큰 상품만 보여드려요.
+          </AppText>
+          {tokens.map((product) => (
+            <ProductOption
+              key={product.id}
+              isSelected={selectedProductId === product.id}
+              onPress={() => setSelectedProductId(product.id)}
+              title={getProductDisplayTitle(product.id)}
+              subtitle={`${product.points.toLocaleString('ko-KR')} 토큰 · ${product.description}`}
+              trailing={storePriceLabels[product.id] ?? formatPrice(product.price)}
+            />
+          ))}
+        </Card>
+      ) : null}
 
       {!focusTopUpOnly ? (
         <Card>
@@ -580,6 +855,96 @@ export function PremiumScreen() {
         </PrimaryButton>
       </Card>
     </Screen>
+  );
+}
+
+function TopUpPackageTile({
+  isRecommended,
+  isSelected,
+  onPress,
+  priceLabel,
+  product,
+}: {
+  isRecommended: boolean;
+  isSelected: boolean;
+  onPress: () => void;
+  priceLabel: string;
+  product: ProductInfo;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ selected: isSelected }}
+      onPress={onPress}
+      style={({ pressed }) => ({
+        flex: isRecommended ? 1.16 : 1,
+        marginTop: isRecommended ? 0 : fortuneTheme.spacing.sm,
+        opacity: pressed ? 0.86 : 1,
+      })}
+    >
+      <Card
+        style={{
+          alignItems: 'center',
+          backgroundColor: isSelected
+            ? withAlpha(fortuneTheme.colors.ctaBackground, 0.12)
+            : fortuneTheme.colors.surfaceElevated,
+          borderColor: isSelected
+            ? fortuneTheme.colors.ctaBackground
+            : isRecommended
+              ? withAlpha(fortuneTheme.colors.accent, 0.1)
+              : withAlpha(fortuneTheme.colors.accent, 0.06),
+          gap: fortuneTheme.spacing.xs,
+          minHeight: isRecommended ? 148 : 132,
+          paddingHorizontal: fortuneTheme.spacing.sm,
+          paddingVertical: isRecommended ? fortuneTheme.spacing.md : fortuneTheme.spacing.sm,
+        }}
+      >
+        {isRecommended ? (
+          <View
+            style={{
+              backgroundColor: fortuneTheme.colors.accentTertiary,
+              borderRadius: fortuneTheme.radius.full,
+              marginTop: -fortuneTheme.spacing.lg,
+              paddingHorizontal: fortuneTheme.spacing.sm,
+              paddingVertical: fortuneTheme.spacing.xs,
+            }}
+          >
+            <AppText variant="caption" color={fortuneTheme.colors.background}>
+              가장 인기
+            </AppText>
+          </View>
+        ) : null}
+        <View
+          style={{
+            alignItems: 'center',
+            backgroundColor: isSelected
+              ? withAlpha(fortuneTheme.colors.ctaBackground, 0.16)
+              : withAlpha(fortuneTheme.colors.accent, 0.04),
+            borderRadius: fortuneTheme.radius.full,
+            height: isRecommended ? 34 : 30,
+            justifyContent: 'center',
+            width: isRecommended ? 34 : 30,
+          }}
+        >
+          <AppText variant="labelSmall" color={isSelected ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.textSecondary}>
+            온
+          </AppText>
+        </View>
+        <AppText variant="caption" color={fortuneTheme.colors.textSecondary}>
+          {getTopUpPackageLabel(product.id)}
+        </AppText>
+        <AppText variant={isRecommended ? 'heading2' : 'heading4'}>
+          {product.points.toLocaleString('ko-KR')}
+        </AppText>
+        <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+          토큰
+        </AppText>
+        <AppText variant="labelMedium">{priceLabel}</AppText>
+        <AppText variant="caption" color={fortuneTheme.colors.textSecondary} style={{ textAlign: 'center' }}>
+          {getTopUpPackagePurpose(product.id)}
+        </AppText>
+      </Card>
+    </Pressable>
   );
 }
 
