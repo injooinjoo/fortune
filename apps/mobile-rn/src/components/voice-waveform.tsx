@@ -1,6 +1,6 @@
 /**
- * 녹음 중 음량을 왼쪽으로 흐르는 긴 스펙트럼으로 시각화한다.
- * 새 샘플은 오른쪽에서 들어오고 기존 기록은 맥박처럼 왼쪽으로 지나간다.
+ * 녹음 중 실제 음량 샘플을 왼쪽으로 부드럽게 흘려보내는 긴 스펙트럼이다.
+ * 새 샘플은 오른쪽에서 들어오고 기존 기록은 왼쪽으로 지나간다.
  *
  * 실시간 amplitude 는 `expo-speech-recognition` 의 `volumechange` 이벤트에서
  * 가져오며, `useVoiceInput` 이 0~1 정규화 값을 `currentVolume` 으로 노출한다.
@@ -26,30 +26,27 @@ interface VoiceWaveformProps {
   height?: number;
 }
 
-type Sample = {
-  id: number;
-  ratio: number;
-};
-
 const MIN_BAR_COUNT = 36;
-const SAMPLE_INTERVAL_MS = 110;
-const MIN_HEIGHT_RATIO = 0.16;
-const IDLE_RATIOS = [0.16, 0.24, 0.18, 0.3, 0.2, 0.26] as const;
+const SAMPLE_INTERVAL_MS = 70;
+const MIN_HEIGHT_RATIO = 0.08;
+const SILENCE_THRESHOLD = 0.015;
 
-function buildNextSample(volume: number, sampleIndex: number): number {
-  const normalizedVolume = Math.max(0, Math.min(1, volume));
-  const heartbeat = normalizedVolume > 0.05 && sampleIndex % 9 === 0 ? 0.22 : 0;
-  const ripple = (((sampleIndex * 7) % 13) / 70) * (0.35 + normalizedVolume);
-  const driven = MIN_HEIGHT_RATIO + normalizedVolume * 0.66 + heartbeat + ripple;
-
-  return Math.max(MIN_HEIGHT_RATIO, Math.min(1, driven));
+function buildSilentRatios(count: number): number[] {
+  return Array.from({ length: count }, () => MIN_HEIGHT_RATIO);
 }
 
-function buildIdleSamples(count: number): Sample[] {
-  return Array.from({ length: count }, (_, index) => ({
-    id: index,
-    ratio: IDLE_RATIOS[index % IDLE_RATIOS.length],
-  }));
+function buildAnimatedValues(count: number): Animated.Value[] {
+  return Array.from({ length: count }, () => new Animated.Value(MIN_HEIGHT_RATIO));
+}
+
+function buildNextSample(volume: number, previousSample: number): number {
+  const normalizedVolume = Math.max(0, Math.min(1, volume));
+  const target = normalizedVolume <= SILENCE_THRESHOLD
+    ? MIN_HEIGHT_RATIO
+    : MIN_HEIGHT_RATIO + Math.pow(normalizedVolume, 0.72) * (1 - MIN_HEIGHT_RATIO);
+
+  // 실제 volume 만 사용하되 샘플 간 높이 변화는 살짝 보간해서 부들부들 떨림을 줄인다.
+  return previousSample * 0.35 + target * 0.65;
 }
 
 export function VoiceWaveform({
@@ -59,11 +56,12 @@ export function VoiceWaveform({
   barGap = 5,
   height = 24,
 }: VoiceWaveformProps) {
-  const translateX = useRef(new Animated.Value(0)).current;
   const volumeRef = useRef(volume);
-  const sampleIndexRef = useRef(MIN_BAR_COUNT);
-  const [sampleCount, setSampleCount] = useState(MIN_BAR_COUNT);
-  const [samples, setSamples] = useState<Sample[]>(() => buildIdleSamples(MIN_BAR_COUNT));
+  const latestSampleRef = useRef(MIN_HEIGHT_RATIO);
+  const ratiosRef = useRef<number[]>(buildSilentRatios(MIN_BAR_COUNT));
+  const [animatedValues, setAnimatedValues] = useState<Animated.Value[]>(() =>
+    buildAnimatedValues(MIN_BAR_COUNT),
+  );
 
   useEffect(() => {
     volumeRef.current = volume;
@@ -72,79 +70,45 @@ export function VoiceWaveform({
   const handleLayout = useCallback(
     (event: LayoutChangeEvent) => {
       const width = event.nativeEvent.layout.width;
-      const nextCount = Math.max(MIN_BAR_COUNT, Math.ceil(width / (barWidth + barGap)) + 3);
+      const nextCount = Math.max(MIN_BAR_COUNT, Math.ceil(width / (barWidth + barGap)) + 2);
 
-      setSampleCount((currentCount) => {
-        if (currentCount === nextCount) {
-          return currentCount;
+      setAnimatedValues((currentValues) => {
+        if (currentValues.length === nextCount) {
+          return currentValues;
         }
-        return nextCount;
+
+        ratiosRef.current = buildSilentRatios(nextCount);
+        latestSampleRef.current = MIN_HEIGHT_RATIO;
+        return buildAnimatedValues(nextCount);
       });
     },
     [barGap, barWidth],
   );
 
   useEffect(() => {
-    setSamples((currentSamples) => {
-      if (currentSamples.length === sampleCount) {
-        return currentSamples;
-      }
+    const interval = setInterval(() => {
+      const nextSample = buildNextSample(volumeRef.current, latestSampleRef.current);
+      latestSampleRef.current = nextSample;
+      const nextRatios = [...ratiosRef.current.slice(1), nextSample];
+      ratiosRef.current = nextRatios;
 
-      if (currentSamples.length > sampleCount) {
-        return currentSamples.slice(currentSamples.length - sampleCount);
-      }
-
-      const missingCount = sampleCount - currentSamples.length;
-      const prefix = Array.from({ length: missingCount }, (_, index) => ({
-        id: sampleIndexRef.current + index + 1,
-        ratio: IDLE_RATIOS[index % IDLE_RATIOS.length],
-      }));
-      sampleIndexRef.current += missingCount;
-      return [...prefix, ...currentSamples];
-    });
-  }, [sampleCount]);
-
-  useEffect(() => {
-    let stopped = false;
-    let timeout: ReturnType<typeof setTimeout> | undefined;
-    const stepWidth = barWidth + barGap;
-
-    const scheduleNextSample = () => {
-      if (stopped) {
-        return;
-      }
-
-      translateX.setValue(0);
-      Animated.timing(translateX, {
-        toValue: -stepWidth,
-        duration: SAMPLE_INTERVAL_MS,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }).start(({ finished }) => {
-        if (stopped || !finished) {
-          return;
-        }
-
-        sampleIndexRef.current += 1;
-        const nextSample: Sample = {
-          id: sampleIndexRef.current,
-          ratio: buildNextSample(volumeRef.current, sampleIndexRef.current),
-        };
-        setSamples((currentSamples) => [...currentSamples.slice(1), nextSample]);
-        timeout = setTimeout(scheduleNextSample, 0);
-      });
-    };
-
-    scheduleNextSample();
+      Animated.parallel(
+        animatedValues.map((value, index) =>
+          Animated.timing(value, {
+            toValue: nextRatios[index] ?? MIN_HEIGHT_RATIO,
+            duration: SAMPLE_INTERVAL_MS,
+            easing: Easing.out(Easing.quad),
+            useNativeDriver: false,
+          }),
+        ),
+      ).start();
+    }, SAMPLE_INTERVAL_MS);
 
     return () => {
-      stopped = true;
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-      translateX.stopAnimation();
+      clearInterval(interval);
+      animatedValues.forEach((value) => value.stopAnimation());
     };
-  }, [barGap, barWidth, translateX]);
+  }, [animatedValues]);
 
   const barColor = color ?? fortuneTheme.colors.ctaBackground;
 
@@ -161,27 +125,25 @@ export function VoiceWaveform({
         overflow: 'hidden',
       }}
     >
-      <Animated.View
-        style={{
-          alignItems: 'center',
-          flexDirection: 'row',
-          transform: [{ translateX }],
-        }}
-      >
-        {samples.map((sample, index) => (
-          <View
-            key={sample.id}
-            style={{
-              backgroundColor: barColor,
-              borderRadius: barWidth / 2,
-              height: Math.max(2, height * sample.ratio),
-              marginRight: barGap,
-              opacity: index > samples.length - 7 ? 1 : 0.78,
-              width: barWidth,
-            }}
-          />
-        ))}
-      </Animated.View>
+      {animatedValues.map((value, index) => (
+        <Animated.View
+          key={index}
+          style={{
+            backgroundColor: barColor,
+            borderRadius: barWidth / 2,
+            height: value.interpolate({
+              inputRange: [0, 1],
+              outputRange: [Math.max(2, height * MIN_HEIGHT_RATIO), height],
+            }),
+            marginRight: barGap,
+            opacity: value.interpolate({
+              inputRange: [MIN_HEIGHT_RATIO, MIN_HEIGHT_RATIO + 0.01, 1],
+              outputRange: [0.42, 0.42, 0.92],
+            }),
+            width: barWidth,
+          }}
+        />
+      ))}
     </View>
   );
 }
