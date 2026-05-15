@@ -62,7 +62,7 @@ export function Screen({
 
   const footerPaddingBottom =
     keyboardAvoiding && keyboardVisible
-      ? fortuneTheme.spacing.xs
+      ? fortuneTheme.spacing.sm
       : fortuneTheme.spacing.pageVertical + insets.bottom;
   const floatingHeader = Boolean(header && topBoundaryFade);
   const [headerChromeHeight, setHeaderChromeHeight] = useState(96);
