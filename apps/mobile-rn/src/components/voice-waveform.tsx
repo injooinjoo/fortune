@@ -1,14 +1,15 @@
 /**
- * 녹음 중 음량을 막대 5개로 시각화한다. 클로드 앱과 동일한 톤 — 마이크에서
- * 들어오는 amplitude 를 받아 막대 높이를 부드럽게 보간한다.
+ * 녹음 중 음량을 왼쪽으로 흐르는 긴 스펙트럼으로 시각화한다.
+ * 새 샘플은 오른쪽에서 들어오고 기존 기록은 맥박처럼 왼쪽으로 지나간다.
  *
  * 실시간 amplitude 는 `expo-speech-recognition` 의 `volumechange` 이벤트에서
  * 가져오며, `useVoiceInput` 이 0~1 정규화 값을 `currentVolume` 으로 노출한다.
  * 이 컴포넌트는 그 값만 prop 으로 받는다.
  */
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Easing, View } from 'react-native';
+import type { LayoutChangeEvent } from 'react-native';
 
 import { fortuneTheme } from '../lib/theme';
 
@@ -19,50 +20,131 @@ interface VoiceWaveformProps {
   color?: string;
   /** 막대 한 개의 너비. 기본 3. */
   barWidth?: number;
-  /** 막대 사이 간격. 기본 4. */
+  /** 막대 사이 간격. 기본 5. */
   barGap?: number;
   /** 컨테이너 height. 막대 최대 높이도 이 값에서 결정됨. 기본 24. */
   height?: number;
 }
 
-const BAR_COUNT = 5;
+type Sample = {
+  id: number;
+  ratio: number;
+};
 
-// 각 막대마다 음량을 약간 다르게 받아들이게 해서 정확히 똑같이 움직이지 않도록.
-// 가운데 막대가 가장 민감, 양 끝 막대가 덜 민감 (자연스러운 스펙트럼 느낌).
-const BAR_SENSITIVITY = [0.7, 0.9, 1.0, 0.9, 0.7] as const;
-
-// 침묵일 때도 살짝 보이도록 하는 최소 비율 (height 의 16%).
+const MIN_BAR_COUNT = 36;
+const SAMPLE_INTERVAL_MS = 110;
 const MIN_HEIGHT_RATIO = 0.16;
+const IDLE_RATIOS = [0.16, 0.24, 0.18, 0.3, 0.2, 0.26] as const;
+
+function buildNextSample(volume: number, sampleIndex: number): number {
+  const normalizedVolume = Math.max(0, Math.min(1, volume));
+  const heartbeat = normalizedVolume > 0.05 && sampleIndex % 9 === 0 ? 0.22 : 0;
+  const ripple = (((sampleIndex * 7) % 13) / 70) * (0.35 + normalizedVolume);
+  const driven = MIN_HEIGHT_RATIO + normalizedVolume * 0.66 + heartbeat + ripple;
+
+  return Math.max(MIN_HEIGHT_RATIO, Math.min(1, driven));
+}
+
+function buildIdleSamples(count: number): Sample[] {
+  return Array.from({ length: count }, (_, index) => ({
+    id: index,
+    ratio: IDLE_RATIOS[index % IDLE_RATIOS.length],
+  }));
+}
 
 export function VoiceWaveform({
   volume,
   color,
   barWidth = 3,
-  barGap = 4,
+  barGap = 5,
   height = 24,
 }: VoiceWaveformProps) {
-  const animValues = useRef(
-    Array.from({ length: BAR_COUNT }, () => new Animated.Value(MIN_HEIGHT_RATIO)),
-  ).current;
+  const translateX = useRef(new Animated.Value(0)).current;
+  const volumeRef = useRef(volume);
+  const sampleIndexRef = useRef(MIN_BAR_COUNT);
+  const [sampleCount, setSampleCount] = useState(MIN_BAR_COUNT);
+  const [samples, setSamples] = useState<Sample[]>(() => buildIdleSamples(MIN_BAR_COUNT));
 
   useEffect(() => {
-    const targets = BAR_SENSITIVITY.map((sensitivity) => {
-      const driven = volume * sensitivity;
-      return Math.max(MIN_HEIGHT_RATIO, Math.min(1, driven));
-    });
+    volumeRef.current = volume;
+  }, [volume]);
 
-    const animations = animValues.map((value, idx) =>
-      Animated.timing(value, {
-        toValue: targets[idx],
-        // 100ms — volumechange 이벤트 갱신 주기와 동일하게 맞춰서 끊김 없는
-        // 보간. useNativeDriver 는 height 보간 불가라 false.
-        duration: 100,
-        easing: Easing.out(Easing.quad),
-        useNativeDriver: false,
-      }),
-    );
-    Animated.parallel(animations).start();
-  }, [volume, animValues]);
+  const handleLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      const width = event.nativeEvent.layout.width;
+      const nextCount = Math.max(MIN_BAR_COUNT, Math.ceil(width / (barWidth + barGap)) + 3);
+
+      setSampleCount((currentCount) => {
+        if (currentCount === nextCount) {
+          return currentCount;
+        }
+        return nextCount;
+      });
+    },
+    [barGap, barWidth],
+  );
+
+  useEffect(() => {
+    setSamples((currentSamples) => {
+      if (currentSamples.length === sampleCount) {
+        return currentSamples;
+      }
+
+      if (currentSamples.length > sampleCount) {
+        return currentSamples.slice(currentSamples.length - sampleCount);
+      }
+
+      const missingCount = sampleCount - currentSamples.length;
+      const prefix = Array.from({ length: missingCount }, (_, index) => ({
+        id: sampleIndexRef.current + index + 1,
+        ratio: IDLE_RATIOS[index % IDLE_RATIOS.length],
+      }));
+      sampleIndexRef.current += missingCount;
+      return [...prefix, ...currentSamples];
+    });
+  }, [sampleCount]);
+
+  useEffect(() => {
+    let stopped = false;
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+    const stepWidth = barWidth + barGap;
+
+    const scheduleNextSample = () => {
+      if (stopped) {
+        return;
+      }
+
+      translateX.setValue(0);
+      Animated.timing(translateX, {
+        toValue: -stepWidth,
+        duration: SAMPLE_INTERVAL_MS,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }).start(({ finished }) => {
+        if (stopped || !finished) {
+          return;
+        }
+
+        sampleIndexRef.current += 1;
+        const nextSample: Sample = {
+          id: sampleIndexRef.current,
+          ratio: buildNextSample(volumeRef.current, sampleIndexRef.current),
+        };
+        setSamples((currentSamples) => [...currentSamples.slice(1), nextSample]);
+        timeout = setTimeout(scheduleNextSample, 0);
+      });
+    };
+
+    scheduleNextSample();
+
+    return () => {
+      stopped = true;
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+      translateX.stopAnimation();
+    };
+  }, [barGap, barWidth, translateX]);
 
   const barColor = color ?? fortuneTheme.colors.ctaBackground;
 
@@ -70,28 +152,36 @@ export function VoiceWaveform({
     <View
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
+      onLayout={handleLayout}
       style={{
         alignItems: 'center',
+        flex: 1,
         flexDirection: 'row',
         height,
-        justifyContent: 'center',
+        overflow: 'hidden',
       }}
     >
-      {animValues.map((value, idx) => (
-        <Animated.View
-          key={idx}
-          style={{
-            backgroundColor: barColor,
-            borderRadius: barWidth / 2,
-            height: value.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0, height],
-            }),
-            marginHorizontal: barGap / 2,
-            width: barWidth,
-          }}
-        />
-      ))}
+      <Animated.View
+        style={{
+          alignItems: 'center',
+          flexDirection: 'row',
+          transform: [{ translateX }],
+        }}
+      >
+        {samples.map((sample, index) => (
+          <View
+            key={sample.id}
+            style={{
+              backgroundColor: barColor,
+              borderRadius: barWidth / 2,
+              height: Math.max(2, height * sample.ratio),
+              marginRight: barGap,
+              opacity: index > samples.length - 7 ? 1 : 0.78,
+              width: barWidth,
+            }}
+          />
+        ))}
+      </Animated.View>
     </View>
   );
 }
