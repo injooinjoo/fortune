@@ -750,110 +750,112 @@ export function PremiumScreen() {
         </Card>
       ) : null}
 
-      <Card>
-        <AppText variant="heading4">선택된 상품</AppText>
-        <AppText variant="labelLarge">{selectedProductTitle}</AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {selectedProduct.description}
-        </AppText>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-          <Chip
-            label={selectedProduct.isSubscription ? '구독 상품' : '단건 상품'}
-            tone="accent"
-          />
-          <Chip label={`가격 ${selectedProductPriceLabel}`} />
-          {selectedProduct.points > 0 ? (
+      {!focusTopUpOnly ? (
+        <Card>
+          <AppText variant="heading4">선택된 상품</AppText>
+          <AppText variant="labelLarge">{selectedProductTitle}</AppText>
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            {selectedProduct.description}
+          </AppText>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
             <Chip
-              label={`토큰 ${selectedProduct.points.toLocaleString('ko-KR')}개 포함`}
+              label={selectedProduct.isSubscription ? '구독 상품' : '단건 상품'}
+              tone="accent"
             />
+            <Chip label={`가격 ${selectedProductPriceLabel}`} />
+            {selectedProduct.points > 0 ? (
+              <Chip
+                label={`토큰 ${selectedProduct.points.toLocaleString('ko-KR')}개 포함`}
+              />
+            ) : null}
+            <Chip label={selectedProductDeliveryLabel} />
+          </View>
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            {!session
+              ? '로그인하면 내 구독 상태를 확인하고 이전 구매를 복원할 수 있어요.'
+              : canManageSelectedSubscription
+                ? '현재 이용 중인 구독은 스토어 구독 관리 화면에서 변경할 수 있어요.'
+                : storeStatus === 'loading'
+                  ? '스토어 준비가 끝나면 바로 구매를 진행할 수 있어요.'
+                  : storeError
+                    ? storeError
+                    : '선택한 상품을 바로 결제하고 계정 상태에 반영할 수 있어요.'}
+          </AppText>
+          {selectedProduct.isSubscription ? (
+            <>
+              <AppText
+                variant="bodySmall"
+                color={fortuneTheme.colors.textTertiary}
+                style={{ lineHeight: 18 }}
+              >
+                자동 갱신 구독입니다. 구독 기간 종료 최소 24시간 전에 자동 갱신을
+                해제하지 않으면 구독이 자동으로 갱신됩니다. 설정 {'>'} Apple ID {'>'}{' '}
+                구독에서 관리할 수 있습니다.
+              </AppText>
+              <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 16, marginTop: 8 }}>
+                <Pressable onPress={() => void Linking.openURL('https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages/terms-of-service')}>
+                  <AppText variant="caption" color={fortuneTheme.colors.ctaBackground} style={{ textDecorationLine: 'underline' }}>
+                    이용약관
+                  </AppText>
+                </Pressable>
+                <Pressable onPress={() => void Linking.openURL('https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages/privacy-policy')}>
+                  <AppText variant="caption" color={fortuneTheme.colors.ctaBackground} style={{ textDecorationLine: 'underline' }}>
+                    개인정보처리방침
+                  </AppText>
+                </Pressable>
+              </View>
+            </>
           ) : null}
-          <Chip label={selectedProductDeliveryLabel} />
-        </View>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {!session
-            ? '로그인하면 내 구독 상태를 확인하고 이전 구매를 복원할 수 있어요.'
-            : canManageSelectedSubscription
-              ? '현재 이용 중인 구독은 스토어 구독 관리 화면에서 변경할 수 있어요.'
-              : storeStatus === 'loading'
-                ? '스토어 준비가 끝나면 바로 구매를 진행할 수 있어요.'
-                : storeError
-                  ? storeError
-                  : '선택한 상품을 바로 결제하고 계정 상태에 반영할 수 있어요.'}
-        </AppText>
-        {selectedProduct.isSubscription ? (
-          <>
-            <AppText
-              variant="bodySmall"
-              color={fortuneTheme.colors.textTertiary}
-              style={{ lineHeight: 18 }}
+          {!session ? (
+            <PrimaryButton
+              disabled={actionState !== 'idle' || isPurchasePending}
+              onPress={() =>
+                router.push({
+                  pathname: '/signup',
+                  params: { returnTo: '/premium' },
+                })
+              }
+              tone="primary"
             >
-              자동 갱신 구독입니다. 구독 기간 종료 최소 24시간 전에 자동 갱신을
-              해제하지 않으면 구독이 자동으로 갱신됩니다. 설정 {'>'} Apple ID {'>'}{' '}
-              구독에서 관리할 수 있습니다.
-            </AppText>
-            <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 16, marginTop: 8 }}>
-              <Pressable onPress={() => void Linking.openURL('https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages/terms-of-service')}>
-                <AppText variant="caption" color={fortuneTheme.colors.ctaBackground} style={{ textDecorationLine: 'underline' }}>
-                  이용약관
-                </AppText>
-              </Pressable>
-              <Pressable onPress={() => void Linking.openURL('https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages/privacy-policy')}>
-                <AppText variant="caption" color={fortuneTheme.colors.ctaBackground} style={{ textDecorationLine: 'underline' }}>
-                  개인정보처리방침
-                </AppText>
-              </Pressable>
-            </View>
-          </>
-        ) : null}
-        {!session ? (
+              로그인하고 계속하기
+            </PrimaryButton>
+          ) : canManageSelectedSubscription ? (
+            <PrimaryButton
+              disabled={actionState !== 'idle' || isPurchasePending}
+              onPress={() => void handleOpenSubscriptionManagement()}
+              tone="primary"
+            >
+              {actionState === 'managing'
+                ? '구독 관리 여는 중...'
+                : '구독 관리 열기'}
+            </PrimaryButton>
+          ) : (
+            <PrimaryButton
+              disabled={!canPressPurchaseCta}
+              onPress={() => void handlePurchase()}
+              tone="primary"
+            >
+              {isPurchasePending
+                ? '결제 진행 중...'
+                : storeStatus === 'loading'
+                  ? '스토어 준비 중...'
+                  : !isStoreProductReady
+                    ? '스토어 상품 확인 필요'
+                    : selectedProduct.isSubscription
+                      ? '구독 시작하기'
+                      : selectedProduct.points > 0
+                        ? '토큰 충전하기'
+                        : '평생 소장 구매하기'}
+            </PrimaryButton>
+          )}
           <PrimaryButton
-            disabled={actionState !== 'idle' || isPurchasePending}
-            onPress={() =>
-              router.push({
-                pathname: '/signup',
-                params: { returnTo: '/premium' },
-              })
-            }
-            tone="primary"
+            onPress={actionState === 'idle' && !isPurchasePending ? () => handleRestore() : undefined}
+            tone="secondary"
           >
-            로그인하고 계속하기
+            {isPurchasePending ? '구매 상태 확인 중...' : '구매 복원'}
           </PrimaryButton>
-        ) : canManageSelectedSubscription ? (
-          <PrimaryButton
-            disabled={actionState !== 'idle' || isPurchasePending}
-            onPress={() => void handleOpenSubscriptionManagement()}
-            tone="primary"
-          >
-            {actionState === 'managing'
-              ? '구독 관리 여는 중...'
-              : '구독 관리 열기'}
-          </PrimaryButton>
-        ) : (
-          <PrimaryButton
-            disabled={!canPressPurchaseCta}
-            onPress={() => void handlePurchase()}
-            tone="primary"
-          >
-            {isPurchasePending
-              ? '결제 진행 중...'
-              : storeStatus === 'loading'
-                ? '스토어 준비 중...'
-                : !isStoreProductReady
-                  ? '스토어 상품 확인 필요'
-                  : selectedProduct.isSubscription
-                    ? '구독 시작하기'
-                    : selectedProduct.points > 0
-                      ? '토큰 충전하기'
-                      : '평생 소장 구매하기'}
-          </PrimaryButton>
-        )}
-        <PrimaryButton
-          onPress={actionState === 'idle' && !isPurchasePending ? () => handleRestore() : undefined}
-          tone="secondary"
-        >
-          {isPurchasePending ? '구매 상태 확인 중...' : '구매 복원'}
-        </PrimaryButton>
-      </Card>
+        </Card>
+      ) : null}
     </Screen>
   );
 }
