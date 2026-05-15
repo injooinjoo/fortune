@@ -11,9 +11,14 @@
  * leaking stale state from older installs.
  */
 
-import { getSecureItem, setSecureItem } from './secure-store-storage';
+import {
+  deleteSecureItem,
+  getSecureItem,
+  setSecureItem,
+} from './secure-store-storage';
 
 export const WELCOME_SEEN_KEY = 'ondo.welcome-seen.v1';
+export const WELCOME_FORCE_ENABLED_KEY = 'ondo.welcome-force-enabled.v1';
 
 export async function readWelcomeSeen(): Promise<boolean> {
   try {
@@ -32,5 +37,34 @@ export async function markWelcomeSeen(): Promise<void> {
   } catch {
     // Non-fatal — the worst case is the welcome screen shows again next
     // launch, which is strictly better than blocking navigation here.
+  }
+}
+
+export async function resetWelcomeSeen(): Promise<void> {
+  try {
+    await deleteSecureItem(WELCOME_SEEN_KEY);
+  } catch {
+    // Non-fatal — this helper is only used for QA-triggered replays.
+  }
+}
+
+export async function readWelcomeForceEnabled(): Promise<boolean> {
+  try {
+    const raw = await getSecureItem(WELCOME_FORCE_ENABLED_KEY);
+    return raw === '1';
+  } catch {
+    return false;
+  }
+}
+
+export async function setWelcomeForceEnabled(enabled: boolean): Promise<void> {
+  try {
+    if (enabled) {
+      await setSecureItem(WELCOME_FORCE_ENABLED_KEY, '1');
+    } else {
+      await deleteSecureItem(WELCOME_FORCE_ENABLED_KEY);
+    }
+  } catch {
+    // QA-only preference; storage failures must never block normal app use.
   }
 }

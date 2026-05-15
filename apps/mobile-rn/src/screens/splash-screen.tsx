@@ -6,7 +6,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
 
 import { formatVersionLabel } from '../lib/build-identity';
-import { readWelcomeSeen } from '../lib/welcome-state';
+import { isOnboardingQaEmail } from '../lib/onboarding-qa';
+import { readWelcomeForceEnabled, readWelcomeSeen } from '../lib/welcome-state';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 
 // Auto-advance timing. The splash is intentionally brief — it exists so the
@@ -29,7 +30,7 @@ const FG_DIM = '#6B6F7D';
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 export function SplashScreen() {
-  const { gate, status } = useAppBootstrap();
+  const { gate, session, status } = useAppBootstrap();
   const hasAutoNavigatedRef = useRef(false);
 
   // Entry (0→1 once at mount).
@@ -39,9 +40,8 @@ export function SplashScreen() {
   const haloBreath = useRef(new Animated.Value(0)).current;
   const outerBreath = useRef(new Animated.Value(0)).current;
 
-  const [authEntryTarget, setAuthEntryTarget] = useState<
-    '/welcome' | '/signup' | null
-  >(null);
+  const [authEntryTarget, setAuthEntryTarget] = useState<Href | null>(null);
+  const [qaWelcomeForce, setQaWelcomeForce] = useState<boolean | null>(null);
   const [showEscape, setShowEscape] = useState(false);
 
   // Entry sequence (once).
@@ -88,19 +88,48 @@ export function SplashScreen() {
     }
     let cancelled = false;
     void readWelcomeSeen().then((seen) => {
-      if (!cancelled) setAuthEntryTarget(seen ? '/signup' : '/welcome');
+      if (!cancelled) {
+        setAuthEntryTarget(seen ? ('/chat?showList=1' as Href) : '/welcome');
+      }
     });
     return () => {
       cancelled = true;
     };
   }, [gate]);
 
+  useEffect(() => {
+    if (status !== 'ready') {
+      setQaWelcomeForce(null);
+      return;
+    }
+
+    const email = session?.user.email;
+    if (!isOnboardingQaEmail(email)) {
+      setQaWelcomeForce(false);
+      return;
+    }
+
+    let cancelled = false;
+    setQaWelcomeForce(null);
+    void readWelcomeForceEnabled().then((enabled) => {
+      if (!cancelled) setQaWelcomeForce(enabled);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session?.user.email, status]);
+
   const nextRoute: Href | null =
-    gate === 'auth-entry'
-      ? authEntryTarget
-      : gate === 'profile-flow'
-        ? '/onboarding'
-        : '/chat';
+    qaWelcomeForce === null
+      ? null
+      : qaWelcomeForce
+        ? '/welcome'
+        : gate === 'auth-entry'
+          ? authEntryTarget
+          : gate === 'profile-flow'
+            ? '/onboarding'
+            : '/chat';
 
   useEffect(() => {
     if (status !== 'ready' || hasAutoNavigatedRef.current) return;

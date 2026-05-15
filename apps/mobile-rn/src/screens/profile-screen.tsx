@@ -21,6 +21,11 @@ import { isTestAccountEmail } from '../lib/test-accounts';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { onDeviceLLMEngine, type ModelStatus } from '../lib/on-device-llm';
+import { isOnboardingQaEmail } from '../lib/onboarding-qa';
+import {
+  readWelcomeForceEnabled,
+  setWelcomeForceEnabled,
+} from '../lib/welcome-state';
 import {
   getDeviceDescriptor,
   type DeviceTier,
@@ -84,6 +89,7 @@ function getConstellation(birthDate: string) {
 
 export function ProfileScreen() {
   const [isRestoring, setIsRestoring] = useState(false);
+  const [welcomeForceEnabled, setWelcomeForceEnabledState] = useState(false);
   const [themeMode, setThemeMode] = useState<'system' | 'light' | 'dark'>('system');
   const [modelStatus, setModelStatus] = useState<ModelStatus>(onDeviceLLMEngine.getStatus());
   const [downloadPct, setDownloadPct] = useState(0);
@@ -99,6 +105,7 @@ export function ProfileScreen() {
     return formatBytesLabel(total);
   }, [activeVariant]);
   const { session } = useAppBootstrap();
+  const email = session?.user.email ?? null;
   const { refreshLocalState, restorePurchases, saveSettings, state, syncRemoteProfile } = useMobileAppState();
 
   // Re-sync state when this screen gains focus (e.g. returning from profile-edit).
@@ -109,6 +116,13 @@ export function ProfileScreen() {
     useCallback(() => {
       refreshLocalState().catch(() => undefined);
       syncRemoteProfile().catch(() => undefined);
+      if (isOnboardingQaEmail(email)) {
+        readWelcomeForceEnabled()
+          .then(setWelcomeForceEnabledState)
+          .catch(() => setWelcomeForceEnabledState(false));
+      } else {
+        setWelcomeForceEnabledState(false);
+      }
       setModelStatus(onDeviceLLMEngine.getStatus());
       // Tier 가 아직 미해석이면 비동기로 해석 — UI 는 준비되면 갱신.
       onDeviceLLMEngine
@@ -138,7 +152,7 @@ export function ProfileScreen() {
         unsub?.();
         clearInterval(timer);
       };
-    }, [refreshLocalState, syncRemoteProfile]),
+    }, [email, refreshLocalState, syncRemoteProfile]),
   );
 
   const savedName =
@@ -147,8 +161,6 @@ export function ProfileScreen() {
     (session?.user.user_metadata.full_name as string | undefined) ||
     session?.user.email ||
     '사용자';
-
-  const email = session?.user.email ?? null;
 
   const authProvider = useMemo(() => {
     const provider = session?.user.app_metadata.provider;
@@ -166,6 +178,7 @@ export function ProfileScreen() {
   const initial = savedName.charAt(0).toUpperCase() || 'U';
 
   const isTestAccount = isTestAccountEmail(email);
+  const isOnboardingQaUser = isOnboardingQaEmail(email);
 
   function handleSignOut() {
     Alert.alert('로그아웃', '정말 로그아웃 하시겠어요?', [
@@ -202,6 +215,23 @@ export function ProfileScreen() {
     } finally {
       setIsRestoring(false);
     }
+  }
+
+  async function handleSetWelcomeForceEnabled(enabled: boolean) {
+    if (!isOnboardingQaUser) return;
+    setWelcomeForceEnabledState(enabled);
+    await setWelcomeForceEnabled(enabled);
+    Alert.alert(
+      '온보딩 테스트',
+      enabled
+        ? '앱을 열 때마다 시작 온보딩이 표시돼요. 끄려면 꺼짐을 선택하세요.'
+        : '온보딩 자동 재표시를 껐어요.',
+    );
+  }
+
+  async function handleOpenWelcomeNow() {
+    if (!isOnboardingQaUser) return;
+    router.push('/welcome');
   }
 
   async function handleOpenSubscriptionManagement() {
@@ -577,6 +607,61 @@ export function ProfileScreen() {
             />
           </View>
         </View>
+
+        {isOnboardingQaUser ? (
+          <View style={{ gap: 10 }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10, paddingRight: 12 }}>
+                <Ionicons
+                  name="sparkles-outline"
+                  size={18}
+                  color={fortuneTheme.colors.textSecondary}
+                />
+                <View style={{ flex: 1, gap: 2 }}>
+                  <AppText variant="bodyMedium">온보딩 테스트</AppText>
+                  <AppText variant="caption" color={fortuneTheme.colors.textSecondary}>
+                    이 계정에서만 시작 온보딩을 다시 확인해요.
+                  </AppText>
+                </View>
+              </View>
+              <View style={{ flexDirection: 'row', gap: 4 }}>
+                <ThemeChip
+                  label="켜짐"
+                  active={welcomeForceEnabled}
+                  onPress={() => void handleSetWelcomeForceEnabled(true)}
+                />
+                <ThemeChip
+                  label="꺼짐"
+                  active={!welcomeForceEnabled}
+                  onPress={() => void handleSetWelcomeForceEnabled(false)}
+                />
+              </View>
+            </View>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="지금 온보딩 보기"
+              onPress={() => void handleOpenWelcomeNow()}
+              style={({ pressed }) => ({
+                alignSelf: 'flex-start',
+                backgroundColor: fortuneTheme.colors.surfaceSecondary,
+                borderRadius: fortuneTheme.radius.sm,
+                opacity: pressed ? 0.7 : 1,
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+              })}
+            >
+              <AppText variant="bodySmall" color={fortuneTheme.colors.ctaBackground}>
+                지금 온보딩 보기
+              </AppText>
+            </Pressable>
+          </View>
+        ) : null}
 
         {/* 계정 연결 */}
         {authProvider ? (

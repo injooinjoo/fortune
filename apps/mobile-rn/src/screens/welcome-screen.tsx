@@ -107,7 +107,7 @@ export function WelcomeScreen() {
 
   const finish = async () => {
     await markWelcomeSeen();
-    router.replace('/signup');
+    router.replace({ pathname: '/chat', params: { showList: '1' } });
   };
 
   const handleCta = () => {
