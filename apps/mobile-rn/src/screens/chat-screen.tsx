@@ -1229,6 +1229,12 @@ export function ChatScreen() {
   // 먼저 살아남, 최근 send 직후 진입 등)에서 enqueue RPC 가 idempotent (same
   // user_message_id) 라 중복 row 없이 안전하게 invoke 만 트리거.
   const autoResumedUserMessageIdsRef = useRef<Set<string>>(new Set());
+  // 현재 앱 세션에서 사용자가 방금 보낸 메시지 id. 자동 답장 재개 hook 은
+  // "앱 재진입 시 과거 user tail 이 남은 경우"만 처리해야 한다. 방금 append 한
+  // optimistic user 메시지를 stale tail 로 오인하면 같은 메시지를 다시 보내고,
+  // 토큰 부족 상태에서는 consumeRemoteTokens → INSUFFICIENT_TOKENS → top-up
+  // 라우팅이 두 번 발생한다.
+  const locallySubmittedUserMessageIdsRef = useRef<Set<string>>(new Set());
   useEffect(() => {
     if (gate !== 'ready') return;
     if (surfaceMode !== 'chat') return;
@@ -1242,6 +1248,8 @@ export function ChatScreen() {
     const canonicalThread = getCanonicalVisibleMessages(thread);
     const last = canonicalThread[canonicalThread.length - 1];
     if (last.kind !== 'text' || last.sender !== 'user') return;
+
+    if (locallySubmittedUserMessageIdsRef.current.has(last.id)) return;
 
     if (autoResumedUserMessageIdsRef.current.has(last.id)) return;
     autoResumedUserMessageIdsRef.current.add(last.id);
@@ -2766,6 +2774,7 @@ export function ChatScreen() {
     cancelPendingReplyForCharacter(character.id);
 
     const queuedUserMessage = buildUserMessage(text);
+    locallySubmittedUserMessageIdsRef.current.add(queuedUserMessage.id);
     chatMessageController.appendMessages(character.id, [queuedUserMessage]);
     pendingSendsRef.current = {
       ...pendingSendsRef.current,
@@ -2885,6 +2894,9 @@ export function ChatScreen() {
       ? [userMessage.id]
       : (sendOptions?.userMessageIds ??
         (sendOptions?.userMessageId ? [sendOptions.userMessageId] : []));
+    for (const id of effectiveUserMessageIds) {
+      locallySubmittedUserMessageIdsRef.current.add(id);
+    }
 
     if (userMessage) {
       chatMessageController.appendMessages(character.id, [userMessage]);
@@ -3299,6 +3311,9 @@ export function ChatScreen() {
       if (shouldClearDraft) {
         setDraft('');
       }
+      for (const id of effectiveUserMessageIds) {
+        locallySubmittedUserMessageIdsRef.current.delete(id);
+      }
       drainNextPendingSend(character);
     }
   }
@@ -3336,6 +3351,9 @@ export function ChatScreen() {
       ? [userMessage.id]
       : (sendOptions?.userMessageIds ??
         (sendOptions?.userMessageId ? [sendOptions.userMessageId] : []));
+    for (const id of effectiveUserMessageIds) {
+      locallySubmittedUserMessageIdsRef.current.add(id);
+    }
     if (userMessage) {
       chatMessageController.appendMessages(character.id, [userMessage]);
     }
@@ -3887,6 +3905,9 @@ export function ChatScreen() {
       setGlobalTyping(character.id, false);
       if (shouldClearDraft) {
         setDraft('');
+      }
+      for (const id of effectiveUserMessageIds) {
+        locallySubmittedUserMessageIdsRef.current.delete(id);
       }
       drainNextPendingSend(character);
     }
