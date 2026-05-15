@@ -7,11 +7,14 @@ import {
   Pressable,
   Text,
   View,
-  type ViewStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { confirmAction } from '../lib/haptics';
+import {
+  onboardingAdvance,
+  onboardingBrandReveal,
+  onboardingTemperatureReveal,
+} from '../lib/haptics';
 import { markWelcomeSeen } from '../lib/welcome-state';
 
 // Ondo Design System tokens — mirrors `ui_kits/mobile/ondo-primitives.jsx`.
@@ -111,7 +114,7 @@ export function WelcomeScreen() {
   };
 
   const handleCta = () => {
-    confirmAction();
+    onboardingAdvance();
     if (step < SCENES.length - 1) {
       setStep(step + 1);
     } else {
@@ -335,7 +338,7 @@ function CurrentScene({
 // renders at the same 32pt as siblings — no baseline jump.
 function renderHighlight(line: string, words?: string[]) {
   if (!words || words.length === 0) return line;
-  let segments: Array<string | { text: string; key: string }> = [line];
+  let segments: (string | { text: string; key: string })[] = [line];
   for (const w of words) {
     segments = segments.flatMap((seg, segIdx) => {
       if (typeof seg !== 'string') return [seg];
@@ -365,66 +368,95 @@ function renderHighlight(line: string, words?: string[]) {
 function BrandReveal() {
   const intro = useRef(new Animated.Value(0)).current;
   const pulse = useRef(new Animated.Value(0)).current;
+  const float = useRef(new Animated.Value(0)).current;
   const subline = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.timing(intro, {
-      toValue: 1,
-      duration: 900,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
+    onboardingBrandReveal();
 
-    Animated.sequence([
-      Animated.delay(700),
-      Animated.timing(subline, {
+    Animated.parallel([
+      Animated.spring(intro, {
         toValue: 1,
-        duration: 500,
-        easing: Easing.linear,
+        speed: 7,
+        bounciness: 7,
         useNativeDriver: true,
       }),
+      Animated.sequence([
+        Animated.delay(420),
+        Animated.timing(subline, {
+          toValue: 1,
+          duration: 520,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }),
+      ]),
     ]).start();
 
-    Animated.loop(
+    const pulseLoop = Animated.loop(
       Animated.sequence([
         Animated.timing(pulse, {
           toValue: 1,
-          duration: 750,
+          duration: 1800,
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
         }),
         Animated.timing(pulse, {
           toValue: 0,
-          duration: 750,
+          duration: 1800,
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
         }),
       ]),
-    ).start();
-  }, [intro, pulse, subline]);
+    );
+    const floatLoop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(float, {
+          toValue: 1,
+          duration: 2600,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
+        Animated.timing(float, {
+          toValue: 0,
+          duration: 2600,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    pulseLoop.start();
+    floatLoop.start();
 
-  const glowScale = Animated.add(
-    intro,
-    pulse.interpolate({ inputRange: [0, 1], outputRange: [0, 0.08] }),
-  );
-  const glowOpacity = Animated.multiply(
-    intro,
-    pulse.interpolate({ inputRange: [0, 1], outputRange: [0.5, 0.75] }),
-  );
-  const coreScale = pulse.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 1.04],
-  });
-  const coreOpacity = Animated.multiply(intro, 0.32);
-  const wordmarkTranslate = intro.interpolate({
-    inputRange: [0, 1],
-    outputRange: [12, 0],
-  });
+    return () => {
+      pulseLoop.stop();
+      floatLoop.stop();
+    };
+  }, [float, intro, pulse, subline]);
 
-  const glowViewStyle: Animated.WithAnimatedObject<ViewStyle> = {
-    opacity: glowOpacity,
-    transform: [{ scale: glowScale }],
-  };
+  const orbScale = intro.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.86, 1],
+  });
+  const wordmarkY = intro.interpolate({
+    inputRange: [0, 1],
+    outputRange: [18, 0],
+  });
+  const ringScale = pulse.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 1.06],
+  });
+  const ringOpacity = pulse.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.16, 0.28],
+  });
+  const floatY = float.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-6, 6],
+  });
+  const sublineY = subline.interpolate({
+    inputRange: [0, 1],
+    outputRange: [8, 0],
+  });
 
   return (
     <View
@@ -437,92 +469,113 @@ function BrandReveal() {
         justifyContent: 'center',
         alignItems: 'center',
         overflow: 'hidden',
+        paddingBottom: 54,
       }}
       pointerEvents="none"
     >
       <Animated.View
-        style={[
-          {
-            position: 'absolute',
-            width: 520,
-            height: 520,
-            borderRadius: 260,
-            backgroundColor: '#E8486B',
-            opacity: 0.2,
-          },
-          glowViewStyle,
-        ]}
-      />
-      <Animated.View
-        style={[
-          {
-            position: 'absolute',
-            width: 340,
-            height: 340,
-            borderRadius: 170,
-            backgroundColor: '#FFB88A',
-            opacity: 0.3,
-          },
-          glowViewStyle,
-        ]}
+        style={{
+          position: 'absolute',
+          width: 420,
+          height: 420,
+          borderRadius: 210,
+          backgroundColor: '#7B2039',
+          opacity: ringOpacity,
+          transform: [{ scale: ringScale }, { translateY: 6 }],
+        }}
       />
       <Animated.View
         style={{
           position: 'absolute',
-          width: 200,
-          height: 200,
-          borderRadius: 100,
-          backgroundColor: '#FFDCB4',
-          opacity: coreOpacity,
-          transform: [{ scale: coreScale }],
+          width: 284,
+          height: 284,
+          borderRadius: 142,
+          backgroundColor: '#C66E5C',
+          opacity: Animated.multiply(intro, 0.18),
+          transform: [{ scale: orbScale }, { translateY: floatY }],
         }}
       />
       <Animated.View
         style={{
+          position: 'absolute',
+          width: 206,
+          height: 206,
+          borderRadius: 103,
+          borderWidth: 1,
+          borderColor: 'rgba(255, 214, 178, 0.18)',
           opacity: intro,
-          transform: [{ translateY: wordmarkTranslate }],
-          zIndex: 10,
+          transform: [{ scale: ringScale }, { translateY: floatY }],
+        }}
+      />
+
+      <Animated.View
+        style={{
+          width: 168,
+          height: 168,
+          borderRadius: 48,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'rgba(255, 214, 178, 0.10)',
+          borderWidth: 1,
+          borderColor: 'rgba(255, 232, 210, 0.18)',
+          shadowColor: '#FFB88A',
+          shadowOpacity: 0.32,
+          shadowRadius: 36,
+          shadowOffset: { width: 0, height: 18 },
+          opacity: intro,
+          transform: [{ scale: orbScale }, { translateY: wordmarkY }],
         }}
       >
         <Text
-          // Wordmark: give the 84pt glyph a generous lineHeight so it doesn't
-          // clip against any parent baseline — this is the bug that was
-          // rendering "온도" as a horizontal stroke.
           style={{
-            fontSize: 84,
-            lineHeight: 100,
+            fontSize: 66,
+            lineHeight: 78,
             fontWeight: '800',
-            letterSpacing: -2,
-            color: '#FFFFFF',
+            letterSpacing: -2.2,
+            color: '#FFF8F0',
             textAlign: 'center',
             fontFamily: T.font,
-            // Subtle single-layer glow (RN only supports one textShadow).
-            textShadowColor: 'rgba(255, 182, 110, 0.6)',
+            textShadowColor: 'rgba(255, 178, 126, 0.42)',
             textShadowOffset: { width: 0, height: 0 },
-            textShadowRadius: 24,
+            textShadowRadius: 22,
           }}
         >
           온도
         </Text>
       </Animated.View>
+
       <Animated.View
         style={{
-          position: 'absolute',
-          bottom: 180,
+          marginTop: 26,
+          alignItems: 'center',
           opacity: subline,
+          transform: [{ translateY: sublineY }],
         }}
       >
         <Text
           style={{
-            fontSize: 13,
+            fontSize: 12,
             lineHeight: 18,
-            color: 'rgba(255, 220, 180, 0.7)',
-            letterSpacing: 2.86,
-            fontWeight: '600',
+            color: 'rgba(255, 232, 210, 0.72)',
+            letterSpacing: 3.2,
+            fontWeight: '700',
             fontFamily: T.font,
           }}
         >
-          ONDO · 당신의 마음 온도
+          ONDO
+        </Text>
+        <Text
+          style={{
+            marginTop: 10,
+            fontSize: 18,
+            lineHeight: 26,
+            color: '#FFF3E6',
+            letterSpacing: -0.28,
+            fontWeight: '700',
+            fontFamily: T.font,
+          }}
+        >
+          당신의 마음 온도
         </Text>
       </Animated.View>
     </View>
@@ -535,27 +588,57 @@ function BrandReveal() {
 function Thermometer({ scene }: { scene: ThermometerScene }) {
   const [tempLabel, setTempLabel] = useState('0.0');
   const fill = useRef(new Animated.Value(0)).current;
+  const intro = useRef(new Animated.Value(0)).current;
   const glow = useRef(new Animated.Value(0)).current;
+  const breathe = useRef(new Animated.Value(0)).current;
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
-    Animated.timing(fill, {
-      toValue: 1,
-      duration: 2400,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: false,
-    }).start();
-    Animated.timing(glow, {
-      toValue: 1,
-      duration: 2400,
-      easing: Easing.linear,
-      useNativeDriver: true,
-    }).start();
+    onboardingTemperatureReveal();
+
+    Animated.parallel([
+      Animated.spring(intro, {
+        toValue: 1,
+        speed: 8,
+        bounciness: 5,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fill, {
+        toValue: 1,
+        duration: 2200,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: false,
+      }),
+      Animated.timing(glow, {
+        toValue: 1,
+        duration: 2200,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    const breatheLoop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(breathe, {
+          toValue: 1,
+          duration: 1500,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
+        Animated.timing(breathe, {
+          toValue: 0,
+          duration: 1500,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    breatheLoop.start();
 
     const startedAt = Date.now();
     const tick = () => {
       const elapsed = Date.now() - startedAt;
-      const p = Math.min(1, elapsed / 2400);
+      const p = Math.min(1, elapsed / 2200);
       const eased = 1 - Math.pow(1 - p, 3);
       setTempLabel((eased * 36.5).toFixed(1));
       if (p < 1) {
@@ -565,131 +648,181 @@ function Thermometer({ scene }: { scene: ThermometerScene }) {
     rafRef.current = requestAnimationFrame(tick);
 
     return () => {
+      breatheLoop.stop();
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
     };
-  }, [fill, glow]);
+  }, [breathe, fill, glow, intro]);
 
   const mercuryHeight = fill.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0%', '85%'],
+    outputRange: ['10%', '82%'],
+  });
+  const introY = intro.interpolate({
+    inputRange: [0, 1],
+    outputRange: [18, 0],
   });
   const bulbGlowOpacity = glow.interpolate({
-    inputRange: [0, 0.75, 1],
-    outputRange: [0, 0, 0.35],
+    inputRange: [0, 0.55, 1],
+    outputRange: [0.08, 0.18, 0.34],
+  });
+  const haloScale = breathe.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 1.05],
+  });
+  const haloOpacity = breathe.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.14, 0.22],
   });
 
   return (
-    <View
+    <Animated.View
       style={{
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        paddingTop: 70,
+        justifyContent: 'center',
+        paddingTop: 34,
         paddingHorizontal: 24,
-        paddingBottom: 140,
+        paddingBottom: 118,
         alignItems: 'center',
+        opacity: intro,
+        transform: [{ translateY: introY }],
       }}
     >
       <View
         style={{
-          width: 88,
-          height: 260,
+          width: 228,
+          height: 228,
+          borderRadius: 114,
           alignItems: 'center',
-          marginTop: 8,
+          justifyContent: 'center',
+          backgroundColor: 'rgba(255, 184, 138, 0.07)',
+          borderWidth: 1,
+          borderColor: 'rgba(255, 210, 178, 0.10)',
         }}
       >
         <Animated.View
           style={{
             position: 'absolute',
-            bottom: -20,
-            width: 200,
-            height: 200,
-            borderRadius: 100,
-            backgroundColor: '#FF8C64',
-            opacity: bulbGlowOpacity,
+            width: 204,
+            height: 204,
+            borderRadius: 102,
+            backgroundColor: '#7A3328',
+            opacity: haloOpacity,
+            transform: [{ scale: haloScale }],
           }}
         />
-        <View
+        <Animated.View
           style={{
-            width: 22,
-            height: 200,
-            borderRadius: 12,
-            marginTop: 4,
-            backgroundColor: '#1C1C22',
-            borderWidth: 1.5,
-            borderColor: '#2B2B33',
-            overflow: 'hidden',
+            position: 'absolute',
+            bottom: 42,
+            width: 128,
+            height: 128,
+            borderRadius: 64,
+            backgroundColor: '#FF8A6B',
+            opacity: bulbGlowOpacity,
+            transform: [{ scale: haloScale }],
           }}
-        >
-          {[0, 1, 2, 3, 4].map((i) => (
-            <View
-              key={i}
+        />
+
+        <View style={{ width: 84, height: 190, alignItems: 'center' }}>
+          <View
+            style={{
+              width: 34,
+              height: 134,
+              borderRadius: 18,
+              marginTop: 4,
+              backgroundColor: 'rgba(255, 255, 255, 0.06)',
+              borderWidth: 1,
+              borderColor: 'rgba(255, 232, 210, 0.18)',
+              overflow: 'hidden',
+            }}
+          >
+            {[0, 1, 2].map((i) => (
+              <View
+                key={i}
+                style={{
+                  position: 'absolute',
+                  right: 5,
+                  top: `${24 + i * 22}%`,
+                  width: 8,
+                  height: 1,
+                  backgroundColor: 'rgba(255, 232, 210, 0.24)',
+                }}
+              />
+            ))}
+            <Animated.View
               style={{
                 position: 'absolute',
-                left: '50%',
-                top: `${15 + i * 22}%`,
-                width: 28,
-                height: 1,
-                marginLeft: -14,
-                backgroundColor: '#3A3A44',
-                opacity: 0.6,
+                left: 5,
+                right: 5,
+                bottom: 5,
+                borderRadius: 14,
+                backgroundColor: '#FF746F',
+                height: mercuryHeight,
+                shadowColor: '#FF8A6B',
+                shadowOpacity: 0.38,
+                shadowRadius: 12,
+                shadowOffset: { width: 0, height: 0 },
               }}
             />
-          ))}
-          <Animated.View
+          </View>
+          <View
             style={{
-              position: 'absolute',
-              left: 3,
-              right: 3,
-              bottom: 3,
-              borderRadius: 10,
-              backgroundColor: '#FF7C7C',
-              height: mercuryHeight,
+              width: 68,
+              height: 68,
+              marginTop: -14,
+              borderRadius: 34,
+              backgroundColor: '#E9486D',
+              borderWidth: 4,
+              borderColor: '#FFAE82',
+              shadowColor: '#FF7C7C',
+              shadowOpacity: 0.44,
+              shadowRadius: 22,
+              shadowOffset: { width: 0, height: 10 },
             }}
           />
         </View>
-        <View
-          style={{
-            width: 54,
-            height: 54,
-            marginTop: -8,
-            borderRadius: 27,
-            backgroundColor: '#E8486B',
-            borderWidth: 1.5,
-            borderColor: '#FF8A6B',
-          }}
-        />
       </View>
 
-      <View style={{ marginTop: 24, alignItems: 'center' }}>
+      <Animated.View
+        style={{
+          marginTop: 20,
+          alignItems: 'center',
+          opacity: glow,
+        }}
+      >
         <Text
           style={{
-            fontSize: 60,
-            lineHeight: 72,
-            fontWeight: '600',
-            color: '#FFB88A',
-            letterSpacing: -1.8,
+            fontSize: 58,
+            lineHeight: 66,
+            fontWeight: '800',
+            color: '#FFBF91',
+            letterSpacing: -2.4,
             fontVariant: ['tabular-nums'],
             fontFamily: T.font,
+            textShadowColor: 'rgba(255, 151, 112, 0.22)',
+            textShadowOffset: { width: 0, height: 0 },
+            textShadowRadius: 18,
           }}
         >
           {tempLabel}
-          <Text style={{ fontSize: 26, lineHeight: 72 }}>°C</Text>
+          <Text style={{ fontSize: 22, lineHeight: 66 }}>°C</Text>
         </Text>
-      </View>
+      </Animated.View>
 
-      <View style={{ marginTop: 18, alignItems: 'center' }}>
+      <View style={{ marginTop: 14, alignItems: 'center' }}>
         {scene.answer.map((ln, i) => (
           <Text
             key={i}
             style={{
-              fontSize: 20,
+              fontSize: 19,
               lineHeight: 28,
-              fontWeight: '700',
+              fontWeight: '800',
               color: T.fg,
-              letterSpacing: -0.3,
+              letterSpacing: -0.34,
               textAlign: 'center',
               fontFamily: T.font,
             }}
@@ -697,21 +830,32 @@ function Thermometer({ scene }: { scene: ThermometerScene }) {
             {ln}
           </Text>
         ))}
-        <Text
+        <View
           style={{
-            marginTop: 12,
-            fontSize: 12,
-            lineHeight: 18,
-            color: T.fg3,
-            letterSpacing: 1,
-            fontWeight: '600',
-            fontFamily: T.font,
+            marginTop: 18,
+            paddingHorizontal: 14,
+            paddingVertical: 7,
+            borderRadius: 999,
+            backgroundColor: 'rgba(255, 255, 255, 0.06)',
+            borderWidth: 1,
+            borderColor: 'rgba(255, 255, 255, 0.07)',
           }}
         >
-          {scene.caption}
-        </Text>
+          <Text
+            style={{
+              fontSize: 12,
+              lineHeight: 17,
+              color: 'rgba(245, 246, 251, 0.64)',
+              letterSpacing: 1.1,
+              fontWeight: '700',
+              fontFamily: T.font,
+            }}
+          >
+            {scene.caption}
+          </Text>
+        </View>
       </View>
-    </View>
+    </Animated.View>
   );
 }
 

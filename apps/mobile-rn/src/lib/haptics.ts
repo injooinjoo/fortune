@@ -203,6 +203,21 @@ export function loveHeartbeat() {
   });
 }
 
+/** Onboarding scene advance — gentle page-turn feedback */
+export function onboardingAdvance() {
+  safe(() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft));
+}
+
+/** Onboarding brand reveal — single warm bloom */
+export function onboardingBrandReveal() {
+  safe(() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light));
+}
+
+/** Onboarding thermometer reveal — single success finish */
+export function onboardingTemperatureReveal() {
+  safe(() => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success));
+}
+
 /** Investment fortune — coin drop pattern */
 export function investmentCoin() {
   safe(async () => {
