@@ -326,52 +326,8 @@ async function verifyGooglePlayPurchase(
  * 1. Production 서버에서 먼저 검증 시도
  * 2. 21007 에러 시 Sandbox 서버로 재시도
  */
-type AppleReceiptLineItem = {
-  product_id?: string;
-  transaction_id?: string;
-  original_transaction_id?: string;
-  purchase_date_ms?: string;
-};
-
-function selectAppleReceiptLineItem(
-  validationResult: {
-    latest_receipt_info?: AppleReceiptLineItem[];
-    receipt?: { in_app?: AppleReceiptLineItem[] };
-  },
-  requestedProductId: string,
-  requestedTransactionId?: string | null,
-): AppleReceiptLineItem | null {
-  const allItems = [
-    ...(validationResult.latest_receipt_info ?? []),
-    ...(validationResult.receipt?.in_app ?? []),
-  ].filter((item): item is AppleReceiptLineItem => !!item);
-
-  const matchingItems = allItems.filter((item) => {
-    if (item.product_id !== requestedProductId) {
-      return false;
-    }
-
-    if (!requestedTransactionId) {
-      return true;
-    }
-
-    return item.transaction_id === requestedTransactionId ||
-      item.original_transaction_id === requestedTransactionId;
-  });
-
-  matchingItems.sort((a, b) => {
-    const aDate = Number(a.purchase_date_ms ?? 0);
-    const bDate = Number(b.purchase_date_ms ?? 0);
-    return bDate - aDate;
-  });
-
-  return matchingItems[0] ?? null;
-}
-
 async function verifyAppleReceipt(
   receipt: string,
-  requestedProductId: string,
-  requestedTransactionId?: string | null,
   sharedSecret?: string,
 ): Promise<{
   isValid: boolean;
@@ -384,36 +340,6 @@ async function verifyAppleReceipt(
     "receipt-data": receipt,
     ...(sharedSecret && { "password": sharedSecret }),
     "exclude-old-transactions": true,
-  };
-
-  const extractVerifiedLine = (
-    validationResult: {
-      latest_receipt_info?: AppleReceiptLineItem[];
-      receipt?: { in_app?: AppleReceiptLineItem[] };
-    },
-    environment: string,
-  ) => {
-    const receiptLine = selectAppleReceiptLineItem(
-      validationResult,
-      requestedProductId,
-      requestedTransactionId,
-    );
-
-    if (!receiptLine?.product_id || !receiptLine?.transaction_id) {
-      return {
-        isValid: false,
-        environment,
-        error:
-          "Apple receipt valid, but no line item matched requested product/transaction",
-      };
-    }
-
-    return {
-      isValid: true,
-      productId: receiptLine.product_id,
-      transactionId: receiptLine.transaction_id,
-      environment,
-    };
   };
 
   console.log("🍎 Apple 영수증 검증 시작...");
@@ -433,7 +359,14 @@ async function verifyAppleReceipt(
     // 성공
     if (productionResult.status === APPLE_STATUS.SUCCESS) {
       console.log("✅ Production 서버 검증 성공!");
-      return extractVerifiedLine(productionResult, "production");
+      const latestReceipt = productionResult.latest_receipt_info?.[0] ||
+        productionResult.receipt?.in_app?.[0];
+      return {
+        isValid: true,
+        productId: latestReceipt?.product_id,
+        transactionId: latestReceipt?.transaction_id,
+        environment: "production",
+      };
     }
 
     // 2. Sandbox 영수증인 경우 (21007) → Sandbox 서버로 재시도
@@ -453,7 +386,14 @@ async function verifyAppleReceipt(
 
       if (sandboxResult.status === APPLE_STATUS.SUCCESS) {
         console.log("✅ Sandbox 서버 검증 성공!");
-        return extractVerifiedLine(sandboxResult, "sandbox");
+        const latestReceipt = sandboxResult.latest_receipt_info?.[0] ||
+          sandboxResult.receipt?.in_app?.[0];
+        return {
+          isValid: true,
+          productId: latestReceipt?.product_id,
+          transactionId: latestReceipt?.transaction_id,
+          environment: "sandbox",
+        };
       }
 
       console.log(`❌ Sandbox 검증 실패: status=${sandboxResult.status}`);
@@ -542,7 +482,7 @@ const ALLOWED_PRODUCT_IDS = new Set<string>([
 
 serve(async (req) => {
   console.log("========================================");
-  console.log("🚀 payment-verify-purchase v20 시작");
+  console.log("🚀 payment-verify-purchase v18 시작");
   console.log("🍎 Apple 영수증 검증: Production → Sandbox fallback 지원");
   console.log("========================================");
 
@@ -639,7 +579,7 @@ serve(async (req) => {
     if (authHeader) {
       const token = authHeader.replace("Bearer ", "");
       console.log(`🔐 토큰 길이: ${token.length}`);
-      console.log("🔐 토큰 본문: [REDACTED]");
+      console.log(`🔐 토큰 앞 50자: ${token.substring(0, 50)}...`);
 
       const { data: { user }, error: authError } = await supabase.auth.getUser(
         token,
@@ -690,14 +630,7 @@ serve(async (req) => {
       const appleSharedSecret = Deno.env.get("APPLE_SHARED_SECRET");
 
       // Apple 영수증 검증 (Production → Sandbox fallback)
-      // iOS app receipt can contain many historical IAP rows. Bind the verified
-      // row to the product/transaction received from StoreKit before granting.
-      const appleResult = await verifyAppleReceipt(
-        receipt,
-        productId,
-        transactionId,
-        appleSharedSecret,
-      );
+      const appleResult = await verifyAppleReceipt(receipt, appleSharedSecret);
 
       isValid = appleResult.isValid;
       environment = appleResult.environment || "unknown";
@@ -756,57 +689,24 @@ serve(async (req) => {
       `✅ 플랫폼 검증 결과: isValid = ${isValid}, environment = ${environment}`,
     );
 
-    // /ultrareview BM P0 #1/#3: verified store transaction is the single
-    // truth. Replay is global across app accounts, not per user.
-    let alreadyGranted = false;
-    let replayOwnedByCurrentUser = true;
+    // /ultrareview BM P0 #1: 검증 통과 시 verified_purchases 에 기록.
+    // subscription-activate 등 후속 함수가 이 row 존재 여부로 진위 확인.
+    // ON CONFLICT DO NOTHING — replay 시도라도 verify_purchases 자체는 멱등.
     if (userId && isValid && verifiedTransactionId) {
-      const { data: existingVerified, error: existingVerifiedErr } =
-        await supabase
-          .from("verified_purchases")
-          .select("user_id")
-          .eq("platform", platform)
-          .eq("verified_transaction_id", verifiedTransactionId)
-          .limit(1)
-          .maybeSingle();
-
-      if (existingVerifiedErr) {
+      const { error: vpInsertErr } = await supabase
+        .from("verified_purchases")
+        .insert({
+          user_id: userId,
+          platform,
+          verified_product_id: verifiedProductId,
+          verified_transaction_id: verifiedTransactionId,
+          environment,
+        });
+      // duplicate key error 는 무시 (UNIQUE 제약 → idempotent)
+      if (vpInsertErr && !vpInsertErr.message?.includes("duplicate")) {
         console.warn(
-          `⚠️ verified_purchases replay 체크 실패: ${existingVerifiedErr.message}`,
+          `⚠️ verified_purchases insert 실패: ${vpInsertErr.message}`,
         );
-      }
-
-      if (existingVerified) {
-        alreadyGranted = true;
-        replayOwnedByCurrentUser = existingVerified.user_id === userId;
-        console.log(
-          `🔁 verifiedTransactionId=${verifiedTransactionId} 는 이미 검증됨 — owner=current? ${replayOwnedByCurrentUser}`,
-        );
-      }
-
-      if (!existingVerified) {
-        const { error: vpInsertErr } = await supabase
-          .from("verified_purchases")
-          .insert({
-            user_id: userId,
-            platform,
-            verified_product_id: verifiedProductId,
-            verified_transaction_id: verifiedTransactionId,
-            environment,
-          });
-        // duplicate key error 는 replay 로 취급. Global UNIQUE 가 최종 방어선.
-        if (vpInsertErr) {
-          if (vpInsertErr.message?.includes("duplicate")) {
-            alreadyGranted = true;
-            console.log(
-              `🔁 verified_purchases global UNIQUE hit — replay로 처리`,
-            );
-          } else {
-            console.warn(
-              `⚠️ verified_purchases insert 실패: ${vpInsertErr.message}`,
-            );
-          }
-        }
       }
     }
 
@@ -823,11 +723,35 @@ serve(async (req) => {
       );
     }
 
+    // /ultrareview BM P0 #3: replay 차단 — 같은 verifiedTransactionId 가 이미
+    // 토큰 지급된 경우 idempotent 응답 (성공이지만 토큰 추가 안 함).
+    let alreadyGranted = false;
+    if (userId && isValid && verifiedTransactionId) {
+      const { data: existingTxn, error: replayCheckErr } = await supabase
+        .from("token_transactions")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("transaction_type", "purchase")
+        .eq("reference_id", verifiedTransactionId)
+        .limit(1)
+        .maybeSingle();
+      if (replayCheckErr) {
+        console.warn(
+          `⚠️ replay 체크 쿼리 실패 (계속 진행): ${replayCheckErr.message}`,
+        );
+      }
+      if (existingTxn) {
+        alreadyGranted = true;
+        console.log(
+          `🔁 verifiedTransactionId=${verifiedTransactionId} 는 이미 지급 처리됨 — replay 무시`,
+        );
+      }
+    }
+
     // 첫 구매 보너스 관련 변수 (응답에서도 사용)
     let actualTokensToAdd = tokensToAdd;
     let bonusTokens = 0;
     let isFirstPurchase = false;
-    let newBalance: number | null = null;
 
     if (!userId) {
       console.log("⚠️ userId가 없어서 토큰 추가 건너뜀");
@@ -840,86 +764,151 @@ serve(async (req) => {
     }
     if (alreadyGranted) {
       console.log(
-        `⚠️ alreadyGranted=true (이전에 같은 store transaction 처리됨) — 토큰 추가 건너뜀`,
+        `⚠️ alreadyGranted=true (이전에 같은 transaction 으로 지급됨) — 토큰 추가 건너뜀`,
       );
     }
 
     if (userId && isValid && tokensToAdd > 0 && !alreadyGranted) {
       console.log("========================================");
-      console.log("💰 Atomic 토큰 구매 지급 시작");
+      console.log("💰 토큰 추가 프로세스 시작");
       console.log("========================================");
 
-      const purchaseDescription = `토큰 ${tokensToAdd}개 구매`;
-      const { data: grantResult, error: grantError } = await supabase.rpc(
-        "grant_purchase_tokens_atomic",
-        {
-          p_user_id: userId,
-          p_base_amount: tokensToAdd,
-          p_description: purchaseDescription,
-          p_reference_type: "in_app_purchase",
-          p_reference_id: verifiedTransactionId,
-          p_idempotency_key: verifiedTransactionId
-            ? `purchase:${platform}:${verifiedTransactionId}`
-            : null,
-        },
-      );
+      console.log("🎁 [STEP 0] 첫 구매 보너스 확인...");
+      const { data: userProfile } = await supabase
+        .from("user_profiles")
+        .select("first_purchase_bonus_granted")
+        .eq("id", userId)
+        .single();
 
-      if (grantError) {
-        console.error(
-          `❌ Atomic 토큰 구매 지급 실패: ${grantError.message}`,
+      if (userProfile && !userProfile.first_purchase_bonus_granted) {
+        // 첫 구매: 50% 보너스 추가
+        bonusTokens = Math.floor(tokensToAdd * 0.5);
+        actualTokensToAdd = tokensToAdd + bonusTokens;
+        isFirstPurchase = true;
+        console.log(
+          `🎁 첫 구매 보너스 적용! 기본 ${tokensToAdd} + 보너스 ${bonusTokens} = ${actualTokensToAdd}`,
         );
-        throw grantError;
+
+        // 첫 구매 플래그 업데이트
+        const { error: updateError } = await supabase
+          .from("user_profiles")
+          .update({ first_purchase_bonus_granted: true })
+          .eq("id", userId);
+
+        if (updateError) {
+          console.error("❌ 첫 구매 플래그 업데이트 실패:", updateError);
+        } else {
+          console.log("✅ 첫 구매 플래그 업데이트 완료");
+        }
+      } else {
+        console.log("📌 첫 구매 아님 - 보너스 없음");
       }
 
-      const grant = grantResult as {
-        balance?: number;
-        granted?: boolean;
-        replayed?: boolean;
-        owned_by_current_user?: boolean;
-        tokens_added?: number;
-        base_tokens?: number;
-        bonus_tokens?: number;
-        is_first_purchase?: boolean;
-      };
-
-      alreadyGranted = grant.replayed === true;
-      replayOwnedByCurrentUser = grant.owned_by_current_user !== false;
-      actualTokensToAdd = Number(grant.tokens_added ?? tokensToAdd);
-      bonusTokens = Number(grant.bonus_tokens ?? 0);
-      isFirstPurchase = grant.is_first_purchase === true;
-      newBalance = typeof grant.balance === "number" ? grant.balance : null;
-
-      if (!replayOwnedByCurrentUser) {
-        return new Response(
-          JSON.stringify({
-            valid: false,
-            error: "Purchase transaction already linked to another account",
-            productId: verifiedProductId,
-            transactionId: verifiedTransactionId,
-            platform,
-            environment,
-          }),
-          {
-            status: 409,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          },
-        );
-      }
-
+      // 현재 잔액 조회 (token_balance - 단수!)
+      console.log("📊 [STEP 1] 현재 잔액 조회 시작...");
       console.log(
-        `✅ Atomic 토큰 구매 지급 완료: granted=${grant.granted}, replayed=${grant.replayed}, tokensAdded=${actualTokensToAdd}, balance=${newBalance}`,
+        `📊 쿼리: SELECT balance, total_earned FROM token_balance WHERE user_id = '${userId}'`,
       );
+
+      const { data: currentBalance, error: selectError } = await supabase
+        .from("token_balance")
+        .select("balance, total_earned")
+        .eq("user_id", userId)
+        .single();
+
+      console.log(`📊 [STEP 1] 조회 결과:`);
+      console.log(`   - data: ${JSON.stringify(currentBalance)}`);
+      console.log(
+        `   - error: ${selectError ? JSON.stringify(selectError) : "null"}`,
+      );
+
+      const oldBalance = currentBalance?.balance || 0;
+      const oldTotalEarned = currentBalance?.total_earned || 0;
+      const newBalance = oldBalance + actualTokensToAdd;
+
+      console.log(`📊 계산:`);
+      console.log(`   - 기존 balance: ${oldBalance}`);
+      console.log(`   - 기존 total_earned: ${oldTotalEarned}`);
+      console.log(
+        `   - 추가할 토큰: ${actualTokensToAdd}${
+          isFirstPurchase
+            ? ` (기본 ${tokensToAdd} + 보너스 ${bonusTokens})`
+            : ""
+        }`,
+      );
+      console.log(`   - 새 balance: ${newBalance}`);
+      console.log(
+        `   - 새 total_earned: ${oldTotalEarned + actualTokensToAdd}`,
+      );
+
+      // 잔액 업데이트 (token_balance - 단수!)
+      console.log("📊 [STEP 2] 잔액 업데이트 시작...");
+      const upsertData = {
+        user_id: userId,
+        balance: newBalance,
+        total_earned: oldTotalEarned + actualTokensToAdd,
+        updated_at: new Date().toISOString(),
+      };
+      console.log(`📊 UPSERT 데이터: ${JSON.stringify(upsertData, null, 2)}`);
+
+      const { data: upsertResult, error: balanceError } = await supabase
+        .from("token_balance")
+        .upsert(upsertData, { onConflict: "user_id" })
+        .select();
+
+      console.log(`📊 [STEP 2] UPSERT 결과:`);
+      console.log(`   - data: ${JSON.stringify(upsertResult)}`);
+      console.log(
+        `   - error: ${balanceError ? JSON.stringify(balanceError) : "null"}`,
+      );
+
+      if (balanceError) {
+        console.error("❌ 토큰 잔액 업데이트 실패!");
+        console.error(`❌ 에러 상세: ${JSON.stringify(balanceError, null, 2)}`);
+      } else {
+        console.log(
+          `✅ 토큰 잔액 업데이트 성공: ${oldBalance} → ${newBalance}`,
+        );
+
+        // 구매 이력 기록 (token_transactions 사용)
+        console.log("📊 [STEP 3] 거래 이력 기록 시작...");
+        const purchaseDescription = isFirstPurchase
+          ? `토큰 ${tokensToAdd}개 구매 + 첫 구매 보너스 ${bonusTokens}개`
+          : `토큰 ${actualTokensToAdd}개 구매`;
+        const transactionData = {
+          user_id: userId,
+          transaction_type: "purchase",
+          amount: actualTokensToAdd,
+          balance_after: newBalance,
+          description: purchaseDescription,
+          reference_type: "in_app_purchase",
+          reference_id: verifiedTransactionId,
+        };
+        console.log(
+          `📊 INSERT 데이터: ${JSON.stringify(transactionData, null, 2)}`,
+        );
+
+        const { data: txResult, error: txError } = await supabase
+          .from("token_transactions")
+          .insert(transactionData)
+          .select();
+
+        console.log(`📊 [STEP 3] INSERT 결과:`);
+        console.log(`   - data: ${JSON.stringify(txResult)}`);
+        console.log(
+          `   - error: ${txError ? JSON.stringify(txError) : "null"}`,
+        );
+      }
 
       // 이벤트 로깅
-      console.log("📊 이벤트 로깅 시작...");
+      console.log("📊 [STEP 4] 이벤트 로깅 시작...");
       const eventData = {
         user_id: userId,
         event_type: "purchase_verified",
-        product_id: verifiedProductId,
+        product_id: productId,
         platform,
         purchase_id: verifiedTransactionId,
         metadata: {
-          requested_product_id: productId,
           tokens_added: actualTokensToAdd,
           base_tokens: tokensToAdd,
           bonus_tokens: bonusTokens,
@@ -927,13 +916,14 @@ serve(async (req) => {
           new_balance: newBalance,
         },
       };
+      console.log(`📊 INSERT 데이터: ${JSON.stringify(eventData, null, 2)}`);
 
       const { error: eventError } = await supabase
         .from("subscription_events")
         .insert(eventData);
 
       console.log(
-        `📊 이벤트 로깅 결과: ${
+        `📊 [STEP 4] 이벤트 로깅 결과: ${
           eventError ? JSON.stringify(eventError) : "성공"
         }`,
       );
@@ -941,21 +931,6 @@ serve(async (req) => {
       console.log("========================================");
       console.log("✅ 토큰 추가 프로세스 완료");
       console.log("========================================");
-    } else if (!replayOwnedByCurrentUser) {
-      return new Response(
-        JSON.stringify({
-          valid: false,
-          error: "Purchase transaction already linked to another account",
-          productId: verifiedProductId,
-          transactionId: verifiedTransactionId,
-          platform,
-          environment,
-        }),
-        {
-          status: 409,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
-      );
     }
 
     // 응답 데이터에 보너스 정보 포함
