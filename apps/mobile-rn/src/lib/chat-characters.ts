@@ -3,7 +3,7 @@ import {
   type FortuneTypeId,
 } from '@fortune/product-contracts';
 
-import { type CreatedFriend } from '../providers/friend-creation-provider';
+import type { CreatedFriend } from '../providers/friend-creation-provider';
 
 export type ChatCharacterTab = 'story' | 'fortune';
 

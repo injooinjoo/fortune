@@ -78,6 +78,7 @@ import {
   haneulOracleCharacter,
   isCustomFriendCharacter,
   isFortuneChatCharacter,
+  normalizeChatCharacterId,
   storyChatCharacters,
   type ChatCharacterSpec,
   type ChatCharacterTab,
@@ -123,6 +124,7 @@ import {
 import { setTyping as setGlobalTyping } from '../lib/typing-store';
 import { replyDeliveryController } from '../lib/reply-delivery-controller';
 import { useChatMessageController } from '../features/chat-surface/hooks/use-chat-message-controller';
+import { shouldDiscardAudioMessageRecording } from '../features/chat-surface/audio-recording-cleanup';
 import { useMessageQueue } from '../features/chat-surface/hooks/use-message-queue';
 import {
   ackScheduledReplyIfPresent,
@@ -286,7 +288,7 @@ function mergeRemoteMessagesPreservingLocal(
  */
 export function ChatScreen() {
   const params = useLocalSearchParams<{ characterId?: string | string[]; showList?: string | string[] }>();
-  const directCharacterId = readSearchParam(params.characterId);
+  const directCharacterId = normalizeChatCharacterId(readSearchParam(params.characterId)) ?? undefined;
   const forceListMode = readSearchParam(params.showList) === '1';
   const {
     cachedCharacterConversations,
@@ -308,6 +310,8 @@ export function ChatScreen() {
     saveProfile,
     syncRemoteProfile,
   } = useMobileAppState();
+  const persistedSelectedCharacterId =
+    normalizeChatCharacterId(mobileAppState.chat.selectedCharacterId) ?? undefined;
   const { createdFriends, resetDraft, removeFriend } = useFriendCreation();
   const directCharacter = useMemo(
     () => findChatCharacterById(directCharacterId, createdFriends),
@@ -664,6 +668,27 @@ export function ChatScreen() {
     toggleRecording: toggleVoiceRecording,
   } = useVoiceInput({ onTranscript: handleVoiceTranscript });
 
+  const discardActiveAudioMessageRecording = useCallback(async () => {
+    const recording = audioRecordingRef.current;
+    if (!recording) return;
+
+    audioRecordingRef.current = null;
+    setRecordingAudioForCharacterId(null);
+
+    try {
+      await recording.stopAndUnloadAsync();
+      const { Audio } = await import('expo-av');
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+        playsInSilentModeIOS: true,
+      });
+    } catch (error) {
+      captureError(error, { surface: 'chat:audio-message-discard' }).catch(
+        () => undefined,
+      );
+    }
+  }, []);
+
   useEffect(() => {
     if (!pendingChatFortuneType) {
       return;
@@ -701,7 +726,7 @@ export function ChatScreen() {
     // (deprecated fortune characters 더 이상 노출 X)
     const targetCharacterId =
       selectedCharacterId ??
-      mobileAppState.chat.selectedCharacterId ??
+      persistedSelectedCharacterId ??
       haneulOracleCharacter.id;
 
     setActiveTab('story');
@@ -725,7 +750,7 @@ export function ChatScreen() {
     });
   }, [
     consumePendingMySajuContext,
-    mobileAppState.chat.selectedCharacterId,
+    persistedSelectedCharacterId,
     pendingMySajuContext,
     selectedCharacterId,
   ]);
@@ -873,7 +898,7 @@ export function ChatScreen() {
 
     const initialCharacterId =
       directCharacterId ??
-      mobileAppState.chat.selectedCharacterId ??
+      persistedSelectedCharacterId ??
       storyChatCharacters[0]?.id;
 
     if (initialCharacterId) {
@@ -885,7 +910,7 @@ export function ChatScreen() {
         void hydrateStoryCharacter(character.id);
       }
     }
-  }, [gate, session?.user.id, directCharacterId, mobileAppState.chat.selectedCharacterId, hydrateStoryCharacter]);
+  }, [gate, session?.user.id, directCharacterId, persistedSelectedCharacterId, hydrateStoryCharacter]);
 
   // 리스트 화면이 (재)포커스되면 전 캐릭터를 강제 재하이드레이션 —
   // 프로액티브 메시지 / 다른 디바이스에서의 변경을 리스트 프리뷰에 즉시 반영.
@@ -951,7 +976,7 @@ export function ChatScreen() {
     const targetId =
       selectedCharacterId ??
       directCharacterId ??
-      mobileAppState.chat.selectedCharacterId;
+      persistedSelectedCharacterId;
 
     const resolved = findChatCharacterById(targetId, createdFriends);
 
@@ -971,7 +996,7 @@ export function ChatScreen() {
     defaultCharacter,
     directCharacterId,
     highlightedExpert,
-    mobileAppState.chat.selectedCharacterId,
+    persistedSelectedCharacterId,
     selectedCharacterId,
   ]);
 
@@ -980,6 +1005,31 @@ export function ChatScreen() {
     [tabCharacters],
   );
   const storeMessagesByCharacterId = useStoreMessagesMap(storeMessageCharacterIds);
+
+  useEffect(() => {
+    if (!recordingAudioForCharacterId) return;
+    if (
+      shouldDiscardAudioMessageRecording({
+        recordingCharacterId: recordingAudioForCharacterId,
+        activeCharacterId: selectedCharacter.id,
+        surfaceMode,
+      })
+    ) {
+      void discardActiveAudioMessageRecording();
+    }
+  }, [
+    discardActiveAudioMessageRecording,
+    recordingAudioForCharacterId,
+    selectedCharacter.id,
+    surfaceMode,
+  ]);
+
+  useEffect(
+    () => () => {
+      void discardActiveAudioMessageRecording();
+    },
+    [discardActiveAudioMessageRecording],
+  );
 
   // 화면 read 모델은 MessageStore 를 우선한다. push/list/chat/badge 가 같은
   // 배열을 보도록 하고, 아직 store 에 실제 대화가 없는 신규 캐릭터만 기존
