@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { ResizeMode, Video } from 'expo-av';
 import { router } from 'expo-router';
 import {
   Animated,
   Easing,
-  Image,
   Pressable,
   Text,
   View,
@@ -19,8 +19,8 @@ import {
 import { markWelcomeSeen } from '../lib/welcome-state';
 
 // Ondo Design System tokens — mirrors `ui_kits/mobile/ondo-primitives.jsx`.
-const BRAND_AURA_ART = require('../../assets/onboarding/ondo-brand-aura.webp');
-const THERMOMETER_AURA_ART = require('../../assets/onboarding/ondo-thermometer-aura.webp');
+const BRAND_AURA_LOOP = require('../../assets/onboarding/ondo-brand-aura-loop.mp4');
+const THERMOMETER_AURA_LOOP = require('../../assets/onboarding/ondo-thermometer-aura-loop.mp4');
 
 const T = {
   bg: '#0B0B10',
@@ -454,11 +454,13 @@ function BrandReveal() {
           transform: [{ scale: artScale }, { translateY: artY }],
         }}
       >
-        <Image
-          source={BRAND_AURA_ART}
-          resizeMode="contain"
+        <Video
+          source={BRAND_AURA_LOOP}
+          resizeMode={ResizeMode.CONTAIN}
+          shouldPlay
+          isLooping
+          isMuted
           style={{ width: '100%', height: '100%' }}
-          accessibilityIgnoresInvertColors
         />
       </Animated.View>
 
@@ -607,11 +609,13 @@ function Thermometer({ scene }: { scene: ThermometerScene }) {
           transform: [{ scale: artScale }, { translateY: artY }],
         }}
       >
-        <Image
-          source={THERMOMETER_AURA_ART}
-          resizeMode="contain"
+        <Video
+          source={THERMOMETER_AURA_LOOP}
+          resizeMode={ResizeMode.CONTAIN}
+          shouldPlay
+          isLooping
+          isMuted
           style={{ width: '100%', height: '100%' }}
-          accessibilityIgnoresInvertColors
         />
       </Animated.View>
 
