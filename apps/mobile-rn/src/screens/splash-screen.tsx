@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { ResizeMode, Video } from 'expo-av';
 import { router, type Href } from 'expo-router';
-import { Animated, Easing, Pressable, Text, View } from 'react-native';
+import { Animated, Easing, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { formatVersionLabel } from '../lib/build-identity';
@@ -16,14 +15,13 @@ import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 const AUTO_ADVANCE_MS = 1400;
 const SLOW_NETWORK_ESCAPE_MS = 4000;
 
-// Ondo Splash — Higgsfield-generated premium aura art.
-// Native launch image uses the same asset via app.config.js; this JS route
-// provides the OTA-updatable splash moment after bootstrap starts.
+// Ondo Splash — keep the native launch image and JS route visually identical.
+// The user wants only the final minimal wordmark style, no intermediate orb art.
 const BG = '#0B0B10';
 const FG_MUTED = '#9198AA';
 const FG_DIM = '#6B6F7D';
 
-const SPLASH_LOOP = require('../../assets/splash-loop.mp4');
+const SPLASH_ART = require('../../assets/splash-icon.png');
 
 export function SplashScreen() {
   const { gate, session, status } = useAppBootstrap();
@@ -175,13 +173,11 @@ export function SplashScreen() {
             transform: [{ scale: artScale }, { translateY: floatY }],
           }}
         >
-          <Video
-            source={SPLASH_LOOP}
-            resizeMode={ResizeMode.CONTAIN}
-            shouldPlay
-            isLooping
-            isMuted
+          <Image
+            source={SPLASH_ART}
+            resizeMode="contain"
             style={{ width: '100%', height: '100%' }}
+            accessibilityIgnoresInvertColors
           />
         </Animated.View>
       </View>
