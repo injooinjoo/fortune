@@ -329,6 +329,15 @@ export function ChatScreen() {
       }
     },
   });
+  const lastPremiumTopUpOpenAtRef = useRef(0);
+  const openPremiumTopUp = useCallback(() => {
+    const now = Date.now();
+    if (now - lastPremiumTopUpOpenAtRef.current < 1200) {
+      return;
+    }
+    lastPremiumTopUpOpenAtRef.current = now;
+    router.push(`/premium?intent=top-up&ts=${now}` as Href);
+  }, []);
   const [activeFortuneType, setActiveFortuneType] =
     useState<FortuneTypeId | null>(null);
   const [activeProviderId, setActiveProviderId] =
@@ -2420,8 +2429,8 @@ export function ChatScreen() {
     setPendingMenuEntry(null);
     costConfirmResolverRef.current?.(false);
     costConfirmResolverRef.current = null;
-    router.push('/premium' as Href);
-  }, []);
+    openPremiumTopUp();
+  }, [openPremiumTopUp]);
 
   // 본인이 보낸 텍스트 메시지 길게 누르기 → 삭제 컨펌. messagesByCharacterId
   // 에서 빼고 디스크 + 원격 양쪽 갱신. story romance pilot 은 snapshot 통째로
@@ -3245,7 +3254,7 @@ export function ChatScreen() {
         });
 
         if (error.code === 'INSUFFICIENT_TOKENS') {
-          router.push('/premium');
+          openPremiumTopUp();
           return;
         }
 
@@ -3840,7 +3849,7 @@ export function ChatScreen() {
         });
 
         if (error.code === 'INSUFFICIENT_TOKENS') {
-          router.push('/premium');
+          openPremiumTopUp();
           return;
         }
 

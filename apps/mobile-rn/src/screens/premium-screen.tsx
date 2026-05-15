@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import {
   getProductDisplayTitle,
   getSubscriptionPeriodLabel,
@@ -72,7 +72,15 @@ function formatTokenBalanceLabel(tokenBalance: number, isUnlimited: boolean) {
   return `보유 토큰 ${tokenBalance.toLocaleString('ko-KR')}개`;
 }
 
+function readRouteParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
 export function PremiumScreen() {
+  const params = useLocalSearchParams<{ intent?: string | string[]; ts?: string | string[] }>();
+  const premiumIntent = readRouteParam(params.intent);
+  const topUpEntryKey = readRouteParam(params.ts);
+  const [showAllProducts, setShowAllProducts] = useState(false);
   const { session } = useAppBootstrap();
   const {
     isPurchasePending,
@@ -85,9 +93,20 @@ export function PremiumScreen() {
     storeStatus,
     syncRemoteProfile,
   } = useMobileAppState();
-  const [selectedProductId, setSelectedProductId] = useState<ProductId>(
-    storefrontSubscriptionProductIds[0],
+  const [selectedProductId, setSelectedProductId] = useState<ProductId>(() =>
+    premiumIntent === 'top-up'
+      ? storefrontConsumableProductIds[0]
+      : storefrontSubscriptionProductIds[0],
   );
+
+  useEffect(() => {
+    if (premiumIntent !== 'top-up') {
+      return;
+    }
+    setShowAllProducts(false);
+    setSelectedProductId(storefrontConsumableProductIds[0]);
+  }, [premiumIntent, topUpEntryKey]);
+
   const rewardedAd = useRewardedAd({
     session,
     userId: session?.user.id ?? null,
@@ -104,6 +123,7 @@ export function PremiumScreen() {
   const lifetime = storefrontNonConsumableProductIds.map(
     (id) => productCatalog[id],
   );
+  const focusTopUpOnly = premiumIntent === 'top-up' && !showAllProducts;
   const activeProduct = state.premium.activeProductId
     ? productCatalog[state.premium.activeProductId]
     : null;
@@ -254,12 +274,40 @@ export function PremiumScreen() {
 
   return (
     <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
-      <AppText variant="displaySmall">프리미엄</AppText>
+      <AppText variant="displaySmall">
+        {premiumIntent === 'top-up' ? '토큰 충전' : '프리미엄'}
+      </AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        현재 판매 중인 상품과 구독 상태를 한곳에서 확인할 수 있어요.
+        {premiumIntent === 'top-up'
+          ? '대화에 필요한 토큰만 빠르게 충전할 수 있어요.'
+          : '현재 판매 중인 상품과 구독 상태를 한곳에서 확인할 수 있어요.'}
       </AppText>
 
-      <Card>
+      {premiumIntent === 'top-up' ? (
+        <Card>
+          <AppText variant="heading4">토큰이 부족해요</AppText>
+          <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+            지금은 토큰 상품만 고르면 됩니다. 구독·평생소장 상품은 숨겨서 결제 흐름을
+            단순하게 보여드려요.
+          </AppText>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+            <Chip label={tokenBalanceLabel} tone="accent" />
+            <Chip label={storeStatus === 'loading' ? '스토어 확인 중' : '충전 가능'} />
+          </View>
+          {focusTopUpOnly ? (
+            <PrimaryButton
+              onPress={() => setShowAllProducts(true)}
+              tone="secondary"
+            >
+              구독 상품도 보기
+            </PrimaryButton>
+          ) : null}
+        </Card>
+      ) : null}
+
+      {!focusTopUpOnly ? (
+        <>
+          <Card>
         <AppText variant="heading4">한눈에 보기</AppText>
         <AppText variant="bodyMedium">
           {session
@@ -353,6 +401,8 @@ export function PremiumScreen() {
           />
         ))}
       </Card>
+        </>
+      ) : null}
 
       <Card>
         <AppText variant="heading4">토큰 충전</AppText>
@@ -371,19 +421,21 @@ export function PremiumScreen() {
         ))}
       </Card>
 
-      <Card>
-        <AppText variant="heading4">평생 소장</AppText>
-        {lifetime.map((product) => (
-          <ProductOption
-            key={product.id}
-            isSelected={selectedProductId === product.id}
-            onPress={() => setSelectedProductId(product.id)}
-            title={getProductDisplayTitle(product.id)}
-            subtitle={product.description}
-            trailing={storePriceLabels[product.id] ?? formatPrice(product.price)}
-          />
-        ))}
-      </Card>
+      {!focusTopUpOnly ? (
+        <Card>
+          <AppText variant="heading4">평생 소장</AppText>
+          {lifetime.map((product) => (
+            <ProductOption
+              key={product.id}
+              isSelected={selectedProductId === product.id}
+              onPress={() => setSelectedProductId(product.id)}
+              title={getProductDisplayTitle(product.id)}
+              subtitle={product.description}
+              trailing={storePriceLabels[product.id] ?? formatPrice(product.price)}
+            />
+          ))}
+        </Card>
+      ) : null}
 
       {session && !rewardedAd.isUnavailable ? (
         <Card>
