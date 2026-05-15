@@ -5,9 +5,13 @@ import {
   determineSlotForLocalHour,
   getImageBearingPlanForSlot,
   IMAGE_BEARING_PROACTIVE_SLOT_KEYS,
+  slotCanBypassQuietHours,
+  slotCanBypassUnansweredCooldown,
 } from "./proactive_message_rules.ts";
 
 Deno.test("determineSlotForLocalHour maps Slice 2 luts slots", () => {
+  assertEquals(determineSlotForLocalHour(8), null);
+  assertEquals(determineSlotForLocalHour(9), "morning_greet");
   assertEquals(determineSlotForLocalHour(10), null);
   assertEquals(determineSlotForLocalHour(11), "lunch_share");
   assertEquals(determineSlotForLocalHour(13), "lunch_share");
@@ -17,6 +21,17 @@ Deno.test("determineSlotForLocalHour maps Slice 2 luts slots", () => {
   assertEquals(determineSlotForLocalHour(22), "goodnight");
   assertEquals(determineSlotForLocalHour(23), "goodnight");
   assertEquals(determineSlotForLocalHour(24), null);
+});
+
+Deno.test("routine slots keep luts relationship cadence without photo leakage", () => {
+  assertEquals(slotCanBypassQuietHours("goodnight", 22, 9), true);
+  assertEquals(slotCanBypassQuietHours("goodnight", 21, 8), false);
+  assertEquals(slotCanBypassQuietHours("lunch_share", 22, 9), false);
+  assertEquals(slotCanBypassUnansweredCooldown("morning_greet"), true);
+  assertEquals(slotCanBypassUnansweredCooldown("lunch_share"), true);
+  assertEquals(slotCanBypassUnansweredCooldown("evening_chat"), true);
+  assertEquals(slotCanBypassUnansweredCooldown("goodnight"), true);
+  assertEquals(slotCanBypassUnansweredCooldown("absence_24h"), false);
 });
 
 Deno.test("chooseDailyImageBearingPlan keeps meal photo hooks on lunch", () => {

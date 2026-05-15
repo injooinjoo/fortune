@@ -25,7 +25,7 @@ export const IMAGE_BEARING_PROACTIVE_SLOT_KEYS: readonly ProactiveSlotKey[] = [
 ];
 
 export const SLOT_WINDOWS: Record<ProactiveSlotKey, SlotWindow> = {
-  morning_greet: { startHour: 7, endHour: 9 },
+  morning_greet: { startHour: 9, endHour: 10 },
   commute_chat: { startHour: 8, endHour: 10 },
   lunch_share: { startHour: 11, endHour: 14 },
   afternoon_break: { startHour: 14, endHour: 17 },
@@ -38,10 +38,33 @@ export const SLOT_WINDOWS: Record<ProactiveSlotKey, SlotWindow> = {
 };
 
 export const ACTIVE_PROACTIVE_SLOT_KEYS: readonly ProactiveSlotKey[] = [
+  "morning_greet",
   "lunch_share",
   "evening_chat",
   "goodnight",
 ];
+
+export const ROUTINE_PROACTIVE_SLOT_KEYS: readonly ProactiveSlotKey[] = [
+  "morning_greet",
+  "lunch_share",
+  "evening_chat",
+  "goodnight",
+];
+
+export function slotCanBypassQuietHours(
+  slotKey: ProactiveSlotKey,
+  quietHoursStart: number,
+  quietHoursEnd: number,
+): boolean {
+  return slotKey === "goodnight" && quietHoursStart === 22 &&
+    quietHoursEnd === 9;
+}
+
+export function slotCanBypassUnansweredCooldown(
+  slotKey: ProactiveSlotKey,
+): boolean {
+  return ROUTINE_PROACTIVE_SLOT_KEYS.includes(slotKey);
+}
 
 export function determineSlotForLocalHour(
   localHour: number,

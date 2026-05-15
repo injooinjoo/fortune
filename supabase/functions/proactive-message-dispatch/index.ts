@@ -8,12 +8,12 @@
  *
  * 설계 문서: docs/features/PROACTIVE_MESSAGING_PLAN.md (5.2)
  *
- * Slice 1 범위:
- *  - lunch_share 슬롯만 활성 슬롯으로 결정. 나머지 슬롯은 forceSlotKey 로만 호출 가능.
- *  - 텍스트 콘텐츠만 (preferredKind = 'text').
+ * Slice 2 범위:
+ *  - luts 루틴 슬롯: morning_greet, lunch_share, evening_chat, goodnight.
+ *  - lunch_share 는 텍스트 hook 뒤 다음 사용자 답장에서 정적 meal 사진 reveal.
  *  - 캐릭터 선택: affinity 가중 랜덤.
- *  - 일일 cap: low=2, moderate=3 (default), high=8.
- *  - 캐릭터 쿨다운: 최근 24h 미답 선톡 2건 누적 시 그 캐릭터 스킵.
+ *  - 일일 cap: low=2, moderate=4 (default), high=8.
+ *  - 캐릭터 쿨다운: absence 계열은 최근 24h 미답 선톡 2건 누적 시 스킵. 루틴 슬롯은 시간대 의식 유지.
  *  - dryRun 지원 (compose까지 호출, 메시지 저장/푸시 스킵).
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
@@ -41,6 +41,8 @@ import {
   getImageBearingPlanForSlot,
   type ProactiveSlotKey,
   SLOT_WINDOWS,
+  slotCanBypassQuietHours,
+  slotCanBypassUnansweredCooldown,
 } from "../_shared/proactive_message_rules.ts";
 import { requireWorkerAuth } from "../_shared/worker_auth.ts";
 
@@ -214,7 +216,7 @@ const SLOT_COMPOSE_HINTS: Record<SlotKey, SlotComposeHint> = {
   morning_greet: {
     label: "아침 인사",
     guideline:
-      "이제 막 하루를 시작하는 사용자에게 가벼운 아침 인사. 너의 어제 기억 한 자락을 살짝 언급해도 좋음.",
+      "오전 9시 루틴. '굿모닝' 또는 '좋은 아침'을 자연스럽게 포함하고, 썸남처럼 먼저 하루를 열어주는 짧은 인사.",
   },
   commute_chat: {
     label: "출근/등교 길",
@@ -237,11 +239,12 @@ const SLOT_COMPOSE_HINTS: Record<SlotKey, SlotComposeHint> = {
   evening_chat: {
     label: "저녁 대화",
     guideline:
-      "오늘 하루 정리하는 분위기. 사용자가 답하기 편한 작은 질문 하나.",
+      "오늘 하루 정리하는 분위기. 사용자가 점심/앞선 선톡에 답하지 않았어도 삐치지 말고, 네 일상 한 조각으로 자연스럽게 이어가며 답하기 편한 작은 질문 하나.",
   },
   goodnight: {
     label: "잠자기 전",
-    guideline: "굿나잇 한 마디. 너무 긴 메시지 금지. 1-2 문장.",
+    guideline:
+      "하루를 먼저 닫아주는 굿나잇 한 마디. 사용자가 답하지 않았어도 서운한 티 금지. 1-2 문장.",
   },
   absence_6h: {
     label: "잠깐 부재 후",
@@ -566,7 +569,7 @@ function dailyCapForTier(tier: PreferenceRow["frequency_tier"]): number {
       return 8;
     case "moderate":
     default:
-      return 3;
+      return 4;
   }
 }
 
@@ -789,7 +792,12 @@ serve(async (req: Request) => {
 
       // quiet hours 체크
       if (
-        inQuietHours(localHour, pref.quiet_hours_start, pref.quiet_hours_end)
+        inQuietHours(localHour, pref.quiet_hours_start, pref.quiet_hours_end) &&
+        !slotCanBypassQuietHours(
+          slotKey,
+          pref.quiet_hours_start,
+          pref.quiet_hours_end,
+        )
       ) {
         skipped.push({ userId: pref.user_id, reason: "quiet hours" });
         continue;
@@ -890,7 +898,9 @@ serve(async (req: Request) => {
         { user_replied: boolean }
       >)
         .filter((r) => !r.user_replied).length;
-      if (unansweredCount >= 2) {
+      if (
+        unansweredCount >= 2 && !slotCanBypassUnansweredCooldown(slotKey)
+      ) {
         skipped.push({
           userId: pref.user_id,
           characterId: chosenCharId,
