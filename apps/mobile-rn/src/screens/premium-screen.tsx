@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { router, useLocalSearchParams } from 'expo-router';
 import {
@@ -138,6 +138,18 @@ export function PremiumScreen() {
       : storefrontSubscriptionProductIds[0],
   );
   const [openTrustIndex, setOpenTrustIndex] = useState<number | null>(null);
+  const didRequestStoreRefreshRef = useRef(false);
+
+  useEffect(() => {
+    if (didRequestStoreRefreshRef.current) {
+      return;
+    }
+
+    didRequestStoreRefreshRef.current = true;
+    void refreshStoreProducts().catch((error) => {
+      void captureError(error, { surface: 'premium:store-auto-refresh' });
+    });
+  }, [refreshStoreProducts]);
 
   useEffect(() => {
     if (premiumIntent !== 'top-up') {
