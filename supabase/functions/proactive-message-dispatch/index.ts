@@ -37,6 +37,7 @@ import {
 } from "../_shared/character_proactive_persona.ts";
 import { SERVICE_TONE_PATTERN as PROACTIVE_SERVICE_TONE_PATTERN } from "../_shared/service_tone_guard.ts";
 import {
+  buildDeterministicProactiveFallbackText,
   determineSlotForLocalHour,
   getImageBearingPlanForSlot,
   type ProactiveSlotKey,
@@ -973,21 +974,66 @@ serve(async (req: Request) => {
         userId: pref.user_id,
       });
 
+      let composed: {
+        success: true;
+        text: string;
+        imageCategory: string | null;
+        meta: { provider: string; model: string; latencyMs: number };
+      };
+
       if ("errorCode" in composeResult) {
-        errors.push({
+        if (composeResult.errorCode !== "llm_failure") {
+          errors.push({
+            userId: pref.user_id,
+            characterId: chosenCharId,
+            error: `compose ${composeResult.errorCode}: ${composeResult.error}`,
+          });
+          continue;
+        }
+
+        console.warn(
+          `[dispatch] compose LLM 실패 → deterministic fallback 사용 user=${pref.user_id} character=${chosenCharId} slot=${slotKey}: ${composeResult.error}`,
+        );
+        const fallbackText = buildDeterministicProactiveFallbackText(
+          chosenCharId,
+          slotKey,
+        );
+        const moderationResult = await moderateText({
+          text: fallbackText,
           userId: pref.user_id,
           characterId: chosenCharId,
-          error: `compose ${composeResult.errorCode}: ${composeResult.error}`,
+          source: "model_output",
         });
-        continue;
-      }
+        if (moderationResult.flagged) {
+          errors.push({
+            userId: pref.user_id,
+            characterId: chosenCharId,
+            error:
+              `fallback moderation blocked after compose ${composeResult.errorCode}: ${composeResult.error}`,
+          });
+          continue;
+        }
 
-      const composed = {
-        success: true,
-        text: composeResult.text,
-        imageCategory: null as string | null,
-        meta: composeResult.meta,
-      };
+        composed = {
+          success: true,
+          text: fallbackText,
+          imageCategory: null,
+          meta: {
+            provider: "rule",
+            model: `deterministic-proactive-fallback:${
+              composeResult.meta?.model ?? "unknown"
+            }`,
+            latencyMs: composeResult.meta?.latencyMs ?? 0,
+          },
+        };
+      } else {
+        composed = {
+          success: true,
+          text: composeResult.text,
+          imageCategory: null,
+          meta: composeResult.meta,
+        };
+      }
 
       // Slice 2: 사용자/날짜별로 3개 활성 슬롯 중 정확히 1개를 image-bearing 으로 결정.
       // 선택 슬롯에서는 텍스트 hook 을 먼저 보내고, character-chat 이 다음 user turn 에서

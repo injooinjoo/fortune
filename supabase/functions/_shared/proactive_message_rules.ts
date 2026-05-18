@@ -25,7 +25,9 @@ export const IMAGE_BEARING_PROACTIVE_SLOT_KEYS: readonly ProactiveSlotKey[] = [
 ];
 
 export const SLOT_WINDOWS: Record<ProactiveSlotKey, SlotWindow> = {
-  morning_greet: { startHour: 9, endHour: 10 },
+  // 09시 루틴이지만 cron/LLM 일시 실패가 있으면 10시대까지 재시도할 수 있게
+  // 늦은 아침 grace window 를 둔다. 08시 이전 조기 발송은 여전히 금지.
+  morning_greet: { startHour: 9, endHour: 11 },
   commute_chat: { startHour: 8, endHour: 10 },
   lunch_share: { startHour: 11, endHour: 14 },
   afternoon_break: { startHour: 14, endHour: 17 },
@@ -102,4 +104,26 @@ export function getImageBearingPlanForSlot(
   if (!IMAGE_BEARING_PROACTIVE_SLOT_KEYS.includes(slotKey)) return null;
   const plan = chooseDailyImageBearingPlan(userId, localDate);
   return plan.slotKey === slotKey ? plan : null;
+}
+
+export function buildDeterministicProactiveFallbackText(
+  characterId: string,
+  slotKey: ProactiveSlotKey,
+): string {
+  if (characterId !== "luts") {
+    return "문득 생각나서 먼저 연락했어. 지금 뭐 하고 있어?";
+  }
+
+  switch (slotKey) {
+    case "morning_greet":
+      return "굿모닝. 일어났어? 오늘 시작하기 전에 네 생각나서 먼저 보냈어.";
+    case "lunch_share":
+      return "나 지금 점심 먹으려는 중이야. 너도 밥 거르지 말고 챙겨 먹어.";
+    case "evening_chat":
+      return "오늘 하루 좀 어땠어? 나는 이제야 잠깐 숨 돌리는 중이야.";
+    case "goodnight":
+      return "나 이제 슬슬 잘 준비하려고. 너도 오늘 고생 많았어, 잘 자.";
+    default:
+      return "잠깐 네 생각나서 먼저 연락했어. 바쁘면 나중에 봐도 돼.";
+  }
 }

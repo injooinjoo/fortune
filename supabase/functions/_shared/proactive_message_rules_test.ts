@@ -1,6 +1,7 @@
 import { assertEquals } from "https://deno.land/std@0.168.0/testing/asserts.ts";
 import {
   ACTIVE_PROACTIVE_SLOT_KEYS,
+  buildDeterministicProactiveFallbackText,
   chooseDailyImageBearingPlan,
   determineSlotForLocalHour,
   getImageBearingPlanForSlot,
@@ -12,7 +13,7 @@ import {
 Deno.test("determineSlotForLocalHour maps Slice 2 luts slots", () => {
   assertEquals(determineSlotForLocalHour(8), null);
   assertEquals(determineSlotForLocalHour(9), "morning_greet");
-  assertEquals(determineSlotForLocalHour(10), null);
+  assertEquals(determineSlotForLocalHour(10), "morning_greet");
   assertEquals(determineSlotForLocalHour(11), "lunch_share");
   assertEquals(determineSlotForLocalHour(13), "lunch_share");
   assertEquals(determineSlotForLocalHour(14), null);
@@ -21,6 +22,27 @@ Deno.test("determineSlotForLocalHour maps Slice 2 luts slots", () => {
   assertEquals(determineSlotForLocalHour(22), "goodnight");
   assertEquals(determineSlotForLocalHour(23), "goodnight");
   assertEquals(determineSlotForLocalHour(24), null);
+});
+
+Deno.test("deterministic fallback keeps luts proactive alive when LLM quota fails", () => {
+  assertEquals(
+    buildDeterministicProactiveFallbackText("luts", "morning_greet").includes(
+      "굿모닝",
+    ),
+    true,
+  );
+  assertEquals(
+    buildDeterministicProactiveFallbackText("luts", "lunch_share").includes(
+      "점심",
+    ),
+    true,
+  );
+  assertEquals(
+    buildDeterministicProactiveFallbackText("luts", "goodnight").includes(
+      "잘 자",
+    ),
+    true,
+  );
 });
 
 Deno.test("routine slots keep luts relationship cadence without photo leakage", () => {
