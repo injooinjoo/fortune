@@ -93,6 +93,18 @@ function shouldSuppressForActiveChat(
 ): boolean {
   if (!activeChatCharacterId) return false;
   if (!data) return false;
+
+  // 선톡/후속 선톡은 사용자가 현재 같은 캐릭터 방을 보고 있어도
+  // "먼저 말 걸었다"는 이벤트 자체가 핵심 UX다. 배너/사운드를 suppress 하면
+  // 메시지는 들어왔는데 알람이 안 온 것처럼 보이므로 proactive 계열은 항상 표시한다.
+  const incomingType = data.type as string | undefined;
+  if (
+    incomingType === 'character_proactive' ||
+    incomingType === 'character_follow_up'
+  ) {
+    return false;
+  }
+
   const incomingCharacterId =
     (data.character_id as string | undefined) ??
     (data.characterId as string | undefined);
@@ -110,7 +122,9 @@ function ensureNotificationHandler(Notifications: NotificationsModule): void {
         | null
         | undefined;
       const suppress = shouldSuppressForActiveChat(data);
-      // 같은 캐릭터 채팅창 안에 있으면 banner/sound/배지 모두 차단.
+      // 같은 캐릭터 채팅창 안의 일반 답장 알림은 banner/sound/배지 차단.
+      // 단, 선톡(character_proactive/follow_up)은 현재 방을 보고 있어도 "먼저 말 걸기"
+      // 이벤트가 핵심이므로 shouldSuppressForActiveChat 에서 표시되도록 예외 처리한다.
       // shouldShowList 만 true 로 두어 알림센터 history 는 유지 (사용자가
       // 나중에 보고 싶을 수 있고, 채팅창에서 이미 보고 있어 중복 카운트 위험 X).
       if (suppress) {
