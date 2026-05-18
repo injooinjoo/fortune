@@ -22,7 +22,6 @@ import { PrimaryButton } from '../components/primary-button';
 import { RouteBackHeader } from '../components/route-back-header';
 import { Screen } from '../components/screen';
 import { captureError } from '../lib/error-reporting';
-import { purchaseSuccess } from '../lib/haptics';
 import { fortuneTheme, withAlpha } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
@@ -308,7 +307,6 @@ export function PremiumScreen() {
 
     try {
       await purchaseProduct(selectedProduct.id);
-      purchaseSuccess();
     } catch (error) {
       await captureError(error, {
         productId: selectedProduct.id,

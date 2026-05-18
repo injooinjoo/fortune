@@ -36,6 +36,7 @@ import {
 import { Platform } from 'react-native';
 
 import { captureError } from '../lib/error-reporting';
+import { purchaseSuccess } from '../lib/haptics';
 import {
   applyProductPurchase,
   emptyMobileAppState,
@@ -736,6 +737,7 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
         });
 
         await syncRemoteProfile();
+        purchaseSuccess();
       } catch (error) {
         processedPurchaseKeysRef.current.delete(processingKey);
         await captureError(error, {
