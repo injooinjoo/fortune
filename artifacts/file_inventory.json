@@ -392,6 +392,20 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/deployment/app-store-token-products.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
       "notes": [],
       "path": "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md",
       "referenced_by": [
@@ -4637,6 +4651,38 @@
     },
     {
       "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "edge_function_source",
+      "notes": [
+        "edge_function_unreferenced:payment-verify-purchase"
+      ],
+      "path": "supabase/functions/payment-verify-purchase/purchase_verification_helpers.ts",
+      "referenced_by": [
+        "supabase/functions/payment-verify-purchase/index.ts",
+        "supabase/functions/payment-verify-purchase/purchase_verification_helpers_test.ts"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "manual_review",
+      "dirty": false,
+      "kind": "edge_function_source",
+      "notes": [
+        "edge_function_unreferenced:payment-verify-purchase",
+        "no_inbound_refs"
+      ],
+      "path": "supabase/functions/payment-verify-purchase/purchase_verification_helpers_test.ts",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "unreferenced"
+    },
+    {
+      "area": "supabase",
       "candidate_action": "manual_review",
       "dirty": false,
       "kind": "edge_function_source",
@@ -6866,6 +6912,48 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "supabase/migrations/20260515044500_purchase_iap_global_idempotency.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "supabase/migrations/20260515044600_purchase_iap_grant_permissions.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "supabase/migrations/20260515044700_purchase_iap_grant_comment.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "supabase/migrations/_archived/20260214000001_add_character_dm_notification_preference.sql",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -7127,23 +7215,23 @@
   ],
   "meta": {
     "counts_by_area": {
-      "docs": 104,
+      "docs": 105,
       "scripts": 53,
-      "supabase": 310
+      "supabase": 315
     },
     "counts_by_candidate_action": {
       "keep": 52,
       "keep_generated": 2,
-      "manual_review": 55,
+      "manual_review": 56,
       "phase1_remove_candidate": 3,
-      "phase2_review_candidate": 355
+      "phase2_review_candidate": 360
     },
     "counts_by_usage_status": {
-      "doc_only": 125,
+      "doc_only": 126,
       "generated_excluded": 2,
       "runtime_used": 52,
-      "tooling_only": 230,
-      "unreferenced": 58
+      "tooling_only": 234,
+      "unreferenced": 59
     },
     "declared_asset_dirs_without_runtime_refs": [],
     "generated_outputs": [
@@ -7192,7 +7280,7 @@
       "generate-poster-guide",
       "grant-ad-reward"
     ],
-    "total_files": 467,
+    "total_files": 473,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "ack-scheduled-reply",
