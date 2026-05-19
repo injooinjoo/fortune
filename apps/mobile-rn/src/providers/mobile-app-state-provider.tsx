@@ -266,6 +266,24 @@ function getPurchasePlatform(): 'ios' | 'android' {
 }
 
 const IOS_RECEIPT_REFRESH_DELAYS_MS = [0, 500, 1500];
+const STORE_PRODUCTS_TIMEOUT_MS = 15_000;
+
+function withStoreTimeout<T>(operation: Promise<T>): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(
+      () => reject(new Error(`store-products timeout (${STORE_PRODUCTS_TIMEOUT_MS / 1000}s)`)),
+      STORE_PRODUCTS_TIMEOUT_MS,
+    );
+  });
+
+  return Promise.race([operation, timeout]).finally(() => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  });
+}
 
 async function getIosReceiptDataForVerification() {
   if (Platform.OS !== 'ios') {
@@ -632,41 +650,71 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
     setStoreStatus('loading');
     setStoreError(null);
 
-    // QA-B: storeStatus === 'loading' 에 무한 대기 없게 15s hard timeout.
-    // initConnection / fetchStoreProducts 가 Apple 서버 이슈로 hang 될 때
-    // 결제 화면이 영원히 스피너만 보이는 UX 를 방지.
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('store-products timeout (15s)')), 15_000);
-    });
-
+    // QA-B: storeStatus === 'loading' 에 무한 대기 없게 단계별 15s hard timeout.
+    // 토큰 충전 플로우는 consumable SKU 가격만 있으면 즉시 구매를 열 수 있다.
+    // 기존처럼 모든 상품 조회를 한 덩어리로 묶으면 구독/평생권 조회 hang 이 토큰 CTA 를
+    // 계속 `스토어 준비 중...` 에 가두므로, 토큰 상품을 먼저 반영한 뒤 나머지는 보강 조회한다.
     try {
-      await Promise.race([initConnection(), timeoutPromise]);
+      await withStoreTimeout(initConnection());
 
-      const [inAppProducts, subscriptionProducts] = await Promise.race([
-        Promise.all([
+      const consumableProducts = await withStoreTimeout(
+        fetchStoreProducts({
+          skus: [...storefrontConsumableProductIds],
+          type: 'in-app',
+        }),
+      );
+      const consumableProductMap = buildStoreProductSnapshotMap(
+        (consumableProducts ?? []) as (Product | ProductSubscription)[],
+      );
+
+      setStoreProducts(consumableProductMap);
+      setStoreStatus('ready');
+      setIsStoreRuntimeAvailable(true);
+
+      const supplementalProductMap: Partial<Record<ProductId, StoreProductSnapshot>> = {};
+
+      try {
+        const nonConsumableProducts = await withStoreTimeout(
           fetchStoreProducts({
-            skus: [
-              ...storefrontConsumableProductIds,
-              ...storefrontNonConsumableProductIds,
-            ],
+            skus: [...storefrontNonConsumableProductIds],
             type: 'in-app',
           }),
+        );
+        Object.assign(
+          supplementalProductMap,
+          buildStoreProductSnapshotMap(
+            (nonConsumableProducts ?? []) as (Product | ProductSubscription)[],
+          ),
+        );
+      } catch (nonConsumableError) {
+        await captureError(nonConsumableError, {
+          surface: 'mobile-app-state:store-non-consumable-products',
+        });
+      }
+
+      try {
+        const subscriptionProducts = await withStoreTimeout(
           fetchStoreProducts({
             skus: [...storefrontSubscriptionProductIds],
             type: 'subs',
           }),
-        ]),
-        timeoutPromise,
-      ]);
+        );
+        Object.assign(
+          supplementalProductMap,
+          buildStoreProductSnapshotMap(
+            (subscriptionProducts ?? []) as (Product | ProductSubscription)[],
+          ),
+        );
+      } catch (subscriptionError) {
+        await captureError(subscriptionError, {
+          surface: 'mobile-app-state:store-subscription-products',
+        });
+      }
 
-      const nextStoreProducts = buildStoreProductSnapshotMap([
-        ...((inAppProducts ?? []) as (Product | ProductSubscription)[]),
-        ...((subscriptionProducts ?? []) as (Product | ProductSubscription)[]),
-      ]);
-
-      setStoreProducts(nextStoreProducts);
-      setStoreStatus('ready');
-      setIsStoreRuntimeAvailable(true);
+      setStoreProducts({
+        ...consumableProductMap,
+        ...supplementalProductMap,
+      });
     } catch (error) {
       setStoreStatus('error');
       if (isExpectedStoreUnavailableError(error)) {
