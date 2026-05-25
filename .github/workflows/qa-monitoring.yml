@@ -618,9 +618,11 @@ jobs:
               bodyLines.push('');
             }
 
-            if (perfResult === 'skipped') {
+            if (perfSkipped) {
               bodyLines.push('### ⏭️ 성능 측정 생략');
-              bodyLines.push('이번 실행에서는 Performance 테스트가 수동으로 비활성화되었습니다.');
+              bodyLines.push(perfResult === 'skipped'
+                ? '이번 실행에서는 Performance 테스트가 수동으로 비활성화되었습니다.'
+                : 'Flutter 프로젝트가 없어 성능 테스트를 건너뛰었습니다.');
               bodyLines.push('');
             } else if (!perfMeasured) {
               bodyLines.push('### ❌ 성능 측정 실패');
