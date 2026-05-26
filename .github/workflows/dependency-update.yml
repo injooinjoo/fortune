@@ -20,7 +20,18 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Detect Flutter project
+        id: flutter-project
+        run: |
+          if [ -f pubspec.yaml ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Skipping Flutter dependency update because pubspec.yaml is not present."
+          fi
+
       - name: Setup Flutter
+        if: steps.flutter-project.outputs.present == 'true'
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.38.0'
@@ -28,16 +39,27 @@ jobs:
           cache: true
 
       - name: Update Flutter dependencies
+        if: steps.flutter-project.outputs.present == 'true'
         working-directory: .
         run: |
           flutter pub upgrade --major-versions
           flutter pub outdated
 
-      - name: Update npm dependencies
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.33.1 --activate
+
+      - name: Update pnpm dependencies
         if: hashFiles('package.json') != ''
         run: |
-          npm update
-          npm audit fix --force || true
+          pnpm update
+          pnpm audit --prod || true
 
       - name: Check PR creation permission
         id: pr-permission
@@ -72,12 +94,12 @@ jobs:
           title: 'Weekly Dependency Update'
           body: |
             ## 🔄 Automated Dependency Update
-            
+
             This PR contains:
-            - Flutter package updates
-            - npm package updates (if applicable)
+            - pnpm package updates
+            - Flutter package updates (if applicable)
             - Security patches
-            
+
             Please review and test before merging.
           branch: deps/weekly-update
           delete-branch: true
@@ -89,7 +111,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Detect Flutter project
+        id: flutter-project
+        run: |
+          if [ -f pubspec.yaml ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Skipping Flutter security audit because pubspec.yaml is not present."
+          fi
+
       - name: Setup Flutter
+        if: steps.flutter-project.outputs.present == 'true'
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.38.0'
@@ -97,16 +130,29 @@ jobs:
           cache: true
 
       - name: Install Flutter dependencies
+        if: steps.flutter-project.outputs.present == 'true'
         run: flutter pub get
 
-      - name: Run npm audit
-        if: hashFiles('package-lock.json') != ''
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Enable pnpm
         run: |
-          npm audit --production
-          echo "## NPM Audit Report" >> $GITHUB_STEP_SUMMARY
-          npm audit --production >> $GITHUB_STEP_SUMMARY || true
+          corepack enable
+          corepack prepare pnpm@10.33.1 --activate
+
+      - name: Run pnpm audit
+        if: hashFiles('pnpm-lock.yaml') != ''
+        run: |
+          pnpm install --frozen-lockfile --ignore-scripts
+          pnpm audit --prod || true
+          echo "## pnpm Audit Report" >> $GITHUB_STEP_SUMMARY
+          pnpm audit --prod >> $GITHUB_STEP_SUMMARY || true
 
       - name: Run Flutter dependency audit
+        if: steps.flutter-project.outputs.present == 'true'
         working-directory: .
         run: |
           flutter pub outdated
