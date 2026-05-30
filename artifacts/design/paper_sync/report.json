@@ -2,12 +2,16 @@
   "ok": true,
   "errors": [],
   "changedFiles": {
-    "mode": "git-range",
+    "mode": "git-range+working-tree",
     "range": "HEAD~1..HEAD",
     "files": [
-      "artifacts/design/paper_sync/report.json",
-      "artifacts/design/paper_sync/report.md"
+      "apps/mobile-rn/app.config.js",
+      "apps/mobile-rn/package.json",
+      "apps/mobile-rn/src/lib/ad-rewards.ts",
+      "package.json",
+      "pnpm-lock.yaml",
+      "docs/design/PAPER_SYNC_CHANGELOG.md"
     ]
   },
-  "checkedAt": "2026-04-14T00:04:47.302Z"
+  "checkedAt": "2026-05-30T02:13:17.798Z"
 }
