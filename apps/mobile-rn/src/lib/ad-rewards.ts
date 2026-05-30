@@ -33,6 +33,7 @@ type RewardedAdModule = {
     createForAdRequest: (
       adUnitId: string,
       requestOptions?: {
+        requestNonPersonalizedAdsOnly?: boolean;
         keywords?: string[];
         serverSideVerificationOptions?: { customData?: string; userId?: string };
       },
@@ -152,6 +153,7 @@ export function useRewardedAd(
     moduleRef.current = mod;
 
     const ad = mod.RewardedAd.createForAdRequest(adUnitId, {
+      requestNonPersonalizedAdsOnly: true,
       keywords: ['fortune', 'tarot', 'horoscope', 'lifestyle'],
       serverSideVerificationOptions: userId
         ? { customData: userId, userId }

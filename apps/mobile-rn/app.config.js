@@ -139,9 +139,8 @@ const config = {
       GADApplicationIdentifier:
         process.env.EXPO_PUBLIC_ADMOB_APP_ID_IOS ||
         'ca-app-pub-2803643717997352~5970615545',
-      // ATT (App Tracking Transparency) - AdMob SDK 권장
-      NSUserTrackingUsageDescription:
-        '맞춤형 광고를 제공하기 위해 사용됩니다. 거부해도 광고는 표시됩니다.',
+      // ATT is intentionally not declared/requested: Ondo serves reward ads without
+      // cross-app/site tracking, and PrivacyInfo.xcprivacy keeps NSPrivacyTracking=false.
     },
     entitlements: {
       'aps-environment': 'production',
@@ -289,6 +288,7 @@ const config = {
   },
   plugins: [
     'expo-router',
+    'expo-font',
     'expo-iap',
     // 채팅 메시지 영속화 — SecureStore chunked JSON blob 에서 row-per-message
     // SQLite 로 이전. expo-sqlite 는 native module 등록만 하면 동작 (별도
