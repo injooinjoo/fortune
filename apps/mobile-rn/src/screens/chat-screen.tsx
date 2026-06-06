@@ -310,6 +310,13 @@ export function ChatScreen() {
     saveProfile,
     syncRemoteProfile,
   } = useMobileAppState();
+  const pendingRewardPollTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  useEffect(() => {
+    return () => {
+      pendingRewardPollTimeoutsRef.current.forEach(clearTimeout);
+      pendingRewardPollTimeoutsRef.current = [];
+    };
+  }, []);
   const persistedSelectedCharacterId =
     normalizeChatCharacterId(mobileAppState.chat.selectedCharacterId) ?? undefined;
   const { createdFriends, resetDraft, removeFriend } = useFriendCreation();
@@ -324,7 +331,34 @@ export function ChatScreen() {
     session,
     userId: session?.user.id ?? null,
     onReward: (outcome) => {
-      if (outcome.success && outcome.tokensGranted) {
+      if (outcome.rewardPending) {
+        const balanceBefore = mobileAppState.premium.tokenBalance;
+        Alert.alert(
+          '🎁 광고 확인 중',
+          'Google 확인이 끝나면 토큰에 반영돼요. 잔액을 몇 번 더 확인할게요.',
+        );
+        [2500, 6000, 12000].forEach((delayMs) => {
+          const timeoutId = setTimeout(() => {
+            void syncRemoteProfile().then((nextState) => {
+              if (
+                delayMs === 12000 &&
+                nextState &&
+                nextState.premium.tokenBalance <= balanceBefore
+              ) {
+                Alert.alert(
+                  '광고 보상 확인 중',
+                  '아직 토큰 반영이 확인되지 않았어요. 한도 또는 Google 확인 지연일 수 있어요.',
+                );
+              }
+            }).catch((error: unknown) => {
+              captureError(error, { surface: 'chat:reward-pending-profile-sync' }).catch(
+                () => undefined,
+              );
+            });
+          }, delayMs);
+          pendingRewardPollTimeoutsRef.current.push(timeoutId);
+        });
+      } else if (outcome.success && outcome.tokensGranted) {
         // 잔액 갱신은 premium-remote 가 다음 fetch 시 반영. 여기선 토스트만.
         Alert.alert(
           '🎁 토큰 획득',
@@ -2175,11 +2209,10 @@ export function ChatScreen() {
 
   /**
    * 비동기 poster-guide 처리 (palm-reading 등).
-   *   1. 큐 등록 (start-poster-job) — 즉시 반환
+   *   1. 서버 RPC 가 토큰 차감/구독 확인 + 큐 등록을 한 트랜잭션으로 처리
    *   2. placeholder 메시지 로컬 append (서버측도 INSERT 됐으나 즉시 UI 반영 위해)
-   *   3. 토큰 차감 (job 등록 성공이면 cron 이 처리할 거라 차감해도 안전)
-   *   4. 사용자는 자유롭게 다른 채팅 / 앱 종료 가능
-   *   5. cron 완료 → push 알림 → 사용자 진입 → hydrate → 결과 카드 등장
+   *   3. 사용자는 자유롭게 다른 채팅 / 앱 종료 가능
+   *   4. cron 완료 → push 알림 → 사용자 진입 → hydrate → 결과 카드 등장
    */
   async function handleAsyncPosterFortune(
     character: ChatCharacterSpec,
@@ -2233,48 +2266,9 @@ export function ChatScreen() {
       return;
     }
 
-    // 큐 등록 성공 시점부터는 서버 cron 이 처리할 side effect 가 생긴 상태다.
-    // 이 이후에는 사용자 cancel/AbortSignal 을 billing 단계에 전달하지 않는다.
-    // 그래야 "queued server work + client cancel + no charge" orphan race 를 막는다.
+    // 큐 등록 성공 시점에는 서버 트랜잭션에서 이미 billing/reserve 가 끝난 상태다.
+    // 이후 사용자가 cancel 해도 worker side effect 는 정상 완료되어야 하므로 취소 불가.
     setFortuneGenerationCancellable(character.id, false);
-    let tokensConsumedForJob = false;
-    if (session) {
-      try {
-        // PR-0a: jobId 가 이미 unique — referenceId/idempotencyKey 동일 값으로 사용.
-        const jobConsumeKey = `fortune:${character.id}:${completed.fortuneType}:${result.jobId}`;
-        await consumeRemoteTokens(session, {
-          fortuneType: completed.fortuneType,
-          referenceId: jobConsumeKey,
-          idempotencyKey: jobConsumeKey,
-        });
-        tokensConsumedForJob = true;
-      } catch (chargeError) {
-        if (isAbortError(chargeError) && signal?.aborted) {
-          return;
-        }
-        if (
-          chargeError instanceof RemoteTokenConsumeError &&
-          chargeError.code === 'INSUFFICIENT_TOKENS'
-        ) {
-          // 토큰 부족 — job 은 이미 큐에 있지만 cron 이 user_token_balance 도 체크하므로
-          // 별도 cancel 안 해도 무해. 사용자에게 안내만.
-          appendMessages(character, [
-            buildAssistantTextMessage(
-              chargeError.message ||
-                '토큰이 부족해요. 토큰을 충전한 뒤 다시 시도해주세요.',
-            ),
-          ]);
-          return;
-        }
-        await captureError(chargeError, {
-          surface: 'chat:fortune-charge-after-async-queue',
-        }).catch(() => undefined);
-      }
-    }
-
-    if (signal?.aborted && !tokensConsumedForJob) {
-      return;
-    }
 
     // 진행 카드 로컬 INSERT — 카드 컴포넌트(ProgressMessageCard)가 mount 되면
     // 자기 jobId 의 status 를 직접 polling 해서 done/failed 시 스스로 사라진다.

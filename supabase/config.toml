@@ -30,6 +30,11 @@ verify_jwt = false
 [functions.proactive-message-dispatch]
 verify_jwt = false
 
+# AdMob SSV callback — Google server cannot attach Supabase JWT. The function
+# verifies the AdMob ECDSA signature before granting any token.
+[functions.grant-ad-reward]
+verify_jwt = false
+
 # fortune-* 함수: 클라가 직접 호출 (실 user JWT) + 워커가 호출 (service_role +
 # X-Internal-User-Id 헤더). 게이트웨이 verify_jwt 가 신형 service_role 키
 # 형식을 거부하므로 비활성. 진짜 auth 는 함수 안 deriveUserIdFromJwt 가 담당.

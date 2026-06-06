@@ -767,10 +767,19 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
         });
 
         if (isSubscriptionProductId(productId)) {
+          if (!isSubscriptionProductId(verification.productId)) {
+            throw new Error('검증된 상품이 구독 상품이 아니어서 구독을 활성화할 수 없어요.');
+          }
+
+          const verifiedTransactionId = verification.transactionId;
+          if (!verifiedTransactionId) {
+            throw new Error('검증된 구독 거래 ID가 없어 구독을 활성화할 수 없어요.');
+          }
+
           await activateRemoteSubscription(currentSession, {
             platform: getPurchasePlatform(),
-            productId,
-            purchaseId: verification.transactionId,
+            productId: verification.productId,
+            purchaseId: verifiedTransactionId,
           });
         } else if (isNonConsumableProductId(productId)) {
           await persistFromCurrent(
@@ -1023,10 +1032,34 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
         }
 
         if (isSubscriptionProductId(productId)) {
-          await activateRemoteSubscription(currentSession, {
+          const receipt =
+            Platform.OS === 'ios' ? await getIosReceiptDataForVerification() : null;
+
+          if (Platform.OS === 'ios' && !receipt) {
+            throw new Error('iOS 영수증을 읽지 못해 구독을 복원할 수 없어요.');
+          }
+
+          const verification = await verifyRemotePurchase(currentSession, {
             platform: getPurchasePlatform(),
             productId,
-            purchaseId: purchase.transactionId ?? purchase.id,
+            purchaseToken: purchase.purchaseToken ?? null,
+            receipt,
+            transactionId: purchase.transactionId ?? purchase.id,
+          });
+
+          if (!isSubscriptionProductId(verification.productId)) {
+            throw new Error('검증된 상품이 구독 상품이 아니어서 구독을 복원할 수 없어요.');
+          }
+
+          const verifiedTransactionId = verification.transactionId;
+          if (!verifiedTransactionId) {
+            throw new Error('검증된 구독 거래 ID가 없어 구독을 활성화할 수 없어요.');
+          }
+
+          await activateRemoteSubscription(currentSession, {
+            platform: getPurchasePlatform(),
+            productId: verification.productId,
+            purchaseId: verifiedTransactionId,
           });
           continue;
         }

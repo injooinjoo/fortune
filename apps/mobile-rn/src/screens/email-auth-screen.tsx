@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { router } from 'expo-router';
+import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { TextInput, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
@@ -27,7 +27,25 @@ const INPUT_STYLE = {
   paddingVertical: 14,
 } as const;
 
+function readSearchParam(
+  value: string | string[] | undefined,
+): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function normalizeReturnTo(value: string | undefined) {
+  return value && value.startsWith('/') && value !== '/auth/callback'
+    ? value
+    : '/chat';
+}
+
 export function EmailAuthScreen() {
+  const params = useLocalSearchParams<{ returnTo?: string | string[] }>();
+  const returnTo = normalizeReturnTo(readSearchParam(params.returnTo));
+  const signupFallbackHref = {
+    pathname: '/signup',
+    params: { returnTo },
+  } as Href;
   const { markAuthComplete } = useAppBootstrap();
   const [mode, setMode] = useState<AuthMode>('login');
   const [email, setEmail] = useState('');
@@ -72,7 +90,10 @@ export function EmailAuthScreen() {
 
       authSuccess();
       await markAuthComplete();
-      router.replace('/auth/callback');
+      router.replace({
+        pathname: '/auth/callback',
+        params: { returnTo },
+      });
     } catch (error) {
       await captureError(error, { surface: 'email-auth:submit' });
       setErrorMessage('오류가 발생했습니다. 다시 시도해 주세요.');
@@ -90,7 +111,7 @@ export function EmailAuthScreen() {
   return (
     <Screen
       keyboardAvoiding
-      header={<RouteBackHeader fallbackHref="/signup" label="로그인 및 시작" />}
+      header={<RouteBackHeader fallbackHref={signupFallbackHref} label="로그인 및 시작" />}
     >
       <AppText variant="displaySmall">
         {isSignup ? '이메일로 가입하기' : '이메일로 로그인'}

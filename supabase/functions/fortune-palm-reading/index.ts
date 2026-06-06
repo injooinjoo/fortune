@@ -43,8 +43,7 @@ const TEMPLATE_PATH = "template.png";
 const OPENAI_EDITS_ENDPOINT = "https://api.openai.com/v1/images/edits";
 const REQUEST_TIMEOUT_MS = 90_000; // gpt-image-2 multi-image 는 30~60s 소요
 const MAX_USER_IMAGE_BYTES = 8 * 1024 * 1024; // 8MB raw bytes (base64 decoded)
-const KOREAN_USER_ERROR =
-  "손금 분석에 실패했어요. 다시 시도해주세요.";
+const KOREAN_USER_ERROR = "손금 분석에 실패했어요. 다시 시도해주세요.";
 
 const COMBINED_PROMPT = [
   "You are creating a premium Korean palm reading guide poster.",
@@ -91,7 +90,8 @@ const COMBINED_PROMPT = [
 // =====================================================
 const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ??
+  "";
 
 if (!OPENAI_API_KEY) {
   console.error(
@@ -148,7 +148,11 @@ function jsonResponse(
   });
 }
 
-function failure(status: number, log: string, userMsg = KOREAN_USER_ERROR): Response {
+function failure(
+  status: number,
+  log: string,
+  userMsg = KOREAN_USER_ERROR,
+): Response {
   console.error(`❌ fortune-palm-reading: ${log}`);
   return jsonResponse({ success: false, error: userMsg }, status);
 }
@@ -183,7 +187,9 @@ async function downloadAsset(path: string): Promise<Uint8Array> {
 
   if (error || !data) {
     throw new Error(
-      `Asset download failed: ${ASSETS_BUCKET}/${path} — ${error?.message ?? "no data"}`,
+      `Asset download failed: ${ASSETS_BUCKET}/${path} — ${
+        error?.message ?? "no data"
+      }`,
     );
   }
 
@@ -209,11 +215,17 @@ async function uploadResult(
     throw new Error(`Storage upload failed: ${error.message}`);
   }
 
-  const { data } = supabase.storage.from(RESULTS_BUCKET).getPublicUrl(fileName);
-  if (!data?.publicUrl) {
-    throw new Error("Storage upload succeeded but public URL missing");
+  const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+    .from(RESULTS_BUCKET)
+    .createSignedUrl(fileName, 7 * 24 * 60 * 60);
+  if (signedUrlError || !signedUrlData?.signedUrl) {
+    throw new Error(
+      `Storage upload succeeded but signed URL missing: ${
+        signedUrlError?.message ?? "no url"
+      }`,
+    );
   }
-  return data.publicUrl;
+  return signedUrlData.signedUrl;
 }
 
 // =====================================================
@@ -244,7 +256,10 @@ async function generatePalmReadingImage(
   form.append("image", blobOf(userPalmPng), "user.png");
 
   const controller = new AbortController();
-  const timeoutHandle = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const timeoutHandle = setTimeout(
+    () => controller.abort(),
+    REQUEST_TIMEOUT_MS,
+  );
 
   let response: Response;
   try {
@@ -267,7 +282,9 @@ async function generatePalmReadingImage(
 
   if (!response.ok) {
     const text = await response.text().catch(() => "");
-    throw new Error(`OpenAI images/edits ${response.status}: ${text.slice(0, 500)}`);
+    throw new Error(
+      `OpenAI images/edits ${response.status}: ${text.slice(0, 500)}`,
+    );
   }
 
   const json = await response.json() as {

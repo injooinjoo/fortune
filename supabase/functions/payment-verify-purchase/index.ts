@@ -451,6 +451,7 @@ async function verifyAppleReceipt(
  */
 
 // 상품별 토큰 수량 매핑 (BM v2.2 + 레거시 복원)
+// 구독 월 토큰은 subscription-activate RPC 에서 entitlement 와 같은 DB transaction 으로 지급한다.
 const PRODUCT_TOKENS: Record<string, number> = {
   // BM v2.2 신규 패키지 (Apple Korea tier 정합 — Starter 50→30 으로 축소)
   "com.beyond.fortune.tokens.starter": 30,
@@ -473,6 +474,13 @@ const PRODUCT_TOKENS: Record<string, number> = {
   // Legacy 구독 (이전 분량 그대로 복원)
   "com.beyond.fortune.subscription.monthly": 30000,
 };
+
+const SUBSCRIPTION_PRODUCT_IDS = new Set<string>([
+  "com.beyond.fortune.subscription.lite",
+  "com.beyond.fortune.subscription.pro",
+  "com.beyond.fortune.subscription.max",
+  "com.beyond.fortune.subscription.monthly",
+]);
 
 // 허용된 product_id 화이트리스트.
 // packages/product-contracts/src/products.ts 의 allProductIds 와 동기화 필수.
@@ -770,7 +778,8 @@ serve(async (req) => {
           if (vpInsertErr.message?.includes("duplicate")) {
             existingVerified = await loadVerifiedPurchase();
             replayOwnedByCurrentUser = existingVerified?.user_id === userId;
-            alreadyGranted = existingVerified?.consumed_for_token_grant === true;
+            alreadyGranted =
+              existingVerified?.consumed_for_token_grant === true;
             console.log(
               `🔁 verified_purchases global UNIQUE hit — owner=current? ${replayOwnedByCurrentUser}, tokenGrantConsumed? ${alreadyGranted}`,
             );
@@ -786,9 +795,17 @@ serve(async (req) => {
     // /ultrareview BM P0 #3: verified productId (Apple/Google 응답) 사용.
     // 이전엔 클라가 보낸 productId 로 토큰 지급 → 낮은 가격 receipt 로 비싼 product
     // 요청 시 비싼 양 지급되는 mismatch 공격 가능했음.
-    const tokensToAdd = PRODUCT_TOKENS[verifiedProductId] || 0;
+    const isSubscriptionPurchase = SUBSCRIPTION_PRODUCT_IDS.has(
+      verifiedProductId,
+    );
+    const tokensToAdd = isSubscriptionPurchase
+      ? 0
+      : PRODUCT_TOKENS[verifiedProductId] || 0;
+    const subscriptionTokensPendingActivation = isSubscriptionPurchase
+      ? PRODUCT_TOKENS[verifiedProductId] || 0
+      : 0;
     console.log(
-      `💰 추가할 토큰 수: ${tokensToAdd} (verifiedProductId: ${verifiedProductId}, requestedProductId: ${productId})`,
+      `💰 추가할 토큰 수: ${tokensToAdd} (subscriptionPendingActivation=${subscriptionTokensPendingActivation}, verifiedProductId: ${verifiedProductId}, requestedProductId: ${productId})`,
     );
     if (verifiedProductId !== productId) {
       console.warn(
@@ -939,6 +956,9 @@ serve(async (req) => {
       platform,
       environment,
       tokensAdded: isValid ? actualTokensToAdd : 0,
+      subscriptionTokensPendingActivation: isValid
+        ? subscriptionTokensPendingActivation
+        : 0,
       bonusTokens: bonusTokens,
       isFirstPurchase: isFirstPurchase,
       verifiedAt: new Date().toISOString(),

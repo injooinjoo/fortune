@@ -31,11 +31,15 @@
  *   { success: false, error: string }
  */
 
-import { createClient, type SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import {
+  createClient,
+  type SupabaseClient,
+} from "https://esm.sh/@supabase/supabase-js@2";
 import {
   ALL_POSTER_TYPES,
   type PosterType,
-} from '../_shared/poster_registry.ts';
+} from "../_shared/poster_registry.ts";
+import { FORTUNE_TOKEN_COSTS, normalizeFortuneType } from "../_shared/types.ts";
 
 interface StartPosterJobRequest {
   posterType: PosterType;
@@ -46,26 +50,26 @@ interface StartPosterJobRequest {
 }
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers':
-    'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     // Auth 검증 — JWT 에서 user_id 추출
-    const authHeader = req.headers.get('Authorization');
+    const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
-      return jsonError(401, '인증이 필요합니다.');
+      return jsonError(401, "인증이 필요합니다.");
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
     const userClient = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
@@ -76,52 +80,70 @@ Deno.serve(async (req) => {
     } = await userClient.auth.getUser();
 
     if (userError || !user) {
-      return jsonError(401, '세션이 만료되었습니다.');
+      return jsonError(401, "세션이 만료되었습니다.");
     }
 
     // 요청 body 검증
     const body = (await req.json()) as StartPosterJobRequest;
     if (!body.posterType || !ALL_POSTER_TYPES.includes(body.posterType)) {
-      return jsonError(400, '지원하지 않는 운세 종류입니다.');
+      return jsonError(400, "지원하지 않는 운세 종류입니다.");
     }
     if (!body.characterId || !body.characterName) {
-      return jsonError(400, '캐릭터 정보가 누락되었습니다.');
+      return jsonError(400, "캐릭터 정보가 누락되었습니다.");
     }
 
-    // 동시 큐 제한: 같은 user 가 pending/processing 인 job 5개 초과면 거절.
-    // (사용자가 무한 큐잉으로 API quota 소진하는 abuse 방지)
     const adminClient = createClient(supabaseUrl, supabaseServiceKey);
-    const { count: activeCount } = await adminClient
-      .from('scheduled_poster_jobs')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-      .in('status', ['pending', 'processing']);
+    const normalizedType = normalizeFortuneType(body.posterType);
+    const tokenCost = FORTUNE_TOKEN_COSTS[
+      normalizedType as keyof typeof FORTUNE_TOKEN_COSTS
+    ] ?? 1;
 
-    if ((activeCount ?? 0) >= 5) {
+    // P0 billing safety: token charge/reserve + job INSERT happen in one DB RPC.
+    // If the charge fails, no pending job is created; if insert fails, the charge
+    // rolls back with the function transaction. Subscribers get a charged marker
+    // without token decrement so workers can still claim legitimate jobs.
+    const { data: scheduleResult, error: scheduleError } = await adminClient
+      .rpc(
+        "schedule_poster_job_with_charge",
+        {
+          p_user_id: user.id,
+          p_character_id: body.characterId,
+          p_character_name: body.characterName,
+          p_poster_type: body.posterType,
+          p_image_base64: body.imageBase64 ?? null,
+          p_context_text: body.contextText ?? null,
+          p_cost: tokenCost,
+        },
+      );
+
+    if (scheduleError) {
+      console.error("[start-poster-job] schedule RPC failed:", scheduleError);
       return jsonError(
-        429,
-        '진행 중인 운세가 너무 많습니다. 끝난 후 다시 시도해주세요.',
+        500,
+        "요청 등록에 실패했습니다. 잠시 후 다시 시도해주세요.",
       );
     }
 
-    // INSERT job
-    const { data: job, error: insertError } = await adminClient
-      .from('scheduled_poster_jobs')
-      .insert({
-        user_id: user.id,
-        character_id: body.characterId,
-        character_name: body.characterName,
-        poster_type: body.posterType,
-        image_base64: body.imageBase64 ?? null,
-        context_text: body.contextText ?? null,
-        status: 'pending',
-      })
-      .select('id')
-      .single();
+    const scheduled = scheduleResult as {
+      success?: boolean;
+      jobId?: string;
+      code?: string;
+      error?: string;
+      estimatedSeconds?: number;
+    };
 
-    if (insertError || !job) {
-      console.error('[start-poster-job] INSERT failed:', insertError);
-      return jsonError(500, '요청 등록에 실패했습니다. 잠시 후 다시 시도해주세요.');
+    if (!scheduled?.success || !scheduled.jobId) {
+      const status = scheduled?.code === "INSUFFICIENT_TOKENS"
+        ? 402
+        : scheduled?.code === "QUEUE_LIMIT_REACHED"
+        ? 429
+        : 400;
+      return jsonError(
+        status,
+        scheduled?.error ??
+          "요청 등록에 실패했습니다. 잠시 후 다시 시도해주세요.",
+        scheduled?.code,
+      );
     }
 
     // Placeholder 메시지 INSERT — 캐릭터가 "분석 시작했어!" 라고 채팅창에 즉시 답변
@@ -135,18 +157,18 @@ Deno.serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
-        jobId: job.id,
-        status: 'pending',
-        estimatedSeconds: 60,
+        jobId: scheduled.jobId,
+        status: "pending",
+        estimatedSeconds: scheduled.estimatedSeconds ?? 60,
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
       },
     );
   } catch (error) {
-    console.error('[start-poster-job] unexpected error:', error);
-    return jsonError(500, '예상치 못한 오류가 발생했습니다.');
+    console.error("[start-poster-job] unexpected error:", error);
+    return jsonError(500, "예상치 못한 오류가 발생했습니다.");
   }
 });
 
@@ -169,16 +191,18 @@ async function insertPlaceholderMessage(
   posterType: PosterType,
 ): Promise<void> {
   const placeholderText = buildPlaceholderText(posterType);
-  const messageId = `text-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  const messageId = `text-${Date.now()}-${
+    Math.random().toString(36).slice(2, 10)
+  }`;
 
   const placeholder = {
     id: messageId,
-    type: 'character',
+    type: "character",
     content: placeholderText,
     timestamp: new Date().toISOString(),
   };
 
-  const { error } = await client.rpc('merge_character_conversation_messages', {
+  const { error } = await client.rpc("merge_character_conversation_messages", {
     p_user_id: userId,
     p_character_id: characterId,
     p_incoming_messages: [placeholder],
@@ -188,7 +212,7 @@ async function insertPlaceholderMessage(
 
   if (error) {
     // 부수효과 실패는 치명적 아님 — 결과 카드는 cron 이 별도로 INSERT
-    console.warn('[start-poster-job] placeholder merge failed:', error);
+    console.warn("[start-poster-job] placeholder merge failed:", error);
   }
 }
 
@@ -197,13 +221,13 @@ async function insertPlaceholderMessage(
  */
 function buildPlaceholderText(posterType: PosterType): string {
   const labels: Record<PosterType, string> = {
-    'palm-reading': '손금',
-    'beauty-simulation': '뷰티 시뮬레이션',
-    'hair-style-guide': '헤어스타일',
-    'face-reading-guide': '얼굴 인상',
-    'ootd-guide': 'OOTD',
-    'blind-date-guide': '소개팅',
-    'past-life-guide': '전생',
+    "palm-reading": "손금",
+    "beauty-simulation": "뷰티 시뮬레이션",
+    "hair-style-guide": "헤어스타일",
+    "face-reading-guide": "얼굴 인상",
+    "ootd-guide": "OOTD",
+    "blind-date-guide": "소개팅",
+    "past-life-guide": "전생",
   };
   const label = labels[posterType];
   return (
@@ -212,9 +236,12 @@ function buildPlaceholderText(posterType: PosterType): string {
   );
 }
 
-function jsonError(status: number, message: string) {
-  return new Response(JSON.stringify({ success: false, error: message }), {
-    status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  });
+function jsonError(status: number, message: string, code?: string) {
+  return new Response(
+    JSON.stringify({ success: false, error: message, code }),
+    {
+      status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    },
+  );
 }

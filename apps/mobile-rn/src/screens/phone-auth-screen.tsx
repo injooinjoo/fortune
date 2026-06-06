@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { router } from 'expo-router';
+import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { TextInput, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
@@ -39,7 +39,25 @@ function formatTimer(seconds: number): string {
   return `${min}:${sec.toString().padStart(2, '0')}`;
 }
 
+function readSearchParam(
+  value: string | string[] | undefined,
+): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function normalizeReturnTo(value: string | undefined) {
+  return value && value.startsWith('/') && value !== '/auth/callback'
+    ? value
+    : '/chat';
+}
+
 export function PhoneAuthScreen() {
+  const params = useLocalSearchParams<{ returnTo?: string | string[] }>();
+  const returnTo = normalizeReturnTo(readSearchParam(params.returnTo));
+  const signupFallbackHref = {
+    pathname: '/signup',
+    params: { returnTo },
+  } as Href;
   const { markAuthComplete } = useAppBootstrap();
   const [step, setStep] = useState<Step>('phone');
   const [phone, setPhone] = useState('');
@@ -130,7 +148,10 @@ export function PhoneAuthScreen() {
       clearTimer();
       authSuccess();
       await markAuthComplete();
-      router.replace('/auth/callback');
+      router.replace({
+        pathname: '/auth/callback',
+        params: { returnTo },
+      });
     } catch (error) {
       await captureError(error, { surface: 'phone-auth:verify-otp' });
       setErrorMessage('오류가 발생했습니다. 다시 시도해 주세요.');
@@ -176,7 +197,7 @@ export function PhoneAuthScreen() {
   return (
     <Screen
       keyboardAvoiding
-      header={<RouteBackHeader fallbackHref="/signup" label="로그인 및 시작" />}
+      header={<RouteBackHeader fallbackHref={signupFallbackHref} label="로그인 및 시작" />}
     >
       <AppText variant="displaySmall">전화번호로 시작</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>

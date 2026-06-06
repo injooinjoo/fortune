@@ -112,7 +112,9 @@ async function generateImageWithFallback(
       primaryError.name === "SafetyBlockedError";
     if (!isSafetyBlocked) throw primaryError;
 
-    console.warn("[generate-friend-avatar] Gemini safety blocked → Grok 폴백 시도");
+    console.warn(
+      "[generate-friend-avatar] Gemini safety blocked → Grok 폴백 시도",
+    );
     const fallback = LLMFactory.create("grok", "grok-2-image-1212");
     if (!fallback.generateImage) {
       throw primaryError;
@@ -120,7 +122,10 @@ async function generateImageWithFallback(
     try {
       return await fallback.generateImage(prompt);
     } catch (fallbackError) {
-      console.error("[generate-friend-avatar] Grok 폴백도 실패:", fallbackError);
+      console.error(
+        "[generate-friend-avatar] Grok 폴백도 실패:",
+        fallbackError,
+      );
       // 두 엔진 모두 실패 → 원본 Safety 에러 유지 (사용자 메시지 일관성)
       throw primaryError;
     }
@@ -145,16 +150,16 @@ serve(async (req: Request) => {
     if (authError || !user) {
       return (
         authError ??
-        new Response(
-          JSON.stringify({
-            success: false,
-            error: "Unauthorized",
-          } as GenerateFriendAvatarResponse),
-          {
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-            status: 401,
-          },
-        )
+          new Response(
+            JSON.stringify({
+              success: false,
+              error: "Unauthorized",
+            } as GenerateFriendAvatarResponse),
+            {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+              status: 401,
+            },
+          )
       );
     }
 
@@ -252,10 +257,18 @@ serve(async (req: Request) => {
         throw new Error(`이미지 업로드 실패: ${uploadError.message}`);
       }
 
-      const { data: publicUrlData } = supabase.storage
+      const { data: signedUrlData, error: signedUrlError } = await supabase
+        .storage
         .from(BUCKET_NAME)
-        .getPublicUrl(storagePath);
-      publicUrl = publicUrlData.publicUrl;
+        .createSignedUrl(storagePath, 7 * 24 * 60 * 60);
+      if (signedUrlError || !signedUrlData?.signedUrl) {
+        throw new Error(
+          `Storage upload succeeded but signed URL missing: ${
+            signedUrlError?.message ?? "no url"
+          }`,
+        );
+      }
+      publicUrl = signedUrlData.signedUrl;
     } catch (workError) {
       if (charge?.charged) {
         await refundTokens(

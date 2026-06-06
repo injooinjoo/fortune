@@ -353,7 +353,10 @@ export function SignupScreen() {
                   return;
                 }
                 confirmAction();
-                router.push('/auth/email');
+                router.push({
+                  pathname: '/auth/email',
+                  params: { returnTo },
+                });
               }}
               style={({ pressed }) => ({
                 alignItems: 'center',
@@ -407,7 +410,10 @@ export function SignupScreen() {
                   return;
                 }
                 confirmAction();
-                router.push('/auth/phone');
+                router.push({
+                  pathname: '/auth/phone',
+                  params: { returnTo },
+                });
               }}
               style={({ pressed }) => ({
                 alignItems: 'center',

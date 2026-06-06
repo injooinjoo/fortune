@@ -3,11 +3,11 @@
 // 흐름:
 // 1. RewardedAd.createForAdRequest() → 광고 로드
 // 2. 사용자가 "광고 보기" 버튼 누름 → ad.show()
-// 3. EARNED_REWARD 이벤트 → grant-ad-reward edge function POST 호출
-// 4. 토큰 잔액 갱신 + 사용자에게 결과 알림
+// 3. EARNED_REWARD 이벤트 → 클라이언트는 보상 대기 상태만 표시
+// 4. 실제 토큰 지급은 AdMob SSV GET 콜백 → grant-ad-reward edge function 에서 처리
 //
-// SSV 가 활성화되면 (3) 의 POST 는 fallback 이고 실제 토큰은 AdMob 서버 →
-// grant-ad-reward GET 콜백 경로로 지급된다. 이 훅은 두 경로 모두 호환.
+// 클라이언트 POST self-attestation 은 광고 시청 증명 없이 토큰을 발급할 수 있어
+// 운영 원칙상 사용하지 않는다.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Platform } from 'react-native';
@@ -71,47 +71,9 @@ export interface AdRewardOutcome {
   tokensGranted?: number;
   newBalance?: number;
   remainingToday?: number;
+  rewardPending?: boolean;
   error?: string;
-  errorCode?: 'limit_reached' | 'unauthorized' | 'unknown';
-}
-
-/**
- * Edge Function 직접 호출 (POST self-attestation 경로).
- * SSV 가 활성화된 환경에서는 보상이 중복으로 지급되지 않도록 server-side 에서
- * idempotency 체크가 필요할 수 있으나, 현재는 ad_reward_log 의 일일 한도 (5)
- * 와 row 단위 insert 로 자연스럽게 cap 됨.
- */
-async function notifyEdgeFunction(
-  session: Session,
-  payload: { adUnit?: string; ssvSignature?: string },
-): Promise<AdRewardOutcome> {
-  if (!appEnv.isSupabaseConfigured) {
-    return { success: false, error: 'Supabase not configured' };
-  }
-  try {
-    const res = await fetch(
-      `${appEnv.supabaseUrl}/functions/v1/grant-ad-reward`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-          apikey: appEnv.supabaseAnonKey,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          adUnit: payload.adUnit ?? null,
-          ssvSignature: payload.ssvSignature ?? null,
-        }),
-      },
-    );
-    const json = (await res.json()) as AdRewardOutcome;
-    return json;
-  } catch (error) {
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'unknown',
-    };
-  }
+  errorCode?: 'limit_reached' | 'unauthorized' | 'ssv_required' | 'unknown';
 }
 
 export interface UseRewardedAdOptions {
@@ -138,13 +100,14 @@ export function useRewardedAd(
   options: UseRewardedAdOptions,
 ): UseRewardedAdResult {
   const { session, onReward, userId } = options;
+  const effectiveUserId = userId ?? session?.user.id ?? null;
   const [isReady, setIsReady] = useState(false);
   const [isShowing, setIsShowing] = useState(false);
   const adRef = useRef<RewardedAdInstance | null>(null);
   const moduleRef = useRef<RewardedAdModule | null>(null);
 
   const adUnitId = pickRewardedUnitId();
-  const isUnavailable = !adUnitId || Platform.OS === 'web';
+  const isUnavailable = !adUnitId || Platform.OS === 'web' || !effectiveUserId;
 
   const prefetch = useCallback(async () => {
     if (isUnavailable) return;
@@ -155,8 +118,8 @@ export function useRewardedAd(
     const ad = mod.RewardedAd.createForAdRequest(adUnitId, {
       requestNonPersonalizedAdsOnly: true,
       keywords: ['fortune', 'tarot', 'horoscope', 'lifestyle'],
-      serverSideVerificationOptions: userId
-        ? { customData: userId, userId }
+      serverSideVerificationOptions: effectiveUserId
+        ? { customData: effectiveUserId, userId: effectiveUserId }
         : undefined,
     });
 
@@ -175,7 +138,7 @@ export function useRewardedAd(
       offLoaded();
       offError();
     };
-  }, [adUnitId, isUnavailable, userId]);
+  }, [adUnitId, effectiveUserId, isUnavailable]);
 
   useEffect(() => {
     let cleanup: (() => void) | undefined;
@@ -194,6 +157,9 @@ export function useRewardedAd(
     if (!session) {
       return { success: false, error: 'login_required' };
     }
+    if (!effectiveUserId) {
+      return { success: false, error: 'missing_user_for_ssv' };
+    }
     const ad = adRef.current;
     const mod = moduleRef.current;
     if (!ad || !mod || !ad.loaded) {
@@ -203,18 +169,26 @@ export function useRewardedAd(
     setIsShowing(true);
     try {
       const earned = await new Promise<boolean>((resolve) => {
-        const offEarned = ad.addAdEventListener(
+        let resolved = false;
+        let offEarned: (() => void) | null = null;
+        let offClosed: (() => void) | null = null;
+        const complete = (value: boolean) => {
+          if (resolved) return;
+          resolved = true;
+          offEarned?.();
+          offClosed?.();
+          resolve(value);
+        };
+        offEarned = ad.addAdEventListener(
           mod.RewardedAdEventType.EARNED_REWARD,
           () => {
-            offEarned();
-            resolve(true);
+            complete(true);
           },
         );
-        const offClosed = ad.addAdEventListener(mod.AdEventType.CLOSED, () => {
-          offClosed();
-          resolve(false);
+        offClosed = ad.addAdEventListener(mod.AdEventType.CLOSED, () => {
+          complete(false);
         });
-        ad.show().catch(() => resolve(false));
+        ad.show().catch(() => complete(false));
       });
 
       setIsShowing(false);
@@ -225,9 +199,11 @@ export function useRewardedAd(
         return { success: false, error: 'ad_dismissed_before_reward' };
       }
 
-      const outcome = await notifyEdgeFunction(session, {
-        adUnit: adUnitId,
-      });
+      const outcome: AdRewardOutcome = {
+        success: true,
+        rewardPending: true,
+        error: 'reward_pending',
+      };
       onReward?.(outcome);
 
       // 다음 시청을 위해 새 광고 prefetch
@@ -241,7 +217,7 @@ export function useRewardedAd(
         error: error instanceof Error ? error.message : 'unknown',
       };
     }
-  }, [adUnitId, isUnavailable, onReward, prefetch, session]);
+  }, [effectiveUserId, isUnavailable, onReward, prefetch, session]);
 
   return { isReady, isShowing, isUnavailable, showAd };
 }

@@ -132,6 +132,7 @@ export function PremiumScreen() {
     storeStatus,
     syncRemoteProfile,
   } = useMobileAppState();
+  const pendingRewardPollTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const [selectedProductId, setSelectedProductId] = useState<ProductId>(() =>
     premiumIntent === 'top-up'
       ? strongFitRecommendedProductId
@@ -139,6 +140,13 @@ export function PremiumScreen() {
   );
   const [openTrustIndex, setOpenTrustIndex] = useState<number | null>(null);
   const didRequestStoreRefreshRef = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      pendingRewardPollTimeoutsRef.current.forEach(clearTimeout);
+      pendingRewardPollTimeoutsRef.current = [];
+    };
+  }, []);
 
   useEffect(() => {
     if (didRequestStoreRefreshRef.current) {
@@ -731,7 +739,34 @@ export function PremiumScreen() {
           <PrimaryButton
             onPress={() => {
               void rewardedAd.showAd().then((outcome) => {
-                if (outcome.success) {
+                if (outcome.rewardPending) {
+                  const balanceBefore = state.premium.tokenBalance;
+                  Alert.alert(
+                    '🎁 광고 확인 중',
+                    'Google 확인이 끝나면 토큰에 반영돼요. 잔액을 몇 번 더 확인할게요.',
+                  );
+                  [2500, 6000, 12000].forEach((delayMs) => {
+                    const timeoutId = setTimeout(() => {
+                      void syncRemoteProfile().then((nextState) => {
+                        if (
+                          delayMs === 12000 &&
+                          nextState &&
+                          nextState.premium.tokenBalance <= balanceBefore
+                        ) {
+                          Alert.alert(
+                            '광고 보상 확인 중',
+                            '아직 토큰 반영이 확인되지 않았어요. 한도 또는 Google 확인 지연일 수 있어요.',
+                          );
+                        }
+                      }).catch((error: unknown) => {
+                        captureError(error, { surface: 'premium:reward-pending-profile-sync' }).catch(
+                          () => undefined,
+                        );
+                      });
+                    }, delayMs);
+                    pendingRewardPollTimeoutsRef.current.push(timeoutId);
+                  });
+                } else if (outcome.success) {
                   Alert.alert(
                     '🎁 토큰 획득',
                     `${outcome.tokensGranted ?? 1} 토큰을 받았어요. (오늘 ${
@@ -740,10 +775,22 @@ export function PremiumScreen() {
                   );
                 } else if (outcome.error === 'ad_not_ready') {
                   Alert.alert('광고 준비 중', '잠시 후 다시 시도해주세요.');
+                } else if (outcome.error === 'ad_dismissed_before_reward') {
+                  Alert.alert('보상 미완료', '광고가 끝나기 전에 닫혀 토큰 보상이 진행되지 않았어요.');
+                } else if (
+                  outcome.error === 'login_required' ||
+                  outcome.error === 'missing_user_for_ssv'
+                ) {
+                  Alert.alert('로그인 필요', '광고 보상 토큰은 로그인 후 받을 수 있어요.');
                 } else if (outcome.errorCode === 'limit_reached') {
                   Alert.alert(
                     '오늘 한도 도달',
                     '내일 다시 광고로 토큰을 받을 수 있어요.',
+                  );
+                } else {
+                  Alert.alert(
+                    '광고 보상 확인 실패',
+                    '광고 보상 상태를 확인하지 못했어요. 잠시 후 잔액을 새로고침해 주세요.',
                   );
                 }
               });

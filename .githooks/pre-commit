@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+cd "$ROOT_DIR"
+
+STAGED_FILES="$(git diff --cached --name-only --diff-filter=ACMR)"
+if [[ -z "$STAGED_FILES" ]]; then
+  exit 0
+fi
+
+if ! grep -Eq '^(apps/mobile-rn/|packages/(design-tokens|product-contracts|saju-engine)/|package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml)' <<< "$STAGED_FILES"; then
+  echo "[pre-commit] No RN/native-relevant staged changes; skipping native iOS build."
+  exit 0
+fi
+
+echo "[pre-commit] RN/native-relevant changes detected. Running local native verification..."
+bash scripts/verify-rn-native-patch.sh

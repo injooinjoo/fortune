@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, type PropsWithChildren } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo, type PropsWithChildren } from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -3301,23 +3301,31 @@ export function ActiveCharacterChatSurface({
   // 메시지가 뒤늦게 array 끝에 append → DB 의 chronological 순서와 어긋남.
   // ID 에 unix-ms 가 내장 (`user-1778217138036-...`) 되어 있어서 그걸 추출해
   // ascending 정렬. 안전 — id 패턴 안 맞으면 array index 폴백 (sort stability).
-  const visibleMessages = getCanonicalVisibleMessages(messages);
+  const visibleMessages = useMemo(() => getCanonicalVisibleMessages(messages), [messages]);
   const { state: mobileAppState } = useMobileAppState();
-  const heroReplyMessages = visibleMessages.filter(
-    (message): message is ChatShellTextMessage =>
-      message.kind === 'text' &&
-      message.sender === 'assistant' &&
-      message.animate === true &&
-      message.text.trim().length > 0,
+  const heroReplyMessages = useMemo(
+    () =>
+      visibleMessages.filter(
+        (message): message is ChatShellTextMessage =>
+          message.kind === 'text' &&
+          message.sender === 'assistant' &&
+          message.animate === true &&
+          message.text.trim().length > 0,
+      ),
+    [visibleMessages],
   );
-  const renderItems = buildChatRenderItems(visibleMessages);
+  const renderItems = useMemo(() => buildChatRenderItems(visibleMessages), [visibleMessages]);
   const promptActions = actions;
-  const hasEmbeddedResult = visibleMessages.some(
-    (message) =>
-      message.kind === 'embedded-result' ||
-      message.kind === 'fortune-cookie' ||
-      message.kind === 'saju-preview' ||
-      message.kind === 'story-reveal',
+  const hasEmbeddedResult = useMemo(
+    () =>
+      visibleMessages.some(
+        (message) =>
+          message.kind === 'embedded-result' ||
+          message.kind === 'fortune-cookie' ||
+          message.kind === 'saju-preview' ||
+          message.kind === 'story-reveal',
+      ),
+    [visibleMessages],
   );
   // 진짜 메시지만 렌더 (placeholder 안 만든다).
   // 이전엔 user 메시지가 하나도 없을 때 3개의 가짜 메시지(가상 인트로 + 가상

@@ -187,6 +187,16 @@ const config = {
           ],
         },
         {
+          // Supabase phone OTP auth (`/auth/phone`) collects a phone number.
+          // Keep this aligned with ASC App Privacy answers and Privacy Policy.
+          NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypePhoneNumber',
+          NSPrivacyCollectedDataTypeLinked: true,
+          NSPrivacyCollectedDataTypeTracking: false,
+          NSPrivacyCollectedDataTypePurposes: [
+            'NSPrivacyCollectedDataTypePurposeAppFunctionality',
+          ],
+        },
+        {
           NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeName',
           NSPrivacyCollectedDataTypeLinked: true,
           NSPrivacyCollectedDataTypeTracking: false,

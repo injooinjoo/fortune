@@ -863,12 +863,19 @@ async function uploadToSupabase(
     throw new Error(`Upload failed: ${error.message}`);
   }
 
-  const { data: publicUrlData } = supabase.storage
+  const { data: signedUrlData, error: signedUrlError } = await supabase.storage
     .from("yearly-encounter-images")
-    .getPublicUrl(fileName);
+    .createSignedUrl(fileName, 7 * 24 * 60 * 60);
+  if (signedUrlError || !signedUrlData?.signedUrl) {
+    throw new Error(
+      `Storage upload succeeded but signed URL missing: ${
+        signedUrlError?.message ?? "no url"
+      }`,
+    );
+  }
 
-  console.log("✅ Upload successful:", publicUrlData.publicUrl);
-  return publicUrlData.publicUrl;
+  console.log("✅ Upload successful:", fileName);
+  return signedUrlData.signedUrl;
 }
 
 // ============================================================================

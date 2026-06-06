@@ -38,6 +38,7 @@ import {
   type PosterType,
   type PosterTypeConfig,
 } from "../_shared/poster_registry.ts";
+import { requireWorkerAuth } from "../_shared/worker_auth.ts";
 
 // =====================================================
 // 상수 (매직 넘버 금지)
@@ -60,6 +61,7 @@ const MAX_BASE64_STRING_LENGTH = 12 * 1024 * 1024;
 
 /** 결과 이미지 1장만 받는다. */
 const OPENAI_N_IMAGES = "1";
+const SIGNED_RESULT_URL_TTL_SECONDS = 7 * 24 * 60 * 60;
 
 /** 사용자에게 노출하는 일반 한국어 에러 (로그는 별도). */
 const KOREAN_USER_ERROR = "운세 분석에 실패했어요. 다시 시도해주세요.";
@@ -67,9 +69,11 @@ const KOREAN_USER_ERROR = "운세 분석에 실패했어요. 다시 시도해주
 const KOREAN_TEMPLATE_MISSING =
   "준비 중인 운세예요. 잠시 후 다시 시도해주세요.";
 
-const KOREAN_PHOTO_REQUIRED = "사진이 필요한 운세예요. 사진을 다시 선택해주세요.";
+const KOREAN_PHOTO_REQUIRED =
+  "사진이 필요한 운세예요. 사진을 다시 선택해주세요.";
 
-const KOREAN_PHOTO_TOO_LARGE = "사진 용량이 너무 커요. 더 작은 사진으로 다시 시도해주세요.";
+const KOREAN_PHOTO_TOO_LARGE =
+  "사진 용량이 너무 커요. 더 작은 사진으로 다시 시도해주세요.";
 
 const KOREAN_INVALID_TYPE = "지원하지 않는 운세 유형이에요.";
 
@@ -87,7 +91,8 @@ const UUID_REGEX =
 // =====================================================
 const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ??
+  "";
 
 if (!OPENAI_API_KEY) {
   console.error(
@@ -146,7 +151,11 @@ function jsonResponse(body: PosterGuideResponseBody, status: number): Response {
   });
 }
 
-function failure(status: number, log: string, userMsg = KOREAN_USER_ERROR): Response {
+function failure(
+  status: number,
+  log: string,
+  userMsg = KOREAN_USER_ERROR,
+): Response {
   console.error(`❌ generate-poster-guide: ${log}`);
   return jsonResponse({ success: false, error: userMsg }, status);
 }
@@ -180,7 +189,9 @@ async function downloadAsset(path: string): Promise<Uint8Array> {
 
   if (error || !data) {
     throw new Error(
-      `Asset download failed: ${ASSETS_BUCKET}/${path} — ${error?.message ?? "no data"}`,
+      `Asset download failed: ${ASSETS_BUCKET}/${path} — ${
+        error?.message ?? "no data"
+      }`,
     );
   }
 
@@ -232,11 +243,17 @@ async function uploadResult(
     throw new Error(`Storage upload failed: ${error.message}`);
   }
 
-  const { data } = supabase.storage.from(RESULTS_BUCKET).getPublicUrl(fileName);
-  if (!data?.publicUrl) {
-    throw new Error("Storage upload succeeded but public URL missing");
+  const { data: signed, error: signedError } = await supabase.storage
+    .from(RESULTS_BUCKET)
+    .createSignedUrl(fileName, SIGNED_RESULT_URL_TTL_SECONDS);
+  if (signedError || !signed?.signedUrl) {
+    throw new Error(
+      `Storage upload succeeded but signed URL missing: ${
+        signedError?.message ?? "no url"
+      }`,
+    );
   }
-  return data.publicUrl;
+  return signed.signedUrl;
 }
 
 // =====================================================
@@ -275,7 +292,10 @@ async function generatePosterImage(
   }
 
   const controller = new AbortController();
-  const timeoutHandle = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const timeoutHandle = setTimeout(
+    () => controller.abort(),
+    REQUEST_TIMEOUT_MS,
+  );
 
   let response: Response;
   try {
@@ -298,7 +318,9 @@ async function generatePosterImage(
 
   if (!response.ok) {
     const text = await response.text().catch(() => "");
-    throw new Error(`OpenAI images/edits ${response.status}: ${text.slice(0, 500)}`);
+    throw new Error(
+      `OpenAI images/edits ${response.status}: ${text.slice(0, 500)}`,
+    );
   }
 
   const json = await response.json() as {
@@ -324,6 +346,12 @@ serve(async (req) => {
   if (req.method !== "POST") {
     return failure(405, `Method not allowed: ${req.method}`);
   }
+
+  // Internal image-generation endpoint: only process-poster-jobs/service-role or
+  // CRON_SECRET callers may invoke it. Public clients must use start-poster-job,
+  // which charges before queueing.
+  const authError = requireWorkerAuth(req);
+  if (authError) return authError;
 
   if (!OPENAI_API_KEY) {
     return failure(500, "OPENAI_API_KEY not configured");
@@ -354,7 +382,11 @@ serve(async (req) => {
   // userId validation (UUID 강제)
   const userId = readString(body.userId);
   if (!userId || !UUID_REGEX.test(userId)) {
-    return failure(400, `Invalid userId: ${JSON.stringify(body.userId)}`, KOREAN_INVALID_USER);
+    return failure(
+      400,
+      `Invalid userId: ${JSON.stringify(body.userId)}`,
+      KOREAN_INVALID_USER,
+    );
   }
 
   // contextText 정규화 (옵션)
@@ -366,7 +398,11 @@ serve(async (req) => {
 
   if (config.requiresUserPhoto) {
     if (!imageBase64) {
-      return failure(400, `posterType=${posterType} requires imageBase64`, KOREAN_PHOTO_REQUIRED);
+      return failure(
+        400,
+        `posterType=${posterType} requires imageBase64`,
+        KOREAN_PHOTO_REQUIRED,
+      );
     }
     if (imageBase64.length > MAX_BASE64_STRING_LENGTH) {
       return failure(
@@ -378,7 +414,10 @@ serve(async (req) => {
     try {
       userPhotoBytes = decodeBase64(imageBase64);
     } catch (err) {
-      return failure(400, `imageBase64 decode failed: ${(err as Error).message}`);
+      return failure(
+        400,
+        `imageBase64 decode failed: ${(err as Error).message}`,
+      );
     }
     if (userPhotoBytes.byteLength === 0) {
       return failure(400, "imageBase64 decoded to 0 bytes");
@@ -402,7 +441,10 @@ serve(async (req) => {
     try {
       userPhotoBytes = decodeBase64(imageBase64);
     } catch (err) {
-      return failure(400, `imageBase64 decode failed: ${(err as Error).message}`);
+      return failure(
+        400,
+        `imageBase64 decode failed: ${(err as Error).message}`,
+      );
     }
     if (userPhotoBytes.byteLength === 0) {
       userPhotoBytes = null;
@@ -437,7 +479,9 @@ serve(async (req) => {
     );
   }
   console.log(
-    `📦 template: ${config.templatePath} (${templateBytes.byteLength}b)${usedFallback ? " [fallback]" : ""}`,
+    `📦 template: ${config.templatePath} (${templateBytes.byteLength}b)${
+      usedFallback ? " [fallback]" : ""
+    }`,
   );
 
   // ---------- Prompt 빌드 (Generator C 가 작성한 buildPrompt) ----------
@@ -446,7 +490,12 @@ serve(async (req) => {
   // ---------- OpenAI 호출 ----------
   let resultBytes: Uint8Array;
   try {
-    resultBytes = await generatePosterImage(config, prompt, templateBytes, userPhotoBytes);
+    resultBytes = await generatePosterImage(
+      config,
+      prompt,
+      templateBytes,
+      userPhotoBytes,
+    );
     console.log(`✅ gpt-image-2 result: ${resultBytes.byteLength} bytes`);
   } catch (err) {
     return failure(500, `OpenAI generation failed: ${(err as Error).message}`);

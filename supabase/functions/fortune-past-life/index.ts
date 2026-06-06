@@ -2132,7 +2132,8 @@ Style requirements:
 - Aged Hanji paper texture
 - Centered upper body framing
 ${faceDescription}
-IMPORTANT: Do NOT include any text, watermark, or signature in the image.`.trim();
+IMPORTANT: Do NOT include any text, watermark, or signature in the image.`
+    .trim();
 }
 
 /**
@@ -2267,12 +2268,19 @@ async function uploadPortraitToStorage(
     throw new Error(`Upload failed: ${error.message}`);
   }
 
-  const { data: publicUrlData } = supabase.storage
+  const { data: signedUrlData, error: signedUrlError } = await supabase.storage
     .from("past-life-portraits")
-    .getPublicUrl(fileName);
+    .createSignedUrl(fileName, 7 * 24 * 60 * 60);
+  if (signedUrlError || !signedUrlData?.signedUrl) {
+    throw new Error(
+      `Storage upload succeeded but signed URL missing: ${
+        signedUrlError?.message ?? "no url"
+      }`,
+    );
+  }
 
-  console.log("✅ [PastLife] Portrait uploaded:", publicUrlData.publicUrl);
-  return publicUrlData.publicUrl;
+  console.log("✅ [PastLife] Portrait uploaded:", fileName);
+  return signedUrlData.signedUrl;
 }
 
 // =====================================================

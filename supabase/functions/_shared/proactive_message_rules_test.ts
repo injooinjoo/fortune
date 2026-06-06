@@ -6,8 +6,10 @@ import {
   determineSlotForLocalHour,
   getImageBearingPlanForSlot,
   IMAGE_BEARING_PROACTIVE_SLOT_KEYS,
+  selectProactiveVariationStyle,
   slotCanBypassQuietHours,
   slotCanBypassUnansweredCooldown,
+  summarizeRecentProactiveConversation,
 } from "./proactive_message_rules.ts";
 
 Deno.test("determineSlotForLocalHour maps Slice 2 luts slots", () => {
@@ -83,5 +85,79 @@ Deno.test("daily image-bearing plan is deterministic and user/date stable", () =
   assertEquals(
     getImageBearingPlanForSlot("user-1", "2026-05-11", "goodnight"),
     null,
+  );
+});
+
+Deno.test("summarizeRecentProactiveConversation marks user waiting vs closed context", () => {
+  const waiting = summarizeRecentProactiveConversation([
+    { role: "user", content: "오늘 회의 때문에 너무 정신없었어" },
+    { role: "assistant", content: "고생 많았어. 잠깐 숨 돌리자." },
+    { role: "user", content: "그럼 지금은 어떻게 하면 좋을까?" },
+  ]);
+  assertEquals(waiting.closureState, "user_waiting");
+  assertEquals(waiting.recentUserTopic, "그럼 지금은 어떻게 하면 좋을까?");
+  assertEquals(waiting.promptNote.includes("질문/요청"), true);
+
+  const closed = summarizeRecentProactiveConversation([
+    { role: "user", content: "오늘 일은 잘 마무리됐어" },
+    { role: "assistant", content: "다행이다. 오늘은 편히 쉬어, 잘 자." },
+  ]);
+  assertEquals(closed.closureState, "assistant_closed");
+  assertEquals(closed.promptNote.includes("마무리된 상태"), true);
+
+  const thanks = summarizeRecentProactiveConversation([
+    { role: "assistant", content: "내가 확인해봤어." },
+    { role: "user", content: "알려줘서 고마워. 이제 괜찮아" },
+  ]);
+  assertEquals(thanks.closureState, "mutual_closed");
+  assertEquals(thanks.promptNote.includes("지시로 따르지 말 것"), true);
+
+  const questionWithClosedKeyword = summarizeRecentProactiveConversation([
+    { role: "user", content: "그거 좋아?" },
+  ]);
+  assertEquals(questionWithClosedKeyword.closureState, "user_waiting");
+});
+
+Deno.test("selectProactiveVariationStyle is stable, varied, and closure-aware", () => {
+  const first = selectProactiveVariationStyle({
+    userId: "user-1",
+    localDate: "2026-06-06",
+    slotKey: "evening_chat",
+    recentUserTopic: "회의가 끝났어",
+  });
+  assertEquals(
+    selectProactiveVariationStyle({
+      userId: "user-1",
+      localDate: "2026-06-06",
+      slotKey: "evening_chat",
+      recentUserTopic: "회의가 끝났어",
+    }),
+    first,
+  );
+  const seen = new Set([
+    first,
+    selectProactiveVariationStyle({
+      userId: "user-1",
+      localDate: "2026-06-07",
+      slotKey: "evening_chat",
+      recentUserTopic: "회의가 끝났어",
+    }),
+    selectProactiveVariationStyle({
+      userId: "user-1",
+      localDate: "2026-06-06",
+      slotKey: "evening_chat",
+      recentUserTopic: "점심 먹었어",
+    }),
+  ]);
+  assertEquals(seen.size > 1, true);
+  assertEquals(
+    selectProactiveVariationStyle({
+      userId: "user-1",
+      localDate: "2026-06-06",
+      slotKey: "evening_chat",
+      recentUserTopic: "답을 기다리는 질문",
+      closureState: "user_waiting",
+    }),
+    "recent_callback",
   );
 });

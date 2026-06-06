@@ -20,10 +20,13 @@
  *   - CRON_SECRET (옵션, 외부 cron-job.org 인증용)
  */
 
-import { createClient, type SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { sendPushToUser } from '../_shared/notification_push.ts';
-import type { PosterType } from '../_shared/poster_registry.ts';
-import { requireWorkerAuth } from '../_shared/worker_auth.ts';
+import {
+  createClient,
+  type SupabaseClient,
+} from "https://esm.sh/@supabase/supabase-js@2";
+import { sendPushToUser } from "../_shared/notification_push.ts";
+import type { PosterType } from "../_shared/poster_registry.ts";
+import { requireWorkerAuth } from "../_shared/worker_auth.ts";
 
 interface PosterJobRow {
   id: string;
@@ -34,43 +37,48 @@ interface PosterJobRow {
   image_base64: string | null;
   context_text: string | null;
   retry_count: number;
+  charge_transaction_id?: string | null;
 }
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers':
-    'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // /ultrareview SRE P0 #6 후속: queue worker — atomic claim 기반이라 worker auth
-  // 강제 안 함. start-poster-job 이 JWT 검증 후 INSERT 하므로 외부 공격자가 임의
-  // job 을 채울 수 없다. cron GUC 미설정 환경에서 401 stuck 회피.
+  // Queue worker spends OpenAI image quota, so only Supabase service role or
+  // CRON_SECRET callers may claim charged jobs.
+  const authError = requireWorkerAuth(req);
+  if (authError) return authError;
 
-  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const admin = createClient(supabaseUrl, serviceKey);
 
   // Atomic claim: 가장 오래된 pending → processing.
   // FOR UPDATE SKIP LOCKED 으로 동시 cron 인스턴스 race 회피.
   const { data: claimed, error: claimError } = await admin.rpc(
-    'claim_next_poster_job',
+    "claim_next_poster_job",
   );
 
   if (claimError) {
-    console.error('[process-poster-jobs] claim RPC failed:', claimError);
-    return jsonResponse({ processed: 0, jobId: null, result: 'failed' }, 500);
+    console.error("[process-poster-jobs] claim RPC failed:", claimError);
+    return jsonResponse({ processed: 0, jobId: null, result: "failed" }, 500);
   }
 
   // RPC 가 RETURN scheduled_poster_jobs 라 row 없을 때 NULL 또는 모든 필드가
   // null 인 레코드를 반환할 수 있음. id 가 null 이면 pending job 없음.
   const claimedRow = Array.isArray(claimed) ? claimed[0] : claimed;
   if (!claimedRow || !claimedRow.id) {
-    return jsonResponse({ processed: 0, jobId: null, result: 'no_pending' }, 200);
+    return jsonResponse(
+      { processed: 0, jobId: null, result: "no_pending" },
+      200,
+    );
   }
 
   const job = claimedRow as PosterJobRow;
@@ -79,17 +87,21 @@ Deno.serve(async (req) => {
   );
 
   try {
+    if (!job.charge_transaction_id) {
+      throw new Error("uncharged poster job cannot be processed");
+    }
+
     // Phase: rendering — claim 직후, OpenAI 호출 직전 1회만 emit.
     // 호출 자체가 30-90s 로 lifecycle 대부분이라 별도 'preparing' 단계는 의미
     // 없음 (preparing→rendering 두 UPDATE 가 <1ms 간격이라 클라가 둘 다 받아도
     // 한 프레임에 깜빡임). preparing 은 enum 에 남겨 두지만 사용 안 함.
     const generateUrl = `${supabaseUrl}/functions/v1/generate-poster-guide`;
-    await updateJobPhase(admin, job.id, 'rendering');
+    await updateJobPhase(admin, job.id, "rendering");
     const generateResponse = await fetch(generateUrl, {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${serviceKey}`,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         posterType: job.poster_type,
@@ -102,7 +114,9 @@ Deno.serve(async (req) => {
     if (!generateResponse.ok) {
       const errBody = await generateResponse.text();
       throw new Error(
-        `generate-poster-guide returned ${generateResponse.status}: ${errBody.slice(0, 300)}`,
+        `generate-poster-guide returned ${generateResponse.status}: ${
+          errBody.slice(0, 300)
+        }`,
       );
     }
 
@@ -113,14 +127,16 @@ Deno.serve(async (req) => {
     };
 
     if (!result.success || !result.imageUrl) {
-      throw new Error(result.error ?? 'generate-poster-guide returned no imageUrl');
+      throw new Error(
+        result.error ?? "generate-poster-guide returned no imageUrl",
+      );
     }
 
     const imageUrl = result.imageUrl;
 
     // Phase: finalizing — 결과 받음, 메시지 INSERT + push 발송 단계.
     // 보통 1-2초로 짧지만 사용자에게 "거의 다 됐다" 신호로 의미.
-    await updateJobPhase(admin, job.id, 'finalizing');
+    await updateJobPhase(admin, job.id, "finalizing");
 
     // 결과 카드 메시지 INSERT
     await insertResultCardMessage(admin, job, imageUrl);
@@ -130,40 +146,46 @@ Deno.serve(async (req) => {
 
     // Job mark done — phase=completed 와 status=done 한 번에.
     await admin
-      .from('scheduled_poster_jobs')
+      .from("scheduled_poster_jobs")
       .update({
-        status: 'done',
-        phase: 'completed',
+        status: "done",
+        phase: "completed",
         phase_updated_at: new Date().toISOString(),
         result_image_url: imageUrl,
         completed_at: new Date().toISOString(),
       })
-      .eq('id', job.id);
+      .eq("id", job.id);
 
     console.log(`[process-poster-jobs] done job=${job.id}`);
-    return jsonResponse({ processed: 1, jobId: job.id, result: 'ok' }, 200);
+    return jsonResponse({ processed: 1, jobId: job.id, result: "ok" }, 200);
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error);
     console.error(`[process-poster-jobs] job=${job.id} failed:`, errMsg);
 
+    // 실패 시 이미 차감된 non-subscription 토큰은 환불한다. 구독/무제한 job은
+    // matching consume row 가 없어 NO_MATCHING_CONSUME 로 warn-only 처리된다.
+    await refundPosterJobCharge(admin, job).catch((e) =>
+      console.warn("[process-poster-jobs] refund error:", e)
+    );
+
     // failed 메시지 INSERT (사용자가 실패 사실 인지 가능)
     await insertFailureMessage(admin, job).catch((e) =>
-      console.warn('[process-poster-jobs] failure message insert error:', e),
+      console.warn("[process-poster-jobs] failure message insert error:", e)
     );
 
     await admin
-      .from('scheduled_poster_jobs')
+      .from("scheduled_poster_jobs")
       .update({
-        status: 'failed',
-        phase: 'failed',
+        status: "failed",
+        phase: "failed",
         phase_updated_at: new Date().toISOString(),
         error_message: errMsg.slice(0, 500),
         completed_at: new Date().toISOString(),
       })
-      .eq('id', job.id);
+      .eq("id", job.id);
 
     return jsonResponse(
-      { processed: 1, jobId: job.id, result: 'failed' },
+      { processed: 1, jobId: job.id, result: "failed" },
       200, // cron 자체는 성공 — 다음 사이클 호출되어야 함
     );
   }
@@ -176,12 +198,12 @@ Deno.serve(async (req) => {
 async function updateJobPhase(
   admin: SupabaseClient,
   jobId: string,
-  phase: 'rendering' | 'finalizing',
+  phase: "rendering" | "finalizing",
 ): Promise<void> {
   const { error } = await admin
-    .from('scheduled_poster_jobs')
+    .from("scheduled_poster_jobs")
     .update({ phase, phase_updated_at: new Date().toISOString() })
-    .eq('id', jobId);
+    .eq("id", jobId);
   if (error) {
     console.warn(
       `[process-poster-jobs] phase update failed (job=${jobId} phase=${phase}):`,
@@ -213,9 +235,9 @@ function buildCardPayload(job: PosterJobRow, imageUrl: string) {
   // 통째로 박는다. 클라 `tryRestoreCardMessage` 가 이 객체를 그대로 복원.
   return {
     id: messageId,
-    kind: 'embedded-result' as const,
-    sender: 'assistant' as const,
-    embeddedWidgetType: 'fortune_result_card' as const,
+    kind: "embedded-result" as const,
+    sender: "assistant" as const,
+    embeddedWidgetType: "fortune_result_card" as const,
     fortuneType: job.poster_type,
     resultKind: job.poster_type, // poster-guide types 는 fortuneType == resultKind
     title: label,
@@ -252,14 +274,14 @@ async function insertResultCardMessage(
   // 와 동일 형식 유지).
   const persisted = {
     id: cardPayload.id,
-    type: 'character',
+    type: "character",
     content: `[운세 결과 — ${job.poster_type}]`,
     timestamp: generatedAt,
-    cardKind: 'embedded-result',
+    cardKind: "embedded-result",
     cardPayload,
   };
 
-  const { error } = await admin.rpc('merge_character_conversation_messages', {
+  const { error } = await admin.rpc("merge_character_conversation_messages", {
     p_user_id: job.user_id,
     p_character_id: job.character_id,
     p_incoming_messages: [persisted],
@@ -285,14 +307,16 @@ async function insertFailureMessage(
 ): Promise<void> {
   const message = {
     id: `text-fail-${job.id}`,
-    type: 'character',
+    type: "character",
     content:
-      `${posterTypeLabel(job.poster_type)} 분석에 실패했어. 잠시 후 다시 시도해줘. ` +
+      `${
+        posterTypeLabel(job.poster_type)
+      } 분석에 실패했어. 잠시 후 다시 시도해줘. ` +
       `같은 사진으로 계속 실패하면 다른 사진으로 부탁해!`,
     timestamp: new Date().toISOString(),
   };
 
-  const { error } = await admin.rpc('merge_character_conversation_messages', {
+  const { error } = await admin.rpc("merge_character_conversation_messages", {
     p_user_id: job.user_id,
     p_character_id: job.character_id,
     p_incoming_messages: [message],
@@ -325,8 +349,8 @@ async function sendCompletionPush(
   // `card_payload_json` 키로 JSON-stringify 해서 박는다. push data 는
   // Record<string, string> 만 허용. 클라가 detect 후 JSON.parse → ChatShellMessage 로 INSERT.
   const pushData: Record<string, string> = {
-    type: 'poster_result',
-    channel: 'character_dm',
+    type: "poster_result",
+    channel: "character_dm",
     character_id: job.character_id,
     characterId: job.character_id,
     title: job.character_name,
@@ -349,13 +373,13 @@ async function sendCompletionPush(
 
 function posterTypeLabel(t: PosterType): string {
   const labels: Record<PosterType, string> = {
-    'palm-reading': '손금가이드',
-    'beauty-simulation': '뷰티 시뮬레이션',
-    'hair-style-guide': '헤어스타일 가이드',
-    'face-reading-guide': '얼굴 인상 리포트',
-    'ootd-guide': 'OOTD 가이드',
-    'blind-date-guide': '소개팅 가이드',
-    'past-life-guide': '전생 리포트',
+    "palm-reading": "손금가이드",
+    "beauty-simulation": "뷰티 시뮬레이션",
+    "hair-style-guide": "헤어스타일 가이드",
+    "face-reading-guide": "얼굴 인상 리포트",
+    "ootd-guide": "OOTD 가이드",
+    "blind-date-guide": "소개팅 가이드",
+    "past-life-guide": "전생 리포트",
   };
   return labels[t];
 }
@@ -363,6 +387,6 @@ function posterTypeLabel(t: PosterType): string {
 function jsonResponse(data: unknown, status: number) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }

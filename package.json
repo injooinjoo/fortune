@@ -39,7 +39,18 @@
     "serve:build": "npx serve build/web -l 3000 --single",
     "paper:guard": "node scripts/design/paper_sync_guard.js",
     "android": "expo run:android",
-    "ios": "expo run:ios"
+    "ios": "expo run:ios",
+    "rn:start:native": "pnpm --filter @fortune/mobile-rn start:native",
+    "rn:native:doctor": "pnpm --filter @fortune/mobile-rn native:doctor",
+    "rn:native:prepare": "pnpm --filter @fortune/mobile-rn native:prepare",
+    "rn:native:pods": "pnpm --filter @fortune/mobile-rn native:pods",
+    "rn:native:build": "pnpm --filter @fortune/mobile-rn native:build",
+    "rn:native:device:build": "pnpm --filter @fortune/mobile-rn native:device:build",
+    "rn:native:device:install": "pnpm --filter @fortune/mobile-rn native:device:install",
+    "rn:native:device:launch": "pnpm --filter @fortune/mobile-rn native:device:launch",
+    "rn:native:device:run": "pnpm --filter @fortune/mobile-rn native:device:run",
+    "rn:ios:xcode": "pnpm --filter @fortune/mobile-rn ios:xcode",
+    "rn:ios:local": "pnpm --filter @fortune/mobile-rn ios:local"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0",

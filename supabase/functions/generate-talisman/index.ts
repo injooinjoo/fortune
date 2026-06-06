@@ -223,7 +223,9 @@ function isTransientImageError(error: unknown): boolean {
   if (message.includes("OPENAI_API_KEY")) return false;
   if (message.includes("LLM_ALLOW_HIGH_COST_MODELS")) return false;
   if (/\b(408|409|425|429|500|502|503|504)\b/.test(message)) return true;
-  if (/timeout|timed out|fetch failed|ECONNRESET|ETIMEDOUT|socket/i.test(message)) return true;
+  if (
+    /timeout|timed out|fetch failed|ECONNRESET|ETIMEDOUT|socket/i.test(message)
+  ) return true;
   return false;
 }
 
@@ -247,7 +249,9 @@ async function generateImageWithOpenAI(
     const delay = IMAGE_RETRY_DELAYS_MS[attempt];
     if (delay > 0) {
       console.warn(
-        `⏳ Retrying talisman image generation in ${delay}ms (attempt ${attempt + 1})`,
+        `⏳ Retrying talisman image generation in ${delay}ms (attempt ${
+          attempt + 1
+        })`,
       );
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
@@ -481,12 +485,19 @@ async function uploadToSupabase(
     throw new Error(`Upload failed: ${error.message}`);
   }
 
-  const { data: publicUrlData } = supabase.storage
+  const { data: signedUrlData, error: signedUrlError } = await supabase.storage
     .from(TALISMAN_STORAGE_BUCKET)
-    .getPublicUrl(fileName);
+    .createSignedUrl(fileName, 7 * 24 * 60 * 60);
+  if (signedUrlError || !signedUrlData?.signedUrl) {
+    throw new Error(
+      `Storage upload succeeded but signed URL missing: ${
+        signedUrlError?.message ?? "no url"
+      }`,
+    );
+  }
 
-  console.log("✅ Upload successful:", publicUrlData.publicUrl);
-  return publicUrlData.publicUrl;
+  console.log("✅ Upload successful:", fileName);
+  return signedUrlData.signedUrl;
 }
 
 async function saveGeneratedTalismanRecord(
