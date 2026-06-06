@@ -132,11 +132,11 @@ async function generateImageWithFallback(
   }
 }
 
-function buildStoragePath(name: string): string {
+function buildStoragePath(userId: string, name: string): string {
   const timestamp = Date.now();
   const uid = crypto.randomUUID().split("-")[0];
   const safeName = name.replace(/[^a-zA-Z0-9가-힣]/g, "_").slice(0, 20);
-  return `custom/${safeName}/${timestamp}_${uid}.png`;
+  return `${userId}/custom/${safeName}/${timestamp}_${uid}.png`;
 }
 
 serve(async (req: Request) => {
@@ -244,7 +244,7 @@ serve(async (req: Request) => {
         atob(imageResult.imageBase64),
         (c) => c.charCodeAt(0),
       );
-      const storagePath = buildStoragePath(request.name || "friend");
+      const storagePath = buildStoragePath(user.id, request.name || "friend");
 
       const { error: uploadError } = await supabase.storage
         .from(BUCKET_NAME)

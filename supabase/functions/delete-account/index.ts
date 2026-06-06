@@ -73,7 +73,7 @@ const USER_STORAGE_TARGETS: Array<
   { bucket: "talisman-images", prefix: (userId) => userId },
   { bucket: "yearly-encounter-images", prefix: (userId) => userId },
   { bucket: "friend-avatars", prefix: (userId) => userId },
-  { bucket: "character-audio-messages", prefix: (userId) => userId },
+  { bucket: "character-audio-messages", prefix: (userId) => `users/${userId}` },
 ];
 
 async function listStoragePathsRecursively(

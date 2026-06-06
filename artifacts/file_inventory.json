@@ -96,6 +96,538 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/checklists/00-index.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/audits/2026-06-ondo-full-audit/checklists/01-bm-iap-revenue.md",
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/01-bm-iap-revenue-report.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/audits/2026-06-ondo-full-audit/checklists/02-app-store-review.md",
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/02-app-store-review-report.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/audits/2026-06-ondo-full-audit/checklists/03-chat-runtime-rca.md",
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/03-chat-runtime-rca-report.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/audits/2026-06-ondo-full-audit/checklists/04-chat-ux-conversation.md",
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/04-chat-ux-conversation-report.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/audits/2026-06-ondo-full-audit/checklists/05-proactive-push.md",
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/05-proactive-push-report.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/checklists/06-fortune-registry-schema.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/audits/2026-06-ondo-full-audit/checklists/07-haneul-fortune-e2e.md",
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/07-haneul-fortune-e2e-report.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/audits/2026-06-ondo-full-audit/checklists/08-ux-button-walker.md",
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/08-ux-button-walker-report.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/audits/2026-06-ondo-full-audit/checklists/09-design-system-motion.md",
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/09-design-system-motion-report.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/audits/2026-06-ondo-full-audit/checklists/10-architecture-duplication-performance.md",
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/10-architecture-duplication-performance-report.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/audits/2026-06-ondo-full-audit/checklists/11-supabase-rls-edge-health.md",
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/11-supabase-rls-edge-health-report.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/audits/2026-06-ondo-full-audit/checklists/12-ios-simulator-real-device.md",
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/12-ios-simulator-real-device-report.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/checklists/13-consolidation.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/checklists/PROMPTS.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_file",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/evidence/db-probes/.gitkeep",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_file",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/evidence/logs/.gitkeep",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_file",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/evidence/real-device/.gitkeep",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_file",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/evidence/screenshots/.gitkeep",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_png",
+      "notes": [],
+      "path": "docs/audits/2026-06-ondo-full-audit/evidence/screenshots/12-ios-app-after-expo-dev-server.png",
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/12-ios-simulator-real-device-report.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_png",
+      "notes": [],
+      "path": "docs/audits/2026-06-ondo-full-audit/evidence/screenshots/12-ios-app-loaded-attempt.png",
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/12-ios-simulator-real-device-report.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_png",
+      "notes": [],
+      "path": "docs/audits/2026-06-ondo-full-audit/evidence/screenshots/12-ios-clean-install-launch.png",
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/12-ios-simulator-real-device-report.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_png",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/evidence/screenshots/12-ios-launch.png",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_file",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/evidence/simulator/.gitkeep",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_file",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/fixes/.gitkeep",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_file",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/reports/.gitkeep",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/reports/01-bm-iap-revenue-report.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/reports/02-app-store-review-report.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/reports/03-chat-runtime-rca-report.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/reports/04-chat-ux-conversation-report.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/reports/05-proactive-push-report.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/reports/07-haneul-fortune-e2e-report.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/reports/08-ux-button-walker-report.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/reports/09-design-system-motion-report.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/reports/10-architecture-duplication-performance-report.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/reports/11-supabase-rls-edge-health-report.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/reports/12-ios-simulator-real-device-report.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-full-audit/reports/13-consolidated-fix-plan.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
       "notes": [],
       "path": "docs/data/API_USAGE.md",
       "referenced_by": [
@@ -978,6 +1510,26 @@
       ],
       "path": "docs/development/gcp-api-usage-monitoring.md",
       "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/development/local-native-ios-testing.md",
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/02-app-store-review-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/04-chat-ux-conversation-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/07-haneul-fortune-e2e-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/08-ux-button-walker-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/09-design-system-motion-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/10-architecture-duplication-performance-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/12-ios-simulator-real-device-report.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -2125,6 +2677,7 @@
       "notes": [],
       "path": "scripts/qa/haneul-fortune-edge-smoke.mjs",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/07-haneul-fortune-e2e-report.md",
         "docs/qa/haneul-fortune-e2e-progress-2026-05-11.md"
       ],
       "runtime_reachable": false,
@@ -2308,6 +2861,25 @@
       "dirty": false,
       "kind": "script_sh",
       "notes": [],
+      "path": "scripts/verify-rn-native-patch.sh",
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/02-app-store-review-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/04-chat-ux-conversation-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/07-haneul-fortune-e2e-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/08-ux-button-walker-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/09-design-system-motion-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/10-architecture-duplication-performance-report.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "scripts",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "script_sh",
+      "notes": [],
       "path": "scripts/verify_deep_links.sh",
       "referenced_by": [
         "docs/deployment/LAUNCH_READINESS_AUDIT_2026-02-14.md",
@@ -2319,17 +2891,18 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "phase1_remove_candidate",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "supabase_support",
-      "notes": [
-        "no_inbound_refs"
-      ],
+      "notes": [],
       "path": "supabase/config.toml",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/01-bm-iap-revenue-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/11-supabase-rls-edge-health-report.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "supabase",
@@ -2339,6 +2912,7 @@
       "notes": [],
       "path": "supabase/functions/_shared/auth.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/11-supabase-rls-edge-health-report.md",
         "supabase/functions/ack-scheduled-reply/index.ts",
         "supabase/functions/character-tts/index.ts",
         "supabase/functions/claim-scheduled-reply/index.ts",
@@ -2358,7 +2932,6 @@
         "supabase/functions/free-chat/index.ts",
         "supabase/functions/generate-character-proactive-image/index.ts",
         "supabase/functions/generate-friend-avatar/index.ts",
-        "supabase/functions/grant-ad-reward/index.ts",
         "supabase/functions/report-message/index.ts",
         "supabase/functions/sync-notification-device/index.ts",
         "supabase/functions/widget-cache/index.ts"
@@ -2503,6 +3076,7 @@
       "notes": [],
       "path": "supabase/functions/_shared/cors.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/11-supabase-rls-edge-health-report.md",
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/middleware.ts",
         "supabase/functions/ack-scheduled-reply/index.ts",
@@ -2551,6 +3125,7 @@
       "path": "supabase/functions/_shared/fortune-pricing-generated.ts",
       "referenced_by": [
         ".github/workflows/ci.yml",
+        "docs/audits/2026-06-ondo-full-audit/reports/01-bm-iap-revenue-report.md",
         "docs/qa/ondo-audit/2026-05-12-cycle-1-architecture-addendum.md",
         "scripts/sync-edge-pricing.sh",
         "supabase/functions/_shared/fortune-pricing-generated.ts",
@@ -2666,6 +3241,7 @@
       "notes": [],
       "path": "supabase/functions/_shared/llm/config.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/10-architecture-duplication-performance-report.md",
         "supabase/functions/_shared/llm/factory.ts"
       ],
       "runtime_reachable": true,
@@ -2763,6 +3339,7 @@
       "notes": [],
       "path": "supabase/functions/_shared/llm/models.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/10-architecture-duplication-performance-report.md",
         "supabase/functions/_shared/llm/config-service.ts",
         "supabase/functions/_shared/llm/config.ts",
         "supabase/functions/_shared/llm/providers/gemini.ts",
@@ -3039,6 +3616,7 @@
       "notes": [],
       "path": "supabase/functions/_shared/notification_push.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/05-proactive-push-report.md",
         "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md",
         "docs/features/HANEUL_AUDIT_RESULTS.md",
         "supabase/functions/_shared/character_message_helper.ts",
@@ -3075,6 +3653,7 @@
       "notes": [],
       "path": "supabase/functions/_shared/pending_reply_delivery.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/03-chat-runtime-rca-report.md",
         "supabase/functions/_shared/pending_reply_delivery_test.ts",
         "supabase/functions/process-pending-reply-jobs/index.ts"
       ],
@@ -3166,6 +3745,7 @@
       "notes": [],
       "path": "supabase/functions/_shared/proactive_message_rules.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/05-proactive-push-report.md",
         "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md",
         "supabase/functions/_shared/proactive_message_rules_test.ts",
         "supabase/functions/proactive-message-dispatch/index.ts"
@@ -3397,7 +3977,8 @@
       "path": "supabase/functions/_shared/types.ts",
       "referenced_by": [
         "docs/features/HANEUL_AUDIT_RESULTS.md",
-        "supabase/functions/soul-consume/index.ts"
+        "supabase/functions/soul-consume/index.ts",
+        "supabase/functions/start-poster-job/index.ts"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -3405,21 +3986,22 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "phase2_review_candidate",
+      "candidate_action": "keep",
       "dirty": false,
       "kind": "edge_shared_source",
       "notes": [],
       "path": "supabase/functions/_shared/worker_auth.ts",
       "referenced_by": [
         "supabase/functions/deliver-due-replies/index.ts",
+        "supabase/functions/generate-poster-guide/index.ts",
         "supabase/functions/proactive-message-dispatch/index.ts",
         "supabase/functions/process-long-running-jobs/index.ts",
         "supabase/functions/process-pending-reply-jobs/index.ts",
         "supabase/functions/process-poster-jobs/index.ts"
       ],
-      "runtime_reachable": false,
+      "runtime_reachable": true,
       "test_only": false,
-      "usage_status": "tooling_only"
+      "usage_status": "runtime_used"
     },
     {
       "area": "supabase",
@@ -3476,6 +4058,10 @@
       ],
       "path": "supabase/functions/character-chat/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/02-app-store-review-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/03-chat-runtime-rca-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/05-proactive-push-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/10-architecture-duplication-performance-report.md",
         "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md",
         "docs/features/HANEUL_UNIFIED_FORTUNE_PLAN.md",
         "docs/features/PROACTIVE_MESSAGING_PLAN.md",
@@ -3498,6 +4084,7 @@
       ],
       "path": "supabase/functions/character-chat/persona_prompts.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/03-chat-runtime-rca-report.md",
         "docs/qa/proactive-fixes-test-plan.md",
         "supabase/functions/character-chat/pilot_registry.ts",
         "supabase/functions/process-pending-reply-jobs/index.ts"
@@ -3516,6 +4103,7 @@
       ],
       "path": "supabase/functions/character-chat/pilot_registry.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/03-chat-runtime-rca-report.md",
         "docs/qa/proactive-fixes-test-plan.md",
         "supabase/functions/character-chat/index.ts",
         "supabase/functions/character-chat/persona_prompts.ts",
@@ -3572,33 +4160,37 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:claim-scheduled-reply",
-        "no_inbound_refs"
+        "edge_function_unreferenced:claim-scheduled-reply"
       ],
       "path": "supabase/functions/claim-scheduled-reply/index.ts",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/03-chat-runtime-rca-report.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:delete-account",
-        "no_inbound_refs"
+        "edge_function_unreferenced:delete-account"
       ],
       "path": "supabase/functions/delete-account/index.ts",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/02-app-store-review-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/11-supabase-rls-edge-health-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/13-consolidated-fix-plan.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "supabase",
@@ -3610,6 +4202,7 @@
       ],
       "path": "supabase/functions/deliver-due-replies/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/03-chat-runtime-rca-report.md",
         "supabase/migrations/20260427000001_scheduled_character_replies.sql",
         "supabase/migrations/20260505110000_proactive_cron_use_service_role.sql"
       ],
@@ -3794,6 +4387,7 @@
       ],
       "path": "supabase/functions/fortune-compatibility/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/11-supabase-rls-edge-health-report.md",
         "supabase/functions/fortune-compatibility/index.ts",
         "supabase/functions/process-long-running-jobs/handlers.ts"
       ],
@@ -3820,18 +4414,19 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:fortune-decision",
-        "no_inbound_refs"
+        "edge_function_unreferenced:fortune-decision"
       ],
       "path": "supabase/functions/fortune-decision/index.ts",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/11-supabase-rls-edge-health-report.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "supabase",
@@ -3950,6 +4545,7 @@
       ],
       "path": "supabase/functions/fortune-family-health/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/11-supabase-rls-edge-health-report.md",
         "docs/development/reports/2026-03-21_release_risk_register.md"
       ],
       "runtime_reachable": false,
@@ -4059,6 +4655,7 @@
       ],
       "path": "supabase/functions/fortune-love/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/11-supabase-rls-edge-health-report.md",
         "docs/data/LLM_PROVIDER_MIGRATION.md",
         "docs/development/reports/2026-03-21_release_risk_register.md",
         "supabase/functions/fortune-love/index.ts"
@@ -4203,6 +4800,7 @@
       ],
       "path": "supabase/functions/fortune-past-life/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/10-architecture-duplication-performance-report.md",
         "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md",
         "docs/development/reports/2026-03-21_release_risk_register.md",
         "docs/qa/ondo-audit/2026-05-12-cycle-1-architecture-addendum.md"
@@ -4228,18 +4826,19 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:fortune-recommend",
-        "no_inbound_refs"
+        "edge_function_unreferenced:fortune-recommend"
       ],
       "path": "supabase/functions/fortune-recommend/index.ts",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/10-architecture-duplication-performance-report.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "supabase",
@@ -4266,6 +4865,7 @@
       ],
       "path": "supabase/functions/fortune-tarot/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/11-supabase-rls-edge-health-report.md",
         "docs/data/LLM_PROVIDER_MIGRATION.md",
         "supabase/functions/process-long-running-jobs/handlers.ts"
       ],
@@ -4283,6 +4883,7 @@
       ],
       "path": "supabase/functions/fortune-tarot/tarotCatalog.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/11-supabase-rls-edge-health-report.md",
         "docs/data/LLM_PROVIDER_MIGRATION.md",
         "supabase/functions/fortune-tarot/index.ts",
         "supabase/functions/process-long-running-jobs/handlers.ts"
@@ -4398,6 +4999,7 @@
       ],
       "path": "supabase/functions/generate-character-proactive-image/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/10-architecture-duplication-performance-report.md",
         "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md",
         "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md",
         "docs/features/PROACTIVE_MESSAGING_PLAN.md"
@@ -4446,6 +5048,7 @@
       ],
       "path": "supabase/functions/generate-poster-guide/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/01-bm-iap-revenue-report.md",
         "scripts/qa/haneul-fortune-edge-smoke.mjs",
         "supabase/functions/process-poster-jobs/index.ts"
       ],
@@ -4480,6 +5083,8 @@
       ],
       "path": "supabase/functions/grant-ad-reward/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/01-bm-iap-revenue-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/02-app-store-review-report.md",
         "docs/qa/ondo-audit/2026-05-12-cycle-1.md",
         "supabase/functions/grant-ad-reward/index.ts"
       ],
@@ -4497,6 +5102,8 @@
       ],
       "path": "supabase/functions/grant-ad-reward/ssv-verify.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/01-bm-iap-revenue-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/02-app-store-review-report.md",
         "supabase/functions/grant-ad-reward/index.ts"
       ],
       "runtime_reachable": true,
@@ -4528,6 +5135,8 @@
       ],
       "path": "supabase/functions/legal-pages/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/02-app-store-review-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/08-ux-button-walker-report.md",
         "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md"
       ],
       "runtime_reachable": false,
@@ -4639,6 +5248,9 @@
       ],
       "path": "supabase/functions/payment-verify-purchase/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/01-bm-iap-revenue-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/02-app-store-review-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/10-architecture-duplication-performance-report.md",
         "docs/development/reports/2026-02-16_store_review_gate_blockers_verify.md",
         "docs/development/reports/2026-02-16_store_review_strategy_discovery.md",
         "docs/development/reports/2026-02-16_store_review_strategy_verify.md",
@@ -4706,6 +5318,7 @@
       ],
       "path": "supabase/functions/proactive-message-dispatch/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/05-proactive-push-report.md",
         "docs/deployment/review/IOS_SUBMISSION_AUDIT_2026-05-11.md",
         "docs/features/PROACTIVE_MESSAGING_PLAN.md",
         "supabase/migrations/20260426000004_proactive_dispatch_cron.sql",
@@ -4760,6 +5373,7 @@
       ],
       "path": "supabase/functions/process-pending-reply-jobs/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/03-chat-runtime-rca-report.md",
         "supabase/migrations/20260506220200_cron_process_pending_reply_jobs.sql"
       ],
       "runtime_reachable": false,
@@ -4776,6 +5390,7 @@
       ],
       "path": "supabase/functions/process-poster-jobs/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/01-bm-iap-revenue-report.md",
         "docs/qa/ondo-audit/2026-05-12-cycle-1-architecture-addendum.md",
         "supabase/migrations/20260504010200_cron_process_poster_jobs.sql"
       ],
@@ -4800,18 +5415,19 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:report-message",
-        "no_inbound_refs"
+        "edge_function_unreferenced:report-message"
       ],
       "path": "supabase/functions/report-message/index.ts",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/02-app-store-review-report.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "supabase",
@@ -4823,6 +5439,7 @@
       ],
       "path": "supabase/functions/soul-consume/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/01-bm-iap-revenue-report.md",
         "docs/features/HANEUL_AUDIT_RESULTS.md",
         "docs/qa/ondo-audit/2026-05-12-cycle-1.md"
       ],
@@ -4901,6 +5518,7 @@
       ],
       "path": "supabase/functions/start-poster-job/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/01-bm-iap-revenue-report.md",
         "docs/qa/ondo-audit/2026-05-12-cycle-1-architecture-addendum.md"
       ],
       "runtime_reachable": false,
@@ -4917,6 +5535,7 @@
       ],
       "path": "supabase/functions/subscription-activate/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/01-bm-iap-revenue-report.md",
         "docs/qa/ondo-audit/2026-05-12-cycle-1.md"
       ],
       "runtime_reachable": false,
@@ -4940,18 +5559,19 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:sync-notification-device",
-        "no_inbound_refs"
+        "edge_function_unreferenced:sync-notification-device"
       ],
       "path": "supabase/functions/sync-notification-device/index.ts",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/05-proactive-push-report.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "supabase",
@@ -4963,6 +5583,7 @@
       ],
       "path": "supabase/functions/token-balance/index.ts",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/01-bm-iap-revenue-report.md",
         "docs/qa/ondo-audit/2026-05-12-cycle-1.md"
       ],
       "runtime_reachable": false,
@@ -6363,11 +6984,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "supabase_migration",
-      "notes": [
-        "no_inbound_refs"
-      ],
+      "notes": [],
       "path": "supabase/migrations/20260426000001_proactive_messaging.sql",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/05-proactive-push-report.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "tooling_only"
@@ -6419,11 +7040,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "supabase_migration",
-      "notes": [
-        "no_inbound_refs"
-      ],
+      "notes": [],
       "path": "supabase/migrations/20260427000001_scheduled_character_replies.sql",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/03-chat-runtime-rca-report.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "tooling_only"
@@ -6534,6 +7155,8 @@
       "notes": [],
       "path": "supabase/migrations/20260503193000_ad_reward_log.sql",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/01-bm-iap-revenue-report.md",
+        "docs/audits/2026-06-ondo-full-audit/reports/02-app-store-review-report.md",
         "docs/qa/ondo-audit/2026-05-12-cycle-1.md"
       ],
       "runtime_reachable": false,
@@ -6702,6 +7325,7 @@
       "notes": [],
       "path": "supabase/migrations/20260505120000_token_transactions_purchase_unique.sql",
       "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/01-bm-iap-revenue-report.md",
         "docs/qa/ondo-audit/2026-05-12-cycle-1.md"
       ],
       "runtime_reachable": false,
@@ -6909,11 +7533,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "supabase_migration",
-      "notes": [
-        "no_inbound_refs"
-      ],
+      "notes": [],
       "path": "supabase/migrations/20260515044500_purchase_iap_global_idempotency.sql",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/audits/2026-06-ondo-full-audit/reports/01-bm-iap-revenue-report.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "tooling_only"
@@ -6941,6 +7565,202 @@
         "no_inbound_refs"
       ],
       "path": "supabase/migrations/20260515044700_purchase_iap_grant_comment.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "supabase/migrations/20260606122432_ad_reward_ssv_only_atomic.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "supabase/migrations/20260606125000_subscription_activation_idempotency.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "supabase/migrations/20260606141000_poster_jobs_server_charge_guard.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "supabase/migrations/20260606142000_private_user_generated_storage.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "supabase/migrations/20260606143000_harden_atomic_rpc_execute_grants.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "supabase/migrations/20260606143001_revoke_grant_ad_reward_rpc.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "supabase/migrations/20260606143010_grant_ad_reward_rpc.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "supabase/migrations/20260606143020_revoke_subscription_activation_rpc.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "supabase/migrations/20260606143030_grant_subscription_activation_rpc.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "supabase/migrations/20260606143040_revoke_schedule_poster_job_rpc.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "supabase/migrations/20260606143050_grant_schedule_poster_job_rpc.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "supabase/migrations/20260606143060_revoke_claim_poster_job_rpc.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "supabase/migrations/20260606143070_grant_claim_poster_job_rpc.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "supabase/migrations/20260606143080_comment_subscription_activation_rpc.sql",
       "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
@@ -7215,23 +8035,23 @@
   ],
   "meta": {
     "counts_by_area": {
-      "docs": 105,
-      "scripts": 53,
-      "supabase": 315
+      "docs": 144,
+      "scripts": 54,
+      "supabase": 329
     },
     "counts_by_candidate_action": {
-      "keep": 52,
+      "keep": 53,
       "keep_generated": 2,
-      "manual_review": 56,
-      "phase1_remove_candidate": 3,
-      "phase2_review_candidate": 360
+      "manual_review": 50,
+      "phase1_remove_candidate": 2,
+      "phase2_review_candidate": 420
     },
     "counts_by_usage_status": {
-      "doc_only": 126,
+      "doc_only": 172,
       "generated_excluded": 2,
-      "runtime_used": 52,
-      "tooling_only": 234,
-      "unreferenced": 59
+      "runtime_used": 53,
+      "tooling_only": 248,
+      "unreferenced": 52
     },
     "declared_asset_dirs_without_runtime_refs": [],
     "generated_outputs": [
@@ -7254,6 +8074,7 @@
     "missing_function_refs": [
       "--all",
       "account-deletion",
+      "business-info",
       "calculate-celebrity-saju",
       "daily-calendar",
       "face-reading",
@@ -7262,6 +8083,7 @@
       "generate-fashion-image",
       "generate-fortune",
       "health-toss",
+      "open-source-licenses",
       "privacy-policy",
       "terms-of-service",
       "traditional-saju"
@@ -7280,7 +8102,7 @@
       "generate-poster-guide",
       "grant-ad-reward"
     ],
-    "total_files": 473,
+    "total_files": 527,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "ack-scheduled-reply",

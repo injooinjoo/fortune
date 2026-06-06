@@ -385,7 +385,7 @@ serve(async (req) => {
   let imageUrl: string;
   try {
     imageUrl = await uploadResult(userId, resultBytes);
-    console.log(`📤 uploaded: ${imageUrl}`);
+    console.log("📤 uploaded private palm-reading result");
   } catch (err) {
     return failure(500, `Result upload failed: ${(err as Error).message}`);
   }

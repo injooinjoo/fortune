@@ -38,6 +38,7 @@ interface PosterJobRow {
   context_text: string | null;
   retry_count: number;
   charge_transaction_id?: string | null;
+  charge_reference_id?: string | null;
 }
 
 const corsHeaders = {
@@ -292,6 +293,42 @@ async function insertResultCardMessage(
   if (error) {
     throw new Error(`merge failed: ${error.message}`);
   }
+}
+
+async function refundPosterJobCharge(
+  admin: SupabaseClient,
+  job: PosterJobRow,
+): Promise<void> {
+  if (!job.charge_reference_id) {
+    return;
+  }
+
+  const { data, error } = await admin.rpc("refund_token_atomic", {
+    p_user_id: job.user_id,
+    p_consume_reference_id: job.charge_reference_id,
+    p_description: `${posterTypeLabel(job.poster_type)} 생성 실패 환불`,
+    p_reference_type: "fortune_refund",
+    p_idempotency_key: `refund:${job.charge_reference_id}`,
+  });
+
+  if (error) {
+    const message = error.message ?? String(error);
+    // Subscription/unlimited jobs use a marker charge_transaction_id to pass the
+    // charged-job guard, but do not create a consume transaction.
+    if (message.includes("NO_MATCHING_CONSUME")) {
+      console.log(
+        `[process-poster-jobs] no token consume to refund for job=${job.id}`,
+      );
+      return;
+    }
+    throw new Error(message);
+  }
+
+  console.log(
+    `[process-poster-jobs] refunded job=${job.id} result=${
+      JSON.stringify(data)
+    }`,
+  );
 }
 
 /**
