@@ -2,6 +2,7 @@ import { useMemo, useState, useCallback } from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
+import { productCatalog } from '@fortune/product-contracts';
 import { Alert, Linking, Platform, Pressable, View } from 'react-native';
 import type { Href } from 'expo-router';
 
@@ -171,7 +172,10 @@ export function ProfileScreen() {
     return null;
   }, [session]);
 
-  const tokenLabel = `${state.premium.tokenBalance}`;
+  const activeTokenAllowance = state.premium.activeProductId
+    ? productCatalog[state.premium.activeProductId]?.points ?? 0
+    : 0;
+  const tokenGaugeMax = Math.max(activeTokenAllowance, state.premium.tokenBalance, 100);
 
   const initial = savedName.charAt(0).toUpperCase() || 'U';
 
@@ -304,10 +308,15 @@ export function ProfileScreen() {
         </View>
       </Card>
 
+      <TokenGaugeCard
+        balance={state.premium.tokenBalance}
+        maxTokens={tokenGaugeMax}
+        onPress={() => router.push('/premium')}
+      />
+
       {/* User Info Grid */}
       <ProfileInfoGrid
         profile={state.profile}
-        tokenLabel={tokenLabel}
         messageCount={state.chat.sentMessageCount}
       />
 
@@ -845,11 +854,9 @@ export function ProfileScreen() {
 
 function ProfileInfoGrid({
   profile,
-  tokenLabel,
   messageCount,
 }: {
   profile: { displayName: string; birthDate: string; birthTime: string; mbti: string; bloodType: string };
-  tokenLabel: string;
   messageCount: number;
 }) {
   const zodiac = profile.birthDate ? getZodiacAnimal(profile.birthDate) : null;
@@ -870,7 +877,6 @@ function ProfileInfoGrid({
     { label: '혈액형', value: profile.bloodType ? `${profile.bloodType}형` : '—', icon: '🩸', editField: 'bloodType' },
     { label: '띠', value: zodiac ? `${zodiac.emoji} ${zodiac.name}띠` : '—', icon: '' },
     { label: '별자리', value: constellation && profile.birthDate ? `${constellation.emoji} ${constellation.name}` : '—', icon: '' },
-    { label: '토큰', value: tokenLabel, icon: '💎' },
   ];
 
   return (
@@ -913,6 +919,72 @@ function ProfileInfoGrid({
         </Pressable>
       ))}
     </Card>
+  );
+}
+
+function TokenGaugeCard({
+  balance,
+  maxTokens,
+  onPress,
+}: {
+  balance: number;
+  maxTokens: number;
+  onPress: () => void;
+}) {
+  const safeMax = Math.max(1, maxTokens);
+  const progress = Math.min(1, Math.max(0, balance / safeMax));
+  const progressPercent = Math.round(progress * 100);
+
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel="토큰 잔량 및 요금제 보기"
+      onPress={onPress}
+      style={({ pressed }) => ({ opacity: pressed ? 0.86 : 1 })}
+    >
+      <Card style={{ gap: 12 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+          <View style={{ flex: 1, gap: 4 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Ionicons name="diamond-outline" size={16} color={fortuneTheme.colors.ctaBackground} />
+              <AppText variant="labelLarge">남은 토큰</AppText>
+            </View>
+            <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+              누르면 구독 요금제와 구매 화면으로 이동해요.
+            </AppText>
+          </View>
+          <View style={{ alignItems: 'flex-end', gap: 2 }}>
+            <AppText variant="heading3">
+              {balance.toLocaleString('ko-KR')}
+            </AppText>
+            <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+              기준 {safeMax.toLocaleString('ko-KR')}
+            </AppText>
+          </View>
+          <Ionicons name="chevron-forward" size={16} color={fortuneTheme.colors.textTertiary} />
+        </View>
+        <View
+          style={{
+            backgroundColor: fortuneTheme.colors.surfaceSecondary,
+            borderRadius: fortuneTheme.radius.full,
+            height: 10,
+            overflow: 'hidden',
+          }}
+        >
+          <View
+            style={{
+              backgroundColor:
+                progressPercent <= 20
+                  ? fortuneTheme.colors.accentTertiary
+                  : fortuneTheme.colors.ctaBackground,
+              borderRadius: fortuneTheme.radius.full,
+              height: 10,
+              width: `${progressPercent}%`,
+            }}
+          />
+        </View>
+      </Card>
+    </Pressable>
   );
 }
 

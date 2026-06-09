@@ -76,7 +76,7 @@ export const productCatalog = {
   'com.beyond.fortune.subscription.lite': {
     id: 'com.beyond.fortune.subscription.lite',
     title: '라이트 구독',
-    description: '매월 200 토큰 + 광고 제거',
+    description: '구독 기간 동안 200 토큰 한도 제공 · 토큰을 다 쓰면 한도가 소진돼요',
     price: 4400,
     points: 200,
     isSubscription: true,
@@ -85,7 +85,7 @@ export const productCatalog = {
   'com.beyond.fortune.subscription.pro': {
     id: 'com.beyond.fortune.subscription.pro',
     title: '프로 구독',
-    description: '매월 500 토큰 + 캐릭터 슬롯 확장 + 메모리 확장',
+    description: '구독 기간 동안 500 토큰 한도 제공 · 더 긴 대화와 심층 풀이용',
     price: 9900,
     points: 500,
     isSubscription: true,
@@ -175,7 +175,7 @@ export const productCatalog = {
   'com.beyond.fortune.subscription.max': {
     id: 'com.beyond.fortune.subscription.max',
     title: '맥스 구독',
-    description: '매월 2000 토큰 + 음성 응답 넉넉한 사용 + 우선 응답',
+    description: '구독 기간 동안 2000 토큰 한도 제공 · 헤비 유저용 넉넉한 사용량',
     price: 19000,
     points: 2000,
     isSubscription: true,

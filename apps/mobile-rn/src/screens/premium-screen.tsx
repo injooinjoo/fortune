@@ -5,8 +5,6 @@ import {
   getProductDisplayTitle,
   getSubscriptionPeriodLabel,
   productCatalog,
-  storefrontConsumableProductIds,
-  storefrontNonConsumableProductIds,
   storefrontSubscriptionProductIds,
   type ProductInfo,
   type ProductId,
@@ -174,10 +172,6 @@ export function PremiumScreen() {
 
   const selectedProduct = productCatalog[selectedProductId];
   const subscriptions = storefrontSubscriptionProductIds.map(
-    (id) => productCatalog[id],
-  );
-  const tokens = storefrontConsumableProductIds.map((id) => productCatalog[id]);
-  const lifetime = storefrontNonConsumableProductIds.map(
     (id) => productCatalog[id],
   );
   const focusTopUpOnly = premiumIntent === 'top-up' && !showAllProducts;
@@ -411,12 +405,12 @@ export function PremiumScreen() {
       header={<RouteBackHeader fallbackHref="/profile" />}
     >
       <AppText variant="displaySmall">
-        {premiumIntent === 'top-up' ? '토큰 충전' : '프리미엄'}
+        {premiumIntent === 'top-up' ? '토큰 충전' : '온도 요금제'}
       </AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
         {premiumIntent === 'top-up'
           ? '대화에 필요한 토큰만 빠르게 충전할 수 있어요.'
-          : '현재 판매 중인 상품과 구독 상태를 한곳에서 확인할 수 있어요.'}
+          : '클로드처럼 구독하면 정해진 토큰 한도를 받고, 모두 쓰면 한도가 소진되는 구조예요.'}
       </AppText>
 
       {focusTopUpOnly ? (
@@ -591,8 +585,8 @@ export function PremiumScreen() {
         <AppText variant="heading4">한눈에 보기</AppText>
         <AppText variant="bodyMedium">
           {session
-            ? '로그인된 계정에서 구독 상태와 토큰 잔액을 확인할 수 있어요.'
-            : '게스트 상태에서는 판매 중인 상품 구성을 먼저 둘러볼 수 있어요.'}
+            ? '내 구독 한도와 남은 토큰을 기준으로 사용할 수 있어요.'
+            : '먼저 구독 플랜별 토큰 한도를 확인할 수 있어요.'}
         </AppText>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           <Chip
@@ -663,7 +657,7 @@ export function PremiumScreen() {
             : storeStatus === 'error'
               ? storeError ??
                 '스토어 연결에 실패했어요. 네트워크 상태를 확인하고 새로고침해 주세요.'
-              : 'App Store에 등록된 현재 판매 상품만 보여드려요.'}
+              : '구독은 정해진 토큰 한도를 제공하고, 한도를 다 쓰면 추가 사용이 막혀요.'}
         </AppText>
         {subscriptions.map((product) => (
           <ProductOption
@@ -671,7 +665,7 @@ export function PremiumScreen() {
             isSelected={selectedProductId === product.id}
             onPress={() => setSelectedProductId(product.id)}
             title={getProductDisplayTitle(product.id)}
-            subtitle={product.description}
+            subtitle={`${product.points.toLocaleString('ko-KR')} 토큰 한도 · ${product.description}`}
             trailing={`월 ${storePriceLabels[product.id] ?? formatPrice(product.price)}`}
             badge={
               product.id === 'com.beyond.fortune.subscription.pro'
@@ -682,41 +676,6 @@ export function PremiumScreen() {
         ))}
       </Card>
         </>
-      ) : null}
-
-      {!focusTopUpOnly ? (
-        <Card>
-          <AppText variant="heading4">토큰 충전</AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            현재 스토어에서 판매 중인 토큰 상품만 보여드려요.
-          </AppText>
-          {tokens.map((product) => (
-            <ProductOption
-              key={product.id}
-              isSelected={selectedProductId === product.id}
-              onPress={() => setSelectedProductId(product.id)}
-              title={getProductDisplayTitle(product.id)}
-              subtitle={`${product.points.toLocaleString('ko-KR')} 토큰 · ${product.description}`}
-              trailing={storePriceLabels[product.id] ?? formatPrice(product.price)}
-            />
-          ))}
-        </Card>
-      ) : null}
-
-      {!focusTopUpOnly ? (
-        <Card>
-          <AppText variant="heading4">평생 소장</AppText>
-          {lifetime.map((product) => (
-            <ProductOption
-              key={product.id}
-              isSelected={selectedProductId === product.id}
-              onPress={() => setSelectedProductId(product.id)}
-              title={getProductDisplayTitle(product.id)}
-              subtitle={product.description}
-              trailing={storePriceLabels[product.id] ?? formatPrice(product.price)}
-            />
-          ))}
-        </Card>
       ) : null}
 
       {session && !rewardedAd.isUnavailable ? (
