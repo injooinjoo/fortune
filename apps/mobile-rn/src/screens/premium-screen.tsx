@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { router, useLocalSearchParams } from 'expo-router';
 import {
-  getProductDisplayTitle,
   getSubscriptionPeriodLabel,
   productCatalog,
   storefrontSubscriptionProductIds,
@@ -11,11 +10,8 @@ import {
 } from '@fortune/product-contracts';
 import { Alert, Linking, Platform, Pressable, View } from 'react-native';
 
-import { useRewardedAd } from '../lib/ad-rewards';
-
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
-import { Chip } from '../components/chip';
 import { PrimaryButton } from '../components/primary-button';
 import { RouteBackHeader } from '../components/route-back-header';
 import { Screen } from '../components/screen';
@@ -26,44 +22,6 @@ import { useMobileAppState } from '../providers/mobile-app-state-provider';
 
 function formatPrice(price: number) {
   return `₩${price.toLocaleString('ko-KR')}`;
-}
-
-function formatIsoDate(value: string | null) {
-  if (!value) {
-    return null;
-  }
-
-  const parsed = new Date(value);
-
-  if (Number.isNaN(parsed.getTime())) {
-    return null;
-  }
-
-  return parsed.toLocaleDateString('ko-KR');
-}
-
-function formatIsoDateTime(value: string | null) {
-  if (!value) {
-    return null;
-  }
-
-  const parsed = new Date(value);
-
-  if (Number.isNaN(parsed.getTime())) {
-    return null;
-  }
-
-  return parsed.toLocaleString('ko-KR', {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
-
-function formatTokenBalanceLabel(tokenBalance: number) {
-  return `보유 토큰 ${tokenBalance.toLocaleString('ko-KR')}개`;
 }
 
 function readRouteParam(value: string | string[] | undefined) {
@@ -102,6 +60,30 @@ function getTopUpPackagePurpose(productId: ProductId) {
   return '오래 쓸 여유분';
 }
 
+function getPlanShortName(productId: ProductId) {
+  if (productId === 'com.beyond.fortune.subscription.lite') {
+    return 'Lite';
+  }
+
+  if (productId === 'com.beyond.fortune.subscription.pro') {
+    return 'Pro';
+  }
+
+  return 'Max';
+}
+
+function getPlanOneLine(productId: ProductId) {
+  if (productId === 'com.beyond.fortune.subscription.lite') {
+    return '가볍게 매일 보기';
+  }
+
+  if (productId === 'com.beyond.fortune.subscription.pro') {
+    return '대화와 풀이를 넉넉하게';
+  }
+
+  return '자주 쓰는 사람을 위한 최대 한도';
+}
+
 function getUsagePreview(product: ProductInfo) {
   return [
     { label: '긴 답변', value: Math.max(1, Math.floor(product.points / 5)), unit: '회' },
@@ -126,7 +108,6 @@ export function PremiumScreen() {
     storeStatus,
     syncRemoteProfile,
   } = useMobileAppState();
-  const pendingRewardPollTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const [selectedProductId, setSelectedProductId] = useState<ProductId>(() =>
     premiumIntent === 'top-up'
       ? strongFitRecommendedProductId
@@ -135,12 +116,6 @@ export function PremiumScreen() {
   const [openTrustIndex, setOpenTrustIndex] = useState<number | null>(null);
   const didRequestStoreRefreshRef = useRef(false);
 
-  useEffect(() => {
-    return () => {
-      pendingRewardPollTimeoutsRef.current.forEach(clearTimeout);
-      pendingRewardPollTimeoutsRef.current = [];
-    };
-  }, []);
 
   useEffect(() => {
     if (didRequestStoreRefreshRef.current) {
@@ -161,11 +136,6 @@ export function PremiumScreen() {
     setSelectedProductId(strongFitRecommendedProductId);
     setOpenTrustIndex(null);
   }, [premiumIntent, topUpEntryKey]);
-
-  const rewardedAd = useRewardedAd({
-    session,
-    userId: session?.user.id ?? null,
-  });
   const [actionState, setActionState] = useState<'idle' | 'refreshing' | 'managing'>(
     'idle',
   );
@@ -175,27 +145,6 @@ export function PremiumScreen() {
     (id) => productCatalog[id],
   );
   const focusTopUpOnly = premiumIntent === 'top-up' && !showAllProducts;
-  const activeProduct = state.premium.activeProductId
-    ? productCatalog[state.premium.activeProductId]
-    : null;
-  const activePlanLabel =
-    state.premium.status === 'subscription'
-      ? activeProduct
-        ? getProductDisplayTitle(activeProduct.id)
-        : '활성 구독 없음'
-      : state.premium.status === 'lifetime'
-        ? activeProduct
-          ? getProductDisplayTitle(activeProduct.id)
-          : '평생 소장 없음'
-        : '활성 플랜 없음';
-  const lastPurchaseLabel = state.premium.lastPurchaseProductId
-    ? getProductDisplayTitle(state.premium.lastPurchaseProductId)
-    : null;
-  const subscriptionExpiryLabel = formatIsoDate(
-    state.premium.subscriptionExpiresAt,
-  );
-  const lastSyncedLabel = formatIsoDateTime(state.premium.lastSyncedAt);
-  const selectedProductTitle = getProductDisplayTitle(selectedProduct.id);
   const selectedProductPeriodLabel = getSubscriptionPeriodLabel(selectedProduct.id);
   const selectedProductPriceLabel =
     storePriceLabels[selectedProduct.id] ?? formatPrice(selectedProduct.price);
@@ -204,7 +153,6 @@ export function PremiumScreen() {
     : selectedProduct.points > 0
       ? '구매 즉시 지급'
       : '평생 소장';
-  const tokenBalanceLabel = formatTokenBalanceLabel(state.premium.tokenBalance);
   const canManageSelectedSubscription =
     session != null &&
     selectedProduct.isSubscription &&
@@ -410,7 +358,7 @@ export function PremiumScreen() {
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
         {premiumIntent === 'top-up'
           ? '대화에 필요한 토큰만 빠르게 충전할 수 있어요.'
-          : '클로드처럼 구독하면 정해진 토큰 한도를 받고, 모두 쓰면 한도가 소진되는 구조예요.'}
+          : '3개 중 하나만 고르면 돼요.'}
       </AppText>
 
       {focusTopUpOnly ? (
@@ -581,236 +529,61 @@ export function PremiumScreen() {
 
       {!focusTopUpOnly ? (
         <>
-          <Card>
-        <AppText variant="heading4">한눈에 보기</AppText>
-        <AppText variant="bodyMedium">
-          {session
-            ? '내 구독 한도와 남은 토큰을 기준으로 사용할 수 있어요.'
-            : '먼저 구독 플랜별 토큰 한도를 확인할 수 있어요.'}
-        </AppText>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-          <Chip
-            label={session ? '로그인됨' : '게스트'}
-            tone={session ? 'success' : 'neutral'}
-          />
-          <Chip
-            label={tokenBalanceLabel}
-            tone="accent"
-          />
-          <Chip
-            label={
-              state.premium.status === 'subscription'
-                ? '정기 결제 이용 중'
-                : state.premium.status === 'lifetime'
-                  ? '평생 소장 이용 중'
-                : '아직 이용 전'
-            }
-          />
-          <Chip
-            label={state.premium.lastSyncedAt ? '상태 확인됨' : '상태 확인 전'}
-            tone={state.premium.lastSyncedAt ? 'success' : 'neutral'}
-          />
-          <Chip
-            label={
-              storeStatus === 'loading'
-                ? '스토어 확인 중'
-                : storeStatus === 'error'
-                  ? '스토어 확인 필요'
-                  : '스토어 연결됨'
-            }
-            tone={storeStatus === 'error' ? 'neutral' : 'success'}
-          />
-        </View>
-      </Card>
-
-      <Card>
-        <AppText variant="heading4">현재 상태</AppText>
-        <AppText variant="labelLarge">{activePlanLabel}</AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          마지막 구매: {lastPurchaseLabel ?? '없음'}
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {subscriptionExpiryLabel
-            ? `구독 만료일 ${subscriptionExpiryLabel}`
-            : '현재 확인된 활성 구독이 없어요.'}
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {lastSyncedLabel
-            ? `마지막 확인 ${lastSyncedLabel}`
-            : '아직 구독 상태를 확인하지 않았어요.'}
-        </AppText>
-        <PrimaryButton
-          onPress={actionState === 'idle' ? () => void handleRefresh() : undefined}
-          tone="secondary"
-        >
-          {actionState === 'refreshing'
-            ? '구독 상태 새로고침 중...'
-            : '구독 상태 새로고침'}
-        </PrimaryButton>
-      </Card>
-
-      <Card>
-        <AppText variant="heading4">구독 플랜</AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {storeStatus === 'loading'
-            ? '스토어 상품 정보를 불러오는 중이에요.'
-            : storeStatus === 'error'
-              ? storeError ??
-                '스토어 연결에 실패했어요. 네트워크 상태를 확인하고 새로고침해 주세요.'
-              : '구독은 정해진 토큰 한도를 제공하고, 한도를 다 쓰면 추가 사용이 막혀요.'}
-        </AppText>
-        {subscriptions.map((product) => (
-          <ProductOption
-            key={product.id}
-            isSelected={selectedProductId === product.id}
-            onPress={() => setSelectedProductId(product.id)}
-            title={getProductDisplayTitle(product.id)}
-            subtitle={`${product.points.toLocaleString('ko-KR')} 토큰 한도 · ${product.description}`}
-            trailing={`월 ${storePriceLabels[product.id] ?? formatPrice(product.price)}`}
-            badge={
-              product.id === 'com.beyond.fortune.subscription.pro'
-                ? '추천'
-                : undefined
-            }
-          />
-        ))}
-      </Card>
-        </>
-      ) : null}
-
-      {session && !rewardedAd.isUnavailable ? (
-        <Card>
-          <AppText variant="heading4">광고 보고 토큰 받기</AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            짧은 광고 1회 시청으로 토큰 1개 획득. 일일 5회까지.
-          </AppText>
-          <PrimaryButton
-            onPress={() => {
-              void rewardedAd.showAd().then((outcome) => {
-                if (outcome.rewardPending) {
-                  const balanceBefore = state.premium.tokenBalance;
-                  Alert.alert(
-                    '🎁 광고 확인 중',
-                    'Google 확인이 끝나면 토큰에 반영돼요. 잔액을 몇 번 더 확인할게요.',
-                  );
-                  [2500, 6000, 12000].forEach((delayMs) => {
-                    const timeoutId = setTimeout(() => {
-                      void syncRemoteProfile().then((nextState) => {
-                        if (
-                          delayMs === 12000 &&
-                          nextState &&
-                          nextState.premium.tokenBalance <= balanceBefore
-                        ) {
-                          Alert.alert(
-                            '광고 보상 확인 중',
-                            '아직 토큰 반영이 확인되지 않았어요. 한도 또는 Google 확인 지연일 수 있어요.',
-                          );
-                        }
-                      }).catch((error: unknown) => {
-                        captureError(error, { surface: 'premium:reward-pending-profile-sync' }).catch(
-                          () => undefined,
-                        );
-                      });
-                    }, delayMs);
-                    pendingRewardPollTimeoutsRef.current.push(timeoutId);
-                  });
-                } else if (outcome.success) {
-                  Alert.alert(
-                    '🎁 토큰 획득',
-                    `${outcome.tokensGranted ?? 1} 토큰을 받았어요. (오늘 ${
-                      outcome.remainingToday ?? 0
-                    }회 남음)`,
-                  );
-                } else if (outcome.error === 'ad_not_ready') {
-                  Alert.alert('광고 준비 중', '잠시 후 다시 시도해주세요.');
-                } else if (outcome.error === 'ad_dismissed_before_reward') {
-                  Alert.alert('보상 미완료', '광고가 끝나기 전에 닫혀 토큰 보상이 진행되지 않았어요.');
-                } else if (
-                  outcome.error === 'login_required' ||
-                  outcome.error === 'missing_user_for_ssv'
-                ) {
-                  Alert.alert('로그인 필요', '광고 보상 토큰은 로그인 후 받을 수 있어요.');
-                } else if (outcome.errorCode === 'limit_reached') {
-                  Alert.alert(
-                    '오늘 한도 도달',
-                    '내일 다시 광고로 토큰을 받을 수 있어요.',
-                  );
-                } else {
-                  Alert.alert(
-                    '광고 보상 확인 실패',
-                    '광고 보상 상태를 확인하지 못했어요. 잠시 후 잔액을 새로고침해 주세요.',
-                  );
-                }
-              });
+          <Card
+            style={{
+              backgroundColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.08),
+              borderColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.16),
+              gap: fortuneTheme.spacing.md,
+              overflow: 'hidden',
             }}
-            disabled={!rewardedAd.isReady || rewardedAd.isShowing}
-            fullWidth
           >
-            {rewardedAd.isShowing
-              ? '광고 재생 중…'
-              : rewardedAd.isReady
-                ? '🎁 광고 1회 시청'
-                : '광고 준비 중…'}
-          </PrimaryButton>
-        </Card>
-      ) : null}
-
-      {!focusTopUpOnly ? (
-        <Card>
-          <AppText variant="heading4">선택된 상품</AppText>
-          <AppText variant="labelLarge">{selectedProductTitle}</AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {selectedProduct.description}
-          </AppText>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-            <Chip
-              label={selectedProduct.isSubscription ? '구독 상품' : '단건 상품'}
-              tone="accent"
+            <View
+              pointerEvents="none"
+              style={{
+                backgroundColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.16),
+                borderRadius: fortuneTheme.radius.full,
+                height: 180,
+                position: 'absolute',
+                right: -76,
+                top: -96,
+                width: 180,
+              }}
             />
-            <Chip label={`가격 ${selectedProductPriceLabel}`} />
-            {selectedProduct.points > 0 ? (
-              <Chip
-                label={`토큰 ${selectedProduct.points.toLocaleString('ko-KR')}개 포함`}
-              />
-            ) : null}
-            <Chip label={selectedProductDeliveryLabel} />
-          </View>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {!session
-              ? '로그인하면 내 구독 상태를 확인하고 이전 구매를 복원할 수 있어요.'
-              : canManageSelectedSubscription
-                ? '현재 이용 중인 구독은 스토어 구독 관리 화면에서 변경할 수 있어요.'
-                : storeStatus === 'loading'
-                  ? '스토어 준비가 끝나면 바로 구매를 진행할 수 있어요.'
-                  : storeError
-                    ? storeError
-                    : '선택한 상품을 바로 결제하고 계정 상태에 반영할 수 있어요.'}
-          </AppText>
-          {selectedProduct.isSubscription ? (
-            <>
-              <AppText
-                variant="bodySmall"
-                color={fortuneTheme.colors.textTertiary}
-                style={{ lineHeight: 18 }}
-              >
-                자동 갱신 구독입니다. 구독 기간 종료 최소 24시간 전에 자동 갱신을
-                해제하지 않으면 구독이 자동으로 갱신됩니다. 설정 {'>'} Apple ID {'>'}{' '}
-                구독에서 관리할 수 있습니다.
+            <View style={{ gap: fortuneTheme.spacing.xs }}>
+              <AppText variant="displaySmall">더 오래 대화하기</AppText>
+              <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+                매달 쓸 수 있는 토큰 한도를 골라요.
               </AppText>
-              <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 16, marginTop: 8 }}>
-                <Pressable onPress={() => void Linking.openURL('https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages/terms-of-service')}>
-                  <AppText variant="caption" color={fortuneTheme.colors.ctaBackground} style={{ textDecorationLine: 'underline' }}>
-                    이용약관
-                  </AppText>
-                </Pressable>
-                <Pressable onPress={() => void Linking.openURL('https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages/privacy-policy')}>
-                  <AppText variant="caption" color={fortuneTheme.colors.ctaBackground} style={{ textDecorationLine: 'underline' }}>
-                    개인정보처리방침
-                  </AppText>
-                </Pressable>
-              </View>
-            </>
+            </View>
+            <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
+              <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+                현재 {state.premium.tokenBalance.toLocaleString('ko-KR')} 토큰
+              </AppText>
+              <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+                다 쓰면 오늘은 쉬어가기
+              </AppText>
+            </View>
+          </Card>
+
+          <View style={{ gap: fortuneTheme.spacing.sm }}>
+            {subscriptions.map((product) => (
+              <SubscriptionPlanCard
+                key={product.id}
+                isRecommended={product.id === 'com.beyond.fortune.subscription.pro'}
+                isSelected={selectedProductId === product.id}
+                onPress={() => setSelectedProductId(product.id)}
+                priceLabel={`월 ${storePriceLabels[product.id] ?? formatPrice(product.price)}`}
+                product={product}
+              />
+            ))}
+          </View>
+
+          {storeStatus === 'error' ? (
+            <AppText variant="caption" color={fortuneTheme.colors.textSecondary}>
+              {storeError ?? '스토어 연결을 확인해 주세요.'}
+            </AppText>
           ) : null}
+
           {!session ? (
             <PrimaryButton
               disabled={actionState !== 'idle' || isPurchasePending}
@@ -822,7 +595,7 @@ export function PremiumScreen() {
               }
               tone="primary"
             >
-              로그인하고 계속하기
+              로그인하고 시작하기
             </PrimaryButton>
           ) : canManageSelectedSubscription ? (
             <PrimaryButton
@@ -830,9 +603,7 @@ export function PremiumScreen() {
               onPress={() => void handleOpenSubscriptionManagement()}
               tone="primary"
             >
-              {actionState === 'managing'
-                ? '구독 관리 여는 중...'
-                : '구독 관리 열기'}
+              {actionState === 'managing' ? '여는 중...' : '구독 관리'}
             </PrimaryButton>
           ) : (
             <PrimaryButton
@@ -841,25 +612,41 @@ export function PremiumScreen() {
               tone="primary"
             >
               {isPurchasePending
-                ? '결제 진행 중...'
+                ? '결제 중...'
                 : storeStatus === 'loading'
                   ? '스토어 준비 중...'
                   : !isStoreProductReady
-                    ? '스토어 상품 확인 필요'
-                    : selectedProduct.isSubscription
-                      ? '구독 시작하기'
-                      : selectedProduct.points > 0
-                        ? '토큰 충전하기'
-                        : '평생 소장 구매하기'}
+                    ? '스토어 확인 필요'
+                    : `${getPlanShortName(selectedProduct.id)} 시작하기`}
             </PrimaryButton>
           )}
-          <PrimaryButton
-            onPress={actionState === 'idle' && !isPurchasePending ? () => handleRestore() : undefined}
-            tone="secondary"
-          >
-            {isPurchasePending ? '구매 상태 확인 중...' : '구매 복원'}
-          </PrimaryButton>
-        </Card>
+
+          <View style={{ alignItems: 'center', gap: fortuneTheme.spacing.sm }}>
+            <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.lg }}>
+              <Pressable
+                disabled={actionState !== 'idle' || isPurchasePending}
+                onPress={() => void handleRestore()}
+              >
+                <AppText variant="caption" color={fortuneTheme.colors.textSecondary}>
+                  구매 복원
+                </AppText>
+              </Pressable>
+              <Pressable onPress={() => void Linking.openURL('https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages/terms-of-service')}>
+                <AppText variant="caption" color={fortuneTheme.colors.textSecondary}>
+                  약관
+                </AppText>
+              </Pressable>
+              <Pressable onPress={() => void Linking.openURL('https://hayjukwfcsdmppairazc.supabase.co/functions/v1/legal-pages/privacy-policy')}>
+                <AppText variant="caption" color={fortuneTheme.colors.textSecondary}>
+                  개인정보
+                </AppText>
+              </Pressable>
+            </View>
+            <AppText variant="caption" color={fortuneTheme.colors.textTertiary} style={{ textAlign: 'center' }}>
+              자동 갱신 구독 · 언제든 스토어에서 해지 가능
+            </AppText>
+          </View>
+        </>
       ) : null}
     </Screen>
   );
@@ -955,63 +742,95 @@ function TopUpPackageTile({
   );
 }
 
-function ProductOption({
-  badge,
+function SubscriptionPlanCard({
+  isRecommended,
   isSelected,
   onPress,
-  subtitle,
-  title,
-  trailing,
+  priceLabel,
+  product,
 }: {
-  badge?: string;
+  isRecommended: boolean;
   isSelected: boolean;
   onPress: () => void;
-  subtitle: string;
-  title: string;
-  trailing: string;
+  priceLabel: string;
+  product: ProductInfo;
 }) {
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityState={{ selected: isSelected }}
       onPress={onPress}
-      style={({ pressed }) => ({
-        opacity: pressed ? 0.84 : 1,
-      })}
+      style={({ pressed }) => ({ opacity: pressed ? 0.86 : 1 })}
     >
       <Card
         style={{
           backgroundColor: isSelected
-            ? fortuneTheme.colors.backgroundTertiary
-            : fortuneTheme.colors.surfaceSecondary,
+            ? withAlpha(fortuneTheme.colors.ctaBackground, 0.1)
+            : fortuneTheme.colors.surfaceElevated,
           borderColor: isSelected
-            ? fortuneTheme.colors.accentSecondary
-            : fortuneTheme.colors.border,
+            ? fortuneTheme.colors.ctaBackground
+            : withAlpha(fortuneTheme.colors.accent, 0.08),
+          gap: fortuneTheme.spacing.sm,
+          paddingVertical: fortuneTheme.spacing.lg,
         }}
       >
-        <View
-          style={{
-            alignItems: 'flex-start',
-            flexDirection: 'row',
-            gap: fortuneTheme.spacing.md,
-            justifyContent: 'space-between',
-          }}
-        >
+        <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', gap: fortuneTheme.spacing.md }}>
           <View style={{ flex: 1, gap: fortuneTheme.spacing.xs }}>
-            <AppText variant="labelLarge">{title}</AppText>
+            <View style={{ alignItems: 'center', flexDirection: 'row', gap: fortuneTheme.spacing.sm }}>
+              <AppText variant="heading4">{getPlanShortName(product.id)}</AppText>
+              {isRecommended ? (
+                <View
+                  style={{
+                    backgroundColor: fortuneTheme.colors.ctaBackground,
+                    borderRadius: fortuneTheme.radius.full,
+                    paddingHorizontal: fortuneTheme.spacing.sm,
+                    paddingVertical: 3,
+                  }}
+                >
+                  <AppText variant="caption" color={fortuneTheme.colors.background}>
+                    추천
+                  </AppText>
+                </View>
+              ) : null}
+            </View>
             <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-              {subtitle}
+              {getPlanOneLine(product.id)}
             </AppText>
           </View>
+          <View style={{ alignItems: 'flex-end', gap: 2 }}>
+            <AppText variant="heading3">{product.points.toLocaleString('ko-KR')}</AppText>
+            <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+              토큰 / 월
+            </AppText>
+          </View>
+        </View>
+        <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
+          <AppText variant="labelMedium" color={fortuneTheme.colors.textSecondary}>
+            {priceLabel}
+          </AppText>
           <View
             style={{
-              alignItems: 'flex-end',
-              flexShrink: 0,
-              gap: fortuneTheme.spacing.xs,
-              minWidth: 84,
+              alignItems: 'center',
+              borderColor: isSelected
+                ? fortuneTheme.colors.ctaBackground
+                : fortuneTheme.colors.border,
+              borderRadius: fortuneTheme.radius.full,
+              borderWidth: 1,
+              height: 22,
+              justifyContent: 'center',
+              width: 22,
             }}
           >
-            <AppText variant="labelMedium">{trailing}</AppText>
-            {badge ? <Chip label={badge} tone="success" /> : null}
+            {isSelected ? (
+              <View
+                style={{
+                  backgroundColor: fortuneTheme.colors.ctaBackground,
+                  borderRadius: fortuneTheme.radius.full,
+                  height: 12,
+                  width: 12,
+                }}
+              />
+            ) : null}
           </View>
         </View>
       </Card>
