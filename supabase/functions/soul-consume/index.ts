@@ -157,43 +157,12 @@ serve(async (req) => {
       }
     }
 
-    // 1. 무제한 구독 체크. RPC 밖 — 구독자는 토큰 차감 자체 skip.
-    const { data: subscription } = await supabase
-      .from('subscriptions')
-      .select('id, product_id, expires_at, status')
-      .eq('user_id', user.id)
-      .eq('status', 'active')
-      .gt('expires_at', new Date().toISOString())
-      .order('expires_at', { ascending: false })
-      .limit(1)
-      .maybeSingle()
-
-    if (subscription) {
-      const { data: tokenData } = await supabase
-        .from('token_balance')
-        .select('balance, total_earned, total_spent')
-        .eq('user_id', user.id)
-        .single()
-
-      console.log(`✅ Unlimited access — no token consumption`)
-      return new Response(
-        JSON.stringify({
-          balance: {
-            totalTokens: tokenData?.total_earned ?? 0,
-            usedTokens: tokenData?.total_spent ?? 0,
-            remainingTokens: tokenData?.balance ?? 0,
-            lastUpdated: new Date().toISOString(),
-            hasUnlimitedAccess: true
-          }
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
-
-    // 2. 비용 계산
+    // 1. 비용 계산
+    // 구독자도 구매/갱신 때 지급받은 토큰을 동일하게 차감한다.
+    // 구독은 "무제한 통과권"이 아니라 플랜별 정기 토큰 할당권이다.
     const cost = FORTUNE_TOKEN_COSTS[fortuneType as keyof typeof FORTUNE_TOKEN_COSTS] ?? 1
 
-    // 3. atomic RPC 호출
+    // 2. atomic RPC 호출
     const { data: rpcResult, error: rpcError } = await supabase.rpc(
       'consume_token_atomic',
       {
@@ -246,16 +215,18 @@ serve(async (req) => {
       total_earned: number
       total_spent: number
       replayed: boolean
-      transaction_id: string
+      consume_transaction_id?: string
+      transaction_id?: string
     }
+    const transactionId = result.consume_transaction_id ?? result.transaction_id ?? null
 
     if (result.replayed) {
       console.log(
-        `🔁 Idempotent replay: txn=${result.transaction_id}, balance=${result.balance}`,
+        `🔁 Idempotent replay: txn=${transactionId}, balance=${result.balance}`,
       )
     } else {
       console.log(
-        `✅ Token consumed: balance=${result.balance}, txn=${result.transaction_id}`,
+        `✅ Token consumed: balance=${result.balance}, txn=${transactionId}`,
       )
     }
 
@@ -269,7 +240,7 @@ serve(async (req) => {
           hasUnlimitedAccess: false
         },
         replayed: result.replayed,
-        transactionId: result.transaction_id,
+        transactionId,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )

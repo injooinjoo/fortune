@@ -64,11 +64,7 @@ function formatIsoDateTime(value: string | null) {
   });
 }
 
-function formatTokenBalanceLabel(tokenBalance: number, isUnlimited: boolean) {
-  if (isUnlimited) {
-    return '보유 토큰 무제한';
-  }
-
+function formatTokenBalanceLabel(tokenBalance: number) {
   return `보유 토큰 ${tokenBalance.toLocaleString('ko-KR')}개`;
 }
 
@@ -214,10 +210,7 @@ export function PremiumScreen() {
     : selectedProduct.points > 0
       ? '구매 즉시 지급'
       : '평생 소장';
-  const tokenBalanceLabel = formatTokenBalanceLabel(
-    state.premium.tokenBalance,
-    state.premium.isUnlimited,
-  );
+  const tokenBalanceLabel = formatTokenBalanceLabel(state.premium.tokenBalance);
   const canManageSelectedSubscription =
     session != null &&
     selectedProduct.isSubscription &&
@@ -239,9 +232,7 @@ export function PremiumScreen() {
   );
   const selectedTopUpUsage =
     selectedProduct.points > 0 ? getUsagePreview(selectedProduct) : [];
-  const selectedTopUpAfterBalance = state.premium.isUnlimited
-    ? null
-    : state.premium.tokenBalance + selectedProduct.points;
+  const selectedTopUpAfterBalance = state.premium.tokenBalance + selectedProduct.points;
 
   async function handleRefresh() {
     if (actionState !== 'idle') {
@@ -452,9 +443,7 @@ export function PremiumScreen() {
               }}
             />
             <AppText variant="displayLarge">
-              {state.premium.isUnlimited
-                ? '무제한'
-                : state.premium.tokenBalance.toLocaleString('ko-KR')}
+              {state.premium.tokenBalance.toLocaleString('ko-KR')}
             </AppText>
             <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>
               보유 토큰

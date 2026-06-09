@@ -282,7 +282,7 @@ serve(async (req: Request) => {
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // 토큰 차감 (₩52/장 적자 차단). 무제한 구독자 통과. LLM 호출 + storage
+    // 토큰 차감 (₩52/장 적자 차단). 구독도 플랜별 토큰 잔액에서 차감한다. LLM 호출 + storage
     // upload 까지 한 try 블록으로 감싸 어디서 실패해도 환불 보장.
     // PR-0a: referenceId 는 호출 단위 unique 여야 atomic refund 가 원본 추적 가능.
     // characterId 만 쓰면 같은 캐릭터의 과거 차감과 reference 충돌. UUID 추가.
@@ -300,7 +300,7 @@ serve(async (req: Request) => {
       chargeCtx,
     );
 
-    if (!charge.charged && !charge.unlimited) {
+    if (!charge.charged) {
       return new Response(
         JSON.stringify({
           success: false,

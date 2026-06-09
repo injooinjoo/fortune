@@ -171,9 +171,7 @@ export function ProfileScreen() {
     return null;
   }, [session]);
 
-  const tokenLabel = state.premium.isUnlimited
-    ? '∞'
-    : `${state.premium.tokenBalance}`;
+  const tokenLabel = `${state.premium.tokenBalance}`;
 
   const initial = savedName.charAt(0).toUpperCase() || 'U';
 

@@ -3159,56 +3159,43 @@ serve(async (req: Request) => {
       );
     }
 
-    // Streak 기반 일일 채팅 한도 (Free 사용자만, 구독자는 무제한).
+    // Streak 기반 일일 채팅 한도. 구독도 무제한 통과권이 아니므로 동일하게 카운트한다.
     // streak: 1일=30, 2일=100, 3일=200, 4일+=400. 끊기면 30 으로 리셋.
     // 모더레이션 통과한 실 호출만 카운트되도록 여기에 위치.
     if (userId && supabase) {
-      const { data: subscription } = await supabase
-        .from("subscriptions")
-        .select("id")
-        .eq("user_id", userId)
-        .eq("status", "active")
-        .gt("expires_at", new Date().toISOString())
-        .limit(1)
-        .maybeSingle();
+      const { data: streakResult, error: streakError } = await supabase
+        .rpc("consume_chat_streak", { p_user_id: userId })
+        .single<{
+          allowed: boolean;
+          current_count: number;
+          daily_limit: number;
+          streak_days: number;
+        }>();
 
-      const hasUnlimitedChat = !!subscription;
-
-      if (!hasUnlimitedChat) {
-        const { data: streakResult, error: streakError } = await supabase
-          .rpc("consume_chat_streak", { p_user_id: userId })
-          .single<{
-            allowed: boolean;
-            current_count: number;
-            daily_limit: number;
-            streak_days: number;
-          }>();
-
-        if (streakError) {
-          console.warn(
-            "[character-chat] streak check failed (fail-open):",
-            streakError,
-          );
-        } else if (streakResult && !streakResult.allowed) {
-          // 일일 한도 도달 — 답장 생성 안 했지만 큐에서 빼야 cron 재시도 안 됨.
-          await markJobAsDone();
-          return new Response(
-            JSON.stringify({
-              success: false,
-              error: "daily_chat_limit_reached",
-              message: "오늘 무료 채팅 한도에 도달했어요. 내일 또 만나요 ✨",
-              chatLimit: {
-                currentCount: streakResult.current_count,
-                dailyLimit: streakResult.daily_limit,
-                streakDays: streakResult.streak_days,
-              },
-            }),
-            {
-              status: 429,
-              headers: { ...corsHeaders, "Content-Type": "application/json" },
+      if (streakError) {
+        console.warn(
+          "[character-chat] streak check failed (fail-open):",
+          streakError,
+        );
+      } else if (streakResult && !streakResult.allowed) {
+        // 일일 한도 도달 — 답장 생성 안 했지만 큐에서 빼야 cron 재시도 안 됨.
+        await markJobAsDone();
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: "daily_chat_limit_reached",
+            message: "오늘 채팅 사용량에 도달했어요. 내일 또 만나요 ✨",
+            chatLimit: {
+              currentCount: streakResult.current_count,
+              dailyLimit: streakResult.daily_limit,
+              streakDays: streakResult.streak_days,
             },
-          );
-        }
+          }),
+          {
+            status: 429,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
       }
     }
 

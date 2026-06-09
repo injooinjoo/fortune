@@ -163,8 +163,8 @@ Deno.serve(async (req) => {
     const errMsg = error instanceof Error ? error.message : String(error);
     console.error(`[process-poster-jobs] job=${job.id} failed:`, errMsg);
 
-    // 실패 시 이미 차감된 non-subscription 토큰은 환불한다. 구독/무제한 job은
-    // matching consume row 가 없어 NO_MATCHING_CONSUME 로 warn-only 처리된다.
+    // 실패 시 이미 차감된 토큰은 환불한다. 구독도 플랜별 토큰 잔액에서 차감되므로
+    // matching consume row 기준으로 동일하게 환불된다.
     await refundPosterJobCharge(admin, job).catch((e) =>
       console.warn("[process-poster-jobs] refund error:", e)
     );
@@ -313,8 +313,8 @@ async function refundPosterJobCharge(
 
   if (error) {
     const message = error.message ?? String(error);
-    // Subscription/unlimited jobs use a marker charge_transaction_id to pass the
-    // charged-job guard, but do not create a consume transaction.
+    // Legacy marker-only jobs can still hit this during migration; current
+    // subscription jobs create a consume transaction and refund normally.
     if (message.includes("NO_MATCHING_CONSUME")) {
       console.log(
         `[process-poster-jobs] no token consume to refund for job=${job.id}`,

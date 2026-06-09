@@ -16,7 +16,6 @@
  *   visible={visible}
  *   entry={selectedEntry}
  *   currentBalance={balance}
- *   isUnlimited={isUnlimited}
  *   freeForDaily={daily첫사용여부}
  *   onConfirm={() => triggerGeneration()}
  *   onCancel={() => setVisible(false)}
@@ -36,7 +35,6 @@ interface CostConfirmationSheetProps {
   visible: boolean;
   entry: FortuneCatalogEntry | null;
   currentBalance: number | null;
-  isUnlimited: boolean;
   /** daily 운세 1일 1회 무료. 호출자가 daily_free_fortune 상태로 결정. */
   freeForDaily?: boolean;
   onConfirm: () => void;
@@ -48,7 +46,6 @@ export function CostConfirmationSheet({
   visible,
   entry,
   currentBalance,
-  isUnlimited,
   freeForDaily = false,
   onConfirm,
   onCancel,
@@ -58,7 +55,6 @@ export function CostConfirmationSheet({
 
   const effectiveCost = freeForDaily ? 0 : entry.costPoints;
   const insufficient =
-    !isUnlimited &&
     !freeForDaily &&
     currentBalance !== null &&
     currentBalance < effectiveCost;
@@ -108,11 +104,7 @@ export function CostConfirmationSheet({
               gap: 4,
             }}
           >
-            {isUnlimited ? (
-              <AppText variant="labelLarge" color={fortuneTheme.colors.textPrimary}>
-                무제한 이용권 — 차감 없음
-              </AppText>
-            ) : freeForDaily ? (
+            {freeForDaily ? (
               <>
                 <AppText variant="labelLarge" color={fortuneTheme.colors.textPrimary}>
                   오늘 무료

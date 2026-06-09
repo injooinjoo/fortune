@@ -97,25 +97,8 @@ export async function checkTokenBalance(userId: string, requiredTokens: number) 
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   )
 
-  // ✅ 구독 상태 먼저 체크 (unlimited/premium 사용자는 토큰 체크 불필요)
-  const { data: subData } = await supabase
-    .from('subscriptions')
-    .select('status, plan_id')
-    .eq('user_id', userId)
-    .eq('status', 'active')
-    .single()
-
-  if (subData?.plan_id === 'unlimited' || subData?.plan_id === 'premium') {
-    console.log(`[checkTokenBalance] User ${userId} has unlimited/premium subscription`)
-    return {
-      hasBalance: true,
-      balance: Infinity,
-      isUnlimited: true,
-      error: null
-    }
-  }
-
   // ✅ 토큰 잔액 조회 (에러 무시, nullish coalescing 사용)
+  // 구독도 무제한 통과권이 아니라 플랜별 토큰 할당권이므로 동일 잔액에서 차감한다.
   const { data: tokenData } = await supabase
     .from('token_balance')
     .select('balance')

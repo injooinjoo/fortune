@@ -2532,10 +2532,12 @@ export function ChatScreen() {
 
   function handleCreateFriend() {
     const freeCharacterLimit = 1;
-    const isPremium = mobileAppState.premium.isUnlimited ||
+    const hasPremiumEntitlement =
+      mobileAppState.premium.status === 'subscription' ||
+      mobileAppState.premium.status === 'lifetime' ||
       (mobileAppState.premium.tokenBalance ?? 0) > 0;
 
-    if (!isPremium && createdFriends.length >= freeCharacterLimit) {
+    if (!hasPremiumEntitlement && createdFriends.length >= freeCharacterLimit) {
       Alert.alert(
         '친구 슬롯이 꽉 찼어요',
         '무료 플랜은 직접 만든 친구 1명까지 저장할 수 있어요. 새 친구를 만들려면 기존 친구를 삭제하거나 프리미엄을 확인해 주세요.',
@@ -2902,9 +2904,11 @@ export function ChatScreen() {
 
     // 관계 진행 프리미엄 게이팅 — 친밀도 50+ 에서 무료 유저는 프리미엄 유도
     const currentAffinity = existingSnapshot?.romanceState?.emotionalTemperature ?? 0;
-    const isPremiumUser = mobileAppState.premium.isUnlimited ||
+    const hasPremiumEntitlement =
+      mobileAppState.premium.status === 'subscription' ||
+      mobileAppState.premium.status === 'lifetime' ||
       (mobileAppState.premium.tokenBalance ?? 0) > 0;
-    if (currentAffinity >= 50 && !isPremiumUser && session) {
+    if (currentAffinity >= 50 && !hasPremiumEntitlement && session) {
       Alert.alert(
         '관계가 깊어지고 있어요',
         `${character.name}과(와) 더 깊은 대화를 이어가려면 프리미엄이 필요해요.`,
@@ -3696,7 +3700,7 @@ export function ChatScreen() {
         Alert.alert(
           '오늘 무료 채팅 한도',
           payload.message ??
-            `오늘 ${limit}개 메시지를 모두 사용했어요. 광고 보고 토큰 받거나 구독으로 무제한 사용해보세요.`,
+            `오늘 ${limit}개 메시지를 모두 사용했어요. 광고를 보거나 구독 토큰으로 더 이어가보세요.`,
           buttons,
         );
         return;
@@ -4849,7 +4853,6 @@ export function ChatScreen() {
         visible={costSheetVisible}
         entry={pendingMenuEntry}
         currentBalance={mobileAppState.premium.tokenBalance ?? null}
-        isUnlimited={mobileAppState.premium.isUnlimited}
         onConfirm={handleConfirmCostSheet}
         onCancel={handleCancelCostSheet}
         onTopUpRequest={handleTopUpFromCostSheet}

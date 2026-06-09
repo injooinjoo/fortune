@@ -230,7 +230,9 @@ export function normalizeMobileAppState(raw: Record<string, unknown>): MobileApp
         ? premium.lastPurchaseProductId
         : null,
       tokenBalance: asNumber(premium.tokenBalance, 0),
-      isUnlimited: asBoolean(premium.isUnlimited, false),
+      // 2026-06 BM policy: subscriptions are finite token allowances, not unlimited passes.
+      // Ignore stale persisted unlimited flags from old app versions.
+      isUnlimited: false,
       restoreCount: asNumber(premium.restoreCount, 0),
       subscriptionExpiresAt: asString(premium.subscriptionExpiresAt) || null,
       lastSyncedAt: asString(premium.lastSyncedAt) || null,

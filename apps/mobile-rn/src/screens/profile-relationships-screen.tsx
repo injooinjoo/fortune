@@ -9,6 +9,7 @@ import { Screen } from "../components/screen";
 import {
   chatCharacters,
   findChatCharacterById,
+  type ChatCharacterSpec,
 } from "../lib/chat-characters";
 import { formatFortuneTypeLabel } from "../lib/chat-shell";
 import { fortuneTheme } from "../lib/theme";
@@ -152,6 +153,48 @@ function SectionHeader({ title }: { title: string }) {
   );
 }
 
+function CharacterSection({
+  characters,
+  navigateToCharacter,
+  selectedCharacterId,
+  sentMessageCount,
+  title,
+}: {
+  characters: ChatCharacterSpec[];
+  navigateToCharacter: (characterId: string) => void;
+  selectedCharacterId?: string;
+  sentMessageCount: number;
+  title: string;
+}) {
+  return (
+    <>
+      <SectionHeader title={title} />
+      {characters.map((character) => {
+        const isSelected = selectedCharacterId === character.id;
+        const avatarColor = getAvatarColor(character.name);
+        return (
+          <CharacterCard
+            key={character.id}
+            name={character.name}
+            tagline={character.shortDescription}
+            initials={character.name.charAt(0)}
+            avatarSize={44}
+            gradient={[avatarColor, avatarColor] as const}
+            selected={isSelected}
+            onPress={() => navigateToCharacter(character.id)}
+            footer={
+              <RelationshipStatusChips
+                isSelected={isSelected}
+                sentMessageCount={isSelected ? sentMessageCount : 0}
+              />
+            }
+          />
+        );
+      })}
+    </>
+  );
+}
+
 /* ------------------------------------------------------------------ */
 /*  Main screen                                                        */
 /* ------------------------------------------------------------------ */
@@ -235,54 +278,22 @@ export function ProfileRelationshipsScreen() {
       </Card>
 
       {/* Story characters section */}
-      <SectionHeader title="스토리 캐릭터" />
-      {storyChars.map((character) => {
-        const isSelected = selectedCharacter?.id === character.id;
-        const avatarColor = getAvatarColor(character.name);
-        return (
-          <CharacterCard
-            key={character.id}
-            name={character.name}
-            tagline={character.shortDescription}
-            initials={character.name.charAt(0)}
-            avatarSize={44}
-            gradient={[avatarColor, avatarColor] as const}
-            selected={isSelected}
-            onPress={() => navigateToCharacter(character.id)}
-            footer={
-              <RelationshipStatusChips
-                isSelected={isSelected}
-                sentMessageCount={isSelected ? sentMessageCount : 0}
-              />
-            }
-          />
-        );
-      })}
+      <CharacterSection
+        characters={storyChars}
+        navigateToCharacter={navigateToCharacter}
+        selectedCharacterId={selectedCharacter?.id}
+        sentMessageCount={sentMessageCount}
+        title="스토리 캐릭터"
+      />
 
       {/* Fortune characters section */}
-      <SectionHeader title="인사이트 캐릭터" />
-      {fortuneChars.map((character) => {
-        const isSelected = selectedCharacter?.id === character.id;
-        const avatarColor = getAvatarColor(character.name);
-        return (
-          <CharacterCard
-            key={character.id}
-            name={character.name}
-            tagline={character.shortDescription}
-            initials={character.name.charAt(0)}
-            avatarSize={44}
-            gradient={[avatarColor, avatarColor] as const}
-            selected={isSelected}
-            onPress={() => navigateToCharacter(character.id)}
-            footer={
-              <RelationshipStatusChips
-                isSelected={isSelected}
-                sentMessageCount={isSelected ? sentMessageCount : 0}
-              />
-            }
-          />
-        );
-      })}
+      <CharacterSection
+        characters={fortuneChars}
+        navigateToCharacter={navigateToCharacter}
+        selectedCharacterId={selectedCharacter?.id}
+        sentMessageCount={sentMessageCount}
+        title="인사이트 캐릭터"
+      />
 
       {/* "New friend" action at the bottom */}
       <Pressable

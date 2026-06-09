@@ -104,22 +104,10 @@ serve(async (req) => {
       console.error('❌ Token balance query error:', tokenError.message)
     }
 
-    // 2. subscriptions 테이블에서 활성 구독 확인 (무제한 이용권)
-    const { data: subscription, error: subError } = await supabase
-      .from('subscriptions')
-      .select('id, product_id, expires_at, status')
-      .eq('user_id', user.id)
-      .eq('status', 'active')
-      .gt('expires_at', new Date().toISOString())
-      .order('expires_at', { ascending: false })
-      .limit(1)
-      .single()
-
-    if (subError && subError.code !== 'PGRST116') {
-      console.error('❌ Subscription query error:', subError.message)
-    }
-
-    const isUnlimited = !!subscription
+    // 2. 구독도 무제한 상태로 보고하지 않는다.
+    // 구독 구매/갱신 시 지급된 플랜별 토큰이 token_balance 에 반영되고,
+    // 모든 유료 AI 사용은 동일한 잔액에서 차감된다.
+    const isUnlimited = false
 
     // 3. 응답 구성
     const balance = tokenData?.balance ?? 0

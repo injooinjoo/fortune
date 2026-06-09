@@ -111,41 +111,7 @@ serve(async (req) => {
 
     console.log(`👤 User: ${user.id}`)
 
-    // 1. 무제한 구독자는 환불 불필요. RPC 밖 — 토큰 차감 자체가 없었음.
-    const { data: subscription } = await supabase
-      .from('subscriptions')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('status', 'active')
-      .gt('expires_at', new Date().toISOString())
-      .limit(1)
-      .maybeSingle()
-
-    if (subscription) {
-      console.log(`⏭️ Subscriber — no refund needed`)
-      const { data: tokenData } = await supabase
-        .from('token_balance')
-        .select('balance, total_earned, total_spent')
-        .eq('user_id', user.id)
-        .single()
-
-      return new Response(
-        JSON.stringify({
-          balance: {
-            totalTokens: tokenData?.total_earned ?? 0,
-            usedTokens: tokenData?.total_spent ?? 0,
-            remainingTokens: tokenData?.balance ?? 0,
-            lastUpdated: new Date().toISOString(),
-            hasUnlimitedAccess: true
-          },
-          refunded: false,
-          replayed: false,
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
-
-    // 2. atomic RPC 호출
+    // 1. atomic RPC 호출. 구독도 플랜별 토큰 잔액에서 차감되므로 실패 시 환불 대상이다.
     const { data: rpcResult, error: rpcError } = await supabase.rpc(
       'refund_token_atomic',
       {

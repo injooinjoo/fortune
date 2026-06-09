@@ -1,4 +1,4 @@
-// 공통 토큰 차감 / 환불 / 무제한 구독 체크 헬퍼.
+// 공통 토큰 차감 / 환불 헬퍼.
 // generate-character-proactive-image, generate-friend-avatar, soul-consume,
 // soul-refund 등에 동일 로직 산재 → 단일 진실로 통합.
 //
@@ -20,9 +20,9 @@ export interface ChargeContext {
 }
 
 export interface ChargeResult {
-  /** 차감 성공 여부. false 면 잔액 부족 또는 무제한 구독자. */
+  /** 차감 성공 여부. false 면 잔액 부족. */
   charged: boolean;
-  /** 무제한 구독자라 차감 자체를 skip 했는지. */
+  /** Legacy 호환 필드. 구독도 유한 토큰 할당권이므로 항상 false. */
   unlimited: boolean;
   /** 차감 직전 잔액. 환불 시 복원에 사용 (legacy). */
   balanceBeforeCharge: number;
@@ -34,26 +34,11 @@ export interface ChargeResult {
   transactionId: string | null;
 }
 
-export async function hasUnlimitedSubscription(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<boolean> {
-  const { data } = await supabase
-    .from("subscriptions")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("status", "active")
-    .gt("expires_at", new Date().toISOString())
-    .limit(1)
-    .maybeSingle();
-  return !!data;
-}
-
 /**
- * 토큰 차감. 무제한 구독자는 통과. 잔액 부족이면 charged=false.
+ * 토큰 차감. 잔액 부족이면 charged=false.
  * 호출자는 charged=false 일 때 작업 (LLM 호출/이미지생성 등) 을 차단해야 한다.
  *
- * 성공 시 (charged=true || unlimited=true) 작업 수행 후 실패하면 refundTokens()
+ * 성공 시 charged=true 후 작업 수행, 실패하면 refundTokens()
  * 로 환불해야 한다 — 호출자 책임.
  *
  * PR-0a: ctx.idempotencyKey 가 있으면 같은 키 재전송 시 1회만 차감.
@@ -64,17 +49,6 @@ export async function chargeTokens(
   amount: number,
   ctx: ChargeContext,
 ): Promise<ChargeResult> {
-  if (await hasUnlimitedSubscription(supabase, userId)) {
-    return {
-      charged: false,
-      unlimited: true,
-      balanceBeforeCharge: 0,
-      balanceAfter: 0,
-      replayed: false,
-      transactionId: null,
-    };
-  }
-
   const { data: rpcResult, error: rpcError } = await supabase.rpc(
     "consume_token_atomic",
     {

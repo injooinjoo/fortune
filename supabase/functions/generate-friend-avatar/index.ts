@@ -7,12 +7,11 @@ import { UsageLogger } from "../_shared/llm/usage-logger.ts";
 import { authenticateUser } from "../_shared/auth.ts";
 import {
   chargeTokens,
-  hasUnlimitedSubscription,
   refundTokens,
 } from "../_shared/token_charge.ts";
 import type { ImageResponse } from "../_shared/llm/types.ts";
 
-// 첫 1회는 무료, 재시도부터 25 토큰 차감 (구독자 무제한).
+// 첫 1회는 무료, 재시도부터 25 토큰 차감.
 // "첫 시도" 여부는 llm_usage_logs 의 friend-avatar 성공 카운트로 판정.
 const FRIEND_AVATAR_RETRY_COST = 25;
 
@@ -186,7 +185,8 @@ serve(async (req: Request) => {
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // 첫 시도 무료 (llm_usage_logs 카운트 기준) / 재시도 25 토큰. 구독자는 통과.
+    // 첫 시도 무료 (llm_usage_logs 카운트 기준) / 재시도 25 토큰.
+    // 구독도 플랜별 토큰 할당권이므로 재시도는 동일하게 차감한다.
     // LLM 호출 + storage upload 한 try 블록으로 감싸 어디서 실패해도 환불 보장.
     // PR-0a: referenceId 필수 — atomic refund RPC 가 원본 consume 추적에 사용.
     const chargeReferenceId = crypto.randomUUID();
@@ -197,40 +197,37 @@ serve(async (req: Request) => {
       idempotencyKey: `friend_avatar_retry:${user.id}:${chargeReferenceId}`,
     };
 
-    const unlimited = await hasUnlimitedSubscription(supabase, user.id);
     let charge: Awaited<ReturnType<typeof chargeTokens>> | null = null;
 
-    if (!unlimited) {
-      const { count: priorAttempts } = await supabase
-        .from("llm_usage_logs")
-        .select("id", { count: "exact", head: true })
-        .eq("user_id", user.id)
-        .eq("fortune_type", "friend-avatar")
-        .eq("success", true);
+    const { count: priorAttempts } = await supabase
+      .from("llm_usage_logs")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("fortune_type", "friend-avatar")
+      .eq("success", true);
 
-      const isFirstFree = (priorAttempts ?? 0) === 0;
+    const isFirstFree = (priorAttempts ?? 0) === 0;
 
-      if (!isFirstFree) {
-        charge = await chargeTokens(
-          supabase,
-          user.id,
-          FRIEND_AVATAR_RETRY_COST,
-          chargeCtx,
+    if (!isFirstFree) {
+      charge = await chargeTokens(
+        supabase,
+        user.id,
+        FRIEND_AVATAR_RETRY_COST,
+        chargeCtx,
+      );
+
+      if (!charge.charged) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: "토큰이 부족합니다 (재생성 25 토큰 필요)",
+            errorCode: "unknown",
+          } as GenerateFriendAvatarResponse),
+          {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 402,
+          },
         );
-
-        if (!charge.charged && !charge.unlimited) {
-          return new Response(
-            JSON.stringify({
-              success: false,
-              error: "토큰이 부족합니다 (재생성 25 토큰 필요)",
-              errorCode: "unknown",
-            } as GenerateFriendAvatarResponse),
-            {
-              headers: { ...corsHeaders, "Content-Type": "application/json" },
-              status: 402,
-            },
-          );
-        }
       }
     }
 

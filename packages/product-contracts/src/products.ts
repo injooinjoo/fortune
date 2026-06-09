@@ -85,7 +85,7 @@ export const productCatalog = {
   'com.beyond.fortune.subscription.pro': {
     id: 'com.beyond.fortune.subscription.pro',
     title: '프로 구독',
-    description: '매월 500 토큰 + 캐릭터 무제한 + 메모리 확장',
+    description: '매월 500 토큰 + 캐릭터 슬롯 확장 + 메모리 확장',
     price: 9900,
     points: 500,
     isSubscription: true,
@@ -175,7 +175,7 @@ export const productCatalog = {
   'com.beyond.fortune.subscription.max': {
     id: 'com.beyond.fortune.subscription.max',
     title: '맥스 구독',
-    description: '매월 2000 토큰 + 음성 무제한 + 우선 응답',
+    description: '매월 2000 토큰 + 음성 응답 넉넉한 사용 + 우선 응답',
     price: 19000,
     points: 2000,
     isSubscription: true,
@@ -185,7 +185,7 @@ export const productCatalog = {
   'com.beyond.fortune.subscription.monthly': {
     id: 'com.beyond.fortune.subscription.monthly',
     title: '레거시 월간 구독',
-    description: '이전 구매 복원용',
+    description: '이전 구매 복원용 월 30000 토큰 구독',
     price: 4500,
     points: 30000,
     isSubscription: true,

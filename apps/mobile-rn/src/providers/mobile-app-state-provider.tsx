@@ -131,10 +131,7 @@ function mergeRemotePremiumIntoState(
     ...current.premium,
     lastSyncedAt: snapshot.syncedAt,
     tokenBalance: snapshot.tokenBalance ?? current.premium.tokenBalance,
-    isUnlimited:
-      snapshot.tokenBalance == null
-        ? current.premium.isUnlimited
-        : snapshot.isUnlimited,
+    isUnlimited: false,
   };
 
   if (snapshot.activeSubscriptionProductId) {

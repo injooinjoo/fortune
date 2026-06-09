@@ -127,6 +127,38 @@ describe('subscription IAP monthly token contract', () => {
     expect(migration).toContain('consumed_for_token_grant = true');
   });
 
+  it('describes subscriptions as token allowances, not unlimited usage', () => {
+    for (const productId of activationEligibleSubscriptionProductIds) {
+      expect(productCatalog[productId].description).not.toContain('무제한');
+      expect(productCatalog[productId].description).toContain('토큰');
+    }
+  });
+
+  it('reports token balance as finite even when a subscription is active', () => {
+    const tokenBalanceFunction = readRepoFile('supabase/functions/token-balance/index.ts');
+
+    expect(tokenBalanceFunction).not.toContain('const isUnlimited = !!subscription');
+    expect(tokenBalanceFunction).toContain('isUnlimited: false');
+  });
+
+  it('does not bypass token consumption for active subscriptions', () => {
+    const soulConsumeFunction = readRepoFile('supabase/functions/soul-consume/index.ts');
+    const tokenChargeHelper = readRepoFile('supabase/functions/_shared/token_charge.ts');
+    const edgeAuthHelper = readRepoFile('supabase/functions/_shared/auth.ts');
+    const soulRefundFunction = readRepoFile('supabase/functions/soul-refund/index.ts');
+
+    expect(soulConsumeFunction).toContain('consume_token_atomic');
+    expect(soulConsumeFunction).not.toContain('Unlimited access');
+    expect(soulConsumeFunction).not.toContain('hasUnlimitedAccess: true');
+    expect(soulConsumeFunction).not.toContain('no token consumption');
+    expect(tokenChargeHelper).toContain('consume_token_atomic');
+    expect(tokenChargeHelper).not.toContain('hasUnlimitedSubscription');
+    expect(edgeAuthHelper).not.toContain('Infinity');
+    expect(edgeAuthHelper).not.toContain('isUnlimited: true');
+    expect(soulRefundFunction).not.toContain('Subscriber — no refund needed');
+    expect(soulRefundFunction).not.toContain('hasUnlimitedAccess: true');
+  });
+
   it('server-verifies restored subscriptions before activating them', () => {
     const provider = readRepoFile(
       'apps/mobile-rn/src/providers/mobile-app-state-provider.tsx',

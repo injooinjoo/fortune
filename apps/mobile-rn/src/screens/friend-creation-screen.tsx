@@ -978,7 +978,9 @@ export function FriendCreationCreatingScreen() {
   const attemptedRef = useRef(false);
 
   const FREE_CHARACTER_LIMIT = 1;
-  const isPremium = mobileAppState.premium.isUnlimited ||
+  const hasPremiumEntitlement =
+    mobileAppState.premium.status === 'subscription' ||
+    mobileAppState.premium.status === 'lifetime' ||
     (mobileAppState.premium.tokenBalance ?? 0) > 0;
 
   useEffect(() => {
@@ -993,11 +995,11 @@ export function FriendCreationCreatingScreen() {
 
     attemptedRef.current = true;
 
-    // 멀티 캐릭터 프리미엄 게이팅: 무료 1명, 프리미엄 무제한
-    if (!isPremium && createdFriends.length >= FREE_CHARACTER_LIMIT) {
+    // 멀티 캐릭터 프리미엄 게이팅: 무료 1명, 프리미엄은 보유 토큰 기반 확장
+    if (!hasPremiumEntitlement && createdFriends.length >= FREE_CHARACTER_LIMIT) {
       Alert.alert(
         '캐릭터 슬롯이 꽉 찼어요',
-        '무료 플랜은 캐릭터 1명까지 만들 수 있어요. 프리미엄으로 업그레이드하면 무제한으로 만들 수 있어요!',
+        '무료 플랜은 캐릭터 1명까지 만들 수 있어요. 프리미엄 토큰을 충전하면 더 만들 수 있어요!',
         [
           { text: '돌아가기', onPress: () => router.back() },
           { text: '프리미엄 보기', onPress: () => router.push('/premium') },
@@ -1025,6 +1027,8 @@ export function FriendCreationCreatingScreen() {
     isPersonaComplete,
     isStoryComplete,
     saveFriend,
+    hasPremiumEntitlement,
+    createdFriends.length,
   ]);
 
   function handleFinish() {

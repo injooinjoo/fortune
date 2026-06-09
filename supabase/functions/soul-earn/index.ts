@@ -115,20 +115,8 @@ serve(async (req) => {
 
     console.log(`👤 User: ${user.id}`)
 
-    // 1. 활성 구독 확인 (무제한 이용권)
-    const { data: subscription } = await supabase
-      .from('subscriptions')
-      .select('id, product_id, expires_at, status')
-      .eq('user_id', user.id)
-      .eq('status', 'active')
-      .gt('expires_at', new Date().toISOString())
-      .order('expires_at', { ascending: false })
-      .limit(1)
-      .single()
-
-    const hasUnlimitedAccess = !!subscription
-
-    // 2. 현재 토큰 잔액 조회
+    // 1. 현재 토큰 잔액 조회. 구독도 유한 토큰 할당권이므로 무제한 플래그는 항상 false.
+    const hasUnlimitedAccess = false
     const { data: tokenData } = await supabase
       .from('token_balance')
       .select('balance, total_earned, total_spent')

@@ -6,7 +6,7 @@
 //
 // 흐름:
 //   1) 인증 (premium 사용자만)
-//   2) 토큰 1개 차감 (unlimited 구독자는 제외)
+//   2) 토큰 1개 차감 (구독도 플랜별 토큰 잔액에서 차감)
 //   3) emotion → inline instruction tag 적용
 //   4) Gemini TTS API 호출 → PCM 24kHz 16-bit mono base64
 //   5) PCM → WAV header 래핑 → base64 응답
@@ -205,7 +205,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Premium 게이트 — unlimited 또는 잔액 1+ 토큰
+    // Premium 게이트 — 구독도 플랜별 토큰 잔액에서 1+ 토큰 필요
     const tokenCheck = await checkTokenBalance(user.id, TTS_TOKEN_COST);
     if (!tokenCheck.hasBalance && !tokenCheck.isUnlimited) {
       return jsonResponse(
@@ -279,17 +279,15 @@ Deno.serve(async (req) => {
 
     const wavBase64 = wrapPcmAsWavBase64(pcmBase64);
 
-    // 토큰 차감 (unlimited 는 skip — checkTokenBalance.isUnlimited 이미 true)
-    if (!tokenCheck.isUnlimited) {
-      const deductResult = await deductTokens(
-        user.id,
-        TTS_TOKEN_COST,
-        `character-tts:${voice}${body.messageId ? `:${body.messageId}` : ''}`,
-      );
-      if (!deductResult.success) {
-        // 차감 실패해도 audio 는 이미 받았으므로 응답은 정상으로 — log 만.
-        console.error('[character-tts] token deduct failed:', deductResult.error);
-      }
+    // 토큰 차감 — 구독도 플랜별 토큰 잔액에서 동일하게 차감한다.
+    const deductResult = await deductTokens(
+      user.id,
+      TTS_TOKEN_COST,
+      `character-tts:${voice}${body.messageId ? `:${body.messageId}` : ''}`,
+    );
+    if (!deductResult.success) {
+      // 차감 실패해도 audio 는 이미 받았으므로 응답은 정상으로 — log 만.
+      console.error('[character-tts] token deduct failed:', deductResult.error);
     }
 
     return jsonResponse({
