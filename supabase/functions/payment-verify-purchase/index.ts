@@ -630,6 +630,17 @@ serve(async (req) => {
       console.log("⚠️ Authorization 헤더 없음 - 익명 요청");
     }
 
+    if (!userId) {
+      console.log("❌ 인증된 사용자 없음 - 결제 검증/토큰 지급 중단");
+      return new Response(
+        JSON.stringify({ valid: false, error: "Authentication required" }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
+    }
+
     console.log(
       `🔍 검증 시작: ${platform}/${productId} for user ${
         userId || "anonymous"
@@ -696,8 +707,8 @@ serve(async (req) => {
         );
       }
 
-      const targetPackageName = packageName ||
-        Deno.env.get("GOOGLE_PLAY_PACKAGE_NAME") || "com.beyond.fortune";
+      const targetPackageName = Deno.env.get("GOOGLE_PLAY_PACKAGE_NAME") ||
+        "com.beyond.fortune";
       const androidResult = await verifyGooglePlayPurchase(
         targetPackageName,
         productId,
@@ -819,6 +830,22 @@ serve(async (req) => {
     let isFirstPurchase = false;
     let newBalance: number | null = null;
 
+    if (userId && isValid && alreadyGranted && replayOwnedByCurrentUser) {
+      const { data: balanceRow, error: balanceError } = await supabase
+        .from("token_balance")
+        .select("balance")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (balanceError) {
+        console.warn(
+          `⚠️ alreadyGranted replay balance 조회 실패: ${balanceError.message}`,
+        );
+      } else if (typeof balanceRow?.balance === "number") {
+        newBalance = balanceRow.balance;
+      }
+    }
+
     if (!userId) {
       console.log("⚠️ userId가 없어서 토큰 추가 건너뜀");
     }
@@ -834,7 +861,10 @@ serve(async (req) => {
       );
     }
 
-    if (userId && isValid && tokensToAdd > 0 && !alreadyGranted) {
+    if (
+      userId && isValid && tokensToAdd > 0 && !alreadyGranted &&
+      replayOwnedByCurrentUser
+    ) {
       console.log("========================================");
       console.log("💰 Atomic 토큰 구매 지급 시작");
       console.log("========================================");
@@ -955,6 +985,8 @@ serve(async (req) => {
       transactionId: verifiedTransactionId,
       platform,
       environment,
+      alreadyGranted,
+      balance: newBalance,
       tokensAdded: isValid ? actualTokensToAdd : 0,
       subscriptionTokensPendingActivation: isValid
         ? subscriptionTokensPendingActivation

@@ -41,6 +41,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "rn:start:native": "pnpm --filter @fortune/mobile-rn start:native",
+    "rn:start:remote-native": "pnpm --filter @fortune/mobile-rn start:remote-native",
     "rn:native:doctor": "pnpm --filter @fortune/mobile-rn native:doctor",
     "rn:native:prepare": "pnpm --filter @fortune/mobile-rn native:prepare",
     "rn:native:pods": "pnpm --filter @fortune/mobile-rn native:pods",

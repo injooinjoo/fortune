@@ -20,6 +20,8 @@ interface PurchaseVerificationResponse {
   productId?: string;
   transactionId?: string;
   tokensAdded?: number;
+  alreadyGranted?: boolean;
+  balance?: number;
   error?: string;
 }
 
@@ -69,6 +71,8 @@ export interface RemotePurchaseVerificationPayload {
 export interface RemotePurchaseVerificationResult {
   productId: ProductId;
   tokensAdded: number;
+  alreadyGranted: boolean;
+  balance: number | null;
   transactionId: string | null;
   valid: boolean;
 }
@@ -296,6 +300,11 @@ export async function verifyRemotePurchase(
       typeof result.tokensAdded === 'number' && Number.isFinite(result.tokensAdded)
         ? result.tokensAdded
         : 0,
+    alreadyGranted: result.alreadyGranted === true,
+    balance:
+      typeof result.balance === 'number' && Number.isFinite(result.balance)
+        ? result.balance
+        : null,
     transactionId:
       typeof result.transactionId === 'string' && result.transactionId.length > 0
         ? result.transactionId

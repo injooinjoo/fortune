@@ -766,7 +766,26 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
           transactionId: purchase.transactionId ?? purchase.id,
         });
 
-        if (isSubscriptionProductId(productId)) {
+        if (isConsumableProductId(productId)) {
+          if (verification.tokensAdded <= 0 && verification.balance == null) {
+            throw new Error('구매는 검증됐지만 토큰 지급이 확인되지 않았어요.');
+          }
+
+          if (verification.tokensAdded > 0 || verification.balance != null) {
+            await persistFromCurrent(
+              (current) =>
+                mergeMobileAppState(current, {
+                  premium: {
+                    lastPurchaseProductId: verification.productId,
+                    tokenBalance:
+                      verification.balance ??
+                      current.premium.tokenBalance + verification.tokensAdded,
+                  },
+                }),
+              currentSession.user.id,
+            );
+          }
+        } else if (isSubscriptionProductId(productId)) {
           if (!isSubscriptionProductId(verification.productId)) {
             throw new Error('검증된 상품이 구독 상품이 아니어서 구독을 활성화할 수 없어요.');
           }

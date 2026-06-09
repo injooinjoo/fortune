@@ -81,27 +81,42 @@ async function listStoragePathsRecursively(
   bucket: string,
   prefix: string,
 ): Promise<string[]> {
-  const { data: entries, error } = await supabaseClient.storage
-    .from(bucket)
-    .list(prefix, { limit: 1000 });
-  if (error) {
-    throw new Error(error.message);
-  }
-  if (!entries || entries.length === 0) {
-    return [];
+  const paths: string[] = [];
+  const pageSize = 1000;
+  let offset = 0;
+
+  while (true) {
+    const { data: entries, error } = await supabaseClient.storage
+      .from(bucket)
+      .list(prefix, {
+        limit: pageSize,
+        offset,
+        sortBy: { column: "name", order: "asc" },
+      });
+    if (error) {
+      throw new Error(error.message);
+    }
+    if (!entries || entries.length === 0) {
+      break;
+    }
+
+    for (const entry of entries) {
+      const path = `${prefix}/${entry.name}`;
+      if (entry.id === null) {
+        paths.push(
+          ...await listStoragePathsRecursively(supabaseClient, bucket, path),
+        );
+      } else {
+        paths.push(path);
+      }
+    }
+
+    if (entries.length < pageSize) {
+      break;
+    }
+    offset += pageSize;
   }
 
-  const paths: string[] = [];
-  for (const entry of entries) {
-    const path = `${prefix}/${entry.name}`;
-    if (entry.id === null) {
-      paths.push(
-        ...await listStoragePathsRecursively(supabaseClient, bucket, path),
-      );
-    } else {
-      paths.push(path);
-    }
-  }
   return paths;
 }
 

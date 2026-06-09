@@ -4,6 +4,9 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
+  allProductIds,
+  consumableProductIds,
+  legacyConsumableProductIds,
   legacySubscriptionProductIds,
   productCatalog,
   subscriptionProductIds,
@@ -31,6 +34,22 @@ function extractNumberMap(source: string, constName: string): Record<string, num
   return Object.fromEntries(entries);
 }
 
+function extractQuotedSet(source: string, constName: string): string[] {
+  const start = source.indexOf(`const ${constName}`);
+  expect(start, `${constName} must exist`).toBeGreaterThanOrEqual(0);
+  const end = source.indexOf(']);', start);
+  expect(end, `${constName} set must end`).toBeGreaterThan(start);
+  const block = source.slice(start, end);
+  const entries: string[] = [];
+  const matcher = /"(com\.beyond\.fortune\.[^"]+)"/g;
+  let match = matcher.exec(block);
+  while (match) {
+    entries.push(match[1]);
+    match = matcher.exec(block);
+  }
+  return entries;
+}
+
 describe('subscription IAP monthly token contract', () => {
   const activationEligibleSubscriptionProductIds = [
     ...subscriptionProductIds,
@@ -49,6 +68,43 @@ describe('subscription IAP monthly token contract', () => {
     expect(paymentFunction).toContain('? 0');
     expect(paymentFunction).toContain(': PRODUCT_TOKENS[verifiedProductId] || 0');
     expect(paymentFunction).toContain('subscriptionTokensPendingActivation');
+  });
+
+  it('keeps consumable token grants and allowed products in sync with the product catalog', () => {
+    const paymentFunction = readRepoFile('supabase/functions/payment-verify-purchase/index.ts');
+    const tokenMap = extractNumberMap(paymentFunction, 'PRODUCT_TOKENS');
+    const allowedProductIds = extractQuotedSet(paymentFunction, 'ALLOWED_PRODUCT_IDS');
+
+    for (const productId of [...consumableProductIds, ...legacyConsumableProductIds]) {
+      expect(tokenMap[productId]).toBe(productCatalog[productId].points);
+    }
+
+    expect(new Set(allowedProductIds)).toEqual(new Set(allProductIds));
+  });
+
+  it('does not finish consumable purchases unless a server grant or safe replay is confirmed', () => {
+    const paymentFunction = readRepoFile('supabase/functions/payment-verify-purchase/index.ts');
+    const premiumRemote = readRepoFile('apps/mobile-rn/src/lib/premium-remote.ts');
+    const provider = readRepoFile(
+      'apps/mobile-rn/src/providers/mobile-app-state-provider.tsx',
+    );
+    const purchaseStart = provider.indexOf('const processQueuedPurchase = useCallback');
+    const purchaseBlock = provider.slice(purchaseStart, provider.indexOf('useEffect(() => {', purchaseStart));
+
+    expect(paymentFunction).toContain('Authentication required');
+    expect(paymentFunction).toContain('!alreadyGranted &&\n      replayOwnedByCurrentUser');
+    expect(paymentFunction).toContain('alreadyGranted && replayOwnedByCurrentUser');
+    expect(paymentFunction).toContain('.from("token_balance")');
+    expect(paymentFunction).toContain('balance: newBalance,');
+    expect(premiumRemote).toContain('alreadyGranted: result.alreadyGranted === true');
+    expect(premiumRemote).toContain('balance:');
+    expect(purchaseBlock).toContain('if (isConsumableProductId(productId))');
+    expect(purchaseBlock).toContain('verification.tokensAdded <= 0 && verification.balance == null');
+    expect(purchaseBlock.indexOf('verification.tokensAdded <= 0')).toBeLessThan(
+      purchaseBlock.indexOf('await finishStoreTransaction'),
+    );
+    expect(purchaseBlock).toContain('tokenBalance:');
+    expect(purchaseBlock).toContain('verification.balance ??');
   });
 
   it('uses one server-side RPC to atomically activate subscriptions and grant monthly tokens', () => {

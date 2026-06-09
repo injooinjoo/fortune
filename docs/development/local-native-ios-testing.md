@@ -63,6 +63,40 @@ pnpm rn:ios:local
 
 The local helper discovers the generated `.xcworkspace` and the app scheme automatically, so it does not rely on a hard-coded workspace name.
 
+## Remote wireless testing from another network/region
+
+Use this when the iPhone is not on the same Wi-Fi/LAN as this Mac. This is still the local native Debug app path: no Expo Go, no Expo tunnel, no EAS build, and no EAS OTA.
+
+### One-time phone install
+
+The phone needs a Debug native build that includes the remote-bundle handler:
+
+```bash
+pnpm rn:native:device:run
+```
+
+This install step still requires the iPhone to be connected/trusted at least once, because it is a local Xcode/CoreDevice development build. After it is installed, the JS bundle can be switched remotely with the deep link below while the tunnel is running.
+
+### Start the public Metro tunnel
+
+```bash
+pnpm rn:start:remote-native
+```
+
+The command starts React Native Metro on `127.0.0.1:8081`, exposes it with `cloudflared tunnel`, and prints an iPhone link like:
+
+```text
+com.beyond.fortune://dev-bundle?url=https%3A%2F%2F...trycloudflare.com%2F.expo%2F.virtual-metro-entry.bundle%3Fplatform%3Dios%26dev%3Dtrue%26minify%3Dfalse
+```
+
+Send/open that link on the installed iPhone, then fully quit and reopen Ondo. The Debug app stores the bundle URL in `UserDefaults` and loads JavaScript from the Cloudflare tunnel on launch.
+
+Keep the terminal running while testing. When the tunnel stops, the remote bundle URL becomes unreachable; start the command again and open the new printed link.
+
+### Reset back to normal local Metro
+
+If the app keeps trying an old tunnel URL, reinstall the Debug app or clear app data. A fresh Debug install falls back to the normal local Metro bundle root.
+
 ## Health check
 
 ```bash

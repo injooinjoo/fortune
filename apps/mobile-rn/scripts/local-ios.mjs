@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { existsSync, mkdtempSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
@@ -268,11 +268,142 @@ function ensureIosProject() {
   run('pnpm', ['exec', 'expo', 'prebuild', '--platform', 'ios', '--no-install']);
 }
 
+function ensureRemoteBundleHandler() {
+  const appDelegatePath = path.join(iosDir, 'app', 'AppDelegate.swift');
+  if (!existsSync(appDelegatePath)) {
+    return;
+  }
+
+  let source = readFileSync(appDelegatePath, 'utf8');
+  if (source.includes('OndoDevBundleURL')) {
+    return;
+  }
+
+  source = source.replace(
+    '  ) -> Bool {\n    let delegate = ReactNativeDelegate()\n',
+    '  ) -> Bool {\n    OndoDevBundleURL.store(from: launchOptions)\n\n    let delegate = ReactNativeDelegate()\n',
+  );
+
+  source = source.replace(
+    '  ) -> Bool {\n    return super.application(app, open: url, options: options) || RCTLinkingManager.application(app, open: url, options: options)\n  }\n',
+    '  ) -> Bool {\n    if OndoDevBundleURL.store(from: url) {\n      return true\n    }\n\n    return super.application(app, open: url, options: options) || RCTLinkingManager.application(app, open: url, options: options)\n  }\n',
+  );
+
+  source = source.replace(
+    `  override func bundleURL() -> URL? {
+#if DEBUG
+    return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: ".expo/.virtual-metro-entry")
+#else
+    return Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+#endif
+  }
+}
+`,
+    `  override func bundleURL() -> URL? {
+#if DEBUG
+    if let remoteBundleURL = OndoDevBundleURL.current() {
+      return remoteBundleURL
+    }
+
+    return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: ".expo/.virtual-metro-entry")
+#else
+    return Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+#endif
+  }
+}
+
+private enum OndoDevBundleURL {
+  private static let defaultsKey = "ondo.remoteMetroBundleURL"
+  private static let routeHost = "dev-bundle"
+
+  static func store(from launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
+#if DEBUG
+    guard let url = launchOptions?[.url] as? URL else {
+      return
+    }
+
+    _ = store(from: url)
+#endif
+  }
+
+  static func store(from url: URL) -> Bool {
+#if DEBUG
+    guard url.host == routeHost else {
+      return false
+    }
+
+    guard
+      let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+      let value = components.queryItems?.first(where: { $0.name == "url" })?.value,
+      let bundleURL = URL(string: value),
+      ["http", "https"].contains(bundleURL.scheme?.lowercased())
+    else {
+      return false
+    }
+
+    UserDefaults.standard.set(bundleURL.absoluteString, forKey: defaultsKey)
+    UserDefaults.standard.synchronize()
+    return true
+#else
+    return false
+#endif
+  }
+
+  static func current() -> URL? {
+#if DEBUG
+    guard
+      let value = UserDefaults.standard.string(forKey: defaultsKey),
+      let bundleURL = URL(string: value),
+      ["http", "https"].contains(bundleURL.scheme?.lowercased())
+    else {
+      return nil
+    }
+
+    return bundleURL
+#else
+    return nil
+#endif
+  }
+}
+`,
+  );
+
+  if (!source.includes('OndoDevBundleURL')) {
+    console.error('Failed to patch AppDelegate.swift with the Ondo remote bundle handler. Inspect the generated iOS template before continuing.');
+    process.exit(1);
+  }
+
+  writeFileSync(appDelegatePath, source);
+}
+
+function ensurePodfilePostInstallGuards() {
+  const podfilePath = path.join(iosDir, 'Podfile');
+  let source = readFileSync(podfilePath, 'utf8');
+
+  if (source.includes('LLAMA_RN_CXX20: Force C++20 on all Pods.')) {
+    return;
+  }
+
+  const original = `    # LLAMA_RN_CXX20: Force C++20 on all Pods\n    installer.pods_project.targets.each do |target|\n      target.build_configurations.each do |config|\n        config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'gnu++20'\n        config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'\n        config.build_settings['OTHER_CPLUSPLUSFLAGS'] = '$(inherited) -std=gnu++20'\n      end\n    end\n`;
+  const patched = `    minimum_deployment_target = podfile_properties['ios.deploymentTarget'] || '15.1'\n\n    # LLAMA_RN_CXX20: Force C++20 on all Pods.\n    # Also normalize legacy pod targets (for example Sentry's 11.0 default) so\n    # local Xcode simulator builds do not emit unsupported deployment target\n    # warnings on every native smoke test.\n    installer.pods_project.targets.each do |target|\n      target.build_configurations.each do |config|\n        config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'gnu++20'\n        config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'\n        config.build_settings['OTHER_CPLUSPLUSFLAGS'] = '$(inherited) -std=gnu++20'\n        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = minimum_deployment_target\n      end\n\n      # The EXUpdates resource-generation phase intentionally runs each build.\n      # Mark it as explicitly always out-of-date to match that behavior and\n      # avoid Xcode's dependency-analysis warning.\n      target.shell_script_build_phases.each do |phase|\n        next unless phase.display_name == '[CP-User] Generate updates resources for expo-updates'\n        phase.always_out_of_date = '1' if phase.respond_to?(:always_out_of_date=)\n      end\n    end\n`;
+
+  if (!source.includes(original)) {
+    console.error('Could not locate Podfile C++20 post_install block. Inspect the generated Podfile before running pod install.');
+    process.exit(1);
+  }
+
+  source = source.replace(original, patched);
+  writeFileSync(podfilePath, source);
+}
+
 function installPods() {
-  if (!existsSync(path.join(iosDir, 'Podfile'))) {
+  const podfilePath = path.join(iosDir, 'Podfile');
+  if (!existsSync(podfilePath)) {
     console.error('Podfile not found. Run native:prepare first.');
     process.exit(1);
   }
+
+  ensurePodfilePostInstallGuards();
 
   const bundleResult = spawnSync('bundle', ['exec', 'pod', '--version'], {
     cwd: iosDir,
@@ -304,12 +435,14 @@ function doctor() {
 
 if (command === 'prepare') {
   ensureIosProject();
+  ensureRemoteBundleHandler();
   installPods();
   doctor();
 } else if (command === 'pods') {
   installPods();
 } else if (command === 'open') {
   ensureIosProject();
+  ensureRemoteBundleHandler();
   const workspace = findWorkspace();
   if (workspace) {
     run('open', [workspace]);
@@ -317,6 +450,7 @@ if (command === 'prepare') {
     run('xed', [iosDir]);
   }
 } else if (command === 'run') {
+  ensureRemoteBundleHandler();
   const { workspace, scheme } = ensureWorkspaceAndScheme();
 
   run('pnpm', [
@@ -329,10 +463,13 @@ if (command === 'prepare') {
     scheme,
   ]);
 } else if (command === 'build') {
+  ensureRemoteBundleHandler();
   buildNativeApp(destinationArgs(), 'iphonesimulator');
 } else if (command === 'device-build') {
+  ensureRemoteBundleHandler();
   buildNativeApp(deviceBuildArgs(), 'iphoneos');
 } else if (command === 'device-install') {
+  ensureRemoteBundleHandler();
   const appPath = existsSync(process.argv[3] ?? '') ? process.argv[3] : buildNativeApp(deviceBuildArgs(), 'iphoneos');
   installOnPhone(appPath);
 } else if (command === 'device-launch') {
@@ -340,6 +477,7 @@ if (command === 'prepare') {
   const bundleId = existsSync(appPath) ? bundleIdentifier(appPath) : (process.env.IOS_BUNDLE_ID ?? 'com.beyond.fortune');
   launchOnPhone(bundleId);
 } else if (command === 'device-run') {
+  ensureRemoteBundleHandler();
   const appPath = buildNativeApp(deviceBuildArgs(), 'iphoneos');
   const { bundleId } = installOnPhone(appPath);
   launchOnPhone(bundleId);
