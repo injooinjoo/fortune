@@ -95,6 +95,12 @@ export interface EmbeddedResultPayload {
   manseryeok?: ManseryeokLocalData;
   /** Raw API response for fortune types with rich domain-specific data */
   rawApiResponse?: Record<string, unknown>;
+  /** Server-side token charge marker returned by hardened Edge functions. */
+  serverTokenCharge?: {
+    cost?: number;
+    balance?: number | null;
+    consumeTransactionId?: string | null;
+  };
 
   // --- Hero-specific visualization fields (Phase 3b) ---
   /** HeroTarot — 3-card spread. */

@@ -27,6 +27,24 @@ import type {
 
 type UnknownRecord = Record<string, unknown>;
 
+export class TerminalFortuneEdgeError extends Error {
+  readonly status?: number;
+  readonly errorCode?: string;
+  readonly userMessage: string;
+
+  constructor(args: { message: string; status?: number; errorCode?: string; userMessage?: string }) {
+    super(args.message);
+    this.name = 'TerminalFortuneEdgeError';
+    this.status = args.status;
+    this.errorCode = args.errorCode;
+    this.userMessage = args.userMessage ?? args.message;
+  }
+}
+
+export function isTerminalFortuneEdgeError(error: unknown): error is TerminalFortuneEdgeError {
+  return error instanceof TerminalFortuneEdgeError;
+}
+
 export function isAbortError(error: unknown): boolean {
   return (
     typeof error === 'object' &&
@@ -40,6 +58,67 @@ function createAbortError(message: string): Error {
   const error = new Error(message);
   error.name = 'AbortError';
   return error;
+}
+
+function createClientChargeId(): string {
+  return `client:${Date.now().toString(36)}:${Math.random().toString(36).slice(2, 12)}`;
+}
+
+function readRecordString(record: unknown, key: string): string | undefined {
+  if (!record || typeof record !== 'object') return undefined;
+  const value = (record as UnknownRecord)[key];
+  return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+}
+
+function terminalUserMessage(status?: number, errorCode?: string, fallback?: string): string {
+  if (errorCode === 'auth_required' || status === 401 || status === 403) {
+    return '로그인이 필요해요. 로그인한 뒤 다시 시도해 주세요.';
+  }
+  if (errorCode === 'insufficient_tokens' || status === 402) {
+    return fallback ?? '토큰이 부족해요. 토큰을 충전한 뒤 다시 시도해 주세요.';
+  }
+  if (errorCode === 'duplicate_generation_request' || status === 409) {
+    return fallback ?? '이미 처리된 요청이에요. 새로 다시 시도해 주세요.';
+  }
+  return fallback ?? '운세를 불러오지 못했어요. 잠시 뒤 다시 시도해 주세요.';
+}
+
+function isTerminalStatusOrCode(status?: number, errorCode?: string): boolean {
+  return status === 401 || status === 402 || status === 403 || status === 409 ||
+    errorCode === 'auth_required' ||
+    errorCode === 'insufficient_tokens' ||
+    errorCode === 'duplicate_generation_request';
+}
+
+async function throwTerminalEdgeErrorIfNeeded(error: unknown, data: unknown): Promise<void> {
+  let status = error && typeof error === 'object'
+    ? (error as { context?: { status?: number } }).context?.status
+    : undefined;
+  let errorCode = readRecordString(data, 'errorCode');
+  let serverMessage = readRecordString(data, 'error');
+
+  const context = error && typeof error === 'object'
+    ? (error as { context?: { status?: number; json?: () => Promise<unknown> } }).context
+    : undefined;
+  if ((!errorCode || !serverMessage) && context?.json) {
+    try {
+      const parsed = await context.json();
+      errorCode = errorCode ?? readRecordString(parsed, 'errorCode');
+      serverMessage = serverMessage ?? readRecordString(parsed, 'error');
+      status = status ?? context.status;
+    } catch {
+      // Keep the generic invoke error path if the response body cannot be parsed.
+    }
+  }
+
+  if (isTerminalStatusOrCode(status, errorCode)) {
+    throw new TerminalFortuneEdgeError({
+      message: serverMessage ?? errorCode ?? `edge function failed (${status ?? 'unknown'})`,
+      status,
+      errorCode,
+      userMessage: terminalUserMessage(status, errorCode, serverMessage),
+    });
+  }
 }
 
 function throwIfAborted(signal?: AbortSignal): void {
@@ -220,6 +299,10 @@ export async function fetchEmbeddedEdgeResultPayload(
     return null;
   }
 
+  if (endpoint === '/fortune-tarot') {
+    body.clientChargeId = createClientChargeId();
+  }
+
   const functionName = endpoint.replace(/^\//u, '');
   // 타임아웃: gpt-image-2 / Gemini image 기반 poster-guide 및 전생 초상화는
   // 이미지 생성 + Storage upload 때문에 20-60s 걸릴 수 있음 → 90s 여유.
@@ -253,8 +336,10 @@ export async function fetchEmbeddedEdgeResultPayload(
   }
 
   if (error) {
+    await throwTerminalEdgeErrorIfNeeded(error, data);
     throw error;
   }
+  await throwTerminalEdgeErrorIfNeeded(null, data);
 
   const normalized = normalizeFortuneResult(data, { fortuneType });
   const result = buildEmbeddedResultPayloadFromNormalizedResult(
@@ -274,8 +359,19 @@ export async function fetchEmbeddedEdgeResultPayload(
       : data;
     result.rawApiResponse = rawData as Record<string, unknown>;
 
-    // Store in client cache
-    setCachedResult(cacheKey, result);
+    const serverTokenCharge = typeof data === 'object' && data !== null
+      ? (data as Record<string, unknown>).tokenCharge
+      : null;
+    if (serverTokenCharge && typeof serverTokenCharge === 'object') {
+      result.serverTokenCharge = serverTokenCharge as EmbeddedResultPayload['serverTokenCharge'];
+    }
+
+    // Store in client cache without the per-invocation server charge marker.
+    // Cache hits still need the legacy client-side charge path to avoid free repeats.
+    const cachePayload = result.serverTokenCharge
+      ? { ...result, serverTokenCharge: undefined }
+      : result;
+    setCachedResult(cacheKey, cachePayload);
   }
 
   return result;

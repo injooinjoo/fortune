@@ -43,6 +43,7 @@ import {
   fetchEmbeddedEdgeResultPayload,
   isAbortError,
   isAsyncPosterFortuneType,
+  isTerminalFortuneEdgeError,
   lookupCachedFortuneResult,
   startAsyncPosterJob,
 } from '../features/chat-results/edge-runtime';
@@ -2100,9 +2101,14 @@ export function ChatScreen() {
         return;
       }
 
-      let tokensConsumedForResult = false;
+      if (embeddedResult.kind !== 'embedded-result') {
+        appendMessages(character, [embeddedResult]);
+        return;
+      }
+
+      let tokensConsumedForResult = Boolean(embeddedResult.payload.serverTokenCharge);
       let shouldRenderResult = true;
-      if (session) {
+      if (session && !tokensConsumedForResult) {
         if (!isCurrentFortuneGeneration(character.id, generationController)) {
           return;
         }
@@ -4419,6 +4425,9 @@ export function ChatScreen() {
     } catch (error) {
       if (isAbortError(error) && signal?.aborted) {
         return null;
+      }
+      if (isTerminalFortuneEdgeError(error)) {
+        return buildAssistantTextMessage(error.userMessage);
       }
       // Edge Function 실패 시 로컬 fallback으로 자동 전환 — 에러 무시
     }

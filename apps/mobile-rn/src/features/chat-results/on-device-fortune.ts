@@ -361,6 +361,9 @@ const CLOUD_ONLY_FORTUNE_TYPES = new Set<FortuneTypeId>([
   // portraitUrl 을 만들어야 한다. 온디바이스 텍스트 경로로 우회하면 hero 카드가
   // 초상화 URL 없이 🏯 placeholder 로 떨어진다.
   'past-life',
+  // 타로는 서버가 auth → token consume → LLM/cohort → refund 를 책임지는 유료
+  // 보안 경로다. on-device 우회는 guest/free result 및 이중 과금 분기를 만든다.
+  'tarot',
 ]);
 
 /**
