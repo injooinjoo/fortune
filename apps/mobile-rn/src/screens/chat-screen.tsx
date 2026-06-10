@@ -194,6 +194,8 @@ const FALLBACK_REPLY_MIN_SEC = 6;
 const FALLBACK_REPLY_MAX_SEC = 18;
 const AUDIO_ONLY_STORY_PROMPT =
   '[사용자가 음성 메시지를 보냈어요. 아직 음성 내용은 텍스트로 변환되지 않았으니, 들은 척하지 말고 자연스럽게 짧게 반응해 주세요.]';
+const PHOTO_ONLY_STORY_PROMPT =
+  '[사용자가 사진을 보냈어요. 사진을 보고 구체적으로 반응하되, 과장하지 말고 자연스럽게 짧게 답해 주세요.]';
 
 function randomFallbackReplyDelayMs() {
   return (Math.random() * (FALLBACK_REPLY_MAX_SEC - FALLBACK_REPLY_MIN_SEC) +
@@ -3994,10 +3996,15 @@ export function ChatScreen() {
     }
 
     // 이미지 첨부가 있으면 여기서 먼저 처리한다.
-    // 사진 자체에는 캡션을 붙이지 않는다. 스토리 파일럿은 trimmed 를 별도 유저 텍스트로
-    // append 하므로, 이미지 아래 캡션까지 표시하면 같은 문장이 두 번 보인다.
+    // 스토리 파일럿 사진 전송은 visible image bubble 의 id 를 그대로 답장
+    // 파이프라인에 넘겨야 pending reply job/rollback/read receipt 가 같은 유저
+    // 메시지를 추적한다. 캡션은 이미지 메시지에 붙이고 optimistic text bubble 은
+    // 추가하지 않는다.
     if (pendingImage) {
-      const imageMessage = buildUserImageMessage(pendingImage.uri);
+      const imageMessage = buildUserImageMessage(
+        pendingImage.uri,
+        trimmed || undefined,
+      );
       const isStoryPilotImageSend =
         pendingImage.base64 && isStoryRomancePilotCharacterId(selectedCharacter.id);
       const messagesToAppend =
@@ -4028,9 +4035,16 @@ export function ChatScreen() {
         const dataUrl = pendingImage.base64.startsWith('data:')
           ? pendingImage.base64
           : `data:${mimeType};base64,${pendingImage.base64}`;
-        void sendStoryPilotMessage(selectedCharacter, trimmed, {
-          imageBase64: dataUrl,
-        });
+        void sendStoryPilotMessage(
+          selectedCharacter,
+          trimmed || PHOTO_ONLY_STORY_PROMPT,
+          {
+            imageBase64: dataUrl,
+            skipOptimisticUserMessage: true,
+            userMessageId: imageMessage.id,
+            userMessageIds: [imageMessage.id],
+          },
+        );
       }
       return;
     }
