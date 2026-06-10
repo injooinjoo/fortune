@@ -180,6 +180,20 @@ function isConsumableProductId(productId: ProductId) {
   return !product.isSubscription && !isNonConsumableProductId(productId);
 }
 
+function markSubscriptionActive(
+  current: MobileAppState,
+  productId: ProductId,
+): MobileAppState {
+  return mergeMobileAppState(current, {
+    premium: {
+      status: 'subscription',
+      activeProductId: productId,
+      lastPurchaseProductId: productId,
+      subscriptionExpiresAt: null,
+    },
+  });
+}
+
 function getStoreProductOfferToken(
   product: Product | ProductSubscription,
 ): string | null {
@@ -797,6 +811,10 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
             productId: verification.productId,
             purchaseId: verifiedTransactionId,
           });
+          await persistFromCurrent(
+            (current) => markSubscriptionActive(current, verification.productId),
+            currentSession.user.id,
+          );
         } else if (isNonConsumableProductId(productId)) {
           await persistFromCurrent(
             (current) => applyProductPurchase(current, productId),
@@ -810,6 +828,12 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
         });
 
         await syncRemoteProfile();
+        if (isSubscriptionProductId(productId)) {
+          await persistFromCurrent(
+            (current) => markSubscriptionActive(current, productId),
+            currentSession.user.id,
+          );
+        }
         purchaseSuccess();
       } catch (error) {
         processedPurchaseKeysRef.current.delete(processingKey);
@@ -1077,6 +1101,10 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
             productId: verification.productId,
             purchaseId: verifiedTransactionId,
           });
+          await persistFromCurrent(
+            (current) => markSubscriptionActive(current, verification.productId),
+            currentSession.user.id,
+          );
           continue;
         }
 
@@ -1097,6 +1125,22 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
       );
 
       await syncRemoteProfile();
+      await persistFromCurrent(
+        (current) => {
+          let nextState = current;
+
+          for (const purchase of availablePurchases) {
+            const productId = purchase.productId;
+
+            if (isProductId(productId) && isSubscriptionProductId(productId)) {
+              nextState = markSubscriptionActive(nextState, productId);
+            }
+          }
+
+          return nextState;
+        },
+        currentSession.user.id,
+      );
     } catch (error) {
       if (isExpectedStoreUnavailableError(error)) {
         setIsStoreRuntimeAvailable(false);

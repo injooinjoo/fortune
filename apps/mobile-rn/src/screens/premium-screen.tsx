@@ -115,7 +115,8 @@ export function PremiumScreen() {
   );
   const [openTrustIndex, setOpenTrustIndex] = useState<number | null>(null);
   const didRequestStoreRefreshRef = useRef(false);
-
+  const pendingNavigationProductRef = useRef<ProductId | null>(null);
+  const purchaseStartedBalanceRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (didRequestStoreRefreshRef.current) {
@@ -145,6 +146,9 @@ export function PremiumScreen() {
     (id) => productCatalog[id],
   );
   const focusTopUpOnly = premiumIntent === 'top-up' && !showAllProducts;
+  const activeSubscriptionProductId = state.premium.status === 'subscription'
+    ? state.premium.activeProductId
+    : null;
   const selectedProductPeriodLabel = getSubscriptionPeriodLabel(selectedProduct.id);
   const selectedProductPriceLabel =
     storePriceLabels[selectedProduct.id] ?? formatPrice(selectedProduct.price);
@@ -175,6 +179,37 @@ export function PremiumScreen() {
   const selectedTopUpUsage =
     selectedProduct.points > 0 ? getUsagePreview(selectedProduct) : [];
   const selectedTopUpAfterBalance = state.premium.tokenBalance + selectedProduct.points;
+
+  useEffect(() => {
+    if (premiumIntent === 'top-up' || !activeSubscriptionProductId) {
+      return;
+    }
+
+    setSelectedProductId(activeSubscriptionProductId);
+  }, [activeSubscriptionProductId, premiumIntent]);
+
+  useEffect(() => {
+    const pendingProductId = pendingNavigationProductRef.current;
+
+    if (!pendingProductId || isPurchasePending) {
+      return;
+    }
+
+    const pendingProduct = productCatalog[pendingProductId];
+    const startedBalance = purchaseStartedBalanceRef.current;
+    const didCompletePurchase = pendingProduct.isSubscription
+      ? state.premium.status === 'subscription' &&
+        state.premium.activeProductId === pendingProductId
+      : startedBalance != null && state.premium.tokenBalance > startedBalance;
+
+    if (!didCompletePurchase) {
+      return;
+    }
+
+    pendingNavigationProductRef.current = null;
+    purchaseStartedBalanceRef.current = null;
+    router.replace('/chat');
+  }, [isPurchasePending, state.premium]);
 
   async function handleRefresh() {
     if (actionState !== 'idle') {
@@ -259,8 +294,12 @@ export function PremiumScreen() {
     }
 
     try {
+      pendingNavigationProductRef.current = selectedProduct.id;
+      purchaseStartedBalanceRef.current = state.premium.tokenBalance;
       await purchaseProduct(selectedProduct.id);
     } catch (error) {
+      pendingNavigationProductRef.current = null;
+      purchaseStartedBalanceRef.current = null;
       await captureError(error, {
         productId: selectedProduct.id,
         surface: 'premium:purchase',
@@ -566,10 +605,15 @@ export function PremiumScreen() {
           </Card>
 
           <View style={{ gap: fortuneTheme.spacing.sm }}>
+            <FreePlanCard isCurrentPlan={activeSubscriptionProductId == null} />
             {subscriptions.map((product) => (
               <SubscriptionPlanCard
                 key={product.id}
-                isRecommended={product.id === 'com.beyond.fortune.subscription.pro'}
+                isCurrentPlan={activeSubscriptionProductId === product.id}
+                isRecommended={
+                  activeSubscriptionProductId == null &&
+                  product.id === 'com.beyond.fortune.subscription.pro'
+                }
                 isSelected={selectedProductId === product.id}
                 onPress={() => setSelectedProductId(product.id)}
                 priceLabel={`월 ${storePriceLabels[product.id] ?? formatPrice(product.price)}`}
@@ -742,13 +786,94 @@ function TopUpPackageTile({
   );
 }
 
+function FreePlanCard({ isCurrentPlan }: { isCurrentPlan: boolean }) {
+  return (
+    <Card
+      style={{
+        backgroundColor: isCurrentPlan
+          ? withAlpha(fortuneTheme.colors.ctaBackground, 0.08)
+          : fortuneTheme.colors.surfaceElevated,
+        borderColor: isCurrentPlan
+          ? fortuneTheme.colors.ctaBackground
+          : withAlpha(fortuneTheme.colors.accent, 0.08),
+        gap: fortuneTheme.spacing.sm,
+        paddingVertical: fortuneTheme.spacing.lg,
+      }}
+    >
+      <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', gap: fortuneTheme.spacing.md }}>
+        <View style={{ flex: 1, gap: fortuneTheme.spacing.xs }}>
+          <View style={{ alignItems: 'center', flexDirection: 'row', gap: fortuneTheme.spacing.sm }}>
+            <AppText variant="heading4">Free</AppText>
+            {isCurrentPlan ? (
+              <PlanStatusBadge label="이용중" tone="active" />
+            ) : null}
+          </View>
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            가끔 온도와 대화해보기
+          </AppText>
+        </View>
+        <View style={{ alignItems: 'flex-end', gap: 2 }}>
+          <AppText variant="heading3">0</AppText>
+          <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+            구독료
+          </AppText>
+        </View>
+      </View>
+      <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <AppText variant="labelMedium" color={fortuneTheme.colors.textSecondary}>
+          무료
+        </AppText>
+        <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+          기본 체험 한도
+        </AppText>
+      </View>
+    </Card>
+  );
+}
+
+function PlanStatusBadge({
+  label,
+  tone,
+}: {
+  label: string;
+  tone: 'active' | 'recommended';
+}) {
+  const isActive = tone === 'active';
+
+  return (
+    <View
+      style={{
+        backgroundColor: isActive
+          ? withAlpha(fortuneTheme.colors.ctaBackground, 0.12)
+          : fortuneTheme.colors.ctaBackground,
+        borderColor: isActive
+          ? withAlpha(fortuneTheme.colors.ctaBackground, 0.3)
+          : fortuneTheme.colors.ctaBackground,
+        borderRadius: fortuneTheme.radius.full,
+        borderWidth: 1,
+        paddingHorizontal: fortuneTheme.spacing.sm,
+        paddingVertical: 3,
+      }}
+    >
+      <AppText
+        variant="caption"
+        color={isActive ? fortuneTheme.colors.ctaBackground : fortuneTheme.colors.background}
+      >
+        {label}
+      </AppText>
+    </View>
+  );
+}
+
 function SubscriptionPlanCard({
+  isCurrentPlan,
   isRecommended,
   isSelected,
   onPress,
   priceLabel,
   product,
 }: {
+  isCurrentPlan: boolean;
   isRecommended: boolean;
   isSelected: boolean;
   onPress: () => void;
@@ -778,19 +903,10 @@ function SubscriptionPlanCard({
           <View style={{ flex: 1, gap: fortuneTheme.spacing.xs }}>
             <View style={{ alignItems: 'center', flexDirection: 'row', gap: fortuneTheme.spacing.sm }}>
               <AppText variant="heading4">{getPlanShortName(product.id)}</AppText>
-              {isRecommended ? (
-                <View
-                  style={{
-                    backgroundColor: fortuneTheme.colors.ctaBackground,
-                    borderRadius: fortuneTheme.radius.full,
-                    paddingHorizontal: fortuneTheme.spacing.sm,
-                    paddingVertical: 3,
-                  }}
-                >
-                  <AppText variant="caption" color={fortuneTheme.colors.background}>
-                    추천
-                  </AppText>
-                </View>
+              {isCurrentPlan ? (
+                <PlanStatusBadge label="구독중" tone="active" />
+              ) : isRecommended ? (
+                <PlanStatusBadge label="추천" tone="recommended" />
               ) : null}
             </View>
             <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
