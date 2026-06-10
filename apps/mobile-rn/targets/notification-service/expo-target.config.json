@@ -3,5 +3,8 @@
   "type": "notification-service",
   "name": "OndoNotificationService",
   "bundleIdentifier": "com.beyond.fortune.notification-service",
-  "deploymentTarget": "17.0"
+  "deploymentTarget": "17.0",
+  "entitlements": {
+    "com.apple.developer.usernotifications.communication": true
+  }
 }

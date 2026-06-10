@@ -18,8 +18,8 @@
 //
 
 import UserNotifications
-import MobileCoreServices
 import UniformTypeIdentifiers
+import Intents
 
 class NotificationService: UNNotificationServiceExtension {
 
@@ -48,7 +48,8 @@ class NotificationService: UNNotificationServiceExtension {
 
         guard let urlString = imageUrlString,
               let imageUrl = URL(string: urlString) else {
-            contentHandler(bestAttempt)
+            let bundledAvatarData = self.attachBundledAvatarIfAvailable(to: bestAttempt)
+            self.applyCommunicationMetadataAndDeliver(avatarData: bundledAvatarData)
             return
         }
 
@@ -59,7 +60,8 @@ class NotificationService: UNNotificationServiceExtension {
                   let bestAttempt = self.bestAttemptContent,
                   let location = location,
                   error == nil else {
-                self?.deliverBestAttempt()
+                let bundledAvatarData = self?.bestAttemptContent.flatMap { self?.attachBundledAvatarIfAvailable(to: $0) }
+                self?.applyCommunicationMetadataAndDeliver(avatarData: bundledAvatarData)
                 return
             }
 
@@ -69,9 +71,11 @@ class NotificationService: UNNotificationServiceExtension {
             let pathExt = imageUrl.pathExtension.isEmpty ? "jpg" : imageUrl.pathExtension
             let targetUrl = location.deletingLastPathComponent()
                 .appendingPathComponent("\(UUID().uuidString).\(pathExt)")
+            var avatarData: Data? = nil
 
             do {
                 try FileManager.default.moveItem(at: location, to: targetUrl)
+                avatarData = try? Data(contentsOf: targetUrl)
                 let typeHint = self.utiTypeHint(for: pathExt)
                 var options: [String: Any] = [:]
                 if let typeHint = typeHint {
@@ -84,23 +88,167 @@ class NotificationService: UNNotificationServiceExtension {
                 )
                 bestAttempt.attachments = [attachment]
             } catch {
-                // 첨부 실패해도 텍스트 푸시는 살린다.
+                // 첨부 실패해도 텍스트 푸시는 살린다. Communication Notification
+                // 메타데이터는 extension bundle PNG fallback 으로 다시 시도한다.
+                avatarData = nil
             }
 
-            self.deliverBestAttempt()
+            self.applyCommunicationMetadataAndDeliver(avatarData: avatarData ?? self.attachBundledAvatarIfAvailable(to: bestAttempt))
         }
         task.resume()
     }
 
     override func serviceExtensionTimeWillExpire() {
-        // 시간 안에 다운로드 못 끝낸 경우. 텍스트만이라도 띄운다.
-        deliverBestAttempt()
+        // 시간 안에 다운로드 못 끝낸 경우. 텍스트만이라도 띄우되, 가능한 경우
+        // Communication Notification 메타데이터는 적용한다.
+        applyCommunicationMetadataAndDeliver(avatarData: nil)
     }
 
     private func deliverBestAttempt() {
         guard let contentHandler = contentHandler,
               let bestAttempt = bestAttemptContent else { return }
         contentHandler(bestAttempt)
+    }
+
+    /// iOS 15+ Communication Notification 메타데이터를 적용한다.
+    /// 카톡/iMessage처럼 알림을 "앱이 보낸 일반 푸시"가 아니라
+    /// "캐릭터가 보낸 메시지"로 분류하게 만들어 발신자 avatar 표시 가능성을 높인다.
+    ///
+    /// 주의: 작은 앱 출처 아이콘 자체는 iOS 정책상 계속 앱 아이콘이다. 이 메타데이터는
+    /// 시스템이 허용하는 발신자 이미지/메시지 UI 영역을 채우는 경로다.
+    private func applyCommunicationMetadataAndDeliver(avatarData: Data?) {
+        guard let contentHandler = contentHandler,
+              let bestAttempt = bestAttemptContent else { return }
+
+        guard #available(iOSApplicationExtension 15.0, *) else {
+            contentHandler(bestAttempt)
+            return
+        }
+
+        let updated = communicationUpdatedContent(from: bestAttempt, avatarData: avatarData)
+        bestAttemptContent = updated
+        contentHandler(updated)
+    }
+
+    @available(iOSApplicationExtension 15.0, *)
+    private func communicationUpdatedContent(
+        from content: UNMutableNotificationContent,
+        avatarData: Data?
+    ) -> UNMutableNotificationContent {
+        let userInfo = content.userInfo
+        let characterId = extractString(from: userInfo, keys: ["character_id", "characterId"])
+            ?? "ondo-character"
+        let displayName = extractString(from: userInfo, keys: ["title", "character_name", "characterName"])
+            ?? content.title
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let body = extractString(from: userInfo, keys: ["body", "message", "messageText"])
+            ?? content.body
+        let conversationId = extractString(from: userInfo, keys: ["conversation_id", "conversationId", "route"])
+            ?? characterId
+
+        let senderImage = avatarData.flatMap { INImage(imageData: $0) }
+        let sender = INPerson(
+            personHandle: INPersonHandle(value: characterId, type: .unknown),
+            nameComponents: nil,
+            displayName: displayName.isEmpty ? content.title : displayName,
+            image: senderImage,
+            contactIdentifier: characterId,
+            customIdentifier: characterId,
+            isMe: false,
+            suggestionType: .none
+        )
+        let me = INPerson(
+            personHandle: INPersonHandle(value: "ondo-user", type: .unknown),
+            nameComponents: nil,
+            displayName: "나",
+            image: nil,
+            contactIdentifier: nil,
+            customIdentifier: "ondo-user",
+            isMe: true,
+            suggestionType: .none
+        )
+
+        let intent = INSendMessageIntent(
+            recipients: [me],
+            outgoingMessageType: .outgoingMessageText,
+            content: body,
+            speakableGroupName: nil,
+            conversationIdentifier: conversationId,
+            serviceName: "온도",
+            sender: sender,
+            attachments: nil
+        )
+        let interaction = INInteraction(intent: intent, response: nil)
+        interaction.direction = .incoming
+        interaction.donate(completion: nil)
+
+        do {
+            let updatedContent = try content.updating(from: intent)
+            guard let mutable = updatedContent.mutableCopy() as? UNMutableNotificationContent else {
+                return content
+            }
+            // updating(from:) 이 본문/제목을 시스템 메시지 스타일로 재작성할 수 있으므로
+            // 기존 route/data 및 rich attachment 는 반드시 보존한다.
+            mutable.userInfo = content.userInfo
+            mutable.attachments = content.attachments
+            mutable.sound = content.sound
+            mutable.badge = content.badge
+            mutable.categoryIdentifier = content.categoryIdentifier
+            mutable.threadIdentifier = content.threadIdentifier.isEmpty ? characterId : content.threadIdentifier
+            return mutable
+        } catch {
+            return content
+        }
+    }
+
+    private func extractString(from userInfo: [AnyHashable: Any], keys: [String]) -> String? {
+        for key in keys {
+            if let value = userInfo[key] as? String, !value.isEmpty {
+                return value
+            }
+            if let body = userInfo["body"] as? [String: Any],
+               let value = body[key] as? String,
+               !value.isEmpty {
+                return value
+            }
+            if let data = userInfo["data"] as? [String: Any],
+               let value = data[key] as? String,
+               !value.isEmpty {
+                return value
+            }
+        }
+        return nil
+    }
+
+    /// 서버 richContent.image 다운로드가 실패하거나 URL 이 없을 때도 캐릭터 얼굴이
+    /// 뜨도록 extension bundle 에 포함한 PNG avatar 를 fallback 으로 사용한다.
+    @discardableResult
+    private func attachBundledAvatarIfAvailable(to content: UNMutableNotificationContent) -> Data? {
+        let characterId = extractString(from: content.userInfo, keys: ["character_id", "characterId"])
+        guard let characterId = characterId else { return nil }
+        guard let bundledUrl = Bundle.main.url(
+            forResource: characterId,
+            withExtension: "png",
+            subdirectory: "avatars"
+        ) else { return nil }
+
+        let avatarData = try? Data(contentsOf: bundledUrl)
+        do {
+            let tmpUrl = FileManager.default.temporaryDirectory
+                .appendingPathComponent("\(UUID().uuidString)-\(characterId).png")
+            try FileManager.default.copyItem(at: bundledUrl, to: tmpUrl)
+            let attachment = try UNNotificationAttachment(
+                identifier: "character-avatar-bundled",
+                url: tmpUrl,
+                options: [UNNotificationAttachmentOptionsTypeHintKey: UTType.png.identifier]
+            )
+            if content.attachments.isEmpty {
+                content.attachments = [attachment]
+            }
+        } catch {
+            // Attachment fallback 실패 시에도 INPerson avatar data 는 사용할 수 있다.
+        }
+        return avatarData
     }
 
     /// userInfo 트리에서 image URL 후보를 휴리스틱하게 뽑는다.
@@ -126,20 +274,10 @@ class NotificationService: UNNotificationServiceExtension {
         return nil
     }
 
-    /// 파일 확장자 → UTI 변환. iOS 14+ 는 UniformTypeIdentifiers, 이하는 MobileCoreServices.
+    /// 파일 확장자 → UTI 변환. Notification Service Extension deployment target 이
+    /// iOS 17 이므로 UniformTypeIdentifiers 만 사용한다.
     private func utiTypeHint(for pathExtension: String) -> String? {
         let ext = pathExtension.lowercased()
-        if #available(iOS 14.0, *) {
-            return UTType(filenameExtension: ext)?.identifier
-        }
-        let cfExt = ext as CFString
-        guard let uti = UTTypeCreatePreferredIdentifierForTag(
-            kUTTagClassFilenameExtension,
-            cfExt,
-            nil
-        )?.takeRetainedValue() else {
-            return nil
-        }
-        return uti as String
+        return UTType(filenameExtension: ext)?.identifier
     }
 }

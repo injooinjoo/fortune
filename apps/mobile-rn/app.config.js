@@ -152,6 +152,11 @@ const config = {
       'com.apple.security.application-groups': [
         'group.com.beyond.fortune.widgets',
       ],
+      // iOS 15+ Communication Notifications: 캐릭터 DM/선톡을 카톡처럼
+      // "발신자가 있는 메시지"로 표시하기 위한 native capability.
+      // Apple Developer Portal 의 App ID 에 동일 capability 가 켜져 있어야
+      // EAS native build signing 이 통과한다.
+      'com.apple.developer.usernotifications.communication': true,
     },
     // ios/app/PrivacyInfo.xcprivacy는 gitignored로 prebuild 시 재생성.
     // NSPrivacyAccessedAPITypes 블록도 여기에서 공급해야 Accessed API 카테고리

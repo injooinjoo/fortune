@@ -1,7 +1,12 @@
 #!/bin/bash
 
-# 캐릭터 아바타 webp 20개를 character-avatars 공개 버킷에 업로드.
-# 푸시 알림 richContent.image 가 사용하는 공개 URL 의 출처.
+# 캐릭터 아바타를 character-avatars 공개 버킷에 업로드.
+# - 앱 원본 WebP: <id>.webp
+# - iOS 푸시/Communication Notification용 PNG: <id>.png
+#
+# 푸시 알림 richContent.image 는 iOS Notification Service Extension 에서
+# 다운로드해 UNNotificationAttachment/INPerson avatar 로 사용한다. iOS 알림 첨부
+# 디코딩 안정성을 위해 푸시 URL 은 PNG 를 기본으로 쓴다.
 #
 # 사용 전 마이그레이션 적용 필수:
 #   supabase/migrations/20260430000001_create_character_avatars_storage.sql
@@ -22,10 +27,12 @@ NC='\033[0m'
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-if [ -f "$PROJECT_ROOT/.env" ]; then
-    # shellcheck disable=SC1091
-    source "$PROJECT_ROOT/.env"
-fi
+for env_file in "$PROJECT_ROOT/.env" "$PROJECT_ROOT/.env.local" "$PROJECT_ROOT/.env.production"; do
+    if [ -f "$env_file" ]; then
+        # shellcheck disable=SC1090
+        source "$env_file"
+    fi
+done
 
 if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
     echo -e "${RED}오류: SUPABASE_URL 또는 SUPABASE_SERVICE_ROLE_KEY 누락.${NC}"
@@ -40,7 +47,7 @@ if [ ! -d "$SRC_DIR" ]; then
     exit 1
 fi
 
-echo -e "${GREEN}character-avatars 버킷에 webp 업로드${NC}"
+echo -e "${GREEN}character-avatars 버킷에 WebP 원본 + PNG 푸시 변환본 업로드${NC}"
 echo "Supabase: $SUPABASE_URL"
 echo "원본:     $SRC_DIR"
 echo ""
@@ -63,17 +70,18 @@ TOTAL=0
 SUCCESS=0
 SKIPPED=0
 FAILED=0
+TMP_DIR="$(mktemp -d)"
+trap 'rm -rf "$TMP_DIR"' EXIT
 
-for file in "$SRC_DIR"/*.webp; do
-    [ -f "$file" ] || continue
-    TOTAL=$((TOTAL + 1))
-    name=$(basename "$file")
+upload_object() {
+    local file="$1"
+    local name="$2"
+    local content_type="$3"
 
-    # 이미 동일 키가 있으면 PUT(upsert) 으로 덮어쓴다.
     response=$(curl -s -w "\n%{http_code}" \
         -X POST \
         -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
-        -H "Content-Type: image/webp" \
+        -H "Content-Type: $content_type" \
         -H "x-upsert: true" \
         --data-binary @"$file" \
         "$SUPABASE_URL/storage/v1/object/$BUCKET/$name")
@@ -93,13 +101,47 @@ for file in "$SRC_DIR"/*.webp; do
             FAILED=$((FAILED + 1))
             ;;
     esac
+}
+
+convert_webp_to_png() {
+    local src="$1"
+    local dst="$2"
+
+    if command -v magick >/dev/null 2>&1; then
+        magick "$src" -resize '256x256^' -gravity center -extent '256x256' -strip "PNG8:$dst"
+        return
+    fi
+    if command -v convert >/dev/null 2>&1; then
+        convert "$src" -resize '256x256^' -gravity center -extent '256x256' -strip "PNG8:$dst"
+        return
+    fi
+    if command -v sips >/dev/null 2>&1; then
+        sips -s format png "$src" --out "$dst" >/dev/null
+        return
+    fi
+
+    echo -e "${RED}오류: WebP→PNG 변환 도구가 없습니다. ImageMagick(magick/convert) 또는 macOS sips 가 필요합니다.${NC}"
+    exit 1
+}
+
+for file in "$SRC_DIR"/*.webp; do
+    [ -f "$file" ] || continue
+    base=$(basename "$file" .webp)
+
+    TOTAL=$((TOTAL + 1))
+    upload_object "$file" "$base.webp" "image/webp"
+
+    png_file="$TMP_DIR/$base.png"
+    convert_webp_to_png "$file" "$png_file"
+    TOTAL=$((TOTAL + 1))
+    upload_object "$png_file" "$base.png" "image/png"
 done
 
 echo ""
 echo "총 $TOTAL — 성공 $SUCCESS · 스킵 $SKIPPED · 실패 $FAILED"
 echo ""
 echo "공개 URL 예시:"
-echo "  $SUPABASE_URL/storage/v1/object/public/$BUCKET/luts.webp"
+echo "  $SUPABASE_URL/storage/v1/object/public/$BUCKET/luts.png"
 
 if [ "$FAILED" -gt 0 ]; then
     exit 1

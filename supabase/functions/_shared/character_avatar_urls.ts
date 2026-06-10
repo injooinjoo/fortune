@@ -2,8 +2,8 @@
  * 푸시 알림 richContent.image 에 사용할 캐릭터 아바타 공개 URL 빌더.
  *
  * 매핑은 정적 — characterId 가 그대로 storage object key 의 prefix 로 사용된다
- * (`<characterId>.webp`). scripts/upload_character_avatars.sh 가 동일 명명 규칙
- * 으로 업로드하므로, 새 캐릭터 추가 시
+ * (`<characterId>.webp`). scripts/upload_character_avatars.sh 가 앱 내 WebP 원본과
+ * 푸시용 PNG 백업본을 업로드하므로, 새 캐릭터 추가 시
  *   1) apps/mobile-rn/src/assets/character/avatars/<id>.webp 추가
  *   2) chat-character-avatar.ts 매핑 추가
  *   3) 업로드 스크립트 재실행
