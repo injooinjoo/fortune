@@ -671,6 +671,34 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-write-smoke/delete-account-smoke-20260611021250.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/audits/2026-06-ondo-write-smoke/delete-account-smoke-20260611021447.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
       "notes": [],
       "path": "docs/data/API_USAGE.md",
       "referenced_by": [
@@ -8144,7 +8172,7 @@
   ],
   "meta": {
     "counts_by_area": {
-      "docs": 148,
+      "docs": 150,
       "scripts": 55,
       "supabase": 330
     },
@@ -8153,10 +8181,10 @@
       "keep_generated": 2,
       "manual_review": 48,
       "phase1_remove_candidate": 2,
-      "phase2_review_candidate": 426
+      "phase2_review_candidate": 428
     },
     "counts_by_usage_status": {
-      "doc_only": 178,
+      "doc_only": 180,
       "generated_excluded": 2,
       "runtime_used": 55,
       "tooling_only": 248,
@@ -8212,7 +8240,7 @@
       "generate-poster-guide",
       "grant-ad-reward"
     ],
-    "total_files": 533,
+    "total_files": 535,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "ack-scheduled-reply",
