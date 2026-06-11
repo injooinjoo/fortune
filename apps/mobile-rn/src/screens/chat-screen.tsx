@@ -2986,24 +2986,6 @@ export function ChatScreen() {
         requiresImageInput: !!sendOptions?.imageBase64,
       });
 
-      // Skip token consumption for guest users and on-device mode
-      if (session && chatProvider.getProviderName() === 'cloud') {
-        // PR-0a: 같은 캐릭터 메시지 여러 번 — referenceId 가 같으면 atomic refund 가
-        // 모호해짐. idempotencyKey 만 호출 단위 unique 로 두고 reference_id 도 같이.
-        const storyConsumeKey = `story:${character.id}:${Crypto.randomUUID()}`;
-        await consumeRemoteTokens(session, {
-          fortuneType: 'character-chat',
-          referenceId: storyConsumeKey,
-          idempotencyKey: storyConsumeKey,
-        });
-
-        syncRemoteProfile().catch((error: unknown) => {
-          captureError(error, {
-            surface: 'chat:story-pilot-sync-premium-after-consume',
-          }).catch(() => undefined);
-        });
-      }
-
       if (optimisticSnapshot) {
         setStoryThreadSnapshotsByCharacterId((current) => ({
           ...current,
@@ -3095,16 +3077,9 @@ export function ChatScreen() {
           if (providerError.status === 'not-downloaded') {
             onDeviceLLMEngine.startDownload().catch(() => undefined);
           }
-          // 온디바이스 실패 → 같은 메시지 그대로 클라우드 재시도 (롤백 없음)
-          if (session) {
-            // PR-0a: 호출 단위 unique key. 위 첫 시도 차감과 별도 keyed.
-            const fallbackConsumeKey = `story:${character.id}:fallback:${Crypto.randomUUID()}`;
-            await consumeRemoteTokens(session, {
-              fortuneType: 'character-chat',
-              referenceId: fallbackConsumeKey,
-              idempotencyKey: fallbackConsumeKey,
-            }).catch(() => undefined);
-          }
+          // 온디바이스 실패 → 같은 메시지 그대로 클라우드 재시도 (롤백 없음).
+          // character-chat 서버가 token charge/refund boundary 를 소유하므로
+          // 클라이언트 선차감은 하지 않는다.
           response = await cloudChatProvider.invoke(
             character,
             trimmed,
@@ -3147,8 +3122,17 @@ export function ChatScreen() {
         Alert.alert(
           '응답이 끊겼어요',
           '잠시 후 다시 보내볼까요?',
+          [{ text: '확인' }],
         );
         return;
+      }
+
+      if (session && chatProvider.getProviderName() === 'cloud') {
+        syncRemoteProfile().catch((syncError: unknown) => {
+          captureError(syncError, {
+            surface: 'chat:story-pilot-sync-premium-after-server-consume',
+          }).catch(() => undefined);
+        });
       }
 
       // 최신 assistant emotion 추적 (F4 presence 라인에 반영)
@@ -3546,23 +3530,6 @@ export function ChatScreen() {
         // aiMode==='auto' + 온디바이스 미준비 → 아래 cloud 경로로 자연 폴백
       }
 
-      // Skip token consumption for guest users, but still call the server
-      if (session) {
-        // PR-0a: 호출 단위 unique. 같은 referenceId 여러 메시지 차감 = atomic refund 모호.
-        const characterConsumeKey = `character:${character.id}:${Crypto.randomUUID()}`;
-        await consumeRemoteTokens(session, {
-          fortuneType: 'character-chat',
-          referenceId: characterConsumeKey,
-          idempotencyKey: characterConsumeKey,
-        });
-
-        syncRemoteProfile().catch((error: unknown) => {
-          captureError(error, {
-            surface: 'chat:character-chat-sync-premium-after-consume',
-          }).catch(() => undefined);
-        });
-      }
-
       await recordChatIntent({
         characterId: character.id,
         fortuneType: activeFortuneType,
@@ -3670,6 +3637,9 @@ export function ChatScreen() {
         success?: boolean;
         error?: string;
         message?: string;
+        code?: string;
+        required?: number | null;
+        available?: number | null;
         chatLimit?: {
           currentCount: number;
           dailyLimit: number;
@@ -3714,6 +3684,20 @@ export function ChatScreen() {
         return;
       }
 
+      if (payload?.error === 'INSUFFICIENT_TOKENS' || payload?.code === 'INSUFFICIENT_TOKENS') {
+        shouldClearDraft = false;
+        setDraft(trimmed);
+        clearReadReceiptTimer(character.id);
+        rollbackUserMessages(character.id, effectiveUserMessageIds);
+        await syncRemoteProfile().catch((syncError: unknown) => {
+          captureError(syncError, {
+            surface: 'chat:character-chat-sync-premium-after-server-consume-error',
+          }).catch(() => undefined);
+        });
+        openPremiumTopUp();
+        return;
+      }
+
       if (error) {
         throw error;
       }
@@ -3732,6 +3716,14 @@ export function ChatScreen() {
 
       if (!payload || payload.success === false || (payloadSegments.length === 0 && !payloadResponse)) {
         throw new Error(payload?.error ?? 'Character chat response is empty.');
+      }
+
+      if (session) {
+        syncRemoteProfile().catch((syncError: unknown) => {
+          captureError(syncError, {
+            surface: 'chat:character-chat-sync-premium-after-server-consume',
+          }).catch(() => undefined);
+        });
       }
 
       // F2 — 서버 응답 도착. markRead 는 단계별 sleep 안에서 호출 (진짜 사람 흐름).

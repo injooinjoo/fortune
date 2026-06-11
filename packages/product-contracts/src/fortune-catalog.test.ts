@@ -9,6 +9,7 @@
 import { describe, expect, test } from 'vitest';
 
 import { FORTUNE_CATALOG, FORTUNE_CATALOG_GROUPS, groupFortuneCatalog } from './fortune-catalog';
+import { fortuneTypesById, resolveFortuneEndpoint } from './fortunes';
 import type { FortuneTypeId } from './fortunes';
 
 describe('fortune-catalog', () => {
@@ -61,5 +62,26 @@ describe('fortune-catalog', () => {
       expect(entry.displayName.length).toBeGreaterThan(0);
       expect(entry.shortDesc.length).toBeGreaterThan(0);
     }
+  });
+
+  test('local-only 타입은 원격 endpoint 를 노출하지 않음', () => {
+    for (const spec of Object.values(fortuneTypesById)) {
+      if (spec.isLocalOnly === true) {
+        expect(spec.endpoint).toBeNull();
+        expect(resolveFortuneEndpoint(spec.id)).toBeNull();
+      }
+    }
+  });
+
+  test('wish/decision 은 실제 Edge Function 이 있는 서버형 타입으로 남김', () => {
+    expect(fortuneTypesById.wish.isLocalOnly).not.toBe(true);
+    expect(resolveFortuneEndpoint('wish')).toBe('/analyze-wish');
+    expect(fortuneTypesById.decision.isLocalOnly).not.toBe(true);
+    expect(resolveFortuneEndpoint('decision')).toBe('/fortune-decision');
+  });
+
+  test('lotto 는 구현되지 않은 Edge Function 대신 로컬 fallback 계약을 사용', () => {
+    expect(fortuneTypesById.lotto.isLocalOnly).toBe(true);
+    expect(resolveFortuneEndpoint('lotto')).toBeNull();
   });
 });

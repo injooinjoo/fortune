@@ -9,6 +9,7 @@ import {
 } from './chat-shell';
 import { captureError } from './error-reporting';
 import { type MobileProfileState } from './mobile-app-state';
+import { RemoteTokenConsumeError } from './premium-remote';
 import { consumePendingProactiveMessageId } from './push-notifications';
 import { getSecureItem, setSecureItem } from './secure-store-storage';
 import { supabase } from './supabase';
@@ -635,6 +636,20 @@ function normalizeStoryChatResponse(raw: unknown): StoryChatResponse {
   }
 
   const candidate = raw as Record<string, unknown>;
+  if (
+    candidate.error === 'INSUFFICIENT_TOKENS' ||
+    candidate.code === 'INSUFFICIENT_TOKENS'
+  ) {
+    throw new RemoteTokenConsumeError(
+      'INSUFFICIENT_TOKENS',
+      typeof candidate.message === 'string' ? candidate.message : '토큰이 부족합니다.',
+      {
+        required: typeof candidate.required === 'number' ? candidate.required : null,
+        available: typeof candidate.available === 'number' ? candidate.available : null,
+      },
+    );
+  }
+
   if (
     candidate.status === 'superseded' ||
     candidate.superseded === true ||
@@ -1272,6 +1287,17 @@ export async function invokeStoryChat(
   });
 
   if (error) {
+    const maybeContext = (error as { context?: unknown }).context;
+    if (maybeContext instanceof Response && maybeContext.status === 402) {
+      try {
+        const payload = (await maybeContext.clone().json()) as unknown;
+        return normalizeStoryChatResponse(payload);
+      } catch (parseError) {
+        if (parseError instanceof RemoteTokenConsumeError) {
+          throw parseError;
+        }
+      }
+    }
     throw error;
   }
 

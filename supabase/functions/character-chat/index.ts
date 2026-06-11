@@ -44,6 +44,13 @@ import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { sendCharacterDmPush } from "../_shared/notification_push.ts";
 import {
+  type ChargeContext,
+  type ChargeResult,
+  chargeTokens,
+  refundTokens,
+} from "../_shared/token_charge.ts";
+import { getFortuneCostPoints } from "../_shared/fortune-pricing-generated.ts";
+import {
   type AffinityContext,
   loadUserCharacterAffinity,
   loadUserCharacterMemory,
@@ -265,6 +272,7 @@ function extractSegments(text: string): string[] {
 // 답장 지연/감정 계산은 _shared/reply_delay.ts 의 computeReplyDelay 가
 // 단일 source. 옛 EMOTION_CONFIG / *_DELAY_MULTIPLIER / MIN_DELAY_SEC_FLOOR
 // 등 상수는 그쪽으로 이동됐다.
+const CHARACTER_CHAT_TOKEN_COST = getFortuneCostPoints("character-chat");
 
 // OOC 상태 블록 제거 (사용자에게 보이지 않도록)
 // 기존 대화 히스토리에서 로드된 메타 정보 제거용 안전장치
@@ -2778,6 +2786,9 @@ serve(async (req: Request) => {
   // 성공 시에만 set. supabase client 는 catch 안에서 새로 만든다 (try 변수
   // 캡처 시 deno 타입 추론 충돌 회피).
   let bodyJobId: string | null = null;
+  let characterChatCharge: ChargeResult | null = null;
+  let characterChatChargeCtx: ChargeContext | null = null;
+  let characterChatChargeUserId: string | null = null;
 
   try {
     const {
@@ -3178,7 +3189,8 @@ serve(async (req: Request) => {
           streakError,
         );
       } else if (streakResult && !streakResult.allowed) {
-        // 일일 한도 도달 — 답장 생성 안 했지만 큐에서 빼야 cron 재시도 안 됨.
+        // 일일 한도 도달 — 답장 생성 안 했고 토큰 차감 전이므로 환불 불필요.
+        // 큐에서는 빼야 cron 재시도 안 됨.
         await markJobAsDone();
         return new Response(
           JSON.stringify({
@@ -3193,6 +3205,47 @@ serve(async (req: Request) => {
           }),
           {
             status: 429,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+    }
+
+    // 캐릭터 채팅 토큰 차감은 서버 작업 boundary 안에서 수행한다.
+    // 기존 클라 선차감은 daily limit / LLM 실패 / 앱 종료 시 환불 누락이 가능했음.
+    // 여기서는 moderation + daily limit 통과 후 실제 답장 생성 직전에 차감하고,
+    // 이후 throw 되는 모든 실패는 outer catch 에서 refund_token_atomic 으로 원복한다.
+    if (userId && supabase) {
+      const stableTurnId = currentUserMessageId || bodyJobId ||
+        crypto.randomUUID();
+      characterChatChargeCtx = {
+        description: "캐릭터 채팅",
+        referenceType: "character_chat",
+        referenceId: `character-chat:${userId}:${characterId}:${stableTurnId}`,
+        idempotencyKey:
+          `character-chat:${userId}:${characterId}:${stableTurnId}`,
+      };
+      characterChatChargeUserId = userId;
+      characterChatCharge = await chargeTokens(
+        supabase,
+        userId,
+        CHARACTER_CHAT_TOKEN_COST,
+        characterChatChargeCtx,
+      );
+
+      if (!characterChatCharge.charged) {
+        await markJobAsCanceled("insufficient_tokens");
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: "INSUFFICIENT_TOKENS",
+            code: "INSUFFICIENT_TOKENS",
+            message: "토큰이 부족합니다.",
+            required: CHARACTER_CHAT_TOKEN_COST,
+            available: characterChatCharge.balanceAfter,
+          }),
+          {
+            status: 402,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           },
         );
@@ -3776,6 +3829,31 @@ serve(async (req: Request) => {
     );
   } catch (error) {
     console.error("character-chat 에러:", error);
+
+    if (
+      characterChatCharge?.charged &&
+      characterChatChargeCtx &&
+      characterChatChargeUserId
+    ) {
+      try {
+        const sbUrl = Deno.env.get("SUPABASE_URL");
+        const sbKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+        if (sbUrl && sbKey) {
+          const sb = createClient(sbUrl, sbKey);
+          await refundTokens(
+            sb,
+            characterChatChargeUserId,
+            CHARACTER_CHAT_TOKEN_COST,
+            characterChatCharge.balanceBeforeCharge,
+            characterChatChargeCtx,
+          );
+        }
+      } catch (refundError) {
+        console.warn("[character-chat] 토큰 환불 실패:", refundError);
+      } finally {
+        characterChatCharge = null;
+      }
+    }
 
     // 답장 큐 job 실패 마킹 (있을 때만). attempt_count 가 3 미만이면 pending 으로
     // 되돌려 backoff 후 cron 이 재시도, 3 이상이면 failed 종료.

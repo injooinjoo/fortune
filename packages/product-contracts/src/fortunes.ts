@@ -162,7 +162,7 @@ const fortuneTypeSpecs = [
   {
     id: 'lotto',
     labelKey: 'fortuneLuckyLottery',
-    endpoint: '/fortune-lucky-lottery',
+    endpoint: null,
     isLocalOnly: true,
   },
   {
@@ -205,7 +205,6 @@ const fortuneTypeSpecs = [
     id: 'wish',
     labelKey: 'fortuneWish',
     endpoint: '/analyze-wish',
-    isLocalOnly: true,
   },
   {
     id: 'talisman',
@@ -271,7 +270,6 @@ const fortuneTypeSpecs = [
     id: 'decision',
     labelKey: 'fortuneDecisionHelper',
     endpoint: '/fortune-decision',
-    isLocalOnly: true,
   },
   {
     id: 'view-all',
@@ -334,7 +332,12 @@ export function resolveFortuneEndpoint(
   typeId: FortuneTypeId,
   answers: FortuneAnswerBag = {},
 ): string | null {
-  const endpoint = fortuneTypesById[typeId].endpoint;
+  const spec = fortuneTypesById[typeId];
+  if (spec.isLocalOnly === true) {
+    return null;
+  }
+
+  const endpoint = spec.endpoint;
 
   if (!endpoint) {
     return null;
