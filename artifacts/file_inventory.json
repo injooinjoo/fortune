@@ -3144,6 +3144,7 @@
         "scripts/sync-edge-pricing.sh",
         "supabase/functions/_shared/fortune-pricing-generated.ts",
         "supabase/functions/_shared/types.ts",
+        "supabase/functions/character-chat/index.ts",
         "supabase/functions/fortune-tarot/index.ts"
       ],
       "runtime_reachable": true,
@@ -3969,19 +3970,20 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "phase2_review_candidate",
+      "candidate_action": "keep",
       "dirty": false,
       "kind": "edge_shared_source",
       "notes": [],
       "path": "supabase/functions/_shared/token_charge.ts",
       "referenced_by": [
         "docs/qa/ondo-audit/2026-05-12-cycle-1.md",
+        "supabase/functions/character-chat/index.ts",
         "supabase/functions/generate-character-proactive-image/index.ts",
         "supabase/functions/generate-friend-avatar/index.ts"
       ],
-      "runtime_reachable": false,
+      "runtime_reachable": true,
       "test_only": false,
-      "usage_status": "tooling_only"
+      "usage_status": "runtime_used"
     },
     {
       "area": "supabase",
@@ -8069,17 +8071,17 @@
       "supabase": 330
     },
     "counts_by_candidate_action": {
-      "keep": 54,
+      "keep": 55,
       "keep_generated": 2,
       "manual_review": 50,
       "phase1_remove_candidate": 2,
-      "phase2_review_candidate": 421
+      "phase2_review_candidate": 420
     },
     "counts_by_usage_status": {
       "doc_only": 172,
       "generated_excluded": 2,
-      "runtime_used": 54,
-      "tooling_only": 249,
+      "runtime_used": 55,
+      "tooling_only": 248,
       "unreferenced": 52
     },
     "declared_asset_dirs_without_runtime_refs": [],
