@@ -6,7 +6,9 @@
  *   기존 `fortune-palm-reading` 의 호출 패턴을 generic 화한 것 — palm-reading 도
  *   본 함수로 통합 가능하지만 legacy 클라이언트 보호를 위해 기존 함수는 보존.
  *
- *   토큰 차감은 본 함수가 아니라 client (`completeSurvey`) 가 담당.
+ *   본 함수는 worker 전용 이미지 생성기다. 토큰 차감/예약은 public client 가
+ *   호출하는 `start-poster-job` 의 `schedule_poster_job_with_charge` RPC 에서
+ *   queueing 전에 완료되고, 이 함수는 charged job worker 만 호출한다.
  *
  * @endpoint POST /generate-poster-guide
  *
@@ -19,7 +21,7 @@
  *   }
  *
  * @response 성공 (200)
- *   { success: true, posterType, imageUrl, generatedAt }
+ *   { success: true, posterType, imageUrl, imageBucket, imageStoragePath, imageUrlExpiresAt, generatedAt }
  *
  * @response 실패 (400/500)
  *   { success: false, error: string }   // error 는 한국어 사용자 메시지
@@ -128,6 +130,9 @@ interface PosterGuideSuccess {
   success: true;
   posterType: PosterType;
   imageUrl: string;
+  imageBucket: typeof RESULTS_BUCKET;
+  imageStoragePath: string;
+  imageUrlExpiresAt: string;
   generatedAt: string;
 }
 
@@ -227,7 +232,12 @@ async function uploadResult(
   userId: string,
   posterType: PosterType,
   bytes: Uint8Array,
-): Promise<string> {
+): Promise<{
+  imageUrl: string;
+  imageBucket: typeof RESULTS_BUCKET;
+  imageStoragePath: string;
+  imageUrlExpiresAt: string;
+}> {
   const supabase = getServiceClient();
   // 경로: {userId}/{posterType}/{uuid}.png — userId 와 posterType 모두 검증된 값.
   const fileName = `${userId}/${posterType}/${crypto.randomUUID()}.png`;
@@ -253,7 +263,14 @@ async function uploadResult(
       }`,
     );
   }
-  return signed.signedUrl;
+  return {
+    imageUrl: signed.signedUrl,
+    imageBucket: RESULTS_BUCKET,
+    imageStoragePath: fileName,
+    imageUrlExpiresAt: new Date(
+      Date.now() + SIGNED_RESULT_URL_TTL_SECONDS * 1000,
+    ).toISOString(),
+  };
 }
 
 // =====================================================
@@ -502,9 +519,14 @@ serve(async (req) => {
   }
 
   // ---------- Storage 업로드 ----------
-  let imageUrl: string;
+  let uploaded: {
+    imageUrl: string;
+    imageBucket: typeof RESULTS_BUCKET;
+    imageStoragePath: string;
+    imageUrlExpiresAt: string;
+  };
   try {
-    imageUrl = await uploadResult(userId, posterType, resultBytes);
+    uploaded = await uploadResult(userId, posterType, resultBytes);
     console.log("📤 uploaded private poster result");
   } catch (err) {
     return failure(500, `Result upload failed: ${(err as Error).message}`);
@@ -515,7 +537,10 @@ serve(async (req) => {
     {
       success: true,
       posterType,
-      imageUrl,
+      imageUrl: uploaded.imageUrl,
+      imageBucket: uploaded.imageBucket,
+      imageStoragePath: uploaded.imageStoragePath,
+      imageUrlExpiresAt: uploaded.imageUrlExpiresAt,
       generatedAt: new Date().toISOString(),
     },
     200,

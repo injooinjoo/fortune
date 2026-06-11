@@ -41,6 +41,13 @@ interface PosterJobRow {
   charge_reference_id?: string | null;
 }
 
+interface PosterImageAsset {
+  imageUrl: string;
+  imageBucket?: string;
+  imageStoragePath?: string;
+  imageUrlExpiresAt?: string;
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -124,6 +131,9 @@ Deno.serve(async (req) => {
     const result = (await generateResponse.json()) as {
       success: boolean;
       imageUrl?: string;
+      imageBucket?: string;
+      imageStoragePath?: string;
+      imageUrlExpiresAt?: string;
       error?: string;
     };
 
@@ -133,17 +143,28 @@ Deno.serve(async (req) => {
       );
     }
 
-    const imageUrl = result.imageUrl;
+    const imageAsset: PosterImageAsset = {
+      imageUrl: result.imageUrl,
+      imageBucket: typeof result.imageBucket === "string"
+        ? result.imageBucket
+        : undefined,
+      imageStoragePath: typeof result.imageStoragePath === "string"
+        ? result.imageStoragePath
+        : undefined,
+      imageUrlExpiresAt: typeof result.imageUrlExpiresAt === "string"
+        ? result.imageUrlExpiresAt
+        : undefined,
+    };
 
     // Phase: finalizing — 결과 받음, 메시지 INSERT + push 발송 단계.
     // 보통 1-2초로 짧지만 사용자에게 "거의 다 됐다" 신호로 의미.
     await updateJobPhase(admin, job.id, "finalizing");
 
     // 결과 카드 메시지 INSERT
-    await insertResultCardMessage(admin, job, imageUrl);
+    await insertResultCardMessage(admin, job, imageAsset);
 
     // Push 발송 (cardPayload 포함 → 클라가 hydrate 없이 즉시 INSERT)
-    await sendCompletionPush(admin, job, imageUrl);
+    await sendCompletionPush(admin, job, imageAsset);
 
     // Job mark done — phase=completed 와 status=done 한 번에.
     await admin
@@ -152,7 +173,7 @@ Deno.serve(async (req) => {
         status: "done",
         phase: "completed",
         phase_updated_at: new Date().toISOString(),
-        result_image_url: imageUrl,
+        result_image_url: imageAsset.imageUrl,
         completed_at: new Date().toISOString(),
       })
       .eq("id", job.id);
@@ -227,10 +248,22 @@ async function updateJobPhase(
  *   된 payload 로 "결과를 불러오지 못했어요" fallback 노출. (1.0.11 production
  *   에서 사용자가 결과를 끝까지 못 보던 버그 — 영속화 envelope 미사용이 원인.)
  */
-function buildCardPayload(job: PosterJobRow, imageUrl: string) {
+function buildCardPayload(
+  job: PosterJobRow,
+  imageAsset: PosterImageAsset,
+  options: { includeTransientUrl?: boolean } = {},
+) {
   const messageId = `result-${job.id}`;
   const generatedAt = new Date().toISOString();
   const label = posterTypeLabel(job.poster_type);
+  const imageMetadata = {
+    imageUrl: options.includeTransientUrl === false
+      ? undefined
+      : imageAsset.imageUrl,
+    imageBucket: imageAsset.imageBucket,
+    imageStoragePath: imageAsset.imageStoragePath,
+    imageUrlExpiresAt: imageAsset.imageUrlExpiresAt,
+  };
 
   // 클라이언트 in-memory ChatShellEmbeddedResultMessage 형식 — `cardPayload` 에
   // 통째로 박는다. 클라 `tryRestoreCardMessage` 가 이 객체를 그대로 복원.
@@ -246,14 +279,14 @@ function buildCardPayload(job: PosterJobRow, imageUrl: string) {
       kind: job.poster_type,
       fortuneType: job.poster_type,
       resultKind: job.poster_type,
-      // poster-guide.tsx 가 rawApiResponse.imageUrl 을 읽음. 동일 shape 으로
-      // INSERT 하기 위해 rawApiResponse 미러링 + payload 최상단에도 imageUrl 보존.
-      imageUrl,
+      // poster-guide.tsx 는 canonical storage identity 로 signed URL 을 refresh 하고,
+      // legacy client 를 위해 기존 imageUrl 도 fallback 으로 유지한다.
+      ...imageMetadata,
       generatedAt,
       rawApiResponse: {
         success: true,
         posterType: job.poster_type,
-        imageUrl,
+        ...imageMetadata,
         generatedAt,
       },
     },
@@ -263,11 +296,11 @@ function buildCardPayload(job: PosterJobRow, imageUrl: string) {
 async function insertResultCardMessage(
   admin: SupabaseClient,
   job: PosterJobRow,
-  imageUrl: string,
+  imageAsset: PosterImageAsset,
   // cardPayload 를 caller 가 build → 본 함수 INSERT + sendCompletionPush 가 동일
   // cardPayload 를 push data 로 전송하여 클라이언트가 hydrate 없이 즉시 INSERT.
 ): Promise<void> {
-  const cardPayload = buildCardPayload(job, imageUrl);
+  const cardPayload = buildCardPayload(job, imageAsset);
   const generatedAt = new Date().toISOString();
 
   // 영속화 envelope (PersistedStoryMessage) — `cardKind` sentinel + `cardPayload`
@@ -378,10 +411,15 @@ async function insertFailureMessage(
 async function sendCompletionPush(
   admin: SupabaseClient,
   job: PosterJobRow,
-  imageUrl: string,
+  imageAsset: PosterImageAsset,
 ): Promise<void> {
   const label = posterTypeLabel(job.poster_type);
-  const cardPayload = buildCardPayload(job, imageUrl);
+  // Push payloads can traverse Expo/APNs/provider logs. Keep private Storage
+  // bearer signed URLs out of push and let the app mint a fresh URL from
+  // imageBucket + imageStoragePath when it hydrates the card.
+  const cardPayload = buildCardPayload(job, imageAsset, {
+    includeTransientUrl: false,
+  });
 
   // `card_payload_json` 키로 JSON-stringify 해서 박는다. push data 는
   // Record<string, string> 만 허용. 클라가 detect 후 JSON.parse → ChatShellMessage 로 INSERT.

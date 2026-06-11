@@ -9,13 +9,14 @@
  * - 레퍼런스: `screens/palm-reading.tsx` 의 OndoPalmReadingResult 패턴.
  * - `OndoPalmReadingResult` 는 본 컴포넌트의 thin alias 로 유지 (registry 호환).
  */
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Image, Pressable, Share, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { AppText } from '../../../components/app-text';
 import { Card } from '../../../components/card';
 import { captureError } from '../../../lib/error-reporting';
+import { supabase } from '../../../lib/supabase';
 import { fortuneTheme } from '../../../lib/theme';
 import type { FortuneResultComponentProps } from '../types';
 
@@ -27,6 +28,8 @@ const FALLBACK_LOAD_ERROR =
   '이미지를 불러오지 못했어요. 잠시 후 다시 시도해주세요.';
 const GENERIC_FALLBACK_TITLE = '결과를 불러오지 못했어요';
 const GENERIC_LOADING_TEXT = '이미지를 불러오는 중...';
+const SIGNED_URL_REFRESH_TTL_SECONDS = 60 * 60;
+const SIGNED_URL_REFRESH_WINDOW_MS = 60 * 60 * 1000;
 
 // 7종 PosterType — server-side `_shared/poster_registry.ts` 의 PosterType union 과
 // 1:1 대응. RN 측에서는 단순 string 매칭만 한다.
@@ -116,21 +119,52 @@ function isPosterType(value: unknown): value is PosterType {
   );
 }
 
-function readImageUrl(raw: unknown): string | null {
+interface PosterImageAsset {
+  imageUrl: string | null;
+  imageBucket: string | null;
+  imageStoragePath: string | null;
+  imageUrlExpiresAt: string | null;
+}
+
+function asRecord(raw: unknown): Record<string, unknown> | null {
   if (raw == null || typeof raw !== 'object') return null;
-  const candidate = (raw as Record<string, unknown>).imageUrl;
+  return raw as Record<string, unknown>;
+}
+
+function readStringField(raw: Record<string, unknown> | null, key: string): string | null {
+  const candidate = raw?.[key];
   if (typeof candidate === 'string' && candidate.trim().length > 0) {
     return candidate.trim();
   }
-  // edge-runtime 이 `data: { ... }` 한 단계 더 감쌀 수 있으므로 fallback.
-  const nested = (raw as Record<string, unknown>).data;
-  if (nested && typeof nested === 'object') {
-    const inner = (nested as Record<string, unknown>).imageUrl;
-    if (typeof inner === 'string' && inner.trim().length > 0) {
-      return inner.trim();
-    }
-  }
   return null;
+}
+
+function readPosterImageAsset(raw: unknown): PosterImageAsset {
+  const record = asRecord(raw);
+  const nested = asRecord(record?.data);
+  return {
+    imageUrl: readStringField(record, 'imageUrl') ?? readStringField(nested, 'imageUrl'),
+    imageBucket: readStringField(record, 'imageBucket') ?? readStringField(nested, 'imageBucket'),
+    imageStoragePath:
+      readStringField(record, 'imageStoragePath') ?? readStringField(nested, 'imageStoragePath'),
+    imageUrlExpiresAt:
+      readStringField(record, 'imageUrlExpiresAt') ?? readStringField(nested, 'imageUrlExpiresAt'),
+  };
+}
+
+function shouldRefreshSignedUrl(expiresAt: string | null): boolean {
+  if (!expiresAt) return false;
+  const expiryMs = Date.parse(expiresAt);
+  return Number.isFinite(expiryMs) && expiryMs - Date.now() <= SIGNED_URL_REFRESH_WINDOW_MS;
+}
+
+async function createFreshSignedUrl(asset: PosterImageAsset): Promise<string | null> {
+  if (!supabase || !asset.imageBucket || !asset.imageStoragePath) return null;
+  const { data, error } = await supabase.storage
+    .from(asset.imageBucket)
+    .createSignedUrl(asset.imageStoragePath, SIGNED_URL_REFRESH_TTL_SECONDS);
+  if (error || !data?.signedUrl) return null;
+  return data.signedUrl;
 }
 
 function readPosterType(
@@ -158,7 +192,11 @@ export function OndoPosterGuideResult({
   payload,
   posterType: explicitPosterType,
 }: OndoPosterGuideResultProps) {
-  const imageUrl = readImageUrl(payload?.rawApiResponse);
+  const imageAsset = useMemo(
+    () => readPosterImageAsset(payload?.rawApiResponse),
+    [payload?.rawApiResponse],
+  );
+  const imageUrl = imageAsset.imageUrl;
   // posterType 결정 우선순위: explicit prop > 응답 > payload.fortuneType
   const fallbackFromPayload = isPosterType(payload?.fortuneType)
     ? (payload?.fortuneType as PosterType)
@@ -170,14 +208,39 @@ export function OndoPosterGuideResult({
 
   const [imageLoading, setImageLoading] = useState<boolean>(true);
   const [imageError, setImageError] = useState<boolean>(false);
+  const [resolvedImageUrl, setResolvedImageUrl] = useState<string | null>(imageUrl);
   const [sharing, setSharing] = useState<boolean>(false);
 
+  useEffect(() => {
+    let isMounted = true;
+    setResolvedImageUrl(imageUrl);
+    setImageError(false);
+    const canRefresh = Boolean(imageAsset.imageBucket && imageAsset.imageStoragePath);
+    const mustRefresh = !imageUrl || shouldRefreshSignedUrl(imageAsset.imageUrlExpiresAt);
+    if (!canRefresh || !mustRefresh) return undefined;
+    createFreshSignedUrl(imageAsset)
+      .then((freshUrl) => {
+        if (isMounted && freshUrl) setResolvedImageUrl(freshUrl);
+      })
+      .catch((error: unknown) => {
+        void captureError(error, { surface: 'poster-guide:signed-url-refresh' });
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, [
+    imageAsset.imageBucket,
+    imageAsset.imageStoragePath,
+    imageAsset.imageUrlExpiresAt,
+    imageUrl,
+  ]);
+
   async function handleShare() {
-    if (!imageUrl || sharing) return;
+    if (!resolvedImageUrl || sharing) return;
     setSharing(true);
     try {
       await Share.share({
-        url: imageUrl,
+        url: resolvedImageUrl,
         message: copy.shareMessage,
       });
     } catch (error) {
@@ -190,7 +253,7 @@ export function OndoPosterGuideResult({
     }
   }
 
-  if (!imageUrl) {
+  if (!resolvedImageUrl) {
     return (
       <Card>
         <View style={{ gap: fortuneTheme.spacing.sm }}>
@@ -222,7 +285,7 @@ export function OndoPosterGuideResult({
       >
         {!imageError ? (
           <Image
-            source={{ uri: imageUrl }}
+            source={{ uri: resolvedImageUrl }}
             style={{ width: '100%', height: '100%' }}
             resizeMode="contain"
             onLoadStart={() => {
@@ -231,8 +294,22 @@ export function OndoPosterGuideResult({
             }}
             onLoadEnd={() => setImageLoading(false)}
             onError={() => {
-              setImageLoading(false);
-              setImageError(true);
+              void createFreshSignedUrl(imageAsset)
+                .then((freshUrl) => {
+                  if (freshUrl && freshUrl !== resolvedImageUrl) {
+                    setResolvedImageUrl(freshUrl);
+                    setImageError(false);
+                    setImageLoading(true);
+                    return;
+                  }
+                  setImageLoading(false);
+                  setImageError(true);
+                })
+                .catch((error: unknown) => {
+                  void captureError(error, { surface: 'poster-guide:image-error-refresh' });
+                  setImageLoading(false);
+                  setImageError(true);
+                });
             }}
             accessibilityLabel={copy.accessibilityLabel}
           />
