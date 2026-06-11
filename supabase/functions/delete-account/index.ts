@@ -15,6 +15,7 @@ interface DeleteAccountAuditEntry {
   column: string;
   rowsDeleted: number;
   error?: string;
+  skipped?: "table_missing";
 }
 
 interface DeleteAccountStorageAuditEntry {
@@ -44,7 +45,7 @@ const DELETE_TARGETS: Array<{ table: string; column?: string }> = [
   { table: "fortune_stories" },
   { table: "talisman_user_cache" },
   { table: "pets" },
-  { table: "secondary_profiles" },
+  { table: "secondary_profiles", column: "owner_id" },
   { table: "token_balance" },
   { table: "subscriptions" },
   { table: "user_statistics" },
@@ -214,11 +215,21 @@ serve(async (req) => {
       };
 
       if (deleteError) {
-        entry.error = deleteError.message;
-        failedDeletes.push(entry);
-        console.error(
-          `[delete-account] HARD_FAIL ${target.table}/${column}: ${deleteError.message}`,
+        const missingRelation = deleteError.message.includes(
+          `relation \"public.${target.table}\" does not exist`,
         );
+        if (missingRelation) {
+          entry.skipped = "table_missing";
+          console.warn(
+            `[delete-account] missing_table ${target.table}; skipping`,
+          );
+        } else {
+          entry.error = deleteError.message;
+          failedDeletes.push(entry);
+          console.error(
+            `[delete-account] HARD_FAIL ${target.table}/${column}: ${deleteError.message}`,
+          );
+        }
       } else {
         if (entry.rowsDeleted === 0) {
           // Zero-row deletes aren't always wrong (user may have no data in that
