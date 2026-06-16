@@ -3,6 +3,21 @@ import { createFortuneTheme } from '@fortune/design-tokens';
 
 export const fortuneTheme = createFortuneTheme('dark');
 
+export const fortuneReadingPalette = {
+  background: '#101427',
+  textPrimary: '#FFFFFF',
+  textInverse: '#161B2E',
+  accent: '#FFD38A',
+  accentStrong: '#F8AA4B',
+  warmth: '#F9B35F',
+  coolGlow: '#9CCBFF',
+  shadow: '#000000',
+  sourceLove: '#FFB0A1',
+  sourceMind: '#A7D8FF',
+  sourceFlow: '#BDEFA3',
+  sourceLuck: '#DCC2FF',
+} as const;
+
 /**
  * Lerp from default dark background to warm pink-dark based on romance score (0-100).
  * The transition is subtle — designed for dark mode.

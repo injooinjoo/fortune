@@ -47,6 +47,8 @@ import {
   lookupCachedFortuneResult,
   startAsyncPosterJob,
 } from '../features/chat-results/edge-runtime';
+import type { EmbeddedResultPayload } from '../features/chat-results/types';
+import { HaneulFortuneReadingScreen } from '../features/fortune-results/fullscreen/haneul-fortune-reading-screen';
 import { resolveResultKindFromFortuneType } from '../features/fortune-results/mapping';
 import { captureError } from '../lib/error-reporting';
 import {
@@ -381,6 +383,8 @@ export function ChatScreen() {
   }, []);
   const [activeFortuneType, setActiveFortuneType] =
     useState<FortuneTypeId | null>(null);
+  const [dailyReadingPayload, setDailyReadingPayload] =
+    useState<EmbeddedResultPayload | null>(null);
   const [activeProviderId, setActiveProviderId] =
     useState<SocialAuthProviderId | null>(null);
   const [authMessage, setAuthMessage] = useState<string | null>(null);
@@ -1885,6 +1889,19 @@ export function ChatScreen() {
     }
   }
 
+  function openDailyReadingIfNeeded(
+    character: ChatCharacterSpec,
+    message: ChatShellMessage | null | undefined,
+  ) {
+    if (
+      character.id === 'haneul_oracle' &&
+      message?.kind === 'embedded-result' &&
+      (message.fortuneType === 'daily-calendar' || message.fortuneType === 'daily')
+    ) {
+      setDailyReadingPayload(message.payload);
+    }
+  }
+
   function cancelFortuneFlow(character: ChatCharacterSpec) {
     const controller = fortuneGenerationControllersRef.current[character.id];
     const canCancelGeneration =
@@ -2168,6 +2185,7 @@ export function ChatScreen() {
       }
 
       appendMessages(character, [resultReply, embeddedResult]);
+      openDailyReadingIfNeeded(character, embeddedResult);
 
       // Persist fortune conversation to remote (text messages only)
       const currentMessages = displayMessagesByCharacterId[character.id] ?? [];
@@ -2319,6 +2337,7 @@ export function ChatScreen() {
       buildAssistantTextMessage(prefixText),
       embeddedResult,
     ]);
+    openDailyReadingIfNeeded(character, embeddedResult);
     return true;
   }
 
@@ -4400,6 +4419,7 @@ export function ChatScreen() {
         buildAssistantTextMessage('좋아요. 결과를 같은 대화 안에 바로 붙여드릴게요.'),
         embeddedResult,
       ]);
+      openDailyReadingIfNeeded(character, embeddedResult);
     } finally {
       clearFortuneGenerationController(character.id, generationController);
       if (fortuneGenerationControllersRef.current[character.id] === undefined) {
@@ -4862,6 +4882,15 @@ export function ChatScreen() {
           </View>
         </View>
       </Modal>
+
+      {dailyReadingPayload ? (
+        <HaneulFortuneReadingScreen
+          visible={Boolean(dailyReadingPayload)}
+          payload={dailyReadingPayload}
+          resultKind={dailyReadingPayload.resultKind}
+          onClose={() => setDailyReadingPayload(null)}
+        />
+      ) : null}
 
       {/* PR-B2: 하늘이 운세 메뉴 entry 탭 시 비용 확인 sheet. */}
       <CostConfirmationSheet

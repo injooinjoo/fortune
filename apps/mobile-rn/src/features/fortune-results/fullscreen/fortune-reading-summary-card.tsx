@@ -2,7 +2,7 @@ import { Pressable, View } from 'react-native';
 
 import { AppText } from '../../../components/app-text';
 import type { EmbeddedResultPayload } from '../../chat-results/types';
-import { fortuneTheme, withAlpha } from '../../../lib/theme';
+import { fortuneReadingPalette, fortuneTheme, withAlpha } from '../../../lib/theme';
 
 interface FortuneReadingSummaryCardProps {
   payload: EmbeddedResultPayload;
@@ -19,50 +19,108 @@ export function FortuneReadingSummaryCard({
     ...(payload.contextTags ?? []),
     ...(payload.luckyItems ?? []),
     ...(payload.highlights ?? []).slice(0, 2),
-  ].slice(0, 4);
+  ].slice(0, 5);
+  const score = typeof payload.score === 'number' ? Math.max(0, Math.min(100, payload.score)) : null;
 
   return (
     <View
       accessibilityRole="summary"
       style={{
         alignSelf: 'stretch',
-        backgroundColor: withAlpha(fortuneTheme.colors.surfaceElevated, 0.94),
-        borderColor: fortuneTheme.colors.border,
-        borderRadius: fortuneTheme.radius.xxl,
+        backgroundColor: withAlpha(fortuneReadingPalette.textPrimary, 0.12),
+        borderColor: withAlpha(fortuneReadingPalette.textPrimary, 0.2),
+        borderRadius: 34,
         borderWidth: 1,
-        gap: fortuneTheme.spacing.md,
+        gap: fortuneTheme.spacing.lg,
+        overflow: 'hidden',
         padding: fortuneTheme.spacing.lg,
+        shadowColor: fortuneReadingPalette.shadow,
+        shadowOpacity: 0.24,
+        shadowRadius: 28,
       }}
     >
-      <View style={{ gap: fortuneTheme.spacing.xs }}>
-        <AppText variant="kicker" color={fortuneTheme.colors.textTertiary}>
-          READING COMPLETE
-        </AppText>
-        <AppText variant="heading2">하늘이가 핵심 흐름을 다 읽었어요</AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          닫으면 하늘이 채팅 안에서 자세한 이유와 조언을 이어서 확인할 수 있어요.
-        </AppText>
-      </View>
-
-      {typeof payload.score === 'number' ? (
+      <View
+        pointerEvents="none"
+        style={{
+          backgroundColor: withAlpha(fortuneReadingPalette.accent, 0.14),
+          borderRadius: 90,
+          height: 180,
+          position: 'absolute',
+          right: -64,
+          top: -72,
+          width: 180,
+        }}
+      />
+      <View style={{ alignItems: 'center', gap: fortuneTheme.spacing.sm }}>
         <View
           style={{
             alignItems: 'center',
-            alignSelf: 'flex-start',
-            backgroundColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.16),
-            borderColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.34),
-            borderRadius: fortuneTheme.radius.full,
+            backgroundColor: withAlpha(fortuneReadingPalette.accent, 0.18),
+            borderColor: withAlpha(fortuneReadingPalette.accent, 0.32),
+            borderRadius: 28,
             borderWidth: 1,
-            flexDirection: 'row',
-            gap: fortuneTheme.spacing.sm,
-            paddingHorizontal: fortuneTheme.spacing.md,
-            paddingVertical: fortuneTheme.spacing.sm,
+            height: 56,
+            justifyContent: 'center',
+            width: 56,
           }}
         >
-          <AppText variant="labelLarge">{payload.score}점</AppText>
-          <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-            오늘의 흐름
+          <AppText variant="heading2" color={fortuneReadingPalette.accent}>
+            ✦
           </AppText>
+        </View>
+        <View style={{ alignItems: 'center', gap: fortuneTheme.spacing.xs }}>
+          <AppText variant="kicker" color={withAlpha(fortuneReadingPalette.textPrimary, 0.58)}>
+            READING COMPLETE
+          </AppText>
+          <AppText variant="heading2" color={fortuneReadingPalette.textPrimary} style={{ textAlign: 'center' }}>
+            오늘의 핵심 흐름을 다 읽었어요
+          </AppText>
+          <AppText
+            variant="bodySmall"
+            color={withAlpha(fortuneReadingPalette.textPrimary, 0.64)}
+            style={{ maxWidth: 300, textAlign: 'center' }}
+          >
+            닫으면 하늘이 채팅 안에서 자세한 이유와 조언을 이어서 확인할 수 있어요.
+          </AppText>
+        </View>
+      </View>
+
+      {score !== null ? (
+        <View
+          style={{
+            backgroundColor: withAlpha(fortuneReadingPalette.textPrimary, 0.08),
+            borderColor: withAlpha(fortuneReadingPalette.textPrimary, 0.14),
+            borderRadius: 24,
+            borderWidth: 1,
+            gap: 10,
+            padding: 14,
+          }}
+        >
+          <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <AppText variant="labelLarge" color={fortuneReadingPalette.textPrimary}>
+              오늘의 흐름
+            </AppText>
+            <AppText variant="heading3" color={fortuneReadingPalette.accent}>
+              {score}점
+            </AppText>
+          </View>
+          <View
+            style={{
+              backgroundColor: withAlpha(fortuneReadingPalette.textPrimary, 0.12),
+              borderRadius: 999,
+              height: 8,
+              overflow: 'hidden',
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: fortuneReadingPalette.accent,
+                borderRadius: 999,
+                height: 8,
+                width: `${score}%`,
+              }}
+            />
+          </View>
         </View>
       ) : null}
 
@@ -72,13 +130,15 @@ export function FortuneReadingSummaryCard({
             <View
               key={`${chip}-${index}`}
               style={{
-                backgroundColor: fortuneTheme.colors.accentSubtle,
+                backgroundColor: withAlpha(fortuneReadingPalette.textPrimary, 0.1),
+                borderColor: withAlpha(fortuneReadingPalette.textPrimary, 0.16),
                 borderRadius: fortuneTheme.radius.full,
+                borderWidth: 1,
                 paddingHorizontal: fortuneTheme.spacing.md,
                 paddingVertical: fortuneTheme.spacing.xs,
               }}
             >
-              <AppText variant="caption" color={fortuneTheme.colors.textSubtitle}>
+              <AppText variant="caption" color={withAlpha(fortuneReadingPalette.textPrimary, 0.72)}>
                 {chip}
               </AppText>
             </View>
@@ -86,11 +146,9 @@ export function FortuneReadingSummaryCard({
         </View>
       ) : null}
 
-      <View style={{ gap: fortuneTheme.spacing.sm }}>
-        <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.sm }}>
-          <SummaryButton label="다시 보기" onPress={onReplay} />
-          <SummaryButton label="닫기" onPress={onClose} />
-        </View>
+      <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.sm }}>
+        <SummaryButton label="다시 보기" onPress={onReplay} />
+        <SummaryButton label="채팅에서 계속 보기" primary onPress={onClose} />
       </View>
     </View>
   );
@@ -113,20 +171,21 @@ function SummaryButton({
       style={({ pressed }) => [
         {
           alignItems: 'center',
-          backgroundColor: primary
-            ? fortuneTheme.colors.ctaBackground
-            : fortuneTheme.colors.secondaryBackground,
+          backgroundColor: primary ? fortuneReadingPalette.textPrimary : withAlpha(fortuneReadingPalette.textPrimary, 0.11),
+          borderColor: primary ? fortuneReadingPalette.textPrimary : withAlpha(fortuneReadingPalette.textPrimary, 0.18),
           borderRadius: fortuneTheme.radius.full,
-          flex: primary ? undefined : 1,
+          borderWidth: 1,
+          flex: 1,
           paddingHorizontal: fortuneTheme.spacing.md,
           paddingVertical: fortuneTheme.spacing.md,
         },
-        pressed ? { opacity: 0.88 } : null,
+        pressed ? { opacity: 0.78 } : null,
       ]}
     >
       <AppText
         variant="labelLarge"
-        color={primary ? fortuneTheme.colors.ctaForeground : fortuneTheme.colors.secondaryForeground}
+        color={primary ? fortuneReadingPalette.textInverse : fortuneReadingPalette.textPrimary}
+        style={{ textAlign: 'center' }}
       >
         {label}
       </AppText>

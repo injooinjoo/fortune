@@ -10,6 +10,11 @@ const basePayload: EmbeddedResultPayload = {
   subtitle: '하늘이가 정리했어요',
   summary: '오늘은 서두르지 않을수록 좋아요. 중요한 말은 한 번 더 고르면 운이 살아나요.',
   score: 82,
+  contextTags: ['관계', '일정'],
+  metrics: [
+    { label: '사람 운', value: '88' },
+    { label: '금전 운', value: '62' },
+  ],
   highlights: ['사람 운은 오후에 더 열려요.', '짧은 연락이 따뜻하게 돌아올 수 있어요.'],
   recommendations: ['큰 결정은 바로 확정하지 말고 한 번 더 확인해 보세요.'],
   warnings: ['지출은 작은 새는 곳부터 막는 게 좋아요.'],
@@ -20,19 +25,31 @@ const basePayload: EmbeddedResultPayload = {
 const sentences = buildReadingSentences(basePayload, 'daily-calendar');
 
 if (sentences.length < 4) {
-  throw new Error('reading sentences should include enough meaningful steps');
+  throw new Error('reading sentences should include enough result-card summary steps');
 }
 
 if (sentences.length > 7) {
   throw new Error('reading sentences should stay compact');
 }
 
-if (sentences.some(sentence => sentence.main.length > 64)) {
-  throw new Error('reading sentence main text should stay short enough for fullscreen focus');
+if (sentences.some(sentence => sentence.main.length > 86)) {
+  throw new Error('reading sentence main text should fit the fullscreen page');
 }
 
 if (new Set(sentences.map(sentence => sentence.main)).size !== sentences.length) {
   throw new Error('reading sentences should be deduplicated');
+}
+
+if (sentences[0]?.main !== '오늘은 서두르지 않을수록 좋아요.') {
+  throw new Error('fullscreen reading should start from the result-card summary');
+}
+
+if (!sentences.some(sentence => sentence.source === 'visual')) {
+  throw new Error('fullscreen reading should expose visual/effect-ready summary moments');
+}
+
+if (!sentences.some(sentence => sentence.source === 'highlight')) {
+  throw new Error('fullscreen reading should include card highlights');
 }
 
 const fallbackSentences = buildReadingSentences({
@@ -43,8 +60,10 @@ const fallbackSentences = buildReadingSentences({
   warnings: [],
   specialTip: undefined,
   luckyItems: [],
+  metrics: [],
+  score: undefined,
 }, 'daily-calendar');
 
 if (fallbackSentences.length < 2) {
-  throw new Error('fallback should still produce a short reading sequence');
+  throw new Error('fallback should still produce a short result-card summary sequence');
 }
