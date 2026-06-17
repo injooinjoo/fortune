@@ -1,30 +1,14 @@
 /**
- * PR-B2: 운세 결과 생성 직전 비용 확인 sheet.
+ * 운세 결과 생성 직전 토큰 사용 안내 toast.
  *
  * 디자인:
- * - 사용자가 메뉴 카드 탭 → 본 sheet 노출 → 확인/취소
- * - 잔액 부족 시 본 sheet 안에서 "충전하기" 안내 + /premium 으로 라우팅
- * - daily 운세는 1일 1회 무료 — 본 sheet 가 자동 "오늘 무료" 모드 (cost 0)
- *
- * 기존 흐름과 차이:
- * - 기존: 침묵 차감 (생성 후 실패 시 텍스트 메시지로 통보)
- * - PR-B2: 사전 확인 modal — 사용자가 비용 인지 후 진행
- *
- * 사용:
- * ```tsx
- * <CostConfirmationSheet
- *   visible={visible}
- *   entry={selectedEntry}
- *   currentBalance={balance}
- *   freeForDaily={daily첫사용여부}
- *   onConfirm={() => triggerGeneration()}
- *   onCancel={() => setVisible(false)}
- *   onTopUpRequest={() => router.push('/premium')}
- * />
- * ```
+ * - 설문 완료 후 LLM/큐 호출 직전에 1초 미만으로 토큰 사용량만 안내
+ * - 별도 확인/취소 버튼 없이 자동으로 이어서 진행
+ * - 잔액 부족 시 짧게 안내한 뒤 충전 화면으로 라우팅
  */
 
-import { Modal, Pressable, View } from 'react-native';
+import { useEffect } from 'react';
+import { View } from 'react-native';
 
 import { type FortuneCatalogEntry } from '@fortune/product-contracts';
 
@@ -42,6 +26,8 @@ interface CostConfirmationSheetProps {
   onTopUpRequest: () => void;
 }
 
+const TOKEN_NOTICE_DURATION_MS = 950;
+
 export function CostConfirmationSheet({
   visible,
   entry,
@@ -51,138 +37,76 @@ export function CostConfirmationSheet({
   onCancel,
   onTopUpRequest,
 }: CostConfirmationSheetProps) {
-  if (!entry) return null;
+  const effectiveCost = entry && !freeForDaily ? entry.costPoints : 0;
+  const insufficient = Boolean(
+    entry &&
+      !freeForDaily &&
+      currentBalance !== null &&
+      currentBalance < effectiveCost,
+  );
 
-  const effectiveCost = freeForDaily ? 0 : entry.costPoints;
-  const insufficient =
-    !freeForDaily &&
-    currentBalance !== null &&
-    currentBalance < effectiveCost;
+  useEffect(() => {
+    if (!visible || !entry) return;
+
+    const timer = setTimeout(() => {
+      if (insufficient) {
+        onTopUpRequest();
+        return;
+      }
+      onConfirm();
+    }, TOKEN_NOTICE_DURATION_MS);
+
+    return () => clearTimeout(timer);
+  }, [entry, insufficient, onConfirm, onTopUpRequest, visible]);
+
+  if (!visible || !entry) return null;
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onCancel}
-      accessibilityViewIsModal
+    <View
+      pointerEvents="none"
+      style={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: fortuneTheme.spacing.md,
+        alignItems: 'center',
+        paddingHorizontal: fortuneTheme.spacing.md,
+        zIndex: 999,
+      }}
     >
       <View
         style={{
-          flex: 1,
-          backgroundColor: 'rgba(0,0,0,0.55)',
-          justifyContent: 'flex-end',
+          backgroundColor: fortuneTheme.colors.surfaceSecondary,
+          borderRadius: fortuneTheme.radius.full,
+          paddingHorizontal: fortuneTheme.spacing.md,
+          paddingVertical: fortuneTheme.spacing.sm,
+          gap: 2,
+          maxWidth: '92%',
         }}
       >
-        <Pressable
-          style={{ flex: 1 }}
-          accessibilityRole="button"
-          accessibilityLabel="시트 닫기"
-          onPress={onCancel}
-        />
-        <View
-          style={{
-            backgroundColor: fortuneTheme.colors.surface,
-            borderTopLeftRadius: fortuneTheme.radius.xl,
-            borderTopRightRadius: fortuneTheme.radius.xl,
-            padding: fortuneTheme.spacing.md,
-            gap: fortuneTheme.spacing.sm,
-          }}
+        <AppText
+          variant="labelLarge"
+          color={fortuneTheme.colors.textPrimary}
+          style={{ textAlign: 'center' }}
         >
-          <AppText variant="heading3" color={fortuneTheme.colors.textPrimary}>
-            {entry.displayName}
-          </AppText>
-          <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
-            {entry.shortDesc}
-          </AppText>
-
-          <View
-            style={{
-              backgroundColor: fortuneTheme.colors.surfaceSecondary,
-              borderRadius: fortuneTheme.radius.lg,
-              padding: fortuneTheme.spacing.sm,
-              gap: 4,
-            }}
-          >
-            {freeForDaily ? (
-              <>
-                <AppText variant="labelLarge" color={fortuneTheme.colors.textPrimary}>
-                  오늘 무료
-                </AppText>
-                <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-                  데일리 인사이트 1일 1회 무료. 다음부터는 {entry.costPoints} 포인트 차감.
-                </AppText>
-              </>
-            ) : (
-              <>
-                <AppText variant="labelLarge" color={fortuneTheme.colors.textPrimary}>
-                  {entry.costPoints} 포인트 차감
-                </AppText>
-                <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-                  현재 잔액: {currentBalance ?? '...'} 포인트
-                </AppText>
-              </>
-            )}
-          </View>
-
-          {insufficient ? (
-            <Pressable
-              accessibilityRole="button"
-              onPress={onTopUpRequest}
-              style={({ pressed }) => ({
-                backgroundColor: fortuneTheme.colors.ctaBackground,
-                borderRadius: fortuneTheme.radius.full,
-                paddingVertical: 14,
-                opacity: pressed ? 0.84 : 1,
-              })}
-            >
-              <AppText
-                variant="labelLarge"
-                color={fortuneTheme.colors.ctaForeground}
-                style={{ textAlign: 'center' }}
-              >
-                포인트 충전하기
-              </AppText>
-            </Pressable>
-          ) : (
-            <Pressable
-              accessibilityRole="button"
-              onPress={onConfirm}
-              style={({ pressed }) => ({
-                backgroundColor: fortuneTheme.colors.ctaBackground,
-                borderRadius: fortuneTheme.radius.full,
-                paddingVertical: 14,
-                opacity: pressed ? 0.84 : 1,
-              })}
-            >
-              <AppText
-                variant="labelLarge"
-                color={fortuneTheme.colors.ctaForeground}
-                style={{ textAlign: 'center' }}
-              >
-                {freeForDaily ? '무료로 시작' : '확인하고 진행'}
-              </AppText>
-            </Pressable>
-          )}
-
-          <Pressable
-            accessibilityRole="button"
-            onPress={onCancel}
-            style={({ pressed }) => ({
-              paddingVertical: 12,
-              opacity: pressed ? 0.84 : 1,
-            })}
-          >
-            <AppText
-              variant="labelLarge"
-              color={fortuneTheme.colors.textSecondary}
-              style={{ textAlign: 'center' }}
-            >
-              취소
-            </AppText>
-          </Pressable>
-        </View>
+          {freeForDaily
+            ? '오늘은 무료로 볼 수 있어요'
+            : insufficient
+              ? '토큰이 부족해요'
+              : `${entry.costPoints} 토큰이 사용돼요`}
+        </AppText>
+        <AppText
+          variant="bodySmall"
+          color={fortuneTheme.colors.textPrimary}
+          style={{ textAlign: 'center', opacity: 0.82 }}
+        >
+          {insufficient
+            ? `현재 잔액 ${currentBalance ?? 0} 토큰`
+            : freeForDaily
+              ? `다음부터 ${entry.costPoints} 토큰`
+              : `현재 잔액 ${currentBalance ?? '...'} 토큰`}
+        </AppText>
       </View>
-    </Modal>
+    </View>
   );
 }

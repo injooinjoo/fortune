@@ -2099,8 +2099,7 @@ export function ChatScreen() {
         return;
       }
 
-      // 설문 완료 후 LLM 호출 전 cost confirm. cancel 시 API 비용 0.
-      // catalog entry 없으면 통과.
+      // 설문 완료 후 LLM 호출 전 token notice. catalog entry 없으면 통과.
       if (session) {
         const ok = await confirmCostForFortune(completed.fortuneType);
         if (!ok || !isCurrentFortuneGeneration(character.id, generationController)) {
@@ -2265,8 +2264,7 @@ export function ChatScreen() {
           ? answers.scenario
           : undefined;
 
-    // 큐 등록 전 cost confirm. cancel 시 cron 이 처리할 잡 자체가 안 만들어져
-    // LLM 비용 0. catalog entry 없으면 통과.
+    // 큐 등록 전 token notice. catalog entry 없으면 통과.
     if (session) {
       const ok = await confirmCostForFortune(completed.fortuneType);
       if (!ok || signal?.aborted) {
@@ -2441,10 +2439,9 @@ export function ChatScreen() {
     handleCharacterActionPress(selectedCharacter.id, fortuneType);
   }
 
-  // 운세 cost confirm modal — UX 결정: entry 선택 직후가 아니라 설문 완료 후
-  // LLM/큐 호출 **직전** 에 노출. 사용자가 설문 매몰된 상태라 거부감 ↓ +
-  // cancel 시 LLM API/큐 잡 자체가 안 만들어져 provider 비용 0.
-  // entry 선택 시점엔 modal 안 띄우고 흐름만 시작.
+  // 운세 token notice — entry 선택 직후가 아니라 설문 완료 후
+  // LLM/큐 호출 **직전** 에 토큰 사용량만 잠깐 보여주고 자동 진행.
+  // entry 선택 시점엔 notice 안 띄우고 흐름만 시작.
   const [pendingMenuEntry, setPendingMenuEntry] =
     useState<FortuneCatalogEntry | null>(null);
   const [costSheetVisible, setCostSheetVisible] = useState(false);
@@ -2453,8 +2450,8 @@ export function ChatScreen() {
   // 하늘이 "모든 운세" bottom sheet — view-all chip 또는 외부 트리거로 열림.
   const [allFortunesSheetVisible, setAllFortunesSheetVisible] = useState(false);
 
-  // Promise 기반 cost confirm. 호출자는 await 으로 동의 여부 받아 흐름 분기.
-  // resolver 는 ref 에 저장 — modal confirm/cancel 핸들러에서 resolve.
+  // Promise 기반 token notice. 호출자는 await 하지만 사용자는 버튼 없이 잠깐 안내만 본다.
+  // resolver 는 ref 에 저장 — notice auto-confirm / top-up 핸들러에서 resolve.
   const showCostConfirm = useCallback(
     (entry: FortuneCatalogEntry): Promise<boolean> => {
       setPendingMenuEntry(entry);
@@ -2466,9 +2463,9 @@ export function ChatScreen() {
     [],
   );
 
-  // catalog 에 entry 가 있으면 cost confirm 받기, 없으면 그냥 통과.
-  // fortuneType 별로 catalog 에 등록된 운세는 cost confirm, 아니면 (예: 'view-all',
-  // 'character-chat', 채팅 차감 등) 무모달 진행.
+  // catalog 에 entry 가 있으면 token notice 를 잠깐 보여주고, 없으면 그냥 통과.
+  // fortuneType 별로 catalog 에 등록된 운세는 notice, 아니면 (예: 'view-all',
+  // 'character-chat', 채팅 차감 등) 무표시 진행.
   const confirmCostForFortune = useCallback(
     async (fortuneType: FortuneTypeId): Promise<boolean> => {
       const entry = findCatalogEntry(fortuneType);
@@ -2478,8 +2475,8 @@ export function ChatScreen() {
     [showCostConfirm],
   );
 
-  // entry 선택 — modal 안 띄움. 바로 fortune 흐름 시작 (설문 등). 차감 동의는
-  // 설문 끝나고 LLM 호출 직전 (consumeRemoteTokens 직전) 에 받는다.
+  // entry 선택 — notice 안 띄움. 바로 fortune 흐름 시작 (설문 등). 토큰 안내는
+  // 설문 끝나고 LLM 호출 직전 (consumeRemoteTokens 직전) 에 잠깐 보여준다.
   const handleSelectFortuneMenuEntry = useCallback(
     (entry: FortuneCatalogEntry) => {
       handleCharacterActionPress(
@@ -4894,7 +4891,7 @@ export function ChatScreen() {
         />
       ) : null}
 
-      {/* PR-B2: 하늘이 운세 메뉴 entry 탭 시 비용 확인 sheet. */}
+      {/* 하늘이 운세 생성 직전 토큰 사용량을 짧게 안내하고 자동 진행. */}
       <CostConfirmationSheet
         visible={costSheetVisible}
         entry={pendingMenuEntry}
