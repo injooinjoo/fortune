@@ -1,0 +1,109 @@
+[1mClone found (tsx)[22m
+ - [1m[32mapps/mobile-rn/src/components/survey-composer.tsx[39m[22m [43:52 - 74:15] (32 lines, 148 tokens)
+   [1m[32mapps/mobile-rn/src/components/voice-text-input.tsx[39m[22m [46:3 - 77:15]
+[1mClone found (typescript)[22m
+ - [1m[32mapps/mobile-rn/src/features/ios-widgets/data/widget-data-live.ts[39m[22m [47:1 - 89:3] (43 lines, 222 tokens)
+   [1m[32mapps/mobile-rn/src/lib/widget-data-sync.ts[39m[22m [171:1 - 215:3]
+[1mClone found (tsx)[22m
+ - [1m[32mapps/mobile-rn/src/screens/chat-screen.tsx[39m[22m [3201:11 - 3262:23] (62 lines, 190 tokens)
+   [1m[32mapps/mobile-rn/src/screens/chat-screen.tsx[39m[22m [3801:11 - 3854:23]
+[1mClone found (tsx)[22m
+ - [1m[32mapps/mobile-rn/src/screens/chat-screen.tsx[39m[22m [3214:7 - 3262:12] (49 lines, 177 tokens)
+   [1m[32mapps/mobile-rn/src/screens/chat-screen.tsx[39m[22m [3472:13 - 3517:18]
+[1mClone found (tsx)[22m
+ - [1m[32mapps/mobile-rn/src/screens/signup-screen.tsx[39m[22m [357:42 - 387:50] (31 lines, 123 tokens)
+   [1m[32mapps/mobile-rn/src/screens/signup-screen.tsx[39m[22m [414:42 - 444:50]
+[1mClone found (typescript)[22m
+ - [1m[32mpackages/product-contracts/src/fortune-pricing.ts[39m[22m [24:1 - 182:44] (159 lines, 518 tokens)
+   [1m[32msupabase/functions/_shared/fortune-pricing-generated.ts[39m[22m [31:1 - 189:44]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/_shared/monitoring/gcp-logging.ts[39m[22m [60:1 - 88:2] (29 lines, 191 tokens)
+   [1m[32msupabase/functions/payment-verify-purchase/index.ts[39m[22m [30:1 - 57:2]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/_shared/monitoring/gcp-logging.ts[39m[22m [177:21 - 198:21] (22 lines, 125 tokens)
+   [1m[32msupabase/functions/payment-verify-purchase/index.ts[39m[22m [149:14 - 170:21]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/ack-scheduled-reply/index.ts[39m[22m [33:23 - 63:12] (31 lines, 152 tokens)
+   [1m[32msupabase/functions/claim-scheduled-reply/index.ts[39m[22m [48:22 - 78:12]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/ack-scheduled-reply/index.ts[39m[22m [63:23 - 98:8] (36 lines, 140 tokens)
+   [1m[32msupabase/functions/claim-scheduled-reply/index.ts[39m[22m [78:39 - 107:8]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/fortune-career/index.ts[39m[22m [37:22 - 58:2] (22 lines, 136 tokens)
+   [1m[32msupabase/functions/fortune-compatibility/index.ts[39m[22m [37:29 - 58:2]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/fortune-career/index.ts[39m[22m [37:22 - 58:2] (22 lines, 136 tokens)
+   [1m[32msupabase/functions/fortune-ex-lover/index.ts[39m[22m [39:23 - 58:2]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/fortune-career/index.ts[39m[22m [37:22 - 61:6] (25 lines, 137 tokens)
+   [1m[32msupabase/functions/fortune-exam/index.ts[39m[22m [16:20 - 35:6]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/fortune-career/index.ts[39m[22m [37:22 - 61:6] (25 lines, 137 tokens)
+   [1m[32msupabase/functions/fortune-health/index.ts[39m[22m [38:22 - 59:10]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/fortune-career/index.ts[39m[22m [38:3 - 61:6] (24 lines, 136 tokens)
+   [1m[32msupabase/functions/fortune-game-enhance/index.ts[39m[22m [18:3 - 36:9]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/fortune-family-change/index.ts[39m[22m [69:31 - 104:23] (36 lines, 162 tokens)
+   [1m[32msupabase/functions/fortune-family-children/index.ts[39m[22m [71:33 - 106:23]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/fortune-family-change/index.ts[39m[22m [69:31 - 104:23] (36 lines, 162 tokens)
+   [1m[32msupabase/functions/fortune-family-health/index.ts[39m[22m [70:31 - 105:23]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/fortune-family-change/index.ts[39m[22m [69:31 - 104:23] (36 lines, 162 tokens)
+   [1m[32msupabase/functions/fortune-family-relationship/index.ts[39m[22m [69:37 - 104:23]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/fortune-family-change/index.ts[39m[22m [69:31 - 104:23] (36 lines, 162 tokens)
+   [1m[32msupabase/functions/fortune-family-wealth/index.ts[39m[22m [70:31 - 105:23]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/fortune-family-change/index.ts[39m[22m [267:5 - 294:112] (28 lines, 154 tokens)
+   [1m[32msupabase/functions/fortune-family-children/index.ts[39m[22m [269:5 - 296:112]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/fortune-family-change/index.ts[39m[22m [267:5 - 294:112] (28 lines, 154 tokens)
+   [1m[32msupabase/functions/fortune-family-health/index.ts[39m[22m [268:5 - 295:112]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/fortune-family-change/index.ts[39m[22m [267:5 - 294:112] (28 lines, 154 tokens)
+   [1m[32msupabase/functions/fortune-family-relationship/index.ts[39m[22m [269:5 - 296:112]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/fortune-family-change/index.ts[39m[22m [267:5 - 294:112] (28 lines, 154 tokens)
+   [1m[32msupabase/functions/fortune-family-wealth/index.ts[39m[22m [296:5 - 323:112]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/fortune-home-fengshui/index.ts[39m[22m [47:1 - 73:23] (27 lines, 141 tokens)
+   [1m[32msupabase/functions/fortune-moving/index.ts[39m[22m [161:1 - 187:23]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/fortune-love/index.ts[39m[22m [603:54 - 636:17] (34 lines, 126 tokens)
+   [1m[32msupabase/functions/fortune-naming/index.ts[39m[22m [391:54 - 422:17]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/fortune-palm-reading/index.ts[39m[22m [156:46 - 200:15] (45 lines, 234 tokens)
+   [1m[32msupabase/functions/generate-poster-guide/index.ts[39m[22m [164:47 - 211:15]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/fortune-palm-reading/index.ts[39m[22m [258:3 - 312:4] (55 lines, 281 tokens)
+   [1m[32msupabase/functions/generate-poster-guide/index.ts[39m[22m [311:3 - 365:4]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/profile-completion-bonus/index.ts[39m[22m [20:1 - 44:10] (25 lines, 125 tokens)
+   [1m[32msupabase/functions/soul-refund/index.ts[39m[22m [27:1 - 54:10]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/profile-completion-bonus/index.ts[39m[22m [38:26 - 58:25] (21 lines, 131 tokens)
+   [1m[32msupabase/functions/subscription-status/index.ts[39m[22m [40:41 - 66:25]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/soul-consume/index.ts[39m[22m [7:87 - 61:18] (55 lines, 144 tokens)
+   [1m[32msupabase/functions/soul-earn/index.ts[39m[22m [23:19 - 76:24]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/soul-consume/index.ts[39m[22m [85:5 - 114:7] (30 lines, 143 tokens)
+   [1m[32msupabase/functions/soul-earn/index.ts[39m[22m [88:69 - 119:10]
+[1mClone found (typescript)[22m
+ - [1m[32msupabase/functions/subscription-status/index.ts[39m[22m [40:32 - 66:25] (27 lines, 134 tokens)
+   [1m[32msupabase/functions/token-balance/index.ts[39m[22m [55:22 - 83:25]
+[90m┌────────────┬────────────────┬─────────────┬──────────────┬──────────────┬──────────────────┬───────────────────┐[39m
+[90m│[39m[31m Format     [39m[90m│[39m[31m Files analyzed [39m[90m│[39m[31m Total lines [39m[90m│[39m[31m Total tokens [39m[90m│[39m[31m Clones found [39m[90m│[39m[31m Duplicated lines [39m[90m│[39m[31m Duplicated tokens [39m[90m│[39m
+[90m├────────────┼────────────────┼─────────────┼──────────────┼──────────────┼──────────────────┼───────────────────┤[39m
+[90m│[39m markdown   [90m│[39m 1              [90m│[39m 70          [90m│[39m 247          [90m│[39m 0            [90m│[39m 0 (0.00%)        [90m│[39m 0 (0.00%)         [90m│[39m
+[90m├────────────┼────────────────┼─────────────┼──────────────┼──────────────┼──────────────────┼───────────────────┤[39m
+[90m│[39m tsx        [90m│[39m 165            [90m│[39m 40920       [90m│[39m 208567       [90m│[39m 4            [90m│[39m 170 (0.42%)      [90m│[39m 638 (0.31%)       [90m│[39m
+[90m├────────────┼────────────────┼─────────────┼──────────────┼──────────────┼──────────────────┼───────────────────┤[39m
+[90m│[39m typescript [90m│[39m 275            [90m│[39m 91899       [90m│[39m 390135       [90m│[39m 28           [90m│[39m 985 (1.07%)      [90m│[39m 4753 (1.22%)      [90m│[39m
+[90m├────────────┼────────────────┼─────────────┼──────────────┼──────────────┼──────────────────┼───────────────────┤[39m
+[90m│[39m [1mTotal:[22m     [90m│[39m 441            [90m│[39m 132889      [90m│[39m 598949       [90m│[39m 32           [90m│[39m 1155 (0.87%)     [90m│[39m 5391 (0.90%)      [90m│[39m
+[90m└────────────┴────────────────┴─────────────┴──────────────┴──────────────┴──────────────────┴───────────────────┘[39m
+[90mFound 32 clones.[39m
+[90mtime: 92.306ms[39m

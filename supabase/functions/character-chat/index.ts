@@ -79,6 +79,13 @@ import {
   getHaneulSystemPrompt,
   HANEUL_CHARACTER_ID,
 } from "../_shared/haneul_persona.ts";
+import {
+  buildPhotoReactionRetryPrompt,
+  evaluatePhotoReactionQuality,
+  PHOTO_REACTION_SAFE_FALLBACK,
+  PHOTO_REACTION_STRICT_PROMPT,
+} from "./photo_reaction_quality.ts";
+import { PROACTIVE_REVEAL_CAPTIONS } from "./proactive_reveal_captions.ts";
 
 interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -2581,18 +2588,6 @@ function applyLutsOutputGuard(
 // Slice 2 — Proactive hookForReveal Stage 2 reveal helper
 // =============================================================================
 
-// LLM 호출 없이 사용할 reveal 캡션 풀. 캐릭터 톤 다양성 확보용.
-// PROACTIVE_MESSAGING_PLAN.md Slice 2 §2.2.4 (A4) — LLM-free, 단가 0, injection 회피.
-const PROACTIVE_REVEAL_CAPTIONS = [
-  "이거 봐 ㅋ",
-  "지금 먹는 거",
-  "방금 찍었어",
-  "ㅋㅋ 봐봐",
-  "어 이거",
-  "이거임",
-  "사진 한 장",
-];
-
 interface RevealMeta {
   placeholderUrl?: string;
   imageCategory?: string;
@@ -3421,6 +3416,7 @@ serve(async (req: Request) => {
         // service-bot 톤 ("어떻게 도와드릴까요?", "무엇을 도와드릴까요?")
         // 으로 떨어지는 케이스가 자주 발생. 빈 string 이면 join 후에도 무영향.
         lutsStylePrompt,
+        imageBase64 ? PHOTO_REACTION_STRICT_PROMPT : "",
         MULTI_BUBBLE_PROMPT,
         AFFINITY_EVALUATION_PROMPT,
       ]
@@ -3438,6 +3434,7 @@ serve(async (req: Request) => {
         firstMeetPrompt,
         memoryPrompt,
         lutsStylePrompt,
+        imageBase64 ? PHOTO_REACTION_STRICT_PROMPT : "",
         MULTI_BUBBLE_PROMPT,
         AFFINITY_EVALUATION_PROMPT,
       ].filter((section) => section && section.trim().length > 0);
@@ -3487,6 +3484,10 @@ serve(async (req: Request) => {
         : null;
     let fallbackUsed = false;
     let llmResponse: LLMResponse;
+    const billableLlmResponses: Array<{
+      response: LLMResponse;
+      attempt: "primary" | "photo-retry";
+    }> = [];
 
     if (grokVariantModel) {
       try {
@@ -3495,6 +3496,7 @@ serve(async (req: Request) => {
           temperature: 0.6,
           maxTokens: fortuneMaxTokens,
         });
+        billableLlmResponses.push({ response: llmResponse, attempt: "primary" });
       } catch (grokError) {
         fallbackUsed = true;
         const grokMsg = grokError instanceof Error
@@ -3525,6 +3527,7 @@ serve(async (req: Request) => {
             temperature: 0.6,
             maxTokens: fortuneMaxTokens,
           });
+          billableLlmResponses.push({ response: llmResponse, attempt: "primary" });
         } catch (defaultError) {
           const defaultMsg = defaultError instanceof Error
             ? defaultError.message
@@ -3565,6 +3568,7 @@ serve(async (req: Request) => {
           temperature: 0.6,
           maxTokens: fortuneMaxTokens,
         });
+        billableLlmResponses.push({ response: llmResponse, attempt: "primary" });
       } catch (llmError) {
         fallbackUsed = true;
         console.error(
@@ -3598,23 +3602,103 @@ serve(async (req: Request) => {
       }
     }
 
+    if (imageBase64) {
+      const photoQa = evaluatePhotoReactionQuality(llmResponse.content, {
+        hasImageInput: true,
+      });
+      if (!photoQa.ok) {
+        console.warn("[character-chat] photo reaction QA retry:", {
+          characterId,
+          issues: photoQa.issues,
+        });
+        try {
+          const retryLlm = await LLMFactory.createFromConfigAsync(
+            "character-chat",
+          );
+          const retryMessages = [
+            ...chatMessages,
+            { role: "assistant" as const, content: llmResponse.content },
+            {
+              role: "user" as const,
+              content: buildPhotoReactionRetryPrompt({
+                previousReply: llmResponse.content,
+                issues: photoQa.issues,
+              }),
+            },
+          ] as unknown as ChatMessage[];
+          const retryResponse = await retryLlm.generate(retryMessages, {
+            temperature: 0.7,
+            maxTokens: fortuneMaxTokens,
+          });
+          billableLlmResponses.push({
+            response: retryResponse,
+            attempt: "photo-retry",
+          });
+          const retryQa = evaluatePhotoReactionQuality(retryResponse.content, {
+            hasImageInput: true,
+          });
+          if (retryQa.ok) {
+            llmResponse = retryResponse;
+            fallbackUsed = true;
+          } else {
+            console.warn(
+              "[character-chat] photo reaction QA retry still weak:",
+              {
+                characterId,
+                issues: retryQa.issues,
+              },
+            );
+            llmResponse = {
+              ...llmResponse,
+              content: PHOTO_REACTION_SAFE_FALLBACK,
+              provider: "fallback-safe",
+              model: "photo-reaction-safe-fallback",
+            };
+            fallbackUsed = true;
+          }
+        } catch (retryError) {
+          console.warn(
+            "[character-chat] photo reaction QA retry failed:",
+            retryError,
+          );
+          llmResponse = {
+            ...llmResponse,
+            content: PHOTO_REACTION_SAFE_FALLBACK,
+            provider: "fallback-safe",
+            model: "photo-reaction-safe-fallback",
+          };
+          fallbackUsed = true;
+        }
+      }
+    }
+
     const latencyMs = Date.now() - startTime;
 
     // LLM 사용량 로깅 (비용/지연/모델 분포 추적). 실패해도 메인 흐름 차단 X.
-    UsageLogger.log({
-      userId: userId ?? undefined,
-      fortuneType: "character-chat",
-      provider: llmResponse.provider,
-      model: llmResponse.model,
-      response: llmResponse,
-      metadata: {
-        characterId,
-        fallbackUsed,
-        isFortuneRequest,
-      },
-    }).catch((logError) => {
-      console.error("[character-chat] usage log failed:", logError);
-    });
+    // 사진 반응 QA retry 는 실제 LLM 호출이 2회 발생하므로 각 attempt 를 별도
+    // row 로 기록한다. 최종 safe fallback 은 LLM 호출이 아니므로 billable 대상 X.
+    const usageResponses = billableLlmResponses.length > 0
+      ? billableLlmResponses
+      : [{ response: llmResponse, attempt: "primary" as const }];
+    for (const { response, attempt } of usageResponses) {
+      UsageLogger.log({
+        userId: userId ?? undefined,
+        fortuneType: "character-chat",
+        provider: response.provider,
+        model: response.model,
+        response,
+        metadata: {
+          characterId,
+          fallbackUsed,
+          isFortuneRequest,
+          attempt,
+          finalProvider: llmResponse.provider,
+          finalModel: llmResponse.model,
+        },
+      }).catch((logError) => {
+        console.error("[character-chat] usage log failed:", logError);
+      });
+    }
 
     // 후처리: 호감도 평가 추출 → OOC 블록 제거 → 이모티콘 검증
     const { cleanedText: textWithoutAffinity, affinityDelta } =

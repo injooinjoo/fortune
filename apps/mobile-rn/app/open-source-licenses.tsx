@@ -36,8 +36,7 @@ export default function OpenSourceLicensesRoute() {
             '- react-native-reanimated (MIT) — Software Mansion\n' +
             '- react-native-screens (MIT) — Software Mansion\n' +
             '- react-native-safe-area-context (MIT) — Th3rd Wave\n' +
-            '- react-native-svg (MIT)\n' +
-            '- react-native-keyboard-controller (MIT) — Kiryl Ziusko',
+            '- react-native-svg (MIT)',
         },
         {
           title: '네트워크·스토리지',

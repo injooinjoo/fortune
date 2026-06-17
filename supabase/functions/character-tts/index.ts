@@ -32,11 +32,12 @@ interface TtsResponse {
   errorCode?: 'PREMIUM_REQUIRED' | 'INVALID_INPUT' | 'TTS_FAILED' | 'INTERNAL';
 }
 
-// Gemini 3.1 Flash TTS preview — 2.5 보다 한국어 자연성/감정 표현 우수
-// ("finishReason: OTHER" 로 빈 응답 떨어지는 빈도가 낮음). preview 단계라
-// 향후 GA 시 endpoint 변경 가능 — `models?key=...` 로 list 확인 후 갱신.
-const GEMINI_TTS_ENDPOINT =
-  'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-tts-preview:generateContent';
+// Gemini TTS preview — 3.1 endpoint is preferred when available, but production
+// must fall back because preview model names can lag by project/region.
+const GEMINI_TTS_ENDPOINTS = [
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-tts-preview:generateContent',
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent',
+];
 
 const ALLOWED_VOICES = new Set([
   'Kore',
@@ -232,39 +233,47 @@ Deno.serve(async (req) => {
       );
     }
 
-    const geminiResponse = await fetch(GEMINI_TTS_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': apiKey,
-      },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: ttsText }] }],
-        generationConfig: {
-          responseModalities: ['AUDIO'],
-          speechConfig: {
-            voiceConfig: {
-              prebuiltVoiceConfig: { voiceName: voice },
-            },
+    const geminiRequestBody = JSON.stringify({
+      contents: [{ parts: [{ text: ttsText }] }],
+      generationConfig: {
+        responseModalities: ['AUDIO'],
+        speechConfig: {
+          voiceConfig: {
+            prebuiltVoiceConfig: { voiceName: voice },
           },
         },
-      }),
+      },
     });
 
-    if (!geminiResponse.ok) {
+    let geminiPayload: unknown = null;
+    let lastGeminiError = '';
+    for (const endpoint of GEMINI_TTS_ENDPOINTS) {
+      const geminiResponse = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey,
+        },
+        body: geminiRequestBody,
+      });
+
+      if (geminiResponse.ok) {
+        geminiPayload = await geminiResponse.json().catch(() => null);
+        break;
+      }
+
       const errText = await geminiResponse.text().catch(() => '');
-      console.error(
-        '[character-tts] Gemini TTS HTTP',
-        geminiResponse.status,
-        errText.slice(0, 500),
-      );
+      lastGeminiError = `${geminiResponse.status} ${errText.slice(0, 500)}`;
+      console.error('[character-tts] Gemini TTS HTTP', endpoint, lastGeminiError);
+    }
+
+    if (!geminiPayload) {
       return jsonResponse(
         { success: false, error: 'TTS upstream failed', errorCode: 'TTS_FAILED' },
         502,
       );
     }
 
-    const geminiPayload = await geminiResponse.json().catch(() => null);
     const pcmBase64 = extractAudioBase64FromGeminiResponse(geminiPayload);
     if (!pcmBase64) {
       console.error(

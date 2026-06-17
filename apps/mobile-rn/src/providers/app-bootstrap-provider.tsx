@@ -10,7 +10,7 @@ import {
 
 import * as Linking from 'expo-linking';
 import { router, type Href } from 'expo-router';
-import { AppState, type AppStateStatus } from 'react-native';
+import { AppState, Platform, type AppStateStatus } from 'react-native';
 import {
   emptyUnifiedOnboardingProgress,
   resolveChatOnboardingGate,
@@ -31,9 +31,13 @@ import { appEnv } from '../lib/env';
 import { captureError } from '../lib/error-reporting';
 import {
   ackScheduledReplyIfPresent,
+  decrementSharedBadgeCount,
+  incrementAppIconBadgeCount,
   insertMessageFromPushIfPresent,
   installPushNotificationHandlers,
   registerPushTokenForSignedInUser,
+  shouldIncrementAppIconBadgeForPush,
+  wasNativeBadgeIncrementRecentlyApplied,
 } from '../lib/push-notifications';
 import {
   getChatLastSeenByCharacterId,
@@ -471,8 +475,38 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
         // 1) 메시지 본문이 payload 에 있으면 즉시 MessageStore 에 INSERT
         //    (extra fetch 0). 사용자가 채팅창에 있으면 자동 reflect, 다른
         //    화면이면 다음 진입 시 즉시 표시. 멱등성: store 가 id dedup.
-        // 2) ack 호출 (fire-and-forget) — cron 중복 발송 방지.
+        // 2) foreground 에서는 Expo/OS/NSE 조합별 badge 동작이 다르므로,
+        //    다른 캐릭터 메시지는 JS 에서 +1 로 보정한다. 같은 캐릭터 방을
+        //    이미 보고 있는 경우에만 iOS NSE 가 먼저 반영했을 수 있는 +1 을
+        //    shared badge count 에서 되돌린다.
+        // 3) ack 호출 (fire-and-forget) — cron 중복 발송 방지.
         insertMessageFromPushIfPresent(payload);
+        if (shouldIncrementAppIconBadgeForPush(payload)) {
+          const shouldSkipJsBadgeIncrement =
+            payload.localBadgeIncrementApplied && Platform.OS === 'ios';
+          if (shouldSkipJsBadgeIncrement) {
+            wasNativeBadgeIncrementRecentlyApplied()
+              .then((nativeApplied) => {
+                if (nativeApplied) return;
+                return incrementAppIconBadgeCount();
+              })
+              .catch((error) => {
+                console.warn('[bootstrap] push badge increment fallback 실패:', error);
+              });
+          } else {
+            incrementAppIconBadgeCount().catch((error) => {
+              console.warn('[bootstrap] push badge increment 실패:', error);
+            });
+          }
+        } else if (
+          payload.characterId &&
+          payload.localBadgeIncrementApplied &&
+          Platform.OS === 'ios'
+        ) {
+          decrementSharedBadgeCount().catch((error) => {
+            console.warn('[bootstrap] push shared badge decrement 실패:', error);
+          });
+        }
         ackScheduledReplyIfPresent(payload.scheduledId);
       },
       onTap: (payload) => {

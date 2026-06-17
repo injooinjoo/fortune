@@ -1,0 +1,227 @@
+Unused files (4)
+apps/mobile-rn/babel.config.js
+apps/mobile-rn/plugins/with-ios-prebuilt-react-native.js
+apps/mobile-rn/scripts/local-ios.mjs
+apps/mobile-rn/scripts/remote-metro.mjs
+Unused dependencies (1)
+expo-splash-screen  apps/mobile-rn/package.json:54:6
+Unused exports (108)
+embeddedResultSeedByKind                           apps/mobile-rn/src/features/chat-results/fixtures.ts:198:14
+CHAT_TIME_DIVIDER_LONG_GAP_MS                      apps/mobile-rn/src/features/chat-surface/chat-time-divider.ts:3:14
+extractChatMessageTimestamp              function  apps/mobile-rn/src/features/chat-surface/chat-time-divider.ts:28:17
+formatChatTimeDividerLabel               function  apps/mobile-rn/src/features/chat-surface/chat-time-divider.ts:72:17
+formatChatTimeDividerAccessibilityLabel  function  apps/mobile-rn/src/features/chat-surface/chat-time-divider.ts:100:17
+surveyDefinitionByFortuneType                      apps/mobile-rn/src/features/chat-survey/registry.ts:1635:14
+FORTUNE_MESSAGES                                   …obile-rn/src/features/fortune-cookie/fortune-cookie-messages.ts:9:14
+fortuneTypeToResultKind                            apps/mobile-rn/src/features/fortune-results/mapping.ts:9:14
+elementColor                             function  …n/src/features/fortune-results/primitives/manseryeok-cells.tsx:33:17
+elementHanja                             function  …n/src/features/fortune-results/primitives/manseryeok-cells.tsx:37:17
+ELEMENT_ORDER                                      …/src/features/fortune-results/primitives/manseryeok-cells.tsx:181:10
+hasTermInfo                              function  …n/src/features/fortune-results/primitives/term-info-sheet.tsx:532:17
+resultKinds                                        apps/mobile-rn/src/features/fortune-results/types.ts:9:14
+CHARACTERS                                         …ps/mobile-rn/src/features/ios-widgets/data/widget-data-mock.ts:17:14
+useWidgetData                                      apps/mobile-rn/src/features/ios-widgets/index.ts:7:10
+WIDGET_SIZES                                       apps/mobile-rn/src/features/ios-widgets/primitives/index.ts:3:23
+TarotBack                                          apps/mobile-rn/src/features/ios-widgets/primitives/index.ts:23:21
+TarotBack                                function  …s/mobile-rn/src/features/ios-widgets/primitives/tarot-card.tsx:99:17
+WIDGET_SIZES                                       …mobile-rn/src/features/ios-widgets/primitives/widget-frame.tsx:21:14
+Wallpaper                                          apps/mobile-rn/src/features/ios-widgets/showcase/index.ts:3:10
+Dock                                               apps/mobile-rn/src/features/ios-widgets/showcase/index.ts:5:10
+AppIcon                                            apps/mobile-rn/src/features/ios-widgets/showcase/index.ts:5:16
+storyCharacterPalettes                             …ile-rn/src/features/story-chat-animations/character-palette.ts:37:14
+FadeUpWords                              function  …mobile-rn/src/features/story-chat-animations/fade-up-words.tsx:40:17
+useStages                                          apps/mobile-rn/src/features/story-chat-animations/index.ts:1:10
+useCount                                           apps/mobile-rn/src/features/story-chat-animations/index.ts:2:10
+useTyped                                           apps/mobile-rn/src/features/story-chat-animations/index.ts:3:10
+FadeUpWords                                        apps/mobile-rn/src/features/story-chat-animations/index.ts:4:10
+getStoryCharacterPalette                           apps/mobile-rn/src/features/story-chat-animations/index.ts:6:3
+storyCharacterPalettes                             apps/mobile-rn/src/features/story-chat-animations/index.ts:7:3
+MemoryRecall                                       apps/mobile-rn/src/features/story-chat-animations/index.ts:10:10
+EmotionMeter                                       apps/mobile-rn/src/features/story-chat-animations/index.ts:12:10
+PoemCard                                           apps/mobile-rn/src/features/story-chat-animations/index.ts:14:10
+PepCapsules                                        apps/mobile-rn/src/features/story-chat-animations/index.ts:16:10
+PhotoRecall                                        apps/mobile-rn/src/features/story-chat-animations/index.ts:18:10
+ResonanceOrbs                                      apps/mobile-rn/src/features/story-chat-animations/index.ts:20:10
+useSajuFor                               function  apps/mobile-rn/src/hooks/use-saju.ts:62:17
+UPDATE_CREATED_AT_DATE                             apps/mobile-rn/src/lib/build-identity.ts:46:14
+unblockCharacter                         function  apps/mobile-rn/src/lib/character-blocks.ts:39:23
+fetchBlockedCharacterIds                 function  apps/mobile-rn/src/lib/character-blocks.ts:58:23
+getCachedCharacterMessages               function  apps/mobile-rn/src/lib/character-conversation-cache.ts:35:23
+deleteCachedCharacterMessage             function  apps/mobile-rn/src/lib/character-conversation-cache.ts:83:23
+SUPPORTED_EMOTIONS                                 apps/mobile-rn/src/lib/character-voices.ts:59:14
+getVisibleChatCharacters                 function  apps/mobile-rn/src/lib/chat-characters.ts:98:17
+createdFriendToStoryCharacter            function  apps/mobile-rn/src/lib/chat-characters.ts:104:17
+openChatDb                               function  apps/mobile-rn/src/lib/chat-db.ts:103:23
+chatThreadsEqualById                     function  apps/mobile-rn/src/lib/chat-message-utils.ts:59:17
+buildProactiveAssistantTextMessage       function  apps/mobile-rn/src/lib/chat-shell.ts:512:17
+buildProactiveAssistantImageMessage      function  apps/mobile-rn/src/lib/chat-shell.ts:527:17
+buildAssistantImageMessage               function  apps/mobile-rn/src/lib/chat-shell.ts:581:17
+buildSystemTextMessage                   function  apps/mobile-rn/src/lib/chat-shell.ts:594:17
+identifyUserForCrashReporting            function  apps/mobile-rn/src/lib/crash-reporting.ts:61:17
+resetDeviceTierCache                     function  apps/mobile-rn/src/lib/device-tier.ts:195:23
+flushExposureBuffer                      function  apps/mobile-rn/src/lib/feature-flag-exposure.ts:121:23
+_resetExposureBufferForTest              function  apps/mobile-rn/src/lib/feature-flag-exposure.ts:167:17
+refreshFeatureFlags                      function  apps/mobile-rn/src/lib/feature-flags.ts:145:23
+refreshOnTrigger                         function  apps/mobile-rn/src/lib/feature-flags.ts:212:23
+getFeatureFlagSnapshot                   function  apps/mobile-rn/src/lib/feature-flags.ts:267:17
+_setFeatureFlagSnapshotForTest           function  apps/mobile-rn/src/lib/feature-flags.ts:274:17
+bootstrapFeatureFlags                    function  apps/mobile-rn/src/lib/feature-flags.ts:287:23
+pageSnap                                 function  apps/mobile-rn/src/lib/haptics.ts:38:17
+sheetOpen                                function  apps/mobile-rn/src/lib/haptics.ts:48:17
+sheetDismiss                             function  apps/mobile-rn/src/lib/haptics.ts:53:17
+swipeComplete                            function  apps/mobile-rn/src/lib/haptics.ts:58:17
+loadingComplete                          function  apps/mobile-rn/src/lib/haptics.ts:87:17
+shareAction                              function  apps/mobile-rn/src/lib/haptics.ts:92:17
+warning                                  function  apps/mobile-rn/src/lib/haptics.ts:111:17
+error                                    function  apps/mobile-rn/src/lib/haptics.ts:116:17
+compatibilityReveal                      function  apps/mobile-rn/src/lib/haptics.ts:146:17
+tarotReveal                              function  apps/mobile-rn/src/lib/haptics.ts:161:17
+premiumUnlock                            function  apps/mobile-rn/src/lib/haptics.ts:172:17
+jackpot                                  function  apps/mobile-rn/src/lib/haptics.ts:187:17
+investmentCoin                           function  apps/mobile-rn/src/lib/haptics.ts:222:17
+streak                                   function  apps/mobile-rn/src/lib/haptics.ts:275:17
+_resetInstallIdCacheForTest              function  apps/mobile-rn/src/lib/install-id.ts:43:17
+LLM_TEXT_PHASE_STEPS                               apps/mobile-rn/src/lib/long-running-jobs.ts:15:14
+hydrateCharacter                         function  apps/mobile-rn/src/lib/message-store.ts:139:23
+replaceAllForCharacter                   function  apps/mobile-rn/src/lib/message-store.ts:202:23
+updateMessage                            function  apps/mobile-rn/src/lib/message-store.ts:332:17
+subscribe                                function  apps/mobile-rn/src/lib/message-store.ts:372:17
+resetStore                               function  apps/mobile-rn/src/lib/message-store.ts:494:17
+stampMobileAppState                      function  apps/mobile-rn/src/lib/mobile-app-state.ts:271:17
+applyPurchaseRestore                     function  apps/mobile-rn/src/lib/mobile-app-state.ts:334:17
+MODEL_REGISTRY                                     apps/mobile-rn/src/lib/on-device-model-registry.ts:44:14
+getVariantTotalBytes                     function  apps/mobile-rn/src/lib/on-device-model-registry.ts:135:17
+gemmaConverter                                     apps/mobile-rn/src/lib/on-device-prompt-converters.ts:115:14
+phiConverter                                       apps/mobile-rn/src/lib/on-device-prompt-converters.ts:157:14
+qwenConverter                                      apps/mobile-rn/src/lib/on-device-prompt-converters.ts:180:14
+llamaConverter                                     apps/mobile-rn/src/lib/on-device-prompt-converters.ts:202:14
+defaultConverter                                   apps/mobile-rn/src/lib/on-device-prompt-converters.ts:224:14
+onboardingInterestOptions                          apps/mobile-rn/src/lib/onboarding-interest-catalog.ts:8:14
+ONBOARDING_QA_EMAIL                                apps/mobile-rn/src/lib/onboarding-qa.ts:1:14
+invalidateTokenBalanceCache              function  apps/mobile-rn/src/lib/premium-remote.ts:246:17
+refundRemoteTokens                       function  apps/mobile-rn/src/lib/premium-remote.ts:422:23
+__PRESENCE_TEMPLATES_INTERNAL                      apps/mobile-rn/src/lib/presence-lines.ts:130:14
+stashPendingProactiveMessageId           function  apps/mobile-rn/src/lib/push-notifications.ts:405:17
+fetchSajuData                            function  apps/mobile-rn/src/lib/saju-remote.ts:50:23
+mapAuthErrorMessage                      function  apps/mobile-rn/src/lib/social-auth.ts:22:17
+resolveSocialAuthRedirectTo              function  apps/mobile-rn/src/lib/social-auth.ts:269:17
+clearUnifiedOnboardingProgress           function  apps/mobile-rn/src/lib/storage.ts:75:23
+clearMobileAppState                      function  apps/mobile-rn/src/lib/storage.ts:148:23
+storyRomancePilotCharacterIds                      apps/mobile-rn/src/lib/story-romance-pilots.ts:7:14
+storyRomancePilotProfiles                          apps/mobile-rn/src/lib/story-romance-pilots.ts:141:14
+resolveStoryOpeningLine                  function  apps/mobile-rn/src/lib/story-romance-pilots.ts:573:17
+getTyping                                function  apps/mobile-rn/src/lib/typing-store.ts:47:17
+useTypingByCharacterId                   function  apps/mobile-rn/src/lib/typing-store.ts:82:17
+WELCOME_FORCE_ENABLED_KEY                          apps/mobile-rn/src/lib/welcome-state.ts:21:14
+resetWelcomeSeen                         function  apps/mobile-rn/src/lib/welcome-state.ts:43:23
+Unused exported types (110)
+EmbeddedResultSeed         interface  apps/mobile-rn/src/features/chat-results/fixtures.ts:7:18
+EmbeddedResultWidgetType   type       apps/mobile-rn/src/features/chat-results/types.ts:6:13
+SajuElementKey             type       apps/mobile-rn/src/features/chat-results/types.ts:36:13
+SajuPillar                 interface  apps/mobile-rn/src/features/chat-results/types.ts:38:18
+CalendarFace               interface  apps/mobile-rn/src/features/chat-results/types.ts:46:18
+TimelinePoint              interface  apps/mobile-rn/src/features/chat-results/types.ts:52:18
+RadarTrait                 interface  apps/mobile-rn/src/features/chat-results/types.ts:57:18
+CompatMetric               interface  apps/mobile-rn/src/features/chat-results/types.ts:62:18
+CompatData                 interface  apps/mobile-rn/src/features/chat-results/types.ts:67:18
+HealthZone                 interface  apps/mobile-rn/src/features/chat-results/types.ts:73:18
+ChatSurveyInputKind        type       apps/mobile-rn/src/features/chat-survey/types.ts:3:13
+TarotDeckId                type       apps/mobile-rn/src/features/haneul/tarot-deck-covers.ts:25:13
+CharacterMock              interface  apps/mobile-rn/src/features/ios-widgets/data/widget-data-mock.ts:9:18
+UnreadItem                 interface  apps/mobile-rn/src/features/ios-widgets/data/widget-data-mock.ts:138:18
+TarotDrawCard              interface  apps/mobile-rn/src/features/ios-widgets/data/widget-data-mock.ts:173:18
+WidgetDataBundle           type       apps/mobile-rn/src/features/ios-widgets/index.ts:8:15
+LiveActivityCompactProps   type       apps/mobile-rn/src/features/ios-widgets/live-activity/index.ts:2:15
+WidgetColorKey             type       apps/mobile-rn/src/features/ios-widgets/primitives/colors.ts:53:13
+WidgetColorKey             type       apps/mobile-rn/src/features/ios-widgets/primitives/index.ts:2:15
+WidgetFrameProps           type       apps/mobile-rn/src/features/ios-widgets/primitives/index.ts:4:15
+WidgetSize                 type       apps/mobile-rn/src/features/ios-widgets/primitives/index.ts:4:33
+WidgetSizeSpec             type       apps/mobile-rn/src/features/ios-widgets/primitives/index.ts:4:45
+WidgetHeaderProps          type       apps/mobile-rn/src/features/ios-widgets/primitives/index.ts:6:15
+OndoMarkProps              type       apps/mobile-rn/src/features/ios-widgets/primitives/index.ts:8:15
+RingProps                  type       apps/mobile-rn/src/features/ios-widgets/primitives/index.ts:10:15
+CornerGlowProps            type       apps/mobile-rn/src/features/ios-widgets/primitives/index.ts:12:15
+CornerMotifProps           type       apps/mobile-rn/src/features/ios-widgets/primitives/index.ts:14:15
+CounterTextProps           type       apps/mobile-rn/src/features/ios-widgets/primitives/index.ts:16:15
+TypingDotsProps            type       apps/mobile-rn/src/features/ios-widgets/primitives/index.ts:18:15
+BreathAuraProps            type       apps/mobile-rn/src/features/ios-widgets/primitives/index.ts:20:15
+StarFieldProps             type       apps/mobile-rn/src/features/ios-widgets/primitives/index.ts:22:15
+TarotCardProps             type       apps/mobile-rn/src/features/ios-widgets/primitives/index.ts:24:15
+TarotCardMeta              type       apps/mobile-rn/src/features/ios-widgets/primitives/index.ts:24:31
+AvatarSquareProps          type       apps/mobile-rn/src/features/ios-widgets/primitives/index.ts:26:15
+WidgetSize                 type       apps/mobile-rn/src/features/ios-widgets/primitives/widget-frame.tsx:13:13
+WidgetSizeSpec             interface  apps/mobile-rn/src/features/ios-widgets/primitives/widget-frame.tsx:15:18
+IPhoneFrameProps           type       apps/mobile-rn/src/features/ios-widgets/showcase/index.ts:2:15
+WallpaperProps             type       apps/mobile-rn/src/features/ios-widgets/showcase/index.ts:4:15
+WallpaperVariant           type       apps/mobile-rn/src/features/ios-widgets/showcase/index.ts:4:31
+DockProps                  type       apps/mobile-rn/src/features/ios-widgets/showcase/index.ts:6:15
+AppIconProps               type       apps/mobile-rn/src/features/ios-widgets/showcase/index.ts:6:26
+WallpaperVariant           type       apps/mobile-rn/src/features/ios-widgets/showcase/wallpaper.tsx:14:13
+EmotionMeterData           interface  apps/mobile-rn/src/features/story-chat-animations/emotion-meter.tsx:19:18
+StoryCharacterPalette      type       apps/mobile-rn/src/features/story-chat-animations/index.ts:8:8
+MemoryRecallData           type       apps/mobile-rn/src/features/story-chat-animations/index.ts:11:15
+MemoryRecallProps          type       apps/mobile-rn/src/features/story-chat-animations/index.ts:11:33
+EmotionMeterData           type       apps/mobile-rn/src/features/story-chat-animations/index.ts:13:15
+EmotionMeterProps          type       apps/mobile-rn/src/features/story-chat-animations/index.ts:13:33
+PoemCardData               type       apps/mobile-rn/src/features/story-chat-animations/index.ts:15:15
+PoemCardProps              type       apps/mobile-rn/src/features/story-chat-animations/index.ts:15:29
+PepCapsulesData            type       apps/mobile-rn/src/features/story-chat-animations/index.ts:17:15
+PepCapsulesProps           type       apps/mobile-rn/src/features/story-chat-animations/index.ts:17:32
+PhotoRecallData            type       apps/mobile-rn/src/features/story-chat-animations/index.ts:19:15
+PhotoRecallProps           type       apps/mobile-rn/src/features/story-chat-animations/index.ts:19:32
+ResonanceOrbsData          type       apps/mobile-rn/src/features/story-chat-animations/index.ts:21:15
+ResonanceOrbsProps         type       apps/mobile-rn/src/features/story-chat-animations/index.ts:21:34
+MemoryRecallData           interface  apps/mobile-rn/src/features/story-chat-animations/memory-recall.tsx:20:18
+PepCapsulesData            interface  apps/mobile-rn/src/features/story-chat-animations/pep-capsules.tsx:19:18
+PhotoRecallData            interface  apps/mobile-rn/src/features/story-chat-animations/photo-recall.tsx:20:18
+PoemCardData               interface  apps/mobile-rn/src/features/story-chat-animations/poem-card.tsx:20:18
+ResonanceOrbsData          interface  apps/mobile-rn/src/features/story-chat-animations/resonance-orbs.tsx:21:18
+PersonalityInterpretation  interface  apps/mobile-rn/src/hooks/use-saju-interpretation.ts:22:18
+CareerInterpretation       interface  apps/mobile-rn/src/hooks/use-saju-interpretation.ts:27:18
+WealthInterpretation       interface  apps/mobile-rn/src/hooks/use-saju-interpretation.ts:32:18
+LoveInterpretation         interface  apps/mobile-rn/src/hooks/use-saju-interpretation.ts:37:18
+HealthInterpretation       interface  apps/mobile-rn/src/hooks/use-saju-interpretation.ts:42:18
+DailyInterpretation        interface  apps/mobile-rn/src/hooks/use-saju-interpretation.ts:47:18
+LuckCycleInterpretation    interface  apps/mobile-rn/src/hooks/use-saju-interpretation.ts:52:18
+AdRewardOutcome            interface  apps/mobile-rn/src/lib/ad-rewards.ts:69:18
+ProactiveMessageMeta       interface  apps/mobile-rn/src/lib/chat-shell.ts:52:18
+StoryRevealPayload         type       apps/mobile-rn/src/lib/chat-shell.ts:116:13
+Element                    type       apps/mobile-rn/src/lib/manseryeok-local.ts:19:13
+Stem                       interface  apps/mobile-rn/src/lib/manseryeok-local.ts:22:18
+Branch                     interface  apps/mobile-rn/src/lib/manseryeok-local.ts:32:18
+Pillar                     interface  apps/mobile-rn/src/lib/manseryeok-local.ts:44:18
+DayPillar                  interface  apps/mobile-rn/src/lib/manseryeok-local.ts:50:18
+SolarTermProgress          interface  apps/mobile-rn/src/lib/manseryeok-local.ts:63:18
+DailyEnergy                interface  apps/mobile-rn/src/lib/manseryeok-local.ts:77:18
+WeekDayEntry               interface  apps/mobile-rn/src/lib/manseryeok-local.ts:87:18
+PremiumStatus              type       apps/mobile-rn/src/lib/mobile-app-state.ts:8:13
+PremiumState               interface  apps/mobile-rn/src/lib/mobile-app-state.ts:32:18
+ChatSurfaceState           interface  apps/mobile-rn/src/lib/mobile-app-state.ts:43:18
+DownloadStage              type       apps/mobile-rn/src/lib/on-device-llm.ts:49:13
+ModelDownloadProgress      interface  apps/mobile-rn/src/lib/on-device-llm.ts:51:18
+OnDeviceGenerateOptions    interface  apps/mobile-rn/src/lib/on-device-llm.ts:67:18
+ModelMmproj                interface  apps/mobile-rn/src/lib/on-device-model-registry.ts:18:18
+RNRole                     type       apps/mobile-rn/src/lib/on-device-prompt-converters.ts:22:13
+ContentPart                interface  apps/mobile-rn/src/lib/on-device-prompt-converters.ts:29:18
+RNConvertedMessage         interface  apps/mobile-rn/src/lib/on-device-prompt-converters.ts:40:18
+ConvertedPrompt            interface  apps/mobile-rn/src/lib/on-device-prompt-converters.ts:45:18
+OnboardingInterestOption   interface  apps/mobile-rn/src/lib/onboarding-interest-catalog.ts:1:18
+PresenceTimeBucket         type       apps/mobile-rn/src/lib/presence-lines.ts:11:13
+PresenceEmotion            type       apps/mobile-rn/src/lib/presence-lines.ts:19:13
+SajuElementBalance         interface  apps/mobile-rn/src/lib/saju-remote.ts:10:18
+StoryChatMessagePayload    interface  apps/mobile-rn/src/lib/story-chat-runtime.ts:31:18
+PersistedStoryMessage      interface  apps/mobile-rn/src/lib/story-chat-runtime.ts:107:18
+WidgetDailyFortune         interface  apps/mobile-rn/src/lib/widget-data-sync.ts:30:18
+WidgetTarotCard            interface  apps/mobile-rn/src/lib/widget-data-sync.ts:49:18
+WidgetLoveFortune          interface  apps/mobile-rn/src/lib/widget-data-sync.ts:57:18
+WidgetConstellation        interface  apps/mobile-rn/src/lib/widget-data-sync.ts:63:18
+WidgetLuckyItem            interface  apps/mobile-rn/src/lib/widget-data-sync.ts:72:18
+WidgetWeeklyDay            interface  apps/mobile-rn/src/lib/widget-data-sync.ts:80:18
+WidgetStoryPreview         interface  apps/mobile-rn/src/lib/widget-data-sync.ts:86:18
+WidgetUnreadItem           interface  apps/mobile-rn/src/lib/widget-data-sync.ts:94:18
+WidgetUnread               interface  apps/mobile-rn/src/lib/widget-data-sync.ts:101:18
+WidgetRecommendation       interface  apps/mobile-rn/src/lib/widget-data-sync.ts:106:18
+WidgetTarotDraw            interface  apps/mobile-rn/src/lib/widget-data-sync.ts:114:18
+WidgetHealthFortune        interface  apps/mobile-rn/src/lib/widget-data-sync.ts:120:18
+WidgetWealthFortune        interface  apps/mobile-rn/src/lib/widget-data-sync.ts:125:18
+WidgetDream                interface  apps/mobile-rn/src/lib/widget-data-sync.ts:130:18

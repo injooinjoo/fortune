@@ -23,6 +23,10 @@ import Intents
 
 class NotificationService: UNNotificationServiceExtension {
 
+    private let appGroupSuiteName = "group.com.beyond.fortune.widgets"
+    private let badgeCountKey = "characterUnreadBadgeCount"
+    private let lastNativeBadgeIncrementAtKey = "characterUnreadBadgeLastNativeIncrementAt"
+
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
 
@@ -39,6 +43,7 @@ class NotificationService: UNNotificationServiceExtension {
             contentHandler(request.content)
             return
         }
+        applyUnreadBadgeIncrementIfNeeded(to: bestAttempt)
 
         // 다양한 위치에서 image URL 후보를 찾는다.
         // 1) userInfo.body / userInfo.aps 에 직접 박힌 image
@@ -108,6 +113,25 @@ class NotificationService: UNNotificationServiceExtension {
         guard let contentHandler = contentHandler,
               let bestAttempt = bestAttemptContent else { return }
         contentHandler(bestAttempt)
+    }
+
+    private func applyUnreadBadgeIncrementIfNeeded(to content: UNMutableNotificationContent) {
+        let rawIncrement = extractString(from: content.userInfo, keys: ["badge_increment", "badgeIncrement"])
+        let increment = Int(rawIncrement ?? "") ?? 0
+        guard increment > 0 else { return }
+
+        if let defaults = UserDefaults(suiteName: appGroupSuiteName) {
+            let current = max(0, defaults.integer(forKey: badgeCountKey))
+            let next = current + increment
+            defaults.set(next, forKey: badgeCountKey)
+            defaults.set(Date().timeIntervalSince1970, forKey: lastNativeBadgeIncrementAtKey)
+            content.badge = NSNumber(value: next)
+            return
+        }
+
+        // App Group entitlement 이 없는 구 빌드 fallback: 서버 badge 값은 최소 보존.
+        let fallback = max(content.badge?.intValue ?? 0, increment)
+        content.badge = NSNumber(value: fallback)
     }
 
     /// iOS 15+ Communication Notification 메타데이터를 적용한다.

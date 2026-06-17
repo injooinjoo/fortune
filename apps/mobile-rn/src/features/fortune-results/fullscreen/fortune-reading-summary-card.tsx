@@ -27,51 +27,16 @@ export function FortuneReadingSummaryCard({
       accessibilityRole="summary"
       style={{
         alignSelf: 'stretch',
-        backgroundColor: withAlpha(fortuneReadingPalette.textPrimary, 0.12),
-        borderColor: withAlpha(fortuneReadingPalette.textPrimary, 0.2),
-        borderRadius: 34,
+        backgroundColor: '#000000',
+        borderColor: withAlpha(fortuneReadingPalette.textPrimary, 0.16),
+        borderRadius: 24,
         borderWidth: 1,
         gap: fortuneTheme.spacing.lg,
-        overflow: 'hidden',
         padding: fortuneTheme.spacing.lg,
-        shadowColor: fortuneReadingPalette.shadow,
-        shadowOpacity: 0.24,
-        shadowRadius: 28,
       }}
     >
-      <View
-        pointerEvents="none"
-        style={{
-          backgroundColor: withAlpha(fortuneReadingPalette.accent, 0.14),
-          borderRadius: 90,
-          height: 180,
-          position: 'absolute',
-          right: -64,
-          top: -72,
-          width: 180,
-        }}
-      />
       <View style={{ alignItems: 'center', gap: fortuneTheme.spacing.sm }}>
-        <View
-          style={{
-            alignItems: 'center',
-            backgroundColor: withAlpha(fortuneReadingPalette.accent, 0.18),
-            borderColor: withAlpha(fortuneReadingPalette.accent, 0.32),
-            borderRadius: 28,
-            borderWidth: 1,
-            height: 56,
-            justifyContent: 'center',
-            width: 56,
-          }}
-        >
-          <AppText variant="heading2" color={fortuneReadingPalette.accent}>
-            ✦
-          </AppText>
-        </View>
         <View style={{ alignItems: 'center', gap: fortuneTheme.spacing.xs }}>
-          <AppText variant="kicker" color={withAlpha(fortuneReadingPalette.textPrimary, 0.58)}>
-            READING COMPLETE
-          </AppText>
           <AppText variant="heading2" color={fortuneReadingPalette.textPrimary} style={{ textAlign: 'center' }}>
             오늘의 핵심 흐름을 다 읽었어요
           </AppText>
@@ -100,7 +65,7 @@ export function FortuneReadingSummaryCard({
             <AppText variant="labelLarge" color={fortuneReadingPalette.textPrimary}>
               오늘의 흐름
             </AppText>
-            <AppText variant="heading3" color={fortuneReadingPalette.accent}>
+            <AppText variant="heading3" color={fortuneReadingPalette.textPrimary}>
               {score}점
             </AppText>
           </View>
@@ -114,7 +79,7 @@ export function FortuneReadingSummaryCard({
           >
             <View
               style={{
-                backgroundColor: fortuneReadingPalette.accent,
+                backgroundColor: fortuneReadingPalette.textPrimary,
                 borderRadius: 999,
                 height: 8,
                 width: `${score}%`,

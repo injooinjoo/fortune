@@ -21,6 +21,25 @@ let handlerInstalled = false;
 
 type NotificationsModule = typeof import('expo-notifications');
 type DeviceModule = typeof import('expo-device');
+type SharedGroupPreferencesClient = {
+  setItem: (key: string, value: string, appGroup: string) => Promise<unknown>;
+  getItem?: (key: string, appGroup: string) => Promise<unknown>;
+};
+
+function isSharedGroupPreferencesClient(
+  value: unknown,
+): value is SharedGroupPreferencesClient {
+  return Boolean(
+    value &&
+      typeof value === 'object' &&
+      typeof (value as { setItem?: unknown }).setItem === 'function',
+  );
+}
+
+const APP_GROUP = 'group.com.beyond.fortune.widgets';
+const APP_ICON_BADGE_COUNT_KEY = 'characterUnreadBadgeCount';
+const APP_ICON_BADGE_LAST_NATIVE_INCREMENT_AT_KEY =
+  'characterUnreadBadgeLastNativeIncrementAt';
 
 function normalizePersistedPushMessages(raw: unknown): ChatShellMessage[] {
   if (!Array.isArray(raw)) return [];
@@ -66,6 +85,36 @@ function loadDevice(): DeviceModule | null {
     return require('expo-device') as DeviceModule;
   } catch {
     return null;
+  }
+}
+
+function loadSharedGroupPreferences(): SharedGroupPreferencesClient | null {
+  if (Platform.OS !== 'ios') return null;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const module = require('react-native-shared-group-preferences') as unknown;
+    const client = module &&
+        typeof module === 'object' &&
+        'default' in module
+      ? (module as { default?: unknown }).default
+      : module;
+    return isSharedGroupPreferencesClient(client) ? client : null;
+  } catch {
+    return null;
+  }
+}
+
+async function syncSharedBadgeCount(count: number): Promise<void> {
+  const SharedGroupPreferences = loadSharedGroupPreferences();
+  if (!SharedGroupPreferences) return;
+  try {
+    await SharedGroupPreferences.setItem(
+      APP_ICON_BADGE_COUNT_KEY,
+      String(Math.max(0, Math.floor(count))),
+      APP_GROUP,
+    );
+  } catch (error) {
+    console.warn('[push] shared badge count sync 실패:', error);
   }
 }
 
@@ -154,13 +203,94 @@ function ensureNotificationHandler(Notifications: NotificationsModule): void {
  * expo-notifications 가 없는 환경(Expo Go 등)에선 silent no-op.
  */
 export async function setAppIconBadgeCount(count: number): Promise<void> {
+  const normalizedCount = Math.max(0, Math.floor(count));
+  await syncSharedBadgeCount(normalizedCount);
   const Notifications = loadNotifications();
   if (!Notifications) return;
   try {
-    await Notifications.setBadgeCountAsync(Math.max(0, Math.floor(count)));
+    await Notifications.setBadgeCountAsync(normalizedCount);
   } catch (e) {
     console.warn('[push] setBadgeCountAsync 실패:', e);
   }
+}
+
+/**
+ * 포그라운드에서 캐릭터 메시지 push 를 받은 경우 OS 가 payload badge 를
+ * 자동 누적하지 않는 빌드/플랫폼이 있어 현재 앱 아이콘 배지에서 +1 보정한다.
+ * 채팅방 화면에 이미 들어와 있는 같은 캐릭터의 일반 답장은 즉시 읽음 상태로
+ * 취급되므로 카운트하지 않는다.
+ */
+export async function incrementAppIconBadgeCount(): Promise<void> {
+  const Notifications = loadNotifications();
+  if (!Notifications) return;
+  try {
+    const current = await Notifications.getBadgeCountAsync();
+    const next = Math.max(0, current) + 1;
+    await syncSharedBadgeCount(next);
+    await Notifications.setBadgeCountAsync(next);
+  } catch (e) {
+    console.warn('[push] badge increment 실패:', e);
+  }
+}
+
+/**
+ * iOS Notification Service Extension 이 background/foreground 구분 없이
+ * badge_increment 를 먼저 반영한 뒤, JS 쪽에서 "현재 보고 있는 채팅방"이라고
+ * 판단한 경우 1회 되돌린다. Expo Go/구 빌드처럼 NSE 가 없는 환경에서는 0 아래로
+ * 내려가지 않아 no-op 에 가깝다.
+ */
+export async function decrementSharedBadgeCount(): Promise<void> {
+  const SharedGroupPreferences = loadSharedGroupPreferences();
+  if (!SharedGroupPreferences?.getItem) return;
+  try {
+    const raw = await SharedGroupPreferences.getItem(
+      APP_ICON_BADGE_COUNT_KEY,
+      APP_GROUP,
+    );
+    const parsedCurrent = typeof raw === 'string'
+      ? Number.parseInt(raw, 10)
+      : typeof raw === 'number'
+        ? raw
+        : 0;
+    const current = Number.isFinite(parsedCurrent) ? parsedCurrent : 0;
+    const next = Math.max(0, current - 1);
+    await syncSharedBadgeCount(next);
+  } catch (e) {
+    console.warn('[push] shared badge decrement 실패:', e);
+  }
+}
+
+/**
+ * iOS NSE 가 같은 foreground push 의 badge_increment 를 이미 처리했는지
+ * App Group timestamp 로 확인한다. 구 빌드/Expo Go 는 이 key 를 쓰지 않으므로
+ * false → JS foreground fallback(+1)이 계속 작동한다.
+ */
+export async function wasNativeBadgeIncrementRecentlyApplied(): Promise<boolean> {
+  const SharedGroupPreferences = loadSharedGroupPreferences();
+  if (!SharedGroupPreferences?.getItem) return false;
+  try {
+    const raw = await SharedGroupPreferences.getItem(
+      APP_ICON_BADGE_LAST_NATIVE_INCREMENT_AT_KEY,
+      APP_GROUP,
+    );
+    const timestampSeconds = typeof raw === 'string'
+      ? Number.parseFloat(raw)
+      : typeof raw === 'number'
+        ? raw
+        : 0;
+    if (!Number.isFinite(timestampSeconds) || timestampSeconds <= 0) return false;
+    return Date.now() / 1000 - timestampSeconds < 10;
+  } catch (e) {
+    console.warn('[push] native badge increment timestamp 조회 실패:', e);
+    return false;
+  }
+}
+
+export function shouldIncrementAppIconBadgeForPush(
+  payload: Pick<PushResponsePayload, 'characterId'>,
+): boolean {
+  if (!payload.characterId) return false;
+  return payload.characterId !== activeChatCharacterId;
 }
 
 /**
@@ -242,7 +372,6 @@ export async function insertMessageFromPushIfPresent(
   } catch (error) {
     // store insert 실패해도 사용자 가시 영향 없음 — 다음 채팅창 진입 시
     // character-conversation-load 로 복구.
-    // eslint-disable-next-line no-console
     console.warn('[push] store insertFromPush 실패:', error);
   }
 }
@@ -342,6 +471,8 @@ export interface PushResponsePayload {
   scheduledMessagesJson?: string;
   /** 푸시 타입 — 'poster_result' 면 cardPayloadJson 사용. */
   type?: string;
+  /** iOS NSE 가 badge_increment 를 로컬 unread 배지에 반영할 수 있는 payload. */
+  localBadgeIncrementApplied?: boolean;
   /**
    * Slice 2 proactive hookForReveal: hooking push 의 proactive_message_log row id.
    * 클라가 다음 character-chat 호출 시 body 에 첨부 → 서버는 이 id 로 reveal claim
@@ -425,6 +556,9 @@ export function installPushNotificationHandlers(handlers: {
     const pendingProactiveMessageId =
       (d.pending_proactive_message_id as string | undefined) ??
       (d.pendingProactiveMessageId as string | undefined);
+    const localBadgeIncrementApplied = Boolean(
+      d.badge_increment ?? d.badgeIncrement,
+    );
     return {
       characterId,
       messageId,
@@ -436,6 +570,7 @@ export function installPushNotificationHandlers(handlers: {
       cardPayloadJson,
       scheduledMessagesJson,
       pendingProactiveMessageId,
+      localBadgeIncrementApplied,
       raw: d,
     };
   }
@@ -517,21 +652,49 @@ async function ensureAndroidChannel(
   });
 }
 
+async function requestIosBadgePermissionIfNeeded(
+  Notifications: NotificationsModule,
+  current: Awaited<ReturnType<NotificationsModule['getPermissionsAsync']>>,
+): Promise<void> {
+  if (Platform.OS !== 'ios') return;
+  if (current.ios?.allowsBadge !== false) return;
+
+  try {
+    const next = await Notifications.requestPermissionsAsync({
+      ios: {
+        allowAlert: true,
+        allowBadge: true,
+        allowSound: true,
+      },
+    });
+    if (next.ios?.allowsBadge === false) {
+      console.warn('[push] iOS badge 권한이 꺼져 있어 앱 아이콘 배지를 표시할 수 없습니다.');
+    }
+  } catch (error) {
+    console.warn('[push] iOS badge 권한 업그레이드 요청 실패:', error);
+  }
+}
+
 async function requestPermission(
   Notifications: NotificationsModule,
   options?: { promptIfNotGranted?: boolean },
 ): Promise<boolean> {
   const current = await Notifications.getPermissionsAsync();
-  if (current.granted) return true;
+  if (current.granted) {
+    await requestIosBadgePermissionIfNeeded(Notifications, current);
+    return true;
+  }
   if (!current.canAskAgain) return false;
   // JIT 정책(W9): 사용자가 명시적으로 푸시 켜기를 선택한 순간에만 OS 프롬프트
   // 노출. cold-start 자동 호출에서는 프롬프트 띄우지 않고 silent skip.
+  // badge 는 앱 아이콘 숫자 품질 개선용일 뿐, alert/sound 푸시 수신의 필수
+  // 권한이 아니므로 토큰 등록 성공 여부에는 포함하지 않는다.
   if (!options?.promptIfNotGranted) return false;
 
   const next = await Notifications.requestPermissionsAsync({
     ios: {
       allowAlert: true,
-      allowBadge: false,
+      allowBadge: true,
       allowSound: true,
     },
   });
@@ -763,6 +926,7 @@ export async function presentLocalCharacterDmPushForDev(params: {
         body: params.body,
         data,
         sound: 'default',
+        badge: 1,
       },
       trigger: null,
     });

@@ -4,7 +4,7 @@ import { createFortuneTheme } from '@fortune/design-tokens';
 export const fortuneTheme = createFortuneTheme('dark');
 
 export const fortuneReadingPalette = {
-  background: '#101427',
+  background: '#000000',
   textPrimary: '#FFFFFF',
   textInverse: '#161B2E',
   accent: '#FFD38A',

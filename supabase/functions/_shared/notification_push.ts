@@ -70,6 +70,11 @@ export function buildCharacterDmPayload(
     title: params.characterName,
     body: params.messageText,
     route,
+    // iOS Notification Service Extension 이 App Group 에 저장한 unread badge 를
+    // +1 누적하도록 하는 신호. APNs badge 는 절대값이라 서버가 항상 1을 보내면
+    // 여러 메시지에서 숫자가 쌓이지 않으므로 extension 이 로컬 누적값으로 보정한다.
+    badge_increment: "1",
+    badgeIncrement: "1",
   };
 
   if (params.messageId) {
@@ -214,6 +219,9 @@ interface ExpoPushMessage {
   sound: "default";
   priority: "high";
   channelId?: string;
+  // iOS 홈 화면 앱 아이콘에 빨간 숫자 배지를 표시하기 위한 APNs badge.
+  // 정확한 unread 총량은 클라이언트 lastSeen 기준으로 앱 진입 시 재동기화한다.
+  badge?: number;
   // 캐릭터 얼굴을 푸시에 띄우기 위한 필드.
   // - Android: Expo SDK 가 BigPictureStyle 로 자동 렌더 (네이티브 지원).
   // - iOS:   Expo Push API 가 mutableContent + APNS attachment hint 로 변환.
@@ -258,6 +266,12 @@ async function sendExpoPushToTokens(
   const dataWithImage = avatarUrl
     ? { ...params.data, image: avatarUrl }
     : params.data;
+  const shouldApplyLocalBadgeIncrement = Boolean(
+    dataWithImage.badge_increment ?? dataWithImage.badgeIncrement,
+  );
+  const shouldUseNotificationServiceExtension = Boolean(
+    richContent || shouldApplyLocalBadgeIncrement,
+  );
 
   const messages: ExpoPushMessage[] = params.tokens.map((token) => ({
     to: token,
@@ -267,7 +281,9 @@ async function sendExpoPushToTokens(
     sound: "default",
     priority: "high",
     channelId: dataWithImage.channel ?? "character_dm",
-    ...(richContent ? { richContent, mutableContent: true } : {}),
+    ...(shouldApplyLocalBadgeIncrement ? { badge: 1 } : {}),
+    ...(shouldUseNotificationServiceExtension ? { mutableContent: true } : {}),
+    ...(richContent ? { richContent } : {}),
   }));
 
   const accessToken = Deno.env.get("EXPO_ACCESS_TOKEN");

@@ -162,13 +162,13 @@ export function useTextToSpeech() {
   );
 
   const play = useCallback(
-    async (args: PlayArgs) => {
+    async (args: PlayArgs): Promise<TtsErrorState | null> => {
       const myGeneration = generationRef.current + 1;
       generationRef.current = myGeneration;
 
       // 이전 재생 정리 + loading 상태로 전환.
       await stopInternal();
-      if (generationRef.current !== myGeneration) return; // 더 새로운 호출이 있으면 abort
+      if (generationRef.current !== myGeneration) return null; // 더 새로운 호출이 있으면 abort
       setState({
         status: 'loading',
         activeMessageId: args.messageId,
@@ -186,7 +186,7 @@ export function useTextToSpeech() {
         }).catch(() => undefined);
 
         const sourcePath = await loadOrFetchAudio(args);
-        if (generationRef.current !== myGeneration) return;
+        if (generationRef.current !== myGeneration) return null;
 
         const { sound } = await Audio.Sound.createAsync(
           { uri: sourcePath },
@@ -194,7 +194,7 @@ export function useTextToSpeech() {
         );
         if (generationRef.current !== myGeneration) {
           await sound.unloadAsync().catch(() => undefined);
-          return;
+          return null;
         }
         soundRef.current = sound;
         setState({
@@ -214,8 +214,9 @@ export function useTextToSpeech() {
             }
           }
         });
+        return null;
       } catch (err) {
-        if (generationRef.current !== myGeneration) return;
+        if (generationRef.current !== myGeneration) return null;
         const ttsError =
           err && typeof err === 'object' && 'code' in (err as TtsErrorState)
             ? (err as TtsErrorState)
@@ -234,6 +235,7 @@ export function useTextToSpeech() {
           activeMessageId: args.messageId,
           error: ttsError,
         });
+        return ttsError;
       }
     },
     [loadOrFetchAudio, stopInternal],

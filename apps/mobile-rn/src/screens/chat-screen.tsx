@@ -47,6 +47,7 @@ import {
   lookupCachedFortuneResult,
   startAsyncPosterJob,
 } from '../features/chat-results/edge-runtime';
+import { canReuseEmbeddedResultMessage } from '../features/chat-results/reuse-policy';
 import type { EmbeddedResultPayload } from '../features/chat-results/types';
 import { HaneulFortuneReadingScreen } from '../features/fortune-results/fullscreen/haneul-fortune-reading-screen';
 import { resolveResultKindFromFortuneType } from '../features/fortune-results/mapping';
@@ -4364,7 +4365,8 @@ export function ChatScreen() {
 
       if (
         message?.kind === 'embedded-result' &&
-        message.fortuneType === fortuneType
+        message.fortuneType === fortuneType &&
+        canReuseEmbeddedResultMessage(message, fortuneType)
       ) {
         return message;
       }

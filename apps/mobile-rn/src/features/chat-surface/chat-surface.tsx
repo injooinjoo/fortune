@@ -14,7 +14,6 @@ import { Card } from '../../components/card';
 import { Chip } from '../../components/chip';
 import { InlineCalendar } from '../../components/inline-calendar';
 import { PrimaryButton } from '../../components/primary-button';
-import { SpeakerButton } from '../../components/speaker-button';
 import { SurveyComposer } from '../../components/survey-composer';
 import { SocialAuthPillButton } from '../../components/social-auth-pill-button';
 import { VoiceWaveform } from '../../components/voice-waveform';
@@ -1397,11 +1396,11 @@ function ChatThreadMessage({
   timeDividerShownBefore?: boolean;
   /** 본인이 보낸 텍스트 메시지를 길게 눌러 삭제할 수 있게 하는 핸들러. */
   onDeleteUserMessage?: (messageId: string) => void;
-  /** TTS controller 상태 — assistant text 메시지 아래 SpeakerButton 표시용. */
+  /** TTS controller 상태 — assistant text 메시지 long-press 메뉴용. */
   ttsControllerStatus?: import('../../lib/use-text-to-speech').TtsStatus;
   ttsActiveMessageId?: string | null;
   ttsError?: import('../../lib/use-text-to-speech').TtsErrorState | null;
-  onPlayTts?: (args: { messageId: string; text: string; emotion?: string }) => void;
+  onPlayTts?: (args: { messageId: string; text: string; emotion?: string }) => void | Promise<void>;
   onStopTts?: () => void;
   /** PR-B2: 운세 메뉴 카드 entry 탭 시 호출. chat-screen 이 cost modal 띄움. */
   onSelectFortuneMenuEntry?: (entry: import('@fortune/product-contracts').FortuneCatalogEntry) => void;
@@ -1437,6 +1436,44 @@ function ChatThreadMessage({
     message.sender === 'user' &&
     typeof onDeleteUserMessage === 'function';
   const [reportOpen, setReportOpen] = useState(false);
+
+  const handleAssistantLongPress = () => {
+    if (!reportable) return;
+
+    const ttsActiveForMessage = ttsActiveMessageId === message.id;
+    const ttsBusyForMessage =
+      ttsActiveForMessage && (ttsControllerStatus === 'playing' || ttsControllerStatus === 'loading');
+    const ttsErrorForMessage =
+      ttsActiveForMessage && ttsControllerStatus === 'error' && ttsError != null;
+
+    Alert.alert(
+      '메시지',
+      undefined,
+      [
+        ...(ttsPlayable
+          ? [
+              {
+                text: ttsBusyForMessage ? '음성 중지' : ttsErrorForMessage ? '음성 다시 듣기' : '음성으로 듣기',
+                onPress: () => {
+                  if (ttsBusyForMessage) {
+                    onStopTts?.();
+                    return;
+                  }
+                  void onPlayTts?.({
+                    messageId: message.id,
+                    text: (message as ChatShellTextMessage).text,
+                    emotion: (message as ChatShellTextMessage).emotionTag,
+                  });
+                },
+              },
+            ]
+          : []),
+        { text: '신고', onPress: () => setReportOpen(true) },
+        { text: '취소', style: 'cancel' },
+      ],
+      { cancelable: true },
+    );
+  };
 
   const handleUserLongPress = () => {
     if (!userDeletable) return;
@@ -1550,11 +1587,11 @@ function ChatThreadMessage({
           // keyboard.dismiss 가 안 됨. 버블 폭 (maxWidth 86%) 만큼만 차지.
           <Pressable
             style={{ alignSelf: 'flex-start' }}
-            onLongPress={() => setReportOpen(true)}
+            onLongPress={handleAssistantLongPress}
             // delayLongPress 기본 500ms — 스크롤 오작동 최소화
             android_ripple={null}
             accessibilityRole="button"
-            accessibilityLabel="메시지 길게 눌러 신고"
+            accessibilityLabel="메시지 길게 눌러 옵션 열기"
           >
             {bubble}
           </Pressable>
@@ -1573,23 +1610,6 @@ function ChatThreadMessage({
           bubble
         )}
       </View>
-
-      {ttsPlayable ? (
-        <SpeakerButton
-          messageId={message.id}
-          controllerStatus={ttsControllerStatus ?? 'idle'}
-          controllerActiveMessageId={ttsActiveMessageId ?? null}
-          controllerError={ttsError ?? null}
-          onPress={() =>
-            onPlayTts?.({
-              messageId: message.id,
-              text: (message as ChatShellTextMessage).text,
-              emotion: (message as ChatShellTextMessage).emotionTag,
-            })
-          }
-          onStop={() => onStopTts?.()}
-        />
-      ) : null}
 
       {reportable ? (
         <MessageReportSheet
@@ -3280,11 +3300,11 @@ export function ActiveCharacterChatSurface({
    * 메뉴가 안 뜬다 (chat-screen 외 다른 surface 에선 의도적으로 비활성).
    */
   onDeleteUserMessage?: (messageId: string) => void;
-  /** TTS controller — assistant text 메시지 아래 SpeakerButton 표시 + 재생/정지. */
+  /** TTS controller — assistant text 메시지 long-press 메뉴 재생/정지. */
   ttsControllerStatus?: import('../../lib/use-text-to-speech').TtsStatus;
   ttsActiveMessageId?: string | null;
   ttsError?: import('../../lib/use-text-to-speech').TtsErrorState | null;
-  onPlayTts?: (args: { messageId: string; text: string; emotion?: string }) => void;
+  onPlayTts?: (args: { messageId: string; text: string; emotion?: string }) => void | Promise<void>;
   onStopTts?: () => void;
   showHeader?: boolean;
   romanceScore?: number;

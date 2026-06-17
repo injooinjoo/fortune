@@ -20,6 +20,9 @@
  */
 
 import { useCallback, useEffect, useRef } from 'react';
+import { Alert } from 'react-native';
+
+import { router } from 'expo-router';
 
 import { loveHeartbeat, tapLight } from '../../../lib/haptics';
 import { useTextToSpeech } from '../../../lib/use-text-to-speech';
@@ -36,13 +39,24 @@ export function useChatTtsHaptics(input: UseChatTtsHapticsInput) {
   const tts = useTextToSpeech();
 
   const handlePlayTts = useCallback(
-    (args: { messageId: string; text: string; emotion?: string }) => {
-      void tts.play({
+    async (args: { messageId: string; text: string; emotion?: string }) => {
+      const error = await tts.play({
         messageId: args.messageId,
         text: args.text,
         characterId: selectedCharacterId,
         emotion: args.emotion,
       });
+      if (!error) return;
+
+      if (error.code === 'PREMIUM_REQUIRED') {
+        Alert.alert('프리미엄 기능', error.message, [
+          { text: '나중에', style: 'cancel' },
+          { text: '구독 보기', onPress: () => router.push('/premium') },
+        ]);
+        return;
+      }
+
+      Alert.alert('음성 재생 실패', error.message || '잠시 후 다시 시도해 주세요.');
     },
     [selectedCharacterId, tts],
   );
