@@ -82,19 +82,17 @@ export function SentenceReadingPlayer({
 
   const sentence = sentences[activeIndex];
   const progress = `${activeIndex + 1} / ${sentences.length}`;
-  const accessibilitySentence = `${sentence.main}${sentence.sub ? ` ${sentence.sub}` : ''}`;
 
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`오늘의 운세 리딩 ${progress}. ${accessibilitySentence}. 탭하면 다음 문장으로 넘어갑니다.`}
-      onPress={handleAdvance}
+      accessibilityLabel={`오늘의 운세 리딩 ${progress}. ${sentence.main}. 탭하면 다음 문장으로 넘어갑니다.`}
+      onPress={() => handleAdvance(true)}
       style={{ alignItems: 'center', backgroundColor: '#000000', flex: 1, justifyContent: 'center', width: '100%' }}
     >
       <Animated.View
         style={{
           alignItems: 'center',
-          gap: 18,
           maxWidth: 360,
           opacity,
           paddingHorizontal: 8,
@@ -104,35 +102,27 @@ export function SentenceReadingPlayer({
         <AppText
           variant="heading1"
           color={fortuneReadingPalette.textPrimary}
-          style={{ lineHeight: 42, maxWidth: 330, textAlign: 'center' }}
+          style={{ lineHeight: 44, maxWidth: 342, textAlign: 'center' }}
         >
           {sentence.main}
         </AppText>
-        {sentence.sub ? (
-          <AppText
-            variant="bodySmall"
-            color={fortuneReadingPalette.textPrimary}
-            style={{ lineHeight: 25, maxWidth: 310, opacity: 0.76, textAlign: 'center' }}
-          >
-            {sentence.sub}
-          </AppText>
-        ) : null}
       </Animated.View>
     </Pressable>
   );
 
-  function handleAdvance() {
+  function handleAdvance(skipExitAnimation = false) {
     if (advancingRef.current || completingRef.current) return;
     advancingRef.current = true;
     pageSnap();
 
-    if (reduceMotion) {
+    clearPendingTimeout();
+    opacity.stopAnimation();
+
+    if (reduceMotion || skipExitAnimation) {
+      opacity.setValue(0);
       goNext();
       return;
     }
-
-    clearPendingTimeout();
-    opacity.stopAnimation();
 
     Animated.parallel([
       Animated.timing(opacity, {

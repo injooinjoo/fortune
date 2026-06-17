@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 import { Modal, Pressable, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText } from '../../../components/app-text';
 import type { EmbeddedResultPayload } from '../../chat-results/types';
-import { fortuneReadingPalette, fortuneTheme, withAlpha } from '../../../lib/theme';
+import { fortuneReadingPalette, fortuneTheme } from '../../../lib/theme';
 import type { ResultKind } from '../types';
 import { FortuneReadingSummaryCard } from './fortune-reading-summary-card';
 import { buildReadingSentences } from './reading-sentences';
@@ -25,6 +25,7 @@ export function HaneulFortuneReadingScreen({
 }: HaneulFortuneReadingScreenProps) {
   const [phase, setPhase] = useState<'reading' | 'summary'>('reading');
   const [replayKey, setReplayKey] = useState(0);
+  const insets = useSafeAreaInsets();
   const sentences = useMemo(
     () => buildReadingSentences(payload, resultKind),
     [payload, resultKind],
@@ -54,6 +55,7 @@ export function HaneulFortuneReadingScreen({
       {visible ? (
         <SafeAreaView
           accessibilityViewIsModal
+          edges={['left', 'right']}
           style={{
             backgroundColor: fortuneReadingPalette.background,
             flex: 1,
@@ -63,8 +65,8 @@ export function HaneulFortuneReadingScreen({
             style={{
               flex: 1,
               paddingHorizontal: fortuneTheme.spacing.pageHorizontal,
-              paddingTop: fortuneTheme.spacing.lg,
-              paddingBottom: fortuneTheme.spacing.md,
+              paddingTop: Math.max(insets.top + fortuneTheme.spacing.lg, 88),
+              paddingBottom: Math.max(insets.bottom, fortuneTheme.spacing.md),
             }}
           >
             <View
@@ -115,23 +117,6 @@ export function HaneulFortuneReadingScreen({
               </View>
             )}
 
-            <View
-              style={{
-                alignItems: 'center',
-                gap: 10,
-                paddingBottom: 4,
-              }}
-            >
-              <AppText
-                variant="caption"
-                color={withAlpha(fortuneReadingPalette.textPrimary, 0.55)}
-                style={{ textAlign: 'center' }}
-              >
-                {phase === 'reading'
-                  ? '흰 글씨가 천천히 나타나고 사라져요'
-                  : '닫으면 하늘이 채팅 안에서 결과를 계속 볼 수 있어요'}
-              </AppText>
-            </View>
           </View>
         </SafeAreaView>
       ) : null}

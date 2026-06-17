@@ -2,7 +2,10 @@ import type { FortuneTypeId } from '@fortune/product-contracts';
 
 import type { ChatShellEmbeddedResultMessage } from '../../lib/chat-shell';
 
-const DAILY_REVALIDATED_FORTUNE_TYPES = new Set<FortuneTypeId>(['daily']);
+const DAILY_REVALIDATED_FORTUNE_TYPES = new Set<FortuneTypeId>([
+  'daily',
+  'daily-calendar',
+]);
 const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
 
 /**

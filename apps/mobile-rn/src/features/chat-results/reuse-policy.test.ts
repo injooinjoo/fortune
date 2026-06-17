@@ -60,6 +60,14 @@ function idAt(timestampMs: number): string {
     !canReuseEmbeddedResultMessage(resultMessage(idAt(june11Kst)), 'daily', june17Kst),
     '오늘의 운세 daily 결과는 KST 날짜가 바뀌면 재사용하면 안 된다',
   );
+  assert(
+    !canReuseEmbeddedResultMessage(
+      resultMessage(idAt(june11Kst), 'daily-calendar'),
+      'daily-calendar',
+      june17Kst,
+    ),
+    '오늘의 운세 daily-calendar 결과도 KST 날짜가 바뀌면 재사용하면 안 된다',
+  );
 }
 
 {
