@@ -551,6 +551,7 @@ function assembleEmbeddedPayload(
     eyebrow: spec.eyebrow ?? 'Ondo',
     title,
     subtitle,
+    generatedAt: new Date().toISOString(),
     score,
     summary,
     highlights,

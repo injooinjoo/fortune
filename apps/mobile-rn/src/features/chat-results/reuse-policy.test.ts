@@ -8,7 +8,11 @@ function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
-function resultMessage(id: string, fortuneType = 'daily') {
+function resultMessage(
+  id: string,
+  fortuneType = 'daily',
+  generatedAt?: string,
+) {
   return {
     id,
     kind: 'embedded-result',
@@ -23,6 +27,7 @@ function resultMessage(id: string, fortuneType = 'daily') {
       resultKind: 'daily',
       title: '오늘 흐름',
       summary: '테스트',
+      ...(generatedAt ? { generatedAt } : {}),
       score: 80,
     },
   } as never;
@@ -57,16 +62,41 @@ function idAt(timestampMs: number): string {
   const june11Kst = Date.UTC(2026, 5, 11, 3, 0, 0);
   const june17Kst = Date.UTC(2026, 5, 17, 3, 0, 0);
   assert(
-    !canReuseEmbeddedResultMessage(resultMessage(idAt(june11Kst)), 'daily', june17Kst),
+    !canReuseEmbeddedResultMessage(
+      resultMessage(idAt(june11Kst), 'daily', new Date(june11Kst).toISOString()),
+      'daily',
+      june17Kst,
+    ),
     '오늘의 운세 daily 결과는 KST 날짜가 바뀌면 재사용하면 안 된다',
   );
   assert(
     !canReuseEmbeddedResultMessage(
-      resultMessage(idAt(june11Kst), 'daily-calendar'),
+      resultMessage(
+        idAt(june11Kst),
+        'daily-calendar',
+        new Date(june11Kst).toISOString(),
+      ),
       'daily-calendar',
       june17Kst,
     ),
     '오늘의 운세 daily-calendar 결과도 KST 날짜가 바뀌면 재사용하면 안 된다',
+  );
+}
+
+{
+  const june17MorningKst = Date.UTC(2026, 5, 16, 22, 30, 0);
+  const june17NightKst = Date.UTC(2026, 5, 17, 14, 30, 0);
+  assert(
+    canReuseEmbeddedResultMessage(
+      resultMessage(
+        idAt(june17MorningKst),
+        'daily',
+        new Date(june17MorningKst).toISOString(),
+      ),
+      'daily',
+      june17NightKst,
+    ),
+    'payload 생성일이 KST 기준 오늘이면 daily 결과 재사용을 허용한다',
   );
 }
 
@@ -87,5 +117,18 @@ function idAt(timestampMs: number): string {
   assert(
     !canReuseEmbeddedResultMessage(resultMessage('legacy-result-id'), 'daily'),
     '생성 날짜를 알 수 없는 legacy daily 결과는 stale 방지를 위해 재사용하지 않는다',
+  );
+}
+
+{
+  const june11Kst = Date.UTC(2026, 5, 11, 3, 0, 0);
+  const june17Kst = Date.UTC(2026, 5, 17, 3, 0, 0);
+  assert(
+    !canReuseEmbeddedResultMessage(
+      resultMessage(idAt(june17Kst), 'daily', new Date(june11Kst).toISOString()),
+      'daily',
+      june17Kst,
+    ),
+    '오래된 payload를 오늘 다시 열어 새 message id가 생겨도 daily는 재사용하면 안 된다',
   );
 }

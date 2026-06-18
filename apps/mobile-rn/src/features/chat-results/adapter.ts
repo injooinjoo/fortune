@@ -102,6 +102,7 @@ export function buildEmbeddedResultPayload(
 
   const payload: EmbeddedResultPayload = {
     ...fallback,
+    generatedAt: new Date().toISOString(),
     score: applyContextualScore(fallback.score, fortuneType, context),
     summary: buildContextualSummary(fortuneType, fallback.summary, normalized),
     contextTags: normalized.tags.length > 0 ? normalized.tags : undefined,
@@ -145,6 +146,7 @@ export function buildEmbeddedResultPayloadFromNormalizedResult(
 
   const resultPayload: EmbeddedResultPayload = {
     ...fallback,
+    generatedAt: new Date().toISOString(),
     score: normalizedResult.score ?? applyContextualScore(fallback.score, fortuneType, context),
     summary: buildContextualSummary(
       fortuneType,

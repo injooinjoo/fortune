@@ -158,8 +158,14 @@ const fortuneResultCache = new Map<string, { payload: EmbeddedResultPayload; ts:
 const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes
 const CACHE_MAX_SIZE = 50;
 
+const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
+
+function toKstDateKey(timestampMs: number): string {
+  return new Date(timestampMs + KST_OFFSET_MS).toISOString().slice(0, 10);
+}
+
 function buildCacheKey(fortuneType: string, userId?: string | null): string {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = toKstDateKey(Date.now());
   return `${fortuneType}:${today}:${userId ?? 'guest'}`;
 }
 

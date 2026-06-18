@@ -29,6 +29,34 @@ export function isSameKstCalendarDay(leftMs: number, rightMs: number): boolean {
   return toKstDateKey(leftMs) === toKstDateKey(rightMs);
 }
 
+function parseIsoTimestampMs(value: unknown): number | null {
+  if (typeof value !== 'string' || !value.trim()) return null;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) ? timestamp : null;
+}
+
+function readNestedRecordValue(record: unknown, path: string[]): unknown {
+  let current: unknown = record;
+  for (const key of path) {
+    if (!current || typeof current !== 'object') return undefined;
+    current = (current as Record<string, unknown>)[key];
+  }
+  return current;
+}
+
+function parsePayloadGeneratedTimestampMs(
+  message: ChatShellEmbeddedResultMessage,
+): number | null {
+  return (
+    parseIsoTimestampMs(message.payload.generatedAt) ??
+    parseIsoTimestampMs(readNestedRecordValue(message.payload.rawApiResponse, ['timestamp'])) ??
+    parseIsoTimestampMs(readNestedRecordValue(message.payload.rawApiResponse, ['generatedAt'])) ??
+    parseIsoTimestampMs(readNestedRecordValue(message.payload.rawApiResponse, ['createdAt'])) ??
+    parseIsoTimestampMs(readNestedRecordValue(message.payload.rawApiResponse, ['fortune', 'timestamp'])) ??
+    parseIsoTimestampMs(readNestedRecordValue(message.payload.rawApiResponse, ['data', 'timestamp']))
+  );
+}
+
 export function canReuseEmbeddedResultMessage(
   message: ChatShellEmbeddedResultMessage,
   fortuneType: FortuneTypeId,
@@ -38,10 +66,11 @@ export function canReuseEmbeddedResultMessage(
     return true;
   }
 
-  const generatedAtMs = parseGeneratedResultTimestampMs(message.id);
+  const generatedAtMs = parsePayloadGeneratedTimestampMs(message);
   if (generatedAtMs === null) {
-    // Date-sensitive fortunes must not be reused when their generation date is
-    // unknown; otherwise a stale "today" card can be pinned forever.
+    // Date-sensitive fortunes must use the payload generation date, not the
+    // wrapper message id. Reopening an old payload creates a fresh message id;
+    // trusting that id pins stale "today" content under a new date.
     return false;
   }
 

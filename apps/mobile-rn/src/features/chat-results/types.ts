@@ -83,6 +83,8 @@ export interface EmbeddedResultPayload {
   title: string;
   subtitle: string;
   summary: string;
+  /** ISO timestamp for the actual payload generation, not a later re-open wrapper. */
+  generatedAt?: string;
   score?: number;
   contextTags?: string[];
   metrics?: MetricTileData[];
