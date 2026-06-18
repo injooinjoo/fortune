@@ -3231,6 +3231,7 @@
       "notes": [],
       "path": "supabase/functions/_shared/cohort/index.ts",
       "referenced_by": [
+        "supabase/functions/_shared/cohort/index_test.ts",
         "supabase/functions/fortune-avoid-people/index.ts",
         "supabase/functions/fortune-blind-date/index.ts",
         "supabase/functions/fortune-career/index.ts",
@@ -3261,6 +3262,20 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase1_remove_candidate",
+      "dirty": false,
+      "kind": "edge_shared_source",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "supabase/functions/_shared/cohort/index_test.ts",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "unreferenced"
     },
     {
       "area": "supabase",
@@ -8325,13 +8340,13 @@
     "counts_by_area": {
       "docs": 156,
       "scripts": 55,
-      "supabase": 333
+      "supabase": 334
     },
     "counts_by_candidate_action": {
       "keep": 58,
       "keep_generated": 2,
       "manual_review": 48,
-      "phase1_remove_candidate": 2,
+      "phase1_remove_candidate": 3,
       "phase2_review_candidate": 434
     },
     "counts_by_usage_status": {
@@ -8339,7 +8354,7 @@
       "generated_excluded": 2,
       "runtime_used": 58,
       "tooling_only": 248,
-      "unreferenced": 50
+      "unreferenced": 51
     },
     "declared_asset_dirs_without_runtime_refs": [],
     "generated_outputs": [
@@ -8391,7 +8406,7 @@
       "generate-poster-guide",
       "grant-ad-reward"
     ],
-    "total_files": 544,
+    "total_files": 545,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "ack-scheduled-reply",
