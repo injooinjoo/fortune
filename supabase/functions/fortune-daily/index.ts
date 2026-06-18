@@ -379,7 +379,7 @@ serve(async (req) => {
     // 🚀 Cohort Pool 조회 (API 비용 90% 절감)
     // ============================================
     // 온디맨드 Pool 저장을 위해 cohortData를 외부에 선언
-    let dailyCohortData: { period: string; zodiac: string; element: string } | null = null;
+    let dailyCohortData: Record<string, string> | null = null;
     let dailyCohortHash: string | null = null;
 
     if (birthDate) {

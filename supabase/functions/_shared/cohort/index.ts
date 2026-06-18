@@ -106,10 +106,13 @@ export function extractDailyCohort(input: {
   now?: Date;
 }): CohortData {
   const birth = new Date(input.birthDate);
-  const now = input.now || new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
+  const now = input.now || new Date();
+  const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  const dateKey = `${kst.getUTCFullYear()}-${String(kst.getUTCMonth() + 1).padStart(2, '0')}-${String(kst.getUTCDate()).padStart(2, '0')}`;
 
   return {
-    period: getPeriod(now.getHours()),
+    dateKey,
+    period: getPeriod(kst.getUTCHours()),
     zodiac: getZodiacName(birth.getFullYear()),
     element: getElement(birth.getFullYear()),
   };
