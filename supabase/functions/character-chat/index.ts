@@ -2723,7 +2723,9 @@ async function tryProactiveReveal(params: {
     return null; // 일반 LLM 응답으로 fall through
   }
 
-  // 5. Stage 2 push (body='[사진]')
+  // 5. Stage 2 push. iOS 알림에 기계적인 "[사진]" 이 그대로 뜨면
+  // 사용자가 버그처럼 느끼므로, OS body 는 자연어로 보내고 payload 에
+  // 실제 imageUrl/caption 을 넣어 클라가 이미지 메시지로 즉시 저장하게 한다.
   if (params.shouldSendPush) {
     try {
       await sendCharacterDmPush({
@@ -2731,9 +2733,11 @@ async function tryProactiveReveal(params: {
         userId: params.userId,
         characterId: params.characterId,
         characterName: params.characterName,
-        messageText: "[사진]",
+        messageText: caption ? `사진 보냈어 — ${caption}` : "사진 보냈어.",
         messageId: revealMessageId,
         type: "character_proactive",
+        imageUrl: placeholderUrl,
+        caption,
       });
     } catch (e) {
       console.warn(`[reveal] Stage 2 push 실패:`, e);

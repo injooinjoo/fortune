@@ -90,6 +90,7 @@ export function getCanonicalVisibleMessages(messages: readonly ChatShellMessage[
   return sortMessagesByTimestamp(messages);
 }
 
+const CHAT_REPLY_HERO_ENABLED = false;
 const HERO_TOKEN_STEP_MS = 260;
 const HERO_TOKEN_DURATION_MS = 240;
 const HERO_REDUCED_MOTION_MS = 520;
@@ -3325,13 +3326,15 @@ export function ActiveCharacterChatSurface({
   const { state: mobileAppState } = useMobileAppState();
   const heroReplyMessages = useMemo(
     () =>
-      visibleMessages.filter(
-        (message): message is ChatShellTextMessage =>
-          message.kind === 'text' &&
-          message.sender === 'assistant' &&
-          message.animate === true &&
-          message.text.trim().length > 0,
-      ),
+      CHAT_REPLY_HERO_ENABLED
+        ? visibleMessages.filter(
+            (message): message is ChatShellTextMessage =>
+              message.kind === 'text' &&
+              message.sender === 'assistant' &&
+              message.animate === true &&
+              message.text.trim().length > 0,
+          )
+        : [],
     [visibleMessages],
   );
   const renderItems = useMemo(() => buildChatRenderItems(visibleMessages), [visibleMessages]);
@@ -3361,10 +3364,12 @@ export function ActiveCharacterChatSurface({
 
   return (
     <View style={{ gap: fortuneTheme.spacing.md, backgroundColor: chatTintBg }}>
-      <CharacterReplyHeroOverlay
-        messages={heroReplyMessages}
-        hapticsEnabled={mobileAppState.settings.chatHapticsEnabled}
-      />
+      {CHAT_REPLY_HERO_ENABLED ? (
+        <CharacterReplyHeroOverlay
+          messages={heroReplyMessages}
+          hapticsEnabled={mobileAppState.settings.chatHapticsEnabled}
+        />
+      ) : null}
       {showHeader ? (
         <ActiveCharacterChatHeader
           character={character}

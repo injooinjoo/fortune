@@ -31,6 +31,10 @@ export interface CharacterPushPayload {
   // proactive_message_log row id (Slice 2). hookForReveal=true 인 메시지일 때만.
   // 클라가 character-chat 호출 시 body 에 동봉 → 서버가 reveal claim 시 race 회피.
   pendingProactiveMessageId?: string;
+  // 사진/이미지 메시지 push. OS 알림 문구와 채팅 저장 payload 를 분리해서
+  // 알림에 기계적인 "[사진]" 이 노출되지 않도록 한다.
+  imageUrl?: string;
+  caption?: string;
 }
 
 export interface CharacterPushSendResult {
@@ -107,6 +111,15 @@ export function buildCharacterDmPayload(
     // 클라가 character-chat 호출 시 body 에 동봉.
     payload["pending_proactive_message_id"] = params.pendingProactiveMessageId;
     payload["pendingProactiveMessageId"] = params.pendingProactiveMessageId;
+  }
+
+  if (params.imageUrl) {
+    payload["kind"] = "image";
+    payload["image_url"] = params.imageUrl;
+    payload["imageUrl"] = params.imageUrl;
+    if (params.caption) {
+      payload["caption"] = params.caption;
+    }
   }
 
   return payload;
@@ -413,6 +426,8 @@ export async function sendCharacterDmPush(params: {
   scheduledId?: string;
   scheduledMessagesJson?: string;
   pendingProactiveMessageId?: string;
+  imageUrl?: string;
+  caption?: string;
 }): Promise<CharacterPushSendResult> {
   const isEnabled = await hasCharacterNotificationEnabled(
     params.supabase,
@@ -452,6 +467,8 @@ export async function sendCharacterDmPush(params: {
     scheduledId: params.scheduledId,
     scheduledMessagesJson: params.scheduledMessagesJson,
     pendingProactiveMessageId: params.pendingProactiveMessageId,
+    imageUrl: params.imageUrl,
+    caption: params.caption,
   });
 
   const sentCount = await sendExpoPushToTokens(params.supabase, {

@@ -25,6 +25,7 @@ export function requireWorkerAuth(req: Request): Response | null {
   }
 
   const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+  const ondoServiceRoleKey = Deno.env.get('ONDO_SERVICE_ROLE_JWT') ?? '';
   const cronSecret = Deno.env.get('CRON_SECRET') ?? '';
 
   // constant-time 비교는 Deno 표준 라이브러리에 없음. 여기선 하나-하나 비교
@@ -32,6 +33,7 @@ export function requireWorkerAuth(req: Request): Response | null {
   // timing attack 표면 적음.
   const acceptableTokens: string[] = [];
   if (serviceRoleKey) acceptableTokens.push(serviceRoleKey);
+  if (ondoServiceRoleKey) acceptableTokens.push(ondoServiceRoleKey);
   if (cronSecret) acceptableTokens.push(cronSecret);
 
   if (acceptableTokens.length === 0) {

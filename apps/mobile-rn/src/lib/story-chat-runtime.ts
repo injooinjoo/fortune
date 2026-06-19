@@ -1250,6 +1250,26 @@ export async function invokeStoryChat(
     ? { ...bodyWithProfile, pendingProactiveMessageId }
     : bodyWithProfile;
 
+  // The foreground request may include a multi-MB data:image payload so the LLM
+  // can react to a just-sent photo. Do not persist that raw base64 into the
+  // pending-job recovery row: retries then have to move the same giant JSONB
+  // through DB/RPC/Edge Function again, and a single oversized/stale photo can
+  // leave the visible user bubble with no recoverable assistant reply. The live
+  // invoke below still receives the image; the recovery job falls back to the
+  // textual prompt if the app dies or the direct call is dropped.
+  const pendingJobPayload = options?.imageBase64
+    ? (() => {
+        const {
+          imageBase64: _imageBase64,
+          ...withoutImage
+        } = body as Record<string, unknown>;
+        return {
+          ...withoutImage,
+          imageInputOmittedFromRecovery: true,
+        };
+      })()
+    : body;
+
   // 답장 생성 큐 enqueue — 앱이 invoke 도중 죽거나 HTTP 가 도달 못 해도 cron
   // 이 30초 grace 후 같은 페이로드로 재호출. 회귀 안전: 실패해도 invoke 진행.
   let pendingReplyJobId: string | undefined;
@@ -1262,7 +1282,7 @@ export async function invokeStoryChat(
           p_character_name: character.name,
           p_user_message_id: options.userMessageId,
           p_user_message: userMessage,
-          p_request_payload: body,
+          p_request_payload: pendingJobPayload,
         },
       );
       if (enqueueError) {

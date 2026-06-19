@@ -31,6 +31,7 @@ import { appEnv } from '../lib/env';
 import { captureError } from '../lib/error-reporting';
 import {
   ackScheduledReplyIfPresent,
+  applySharedBadgeCountToAppIcon,
   decrementSharedBadgeCount,
   incrementAppIconBadgeCount,
   insertMessageFromPushIfPresent,
@@ -487,7 +488,7 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
           if (shouldSkipJsBadgeIncrement) {
             wasNativeBadgeIncrementRecentlyApplied()
               .then((nativeApplied) => {
-                if (nativeApplied) return;
+                if (nativeApplied) return applySharedBadgeCountToAppIcon();
                 return incrementAppIconBadgeCount();
               })
               .catch((error) => {

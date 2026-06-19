@@ -58,3 +58,9 @@ verify_jwt = false
 
 [functions.fortune-palm-reading]
 verify_jwt = false
+
+# Client-side audio transcription before sending chat prompts to story characters.
+# The app normally sends the user's JWT, but local/dev and anonymous-safe CORS calls
+# should be handled inside the function rather than rejected by the gateway.
+[functions.speech-to-text]
+verify_jwt = false

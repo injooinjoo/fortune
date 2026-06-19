@@ -38,3 +38,21 @@ Deno.test("proactive push payload carries pendingProactiveMessageId in snake and
   assertEquals(payload.pendingProactiveMessageId, "log-1");
   assertEquals(payload.route, "/chat?characterId=luts");
 });
+
+Deno.test("image proactive push keeps human notification body and carries image metadata", () => {
+  const payload = buildCharacterDmPayload({
+    characterId: "luts",
+    characterName: "luts",
+    messageText: "사진 보냈어 — 너무먹었어",
+    messageId: "img-1",
+    type: "character_proactive",
+    imageUrl: "https://example.com/photo.webp",
+    caption: "너무먹었어",
+  });
+
+  assertEquals(payload.body, "사진 보냈어 — 너무먹었어");
+  assertEquals(payload.kind, "image");
+  assertEquals(payload.image_url, "https://example.com/photo.webp");
+  assertEquals(payload.imageUrl, "https://example.com/photo.webp");
+  assertEquals(payload.caption, "너무먹었어");
+});

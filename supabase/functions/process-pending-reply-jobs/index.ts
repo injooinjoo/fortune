@@ -50,7 +50,8 @@ serve(async (req: Request) => {
   if (authError) return authError;
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  const serviceKey = Deno.env.get("ONDO_SERVICE_ROLE_JWT") ??
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!supabaseUrl || !serviceKey) {
     return new Response(
       JSON.stringify({
@@ -87,10 +88,12 @@ serve(async (req: Request) => {
         );
         break;
       }
-      // RPC 가 RETURNS pending_character_reply_jobs (record). 클레임할 row 없으면
-      // 모든 컬럼 NULL row 가 나옴 — id 없으면 노op 처리.
-      claimed = data && (data as { id?: string }).id
-        ? (data as PendingJobRow)
+      // RPC 가 RETURNS pending_character_reply_jobs (record). Supabase-js/PostgREST
+      // 환경에 따라 object 또는 one-row array 로 직렬화될 수 있다. array 를
+      // no_pending 으로 오판하면 pending row 가 영원히 처리되지 않는다.
+      const maybeClaimed = Array.isArray(data) ? data[0] : data;
+      claimed = maybeClaimed && (maybeClaimed as { id?: string }).id
+        ? (maybeClaimed as PendingJobRow)
         : null;
     } catch (claimEx) {
       console.error("[process-pending-reply-jobs] claim 예외:", claimEx);

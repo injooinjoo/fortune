@@ -200,6 +200,54 @@ const AUDIO_ONLY_STORY_PROMPT =
 const PHOTO_ONLY_STORY_PROMPT =
   '[사용자가 사진을 보냈어요. 사진을 보고 구체적으로 반응하되, 과장하지 말고 자연스럽게 짧게 답해 주세요.]';
 
+type SpeechToTextResponse = {
+  success?: boolean;
+  text?: string;
+  error?: string;
+  detail?: string;
+};
+
+async function transcribeUserAudioMessage(params: {
+  localUri: string;
+  mimeType?: string;
+}): Promise<string> {
+  const mimeType = params.mimeType || 'audio/mp4';
+  const extension = mimeType.includes('mpeg')
+    ? 'mp3'
+    : mimeType.includes('wav')
+      ? 'wav'
+      : 'm4a';
+  const formData = new FormData();
+  formData.append('language', 'ko');
+  formData.append(
+    'file',
+    {
+      uri: params.localUri,
+      name: `user-audio.${extension}`,
+      type: mimeType,
+    } as unknown as Blob,
+  );
+
+  if (!supabase) {
+    throw new Error('Supabase is not configured');
+  }
+
+  const { data, error } = await supabase.functions.invoke<SpeechToTextResponse>(
+    'speech-to-text',
+    { body: formData },
+  );
+
+  if (error) {
+    throw error;
+  }
+
+  const transcript = data?.text?.trim() ?? '';
+  if (!transcript) {
+    throw new Error(data?.detail || data?.error || 'Empty transcript');
+  }
+  return transcript;
+}
+
 function randomFallbackReplyDelayMs() {
   return (Math.random() * (FALLBACK_REPLY_MAX_SEC - FALLBACK_REPLY_MIN_SEC) +
     FALLBACK_REPLY_MIN_SEC) * 1000;
@@ -4077,6 +4125,14 @@ export function ChatScreen() {
         audioMessage.audioLocalUri = localUri;
         audioMessage.mimeType = 'audio/mp4';
 
+        if (!trimmed) {
+          const transcript = await transcribeUserAudioMessage({
+            localUri,
+            mimeType: audioMessage.mimeType,
+          });
+          audioMessage.caption = transcript;
+        }
+
         const uploaded = await uploadAudioMessageAsset({
           characterId: selectedCharacter.id,
           messageId: audioMessage.id,
@@ -4090,10 +4146,13 @@ export function ChatScreen() {
           audioMessage.sizeBytes = uploaded.sizeBytes;
         }
       } catch (error) {
-        captureError(error, { surface: 'chat:audio-message-persist' }).catch(
+        captureError(error, { surface: 'chat:audio-message-persist-or-transcribe' }).catch(
           () => undefined,
         );
-        Alert.alert('음성 메시지', '음성 파일을 저장하지 못했어요. 다시 시도해 주세요.');
+        Alert.alert(
+          '음성 메시지',
+          '음성을 텍스트로 변환하지 못했어요. 다시 녹음하거나 글로 보내 주세요.',
+        );
         sendingAudioMessageRef.current = false;
         return;
       }
@@ -4116,7 +4175,7 @@ export function ChatScreen() {
         syncPendingCount(selectedCharacter.id);
       }
 
-      const visiblePrompt = trimmed || AUDIO_ONLY_STORY_PROMPT;
+      const visiblePrompt = trimmed || audioMessage.caption || AUDIO_ONLY_STORY_PROMPT;
       const replyPrompt = [...queuedSends.map((item) => item.text), visiblePrompt].join('\n\n');
       const queuedMessageIds = queuedSends.map((item) => item.userMessageId);
       const replyOptions = {
@@ -4535,11 +4594,7 @@ export function ChatScreen() {
 
   return (
     <Screen
-      contentBottomInset={
-        gate === 'ready' && surfaceMode === 'list' && activeTab === 'story'
-          ? 88
-          : 0
-      }
+      contentBottomInset={gate === 'ready' && surfaceMode === 'list' ? 88 : 0}
       onScrollContentSizeChange={(_w, h) => {
         if (gate === 'ready' && surfaceMode === 'chat') {
           scrollChatOnContentGrow(h);
@@ -4669,7 +4724,7 @@ export function ChatScreen() {
         ) : undefined
       }
       overlay={
-        gate === 'ready' && surfaceMode === 'list' && activeTab === 'story' ? (
+        gate === 'ready' && surfaceMode === 'list' ? (
           <View pointerEvents="box-none" style={{ alignItems: 'flex-end' }}>
             <FloatingCreateButton
               label="새 대화 시작"
@@ -4749,7 +4804,7 @@ export function ChatScreen() {
           />
         ) : (
           <ChatFirstRunSurface
-            activeTab={activeTab}
+            activeTab="story"
             characters={sortedFirstRunCharacters}
             lastFortuneType={mobileAppState.chat.lastFortuneType}
             onChangeTab={setActiveTab}

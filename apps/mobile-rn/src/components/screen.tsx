@@ -87,9 +87,9 @@ export function Screen({
             <Defs>
               {floatingHeader ? (
                 <LinearGradient id="screenTopBoundaryFade" x1="0" y1="0" x2="0" y2="1">
-                  <Stop offset="0" stopColor={fortuneTheme.colors.background} stopOpacity={0.78} />
-                  <Stop offset="0.54" stopColor={fortuneTheme.colors.background} stopOpacity={0.44} />
-                  <Stop offset="0.78" stopColor={fortuneTheme.colors.background} stopOpacity={0.16} />
+                  <Stop offset="0" stopColor={fortuneTheme.colors.background} stopOpacity={0.9} />
+                  <Stop offset="0.22" stopColor={fortuneTheme.colors.background} stopOpacity={0.78} />
+                  <Stop offset="0.52" stopColor={fortuneTheme.colors.background} stopOpacity={0.28} />
                   <Stop offset="1" stopColor={fortuneTheme.colors.background} stopOpacity={0} />
                 </LinearGradient>
               ) : (

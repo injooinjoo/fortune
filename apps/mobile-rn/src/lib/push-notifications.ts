@@ -104,6 +104,26 @@ function loadSharedGroupPreferences(): SharedGroupPreferencesClient | null {
   }
 }
 
+async function readSharedBadgeCount(): Promise<number | null> {
+  const SharedGroupPreferences = loadSharedGroupPreferences();
+  if (!SharedGroupPreferences?.getItem) return null;
+  try {
+    const raw = await SharedGroupPreferences.getItem(
+      APP_ICON_BADGE_COUNT_KEY,
+      APP_GROUP,
+    );
+    const parsed = typeof raw === 'string'
+      ? Number.parseInt(raw, 10)
+      : typeof raw === 'number'
+        ? raw
+        : 0;
+    return Number.isFinite(parsed) ? Math.max(0, parsed) : 0;
+  } catch (error) {
+    console.warn('[push] shared badge count 조회 실패:', error);
+    return null;
+  }
+}
+
 async function syncSharedBadgeCount(count: number): Promise<void> {
   const SharedGroupPreferences = loadSharedGroupPreferences();
   if (!SharedGroupPreferences) return;
@@ -234,6 +254,24 @@ export async function incrementAppIconBadgeCount(): Promise<void> {
 }
 
 /**
+ * iOS NSE 가 App Group count 를 먼저 올린 foreground push 에서도 실제 홈화면
+ * 앱 아이콘 badge 를 JS 쪽에서 한 번 더 강제 동기화한다. iOS foreground
+ * presentation 은 NSE content.badge 만으로 스프링보드 배지가 갱신되지 않는
+ * 케이스가 있어 "알림은 왔는데 빨간 숫자가 없음"으로 보인다.
+ */
+export async function applySharedBadgeCountToAppIcon(): Promise<void> {
+  const sharedCount = await readSharedBadgeCount();
+  if (sharedCount == null) return;
+  const Notifications = loadNotifications();
+  if (!Notifications) return;
+  try {
+    await Notifications.setBadgeCountAsync(sharedCount);
+  } catch (e) {
+    console.warn('[push] shared badge apply 실패:', e);
+  }
+}
+
+/**
  * iOS Notification Service Extension 이 background/foreground 구분 없이
  * badge_increment 를 먼저 반영한 뒤, JS 쪽에서 "현재 보고 있는 채팅방"이라고
  * 판단한 경우 1회 되돌린다. Expo Go/구 빌드처럼 NSE 가 없는 환경에서는 0 아래로
@@ -243,18 +281,11 @@ export async function decrementSharedBadgeCount(): Promise<void> {
   const SharedGroupPreferences = loadSharedGroupPreferences();
   if (!SharedGroupPreferences?.getItem) return;
   try {
-    const raw = await SharedGroupPreferences.getItem(
-      APP_ICON_BADGE_COUNT_KEY,
-      APP_GROUP,
-    );
-    const parsedCurrent = typeof raw === 'string'
-      ? Number.parseInt(raw, 10)
-      : typeof raw === 'number'
-        ? raw
-        : 0;
-    const current = Number.isFinite(parsedCurrent) ? parsedCurrent : 0;
+    const current = (await readSharedBadgeCount()) ?? 0;
     const next = Math.max(0, current - 1);
     await syncSharedBadgeCount(next);
+    const Notifications = loadNotifications();
+    await Notifications?.setBadgeCountAsync(next);
   } catch (e) {
     console.warn('[push] shared badge decrement 실패:', e);
   }
@@ -354,6 +385,26 @@ export async function insertMessageFromPushIfPresent(
     } catch (e) {
       console.warn('[push] scheduledMessagesJson parse 실패:', e);
       // fall-through to body fallback
+    }
+  }
+
+  if ((payload.kind === 'image' || payload.imageUrl) && payload.imageUrl) {
+    const id = payload.scheduledId
+      ? `scheduled-${payload.scheduledId}`
+      : payload.messageId ?? `push-image-${Date.now()}`;
+    const message: ChatShellMessage = {
+      id,
+      kind: 'image',
+      sender: 'assistant',
+      imageUrl: payload.imageUrl,
+      caption: payload.caption,
+    };
+    try {
+      await insertMessages(payload.characterId, [message]);
+      return;
+    } catch (error) {
+      console.warn('[push] image insertFromPush 실패:', error);
+      // store insert 실패해도 아래 text fallback 으로 최소 본문은 남긴다.
     }
   }
 
@@ -471,6 +522,10 @@ export interface PushResponsePayload {
   scheduledMessagesJson?: string;
   /** 푸시 타입 — 'poster_result' 면 cardPayloadJson 사용. */
   type?: string;
+  /** 이미지 메시지 push — 서버가 kind=image + imageUrl/caption 을 보내면 즉시 이미지로 저장. */
+  kind?: string;
+  imageUrl?: string;
+  caption?: string;
   /** iOS NSE 가 badge_increment 를 로컬 unread 배지에 반영할 수 있는 payload. */
   localBadgeIncrementApplied?: boolean;
   /**
@@ -541,6 +596,16 @@ export function installPushNotificationHandlers(handlers: {
     const body = typeof d.body === 'string' ? (d.body as string) : undefined;
     const title = typeof d.title === 'string' ? (d.title as string) : undefined;
     const type = typeof d.type === 'string' ? (d.type as string) : undefined;
+    const kind = typeof d.kind === 'string' ? (d.kind as string) : undefined;
+    const imageUrl =
+      typeof d.image_url === 'string'
+        ? (d.image_url as string)
+        : typeof d.imageUrl === 'string'
+          ? (d.imageUrl as string)
+          : typeof d.image === 'string'
+            ? (d.image as string)
+            : undefined;
+    const caption = typeof d.caption === 'string' ? (d.caption as string) : undefined;
     const cardPayloadJson =
       typeof d.card_payload_json === 'string'
         ? (d.card_payload_json as string)
@@ -567,6 +632,9 @@ export function installPushNotificationHandlers(handlers: {
       title,
       route,
       type,
+      kind,
+      imageUrl,
+      caption,
       cardPayloadJson,
       scheduledMessagesJson,
       pendingProactiveMessageId,
