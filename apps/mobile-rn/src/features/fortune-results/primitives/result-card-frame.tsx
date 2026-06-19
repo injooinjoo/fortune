@@ -61,6 +61,7 @@ const DOMAIN_DISCLAIMER_FALLBACKS: Partial<Record<string, string>> = {
 };
 
 export function ResultCardFrame({
+  kind,
   data,
   progress,
   onPress,
@@ -136,7 +137,11 @@ export function ResultCardFrame({
   });
 
   const metrics = data.metrics ?? [];
-  const metricCols = metrics.length >= 3 ? 3 : 2;
+  const shouldUseMetricRows =
+    kind === 'daily-calendar' ||
+    kind === 'daily' ||
+    metrics.some((metric) => (metric.note?.length ?? 0) > 28);
+  const metricCols = shouldUseMetricRows ? 1 : metrics.length >= 3 ? 3 : 2;
 
   const card = (
     <View
@@ -276,13 +281,15 @@ export function ResultCardFrame({
             <View
               key={i}
               style={{
-                width: `${100 / metricCols - 2}%`,
+                width: shouldUseMetricRows ? '100%' : `${100 / metricCols - 2}%`,
                 borderWidth: 1,
                 borderColor: fortuneTheme.colors.border,
-                borderRadius: 10,
-                paddingHorizontal: 10,
-                paddingVertical: 8,
-                backgroundColor: 'rgba(255,255,255,0.015)',
+                borderRadius: shouldUseMetricRows ? 14 : 10,
+                paddingHorizontal: shouldUseMetricRows ? 12 : 10,
+                paddingVertical: shouldUseMetricRows ? 10 : 8,
+                backgroundColor: shouldUseMetricRows
+                  ? 'rgba(255,255,255,0.03)'
+                  : 'rgba(255,255,255,0.015)',
               }}
             >
               <Text
@@ -298,8 +305,8 @@ export function ResultCardFrame({
               <Text
                 style={{
                   marginTop: 2,
-                  fontSize: 16,
-                  lineHeight: 20,
+                  fontSize: shouldUseMetricRows ? 18 : 16,
+                  lineHeight: shouldUseMetricRows ? 23 : 20,
                   fontWeight: '800',
                   color: fortuneTheme.colors.textPrimary,
                 }}
@@ -309,9 +316,9 @@ export function ResultCardFrame({
               {m.note ? (
                 <Text
                   style={{
-                    marginTop: 2,
-                    fontSize: 10,
-                    lineHeight: 14,
+                    marginTop: shouldUseMetricRows ? 6 : 2,
+                    fontSize: shouldUseMetricRows ? 12 : 10,
+                    lineHeight: shouldUseMetricRows ? 18 : 14,
                     color: fortuneTheme.colors.textSecondary,
                   }}
                 >
