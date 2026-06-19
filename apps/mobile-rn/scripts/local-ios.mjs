@@ -8,6 +8,7 @@ const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const appRoot = path.resolve(scriptDir, '..');
 const iosDir = path.join(appRoot, 'ios');
 const command = process.argv[2] ?? 'doctor';
+const debugBundleRoot = 'index';
 
 function localEnv(extra = {}) {
   return {
@@ -74,7 +75,17 @@ function readSchemes(workspacePath) {
 
 function selectScheme(workspacePath) {
   const schemes = readSchemes(workspacePath);
-  const appScheme = schemes.find((scheme) => !/pods/i.test(scheme));
+  const preferredSchemes = [
+    process.env.IOS_SCHEME,
+    'Fortune',
+    'app',
+  ].filter(Boolean);
+  const preferredScheme = preferredSchemes.find((scheme) => schemes.includes(scheme));
+  if (preferredScheme) {
+    return preferredScheme;
+  }
+
+  const appScheme = schemes.find((scheme) => !/(pods|expo|react|google|sentry|hermes|yoga|rct|rn)/i.test(scheme));
   return appScheme ?? schemes[0] ?? null;
 }
 
@@ -212,6 +223,7 @@ function bundleIdentifier(appPath) {
 
 function buildNativeApp(destination, platform) {
   const { workspace, scheme } = ensureWorkspaceAndScheme();
+  generateCodegenArtifacts();
   const args = [
     '-workspace',
     path.relative(appRoot, workspace),
@@ -268,14 +280,67 @@ function ensureIosProject() {
   run('pnpm', ['exec', 'expo', 'prebuild', '--platform', 'ios', '--no-install']);
 }
 
+function findAppDelegatePath() {
+  if (!existsSync(iosDir)) {
+    return null;
+  }
+
+  const preferred = path.join(iosDir, 'app', 'AppDelegate.swift');
+  if (existsSync(preferred)) {
+    return preferred;
+  }
+
+  const candidates = readdirSync(iosDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .filter((entry) => !['Pods', 'build'].includes(entry.name))
+    .map((entry) => path.join(iosDir, entry.name, 'AppDelegate.swift'))
+    .filter((candidate) => existsSync(candidate));
+
+  return candidates[0] ?? null;
+}
+
+function reactNativeCodegenScript() {
+  const candidates = [
+    path.join(appRoot, 'node_modules/react-native/scripts/generate-codegen-artifacts.js'),
+    path.resolve(appRoot, '../../node_modules/react-native/scripts/generate-codegen-artifacts.js'),
+  ];
+
+  return candidates.find((candidate) => existsSync(candidate)) ?? null;
+}
+
+function generateCodegenArtifacts() {
+  const scriptPath = reactNativeCodegenScript();
+  if (!scriptPath) {
+    console.error('React Native codegen script not found. Run dependency install before native build.');
+    process.exit(1);
+  }
+
+  run('node', [
+    scriptPath,
+    '-p',
+    appRoot,
+    '-t',
+    'ios',
+    '-o',
+    iosDir,
+  ]);
+}
+
 function ensureRemoteBundleHandler() {
-  const appDelegatePath = path.join(iosDir, 'app', 'AppDelegate.swift');
-  if (!existsSync(appDelegatePath)) {
+  const appDelegatePath = findAppDelegatePath();
+  if (!appDelegatePath) {
     return;
   }
 
   let source = readFileSync(appDelegatePath, 'utf8');
   if (source.includes('OndoDevBundleURL')) {
+    const normalized = source.replaceAll(
+      'jsBundleURL(forBundleRoot: ".expo/.virtual-metro-entry")',
+      `jsBundleURL(forBundleRoot: "${debugBundleRoot}")`,
+    );
+    if (normalized !== source) {
+      writeFileSync(appDelegatePath, normalized);
+    }
     return;
   }
 
@@ -305,7 +370,7 @@ function ensureRemoteBundleHandler() {
       return remoteBundleURL
     }
 
-    return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: ".expo/.virtual-metro-entry")
+    return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "${debugBundleRoot}")
 #else
     return Bundle.main.url(forResource: "main", withExtension: "jsbundle")
 #endif

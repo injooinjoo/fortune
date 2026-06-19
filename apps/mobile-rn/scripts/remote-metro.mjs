@@ -2,7 +2,7 @@
 import { spawn } from 'node:child_process';
 
 const port = process.env.RN_METRO_PORT ?? '8081';
-const bundleRoot = process.env.ONDO_BUNDLE_ROOT ?? '.expo/.virtual-metro-entry';
+const bundleRoot = process.env.ONDO_BUNDLE_ROOT ?? 'index';
 const appScheme = process.env.ONDO_DEV_URL_SCHEME ?? 'com.beyond.fortune';
 const children = [];
 let printed = false;
