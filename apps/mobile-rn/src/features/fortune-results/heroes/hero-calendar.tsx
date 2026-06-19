@@ -24,9 +24,9 @@ export default function HeroCalendar({ data, progress }: HeroCalendarProps) {
     season?: string;
     cal?: { ganji?: string; lunar?: string; season?: string };
   };
-  const ganji = raw.cal?.ganji ?? '甲辰';
-  const lunarFull = raw.lunar ?? raw.cal?.lunar ?? '음력 4월 11일';
-  const season = raw.season ?? raw.cal?.season ?? '곡우';
+  const ganji = data.manseryeok?.dayPillar.dayPillarHanja ?? raw.cal?.ganji ?? '오늘';
+  const lunarFull = data.manseryeok?.lunarDate ?? raw.lunar ?? raw.cal?.lunar ?? data.subtitle;
+  const season = data.manseryeok?.solarTerm.current ?? raw.season ?? raw.cal?.season ?? '오늘';
   const dayWord = lunarFull.split(' ').pop() ?? lunarFull;
 
   const p = clamp01(progress);
