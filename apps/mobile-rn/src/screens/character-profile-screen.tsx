@@ -98,6 +98,7 @@ export function CharacterProfileScreen() {
 
   return (
     <Screen
+      contentBottomInset={96}
       header={
         <RouteBackHeader
           fallbackHref={returnTo as Href}

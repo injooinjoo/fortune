@@ -115,7 +115,7 @@ function FriendWizardScaffold({
   onBack: () => void;
 }) {
   return (
-    <Screen footer={footer} keyboardAvoiding>
+    <Screen contentBottomInset={72} footer={footer} keyboardAvoiding>
       <View style={{ gap: fortuneTheme.spacing.sm }}>
         <Pressable
           accessibilityRole="button"
@@ -209,7 +209,9 @@ function TokenChip({
 
   return (
     <Pressable
+      accessibilityLabel={label}
       accessibilityRole="button"
+      accessibilityState={{ selected }}
       onPress={onPress}
       style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
     >
@@ -242,7 +244,9 @@ function FooterRow({
       ) : null}
       <View style={{ flex: 1 }}>
         <Pressable
+          accessibilityLabel={primaryLabel}
           accessibilityRole="button"
+          accessibilityState={{ disabled: primaryDisabled }}
           disabled={primaryDisabled}
           onPress={onPrimary}
           style={({ pressed }) => ({
@@ -358,13 +362,13 @@ function reviewLines(draft: FriendCreationDraft) {
 }
 
 function buildFirstGreetingPreview(draft: FriendCreationDraft) {
-  const personality = draft.personalityTags.slice(0, 2).join('하고 ');
+  const personality = draft.personalityTags.slice(0, 2).join(', ');
   const interest = draft.interestTags[0];
   const memory = draft.memoryNote.trim() || draft.scenario.trim();
 
   return [
     '있잖아, 오늘 네 하루 온도는 어땠어?',
-    personality ? `나는 ${personality} 다가가는 사람으로 기억되고 싶어.` : null,
+    personality ? `나는 ${personality} 결로 다가가는 사람으로 기억되고 싶어.` : null,
     interest ? `${interest} 얘기 나오면 나도 모르게 오래 붙잡고 있을지도 몰라.` : null,
     memory ? `그리고 우리 시작은 “${memory}” 이 기억에서 이어가고 싶어.` : null,
   ].filter(Boolean).join(' ');
@@ -1033,16 +1037,17 @@ export function FriendCreationCreatingScreen() {
 
   function handleFinish() {
     const nextFriendId = createdFriend?.id;
-    resetDraft();
 
     if (nextFriendId) {
       router.replace({
-        pathname: '/chat',
+        pathname: '/(tabs)/chat',
         params: { characterId: nextFriendId },
       });
+      resetDraft();
       return;
     }
 
+    resetDraft();
     router.replace(returnTo as Href);
   }
 

@@ -171,6 +171,8 @@ export function SignupScreen() {
           </AppText>
 
           <Pressable
+            accessibilityLabel="전체 동의"
+            accessibilityHint="가입 약관 전체 동의 상태를 전환합니다."
             accessibilityRole="checkbox"
             accessibilityState={{ checked: allConsentToggled }}
             onPress={() => {
@@ -485,6 +487,8 @@ function ConsentRow({
       }}
     >
       <Pressable
+        accessibilityLabel={label}
+        accessibilityHint={`${label} 상태를 전환합니다.`}
         accessibilityRole="checkbox"
         accessibilityState={{ checked }}
         onPress={onToggle}
@@ -515,6 +519,7 @@ function ConsentRow({
       </Pressable>
       {linkLabel && onLinkPress ? (
         <Pressable
+          accessibilityLabel={linkLabel}
           accessibilityRole="link"
           onPress={onLinkPress}
           style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}

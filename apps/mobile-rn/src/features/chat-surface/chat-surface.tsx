@@ -2139,6 +2139,7 @@ export function ActiveChatComposer({
             {trayActions.map((action, actionIndex) => (
               <Pressable
                 key={action.id}
+                accessibilityLabel={action.label}
                 accessibilityRole="button"
                 onPress={() => onPickAction(action.fortuneType)}
                 style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
@@ -2169,6 +2170,7 @@ export function ActiveChatComposer({
             ))}
             {!trayActions.length && auxiliaryAction ? (
               <Pressable
+                accessibilityLabel={auxiliaryAction.label}
                 accessibilityRole="button"
                 onPress={auxiliaryAction.onPress}
                 style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
@@ -3488,6 +3490,7 @@ export function ActiveCharacterChatSurface({
             {promptActions.map((action, actionIndex) => (
               <Pressable
                 key={action.id}
+                accessibilityLabel={action.label}
                 accessibilityRole="button"
                 onPress={() => onPickAction(action.fortuneType)}
                 style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}

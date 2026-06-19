@@ -325,7 +325,7 @@ const config = {
     [
       'expo-image-picker',
       {
-        photosPermission: '관상 분석을 위해 사진 접근이 필요합니다.',
+        photosPermission: '채팅에서 사진을 보내고 이미지 기반 분석을 제공하기 위해 사진 접근이 필요합니다.',
         cameraPermission: '관상 분석을 위해 카메라 접근이 필요합니다.',
       },
     ],

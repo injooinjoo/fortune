@@ -161,8 +161,8 @@ export function useVoiceInput({
       const permission = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
       if (!permission.granted) {
         Alert.alert(
-          '마이크 권한',
-          '음성 입력을 위해 마이크 권한이 필요합니다. 설정에서 허용해 주세요.',
+          '음성 입력 권한',
+          '음성 입력을 위해 마이크와 음성 인식 권한이 필요합니다. iOS 설정에서 허용해 주세요.',
         );
         return;
       }
