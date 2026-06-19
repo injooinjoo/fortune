@@ -20,24 +20,20 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          flutter-version: '3.38.0'
-          channel: 'stable'
-          cache: true
+          node-version: '20.x'
 
-      - name: Update Flutter dependencies
-        working-directory: .
+      - name: Enable pnpm
         run: |
-          flutter pub upgrade --major-versions
-          flutter pub outdated
+          corepack enable
+          corepack prepare pnpm@10.33.1 --activate
 
-      - name: Update npm dependencies
-        if: hashFiles('package.json') != ''
+      - name: Update workspace dependencies
         run: |
-          npm update
-          npm audit fix --force || true
+          pnpm update --recursive --latest
+          pnpm audit --prod || true
 
       - name: Check PR creation permission
         id: pr-permission
@@ -74,8 +70,7 @@ jobs:
             ## 🔄 Automated Dependency Update
             
             This PR contains:
-            - Flutter package updates
-            - npm package updates (if applicable)
+            - pnpm workspace package updates
             - Security patches
             
             Please review and test before merging.
@@ -89,29 +84,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          flutter-version: '3.38.0'
-          channel: 'stable'
-          cache: true
+          node-version: '20.x'
 
-      - name: Install Flutter dependencies
-        run: flutter pub get
-
-      - name: Run npm audit
-        if: hashFiles('package-lock.json') != ''
+      - name: Enable pnpm
         run: |
-          npm audit --production
-          echo "## NPM Audit Report" >> $GITHUB_STEP_SUMMARY
-          npm audit --production >> $GITHUB_STEP_SUMMARY || true
+          corepack enable
+          corepack prepare pnpm@10.33.1 --activate
 
-      - name: Run Flutter dependency audit
-        working-directory: .
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Run pnpm audit
         run: |
-          flutter pub outdated
-          echo "## Flutter Outdated Packages" >> $GITHUB_STEP_SUMMARY
-          flutter pub outdated >> $GITHUB_STEP_SUMMARY || true
+          echo "## PNPM Audit Report" >> $GITHUB_STEP_SUMMARY
+          pnpm audit --prod >> $GITHUB_STEP_SUMMARY || true
 
   # Slack 알림 (실패 시)
   notify-slack:

@@ -1,6 +1,6 @@
 # EAS .easignore — strips everything EAS Build doesn't need from the upload.
 
-# --- Flutter (legacy, not needed for RN build) ---
+# --- Legacy root app paths not used by the RN package ---
 /android
 /ios
 /lib
@@ -9,9 +9,6 @@
 /linux
 /test
 /build
-/.dart_tool
-/.flutter-plugins
-/.flutter-plugins-dependencies
 
 # --- Native folders 전체 — EAS 가 매 빌드 fresh prebuild 하도록 강제. ---
 # 핵심 fix: 이전엔 ios/Pods, ios/build 만 제외하고 ios/ 통째로 업로드 →

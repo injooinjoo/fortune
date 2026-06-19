@@ -2,7 +2,7 @@
 
 > 최종 업데이트: 2026.04.17
 
-Ondo의 현재 런타임 구조를 repo truth 기준으로 정리한 문서입니다. Flutter 코드는 제거되었고, 활성 트리는 `apps/mobile-rn/` (Expo SDK + TypeScript) 하나만 기준으로 고정합니다. 레거시 `lib/` 디렉터리에 남은 파편은 참조하지 않습니다.
+Ondo의 현재 런타임 구조를 repo truth 기준으로 정리한 문서입니다. 활성 트리는 `apps/mobile-rn/` (Expo SDK + TypeScript) 하나만 기준으로 고정합니다.
 
 ## 아키텍처 통계
 

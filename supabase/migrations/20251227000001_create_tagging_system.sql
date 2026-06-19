@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS content_items (
   sort_order INTEGER DEFAULT 0,
 
   -- Metadata
-  icon_name TEXT,             -- Flutter icon name
+  icon_name TEXT,             -- client icon name
   color_hex TEXT,             -- Brand color
   route_path TEXT,            -- Navigation route
   edge_function TEXT,         -- Associated Edge Function name

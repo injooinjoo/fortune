@@ -2,7 +2,7 @@
 
 > 최종 업데이트: 2026.04.17
 
-Ondo의 현재 UI 소스 오브 트루스는 RN(React Native + Expo) 스택 위에 올라간 Paper 정렬형 다크 우선 디자인 시스템입니다. Flutter 레이어는 제거되었으며, 이 문서는 실제 `packages/design-tokens/` 공유 토큰 패키지, `apps/mobile-rn/src/lib/theme.ts`, `apps/mobile-rn/src/components/app-text.tsx`, 그리고 `fortuneTheme.*` API를 기준으로 정리합니다.
+Ondo의 현재 UI 소스 오브 트루스는 RN(React Native + Expo) 스택 위에 올라간 다크 우선 디자인 시스템입니다. 이 문서는 실제 `packages/design-tokens/` 공유 토큰 패키지, `apps/mobile-rn/src/lib/theme.ts`, `apps/mobile-rn/src/components/app-text.tsx`, 그리고 `fortuneTheme.*` API를 기준으로 정리합니다.
 
 ## 디자인 시스템 구조
 
@@ -129,7 +129,7 @@ import { fortuneTheme } from '@/lib/theme';
 
 - 모든 텍스트는 `<AppText>` 또는 `fortuneTheme.typography.*`를 경유합니다. `<Text style={{ fontSize: 16 }}>`처럼 raw 숫자 지정은 금지.
 - 폰트 패밀리는 `AppText`가 기본 `System`을 지정합니다. 변경이 필요하면 `theme.ts`에서 파생하고 변형을 토큰으로 추가합니다.
-- Flutter 시절의 `headlineMedium` / `titleMedium` 같은 이름은 더 이상 사용하지 않습니다. `heading1~4`, `bodyLarge~Small` 스케일로 정렬합니다.
+- 이전 런타임의 `headlineMedium` / `titleMedium` 같은 이름은 더 이상 사용하지 않습니다. `heading1~4`, `bodyLarge~Small` 스케일로 정렬합니다.
 
 ## 공용 컴포넌트 계층
 
@@ -176,7 +176,7 @@ import { fortuneTheme } from '@/lib/theme';
 | hex 리터럴 (`'#8B7BE8'`) 하드코딩 | `fortuneTheme.colors.ctaBackground` |
 | raw `fontSize` 직접 지정 | `<AppText variant="...">`, `fortuneTheme.typography.*` |
 | `'black'`, `'white'` 같은 예약어 | `fortuneTheme.colors.textPrimary` / `background` |
-| Flutter 시절 네이밍(`DSColors`, `context.typography.headlineMedium`) 복원 | RN `fortuneTheme.*` 사용 |
+| 이전 런타임 네이밍(`DSColors`, `context.typography.headlineMedium`) 복원 | RN `fortuneTheme.*` 사용 |
 | 도큐먼트 전역에 라이트 모드 기본 전제 | 다크 우선, 라이트는 `createFortuneTheme('light')` 파생 |
 
 ## 관련 문서

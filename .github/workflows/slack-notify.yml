@@ -151,7 +151,7 @@ jobs:
                       "elements": [
                         {
                           "type": "mrkdwn",
-                          "text": "Fortune Flutter CI/CD | 트리거: ${{ github.event_name }} | 실행 #${{ github.run_number }}"
+                          "text": "Fortune RN CI/CD | 트리거: ${{ github.event_name }} | 실행 #${{ github.run_number }}"
                         }
                       ]
                     }

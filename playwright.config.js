@@ -5,7 +5,7 @@ const shouldRunWebServer =
   process.env.PLAYWRIGHT_SKIP_WEBSERVER !== 'true';
 const isCI = process.env.CI === 'true' || process.env.CI === '1';
 const webServerCommand =
-  'if [ -d build/web ]; then :; else flutter build web --release; fi && npx serve build/web -l 3000 --single';
+  'npm run rn:web:export && npx serve dist/mobile-rn-web -l 3000 --single';
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -40,10 +40,10 @@ module.exports = defineConfig({
     /* Record video on failure */
     video: 'retain-on-failure',
 
-    /* Global timeout for all tests - increased for Flutter Web */
+    /* Global timeout for all tests */
     timeout: 60000,
 
-    /* Test timeout for a single test - increased for Flutter Web */
+    /* Test timeout for a single test */
     actionTimeout: 15000,
 
     /* Ignore HTTPS errors */
@@ -126,6 +126,6 @@ module.exports = defineConfig({
   /* Test output directory */
   outputDir: 'test-results/',
 
-  /* Maximum time one test can run for - increased for Flutter Web */
+  /* Maximum time one test can run */
   timeout: 60000,
 });

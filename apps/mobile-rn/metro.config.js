@@ -4,6 +4,7 @@ const { getDefaultConfig } = require('expo/metro-config');
 const projectRoot = __dirname;
 const workspaceRoot = path.resolve(projectRoot, '../..');
 const config = getDefaultConfig(projectRoot);
+const { assetExts = [] } = config.resolver ?? {};
 
 config.watchFolders = [
   ...(config.watchFolders ?? []),
@@ -12,6 +13,7 @@ config.watchFolders = [
 
 config.resolver = {
   ...config.resolver,
+  assetExts: assetExts.includes('wasm') ? assetExts : [...assetExts, 'wasm'],
   extraNodeModules: {
     ...(config.resolver?.extraNodeModules ?? {}),
     react: path.resolve(projectRoot, 'node_modules/react'),

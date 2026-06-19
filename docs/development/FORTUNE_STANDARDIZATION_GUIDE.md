@@ -683,9 +683,9 @@ LIMIT 10;
 ## 📞 연락처 및 참고 자료
 
 - **JIRA 프로젝트**: KAN (Kanban Board)
-- **DB 가이드**: `docs/data/DATABASE_GUIDE.md`
-- **API 가이드**: `docs/data/API_USAGE.md`
-- **CLAUDE 자동화**: `docs/development/CLAUDE_AUTOMATION.md`
+- **Edge Functions**: `supabase/functions/`
+- **공유 계약**: `packages/product-contracts/`
+- **RN 앱**: `apps/mobile-rn/`
 
 ---
 

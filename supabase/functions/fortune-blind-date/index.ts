@@ -256,7 +256,7 @@ serve(async (req) => {
 
     const requestData = await req.json() as any // Handle both camelCase and snake_case
 
-    // Support both camelCase (from Flutter) and snake_case
+    // Support both camelCase and snake_case clients.
     const name = requestData.name
     const birthDate = requestData.birthDate || requestData.birth_date
     const gender = requestData.gender

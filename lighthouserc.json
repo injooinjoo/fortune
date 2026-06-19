@@ -4,10 +4,10 @@
     "collect": {
       "url": [
         "http://localhost:3000",
-        "http://localhost:3000/#/home",
-        "http://localhost:3000/#/fortune"
+        "http://localhost:3000/chat",
+        "http://localhost:3000/fortune"
       ],
-      "startServerCommand": "npx serve build/web -l 3000",
+      "startServerCommand": "npm run rn:web:export && npx serve dist/mobile-rn-web -l 3000 --single",
       "startServerReadyPattern": "Accepting connections",
       "startServerReadyTimeout": 30000,
       "numberOfRuns": 3,

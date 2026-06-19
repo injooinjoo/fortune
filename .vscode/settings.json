@@ -10,10 +10,10 @@
         "git checkout",
         "git mv",
         "git log",
-        "flutter run",
-        "flutter analyze",
-        "flutter clean",
-        "flutter pub get",
+        "pnpm install",
+        "pnpm --filter @fortune/mobile-rn native:prepare",
+        "pnpm --filter @fortune/mobile-rn native:build",
+        "pnpm --filter @fortune/mobile-rn lint",
         "npm install",
         "npm run",
         "npx supabase",
@@ -26,8 +26,7 @@
         "cat",
         "tee",
         "awk",
-        "python3",
-        "dart run"
+        "python3"
     ],
 
     // 파일 읽기 권한

@@ -661,7 +661,7 @@ serve(async (req) => {
         date: date || new Date().toISOString(),
         dreamType,
         interpretation: interpretationText, // ✅ 무료: 공개
-        analysis, // ✅ 서버는 모든 데이터 반환, 블러는 Flutter UI에서 처리
+        analysis, // ✅ 서버는 모든 데이터 반환, 블러는 클라이언트 UI에서 처리
         todayGuidance: parsedResponse.오늘의지침 || parsedResponse.todayGuidance || '오늘 하루를 긍정적으로 보내세요.',
         psychologicalState: parsedResponse.심리적상태 || parsedResponse.psychologicalState || analysis.psychologicalInsight,
         emotionalBalance: Math.round((analysis.scenes.reduce((sum, scene) => sum + scene.emotionLevel, 0) / Math.max(analysis.scenes.length, 1))),

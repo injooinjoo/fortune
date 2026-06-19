@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   repository-guards:
-    name: Source Inventory & Paper Guards
+    name: Repository Guards
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -34,30 +34,12 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
-      - name: Check source inventory drift
-        run: |
-          if ! npm run source-inventory:check; then
-            echo "::error::Source inventory drift detected. Run 'npm run repo:sync' and commit generated outputs."
-            exit 1
-          fi
-
       - name: Check edge pricing SoT sync
         run: |
           if ! npm run check:edge-pricing; then
             echo "::error::Edge pricing drift detected — supabase/functions/_shared/fortune-pricing-generated.ts is not in sync with packages/product-contracts/src/fortune-pricing.ts. Run 'pnpm sync:edge-pricing' and commit the generated file."
             exit 1
           fi
-
-      - name: Check Paper design contract drift
-        run: npm run paper:guard
-
-      - name: Upload Paper sync report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: paper-sync-report
-          path: artifacts/design/paper_sync/
-          retention-days: 7
 
   mobile-rn-typecheck:
     name: mobile-rn typecheck

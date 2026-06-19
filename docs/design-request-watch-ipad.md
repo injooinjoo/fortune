@@ -261,7 +261,6 @@ apps/mobile-rn/src/lib/chat-shell.ts     # 채팅 메시지 타입
 apps/mobile-rn/src/features/fortune-results/primitives/   # 결과 카드 프리미티브
 apps/mobile-rn/src/features/fortune-results/heroes/       # Hero 컴포넌트 38종
 apps/mobile-rn/app.config.ts             # iPad 설정 (현재 portrait 잠금)
-docs/design-request-for-nanobanana.md    # 이전 리디자인 브리프 (톤 참고)
 ```
 
 ---

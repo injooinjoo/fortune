@@ -10,11 +10,11 @@
 ## 2. Search Strategy
 - Keywords:
 - Commands:
-  - `rg "extends StateNotifier" lib/`
-  - `rg "class .*Widget" lib/`
-  - `rg "class .*Service" lib/`
-  - `rg "@freezed" lib/`
-  - `rg "StateNotifierProvider" lib/`
+  - `rg "createContext" apps/mobile-rn/src`
+  - `rg "AppText" apps/mobile-rn/src`
+  - `rg "fortuneTheme" apps/mobile-rn/src`
+  - `rg "functions.invoke" apps/mobile-rn/src supabase/functions`
+  - `rg "ChatShellMessage" apps/mobile-rn/src`
 
 ## 3. Similar Code Findings
 - Reusable:
@@ -41,4 +41,3 @@
 - Static checks:
 - Runtime checks:
 - Test cases:
-

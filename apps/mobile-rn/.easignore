@@ -12,9 +12,6 @@ ios
 /linux
 /test
 /build
-/.dart_tool
-/.flutter-plugins
-/.flutter-plugins-dependencies
 
 # Design & docs
 *.pen

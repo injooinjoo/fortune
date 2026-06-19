@@ -24,7 +24,7 @@ describe('deep link contracts', () => {
     expect(resolution.fortuneType).toBe('love');
   });
 
-  it('normalizes legacy fortune aliases used by Flutter deep links without overriding valid current types', () => {
+  it('normalizes legacy fortune aliases without overriding valid current types', () => {
     expect(normalizeFortuneTypeForChat('sports-game')).toBe('match-insight');
     expect(normalizeFortuneTypeForChat('investment')).toBe('wealth');
     expect(normalizeFortuneTypeForChat('health')).toBe('health');

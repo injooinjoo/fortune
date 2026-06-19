@@ -198,7 +198,7 @@ SUPABASE_SERVICE_ROLE_KEY=새_키
 ```
 
 **옵션 3: iOS Keychain 사용**
-- flutter_secure_storage 패키지 사용
+- Expo SecureStore 또는 RN 보안 저장소 사용
 - 앱 최초 실행 시 Keychain에 저장
 - 이후 Keychain에서 읽기
 
@@ -325,7 +325,7 @@ grep -r "OPENAI_API_KEY\|SUPABASE_SERVICE_ROLE_KEY\|UPSTASH_REDIS_REST_TOKEN\|KA
 - [OWASP API Security Top 10](https://owasp.org/www-project-api-security/)
 - [GitHub Secret Scanning](https://docs.github.com/en/code-security/secret-scanning)
 - [12 Factor App - Config](https://12factor.net/config)
-- [Flutter Secure Storage](https://pub.dev/packages/flutter_secure_storage)
+- [Expo SecureStore](https://docs.expo.dev/versions/latest/sdk/securestore/)
 
 ---
 

@@ -5,10 +5,8 @@ description = "Allowlisted files and patterns"
 paths = [
     '''\.env\.example$''',
     '''\.env\..*\.example$''',
-    '''firebase_options_secure\.dart$''',
     '''secrets\.txt$''',
     '''(^|/)docs/development/reports/''',
-    '''(^|/)fortune_flutter/flutter_build_log\.txt$''',
     '''(^|/)node_modules/''',
     '''(^|/)supabase/\.temp/''',
     '''(^|/)docs/getting-started/''',

@@ -1,6 +1,6 @@
 # Ondo Documentation
 
-문서를 읽을 때는 먼저 이 저장소가 `current-state`, `system reference`, `future-state/legacy` 문서를 함께 가지고 있다는 점을 전제로 봐야 합니다.
+문서를 읽을 때는 먼저 이 저장소의 활성 런타임이 `apps/mobile-rn/`인 점을 전제로 봐야 합니다.
 
 제품 표면과 라우트 설명의 source of truth는 [getting-started/APP_SURFACES_AND_ROUTES.md](getting-started/APP_SURFACES_AND_ROUTES.md)입니다.
 
@@ -30,15 +30,6 @@
 - `legal/`: 개인정보처리방침, 이용약관
 - `troubleshooting/`: 문제 해결 가이드
 
-### 3. Future-state / legacy 문서
-
-현재 구현의 source of truth는 아니지만, 과거안이나 목표안을 보존하는 문서입니다.
-
-- [../.claude/docs/18-chat-first-architecture.md](../.claude/docs/18-chat-first-architecture.md)
-- [../.claude/docs/17-face-reading-system.md](../.claude/docs/17-face-reading-system.md)
-
-이 문서들은 5탭 구조나 별도 `/fortune`, `/trend`, `/profile` 같은 미래형 IA를 포함할 수 있습니다.
-
 ## 빠른 시작
 
 ### 현재 제품 표면을 이해할 때
@@ -50,10 +41,7 @@
 - [설정 가이드](getting-started/SETUP_GUIDE.md)
 
 ### 시스템 레퍼런스가 필요할 때
-- [데이터베이스 가이드](data/DATABASE_GUIDE.md)
 - [LLM 모듈 가이드](data/LLM_MODULE_GUIDE.md)
-- [테스팅 가이드](testing/TESTING_GUIDE.md)
-- [앱 스토어 가이드](deployment/APP_STORE_GUIDE.md)
 - [MCP 설정 가이드](development/MCP_SETUP_GUIDE.md)
 
 ## 문서 해석 규칙
@@ -77,7 +65,7 @@
 ```text
 docs/
 ├── getting-started/      # current-state 개요와 환경 설정
-├── design/               # 디자인 시스템 및 Paper 운영
+├── design/               # 디자인 시스템 및 생성형 디자인 참고
 ├── data/                 # 데이터, Edge Function, LLM
 ├── native/               # 플랫폼 기능
 ├── testing/              # 테스트와 품질

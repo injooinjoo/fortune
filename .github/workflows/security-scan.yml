@@ -91,47 +91,33 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
 
-  flutter-analyze:
-    name: Flutter Security Analysis
+  mobile-rn-typecheck:
+    name: Mobile RN Typecheck
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    defaults:
-      run:
-        working-directory: .
     steps:
       - uses: actions/checkout@v4
 
-      - name: Detect Flutter project
-        id: flutter-project
-        run: |
-          if [ -f pubspec.yaml ]; then
-            echo "present=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "present=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::Skipping Flutter security analysis because pubspec.yaml is not present in this RN mainline checkout."
-          fi
-      
-      - uses: subosito/flutter-action@v2
-        if: steps.flutter-project.outputs.present == 'true'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          flutter-version: '3.38.0'
-          cache: true
-          channel: 'stable'
+          node-version: '20.x'
+
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.33.1 --activate
 
       - name: Install dependencies
-        if: steps.flutter-project.outputs.present == 'true'
-        run: flutter pub get
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
-      - name: Run Flutter analyze
-        if: steps.flutter-project.outputs.present == 'true'
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+      - name: Run RN typecheck
+        run: npm run rn:typecheck
 
-      - name: Check for hardcoded secrets in Dart
-        if: steps.flutter-project.outputs.present == 'true'
+      - name: Check for hardcoded secrets in RN source
         run: |
-          # Check for hardcoded API keys
-          if grep -r "AIza\|sk_live_\|sk_test_" --include="*.dart" .; then
-            echo "::error::Found potential hardcoded secrets in Dart files"
+          if rg -n "AIza|sk_live_|sk_test_" apps/mobile-rn packages supabase/functions; then
+            echo "::error::Found potential hardcoded secrets in first-party source"
             exit 1
           fi
 
@@ -180,7 +166,7 @@ jobs:
 
   security-report:
     name: Security Report
-    needs: [secret-scan, dependency-check, flutter-analyze, code-quality]
+    needs: [secret-scan, dependency-check, mobile-rn-typecheck, code-quality]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     if: always()
@@ -192,7 +178,7 @@ jobs:
           echo "### Scan Results:" >> $GITHUB_STEP_SUMMARY
           echo "- Secret Scanning: ${{ needs.secret-scan.result }}" >> $GITHUB_STEP_SUMMARY
           echo "- Dependency Check: ${{ needs.dependency-check.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Flutter Analysis: ${{ needs.flutter-analyze.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Mobile RN Typecheck: ${{ needs.mobile-rn-typecheck.result }}" >> $GITHUB_STEP_SUMMARY
           echo "- Code Quality: ${{ needs.code-quality.result }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Generated at: $(date)" >> $GITHUB_STEP_SUMMARY
@@ -200,13 +186,13 @@ jobs:
   # Slack 알림 (보안 스캔 실패 시)
   notify-slack:
     name: Slack Notification
-    needs: [secret-scan, dependency-check, flutter-analyze, code-quality, security-report]
+    needs: [secret-scan, dependency-check, mobile-rn-typecheck, code-quality, security-report]
     if: always() && (failure() || cancelled())
     uses: ./.github/workflows/slack-notify.yml
     with:
       workflow_name: "Security Scan"
       job_status: ${{ contains(needs.*.result, 'failure') && 'failure' || 'cancelled' }}
-      failed_jobs: "${{ needs.secret-scan.result == 'failure' && 'secret-scan ' || '' }}${{ needs.dependency-check.result == 'failure' && 'dependency-check ' || '' }}${{ needs.flutter-analyze.result == 'failure' && 'flutter-analyze ' || '' }}${{ needs.code-quality.result == 'failure' && 'code-quality' || '' }}"
+      failed_jobs: "${{ needs.secret-scan.result == 'failure' && 'secret-scan ' || '' }}${{ needs.dependency-check.result == 'failure' && 'dependency-check ' || '' }}${{ needs.mobile-rn-typecheck.result == 'failure' && 'mobile-rn-typecheck ' || '' }}${{ needs.code-quality.result == 'failure' && 'code-quality' || '' }}"
       custom_message: "보안 스캔에서 문제가 발견되었습니다. 즉시 확인 필요!"
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

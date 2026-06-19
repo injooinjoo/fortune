@@ -214,12 +214,12 @@ chmod 600 ~/.config/firebase/admin-sdk.json
 **언제 쓰나?**
 - `.pen` 파일 기반 디자인 자동화가 필요할 때
 - Codex/Claude에서 Pencil 디자인 툴을 직접 읽고 수정할 때
-- Paper 공식 SoT와 별개로 프로토타이핑 또는 headless 디자인 작업이 필요할 때
+- 공식 디자인 문서와 별개로 프로토타이핑 또는 headless 디자인 작업이 필요할 때
 
 **중요**
 - 최신 Pencil 공식 방식은 `.mcp.json`에 `mcpServers`를 수동 추가하는 방식이 아닙니다.
 - Pencil 데스크톱 앱 또는 IDE 확장을 실행하면 MCP 서버가 로컬에서 자동으로 노출됩니다.
-- 이 저장소의 공식 디자인 source of truth는 여전히 `Paper`이며, Pencil은 보조 워크플로우로만 사용합니다.
+- 이 저장소의 공식 디자인 source of truth는 RN 디자인 토큰과 활성 문서이며, Pencil은 보조 워크플로우로만 사용합니다.
 
 ### 빠른 시작
 
@@ -321,7 +321,7 @@ tail -f ~/Library/Logs/Claude/mcp-*.log
 
 ### Context7
 ```
-"Flutter에서 Riverpod 상태 관리 베스트 프랙티스 알려줘"
+"React Native Context 상태 관리 베스트 프랙티스 알려줘"
 ```
 
 ### Sequential Thinking

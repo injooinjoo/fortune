@@ -4,7 +4,7 @@
  * 지원 모드
  * - GET  ?mode=start    : RN용 OAuth 시작
  * - GET  ?mode=callback : RN용 OAuth 콜백
- * - POST { access_token }: legacy Flutter/native 토큰 교환
+ * - POST { access_token }: legacy/native 토큰 교환
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -22,7 +22,7 @@ const NAVER_PROFILE_URL = "https://openapi.naver.com/v1/nid/me";
 const DEFAULT_RETURN_TO = "/chat";
 const DEFAULT_MOBILE_SCHEME = "com.beyond.fortune";
 const DEFAULT_MOBILE_CALLBACK_HOST = "auth-callback";
-const DEFAULT_LEGACY_FLUTTER_CALLBACK = "io.supabase.flutter://login-callback";
+const DEFAULT_MOBILE_CALLBACK_URL = "com.beyond.fortune://auth-callback";
 
 interface NaverUserResponse {
   resultcode: string;
@@ -99,10 +99,10 @@ function resolveMobileCallbackHost() {
   );
 }
 
-function resolveLegacyFlutterCallbackUrl() {
+function resolveNativeCallbackUrl() {
   return (
-    Deno.env.get("LEGACY_FLUTTER_AUTH_CALLBACK_URL") ||
-    DEFAULT_LEGACY_FLUTTER_CALLBACK
+    Deno.env.get("MOBILE_AUTH_CALLBACK_URL") ||
+    DEFAULT_MOBILE_CALLBACK_URL
   );
 }
 
@@ -551,7 +551,7 @@ serve(async (req) => {
 
     const result = await completeNaverAuth({
       accessToken,
-      sessionRedirectTo: resolveLegacyFlutterCallbackUrl(),
+      sessionRedirectTo: resolveNativeCallbackUrl(),
     });
 
     return jsonResponse(result, 200);

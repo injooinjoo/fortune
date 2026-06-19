@@ -75,10 +75,10 @@ interface MovingFortuneRequest {
   fortune_type?: string
   current_area?: string  // snake_case (호환성)
   target_area?: string   // snake_case (호환성)
-  currentArea?: string   // camelCase (Flutter)
-  targetArea?: string    // camelCase (Flutter)
+  currentArea?: string   // camelCase (호환성)
+  targetArea?: string    // camelCase (호환성)
   moving_period?: string // snake_case (호환성)
-  movingPeriod?: string  // camelCase (Flutter)
+  movingPeriod?: string  // camelCase (호환성)
   purpose: string
   isPremium?: boolean    // ✅ 프리미엄 사용자 여부
 
@@ -600,8 +600,8 @@ ${concernsText}
             reason: '전통적인 이사 행운 의식입니다.'
           })),
 
-        // 요약
-        summary: {
+        // 상세 요약
+        summary_details: {
           one_line: parsedResponse.summary?.one_line || '좋은 이사가 될 것입니다.',
           keywords: parsedResponse.summary?.keywords || ['행운', '새출발', '번영'],
           final_message: parsedResponse.summary?.final_message || '새로운 터전에서 행복한 나날 되세요.'
@@ -648,11 +648,12 @@ ${concernsText}
     })
   } catch (error) {
     console.error('❌ Error in fortune-moving function:', error)
+    const errorMessage = error instanceof Error ? error.message : '분석 중 오류가 발생했습니다.'
 
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message || '분석 중 오류가 발생했습니다.',
+        error: errorMessage,
       }),
       {
         status: 500,

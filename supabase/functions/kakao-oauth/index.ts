@@ -236,7 +236,7 @@ serve(async (req) => {
         type: 'magiclink',
         email: kakaoUser.email,
         options: {
-          redirectTo: 'io.supabase.flutter://login-callback'
+          redirectTo: Deno.env.get('MOBILE_AUTH_CALLBACK_URL') || 'com.beyond.fortune://auth-callback'
         }
       })
 

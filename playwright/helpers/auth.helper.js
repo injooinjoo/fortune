@@ -72,7 +72,6 @@ class AuthHelper {
 
     // Inject test environment variables into browser context
     await this.page.addInitScript(() => {
-      window.FLUTTER_TEST_MODE = true;
       window.TEST_MODE = true;
       window.BYPASS_AUTH = true;
       window.TEST_ACCOUNT_EMAIL = 'ink595@g.harvard.edu';
@@ -89,11 +88,9 @@ class AuthHelper {
     const checks = [
       this.page.locator('[data-testid="home-screen"]').isVisible(),
       this.page.locator('[data-testid="main-navigation"]').isVisible(),
-      this.page.locator('flt-semantics[role="navigation"]').isVisible(),
       this.page.locator('[aria-label*="Home"]').isVisible(),
       this.page.locator('nav').isVisible(),
       this.page.locator('[data-testid*="chat"]').isVisible(),
-      this.page.locator('flt-glass-pane').isVisible(),
       this.page.evaluate(() => {
         const pathname = window.location.pathname || '';
         return pathname === '/chat' || pathname === '/home';
@@ -131,15 +128,13 @@ class AuthHelper {
   async bypassLogin() {
     console.log('🔧 [AUTH] Bypassing login process');
 
-    // Wait for app to load - increased timeout for Flutter Web
     await this._gotoWithRetries();
     await this.page.waitForLoadState('networkidle', { timeout: 45000 });
 
-    // Wait a bit for Flutter to initialize
+    // Wait a bit for the RN web bundle to hydrate.
     await this.page.waitForTimeout(2000);
 
-    // The test auth service in Flutter should automatically handle authentication
-    // We just need to wait for the app to recognize the test session
+    // The test auth path should recognize the injected browser flags.
     for (let attempt = 1; attempt <= 30; attempt++) {
       try {
         const isAuthenticated = await this._isAuthenticatedMarkerVisible();

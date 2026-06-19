@@ -15,144 +15,74 @@ on:
         options:
           - smoke
           - all
-          - comprehensive
 
 permissions:
   contents: read
   pull-requests: write
 
 env:
-  FLUTTER_VERSION: '3.38.0'
   NODE_VERSION: '20.x'
 
 jobs:
-  smoke-tests:
-    name: Playwright Smoke Tests
+  playwright:
+    name: Playwright
     runs-on: ubuntu-latest
     timeout-minutes: 30
     outputs:
-      attempts: ${{ steps.e2e-run.outputs.attempts }}
-      run1_exit: ${{ steps.e2e-run.outputs.run1_exit }}
-      run1_passed: ${{ steps.e2e-run.outputs.run1_passed }}
-      run1_failed: ${{ steps.e2e-run.outputs.run1_failed }}
-      run2_exit: ${{ steps.e2e-run.outputs.run2_exit }}
-      run2_passed: ${{ steps.e2e-run.outputs.run2_passed }}
-      run2_failed: ${{ steps.e2e-run.outputs.run2_failed }}
-      run_summary_file: ${{ steps.e2e-run.outputs.run_summary_file }}
+      exit_code: ${{ steps.run.outputs.exit_code }}
+      passed: ${{ steps.results.outputs.passed }}
+      failed: ${{ steps.results.outputs.failed }}
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Detect Flutter project
-        id: flutter-project
-        run: |
-          if [ -f pubspec.yaml ]; then
-            echo "present=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "present=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::Skipping Flutter Web smoke test because pubspec.yaml is not present in this RN mainline checkout."
-          fi
-
       - name: Setup Node.js
-        if: steps.flutter-project.outputs.present == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Enable pnpm
-        if: steps.flutter-project.outputs.present == 'true'
         run: |
           corepack enable
           corepack prepare pnpm@10.33.1 --activate
 
-      - name: Setup Flutter
-        if: steps.flutter-project.outputs.present == 'true'
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: 'stable'
-          cache: true
-
-      - name: Install Node dependencies
-        if: steps.flutter-project.outputs.present == 'true'
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Install Playwright browsers
-        if: steps.flutter-project.outputs.present == 'true'
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Setup test environment
-        if: steps.flutter-project.outputs.present == 'true'
         run: |
-          cat > .env << 'ENVEOF'
-          FLUTTER_TEST_MODE=true
+          cat > .env <<'ENVEOF'
           NODE_ENV=test
-          SUPABASE_URL=https://test-placeholder.supabase.co
-          SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QtcGxhY2Vob2xkZXIiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoyMDAwMDAwMDAwfQ.placeholder-test-signature-not-real-key-for-ci-only
+          TEST_MODE=true
           BYPASS_AUTH=true
           USE_MOCK_DATA=true
           MOCK_FORTUNE_RESPONSES=true
           BYPASS_PAYMENT=true
           MOCK_PREMIUM_FEATURES=true
+          SUPABASE_URL=https://test-placeholder.supabase.co
+          SUPABASE_ANON_KEY=placeholder-test-anon-key
           GOOGLE_WEB_CLIENT_ID=000000000000-placeholder.apps.googleusercontent.com
           GOOGLE_IOS_CLIENT_ID=000000000000-placeholder-ios.apps.googleusercontent.com
           GOOGLE_ANDROID_CLIENT_ID=000000000000-placeholder-android.apps.googleusercontent.com
-          GEMINI_API_KEY=AIzaSy-placeholder-test-key
-          OPENAI_API_KEY=sk-proj-placeholder-test-key
           KAKAO_REST_API_KEY=placeholder_kakao_key
           ENABLE_ADS=false
           DISABLE_ANALYTICS=true
           ENVEOF
-          mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
-          touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
-
-      - name: Get Flutter dependencies
-        if: steps.flutter-project.outputs.present == 'true'
-        run: flutter pub get
-
-      - name: Build Flutter Web
-        if: steps.flutter-project.outputs.present == 'true'
-        run: flutter build web --release
 
       - name: Run Playwright suite
-        id: e2e-run
+        id: run
         run: |
-          set -uo pipefail
-
-          if [ "${FLUTTER_PROJECT_PRESENT:-false}" != "true" ]; then
-            mkdir -p artifacts
-            SUMMARY_FILE='artifacts/run-summary.md'
-            {
-              echo "# Playwright Smoke Retry Log"
-              echo ""
-              echo "Skipped: pubspec.yaml is not present in this RN mainline checkout."
-            } > "$SUMMARY_FILE"
-            echo "attempts=0" >> "$GITHUB_OUTPUT"
-            echo "run1_exit=0" >> "$GITHUB_OUTPUT"
-            echo "run1_passed=0" >> "$GITHUB_OUTPUT"
-            echo "run1_failed=0" >> "$GITHUB_OUTPUT"
-            echo "run2_exit=0" >> "$GITHUB_OUTPUT"
-            echo "run2_passed=0" >> "$GITHUB_OUTPUT"
-            echo "run2_failed=0" >> "$GITHUB_OUTPUT"
-            echo "run_summary_file=$SUMMARY_FILE" >> "$GITHUB_OUTPUT"
-            cat "$SUMMARY_FILE"
-            exit 0
-          fi
-
           TEST_TYPE="${TEST_TYPE:-smoke}"
           case "$TEST_TYPE" in
             smoke)
               RUN_COMMAND='npm run test:smoke:ci'
-              SUITE_LABEL='Smoke'
               ;;
             all)
               RUN_COMMAND='npm run test:e2e:ci'
-              SUITE_LABEL='E2E'
-              ;;
-            comprehensive)
-              RUN_COMMAND='npm run test:comprehensive:ci'
-              SUITE_LABEL='Comprehensive'
               ;;
             *)
               echo "::error::Unknown test type: $TEST_TYPE"
@@ -160,137 +90,45 @@ jobs:
               ;;
           esac
 
-          SUMMARY_FILE='artifacts/run-summary.md'
-          RUN1_EXIT=1
-          RUN1_PASSED=0
-          RUN1_FAILED=1
-          RUN2_EXIT=1
-          RUN2_PASSED=0
-          RUN2_FAILED=1
-          TOTAL_ATTEMPTS=1
-
-          mkdir -p artifacts/e2e-attempt-1 artifacts/e2e-attempt-2 artifacts
-          {
-            echo "# Playwright ${SUITE_LABEL} Retry Log"
-            echo "| Attempt | Exit | Passed | Failed | Started (UTC) | Finished (UTC) |"
-            echo "|---|---|---|---|---|---|"
-          } > "$SUMMARY_FILE"
-
-          run_once() {
-            local attempt="$1"
-            local artifact_dir="artifacts/e2e-attempt-${attempt}"
-            local exit_code=1
-            local passed_count=0
-            local failed_count=1
-            local start_at
-            local finish_at
-
-            rm -rf test-results playwright-report
-            mkdir -p "$artifact_dir"
-
-            start_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-            if $RUN_COMMAND 2>&1 | tee "$artifact_dir/command.log"; then
-              exit_code=0
-            else
-              exit_code=$?
-            fi
-            finish_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-
-            if [ -f test-results/results.json ]; then
-              passed_count=$(jq '.stats.expected // 0' test-results/results.json)
-              failed_count=$(jq '.stats.unexpected // 0' test-results/results.json)
-            else
-              passed_count=0
-              failed_count=1
-            fi
-
-            cp -R test-results playwright-report "$artifact_dir/" || true
-            cp test-results/results.json "$artifact_dir/run-results.json" 2>/dev/null || true
-
-            printf '%s\n' \
-              '{' \
-              "  \"attempt\": ${attempt}," \
-              "  \"command\": \"${RUN_COMMAND}\"," \
-              "  \"exitCode\": ${exit_code}," \
-              "  \"passed\": ${passed_count}," \
-              "  \"failed\": ${failed_count}," \
-              "  \"startedAt\": \"${start_at}\"," \
-              "  \"finishedAt\": \"${finish_at}\"" \
-              '}' > "$artifact_dir/run-summary.json"
-
-            echo "| ${attempt} | ${exit_code} | ${passed_count} | ${failed_count} | ${start_at} | ${finish_at} |" >> "$SUMMARY_FILE"
-
-            if [ "$attempt" = "1" ]; then
-              RUN1_EXIT=$exit_code
-              RUN1_PASSED=$passed_count
-              RUN1_FAILED=$failed_count
-            else
-              RUN2_EXIT=$exit_code
-              RUN2_PASSED=$passed_count
-              RUN2_FAILED=$failed_count
-            fi
-          }
-
-          run_once 1
-
-          if [ "$RUN1_EXIT" -ne 0 ] || [ "$RUN1_FAILED" -ne 0 ]; then
-            echo "1차 실행 실패로 인해 2차 실행을 시작합니다." | tee -a "$SUMMARY_FILE"
-            run_once 2
-            TOTAL_ATTEMPTS=2
-          fi
-
-          echo "attempts=$TOTAL_ATTEMPTS" >> "$GITHUB_OUTPUT"
-          echo "run1_exit=$RUN1_EXIT" >> "$GITHUB_OUTPUT"
-          echo "run1_passed=$RUN1_PASSED" >> "$GITHUB_OUTPUT"
-          echo "run1_failed=$RUN1_FAILED" >> "$GITHUB_OUTPUT"
-          echo "run2_exit=$RUN2_EXIT" >> "$GITHUB_OUTPUT"
-          echo "run2_passed=$RUN2_PASSED" >> "$GITHUB_OUTPUT"
-          echo "run2_failed=$RUN2_FAILED" >> "$GITHUB_OUTPUT"
-          echo "run_summary_file=$SUMMARY_FILE" >> "$GITHUB_OUTPUT"
-
-          if [ "$TOTAL_ATTEMPTS" -eq 2 ] && { [ "$RUN2_EXIT" -ne 0 ] || [ "$RUN2_FAILED" -ne 0 ]; }; then
-            echo "최종 실행 실패"
-            cat "$SUMMARY_FILE"
-            exit 1
-          fi
-
-          if [ "$TOTAL_ATTEMPTS" -eq 1 ] && { [ "$RUN1_EXIT" -ne 0 ] || [ "$RUN1_FAILED" -ne 0 ]; }; then
-            echo "최종 실행 실패"
-            cat "$SUMMARY_FILE"
-            exit 1
-          fi
-
-          echo "최종 실행 성공"
-          cat "$SUMMARY_FILE"
+          set +e
+          $RUN_COMMAND
+          EXIT_CODE=$?
+          set -e
+          echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
+          exit "$EXIT_CODE"
         env:
           BASE_URL: http://localhost:3000
           CI: true
           TEST_TYPE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.test_type || 'smoke' }}
-          FLUTTER_PROJECT_PRESENT: ${{ steps.flutter-project.outputs.present }}
 
-      - name: Upload Playwright report
+      - name: Parse test results
+        id: results
+        if: always()
+        run: |
+          if [ -f test-results/results.json ]; then
+            PASSED=$(jq '.stats.expected // 0' test-results/results.json)
+            FAILED=$(jq '.stats.unexpected // 0' test-results/results.json)
+          else
+            PASSED=0
+            FAILED=1
+          fi
+          echo "passed=$PASSED" >> "$GITHUB_OUTPUT"
+          echo "failed=$FAILED" >> "$GITHUB_OUTPUT"
+
+      - name: Upload Playwright artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-report-${{ github.run_id }}
+          name: playwright-artifacts-${{ github.run_id }}
           path: |
-            artifacts/e2e-attempt-1
-            artifacts/e2e-attempt-2
-            artifacts/run-summary.md
-          retention-days: 7
-
-      - name: Upload Playwright screenshots
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-screenshots-${{ github.run_id }}
-          path: test-results/
+            test-results/
+            playwright-report/
           retention-days: 7
 
   comment-on-failure:
-    name: Comment on PR (if failed)
+    name: Comment on PR
     runs-on: ubuntu-latest
-    needs: smoke-tests
+    needs: playwright
     if: failure() && github.event_name == 'pull_request'
 
     steps:
@@ -300,74 +138,47 @@ jobs:
           script: |
             const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const body = [
-              '## ❌ Playwright 테스트 실패',
+              '## Playwright 테스트 실패',
               '',
-              '자동 smoke 게이트에서 실패가 감지되었습니다.',
+              'RN web smoke/E2E 게이트에서 실패가 감지되었습니다.',
               '',
-              '**상세 정보:**',
               `- 실행 ID: \`${context.runId}\``,
               `- 커밋: \`${context.sha.substring(0, 7)}\``,
               '',
-              `[🔍 테스트 결과 확인](${runUrl})`,
-              '',
-              '---',
-              '*이 코멘트는 자동으로 생성되었습니다.*'
+              `[테스트 결과 확인](${runUrl})`
             ].join('\n');
 
-            github.rest.issues.createComment({
+            await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: body
+              body
             });
 
   test-summary:
-    name: Playwright Test Summary
+    name: Playwright Summary
     runs-on: ubuntu-latest
-    needs: smoke-tests
+    needs: playwright
     if: always()
 
     steps:
-      - name: Download test results
-        uses: actions/download-artifact@v4
-        with:
-          name: playwright-report-${{ github.run_id }}
-          path: ./report
-        continue-on-error: true
-
       - name: Generate summary
         run: |
-          echo "## 🧪 Playwright Test Results" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Attempt | Exit | Passed | Failed |" >> "$GITHUB_STEP_SUMMARY"
-          echo "|---|---|---|---|" >> "$GITHUB_STEP_SUMMARY"
-          echo "| 1 | ${{ needs['smoke-tests'].outputs.run1_exit }} | ${{ needs['smoke-tests'].outputs.run1_passed }} | ${{ needs['smoke-tests'].outputs.run1_failed }} |" >> "$GITHUB_STEP_SUMMARY"
-          if [ "${{ needs['smoke-tests'].outputs.attempts }}" = "2" ]; then
-            echo "| 2 | ${{ needs['smoke-tests'].outputs.run2_exit }} | ${{ needs['smoke-tests'].outputs.run2_passed }} | ${{ needs['smoke-tests'].outputs.run2_failed }} |" >> "$GITHUB_STEP_SUMMARY"
-          fi
-
+          echo "## Playwright Test Results" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "Run count: ${{ needs['smoke-tests'].outputs.attempts }} of 2 max" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-
-          if [ -f "./report/${{ needs['smoke-tests'].outputs.run_summary_file }}" ]; then
-            echo "### Run Log" >> "$GITHUB_STEP_SUMMARY"
-            cat "./report/${{ needs['smoke-tests'].outputs.run_summary_file }}" >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "⚠️ 실행 로그 파일을 찾을 수 없습니다." >> "$GITHUB_STEP_SUMMARY"
-          fi
-
-          echo "---" >> "$GITHUB_STEP_SUMMARY"
-          echo "*Generated by E2E Tests workflow*" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Exit: \`${{ needs.playwright.outputs.exit_code }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Passed: \`${{ needs.playwright.outputs.passed }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Failed: \`${{ needs.playwright.outputs.failed }}\`" >> "$GITHUB_STEP_SUMMARY"
 
   notify-slack:
     name: Slack Notification
-    needs: [smoke-tests]
-    if: always() && needs['smoke-tests'].result == 'failure'
+    needs: [playwright]
+    if: always() && needs.playwright.result == 'failure'
     uses: ./.github/workflows/slack-notify.yml
     with:
       workflow_name: 'E2E Tests'
       job_status: 'failure'
-      failed_jobs: 'smoke-tests'
+      failed_jobs: 'playwright'
       pr_number: "${{ github.event.pull_request.number || '' }}"
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

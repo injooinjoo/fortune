@@ -78,7 +78,7 @@ interface ExamFortuneRequest {
   examType?: string
   examDate?: string
   preparation?: string
-  // snake_case (Flutter client)
+  // snake_case client
   exam_category?: string
   exam_date?: string
   preparation_status?: string
@@ -98,7 +98,7 @@ serve(async (req) => {
   try {
     const requestData: ExamFortuneRequest = await req.json()
 
-    // snake_case (Flutter) 우선, camelCase (legacy) 폴백
+    // snake_case 우선, camelCase 폴백
     const examType = requestData.exam_category || requestData.examType || 'other'
     const examDate = requestData.exam_date || requestData.examDate
     const preparation = requestData.preparation_status || requestData.preparation || 'normal'
@@ -416,7 +416,7 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
       }
 
       // 🔥 블러 로직 완전 제거 - 모든 데이터 무조건 노출
-      // Flutter UI 필드명 매핑 (snake_case)
+      // 클라이언트 UI 필드명 매핑 (snake_case)
       const luckyInfo = parsedResponse.luckyInfo || {
         luckyTime: '9시',
         unluckyTime: '2시',
@@ -497,14 +497,14 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
         dday_stage: ddayStage,
         preparation_status: preparationLabel,
 
-        // 합격 운세 (Flutter UI 필드명)
+        // 합격 운세 (클라이언트 UI 필드명)
         score: parsedResponse.score || 78,
         status_message: parsedResponse.statusMessage || parsedResponse.passMessage || '합격 가능성이 좋습니다!',
         pass_possibility: parsedResponse.statusMessage || parsedResponse.passMessage || '합격 가능성이 좋습니다!',
         pass_grade: parsedResponse.passGrade || 'B+',
         overall_fortune: parsedResponse.summary || '합격 운이 강한 시기입니다!',
 
-        // 🆕 시험 스탯 (Flutter UI: exam_stats)
+        // 🆕 시험 스탯 (exam_stats)
         exam_stats: {
           answer_intuition: examStats.answerIntuition,
           answer_intuition_desc: examStats.answerIntuitionDesc,
@@ -514,7 +514,7 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
           memory_acceleration_desc: examStats.memoryAccelerationDesc
         },
 
-        // 🆕 오늘의 1점 전략 (Flutter UI: today_strategy)
+        // 🆕 오늘의 1점 전략 (today_strategy)
         today_strategy: {
           main_action: todayStrategy.mainAction,
           action_reason: todayStrategy.actionReason,
@@ -522,7 +522,7 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
           lucky_food_reason: todayStrategy.luckyFoodReason
         },
 
-        // 🆕 영물의 기개 (Flutter UI: spirit_animal)
+        // 🆕 영물의 기개 (spirit_animal)
         spirit_animal: {
           animal: spiritAnimal.animal,
           message: spiritAnimal.message,
@@ -530,7 +530,7 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
           direction_tip: spiritAnimal.directionTip
         },
 
-        // 🆕 해시태그 (Flutter UI: hashtags)
+        // 🆕 해시태그 (hashtags)
         hashtags: hashtags,
 
         // 🆕 수능 전용 섹션
@@ -539,7 +539,7 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
         csat_routine: csatRoutine,
         csat_checklist: csatChecklist,
 
-        // 행운 정보 (Flutter UI 필드명: snake_case) - 초단축
+        // 행운 정보 (snake_case) - 초단축
         lucky_hours: luckyInfo.luckyTime || '9시',
         unlucky_hours: luckyInfo.unluckyTime || '2시',
         lucky_color: luckyInfo.luckyColor || '파랑',
@@ -549,10 +549,10 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
         focus_subject: studyTips.todayTip || '핵심정리',
         exam_keyword: parsedResponse.passGrade || 'A',
 
-        // D-day 조언 (Flutter UI: dday_advice)
+        // D-day 조언 (dday_advice)
         dday_advice: ddayAdviceArr.join(' | '),
 
-        // 공부법 (Flutter UI: study_methods 배열)
+        // 공부법 (study_methods 배열)
         study_methods: [
           studyTips.todayTip,
           studyTips.focusMethod,
@@ -560,16 +560,16 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
         ].filter(Boolean),
         best_study_time: studyTips.bestStudyTime || '오전 9시-12시',
 
-        // 주의사항 (Flutter UI: cautions 배열)
+        // 주의사항 (cautions 배열)
         cautions: warnings,
 
-        // 멘탈 관리 (Flutter UI 필드명)
+        // 멘탈 관리 필드
         mental_tip: mentalCare.anxietyTip || '심호흡으로 긴장을 풀어주세요',
         affirmation: mentalCare.affirmation || '나는 충분히 준비했다!',
         confidence_tip: mentalCare.confidenceTip || '지금까지의 노력을 믿으세요',
         mentalCare: mentalCare,
 
-        // 사주 분석 (Flutter UI에서 sajuAnalysis 객체 사용)
+        // 사주 분석
         sajuAnalysis: sajuAnalysis,
 
         // 요약

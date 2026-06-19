@@ -23,8 +23,8 @@
 
 ## 4. WHERE ELSE (Global Search)
 - Search patterns used:
-  - `rg "pattern1" lib/`
-  - `rg "pattern2" lib/`
+  - `rg "pattern1" apps/mobile-rn/src packages supabase/functions`
+  - `rg "pattern2" apps/mobile-rn/src packages supabase/functions`
 - Findings:
   1. `path/to/file1.dart:line` - issue / safe
   2. `path/to/file2.dart:line` - issue / safe
@@ -47,4 +47,3 @@
   2. `path/to/file2.dart` - change summary
 - Risk assessment:
 - Validation plan:
-

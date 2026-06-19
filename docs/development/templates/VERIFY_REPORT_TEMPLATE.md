@@ -8,13 +8,13 @@
 - Affected area:
 
 ## 2. Static Validation
-- `flutter analyze`
+- `npm run rn:typecheck`
   - Result:
   - Notes:
-- `dart format --set-exit-if-changed .`
+- `pnpm --filter @fortune/mobile-rn lint` (RN app changes)
   - Result:
   - Notes:
-- `dart run build_runner build --delete-conflicting-outputs` (if applicable)
+- `npm run rn:test` (shared contracts or pricing changes)
   - Result:
   - Notes:
 
@@ -44,4 +44,3 @@
 
 ## 7. Completion Gate
 - User confirmation required before final completion declaration.
-
