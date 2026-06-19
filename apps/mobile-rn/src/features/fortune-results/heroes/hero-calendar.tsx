@@ -57,9 +57,9 @@ export default function HeroCalendar({ data, progress }: HeroCalendarProps) {
     >
       <Animated.View
         style={{
-          width: 200,
-          height: 130,
-          borderRadius: 14,
+          width: 176,
+          height: 108,
+          borderRadius: 16,
           borderWidth: 1,
           borderColor: fortuneTheme.colors.border,
           // linear-gradient(180deg, #1A1A1A, #111118) 근사: 상단 레이어 + 하단 레이어
@@ -73,7 +73,7 @@ export default function HeroCalendar({ data, progress }: HeroCalendarProps) {
         <View
           style={{
             position: 'absolute',
-            top: 60,
+            top: 52,
             left: 0,
             right: 0,
             bottom: 0,
@@ -98,12 +98,12 @@ export default function HeroCalendar({ data, progress }: HeroCalendarProps) {
         <Text
           style={{
             position: 'absolute',
-            top: 30,
+            top: 26,
             left: 0,
             right: 0,
             textAlign: 'center',
-            fontSize: 48,
-            lineHeight: 56,
+            fontSize: 42,
+            lineHeight: 48,
             fontFamily: 'ZenSerif',
             color: fortuneTheme.colors.textPrimary,
             letterSpacing: 0.96,

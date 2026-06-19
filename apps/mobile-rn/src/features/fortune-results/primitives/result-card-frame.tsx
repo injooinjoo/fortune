@@ -7,6 +7,7 @@ import {
   isValidElement,
   useEffect,
   useRef,
+  useState,
   type ReactNode,
 } from 'react';
 import { Animated, Pressable, Text, View } from 'react-native';
@@ -36,6 +37,32 @@ const stage = (p: number, from: number, to: number) =>
   clamp01((p - from) / Math.max(0.0001, to - from));
 
 const AMBER = '#E0A76B';
+const DAILY_CARD_KINDS = new Set(['daily', 'daily-calendar']);
+
+function cleanPreviewText(value: string | undefined, maxLength: number) {
+  if (!value) return undefined;
+  const compact = value
+    .replace(/\*\*/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (compact.length <= maxLength) return compact;
+  return `${compact.slice(0, maxLength).trim()}…`;
+}
+
+function DetailText({ children }: { children: string }) {
+  return (
+    <Text
+      style={{
+        marginTop: 8,
+        fontSize: 12,
+        lineHeight: 19,
+        color: fortuneTheme.colors.textSecondary,
+      }}
+    >
+      {children}
+    </Text>
+  );
+}
 
 /**
  * Fortune 유형별 domain-specific disclaimer 폴백. 서버가 응답에 `disclaimer`
@@ -74,6 +101,9 @@ export function ResultCardFrame({
   const pHead = stage(p, 0.22, 0.5);
   const pBody = stage(p, 0.5, 0.72);
   const pSec = stage(p, 0.7, 1);
+  const isDailyCard = DAILY_CARD_KINDS.has(kind);
+  const [expandedMetricIndex, setExpandedMetricIndex] = useState<number | null>(null);
+  const [expandedSectionKey, setExpandedSectionKey] = useState<string | null>(null);
 
   // Head translate-Y (6 → 0) and body translate-Y (4 → 0).
   const headAnim = useRef(new Animated.Value(pHead)).current;
@@ -137,11 +167,26 @@ export function ResultCardFrame({
   });
 
   const metrics = data.metrics ?? [];
-  const shouldUseMetricRows =
-    kind === 'daily-calendar' ||
-    kind === 'daily' ||
-    metrics.some((metric) => (metric.note?.length ?? 0) > 28);
-  const metricCols = shouldUseMetricRows ? 1 : metrics.length >= 3 ? 3 : 2;
+  const metricCols = isDailyCard ? 3 : metrics.length >= 3 ? 3 : 2;
+  const dailySections = [
+    data.highlights?.length
+      ? { key: 'highlights', title: '핵심 포인트', accent: AMBER, items: data.highlights }
+      : null,
+    data.recommendations?.length
+      ? { key: 'recommendations', title: '추천 액션', accent: '#68B593', items: data.recommendations }
+      : null,
+    data.warnings?.length
+      ? { key: 'warnings', title: '주의 포인트', accent: '#E0A76B', items: data.warnings }
+      : null,
+    data.specialTip
+      ? { key: 'specialTip', title: '하늘이 한마디', accent: '#C4B8FF', items: [data.specialTip] }
+      : null,
+  ].filter(Boolean) as Array<{
+    key: string;
+    title: string;
+    accent: string;
+    items: string[];
+  }>;
 
   const card = (
     <View
@@ -191,9 +236,9 @@ export function ResultCardFrame({
          callers don't need to thread it manually. */}
       <View
         style={{
-          minHeight: 180,
+          minHeight: isDailyCard ? 146 : 180,
           justifyContent: 'center',
-          marginTop: 4,
+          marginTop: isDailyCard ? 0 : 4,
         }}
       >
         {Children.map(children, (child) =>
@@ -241,7 +286,7 @@ export function ResultCardFrame({
               score={data.score}
               color={AMBER}
               progress={pHead}
-              size={62}
+              size={isDailyCard ? 52 : 62}
             />
           </View>
         ) : null}
@@ -270,75 +315,201 @@ export function ResultCardFrame({
       {metrics.length > 0 ? (
         <Animated.View
           style={{
-            marginTop: 12,
+            marginTop: 14,
             flexDirection: 'row',
             flexWrap: 'wrap',
-            gap: 6,
+            gap: 8,
             opacity: pBody,
           }}
         >
-          {metrics.map((m, i) => (
+          {metrics.map((m, i) => {
+            const selected = expandedMetricIndex === i;
+            const preview = cleanPreviewText(m.note, isDailyCard ? 22 : 2000);
+            return (
+              <Pressable
+                key={i}
+                accessibilityRole={isDailyCard ? 'button' : undefined}
+                accessibilityLabel={isDailyCard ? `${m.label} 자세히 보기` : undefined}
+                accessibilityState={isDailyCard ? { expanded: selected } : undefined}
+                onPress={() =>
+                  isDailyCard
+                    ? setExpandedMetricIndex(selected ? null : i)
+                    : undefined
+                }
+                style={({ pressed }) => ({
+                  width: isDailyCard ? '31.5%' : `${100 / metricCols - 2}%`,
+                  minHeight: isDailyCard ? 96 : undefined,
+                  borderWidth: 1,
+                  borderColor: selected ? AMBER : fortuneTheme.colors.border,
+                  borderRadius: isDailyCard ? 16 : 10,
+                  paddingHorizontal: isDailyCard ? 10 : 10,
+                  paddingVertical: isDailyCard ? 12 : 8,
+                  backgroundColor: selected
+                    ? 'rgba(224,167,107,0.10)'
+                    : 'rgba(255,255,255,0.025)',
+                  opacity: pressed ? 0.82 : 1,
+                })}
+              >
+                <Text
+                  numberOfLines={1}
+                  style={{
+                    fontSize: 10,
+                    lineHeight: 13,
+                    letterSpacing: 0.6,
+                    color: selected ? AMBER : fortuneTheme.colors.textTertiary,
+                    fontWeight: '700',
+                  }}
+                >
+                  {m.label}
+                </Text>
+                <Text
+                  numberOfLines={1}
+                  style={{
+                    marginTop: 8,
+                    fontSize: isDailyCard ? 20 : 16,
+                    lineHeight: isDailyCard ? 24 : 20,
+                    fontWeight: '800',
+                    color: fortuneTheme.colors.textPrimary,
+                  }}
+                >
+                  {m.value}
+                </Text>
+                {preview ? (
+                  <Text
+                    numberOfLines={isDailyCard ? 1 : undefined}
+                    style={{
+                      marginTop: 6,
+                      fontSize: 11,
+                      lineHeight: 15,
+                      color: fortuneTheme.colors.textSecondary,
+                    }}
+                  >
+                    {preview}
+                  </Text>
+                ) : null}
+              </Pressable>
+            );
+          })}
+          {isDailyCard && expandedMetricIndex !== null && metrics[expandedMetricIndex]?.note ? (
             <View
-              key={i}
               style={{
-                width: shouldUseMetricRows ? '100%' : `${100 / metricCols - 2}%`,
+                width: '100%',
+                marginTop: 2,
+                borderRadius: 16,
                 borderWidth: 1,
-                borderColor: fortuneTheme.colors.border,
-                borderRadius: shouldUseMetricRows ? 14 : 10,
-                paddingHorizontal: shouldUseMetricRows ? 12 : 10,
-                paddingVertical: shouldUseMetricRows ? 10 : 8,
-                backgroundColor: shouldUseMetricRows
-                  ? 'rgba(255,255,255,0.03)'
-                  : 'rgba(255,255,255,0.015)',
+                borderColor: 'rgba(224,167,107,0.24)',
+                backgroundColor: 'rgba(224,167,107,0.07)',
+                padding: 12,
               }}
             >
               <Text
                 style={{
-                  fontSize: 9,
-                  lineHeight: 11,
-                  letterSpacing: 1,
-                  color: fortuneTheme.colors.textTertiary,
-                }}
-              >
-                {m.label}
-              </Text>
-              <Text
-                style={{
-                  marginTop: 2,
-                  fontSize: shouldUseMetricRows ? 18 : 16,
-                  lineHeight: shouldUseMetricRows ? 23 : 20,
+                  fontSize: 12,
+                  lineHeight: 15,
+                  color: AMBER,
                   fontWeight: '800',
-                  color: fortuneTheme.colors.textPrimary,
                 }}
               >
-                {m.value}
+                {metrics[expandedMetricIndex]?.label}
               </Text>
-              {m.note ? (
-                <Text
+              <DetailText>
+                {cleanPreviewText(metrics[expandedMetricIndex]?.note, 2000) ?? ''}
+              </DetailText>
+            </View>
+          ) : null}
+        </Animated.View>
+      ) : null}
+
+      {/* Daily detail cards */}
+      {isDailyCard && dailySections.length > 0 ? (
+        <Animated.View style={{ marginTop: 12, gap: 8, opacity: pSec }}>
+          {dailySections.map((section) => {
+            const selected = expandedSectionKey === section.key;
+            const preview = cleanPreviewText(section.items[0], 34);
+            return (
+              <Pressable
+                key={section.key}
+                accessibilityRole="button"
+                accessibilityLabel={`${section.title} 자세히 보기`}
+                accessibilityState={{ expanded: selected }}
+                onPress={() => setExpandedSectionKey(selected ? null : section.key)}
+                style={({ pressed }) => ({
+                  borderRadius: 16,
+                  borderWidth: 1,
+                  borderColor: selected ? section.accent : fortuneTheme.colors.border,
+                  backgroundColor: selected
+                    ? 'rgba(255,255,255,0.055)'
+                    : 'rgba(255,255,255,0.026)',
+                  paddingHorizontal: 12,
+                  paddingVertical: 11,
+                  opacity: pressed ? 0.84 : 1,
+                })}
+              >
+                <View
                   style={{
-                    marginTop: shouldUseMetricRows ? 6 : 2,
-                    fontSize: shouldUseMetricRows ? 12 : 10,
-                    lineHeight: shouldUseMetricRows ? 18 : 14,
-                    color: fortuneTheme.colors.textSecondary,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: 12,
                   }}
                 >
-                  {m.note}
-                </Text>
-              ) : null}
-            </View>
-          ))}
+                  <View style={{ flex: 1, minWidth: 0 }}>
+                    <Text
+                      style={{
+                        fontSize: 13,
+                        lineHeight: 17,
+                        color: section.accent,
+                        fontWeight: '800',
+                      }}
+                    >
+                      {section.title}
+                    </Text>
+                    {preview ? (
+                      <Text
+                        numberOfLines={1}
+                        style={{
+                          marginTop: 4,
+                          fontSize: 12,
+                          lineHeight: 17,
+                          color: fortuneTheme.colors.textSecondary,
+                        }}
+                      >
+                        {preview}
+                      </Text>
+                    ) : null}
+                  </View>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      lineHeight: 22,
+                      color: fortuneTheme.colors.textTertiary,
+                    }}
+                  >
+                    {selected ? '−' : '+'}
+                  </Text>
+                </View>
+                {selected ? (
+                  <View style={{ marginTop: 10, gap: 7 }}>
+                    {section.items.map((item, index) => (
+                      <DetailText key={index}>{cleanPreviewText(item, 2000) ?? item}</DetailText>
+                    ))}
+                  </View>
+                ) : null}
+              </Pressable>
+            );
+          })}
         </Animated.View>
       ) : null}
 
       {/* Highlights */}
-      {data.highlights && data.highlights.length > 0 ? (
+      {!isDailyCard && data.highlights && data.highlights.length > 0 ? (
         <Section title="핵심 포인트" accent={AMBER} appear={pSec}>
           <BulletList items={data.highlights} tone="neutral" appear={pSec} />
         </Section>
       ) : null}
 
       {/* Recommendations */}
-      {data.recommendations && data.recommendations.length > 0 ? (
+      {!isDailyCard && data.recommendations && data.recommendations.length > 0 ? (
         <Section title="추천 액션" accent="#68B593" appear={pSec}>
           <BulletList
             items={data.recommendations}
@@ -349,7 +520,7 @@ export function ResultCardFrame({
       ) : null}
 
       {/* Warnings */}
-      {data.warnings && data.warnings.length > 0 ? (
+      {!isDailyCard && data.warnings && data.warnings.length > 0 ? (
         <Section title="주의 포인트" accent="#E0A76B" appear={pSec}>
           <BulletList items={data.warnings} tone="warn" appear={pSec} />
         </Section>
@@ -367,7 +538,7 @@ export function ResultCardFrame({
       ) : null}
 
       {/* Special tip */}
-      {data.specialTip ? (
+      {!isDailyCard && data.specialTip ? (
         <Animated.View
           style={{
             marginTop: 14,
