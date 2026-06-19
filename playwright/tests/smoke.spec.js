@@ -16,7 +16,8 @@ test.describe('Core Smoke Flow', () => {
     expect(isAuthenticated).toBe(true);
 
     const bodyText = (await page.textContent('body')) || '';
-    expect(bodyText.length).toBeGreaterThan(100);
+    expect(bodyText.trim().length).toBeGreaterThan(20);
+    expect(bodyText).toMatch(/채팅|메시지|프로필|Ondo|온도/);
 
     const hasLandingCta = await page.getByText('시작하기').isVisible().catch(() => false);
     expect(hasLandingCta).toBe(false);

@@ -7,13 +7,8 @@
  * Chat 포맷은 Gemma 2/3/3n/4 동일 (<start_of_turn>user/model<end_of_turn>).
  */
 
-import {
-  addNativeLogListener,
-  initLlama,
-  toggleNativeLog,
-  type LlamaContext,
-} from 'llama.rn';
 import * as FileSystem from 'expo-file-system/legacy';
+import type { LlamaContext } from 'llama.rn';
 import { Platform } from 'react-native';
 
 import { OnDeviceNotReadyError } from './chat-provider-errors';
@@ -104,6 +99,17 @@ export interface OnDeviceLLMEngine {
 }
 
 type StatusListener = (status: ModelStatus) => void;
+type LlamaModule = typeof import('llama.rn');
+
+let llamaModulePromise: Promise<LlamaModule> | null = null;
+
+async function loadLlamaModule(): Promise<LlamaModule> {
+  if (Platform.OS === 'web') {
+    throw new OnDeviceNotReadyError('unsupported');
+  }
+  llamaModulePromise ??= import('llama.rn');
+  return llamaModulePromise;
+}
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -336,10 +342,11 @@ class LlamaOnDeviceLLMEngine implements OnDeviceLLMEngine {
 
     this.setStatus('loading');
     this.lastLoadError = null;
-    this.attachNativeLogCapture();
+    const llamaModule = await loadLlamaModule();
+    this.attachNativeLogCapture(llamaModule);
     const mmprojPath = this.mmprojPath();
     try {
-      this.llamaContext = await initLlama({
+      this.llamaContext = await llamaModule.initLlama({
         model: this.modelPath(),
         n_ctx: variant.nCtx,
         n_gpu_layers:
@@ -424,11 +431,11 @@ class LlamaOnDeviceLLMEngine implements OnDeviceLLMEngine {
     }
   }
 
-  private attachNativeLogCapture(): void {
+  private attachNativeLogCapture(llamaModule: LlamaModule): void {
     this.nativeLogTail = [];
     try {
-      toggleNativeLog(true).catch(() => undefined);
-      this.nativeLogSubscription = addNativeLogListener((level, text) => {
+      llamaModule.toggleNativeLog(true).catch(() => undefined);
+      this.nativeLogSubscription = llamaModule.addNativeLogListener((level, text) => {
         const line = `[${level}] ${text}`;
         this.nativeLogTail.push(line);
         // 최근 40줄만 유지.

@@ -18,7 +18,7 @@ test.describe('Fortune Generation Flow', () => {
     await page.waitForTimeout(2000);
 
     // Look for fortune-related content
-    const bodyText = await page.textContent('body');
+    const bodyText = (await page.textContent('body')) || '';
 
     // Check for Korean fortune-related terms (앱 이름 변경에 따라 키워드 확장)
     const fortuneKeywords = ['운세', '오늘', '사주', '타로', '궁합', '꿈해몽', '채팅', '홈', '프로필', '탐구', '트렌드', 'Ondo'];
@@ -41,8 +41,9 @@ test.describe('Fortune Generation Flow', () => {
       fullPage: true
     });
 
-    // Basic expectations - 앱이 로드되었으면 OK (콘텐츠 길이로 확인)
-    expect(bodyText.length).toBeGreaterThan(100);  // 앱이 로드되면 콘텐츠가 있어야 함
+    // Basic expectations - RN web shell이 로드되었으면 OK
+    expect(bodyText.trim().length).toBeGreaterThan(20);
+    expect(bodyText).toMatch(/채팅|메시지|프로필|Ondo|온도/);
 
     console.log('🧪 [TEST] Fortune access test completed');
   });
