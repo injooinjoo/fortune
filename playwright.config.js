@@ -5,7 +5,7 @@ const shouldRunWebServer =
   process.env.PLAYWRIGHT_SKIP_WEBSERVER !== 'true';
 const isCI = process.env.CI === 'true' || process.env.CI === '1';
 const webServerCommand =
-  'npm run rn:web:export && npx serve dist/mobile-rn-web -l 3000 --single';
+  'npm run rn:web:export && corepack pnpm exec serve dist/mobile-rn-web -l 3000 --single';
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -105,7 +105,7 @@ module.exports = defineConfig({
     command: webServerCommand,
     url: 'http://localhost:3000',
     reuseExistingServer: true,
-    timeout: isCI ? 60 * 1000 : 300 * 1000,
+    timeout: isCI ? 180 * 1000 : 300 * 1000,
   } : undefined,
 
   /* Global setup */

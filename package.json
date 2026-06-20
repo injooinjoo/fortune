@@ -29,7 +29,7 @@
     "rn:typecheck": "npm run typecheck --workspace @fortune/product-contracts --workspace @fortune/design-tokens --workspace @fortune/mobile-rn",
     "rn:test": "npm run test --workspace @fortune/product-contracts",
     "rn:web:export": "corepack pnpm --filter @fortune/mobile-rn exec expo export --platform web --output-dir ../../dist/mobile-rn-web",
-    "serve:rn-web": "npx serve dist/mobile-rn-web -l 3000 --single",
+    "serve:rn-web": "corepack pnpm exec serve dist/mobile-rn-web -l 3000 --single",
     "sync:edge-pricing": "bash scripts/sync-edge-pricing.sh",
     "check:edge-pricing": "bash scripts/sync-edge-pricing.sh && git diff --exit-code -- supabase/functions/_shared/fortune-pricing-generated.ts",
     "lighthouse": "lhci autorun",
@@ -54,6 +54,7 @@
     "openai": "^6.10.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "serve": "14.2.6",
     "sharp": "^0.34.5"
   },
   "author": "Fortune Team",
