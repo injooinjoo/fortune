@@ -12,6 +12,8 @@ ios
 /linux
 /test
 /build
+/dist
+/web-build
 
 # Design & docs
 *.pen
@@ -26,6 +28,21 @@ ios
 *.md
 !README.md
 
+# Node / Expo caches (EAS reinstalls dependencies)
+**/node_modules
+.expo
+.expo-shared
+.metro-cache
+
 # Large artifacts
 /fortune-transfer-bundle-*
 /pencil*
+
+# Env & secrets (EAS pulls from its own secrets)
+.env
+.env.*
+!.env.example
+*.pem
+*.p8
+*.p12
+*.mobileprovision
