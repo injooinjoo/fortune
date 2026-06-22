@@ -6,6 +6,7 @@ import { AppText } from '../components/app-text';
 import { PrimaryButton } from '../components/primary-button';
 import { Screen } from '../components/screen';
 import { captureError } from '../lib/error-reporting';
+import { getUnifiedOnboardingProgress } from '../lib/storage';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
@@ -31,7 +32,6 @@ export function AuthCallbackScreen() {
   }>();
   const {
     markAuthComplete,
-    onboardingProgress,
     session,
     status: bootstrapStatus,
   } = useAppBootstrap();
@@ -109,11 +109,15 @@ export function AuthCallbackScreen() {
         }
 
         setHasHandled(true);
-        // If the user hasn't completed the Ondo 7-step onboarding yet, drop
-        // them into it here instead of sending them to /chat (which would
-        // render the ProfileFlowGateCard). Returning users with a finished
-        // handoff go to their original returnTo target.
-        const needsOnboardingFlow = !onboardingProgress.firstRunHandoffSeen;
+        // Route from the freshest persisted progress, because syncRemoteProfile
+        // can patch onboarding state before React context re-renders. Treat any
+        // missing required onboarding flag as incomplete so signup/auth does not
+        // fall through to the message list with only the ProfileFlowGateCard.
+        const freshProgress = await getUnifiedOnboardingProgress();
+        const needsOnboardingFlow =
+          !freshProgress.firstRunHandoffSeen ||
+          !freshProgress.birthCompleted ||
+          !freshProgress.interestCompleted;
         const destination = needsOnboardingFlow
           ? '/onboarding/name'
           : callbackMeta.returnTo === '/chat'
@@ -133,7 +137,6 @@ export function AuthCallbackScreen() {
     callbackMeta.returnTo,
     hasHandled,
     markAuthComplete,
-    onboardingProgress.firstRunHandoffSeen,
     session,
     syncRemoteProfile,
   ]);

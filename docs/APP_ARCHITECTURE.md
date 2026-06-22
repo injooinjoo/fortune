@@ -26,8 +26,8 @@ supabase/
 Routes are defined by `apps/mobile-rn/app/` with `expo-router`.
 
 - `/chat`: primary chat surface
-- `/home`: legacy alias that redirects to chat
-- `/fortune`, `/trend`, `/profile`: secondary tab routes
+- `/fortune`: legacy/feature-flag fortune entry
+- `/profile`: profile/settings stack
 - `/character/[id]`: character detail
 - `/friends/new/*`: friend creation flow
 - `/result/[resultKind]`: fortune result surface

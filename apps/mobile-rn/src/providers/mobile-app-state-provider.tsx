@@ -581,7 +581,9 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
     const onboardingPatch = remoteProfileToOnboardingPatch(remoteProfile);
     const shouldUpdateOnboarding =
       onboardingProgress.birthCompleted !== onboardingPatch.birthCompleted ||
-      onboardingProgress.interestCompleted !== onboardingPatch.interestCompleted;
+      onboardingProgress.interestCompleted !== onboardingPatch.interestCompleted ||
+      (onboardingPatch.firstRunHandoffSeen === true &&
+        onboardingProgress.firstRunHandoffSeen !== true);
 
     if (shouldUpdateOnboarding) {
       await updateOnboardingProgress(onboardingPatch);
@@ -591,6 +593,7 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
   }, [
     bootstrapStatus,
     onboardingProgress.birthCompleted,
+    onboardingProgress.firstRunHandoffSeen,
     onboardingProgress.interestCompleted,
     persistFromCurrent,
     session,

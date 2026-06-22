@@ -30,8 +30,7 @@
 | `/splash` | 스플래시 |
 | `/signup` | 가입 |
 | `/auth/callback` | 인증 콜백 |
-| `/onboarding` | 온보딩 |
-| `/onboarding/toss-style` | 온보딩 변형 |
+| `/onboarding` | 온보딩 entry |
 | `/character/:id` | 캐릭터 상세/채팅 진입 보조 |
 | `/friends/new/basic` | 친구 캐릭터 생성 1단계 |
 | `/friends/new/persona` | 친구 캐릭터 생성 2단계 |
@@ -52,8 +51,7 @@
 
 | 경로 | 동작 |
 |------|------|
-| `/` | `/chat`로 이동 |
-| `/home` | `/chat`로 이동 |
+| `/` | `/splash`로 이동 |
 
 ## current-state route diagram
 
@@ -64,7 +62,6 @@ flowchart LR
   Router --> Signup["/signup"]
   Router --> Callback["/auth/callback"]
   Router --> Onboarding["/onboarding"]
-  Router --> TossOnboarding["/onboarding/toss-style"]
   Router --> Chat["/chat"]
   Router --> Character["/character/:id"]
   Router --> FriendBasic["/friends/new/basic"]
@@ -74,8 +71,7 @@ flowchart LR
   Router --> Privacy["/privacy-policy"]
   Router --> Terms["/terms-of-service"]
 
-  Root["/"] --> Chat["/chat"]
-  Home["/home"] --> Chat
+  Root["/"] --> Splash["/splash"]
 
   Profile --> ProfileEdit["/profile/edit"]
   Profile --> ProfileSaju["/profile/saju-summary"]
@@ -92,14 +88,13 @@ flowchart LR
 
 - `/profile/*`만 nested route이고, 나머지 보조 surface는 flat top-level route입니다.
 - `/friends/new/*`는 이름상 wizard이지만 `GoRoute` 중첩이 아니라 순차 이동하는 flat route 집합입니다.
-- `/`와 `/home`은 시각 surface가 없는 redirect-only route입니다.
+- `/`는 시각 surface가 없는 redirect-only route입니다.
 
 ### current-state 기준 비활성 상위 라우트
 
 아래 경로들은 현재 구현 기준 active route inventory에 포함하지 않습니다.
 
 - `/fortune`
-- `/trend`
 - `/interactive`
 - `/health-toss`
 - `/exercise`

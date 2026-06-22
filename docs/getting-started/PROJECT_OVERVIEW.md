@@ -11,8 +11,7 @@ Ondo is a React Native companion chat and fortune app. The active app is `apps/m
 ## Active Surfaces
 
 - `/chat`: primary entry surface
-- `/fortune`: insight exploration
-- `/trend`: trend content
+- `/fortune`: feature-flag/legacy fortune entry
 - `/profile`: profile and settings
 - `/premium`: subscription and purchase surface
 - `/onboarding/*`: onboarding flows

@@ -5,7 +5,6 @@ Ondo React Native monorepo입니다. 현재 활성 앱은 Expo 기반 `apps/mobi
 ## Product Surface
 
 - Main route: `/chat`
-- Alias route: `/home` -> `/chat`
 - Supporting routes: onboarding, auth callback, character detail, premium, legal, account deletion
 - Product language: `일반 채팅` and `호기심`
 

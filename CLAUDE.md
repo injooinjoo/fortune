@@ -222,9 +222,7 @@ const result = await llm.generate({ prompt, maxTokens: 2000 })
 | 탭 | 경로 | 역할 |
 |----|------|------|
 | Home | `/chat` | 통합 채팅 진입점 |
-| 인사이트 alias | `/home` | 레거시 별칭, `/chat`으로 redirect |
-| 탐구 | `/fortune` | 인사이트 카테고리 + Face AI |
-| 트렌드 | `/trend` | 트렌드 콘텐츠 |
+| 탐구 | `/fortune` | feature-flag/legacy fortune entry |
 | 프로필 | `/profile` | 설정 + Premium |
 
 라우팅은 `expo-router` (`apps/mobile-rn/app/(tabs)/`).
@@ -284,7 +282,7 @@ const result = await llm.generate({ prompt, maxTokens: 2000 })
 
 ```
 apps/mobile-rn/                        # Expo SDK 54 / RN 0.81 / TypeScript
-  app/(tabs)/                          # expo-router 라우트 (chat/fortune/trend/profile)
+  app/(tabs)/                          # expo-router 라우트 (chat/profile)
   src/components/                      # 공용 컴포넌트
   src/features/
     chat-surface/                      # 통합 채팅 화면 조립

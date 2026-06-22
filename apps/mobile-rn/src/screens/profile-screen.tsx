@@ -16,9 +16,9 @@ import {
   formatBuildBadge,
 } from '../lib/build-identity';
 import { captureError } from '../lib/error-reporting';
+import { appEnv } from '../lib/env';
 import { deactivateCurrentPushToken } from '../lib/push-notifications';
 import { supabase } from '../lib/supabase';
-import { isTestAccountEmail } from '../lib/test-accounts';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { onDeviceLLMEngine, type ModelStatus } from '../lib/on-device-llm';
@@ -108,6 +108,9 @@ export function ProfileScreen() {
   const { session } = useAppBootstrap();
   const email = session?.user.email ?? null;
   const { refreshLocalState, restorePurchases, saveSettings, state, syncRemoteProfile } = useMobileAppState();
+  const isInternalToolsEnabled = __DEV__ || appEnv.environment === 'development';
+  const isOnboardingQaUser =
+    isInternalToolsEnabled && isOnboardingQaEmail(email);
 
   // Re-sync state when this screen gains focus (e.g. returning from profile-edit).
   // refreshLocalState reads directly from SecureStore into React state (no
@@ -117,7 +120,7 @@ export function ProfileScreen() {
     useCallback(() => {
       refreshLocalState().catch(() => undefined);
       syncRemoteProfile().catch(() => undefined);
-      if (isOnboardingQaEmail(email)) {
+      if (isOnboardingQaUser) {
         readWelcomeForceEnabled()
           .then(setWelcomeForceEnabledState)
           .catch(() => setWelcomeForceEnabledState(false));
@@ -153,7 +156,7 @@ export function ProfileScreen() {
         unsub?.();
         clearInterval(timer);
       };
-    }, [email, refreshLocalState, syncRemoteProfile]),
+    }, [isOnboardingQaUser, refreshLocalState, syncRemoteProfile]),
   );
 
   const savedName =
@@ -178,9 +181,6 @@ export function ProfileScreen() {
   const tokenGaugeMax = Math.max(activeTokenAllowance, state.premium.tokenBalance, 100);
 
   const initial = savedName.charAt(0).toUpperCase() || 'U';
-
-  const isTestAccount = isTestAccountEmail(email);
-  const isOnboardingQaUser = isOnboardingQaEmail(email);
 
   function handleSignOut() {
     Alert.alert('로그아웃', '정말 로그아웃 하시겠어요?', [
@@ -343,11 +343,6 @@ export function ProfileScreen() {
           icon="notifications-outline"
           title="알림 설정"
           onPress={() => router.push('/profile/notifications')}
-        />
-        <IconMenuTile
-          icon="phone-portrait-outline"
-          title="Ondo 위젯 미리보기"
-          onPress={() => router.push('/widgets')}
           showDivider={false}
         />
       </Card>
@@ -797,21 +792,6 @@ export function ProfileScreen() {
           </Pressable>
         </View>
       )}
-
-      {isTestAccount ? (
-        <Card>
-          <AppText variant="heading4">개발자 도구</AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            테스트 계정에만 노출됩니다. 로컬 푸시 발사, 푸시 토큰 확인, 앱 초기화, 빌드 정보 dump 등 디버그 도구가 한 곳에 모여 있어요.
-          </AppText>
-          <PrimaryButton
-            onPress={() => router.push('/profile/dev-tools')}
-            tone="secondary"
-          >
-            개발자 도구 열기
-          </PrimaryButton>
-        </Card>
-      ) : null}
 
       {/* Version / build identity — 테스트 중 어떤 빌드인지 판별용.
           사업자 정보 는 법적 공시 의무 유지하되 최소 타이포로 배치. */}

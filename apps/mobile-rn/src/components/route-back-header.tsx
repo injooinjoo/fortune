@@ -47,10 +47,6 @@ export function resolveBackDestinationLabel(href: Href | undefined) {
     return '알림 설정';
   }
 
-  if (path === '/profile/dev-tools') {
-    return '개발자 도구';
-  }
-
   if (path === '/profile/relationships') {
     return '관계도';
   }

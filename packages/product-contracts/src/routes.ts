@@ -4,13 +4,10 @@ export type AppRouteId =
   | 'signup'
   | 'auth-callback'
   | 'onboarding'
-  | 'onboarding-toss-style'
   | 'chat'
-  | 'home'
   // PR-A: 'fortune' route id 제거 — 본 contract 가 "탭" 의도였는데 실제 운영은
   // chat+profile 만. 라우트 자체는 app/fortune.tsx 에 redirect 로 남아있고 PR-C
   // 가 flag 분기 추가 예정.
-  | 'trend'
   | 'premium'
   | 'account-deletion'
   | 'profile'
@@ -32,7 +29,6 @@ export type RouteGroup =
   | 'onboarding'
   | 'chat'
   | 'explore'
-  | 'trend'
   | 'commerce'
   | 'profile'
   | 'legal'
@@ -88,38 +84,16 @@ export const appRoutes: readonly AppRouteSpec[] = [
     group: 'onboarding',
   },
   {
-    id: 'onboarding-toss-style',
-    path: '/onboarding/toss-style',
-    title: '간편 설정',
-    description: '중간 저장과 다시 이어하기를 지원하는 설정 흐름입니다.',
-    group: 'onboarding',
-  },
-  {
     id: 'chat',
     path: '/chat',
     title: '메시지',
     description: '캐릭터와 대화를 이어가며 운세 결과를 확인하는 기본 화면입니다.',
     group: 'chat',
   },
-  {
-    id: 'home',
-    path: '/home',
-    title: '홈',
-    description: '현재는 기본 채팅 화면으로 이어지는 진입 경로입니다.',
-    group: 'chat',
-    redirectTo: '/chat',
-  },
   // PR-A: /fortune 탭 entry 제거. 실제 라우트는 app/fortune.tsx 의 redirect 로
   // 동작 — 본 contract 는 "탭 표시" 의도였는데 이미 (tabs)/_layout.tsx 가 chat+profile
   // 만 운영 중이라 entry 가 거짓말. 제거해 contract 와 실제 동작 일치.
   // 후속 PR-C 가 /fortune 라우트 동작 자체를 flag 로 분기.
-  {
-    id: 'trend',
-    path: '/trend',
-    title: '트렌드',
-    description: '추천 흐름과 요즘 많이 보는 콘텐츠를 모아보는 탭입니다.',
-    group: 'trend',
-  },
   {
     id: 'premium',
     path: '/premium',

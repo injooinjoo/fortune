@@ -5,6 +5,7 @@ import { Animated, Easing, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { formatVersionLabel } from '../lib/build-identity';
+import { appEnv } from '../lib/env';
 import { isOnboardingQaEmail } from '../lib/onboarding-qa';
 import { readWelcomeForceEnabled, readWelcomeSeen } from '../lib/welcome-state';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
@@ -71,7 +72,10 @@ export function SplashScreen() {
   }, [float]);
 
   useEffect(() => {
-    if (gate !== 'auth-entry') {
+    const shouldResolveWelcomeTarget =
+      gate === 'auth-entry' || (status === 'ready' && !session);
+
+    if (!shouldResolveWelcomeTarget) {
       setAuthEntryTarget(null);
       return;
     }
@@ -84,7 +88,7 @@ export function SplashScreen() {
     return () => {
       cancelled = true;
     };
-  }, [gate]);
+  }, [gate, session, status]);
 
   useEffect(() => {
     if (status !== 'ready') {
@@ -93,7 +97,8 @@ export function SplashScreen() {
     }
 
     const email = session?.user.email;
-    if (!isOnboardingQaEmail(email)) {
+    const isInternalToolsEnabled = __DEV__ || appEnv.environment === 'development';
+    if (!isInternalToolsEnabled || !isOnboardingQaEmail(email)) {
       setQaWelcomeForce(false);
       return;
     }
@@ -114,7 +119,7 @@ export function SplashScreen() {
       ? null
       : qaWelcomeForce
         ? '/welcome'
-        : gate === 'auth-entry'
+        : gate === 'auth-entry' || !session
           ? authEntryTarget
           : gate === 'profile-flow'
             ? '/onboarding'

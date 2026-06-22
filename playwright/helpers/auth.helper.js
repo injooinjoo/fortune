@@ -93,7 +93,7 @@ class AuthHelper {
       this.page.locator('[data-testid*="chat"]').isVisible(),
       this.page.evaluate(() => {
         const pathname = window.location.pathname || '';
-        return pathname === '/chat' || pathname === '/home';
+        return pathname === '/chat';
       }),
       this.page.evaluate(() => {
         const text = document.body.innerText || '';

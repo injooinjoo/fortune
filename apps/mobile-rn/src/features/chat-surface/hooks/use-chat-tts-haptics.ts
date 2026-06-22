@@ -15,7 +15,7 @@
  *   const { tts, handlePlayTts, handleStopTts, triggerAssistantHaptic } =
  *     useChatTtsHaptics({ selectedCharacterId, chatHapticsEnabled });
  *
- * tts 객체는 chat-screen 의 SpeakerButton (state.status / activeMessageId / error)
+ * tts 객체는 chat-screen 의 long-press 재생 액션(state.status / activeMessageId / error)
  * + handleDeleteUserMessage (clearCache) 에서 직접 사용해야 하므로 그대로 노출.
  */
 

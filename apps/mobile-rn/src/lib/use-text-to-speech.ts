@@ -50,8 +50,8 @@ function resolveCachePath(messageId: string): string {
  * (새 재생 시 직전 sound 인스턴스를 unload). 같은 메시지를 두 번째 누르면
  * 이미 캐시된 wav 파일을 사용하므로 즉시 재생.
  *
- * 호출자(SpeakerButton) 는 자기 messageId 와 controller.activeMessageId 를
- * 비교해서 자기 버튼만 'playing' 으로 표시할 수 있게 한다.
+ * 호출자는 자기 messageId 와 controller.activeMessageId 를 비교해서
+ * 현재 재생 중인 메시지만 playing 상태로 표시할 수 있게 한다.
  */
 export function useTextToSpeech() {
   const soundRef = useRef<Audio.Sound | null>(null);

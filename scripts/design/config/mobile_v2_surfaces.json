@@ -11,7 +11,6 @@
     { "id": "route_signup", "path": "/signup", "label": "Signup" },
     { "id": "route_auth_callback", "path": "/auth/callback", "label": "Auth Callback Redirect" },
     { "id": "route_onboarding", "path": "/onboarding", "label": "Onboarding" },
-    { "id": "route_onboarding_toss_style", "path": "/onboarding/toss-style", "label": "Onboarding Toss Style" },
     { "id": "route_chat", "path": "/chat", "label": "Chat Home" },
     { "id": "route_character_luts", "path": "/character/luts", "label": "Character Profile" },
     { "id": "route_premium", "path": "/premium", "label": "Premium" },

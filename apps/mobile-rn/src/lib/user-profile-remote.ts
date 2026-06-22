@@ -199,5 +199,6 @@ export function remoteProfileToOnboardingPatch(profile: RemoteUserProfileRow) {
   return {
     birthCompleted: hasBirthDate,
     interestCompleted: onboardingCompleted,
+    ...(onboardingCompleted ? { firstRunHandoffSeen: true } : {}),
   };
 }
