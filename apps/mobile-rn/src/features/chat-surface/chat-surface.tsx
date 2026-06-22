@@ -679,7 +679,7 @@ function extractMessagePreview(message: ChatShellMessage): string {
     case 'audio':
       return message.caption?.trim() ? `🎤 ${message.caption}` : '🎤 음성 메시지';
     case 'embedded-result':
-      return `📌 ${message.title ?? '결과 카드'}`;
+      return `📌 ${message.title ?? '운세 카드'}`;
     case 'fortune-cookie':
       return '🥠 포춘쿠키';
     case 'saju-preview':
@@ -2027,9 +2027,9 @@ export function ChatFirstRunSurface({
 
       {lastFortuneType ? (
         <EntryActionRow
-          badge="최근 결과"
+          badge="최근 운세"
           onPress={() => onOpenRecentResult(lastFortuneType)}
-          subtitle={`${formatFortuneTypeLabel(lastFortuneType)} 결과를 같은 채팅 안에서 다시 엽니다.`}
+          subtitle={`${formatFortuneTypeLabel(lastFortuneType)} 운세를 같은 채팅 안에서 다시 엽니다.`}
           title={`${formatFortuneTypeLabel(lastFortuneType)} 이어보기`}
           tone="accent"
         />

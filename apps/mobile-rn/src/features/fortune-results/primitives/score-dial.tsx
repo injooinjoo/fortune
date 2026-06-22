@@ -186,7 +186,7 @@ export function ScoreDial({
             marginTop: -2,
           }}
         >
-          SCORE
+          지수
         </Text>
       </View>
     </View>

@@ -18,6 +18,30 @@ const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 
 const AMBER = '#E0A76B';
 
+function cleanCalendarHeroWord(value: string | undefined, fallback: string) {
+  const compact = value?.replace(/\s+/g, ' ').trim();
+  if (!compact) return fallback;
+
+  // 서버/fixture copy에서 내려온 generic label이 달력 히어로 중앙에 크게
+  // 박히면 "결과" 같은 제품 내부 용어가 운세 페이지 이름처럼 보인다.
+  // 달력 히어로는 날짜/흐름을 보여주는 자리이므로 generic 단어는 제거한다.
+  if (/^(결과|리딩|분석|인사이트|화면|카드)$/u.test(compact)) {
+    return fallback;
+  }
+
+  return compact.length > 4 ? `${compact.slice(0, 4).trim()}…` : compact;
+}
+
+function cleanCalendarCaption(value: string | undefined, fallback: string) {
+  const compact = value
+    ?.replace(/결과\s*화면/g, '화면')
+    .replace(/결과/g, '흐름')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!compact) return fallback;
+  return compact.length > 24 ? `${compact.slice(0, 24).trim()}…` : compact;
+}
+
 export default function HeroCalendar({ data, progress }: HeroCalendarProps) {
   const raw = data as unknown as {
     lunar?: string;
@@ -27,7 +51,8 @@ export default function HeroCalendar({ data, progress }: HeroCalendarProps) {
   const ganji = data.manseryeok?.dayPillar.dayPillarHanja ?? raw.cal?.ganji ?? '오늘';
   const lunarFull = data.manseryeok?.lunarDate ?? raw.lunar ?? raw.cal?.lunar ?? data.subtitle;
   const season = data.manseryeok?.solarTerm.current ?? raw.season ?? raw.cal?.season ?? '오늘';
-  const dayWord = lunarFull.split(' ').pop() ?? lunarFull;
+  const rawDayWord = lunarFull.split(/[\s·]+/u).filter(Boolean).pop() ?? lunarFull;
+  const dayWord = cleanCalendarHeroWord(rawDayWord, data.title || '오늘');
 
   const p = clamp01(progress);
   const anim = useRef(new Animated.Value(0)).current;
@@ -124,7 +149,7 @@ export default function HeroCalendar({ data, progress }: HeroCalendarProps) {
             letterSpacing: 1.2,
           }}
         >
-          {lunarFull} · {season}
+          {cleanCalendarCaption(lunarFull, data.eyebrow || '오늘')} · {season}
         </Text>
         <View
           style={{

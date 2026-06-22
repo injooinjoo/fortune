@@ -494,7 +494,7 @@ function buildIntroSentence(
         : null;
     default:
       if (context.tags.length > 0) {
-        return `이번 결과는 ${context.tags.slice(0, 2).join(', ')} 기준으로 정리했습니다.`;
+        return `이번 운세는 ${context.tags.slice(0, 2).join(', ')} 기준으로 정리했습니다.`;
       }
 
       return null;

@@ -1637,6 +1637,11 @@ export function ChatScreen() {
   const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevContentHeightRef = useRef(0);
   const scrollViewHeightRef = useRef(Dimensions.get('window').height * 0.7);
+  // Screen의 chat header는 absolute/floating 이라 scrollTo(y=cardTop) 하면
+  // 카드 직전 메시지/카드 상단이 헤더와 top fade 아래에 깔린다. 스크린샷처럼
+  // 하늘이 아바타/이름이 본문 위에 겹치는 문제를 막기 위해 새 운세 흐름은
+  // 헤더 높이만큼 여유를 두고 앵커한다.
+  const floatingChatHeaderOffset = 112;
   // 카드 상단 스크롤은 메시지 하나 당 한 번만 — 이후 카드 내부 애니메이션 등
   // 진행 중 재호출되는 onContentSizeChange 에서 다시 스크롤이 튀지 않도록.
   const cardTopScrolledMessageIdRef = useRef<string | null>(null);
@@ -1688,13 +1693,13 @@ export function ChatScreen() {
       pendingFortuneStartTopAnchorRef.current = false;
       scrollTimerRef.current = setTimeout(() => {
         requestAnimationFrame(() => {
-          chatScrollRef.current?.scrollTo({ y: Math.max(0, prevHeight - 8), animated: true });
+          chatScrollRef.current?.scrollTo({ y: Math.max(0, prevHeight - floatingChatHeaderOffset), animated: true });
         });
       }, 80);
       return;
     }
 
-    // 최근 메시지가 운세 결과 카드면 카드 상단이 화면 최상단에 보이게 스크롤.
+    // 최근 메시지가 운세 카드면 카드 상단이 화면 최상단에 보이게 스크롤.
     const latestThread = displayMessagesByCharacterId[selectedCharacter.id] ?? [];
     const canonicalLatestThread = getCanonicalVisibleMessages(latestThread);
     const latestMessage = canonicalLatestThread[canonicalLatestThread.length - 1];
@@ -1713,13 +1718,13 @@ export function ChatScreen() {
       // 카드 상단이 뷰포트 상단에 딱 오도록. prevHeight가 카드 시작 y.
       scrollTimerRef.current = setTimeout(() => {
         requestAnimationFrame(() => {
-          chatScrollRef.current?.scrollTo({ y: Math.max(0, prevHeight - 8), animated: true });
+          chatScrollRef.current?.scrollTo({ y: Math.max(0, prevHeight - floatingChatHeaderOffset), animated: true });
         });
       }, 80);
     } else if (addedHeight > viewportHeight * 0.5) {
       scrollTimerRef.current = setTimeout(() => {
         requestAnimationFrame(() => {
-          chatScrollRef.current?.scrollTo({ y: Math.max(0, prevHeight - 8), animated: true });
+          chatScrollRef.current?.scrollTo({ y: Math.max(0, prevHeight - floatingChatHeaderOffset), animated: true });
         });
       }, 80);
     } else {
@@ -2086,7 +2091,7 @@ export function ChatScreen() {
       reopenFortuneResult(
         character,
         fortuneType,
-        '이전 결과를 다시 보여드릴게요.',
+        '이전 운세를 다시 보여드릴게요.',
       );
       return true;
     }
@@ -2109,7 +2114,7 @@ export function ChatScreen() {
     if (!generationController) {
       appendMessages(character, [
         buildAssistantTextMessage(
-          '이전 운세 결과가 마무리되는 중이에요. 잠시만 기다린 뒤 다시 시작해 주세요.',
+          '이전 운세가 마무리되는 중이에요. 잠시만 기다린 뒤 다시 시작해 주세요.',
         ),
       ]);
       return;
@@ -2180,7 +2185,7 @@ export function ChatScreen() {
         setFortuneGenerationCancellable(character.id, false);
         try {
           // PR-0a: idempotencyKey 호출 단위 unique. reference_id 도 같은 값으로
-          // 두어 같은 운세 결과의 환불이 필요할 때 단일 키로 추적 가능.
+          // 두어 같은 운세의 환불이 필요할 때 단일 키로 추적 가능.
           const consumeKey = `fortune:${character.id}:${completed.fortuneType}:${Crypto.randomUUID()}`;
           await consumeRemoteTokens(session, {
             fortuneType: completed.fortuneType,
@@ -2216,7 +2221,7 @@ export function ChatScreen() {
 
       const resultReply = buildAssistantTextMessage(
         definition?.submitReply ??
-          '좋아요. 결과를 같은 채팅 안에서 바로 보여드릴게요.',
+          '좋아요. 운세를 같은 채팅 안에서 바로 보여드릴게요.',
       );
 
       if (!shouldRenderResult) {
@@ -2784,7 +2789,7 @@ export function ChatScreen() {
   }, [gate, selectedCharacter.id, session?.user.id]);
 
   function handleOpenRecentResult(fortuneType: FortuneTypeId) {
-    // 하늘이 통합 후: 모든 운세 결과는 하늘이 채팅 안에 embed.
+    // 하늘이 통합 후: 모든 운세는 하늘이 채팅 안에 embed.
     // recent result 도 하늘이로 라우팅 (deprecated fortune characters 미사용).
     const recentFortuneCharacterId = haneulOracleCharacter.id;
 
@@ -2796,7 +2801,7 @@ export function ChatScreen() {
     const reopened = reopenFortuneResult(
       character,
       fortuneType,
-      `${character.name}와 보던 ${formatFortuneTypeLabel(fortuneType)} 결과를 같은 대화 안에 다시 열어드릴게요.`,
+      `${character.name}와 보던 ${formatFortuneTypeLabel(fortuneType)} 운세를 같은 대화 안에 다시 열어드릴게요.`,
     );
 
     if (!reopened) {
@@ -4453,7 +4458,7 @@ export function ChatScreen() {
     if (!generationController) {
       appendMessages(character, [
         buildAssistantTextMessage(
-          '이전 운세 결과가 마무리되는 중이에요. 잠시만 기다린 뒤 다시 시작해 주세요.',
+          '이전 운세가 마무리되는 중이에요. 잠시만 기다린 뒤 다시 시작해 주세요.',
         ),
       ]);
       return;
@@ -4472,7 +4477,7 @@ export function ChatScreen() {
       }
 
       appendMessages(character, [
-        buildAssistantTextMessage('좋아요. 결과를 같은 대화 안에 바로 붙여드릴게요.'),
+        buildAssistantTextMessage('좋아요. 운세를 같은 대화 안에 바로 붙여드릴게요.'),
         embeddedResult,
       ]);
       openDailyReadingIfNeeded(character, embeddedResult);
@@ -4659,8 +4664,8 @@ export function ChatScreen() {
             >
               <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
                 {selectedFortuneGenerationCanCancel
-                  ? '운세 결과를 준비하고 있어요. 원하면 지금 취소할 수 있어요.'
-                  : '운세 결과를 마무리하고 있어요. 잠시만 기다려 주세요.'}
+                  ? '운세를 준비하고 있어요. 원하면 지금 취소할 수 있어요.'
+                  : '운세를 마무리하고 있어요. 잠시만 기다려 주세요.'}
               </AppText>
               {selectedFortuneGenerationCanCancel ? (
                 <Pressable

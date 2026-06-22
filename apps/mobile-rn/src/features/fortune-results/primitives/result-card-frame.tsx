@@ -39,14 +39,22 @@ const stage = (p: number, from: number, to: number) =>
 const AMBER = '#E0A76B';
 const DAILY_CARD_KINDS = new Set(['daily', 'daily-calendar']);
 
-function cleanPreviewText(value: string | undefined, maxLength: number) {
+function cleanFortunePageText(value: string | undefined, maxLength?: number) {
   if (!value) return undefined;
   const compact = value
     .replace(/\*\*/g, '')
+    .replace(/결과\s*화면/g, '운세 화면')
+    .replace(/결과\s*카드/g, '운세 카드')
+    .replace(/운세\s*결과/g, '운세')
+    .replace(/결과/g, '흐름')
     .replace(/\s+/g, ' ')
     .trim();
-  if (compact.length <= maxLength) return compact;
+  if (!maxLength || compact.length <= maxLength) return compact;
   return `${compact.slice(0, maxLength).trim()}…`;
+}
+
+function cleanPreviewText(value: string | undefined, maxLength: number) {
+  return cleanFortunePageText(value, maxLength);
 }
 
 function DetailText({ children }: { children: string }) {
@@ -218,7 +226,7 @@ export function ResultCardFrame({
             textTransform: 'uppercase',
           }}
         >
-          {data.eyebrow}
+          {cleanFortunePageText(data.eyebrow)}
         </Text>
         <Text
           style={{
@@ -267,7 +275,7 @@ export function ResultCardFrame({
               color: fortuneTheme.colors.textPrimary,
             }}
           >
-            {data.title}
+            {cleanFortunePageText(data.title)}
           </Text>
           <Text
             style={{
@@ -277,7 +285,7 @@ export function ResultCardFrame({
               color: fortuneTheme.colors.textSecondary,
             }}
           >
-            {data.subtitle}
+            {cleanFortunePageText(data.subtitle)}
           </Text>
         </View>
         {data.score != null ? (
@@ -307,7 +315,7 @@ export function ResultCardFrame({
             color: fortuneTheme.colors.textPrimary,
           }}
         >
-          {data.summary}
+          {cleanFortunePageText(data.summary)}
         </Text>
       </Animated.View>
 
@@ -360,7 +368,7 @@ export function ResultCardFrame({
                     fontWeight: '700',
                   }}
                 >
-                  {m.label}
+                  {cleanFortunePageText(m.label)}
                 </Text>
                 <Text
                   numberOfLines={1}
@@ -372,7 +380,7 @@ export function ResultCardFrame({
                     color: fortuneTheme.colors.textPrimary,
                   }}
                 >
-                  {m.value}
+                  {cleanFortunePageText(m.value)}
                 </Text>
                 {preview ? (
                   <Text
@@ -410,7 +418,7 @@ export function ResultCardFrame({
                   fontWeight: '800',
                 }}
               >
-                {metrics[expandedMetricIndex]?.label}
+                {cleanFortunePageText(metrics[expandedMetricIndex]?.label)}
               </Text>
               <DetailText>
                 {cleanPreviewText(metrics[expandedMetricIndex]?.note, 2000) ?? ''}
@@ -462,7 +470,7 @@ export function ResultCardFrame({
                         fontWeight: '800',
                       }}
                     >
-                      {section.title}
+                      {cleanFortunePageText(section.title)}
                     </Text>
                     {preview ? (
                       <Text

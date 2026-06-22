@@ -106,9 +106,9 @@ export function RenderFortuneResult({
     return (
       <Card>
         <View style={{ gap: fortuneTheme.spacing.sm }}>
-          <AppText variant="heading4">결과를 찾지 못했습니다.</AppText>
+          <AppText variant="heading4">운세를 찾지 못했습니다.</AppText>
           <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            등록되지 않은 결과 타입입니다.
+            등록되지 않은 운세 타입입니다.
           </AppText>
         </View>
       </Card>
