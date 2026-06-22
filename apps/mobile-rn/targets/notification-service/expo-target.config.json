@@ -5,9 +5,6 @@
   "bundleIdentifier": "com.beyond.fortune.notification-service",
   "deploymentTarget": "17.0",
   "entitlements": {
-    "com.apple.developer.usernotifications.communication": true,
-    "com.apple.security.application-groups": [
-      "group.com.beyond.fortune.widgets"
-    ]
+    "com.apple.developer.usernotifications.communication": true
   }
 }
