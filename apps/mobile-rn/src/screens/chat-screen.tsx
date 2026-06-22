@@ -24,7 +24,6 @@ import {
   ChatFirstRunSurface,
   ChatListHeader,
   ChatSoftGate,
-  FloatingCreateButton,
   ProfileFlowGateCard,
   buildCharacterListMeta,
   getCanonicalVisibleMessages,
@@ -67,7 +66,6 @@ import {
   buildUserImageMessage,
   buildUserMessage,
   formatFortuneTypeLabel,
-  type ChatShellAction,
   type ChatShellEmbeddedResultMessage,
   type ChatShellMessage,
   type ChatShellTextMessage,
@@ -474,7 +472,7 @@ export function ChatScreen() {
   // 하늘이 통합 후: 채팅 리스트는 항상 'story' 뷰. fortuneChatCharacters
   // 는 deprecated (마르코/닥터마인드 등 더 이상 노출 안 함). activeTab state
   // 자체는 deep link / inner 분기 일부에 남아있지만 list 화면은 무조건 story.
-  const [activeTab, setActiveTab] = useState<ChatCharacterTab>('story');
+  const [, setActiveTab] = useState<ChatCharacterTab>('story');
   const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(
     null,
   );
@@ -4594,7 +4592,7 @@ export function ChatScreen() {
 
   return (
     <Screen
-      contentBottomInset={gate === 'ready' && surfaceMode === 'list' ? 88 : 0}
+      contentBottomInset={0}
       onScrollContentSizeChange={(_w, h) => {
         if (gate === 'ready' && surfaceMode === 'chat') {
           scrollChatOnContentGrow(h);
@@ -4723,16 +4721,6 @@ export function ChatScreen() {
           )
         ) : undefined
       }
-      overlay={
-        gate === 'ready' && surfaceMode === 'list' ? (
-          <View pointerEvents="box-none" style={{ alignItems: 'flex-end' }}>
-            <FloatingCreateButton
-              label="새 대화 시작"
-              onPress={handleCreateFriend}
-            />
-          </View>
-        ) : undefined
-      }
       keyboardAvoiding={gate === 'ready' && surfaceMode === 'chat'}
     >
       {gate === 'auth-entry' ? (
@@ -4807,7 +4795,6 @@ export function ChatScreen() {
             activeTab="story"
             characters={sortedFirstRunCharacters}
             lastFortuneType={mobileAppState.chat.lastFortuneType}
-            onChangeTab={setActiveTab}
             onOpenRecentResult={handleOpenRecentResult}
             onDeleteFriend={(id) => {
               Alert.alert(
@@ -4823,7 +4810,16 @@ export function ChatScreen() {
                 ],
               );
             }}
-            onPickCharacterAction={handleCharacterActionPress}
+            onStartDailyFortune={() => handleCharacterActionPress(haneulOracleCharacter.id, 'daily')}
+            onStartCompanionChat={() => {
+              const companion = sortedFirstRunCharacters.find(
+                (character) => character.id !== haneulOracleCharacter.id,
+              ) ?? sortedFirstRunCharacters[0];
+              if (companion) {
+                handleCharacterSelect(companion.id);
+              }
+            }}
+            onCreateFriend={handleCreateFriend}
             onSelectCharacter={handleCharacterSelect}
             romanceScores={romanceScoresByCharacterId}
             selectedCharacterId={selectedCharacter.id}

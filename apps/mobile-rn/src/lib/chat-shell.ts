@@ -348,11 +348,11 @@ export function buildSuggestedActions(
         reply: '내가 같이 봐줄 수 있는 거 펼쳐 볼게.',
       },
       {
-        id: 'haneul_oracle:tarot',
-        fortuneType: 'tarot' as const,
-        label: '오늘 타로 한 장',
-        prompt: '오늘 타로 한 장만 봐줘.',
-        reply: '한 장 뽑아볼게.',
+        id: 'haneul_oracle:daily',
+        fortuneType: 'daily' as const,
+        label: '오늘의 흐름',
+        prompt: '오늘의 운세 바로 봐줘.',
+        reply: '좋아요. 오늘 하루의 큰 흐름부터 짧게 열어볼게요.',
       },
       {
         id: 'haneul_oracle:traditional-saju',

@@ -37,7 +37,7 @@ import {
   resolveChatCharacterAvatarSource,
 } from '../../lib/chat-character-avatar';
 import { confirmAction, chatTypingTick } from '../../lib/haptics';
-import { fortuneTheme, romanceTintBackground } from '../../lib/theme';
+import { fortuneTheme, romanceTintBackground, withAlpha } from '../../lib/theme';
 import { useIsTyping } from '../../lib/typing-store';
 import { useMobileAppState } from '../../providers/mobile-app-state-provider';
 
@@ -501,6 +501,123 @@ function EntryActionRow({
           </AppText>
         </View>
         {badge ? <Chip label={badge} tone={tone} /> : null}
+      </View>
+    </Pressable>
+  );
+}
+
+function TodayHubPrimaryCard({
+  onPress,
+}: {
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel="오늘의 운세 바로 보기"
+      onPress={onPress}
+      style={({ pressed }) => ({ opacity: pressed ? 0.88 : 1 })}
+    >
+      <View
+        style={{
+          backgroundColor: fortuneTheme.colors.surface,
+          borderColor: fortuneTheme.colors.accentTertiary,
+          borderRadius: fortuneTheme.radius.xl,
+          borderWidth: 1,
+          gap: fortuneTheme.spacing.md,
+          overflow: 'hidden',
+          padding: 18,
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: withAlpha(fortuneTheme.colors.ctaBackground, 0.16),
+            borderRadius: 999,
+            height: 130,
+            position: 'absolute',
+            right: -42,
+            top: -46,
+            width: 130,
+          }}
+        />
+        <View style={{ gap: 6 }}>
+          <Chip label="첫 1분 추천" tone="accent" />
+          <AppText variant="heading2">오늘의 흐름부터 볼까요?</AppText>
+          <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+            로그인이나 긴 입력 없이, 하늘이가 오늘 하루의 큰 기운을 먼저 짧게 열어줘요.
+          </AppText>
+        </View>
+        <View
+          style={{
+            alignItems: 'center',
+            alignSelf: 'flex-start',
+            backgroundColor: fortuneTheme.colors.ctaBackground,
+            borderRadius: 999,
+            flexDirection: 'row',
+            gap: 6,
+            paddingHorizontal: 14,
+            paddingVertical: 9,
+          }}
+        >
+          <AppText variant="labelLarge" color={fortuneTheme.colors.background}>
+            바로 보기
+          </AppText>
+          <Ionicons
+            color={fortuneTheme.colors.background}
+            name="arrow-forward"
+            size={16}
+          />
+        </View>
+      </View>
+    </Pressable>
+  );
+}
+
+function TodayHubActionCard({
+  icon,
+  title,
+  subtitle,
+  onPress,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  title: string;
+  subtitle: string;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={title}
+      onPress={onPress}
+      style={({ pressed }) => ({ flex: 1, opacity: pressed ? 0.84 : 1 })}
+    >
+      <View
+        style={{
+          backgroundColor: fortuneTheme.colors.surfaceSecondary,
+          borderColor: fortuneTheme.colors.border,
+          borderRadius: fortuneTheme.radius.lg,
+          borderWidth: 1,
+          flex: 1,
+          gap: fortuneTheme.spacing.xs,
+          padding: 14,
+        }}
+      >
+        <View
+          style={{
+            alignItems: 'center',
+            backgroundColor: fortuneTheme.colors.backgroundTertiary,
+            borderRadius: 999,
+            height: 34,
+            justifyContent: 'center',
+            width: 34,
+          }}
+        >
+          <Ionicons color={fortuneTheme.colors.textPrimary} name={icon} size={17} />
+        </View>
+        <AppText variant="labelLarge">{title}</AppText>
+        <AppText variant="caption" color={fortuneTheme.colors.textSecondary}>
+          {subtitle}
+        </AppText>
       </View>
     </Pressable>
   );
@@ -1843,7 +1960,10 @@ export function ChatListHeader({ onOpenProfile }: { onOpenProfile: () => void })
       }}
     >
       <View style={{ gap: fortuneTheme.spacing.xs }}>
-        <AppText variant="displaySmall">메시지</AppText>
+        <AppText variant="displaySmall">오늘 뭐부터 볼까요?</AppText>
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          운세와 AI 친구 대화를 바로 시작해요.
+        </AppText>
       </View>
       <HeaderActionButton
         kind="profile"
@@ -1859,10 +1979,11 @@ export function ChatFirstRunSurface({
   characters,
   lastFortuneType,
   selectedCharacterId,
-  onChangeTab,
   onOpenRecentResult,
   onSelectCharacter,
-  onPickCharacterAction,
+  onStartDailyFortune,
+  onStartCompanionChat,
+  onCreateFriend,
   onDeleteFriend,
   romanceScores,
   metaByCharacterId,
@@ -1871,10 +1992,11 @@ export function ChatFirstRunSurface({
   characters: readonly ChatCharacterSpec[];
   lastFortuneType: FortuneTypeId | null;
   selectedCharacterId: string | null;
-  onChangeTab: (tab: ChatCharacterTab) => void;
   onOpenRecentResult: (fortuneType: FortuneTypeId) => void;
   onSelectCharacter: (characterId: string) => void;
-  onPickCharacterAction: (characterId: string, fortuneType: FortuneTypeId) => void;
+  onStartDailyFortune: () => void;
+  onStartCompanionChat: () => void;
+  onCreateFriend: () => void;
   onDeleteFriend?: (characterId: string) => void;
   romanceScores?: Record<string, number>;
   metaByCharacterId?: Record<string, CharacterListRowMeta>;
@@ -1884,49 +2006,76 @@ export function ChatFirstRunSurface({
   const visibleCharacters = Array.isArray(characters) ? characters : [];
 
   return (
-    <View style={{ gap: fortuneTheme.spacing.md }}>
-      {activeTab === 'story' ? (
-        <View style={{ marginHorizontal: -20 }}>
-          {visibleCharacters.map((character) => (
-            <CharacterListRow
-              key={character.id}
-              badge={character.id.startsWith('custom_') ? '내 친구' : '스토리'}
-              character={character}
-              meta={metaByCharacterId?.[character.id]}
-              onDelete={
-                character.id.startsWith('custom_') && onDeleteFriend
-                  ? () => onDeleteFriend(character.id)
-                  : undefined
-              }
-              onPress={() => onSelectCharacter(character.id)}
-              romanceScore={romanceScores?.[character.id] ?? 0}
-              selected={character.id === selectedCharacterId}
-            />
-          ))}
+    <View style={{ gap: fortuneTheme.spacing.lg }}>
+      <View style={{ gap: fortuneTheme.spacing.sm }}>
+        <TodayHubPrimaryCard onPress={onStartDailyFortune} />
+        <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.sm }}>
+          <TodayHubActionCard
+            icon="chatbubble-ellipses-outline"
+            title="AI 친구와 대화"
+            subtitle="지금 기분부터 짧게 말해요."
+            onPress={onStartCompanionChat}
+          />
+          <TodayHubActionCard
+            icon="person-add-outline"
+            title="새 친구 만들기"
+            subtitle="내 취향의 대화 상대를 만들어요."
+            onPress={onCreateFriend}
+          />
         </View>
-      ) : (
-        <View style={{ marginHorizontal: -20 }}>
-          {lastFortuneType ? (
-            <EntryActionRow
-              badge="최근 결과"
-              onPress={() => onOpenRecentResult(lastFortuneType)}
-              subtitle={`${formatFortuneTypeLabel(lastFortuneType)} 결과를 같은 채팅 안에서 다시 엽니다.`}
-              title={`${formatFortuneTypeLabel(lastFortuneType)} 이어보기`}
-              tone="accent"
-            />
-          ) : null}
-          {visibleCharacters.map((character) => (
-            <CharacterListRow
-              key={character.id}
-              badge={`${character.specialties.length}개 인사이트`}
-              character={character}
-              meta={metaByCharacterId?.[character.id]}
-              onPress={() => onSelectCharacter(character.id)}
-              selected={character.id === selectedCharacterId}
-            />
-          ))}
+      </View>
+
+      {lastFortuneType ? (
+        <EntryActionRow
+          badge="최근 결과"
+          onPress={() => onOpenRecentResult(lastFortuneType)}
+          subtitle={`${formatFortuneTypeLabel(lastFortuneType)} 결과를 같은 채팅 안에서 다시 엽니다.`}
+          title={`${formatFortuneTypeLabel(lastFortuneType)} 이어보기`}
+          tone="accent"
+        />
+      ) : null}
+
+      <View style={{ gap: fortuneTheme.spacing.sm }}>
+        <View style={{ gap: 2 }}>
+          <AppText variant="labelLarge">최근 대화</AppText>
+          <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+            이어서 말하고 싶은 친구를 골라주세요.
+          </AppText>
         </View>
-      )}
+        {activeTab === 'story' ? (
+          <View style={{ marginHorizontal: -20 }}>
+            {visibleCharacters.map((character) => (
+              <CharacterListRow
+                key={character.id}
+                badge={character.id.startsWith('custom_') ? '내 친구' : '스토리'}
+                character={character}
+                meta={metaByCharacterId?.[character.id]}
+                onDelete={
+                  character.id.startsWith('custom_') && onDeleteFriend
+                    ? () => onDeleteFriend(character.id)
+                    : undefined
+                }
+                onPress={() => onSelectCharacter(character.id)}
+                romanceScore={romanceScores?.[character.id] ?? 0}
+                selected={character.id === selectedCharacterId}
+              />
+            ))}
+          </View>
+        ) : (
+          <View style={{ marginHorizontal: -20 }}>
+            {visibleCharacters.map((character) => (
+              <CharacterListRow
+                key={character.id}
+                badge={`${character.specialties.length}개 인사이트`}
+                character={character}
+                meta={metaByCharacterId?.[character.id]}
+                onPress={() => onSelectCharacter(character.id)}
+                selected={character.id === selectedCharacterId}
+              />
+            ))}
+          </View>
+        )}
+      </View>
 
     </View>
   );
