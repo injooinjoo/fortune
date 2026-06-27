@@ -23,6 +23,11 @@ regexes = [
 commits = [
     "ab66de62b3babf31717fe8914e346b85b6871843",
 ]
+fingerprints = [
+    "d84207d6cca3043efe8973028604bcd37ecdf6ba:apps/mobile-rn/src/lib/push-notifications.ts:generic-secret:17",
+    "d84207d6cca3043efe8973028604bcd37ecdf6ba:scripts/design/paper_sync_guard.js:generic-secret:13",
+    "d84207d6cca3043efe8973028604bcd37ecdf6ba:scripts/upload_images_to_supabase.sh:supabase-service-role-key:27",
+]
 
 [[rules]]
 id = "firebase-api-key"
