@@ -11,6 +11,7 @@ paths = [
     '''(^|/)supabase/\.temp/''',
     '''(^|/)docs/getting-started/''',
     '''(^|/)docs/testing/''',
+    '''(^|/)scripts/design/paper_sync_guard\.js$''',
 ]
 regexes = [
     '''process\.env\.[A-Z0-9_]+''',
@@ -19,6 +20,8 @@ regexes = [
     '''com\.beyond\.fortune\.tokens\d+''',
     '''token_bonus_rate|token_packages|popular_token_package|daily_free_tokens|referral_bonus_tokens|new_user_bonus_tokens''',
     '''/api/(user|payment|admin)/token''',
+    '''fortune\.push\.pending-token''',
+    '''your-service-role-key''',
 ]
 commits = [
     "ab66de62b3babf31717fe8914e346b85b6871843",
