@@ -11,17 +11,24 @@ paths = [
     '''(^|/)supabase/\.temp/''',
     '''(^|/)docs/getting-started/''',
     '''(^|/)docs/testing/''',
+    '''(^|/)scripts/design/paper_sync_guard\.js$''',
 ]
 regexes = [
     '''process\.env\.[A-Z0-9_]+''',
     '''Deno\.env\.get\(['"][A-Z0-9_]+['"]\)''',
-    '''(?i)(placeholder|not-real|redacted|for-ci-only)''',
+    '''(?i)(placeholder|not-real|redacted|for-ci-only|your-[a-z]+-[a-z]+-[a-z]+)''',
     '''com\.beyond\.fortune\.tokens\d+''',
     '''token_bonus_rate|token_packages|popular_token_package|daily_free_tokens|referral_bonus_tokens|new_user_bonus_tokens''',
     '''/api/(user|payment|admin)/token''',
+    '''fortune\.push\.pending-token''',
 ]
 commits = [
     "ab66de62b3babf31717fe8914e346b85b6871843",
+]
+fingerprints = [
+    "d84207d6cca3043efe8973028604bcd37ecdf6ba:apps/mobile-rn/src/lib/push-notifications.ts:generic-secret:17",
+    "d84207d6cca3043efe8973028604bcd37ecdf6ba:scripts/design/paper_sync_guard.js:generic-secret:13",
+    "d84207d6cca3043efe8973028604bcd37ecdf6ba:scripts/upload_images_to_supabase.sh:supabase-service-role-key:27",
 ]
 
 [[rules]]
