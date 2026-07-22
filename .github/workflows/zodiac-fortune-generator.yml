@@ -136,17 +136,3 @@ jobs:
               labels: ['zodiac-fortune-generation', 'automated', 'bug']
             });
           }
-
-  # Slack 알림 (재사용 가능한 워크플로우로 마이그레이션)
-  notify-slack:
-    name: Slack Notification
-    needs: [generate-zodiac-fortunes]
-    if: always() && needs.generate-zodiac-fortunes.result == 'failure'
-    uses: ./.github/workflows/slack-notify.yml
-    with:
-      workflow_name: "Daily Zodiac Fortune Generator"
-      job_status: "failure"
-      failed_jobs: "generate-zodiac-fortunes"
-      custom_message: "일일 운세 생성 실패! Edge Function 확인 필요."
-    secrets:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

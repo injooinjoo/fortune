@@ -88,16 +88,3 @@ jobs:
           echo "- Usage tracking error: \`${TRACKING_ERROR:-n/a}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- Top feature: \`$TOP_FEATURE\` (\`$TOP_COUNT\` requests)" >> "$GITHUB_STEP_SUMMARY"
           echo "- Actions: \`$ACTIONS\`" >> "$GITHUB_STEP_SUMMARY"
-
-  notify-slack:
-    name: Slack Notification
-    needs: [monitor]
-    if: ${{ needs.monitor.outputs.severity == 'warning' || needs.monitor.outputs.severity == 'critical' }}
-    uses: ./.github/workflows/slack-notify.yml
-    with:
-      workflow_name: "LLM Guard Monitor"
-      job_status: "failure"
-      failed_jobs: "monitor-llm-usage"
-      custom_message: "${{ needs.monitor.outputs.summary }}"
-    secrets:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -169,16 +169,3 @@ jobs:
           echo "- Exit: \`${{ needs.playwright.outputs.exit_code }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- Passed: \`${{ needs.playwright.outputs.passed }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- Failed: \`${{ needs.playwright.outputs.failed }}\`" >> "$GITHUB_STEP_SUMMARY"
-
-  notify-slack:
-    name: Slack Notification
-    needs: [playwright]
-    if: always() && needs.playwright.result == 'failure'
-    uses: ./.github/workflows/slack-notify.yml
-    with:
-      workflow_name: 'E2E Tests'
-      job_status: 'failure'
-      failed_jobs: 'playwright'
-      pr_number: "${{ github.event.pull_request.number || '' }}"
-    secrets:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
