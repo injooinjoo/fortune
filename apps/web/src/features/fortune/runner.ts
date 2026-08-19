@@ -71,6 +71,36 @@ function readTokenCharge(data: unknown): unknown {
 }
 
 /**
+ * LLM provider 원본 에러를 사용자에게 그대로 보여주지 않는다.
+ *
+ * 실제로 프로덕션에서 이런 게 화면에 그대로 찍혔다:
+ *   Gemini API error: 400 - { "error": { "code": 400, "message": "API key not valid. ...
+ *
+ * 사용자에게 쓸모없고, provider·모델·내부 구조를 노출한다. 원문은 콘솔로만 남긴다.
+ */
+const PROVIDER_ERROR_PATTERNS = [
+  /API key/i,
+  /API error/i,
+  /INVALID_ARGUMENT/,
+  /googleapis\.com/i,
+  /generativelanguage/i,
+  /quota/i,
+  /RESOURCE_EXHAUSTED/,
+];
+
+function userFacingMessage(fortuneType: string, raw: string): string {
+  const looksInternal =
+    raw.trimStart().startsWith('{') ||
+    raw.length > 200 ||
+    PROVIDER_ERROR_PATTERNS.some((pattern) => pattern.test(raw));
+
+  if (!looksInternal) return raw;
+
+  console.error(`[${fortuneType}] 서버 원본 에러:`, raw);
+  return '지금 운세를 만들지 못했어요. 잠시 후 다시 시도해 주세요.';
+}
+
+/**
  * 운세 하나를 호출한다.
  *
  * 게스트 우선: 결과 "앞"에 로그인 벽을 두지 않는다. 세션이 없으면 익명 로그인을
@@ -108,7 +138,7 @@ export async function runFortune<T>(
     if (isTokenFailure(result.status, result.errorCode)) {
       return { ok: false, kind: 'tokens', message: TOKENS_FAILURE_MESSAGE };
     }
-    return { ok: false, kind: 'error', message: result.message };
+    return { ok: false, kind: 'error', message: userFacingMessage(fortuneType, result.message) };
   }
 
   // 200 인데 바디가 통째로 비는 경우 (LLM 실패 후 빈 응답 등).
