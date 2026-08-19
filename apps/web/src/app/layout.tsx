@@ -3,6 +3,8 @@ import type { ReactNode } from 'react';
 
 import { fortuneColors } from '@fortune/design-tokens';
 
+import { SiteFooter } from '@/components/site-footer';
+import { SiteHeader } from '@/components/site-header';
 import { siteUrl } from '@/lib/env';
 
 import '@/styles/tokens.css';
@@ -38,11 +40,18 @@ export const viewport: Viewport = {
  * `[data-theme]` 분기를 두지 않는다 — `createFortuneTheme('light')` 는
  * repo 전체에서 호출부가 0 이고, 웹만 라이트 팔레트를 들고 있으면
  * 앱과 색이 갈라진다.
+ *
+ * 헤더/푸터는 여기에만 둔다. 둘 다 세션을 읽지 않는 순수 컴포넌트라 페이지의
+ * 정적 생성 여부를 바꾸지 않는다.
  */
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body>
+        <SiteHeader />
+        {children}
+        <SiteFooter />
+      </body>
     </html>
   );
 }
