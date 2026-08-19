@@ -299,7 +299,7 @@ serve(async (req) => {
     const league = requestedLeague || sportInfo.defaultLeague;
 
     // LLM 호출
-    const llm = LLMFactory.createFromConfig('fortune-match-insight');
+    const llm = await LLMFactory.createFromConfigAsync('fortune-match-insight');
 
     const systemPrompt = getSystemPrompt(sport, league);
     const userPrompt = getUserPrompt(

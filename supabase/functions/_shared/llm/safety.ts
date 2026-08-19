@@ -12,8 +12,25 @@ import {
 } from "./models.ts";
 import { GcpLoggingService } from "../monitoring/gcp-logging.ts";
 
-type LlmProvider = "gemini" | "openai" | "anthropic" | "grok" | "gemma";
+type LlmProvider =
+  | "gemini"
+  | "openai"
+  | "anthropic"
+  | "grok"
+  | "gemma"
+  | "openrouter";
 type LlmRequestMode = "text" | "image";
+
+/**
+ * 이 호출의 요금을 누가 내는가.
+ *
+ * - "platform" (기본): 우리 플랫폼 키로 나가는 호출. 예산 가드 전부 적용.
+ * - "user": 사용자가 연결한 자기 키(BYOK)로 나가는 호출. 비용이 우리 계정에
+ *   찍히지 않으므로 예산/서킷 가드는 적용하지 않는다. 단 킬 스위치
+ *   (LLM_DISABLED_PROVIDERS / GEMINI_EMERGENCY_DISABLE)는 그대로 적용한다 —
+ *   그건 예산이 아니라 "이 provider 로는 지금 아무것도 보내지 말라" 는 뜻이다.
+ */
+export type LlmBillingOwner = "platform" | "user";
 type GuardSeverity = "healthy" | "warning" | "critical";
 type GuardStatus = "healthy" | "warning" | "blocked";
 type GuardMetric = "request_count" | "estimated_cost";
@@ -123,6 +140,8 @@ export interface LlmSafetyCheckParams {
   mode: LlmRequestMode;
   requestId?: string;
   metadata?: Record<string, unknown>;
+  /** 미지정 = "platform". 사용자 키(BYOK) 호출만 "user" 를 넘긴다. */
+  billingOwner?: LlmBillingOwner;
 }
 
 export class LlmSafetyError extends Error {
@@ -389,6 +408,28 @@ function getGeminiLimits(): GeminiGuardLimits {
     ),
     circuitCooldownMinutes: getCircuitCooldownMinutes(),
     alertThresholdRatio: getAlertThresholdRatio(),
+  };
+}
+
+// ── OpenRouter 지출 상한 ──────────────────────────────────────────────────────
+// Gemini 가드(서킷 브레이커 + burst 창 + 알림)는 gemini 전용으로 짜여 있어 그대로
+// 재사용할 수 없다. OpenRouter 는 키 하나로 여러 벤더를 부르는 통로라 상한이 없으면
+// 모델 오설정 하나가 그대로 청구서가 된다. 그래서 **환경변수가 없어도 동작하는
+// 내장 기본 상한**을 둔다 (env 미설정 = 무제한 이 아니다).
+//
+// 창 길이는 Gemini 와 같은 LLM_USAGE_WINDOW_HOURS(기본 24h)를 쓴다.
+const DEFAULT_OPENROUTER_DAILY_REQUEST_LIMIT = 2000;
+const DEFAULT_OPENROUTER_DAILY_COST_LIMIT_USD = 20;
+
+function getOpenRouterLimits(): {
+  dailyRequestLimit: number;
+  dailyCostLimitUsd: number;
+} {
+  return {
+    dailyRequestLimit: getPositiveIntegerEnv("OPENROUTER_DAILY_REQUEST_LIMIT") ??
+      DEFAULT_OPENROUTER_DAILY_REQUEST_LIMIT,
+    dailyCostLimitUsd: getPositiveNumberEnv("OPENROUTER_DAILY_COST_LIMIT_USD") ??
+      DEFAULT_OPENROUTER_DAILY_COST_LIMIT_USD,
   };
 }
 
@@ -1359,6 +1400,65 @@ export async function runGeminiGuardMonitor(): Promise<GeminiGuardSnapshot> {
   return await markGeminiGuardHealthy(snapshot);
 }
 
+/**
+ * OpenRouter 일일 상한. 초과하면 던진다.
+ *
+ * Gemini 처럼 서킷 상태를 DB 에 쓰지 않는다 — 창이 지나면 자연히 풀리는 단순
+ * 상한이다. 사용량 테이블을 못 읽는 상황에서는 Gemini 가드와 동일하게
+ * "degraded" 를 남기고 통과시킨다 (텔레메트리 장애로 서비스를 세우지 않는다).
+ */
+async function assertOpenRouterBudget(
+  params: LlmSafetyCheckParams,
+): Promise<void> {
+  const limits = getOpenRouterLimits();
+  const windowMinutes = getUsageWindowHours() * 60;
+
+  const stats = await getUsageWindowStats(
+    "openrouter",
+    getWindowStartIso(windowMinutes),
+    true,
+  );
+
+  if (usageLogRelationAvailable === false) {
+    await GcpLoggingService.log({
+      eventType: "llm_guard_degraded",
+      functionName: params.featureName,
+      requestId: params.requestId,
+      provider: params.provider,
+      model: params.model,
+      success: false,
+      errorMessage:
+        "llm_usage_logs relation is unavailable; OpenRouter caps are bypassed",
+      metadata: { mode: params.mode },
+    });
+    return;
+  }
+
+  if (stats.requestCount >= limits.dailyRequestLimit) {
+    const message =
+      `OpenRouter daily request cap reached (${stats.requestCount}/${limits.dailyRequestLimit} in ${windowMinutes}m)`;
+    await logBlockedRequest(params, "daily_request_cap_exceeded", message, {
+      windowMinutes,
+      limit: limits.dailyRequestLimit,
+      current: stats.requestCount,
+    });
+    throw new LlmSafetyError("daily_request_cap_exceeded", message);
+  }
+
+  if (stats.estimatedCostUsd >= limits.dailyCostLimitUsd) {
+    const message =
+      `OpenRouter daily cost cap reached ($${
+        stats.estimatedCostUsd.toFixed(2)
+      }/$${limits.dailyCostLimitUsd} in ${windowMinutes}m)`;
+    await logBlockedRequest(params, "daily_cost_cap_exceeded", message, {
+      windowMinutes,
+      limit: limits.dailyCostLimitUsd,
+      current: stats.estimatedCostUsd,
+    });
+    throw new LlmSafetyError("daily_cost_cap_exceeded", message);
+  }
+}
+
 export async function assertLlmRequestAllowed(
   params: LlmSafetyCheckParams,
 ): Promise<void> {
@@ -1370,6 +1470,13 @@ export async function assertLlmRequestAllowed(
       `${params.provider} provider is disabled by LLM safety guard`;
     await logBlockedRequest(params, "provider_disabled", message);
     throw new LlmSafetyError("provider_disabled", message);
+  }
+
+  // 사용자 자금(BYOK) 호출은 여기서 끝. 아래 가드는 전부 **우리 청구서**를 지키는
+  // 장치(LLM_ENABLED_PROVIDERS 예산 화이트리스트, Gemini 서킷, 지출 상한)라
+  // 사용자 키에 적용하면 "왜 내 키로도 못 쓰냐" 가 된다. 위 킬 스위치만 공통이다.
+  if (params.billingOwner === "user") {
+    return;
   }
 
   if (enabledProviders && !enabledProviders.has(params.provider)) {
@@ -1389,6 +1496,11 @@ export async function assertLlmRequestAllowed(
       );
       throw new LlmSafetyError(modelValidation.code, modelValidation.message);
     }
+    return;
+  }
+
+  if (params.provider === "openrouter") {
+    await assertOpenRouterBudget(params);
     return;
   }
 

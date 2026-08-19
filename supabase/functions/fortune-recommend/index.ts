@@ -196,7 +196,7 @@ serve(async (req: Request) => {
     }
 
     // LLM 호출
-    const llm = LLMFactory.createFromConfig('fortune-recommend')
+    const llm = await LLMFactory.createFromConfigAsync('fortune-recommend')
 
     const userPrompt = `사용자 입력: "${query.trim()}"\n\n이 입력에 가장 적합한 운세 ${Math.min(limit, 3)}개를 추천해주세요.`
 

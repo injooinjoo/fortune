@@ -2018,7 +2018,7 @@ async function analyzeFaceWithVision(
   console.log("👤 [PastLife] Analyzing face with Gemini Vision...");
 
   try {
-    const llm = LLMFactory.createFromConfig("fortune-face-reading");
+    const llm = await LLMFactory.createFromConfigAsync("fortune-face-reading");
 
     const prompt =
       `Analyze this face photo and extract the following features in JSON format:
@@ -2480,7 +2480,7 @@ async function generatePastLifeStory(
 }> {
   console.log("📝 [PastLife] Generating dynamic story with 5 chapters...");
 
-  const llm = LLMFactory.createFromConfig("fortune-past-life");
+  const llm = await LLMFactory.createFromConfigAsync("fortune-past-life");
   const genderKo = gender === "male" ? "남성" : "여성";
 
   // 플롯 템플릿 선택 (카테고리 기반)

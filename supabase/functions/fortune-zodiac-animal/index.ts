@@ -199,7 +199,10 @@ serve(async (req) => {
     console.log(`🐾 [zodiac-animal] ${name} → ${animal.emoji} ${animal.name}띠 (${birthYear}년생)`)
 
     // LLM 호출
-    const llm = LLMFactory.createFromConfig('zodiac-animal')
+    // 정적 설정(createFromConfig)은 llm_model_config 를 무시하고 LLM_PROVIDER 기본값인
+    // gemini 로 붙어서, 죽은 GEMINI_API_KEY 로 400 → 500 이 났다. 동작하는 다른 운세와
+    // 같이 DB 설정(zodiac-animal → 없으면 _default)을 쓰는 비동기 경로로 맞춘다.
+    const llm = await LLMFactory.createFromConfigAsync('zodiac-animal')
     const prompt = buildPrompt(animal, name)
 
     const llmResponse = await llm.generate([

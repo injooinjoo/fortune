@@ -6,7 +6,6 @@
  * @endpoint POST /fortune-love
  *
  * @requestBody
- * - userId: string - 사용자 ID
  * - age: number - 나이
  * - gender: string - 성별
  * - relationshipStatus: 'single' | 'dating' | 'breakup' | 'crush' - 연애 상태
@@ -25,7 +24,9 @@
  * @example
  * curl -X POST https://xxx.supabase.co/functions/v1/fortune-love \
  *   -H "Authorization: Bearer <token>" \
- *   -d '{"userId":"xxx","age":28,"gender":"female","relationshipStatus":"single"}'
+ *   -d '{"age":28,"gender":"female","relationshipStatus":"single"}'
+ *
+ * @note userId 는 body 로 받지 않는다. Authorization JWT 에서 파생한다.
  */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
@@ -645,7 +646,8 @@ serve(async (req) => {
     console.log('연애운세 요청 데이터:', requestBody)
 
     // 필수 필드 검증
-    const requiredFields = ['userId', 'age', 'gender', 'relationshipStatus', 'datingStyles', 'valueImportance']
+    // userId 는 여기 없다 — JWT 에서 파생한다 (아래 requirePaidFortuneCaller).
+    const requiredFields = ['age', 'gender', 'relationshipStatus', 'datingStyles', 'valueImportance']
     for (const field of requiredFields) {
       if (!requestBody[field]) {
         return new Response(
@@ -681,7 +683,9 @@ serve(async (req) => {
     }
     paidCharge = paidCaller
 
-    const params: LoveFortuneRequest = requestBody
+    // SECURITY: userId 는 JWT 파생값으로 덮어쓴다. 클라가 준 값을 그대로 쓰면
+    // 캐시 키(`love_<userId>_...`)와 사용량 로그가 남의 id 로 섞인다.
+    const params: LoveFortuneRequest = { ...requestBody, userId: paidCaller.userId }
 
     // 캐시 확인
     const cachedResult = await getCachedFortune(params.userId, params)

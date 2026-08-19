@@ -11,7 +11,7 @@
 -- 2026-06 하드닝 스윕(20260606143001/143020/143040/143060)은 grant_ad_reward_atomic,
 -- activate_subscription_purchase_atomic, schedule_poster_job_with_charge,
 -- claim_next_poster_job 네 개만 잠갔다. 20260606143000_harden_atomic_rpc_execute_grants.sql
--- 은 내용이 `SELECT 1;` 한 줄이라 아무것도 하지 않았다.
+-- 은 내용이 `SELECT 1` 한 줄뿐이라 아무것도 하지 않았다.
 --
 -- grant_purchase_tokens_atomic 이 특히 위험하다 — SECURITY DEFINER 이고 p_user_id 와
 -- p_base_amount 를 인자로 받으며 auth.uid() 검사가 없다. anon key 만으로

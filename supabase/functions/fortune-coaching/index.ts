@@ -208,7 +208,7 @@ serve(async (req) => {
     console.log(`🎯 [coaching] ${name} → 목표: ${goalLabel}, 방해: ${blockerLabel}`)
 
     // LLM 호출
-    const llm = LLMFactory.createFromConfig('coaching')
+    const llm = await LLMFactory.createFromConfigAsync('coaching')
     const prompt = buildPrompt(name, currentGoal, blocker, timeAvailable, mbti)
 
     const llmResponse = await llm.generate([

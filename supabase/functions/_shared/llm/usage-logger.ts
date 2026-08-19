@@ -7,7 +7,7 @@ import {
 } from "https://esm.sh/@supabase/supabase-js@2";
 import { LLMResponse } from "./types.ts";
 import { GcpLoggingService } from "../monitoring/gcp-logging.ts";
-import { getGeminiModelPricing } from "./models.ts";
+import { getGeminiModelPricing, type ModelPricing } from "./models.ts";
 
 // 프로바이더별 토큰당 비용 (USD, 2025년 기준)
 const COST_PER_1M_TOKENS: Record<string, { input: number; output: number }> = {
@@ -38,7 +38,27 @@ const COST_PER_1M_TOKENS: Record<string, { input: number; output: number }> = {
   "gemma-4-27b": { input: 0.20, output: 0.40 },
   "gemma-4-12b": { input: 0.10, output: 0.20 },
   "gemma-3-27b-it": { input: 0.20, output: 0.40 },
+
+  // OpenRouter — 모델 ID 가 "<vendor>/<model>" 슬러그라 위 벤더 키와 겹치지 않는다.
+  // 여기 없으면 calculateCost 가 gemini-flash-lite 단가로 **과소 추정**하고,
+  // 그 추정치가 그대로 safety.ts 의 OpenRouter 일일 지출 상한 판정에 쓰인다.
+  // 새 슬러그를 config/모델 상수에 추가하면 이 표에도 같이 추가할 것.
+  // 단가 출처: https://openrouter.ai/api/v1/models 실조회 (2026-08-19).
+  "google/gemini-2.5-flash-lite": { input: 0.10, output: 0.40 },
+  "google/gemini-2.5-flash": { input: 0.30, output: 2.50 },
+  "google/gemini-2.5-pro": { input: 1.25, output: 10.00 },
+  "google/gemini-2.5-flash-image": { input: 0.30, output: 2.50 },
+  "google/gemini-3.1-flash-lite-image": { input: 0.25, output: 1.50 },
+  "openai/gpt-4o-mini": { input: 0.15, output: 0.60 },
+  "openai/gpt-4.1-mini": { input: 0.40, output: 1.60 },
+  "anthropic/claude-3.5-haiku": { input: 0.80, output: 4.00 },
+  "deepseek/deepseek-chat": { input: 0.26, output: 1.03 },
+  "meta-llama/llama-3.3-70b-instruct": { input: 0.10, output: 0.32 },
 };
+
+// 단가표에 없는 모델은 모델당 한 번만 경고한다.
+// (요청마다 찍으면 로그가 묻히고, 안 찍으면 잘못된 추정치가 조용히 쌓인다)
+const unpricedModelsWarned = new Set<string>();
 
 export interface UsageLogData {
   fortuneType: string;
@@ -65,6 +85,26 @@ function getSupabaseClient(): SupabaseClient {
 }
 
 /**
+ * 모델 단가 조회.
+ *
+ * 정확한 키를 먼저 찾고, 없으면 마지막 "/" 뒤 모델명으로 한 번 더 찾는다.
+ * OpenRouter 가 같은 모델을 새 슬러그로 내놔도("<vendor>/<model>") 표에 없는 채로
+ * 기본 추정치로 떨어지지 않고 대략 맞는 단가가 잡힌다.
+ */
+function lookupModelPricing(model: string): ModelPricing | undefined {
+  const exact = COST_PER_1M_TOKENS[model] || getGeminiModelPricing(model);
+  if (exact) return exact;
+
+  const separatorIndex = model.lastIndexOf("/");
+  if (separatorIndex < 0) return undefined;
+
+  const bareModel = model.slice(separatorIndex + 1);
+  if (!bareModel) return undefined;
+
+  return COST_PER_1M_TOKENS[bareModel] || getGeminiModelPricing(bareModel);
+}
+
+/**
  * 비용 계산 (USD)
  */
 function calculateCost(
@@ -72,9 +112,15 @@ function calculateCost(
   promptTokens: number,
   completionTokens: number,
 ): number {
-  const pricing = COST_PER_1M_TOKENS[model] || getGeminiModelPricing(model);
+  const pricing = lookupModelPricing(model);
   if (!pricing) {
     // 알 수 없는 모델은 기본값 사용 (gemini-2.0-flash-lite 기준)
+    if (!unpricedModelsWarned.has(model)) {
+      unpricedModelsWarned.add(model);
+      console.warn(
+        `⚠️ 단가 미등록 모델: ${model} — 기본 추정치로 계산합니다. COST_PER_1M_TOKENS 에 추가하세요.`,
+      );
+    }
     return (promptTokens * 0.075 + completionTokens * 0.30) / 1_000_000;
   }
 

@@ -235,7 +235,7 @@ serve(async (req) => {
     }
 
     // LLM 호출
-    const llm = LLMFactory.createFromConfig('fortune-celebrity')
+    const llm = await LLMFactory.createFromConfigAsync('fortune-celebrity')
     const today = new Date()
 
     const connectionTypeMap: Record<string, string> = {

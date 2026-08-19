@@ -268,7 +268,7 @@ serve(async (req: Request) => {
     }
 
     // LLM 호출
-    const llm = LLMFactory.createFromConfig("free-chat");
+    const llm = await LLMFactory.createFromConfigAsync("free-chat");
 
     // 지능형 컨텍스트 생성
     const contextPrompt = buildContextPrompt(message, context);

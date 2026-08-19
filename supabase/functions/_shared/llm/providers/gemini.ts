@@ -8,7 +8,10 @@ import {
   LLMMessage,
   LLMResponse,
 } from "../types.ts";
-import { assertLlmRequestAllowed } from "../safety.ts";
+import {
+  assertLlmRequestAllowed,
+  type LlmBillingOwner,
+} from "../safety.ts";
 import { GEMINI_IMAGE_MODEL } from "../models.ts";
 import { normalizeGenerateOptions } from "../generate-options.ts";
 
@@ -29,7 +32,13 @@ function createSafetyBlockedError(message: string): Error {
 
 export class GeminiProvider implements ILLMProvider {
   constructor(
-    private config: { apiKey: string; model: string; featureName?: string },
+    private config: {
+      apiKey: string;
+      model: string;
+      featureName?: string;
+      /** 사용자 키(BYOK)로 생성할 때만 "user". 미지정이면 플랫폼 예산 가드 적용. */
+      billingOwner?: LlmBillingOwner;
+    },
   ) {}
 
   async generate(
@@ -73,6 +82,7 @@ export class GeminiProvider implements ILLMProvider {
         model: this.config.model,
         featureName: this.config.featureName || "shared-gemini-provider",
         mode: "text",
+        billingOwner: this.config.billingOwner,
       });
 
       console.log("🔄 [Gemini] Calling Gemini API...");
