@@ -14,5 +14,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily',
       priority: 1,
     },
+    {
+      // 한글 경로는 sitemap 에서 퍼센트 인코딩돼야 한다.
+      url: `${siteUrl}/${encodeURI('운세/오늘')}`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
   ];
 }
