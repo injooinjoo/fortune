@@ -11,11 +11,19 @@
 
 import Link from 'next/link';
 
+import { IS_BYOK_ENABLED, SETTINGS_AI_HREF } from '@/features/settings/providers';
 import { CHAT_INDEX_HREF, FORTUNE_INDEX_HREF } from '@/lib/href';
 
+/**
+ * 설정 링크는 `/설정` 이 아니라 `/설정/ai` 로 간다 — 지금 설정 화면은 AI 키
+ * 연결 하나뿐이고, 목록만 있는 `/설정` 을 만들면 클릭이 한 번 더 늘 뿐이다.
+ * 그래서 개인 키 연결이 꺼져 있으면 설정 항목 자체를 내보내지 않는다
+ * (`IS_BYOK_ENABLED` 주석 참고).
+ */
 const NAV_LINKS = [
   { href: FORTUNE_INDEX_HREF, label: '운세' },
   { href: CHAT_INDEX_HREF, label: '대화' },
+  ...(IS_BYOK_ENABLED ? [{ href: SETTINGS_AI_HREF, label: '설정' }] : []),
   { href: '/auth/login', label: '로그인' },
 ];
 

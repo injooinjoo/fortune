@@ -330,7 +330,7 @@ serve(async (req) => {
     console.log(`[fortune-pet-compatibility] 💨 Cohort Pool MISS - LLM 호출 필요`)
 
     // LLM 호출
-    const llm = LLMFactory.createFromConfig('fortune-pet')
+    const llm = await LLMFactory.createFromConfigAsync('fortune-pet')
     const today = new Date()
     const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][today.getDay()]
     const season = getCurrentSeason()

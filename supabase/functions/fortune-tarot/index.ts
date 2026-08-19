@@ -739,7 +739,7 @@ serve(async (req: Request) => {
         }
       }
 
-      const llm = LLMFactory.createFromConfig("tarot");
+      const llm = await LLMFactory.createFromConfigAsync("tarot");
       const prompt = buildStorytellingPrompt(
         question,
         spreadType,

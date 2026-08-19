@@ -4,14 +4,13 @@
  * 연애운 입력 폼.
  *
  * 요청 계약 (`supabase/functions/fortune-love/index.ts`):
- * 필수 필드 검증이 `!requestBody[field]` 라서 다음 6개가 **반드시 falsy 가 아니어야**
- * 한다 — userId, age, gender, relationshipStatus, datingStyles, valueImportance.
+ * 필수 필드 검증이 `!requestBody[field]` 라서 다음 5개가 **반드시 falsy 가 아니어야**
+ * 한다 — age, gender, relationshipStatus, datingStyles, valueImportance.
  * 배열/객체는 비어 있어도 truthy 라서 통과하고(그때는 프롬프트가 "미지정" 으로
  * 처리한다), 그래서 화면에서 실제로 받는 필수 입력은 나이·성별·연애 상태 셋뿐이다.
  *
- * `userId` 는 서버가 캐시 키(`love_<userId>_...`)로 쓰기 때문에 body 에 들어가야
- * 한다. 최신 서버는 인증/차감을 JWT 로 하지만 이 검증은 그 앞단이라 값이 없으면
- * 400 으로 끝난다 → `ensureUserId` 로 익명 세션의 id 를 먼저 확보한다.
+ * `userId` 는 보내지 않는다. 서버가 Authorization JWT 에서 파생해서 캐시 키
+ * (`love_<userId>_...`)와 차감에 쓴다 — 클라가 준 id 는 무시된다.
  */
 
 import { useState, type FormEvent } from 'react';
@@ -21,12 +20,8 @@ import { FailureNotice } from '@/features/fortune/result';
 import { runFortune, type FortuneFailureKind } from '@/features/fortune/runner';
 
 import { LoveResult, type LoveEnvelope, type LoveFortune } from './love-result';
-import { ensureUserId } from './session-user';
 
 const LOGIN_HREF = `/auth/login?next=${encodeURIComponent('/운세/연애')}`;
-
-/** 로그인이 안 되면 서버가 userId 누락으로 400 을 준다. 그때 보여줄 안내. */
-const NO_USER_MESSAGE = '세션을 만들지 못했어요. 로그인하면 연애운을 바로 볼 수 있어요.';
 
 /** 서버 프롬프트가 아는 값. `complicated` 는 기본(single) 분기로 떨어져서 뺐다. */
 const STATUS_OPTIONS: ChipOption[] = [
@@ -73,16 +68,7 @@ export function LoveForm() {
     if (!ready) return;
     setState({ kind: 'loading' });
 
-    const userId = await ensureUserId('love');
-    if (!userId) {
-      // 익명 세션도 못 만든 상태. 서버가 어차피 400 을 줄 요청이라
-      // 안내를 앞당긴다 (결과 앞의 로그인 벽이 아니라, 실패 시 안내).
-      setState({ kind: 'failed', failure: 'auth', message: NO_USER_MESSAGE });
-      return;
-    }
-
     const result = await runFortune<LoveEnvelope>('love', {
-      userId,
       age: ageNumber,
       gender,
       relationshipStatus: status,

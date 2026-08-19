@@ -202,7 +202,7 @@ serve(async (req) => {
     console.log(`💬 [chat-insight] ${name} → 관계: ${relationshipLabel}, 궁금: ${curiosityLabel}, 대화길이: ${chatContent.length}자`)
 
     // LLM 호출
-    const llm = LLMFactory.createFromConfig('chat-insight')
+    const llm = await LLMFactory.createFromConfigAsync('chat-insight')
     const prompt = buildPrompt(name, relationship, curiosity, chatContent)
 
     const llmResponse = await llm.generate([

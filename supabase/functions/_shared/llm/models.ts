@@ -86,6 +86,38 @@ const DEFAULT_GROK_IMAGE_MODEL = "grok-2-image-1212";
 export const GROK_IMAGE_MODEL =
   Deno.env.get("GROK_IMAGE_MODEL")?.trim() || DEFAULT_GROK_IMAGE_MODEL;
 
+// ── OpenRouter 저비용 텍스트 모델 ──────────────────────────────────────────
+// 짧은 한국어 운세 텍스트(수백~2천 토큰)에 쓸 후보만 추린 목록.
+// 괄호 안은 1M 토큰당 USD (입력 / 출력) — OpenRouter 표시가 기준.
+// 모델 ID 는 OpenRouter 슬러그("<vendor>/<model>") 형식이며 벤더 원본 ID 와 다르다.
+
+/**
+ * OpenRouter 모델 — 2026-08-19 https://openrouter.ai/api/v1/models 실조회로 검증한 slug.
+ * 존재하지 않는 slug 를 쓰면 404 "No endpoints found" 가 난다 (google/gemini-2.0-flash-001 이 그랬다).
+ * 단가는 $/1M 토큰 (입력/출력).
+ */
+
+/** ($0.10 / $0.40) 기본. 기존 gemini-2.5-flash-lite 와 같은 모델이라 원가 구조가 그대로다.
+ *  입력이 text+image+file+audio+video 라 이미지 해석까지 이 하나로 커버된다. */
+export const OPENROUTER_TEXT_MODEL = "google/gemini-2.5-flash-lite";
+
+/** ($0.30 / $2.50) 이미지 해석 품질을 올리고 싶을 때. 관상/손금/OOTD 처럼 사진 판독이 핵심인 운세용. */
+export const OPENROUTER_VISION_MODEL = "google/gemini-2.5-flash";
+
+/** ($0.30 / $2.50) 이미지 생성. BM 문서가 상정한 gemini-2.5-flash-image 와 동일 모델. */
+export const OPENROUTER_IMAGE_MODEL = "google/gemini-2.5-flash-image";
+
+/** ($0.25 / $1.50) 더 싼 이미지 생성. 부적/포스터처럼 장식성 이미지에. */
+export const OPENROUTER_IMAGE_LITE_MODEL = "google/gemini-3.1-flash-lite-image";
+
+/** ($0.15 / $0.60) JSON 스키마 준수가 가장 안정적. 구조화 출력이 자주 깨지면 이걸로. */
+export const OPENROUTER_STRUCTURED_MODEL = "openai/gpt-4o-mini";
+
+/** OpenRouter 기본 모델. OPENROUTER_DEFAULT_MODEL 환경변수로 교체 가능. */
+export const OPENROUTER_SAFE_TEXT_MODEL =
+  Deno.env.get("OPENROUTER_DEFAULT_MODEL")?.trim() ||
+  OPENROUTER_TEXT_MODEL;
+
 export function getGeminiModelPricing(model: string): ModelPricing | undefined {
   return GEMINI_MODEL_CATALOG[normalizeModelName(model)]?.pricing;
 }

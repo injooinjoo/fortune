@@ -176,7 +176,7 @@ serve(async (req) => {
     console.log(`🩸 [blood-type] ${name} → ${traits.label} (${traits.keyword})`)
 
     // LLM 호출
-    const llm = LLMFactory.createFromConfig('blood-type')
+    const llm = await LLMFactory.createFromConfigAsync('blood-type')
     const prompt = buildPrompt(bloodType, name)
 
     const llmResponse = await llm.generate([

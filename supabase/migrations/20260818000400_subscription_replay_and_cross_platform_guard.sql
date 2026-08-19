@@ -5,7 +5,7 @@
 --     영수증을 재검증하지 않는다 — verified_purchases 행의 존재에만 의존한다.
 --     그런데 replay 분기(v_consumed_for_subscription = true)가
 --       IF v_expires_at <= now() OR status <> 'active' THEN
---         v_expires_at := GREATEST(v_expires_at, now() + p_duration_days);
+--         v_expires_at := GREATEST(v_expires_at, now() + p_duration_days)
 --         UPDATE subscriptions SET status='active', expires_at=...
 --     로 기간을 연장한다. verified_purchases_self_read 정책이 본인
 --     verified_transaction_id 읽기를 허용하므로: 구독 → 해지 → 만료 후 같은 purchaseId
@@ -15,7 +15,7 @@
 -- (2) 다른 채널의 살아있는 구독을 조용히 expired 로 만든다.
 --       UPDATE subscriptions SET status='expired'
 --        WHERE user_id=... AND status='active'
---          AND NOT (platform=p_platform AND purchase_id=p_purchase_id);
+--          AND NOT (platform=p_platform AND purchase_id=p_purchase_id)
 --     Apple 구독 중인 사용자가 웹/안드로이드에서 결제하면 Apple 은 계속 청구하는데
 --     우리 DB 의 Apple 행만 만료된다 = 이중 과금 민원.
 --     → 다른 platform 의 유효한 활성 구독이 있으면 만료시키지 않고 거절한다.
