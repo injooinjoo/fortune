@@ -27,8 +27,8 @@ export default async function LoginPage({
     <main className="ondo-shell ondo-stack">
       <header className="ondo-stack" style={{ gap: 'var(--ondo-spacing-xs)' }}>
         <p className="ondo-kicker">로그인</p>
-        <h1 className="ondo-h2">이메일로 로그인</h1>
-        <p className="ondo-muted">비밀번호가 없습니다. 입력한 주소로 로그인 링크를 보내드려요.</p>
+        <h1 className="ondo-h2">Google 로 로그인</h1>
+        <p className="ondo-muted">비밀번호는 따로 없어요. 구글 계정으로 한 번에 들어옵니다.</p>
       </header>
 
       <LoginForm callbackError={rawError ?? null} nextPath={sanitizeNextPath(rawNext)} />
