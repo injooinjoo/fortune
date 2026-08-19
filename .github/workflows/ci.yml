@@ -71,6 +71,66 @@ jobs:
       - name: tsc --noEmit
         run: npm run typecheck
 
+  web-typecheck-build:
+    name: web typecheck + build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.33.1 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Check web design token sync
+        run: |
+          if ! npm run check:web-tokens; then
+            echo "::error::Design token drift detected — apps/web/src/styles/tokens.css is not in sync with packages/design-tokens/src/index.ts. Run 'pnpm sync:web-tokens' and commit the generated file."
+            exit 1
+          fi
+
+      - name: tsc --noEmit
+        run: pnpm --filter @fortune/web typecheck
+
+      - name: next build
+        run: pnpm --filter @fortune/web build
+
+      # playwright.web.config.js 의 webServer 가 build && start 를 다시 돌린다
+      # (reuseExistingServer: true 라 이미 떠 있으면 재사용). 포트 3100 — 루트
+      # playwright.config.js 의 RN web export(3000) 와 충돌하지 않는다.
+      # chromium-headless-shell 을 명시적으로 받는다.
+      # 로컬(macOS)에서 `npx playwright install chromium` 은 chromium-1217 만 설치하고
+      # chrome-headless-shell 을 빠뜨려 "Executable doesn't exist at
+      # .../chromium_headless_shell-1217" 로 3/4 스펙이 실패했다. 리눅스 러너에서도
+      # 같은지는 확인하지 못했지만(기존 e2e-tests.yml:54 는 chromium 만 받고도 동작 중),
+      # 두 개를 명시하는 것은 idempotent 하고 부작용이 없으므로 방어적으로 지정한다.
+      - name: Install Playwright chromium
+        run: npx playwright install --with-deps chromium chromium-headless-shell
+
+      - name: Web smoke (Playwright)
+        run: npm run test:web:ci
+        env:
+          NEXT_PUBLIC_SITE_URL: http://localhost:3100
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-web
+          path: playwright-report/web
+          retention-days: 7
+
   rls-static-audit:
     name: Supabase RLS static audit
     runs-on: ubuntu-latest

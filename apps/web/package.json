@@ -1,0 +1,27 @@
+{
+  "name": "@fortune/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3100",
+    "build": "next build",
+    "start": "next start -p 3100",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fortune/design-tokens": "file:../../packages/design-tokens",
+    "@fortune/product-contracts": "file:../../packages/product-contracts",
+    "@fortune/saju-engine": "file:../../packages/saju-engine",
+    "@supabase/ssr": "^0.7.0",
+    "@supabase/supabase-js": "^2.86.2",
+    "next": "^15.5.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.6.0",
+    "@types/react": "~19.1.0",
+    "@types/react-dom": "~19.1.0",
+    "typescript": "~5.9.2"
+  }
+}

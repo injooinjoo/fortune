@@ -39,6 +39,9 @@ apps/mobile-rn/android
 apps/mobile-rn/build-*.ipa
 apps/mobile-rn/dist
 
+# --- Next.js 웹 앱 — 네이티브 빌드와 무관. 없으면 .next 산출물까지 EAS 로 업로드됨. ---
+apps/web
+
 # --- Supabase local state ---
 supabase/.temp
 supabase/.branches
