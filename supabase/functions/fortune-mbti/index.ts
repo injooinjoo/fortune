@@ -24,11 +24,23 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 // ==================== 타입 정의 ====================
 
@@ -364,13 +376,17 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     )
 
-    const { mbti, name, birthDate, userId, isPremium, category = 'overall' }: MbtiFortuneRequest = await req.json()
+    const requestBody: MbtiFortuneRequest = await req.json()
+    const { mbti, name, birthDate, userId, isPremium, category = 'overall' } = requestBody
 
     console.log(`[MBTI-v2] Request - User: ${userId}, Premium: ${isPremium}, MBTI: ${mbti}, Category: ${category}`)
 
@@ -402,6 +418,25 @@ serve(async (req) => {
         }
       )
     }
+
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'mbti',
+      requestBody,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
+      )
+    }
+    paidCharge = paidCaller
 
     const today = new Date().toISOString().split('T')[0]
 
@@ -601,16 +636,36 @@ serve(async (req) => {
     const percentileData = await calculatePercentile(supabaseClient, 'mbti', result.energyLevel)
     const resultWithPercentile = addPercentileToResult(result, percentileData)
 
+    const responsePayload = {
+      success: true,
+      data: resultWithPercentile
+    }
+
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'mbti',
+      responsePayload,
+    )
+
     return new Response(
-      JSON.stringify({
-        success: true,
-        data: resultWithPercentile
-      }),
+      JSON.stringify(withTokenCharge(responsePayload, paidCaller.tokenCharge)),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
     )
 
   } catch (error) {
     console.error('MBTI Fortune API Error:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'mbti',
+      )
+    }
 
     const errorMessage = error instanceof Error ? error.message : String(error)
     console.error('Error details:', {

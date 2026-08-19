@@ -52,11 +52,23 @@ import {
   saveToCohortPool,
   personalize,
 } from '../_shared/cohort/index.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 interface FamilyMember {
   name?: string;
@@ -96,6 +108,9 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -104,7 +119,6 @@ serve(async (req) => {
 
     const requestData: FamilyWealthRequest = await req.json()
     const {
-      userId,
       name,
       birthDate,
       birthTime,
@@ -119,6 +133,27 @@ serve(async (req) => {
       familyMember,
       sajuData
     } = requestData
+
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'family-wealth',
+      requestData,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } },
+      )
+    }
+    paidCharge = paidCaller
+    // SECURITY: body.userId 는 더 이상 신뢰하지 않는다. JWT 파생 값만 사용.
+    const userId = paidCaller.userId
 
     console.log('💰 [FamilyWealth] User:', userId, '| Members:', family_member_count, '| Premium:', isPremium)
     if (familyMember) {
@@ -158,12 +193,22 @@ serve(async (req) => {
 
     if (cachedResult) {
       console.log('📦 [FamilyWealth] Cache hit')
+      const cachedPayload = {
+        fortune: cachedResult.result,
+        cached: true,
+        tokensUsed: 0
+      }
+
+      await storeFortuneResult(
+        fortuneChargeAdmin,
+        paidCaller.idempotencyKey,
+        paidCaller.userId,
+        'family-wealth',
+        cachedPayload,
+      )
+
       return new Response(
-        JSON.stringify({
-          fortune: cachedResult.result,
-          cached: true,
-          tokensUsed: 0
-        }),
+        JSON.stringify(withTokenCharge(cachedPayload, paidCaller.tokenCharge)),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
@@ -215,14 +260,24 @@ serve(async (req) => {
           created_at: new Date().toISOString()
         })
 
+      const cohortPayload = {
+        success: true,
+        data: finalResult,
+        cached: false,
+        fromCohortPool: true,
+        tokensUsed: 0
+      }
+
+      await storeFortuneResult(
+        fortuneChargeAdmin,
+        paidCaller.idempotencyKey,
+        paidCaller.userId,
+        'family-wealth',
+        cohortPayload,
+      )
+
       return new Response(
-        JSON.stringify({
-          success: true,
-          data: finalResult,
-          cached: false,
-          fromCohortPool: true,
-          tokensUsed: 0
-        }),
+        JSON.stringify(withTokenCharge(cohortPayload, paidCaller.tokenCharge)),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
@@ -440,19 +495,39 @@ ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함�
         created_at: new Date().toISOString()
       })
 
+    const responsePayload = {
+      success: true,
+      data: resultWithPercentile,
+      cached: false,
+      tokensUsed: response.usage?.totalTokens || 0
+    }
+
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'family-wealth',
+      responsePayload,
+    )
+
     return new Response(
-      JSON.stringify({
-        success: true,
-        data: resultWithPercentile,
-        cached: false,
-        tokensUsed: response.usage?.totalTokens || 0
-      }),
+      JSON.stringify(withTokenCharge(responsePayload, paidCaller.tokenCharge)),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
     )
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     console.error('Error in fortune-family-wealth:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'family-wealth',
+      )
+    }
 
     return new Response(
       JSON.stringify({

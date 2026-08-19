@@ -27,11 +27,23 @@ import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 // 유명인 운세 응답 스키마 (Enhanced)
 interface CelebrityFortuneResponse {
@@ -121,6 +133,9 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -129,7 +144,6 @@ serve(async (req) => {
 
     const requestData = await req.json()
     const {
-      userId,
       celebrity_id,
       celebrity_name,
       connection_type = 'ideal_match',
@@ -147,6 +161,26 @@ serve(async (req) => {
     console.log(`   - 질문 유형: ${question_type}`)
     console.log(`   - Premium: ${isPremium}`)
 
+    // SECURITY: 서버에서 인증 + 토큰 차감. body.userId 는 더 이상 신뢰하지 않는다.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'celebrity',
+      requestData,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
+      )
+    }
+    paidCharge = paidCaller
+    const userId = paidCaller.userId
+
     // 캐시 체크
     const cacheKey = await generateCacheKey(userId, celebrity_id, connection_type, question_type)
     const { data: cachedResult } = await supabaseClient
@@ -158,8 +192,18 @@ serve(async (req) => {
     if (cachedResult) {
       console.log('📦 [CelebrityFortune] 캐시 히트!')
       const fortune = cachedResult.result
+      const cachedPayload = { success: true, data: fortune }
+
+      await storeFortuneResult(
+        fortuneChargeAdmin,
+        paidCaller.idempotencyKey,
+        paidCaller.userId,
+        'celebrity',
+        cachedPayload,
+      )
+
       return new Response(
-        JSON.stringify({ success: true, data: fortune }),
+        JSON.stringify(withTokenCharge(cachedPayload, paidCaller.tokenCharge)),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
@@ -436,11 +480,21 @@ ${category ? `- 카테고리: ${category}` : ''}
     const percentileData = await calculatePercentile(supabaseClient, 'celebrity', fortune.score)
     const fortuneWithPercentile = addPercentileToResult(fortune, percentileData)
 
+    const responsePayload = {
+      success: true,
+      data: fortuneWithPercentile
+    }
+
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'celebrity',
+      responsePayload,
+    )
+
     return new Response(
-      JSON.stringify({
-        success: true,
-        data: fortuneWithPercentile
-      }),
+      JSON.stringify(withTokenCharge(responsePayload, paidCaller.tokenCharge)),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
         status: 200
@@ -450,6 +504,16 @@ ${category ? `- 카테고리: ${category}` : ''}
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     console.error('❌ [CelebrityFortune] 에러:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'celebrity',
+      )
+    }
 
     return new Response(
       JSON.stringify({

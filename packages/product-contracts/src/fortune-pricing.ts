@@ -101,6 +101,7 @@ export const FORTUNE_POINT_COSTS = {
   'family-children': 5,
   'family-wealth': 5,
   'family-relationship': 5,
+  'family-change': 5,
   'career-coaching': 5,
   decision: 5,
 

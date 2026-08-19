@@ -23,11 +23,23 @@ import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile } from '../_shared/percentile/calculator.ts'
 import { withFortuneSafetyGuard } from '../_shared/fortune_safety_guard.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 // 바이오리듬 응답 스키마
 interface BiorhythmResponse {
@@ -117,6 +129,9 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     // Supabase 클라이언트 생성 (퍼센타일 계산용)
     const supabaseClient = createClient(
@@ -124,7 +139,32 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     )
 
-    const { birthDate, name, isPremium, targetDate } = await req.json()
+    const requestBody = await req.json()
+    const { birthDate, name, isPremium, targetDate } = requestBody
+
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'biorhythm',
+      requestBody,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        {
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+    }
+    paidCharge = paidCaller
 
     // 생년월일에서 총 일수 계산
     const birth = new Date(birthDate)
@@ -312,30 +352,40 @@ ${Array.from({ length: 7 }, (_, i) => {
     console.log(`📊 [Biorhythm] Percentile: ${percentileData.isPercentileValid ? `상위 ${percentileData.percentile}%` : '데이터 부족'}`)
 
     // Flutter가 기대하는 형식으로 응답
+    const responsePayload = {
+      success: true,
+      data: {
+        // ✅ 표준화된 필드명: score, content, summary, advice
+        fortuneType: 'biorhythm',
+        score: result.overall_score,
+        content: result.status_message || '바이오리듬 분석 결과입니다.',
+        summary: result.greeting || '오늘의 바이오리듬을 확인하세요',
+        advice: result.today_recommendation?.energy_management || '에너지를 효율적으로 관리하세요',
+        // 기존 필드 유지 (하위 호환성)
+        title: '바이오리듬 분석',
+        biorhythm_summary: {
+          overall_score: result.overall_score,
+          status_message: result.status_message,
+          greeting: result.greeting,
+        },
+        ...blurredResult,
+        // ✅ 퍼센타일 정보 추가
+        percentile: percentileData.percentile,
+        totalTodayViewers: percentileData.totalTodayViewers,
+        isPercentileValid: percentileData.isPercentileValid,
+      }
+    }
+
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'biorhythm',
+      responsePayload,
+    )
+
     return new Response(
-      JSON.stringify({
-        success: true,
-        data: {
-          // ✅ 표준화된 필드명: score, content, summary, advice
-          fortuneType: 'biorhythm',
-          score: result.overall_score,
-          content: result.status_message || '바이오리듬 분석 결과입니다.',
-          summary: result.greeting || '오늘의 바이오리듬을 확인하세요',
-          advice: result.today_recommendation?.energy_management || '에너지를 효율적으로 관리하세요',
-          // 기존 필드 유지 (하위 호환성)
-          title: '바이오리듬 분석',
-          biorhythm_summary: {
-            overall_score: result.overall_score,
-            status_message: result.status_message,
-            greeting: result.greeting,
-          },
-          ...blurredResult,
-          // ✅ 퍼센타일 정보 추가
-          percentile: percentileData.percentile,
-          totalTodayViewers: percentileData.totalTodayViewers,
-          isPercentileValid: percentileData.isPercentileValid,
-        }
-      }),
+      JSON.stringify(withTokenCharge(responsePayload, paidCaller.tokenCharge)),
       {
         headers: {
           ...corsHeaders,
@@ -350,6 +400,17 @@ ${Array.from({ length: 7 }, (_, i) => {
       : '바이오리듬 분석 중 오류가 발생했습니다'
     const errorStack = error instanceof Error ? error.stack : undefined
     console.error('❌ Biorhythm Error:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'biorhythm',
+      )
+    }
+
     return new Response(
       JSON.stringify({
         success: false,

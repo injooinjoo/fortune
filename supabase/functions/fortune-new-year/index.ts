@@ -39,6 +39,18 @@ import {
   saveToCohortPool,
   personalize,
 } from '../_shared/cohort/index.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -62,6 +74,9 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -70,7 +85,6 @@ serve(async (req) => {
 
     const requestData = await req.json()
     const {
-      userId,
       name = '사용자',
       birthDate,
       birthTime,
@@ -82,6 +96,27 @@ serve(async (req) => {
       goalLabel,
       isPremium = false
     } = requestData
+
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'new-year',
+      requestData,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } },
+      )
+    }
+    paidCharge = paidCaller
+    // SECURITY: body.userId 는 더 이상 신뢰하지 않는다. JWT 파생 값만 사용.
+    const userId = paidCaller.userId
 
     console.log('🎊 [NewYear] 요청 수신:', { userId, name, goal, goalLabel, isPremium })
 
@@ -143,13 +178,23 @@ serve(async (req) => {
         }
       }
 
+      const cohortPayload = {
+        fortune: fortune,
+        cached: true,
+        cohortHit: true,
+        tokensUsed: 0
+      }
+
+      await storeFortuneResult(
+        fortuneChargeAdmin,
+        paidCaller.idempotencyKey,
+        paidCaller.userId,
+        'new-year',
+        cohortPayload,
+      )
+
       return new Response(
-        JSON.stringify({
-          fortune: fortune,
-          cached: true,
-          cohortHit: true,
-          tokensUsed: 0
-        }),
+        JSON.stringify(withTokenCharge(cohortPayload, paidCaller.tokenCharge)),
         {
           headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
           status: 200
@@ -442,12 +487,22 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
 
     console.log(`[fortune-new-year] ✅ 응답 생성 완료 (score: ${overallScore}, goal: ${goal})`)
 
+    const responsePayload = {
+      fortune: fortuneWithPercentile,
+      cached: false,
+      tokensUsed: response.usage?.totalTokens || 0
+    }
+
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'new-year',
+      responsePayload,
+    )
+
     return new Response(
-      JSON.stringify({
-        fortune: fortuneWithPercentile,
-        cached: false,
-        tokensUsed: response.usage?.totalTokens || 0
-      }),
+      JSON.stringify(withTokenCharge(responsePayload, paidCaller.tokenCharge)),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
         status: 200
@@ -456,6 +511,16 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
 
   } catch (error) {
     console.error('[fortune-new-year] ❌ Error:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'new-year',
+      )
+    }
 
     return new Response(
       JSON.stringify({
