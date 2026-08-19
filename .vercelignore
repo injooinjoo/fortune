@@ -1,0 +1,40 @@
+# Vercel 업로드에서 제외할 루트 아티팩트.
+#
+# Vercel 프로젝트의 Root Directory 는 apps/web 이지만, 모노레포라
+# 업로드 자체는 repo 루트 기준으로 이뤄진다 (apps/web 이 packages/* 를
+# file: 로 참조하기 때문에 루트를 잘라낼 수도 없다).
+# 아래 항목들이 없으면 매 배포마다 120MB 넘는 쓸모없는 바이트가 올라간다.
+
+# --- 대용량 코퍼스 / 아카이브 (namuwiki: 86MB + 37MB) ---
+namuwiki*.7z
+postgresql.zip
+*.tgz
+
+# --- 루트 스크린샷 / 스토어 에셋 (앱 심사용, 웹 빌드와 무관) ---
+/*.png
+/*.docx
+/screenshots
+/google_play_assets
+/metadata
+/artifacts
+/output
+/logs
+/data
+
+# --- 다른 워크스페이스 / 네이티브 산출물 ---
+apps/mobile-rn
+dist
+.expo
+.metro-cache
+
+# --- 백엔드 / 문서 / 테스트 (Next 빌드가 읽지 않음) ---
+/supabase
+/docs
+/plans
+/playwright
+
+# --- 빌드/툴 캐시 ---
+node_modules
+.next
+.git
+.claude
