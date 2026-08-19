@@ -73,6 +73,21 @@ export function DailyForm() {
 
     setState({ kind: 'loading' });
 
+    // 게스트 진입. 로그인 벽을 결과 "앞"에 두지 않는다 — 방문자가 아무것도 못 보고
+    // 이탈하는 게 가장 큰 손실이고, resolveChatOnboardingGate 가 비로그인에
+    // 'ready' 를 주는 네이티브 정책(Apple 5.1.1(v))과도 일관된다.
+    //
+    // 세션이 없으면 익명 로그인을 시도한다. 프로젝트에서 Anonymous sign-ins 가
+    // 꺼져 있으면 실패하는데, 그때도 anon key 만으로 호출을 계속한다. 서버가
+    // 401 을 주면 아래 auth 분기가 로그인 안내를 띄운다.
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData.session) {
+      const { error: anonError } = await supabase.auth.signInAnonymously();
+      if (anonError) {
+        console.warn('[daily] 익명 세션 발급 실패 — anon key 로 계속:', anonError.message);
+      }
+    }
+
     // userId 는 보내지 않는다 — fortune-daily 는 body.userId 를 무시하고
     // JWT 에서만 파생한다 (index.ts 의 requirePaidFortuneCaller).
     //

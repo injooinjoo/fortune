@@ -36,7 +36,7 @@ export default function LandingPage() {
           앱을 설치하지 않아도 웹에서 바로 오늘의 운세를 볼 수 있습니다. 이메일로 로그인하면 결과가 계정에 남습니다.
         </p>
         <div className="ondo-row" style={{ marginTop: 'var(--ondo-spacing-sm)' }}>
-          <Link className="ondo-button" href="/app/f/daily">
+          <Link className="ondo-button" href="/운세/오늘">
             오늘의 운세 보기
           </Link>
           <Link className="ondo-button ondo-button--secondary" href="/auth/login">
