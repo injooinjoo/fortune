@@ -20,7 +20,12 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { deriveUserIdFromJwt } from '../_shared/auth.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
@@ -37,6 +42,12 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 // 사주 데이터 인터페이스
 interface SajuData {
@@ -185,6 +196,9 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -192,8 +206,26 @@ serve(async (req) => {
     )
 
     const requestData: WealthRequest = await req.json()
-    // SECURITY: body.userId 무시. JWT 에서만 파생. 게스트는 'anonymous'.
-    const userId = (await deriveUserIdFromJwt(req)) ?? 'anonymous'
+    // SECURITY: body.userId 무시. JWT 에서만 파생 + 서버에서 직접 토큰 차감.
+    // 게스트('anonymous') fallback 제거 — 로그인 없이는 LLM 을 태울 수 없다.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'wealth',
+      requestData,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
+      )
+    }
+    paidCharge = paidCaller
+    const userId = paidCaller.userId
     const {
       userName = '회원',
       isPremium = false,
@@ -211,7 +243,7 @@ serve(async (req) => {
 
     // 캐시 확인
     const today = new Date().toISOString().split('T')[0]
-    const cacheKey = `${userId || 'anonymous'}_wealth_${today}_${goal}_${concern}`
+    const cacheKey = `${userId}_wealth_${today}_${goal}_${concern}`
 
     const { data: cachedResult } = await supabaseClient
       .from('fortune_cache')
@@ -221,12 +253,22 @@ serve(async (req) => {
       .maybeSingle()
 
     if (cachedResult) {
+      const cachedPayload = {
+        fortune: cachedResult.result,
+        cached: true,
+        tokensUsed: 0
+      }
+
+      await storeFortuneResult(
+        fortuneChargeAdmin,
+        paidCaller.idempotencyKey,
+        userId,
+        'wealth',
+        cachedPayload,
+      )
+
       return new Response(
-        JSON.stringify({
-          fortune: cachedResult.result,
-          cached: true,
-          tokensUsed: 0
-        }),
+        JSON.stringify(withTokenCharge(cachedPayload, paidCaller.tokenCharge)),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
@@ -289,13 +331,23 @@ serve(async (req) => {
           created_at: new Date().toISOString()
         })
 
+      const cohortPayload = {
+        fortune: finalResult,
+        cached: false,
+        fromCohortPool: true,
+        tokensUsed: 0
+      }
+
+      await storeFortuneResult(
+        fortuneChargeAdmin,
+        paidCaller.idempotencyKey,
+        userId,
+        'wealth',
+        cohortPayload,
+      )
+
       return new Response(
-        JSON.stringify({
-          fortune: finalResult,
-          cached: false,
-          fromCohortPool: true,
-          tokensUsed: 0
-        }),
+        JSON.stringify(withTokenCharge(cohortPayload, paidCaller.tokenCharge)),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
@@ -565,19 +617,39 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
         created_at: new Date().toISOString()
       })
 
+    const responsePayload = {
+      success: true,
+      data: resultWithPercentile,
+      cached: false,
+      tokensUsed: response.usage?.totalTokens || 0
+    }
+
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      userId,
+      'wealth',
+      responsePayload,
+    )
+
     return new Response(
-      JSON.stringify({
-        success: true,
-        data: resultWithPercentile,
-        cached: false,
-        tokensUsed: response.usage?.totalTokens || 0
-      }),
+      JSON.stringify(withTokenCharge(responsePayload, paidCaller.tokenCharge)),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
     )
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     console.error('Error in fortune-wealth:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'wealth',
+      )
+    }
 
     return new Response(
       JSON.stringify({

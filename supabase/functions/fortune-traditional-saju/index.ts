@@ -33,7 +33,12 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
-import { deriveUserIdFromJwt } from '../_shared/auth.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 import {
   extractSajuCohort,
   generateCohortHash,
@@ -46,6 +51,12 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 // 전통 사주팔자 응답 스키마
 interface TraditionalSajuResponse {
@@ -65,6 +76,9 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -73,13 +87,28 @@ serve(async (req) => {
 
     const requestData = await req.json()
     // /ultrareview SRE P0 #5: body.userId 신뢰 금지. JWT 또는 internal-worker.
-    const userId = await deriveUserIdFromJwt(req)
-    if (!userId) {
+    // + 서버에서 직접 토큰 차감 (클라 soul-consume 의존 제거).
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'traditional-saju',
+      requestData,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
       return new Response(
-        JSON.stringify({ success: false, error: 'Unauthorized — JWT 필요' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
+          status: 200,
+        },
       )
     }
+    paidCharge = paidCaller
+    const userId = paidCaller.userId
     const {
       question,
       sajuData,
@@ -121,12 +150,22 @@ serve(async (req) => {
           calculatePercentile(75)
         )
 
+        const cohortPayload = {
+          success: true,
+          data: resultWithPercentile,
+          cohortHit: true,
+        }
+
+        await storeFortuneResult(
+          fortuneChargeAdmin,
+          paidCaller.idempotencyKey,
+          userId,
+          'traditional-saju',
+          cohortPayload,
+        )
+
         return new Response(
-          JSON.stringify({
-            success: true,
-            data: resultWithPercentile,
-            cohortHit: true,
-          }),
+          JSON.stringify(withTokenCharge(cohortPayload, paidCaller.tokenCharge)),
           {
             headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
             status: 200
@@ -267,8 +306,16 @@ serve(async (req) => {
         .catch(e => console.error('[Traditional-Saju] Cohort 저장 오류:', e))
     }
 
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      userId,
+      'traditional-saju',
+      fortuneResponse,
+    )
+
     return new Response(
-      JSON.stringify(fortuneResponse),
+      JSON.stringify(withTokenCharge(fortuneResponse, paidCaller.tokenCharge)),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
         status: 200
@@ -277,6 +324,16 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('❌ [Traditional-Saju] Error:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'traditional-saju',
+      )
+    }
 
     return new Response(
       JSON.stringify({

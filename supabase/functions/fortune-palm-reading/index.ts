@@ -30,7 +30,13 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
-import { deriveUserIdFromJwt } from "../_shared/auth.ts";
+import { createClient as createChargeClient } from "https://esm.sh/@supabase/supabase-js@2";
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from "../_shared/fortune_charge.ts";
 
 // =====================================================
 // 상수 (매직 넘버 금지)
@@ -112,6 +118,14 @@ const corsHeaders = {
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
 };
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+// 본 파일은 supabase-js@2.39.0 을 쓰지만 _shared 헬퍼는 @2 타입을 요구하므로
+// 차감 게이트용 클라이언트만 @2 로 별도 생성한다.
+const fortuneChargeAdmin = createChargeClient(
+  SUPABASE_URL,
+  SUPABASE_SERVICE_ROLE_KEY,
+);
 
 // =====================================================
 // 타입
@@ -326,13 +340,8 @@ serve(async (req) => {
     return failure(400, `Invalid JSON body: ${(err as Error).message}`);
   }
 
-  // /ultrareview SRE P0 #5: body.userId 신뢰 금지. JWT 또는 internal-worker 헤더만.
-  const userId = await deriveUserIdFromJwt(req);
   const imageBase64 = readString(body.imageBase64);
 
-  if (!userId) {
-    return failure(401, "Unauthorized — JWT 필요");
-  }
   if (!imageBase64) {
     return failure(400, "imageBase64 required");
   }
@@ -354,6 +363,45 @@ serve(async (req) => {
     );
   }
 
+  // SECURITY: body.userId 신뢰 금지. 서버에서 인증 + 토큰 차감까지 처리.
+  const paidCaller = await requirePaidFortuneCaller(
+    req,
+    fortuneChargeAdmin,
+    "palm-reading",
+    body,
+  );
+  if ("error" in paidCaller) {
+    return paidCaller.error;
+  }
+  if (paidCaller.replayed) {
+    // TTL 안의 동일 요청 — 이미지 재생성 없이 저장된 응답 그대로.
+    return new Response(
+      JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+      {
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "application/json; charset=utf-8",
+        },
+      },
+    );
+  }
+  const userId = paidCaller.userId;
+
+  // 차감 후 실패하면 환불하고 같은 실패 응답을 돌려준다.
+  const refundAndFail = async (
+    status: number,
+    log: string,
+  ): Promise<Response> => {
+    await refundFortuneCharge(
+      fortuneChargeAdmin,
+      paidCaller.userId,
+      paidCaller.idempotencyKey,
+      "palm-reading",
+    );
+    return failure(status, log);
+  };
+
   console.log(
     `🖐️ fortune-palm-reading: userId=${userId} userImageBytes=${userPalmBytes.byteLength}`,
   );
@@ -363,7 +411,7 @@ serve(async (req) => {
   try {
     templateBytes = await downloadAsset(TEMPLATE_PATH);
   } catch (err) {
-    return failure(
+    return await refundAndFail(
       500,
       `Reference asset fetch failed: ${(err as Error).message}. ` +
         `palm-reading-assets/template.png 가 업로드되었는지 확인 필요.`,
@@ -378,7 +426,10 @@ serve(async (req) => {
     resultBytes = await generatePalmReadingImage(templateBytes, userPalmBytes);
     console.log(`✅ gpt-image-2 result: ${resultBytes.byteLength} bytes`);
   } catch (err) {
-    return failure(500, `OpenAI generation failed: ${(err as Error).message}`);
+    return await refundAndFail(
+      500,
+      `OpenAI generation failed: ${(err as Error).message}`,
+    );
   }
 
   // ---------- Storage 업로드 ----------
@@ -387,16 +438,36 @@ serve(async (req) => {
     imageUrl = await uploadResult(userId, resultBytes);
     console.log("📤 uploaded private palm-reading result");
   } catch (err) {
-    return failure(500, `Result upload failed: ${(err as Error).message}`);
+    return await refundAndFail(
+      500,
+      `Result upload failed: ${(err as Error).message}`,
+    );
   }
 
   // ---------- 성공 응답 ----------
-  return jsonResponse(
+  const responsePayload = {
+    success: true as const,
+    imageUrl,
+    generatedAt: new Date().toISOString(),
+  };
+
+  await storeFortuneResult(
+    fortuneChargeAdmin,
+    paidCaller.idempotencyKey,
+    paidCaller.userId,
+    "palm-reading",
+    responsePayload,
+  );
+
+  // 서버가 차감했음을 최상위 tokenCharge 로 알린다 (클라 이중 과금 방지).
+  return new Response(
+    JSON.stringify(withTokenCharge(responsePayload, paidCaller.tokenCharge)),
     {
-      success: true,
-      imageUrl,
-      generatedAt: new Date().toISOString(),
+      status: 200,
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "application/json; charset=utf-8",
+      },
     },
-    200,
   );
 });

@@ -6,8 +6,22 @@
  * @endpoint POST /fortune-birthstone
  */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { deriveUserIdFromJwt } from '../_shared/auth.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { withEdgeFunction } from '../_shared/middleware.ts'
+// 차감 후 결과 생성이 순수 계산(카탈로그 조회)뿐이라 실패 경로가 없어
+// refundFortuneCharge 는 쓰지 않는다.
+import {
+  requirePaidFortuneCaller,
+  type ServerTokenChargeMarker,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 interface BirthstoneRequest {
   // NOTE: userId 필드는 이전 버전 호환을 위해 타입만 남겨두되, 실제로 body에서
@@ -212,7 +226,18 @@ function getBirthMonthLabel(month: number): string {
 }
 
 serve((req) =>
-  withEdgeFunction<BirthstoneRequest, { success: boolean; data?: unknown; error?: string }>(req, {
+  withEdgeFunction<
+    BirthstoneRequest,
+    {
+      success: boolean
+      data?: unknown
+      error?: string
+      code?: string
+      required?: number
+      available?: number
+      tokenCharge?: ServerTokenChargeMarker
+    }
+  >(req, {
     functionName: 'fortune-birthstone',
     timeoutMs: 10_000,
     handler: async ({ body, req, requestId }) => {
@@ -228,8 +253,44 @@ serve((req) =>
         }
       }
 
-      // SECURITY: body.userId 무시. JWT에서만 파생. 게스트는 null.
-      const userId = await deriveUserIdFromJwt(req)
+      // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+      const paidCaller = await requirePaidFortuneCaller(
+        req,
+        fortuneChargeAdmin,
+        'birthstone',
+        body,
+      )
+      if ('error' in paidCaller) {
+        // withEdgeFunction 은 Response 가 아니라 payload 를 요구하므로 게이트가
+        // 만든 JSON 본문을 그대로 풀어서 같은 status 로 돌려준다.
+        const gateBody = await paidCaller.error.json() as {
+          code?: string
+          message?: string
+          required?: number
+          available?: number
+        }
+        return {
+          status: paidCaller.error.status,
+          payload: {
+            success: false,
+            error: gateBody.message ?? gateBody.code,
+            code: gateBody.code,
+            required: gateBody.required,
+            available: gateBody.available,
+          },
+        }
+      }
+      if (paidCaller.replayed) {
+        // TTL 안의 동일 요청 — 재생성 없이 저장된 응답 그대로.
+        return {
+          status: 200,
+          payload: withTokenCharge(
+            paidCaller.cached,
+            paidCaller.tokenCharge,
+          ) as { success: boolean; tokenCharge?: ServerTokenChargeMarker },
+        }
+      }
+      const userId = paidCaller.userId
 
       const entry = BIRTHSTONE_CATALOG[birthMonth] ?? BIRTHSTONE_CATALOG[1]
       const content = `${getBirthMonthLabel(birthMonth)} 탄생석은 ${entry.stone}예요. ${entry.meaning}의 흐름이 강하게 들어오니, ${entry.summary}`
@@ -265,12 +326,25 @@ serve((req) =>
         isPremium: body.isPremium ?? false,
       }
 
+      const responsePayload = {
+        success: true,
+        data,
+      }
+
+      await storeFortuneResult(
+        fortuneChargeAdmin,
+        paidCaller.idempotencyKey,
+        paidCaller.userId,
+        'birthstone',
+        responsePayload,
+      )
+
       return {
         status: 200,
-        payload: {
-          success: true,
-          data,
-        },
+        payload: withTokenCharge(
+          responsePayload,
+          paidCaller.tokenCharge,
+        ) as { success: boolean; tokenCharge?: ServerTokenChargeMarker },
       }
     },
   }),

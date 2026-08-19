@@ -24,6 +24,12 @@ import { LLMFactory } from "../_shared/llm/factory.ts";
 import { GEMINI_IMAGE_MODEL } from "../_shared/llm/models.ts";
 import { UsageLogger } from "../_shared/llm/usage-logger.ts";
 import { assertLlmRequestAllowed } from "../_shared/llm/safety.ts";
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from "../_shared/fortune_charge.ts";
 
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY")!;
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
@@ -34,6 +40,12 @@ const corsHeaders = {
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
 };
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get("SUPABASE_URL") ?? "",
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+);
 
 // 신분 설정 (80개+ 확장)
 interface StatusConfig {
@@ -2756,10 +2768,12 @@ serve(async (req) => {
 
   const startTime = Date.now();
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null;
+
   try {
     const requestData = await req.json();
     const {
-      userId,
       name: userName = "사용자",
       birthDate: userBirthDate,
       birthTime,
@@ -2776,16 +2790,41 @@ serve(async (req) => {
     console.log(`   - Premium: ${isPremium}`);
     console.log(`   - 얼굴 이미지: ${faceImageBase64 ? "있음" : "없음"}`);
 
-    // 필수 필드 검증
-    if (!userId || !userBirthDate) {
+    // 필수 필드 검증 (userId 는 body 가 아니라 JWT 에서 파생)
+    if (!userBirthDate) {
       return new Response(
-        JSON.stringify({ error: "Missing required fields: userId, birthDate" }),
+        JSON.stringify({ error: "Missing required fields: birthDate" }),
         {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         },
       );
     }
+
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      "past-life",
+      requestData,
+    );
+    if ("error" in paidCaller) {
+      return paidCaller.error;
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        {
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json; charset=utf-8",
+          },
+        },
+      );
+    }
+    paidCharge = paidCaller;
+    const userId = paidCaller.userId;
 
     // 1. 얼굴 분석 (이미지가 있는 경우)
     let faceFeatures: FaceFeatures | null = null;
@@ -2983,8 +3022,18 @@ serve(async (req) => {
       `🎉 [PastLife] V2 완료! 총 소요시간: ${Date.now() - startTime}ms`,
     );
 
+    const responsePayload = { fortune: fortune };
+
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      "past-life",
+      responsePayload,
+    );
+
     return new Response(
-      JSON.stringify({ fortune: fortune }),
+      JSON.stringify(withTokenCharge(responsePayload, paidCaller.tokenCharge)),
       {
         status: 200,
         headers: {
@@ -2995,6 +3044,16 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error("❌ [PastLife] Error:", error);
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        "past-life",
+      );
+    }
 
     // 에러 로깅 - UsageLogger.logError 사용
     UsageLogger.logError(

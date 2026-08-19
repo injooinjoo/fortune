@@ -22,12 +22,17 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { deriveUserIdFromJwt } from '../_shared/auth.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 import { withFortuneSafetyGuard } from '../_shared/fortune_safety_guard.ts'
 import { extractUsername, fetchInstagramProfileImage, downloadAndEncodeImage } from '../_shared/instagram/scraper.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 import {
   extractBlindDateCohort,
   generateCohortHash,
@@ -40,6 +45,12 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 interface BlindDateRequest {
   // Basic Info (기존)
@@ -248,6 +259,9 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -279,8 +293,25 @@ serve(async (req) => {
     const chatContent = requestData.chatContent || requestData.chat_content
     const chatPlatform = requestData.chatPlatform || requestData.chat_platform
     const photoAnalysis = requestData.photoAnalysis || requestData.photo_analysis
-    // SECURITY: body.userId / body.user_id 무시. JWT 에서만 파생.
-    const userId = (await deriveUserIdFromJwt(req)) ?? 'anonymous'
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'blind-date',
+      requestData,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
+      )
+    }
+    paidCharge = paidCaller
+    const userId = paidCaller.userId
     const isPremium = requestData.isPremium ?? requestData.is_premium ?? false
     const instagramUsername = requestData.instagramUsername || requestData.instagram_username
 
@@ -338,8 +369,18 @@ serve(async (req) => {
       const percentileData = await calculatePercentile(supabaseClient, 'blind-date', score)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
+      const cohortPayload = { success: true, data: resultWithPercentile, cohortHit: true }
+
+      await storeFortuneResult(
+        fortuneChargeAdmin,
+        paidCaller.idempotencyKey,
+        paidCaller.userId,
+        'blind-date',
+        cohortPayload,
+      )
+
       return new Response(
-        JSON.stringify({ success: true, data: resultWithPercentile, cohortHit: true }),
+        JSON.stringify(withTokenCharge(cohortPayload, paidCaller.tokenCharge)),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
@@ -347,7 +388,7 @@ serve(async (req) => {
 
     // Cache key 생성
     const today = new Date().toISOString().split('T')[0]
-    const cacheKey = `${userId || 'anonymous'}_blind-date_${today}_${analysisType}_${meetingDate}_${confidence}`
+    const cacheKey = `${userId}_blind-date_${today}_${analysisType}_${meetingDate}_${confidence}`
 
     // fortune_cache 조회
     const { data: cachedResult } = await supabaseClient
@@ -358,8 +399,18 @@ serve(async (req) => {
       .single()
 
     if (cachedResult) {
+      const cachedPayload = { success: true, data: cachedResult.result }
+
+      await storeFortuneResult(
+        fortuneChargeAdmin,
+        paidCaller.idempotencyKey,
+        paidCaller.userId,
+        'blind-date',
+        cachedPayload,
+      )
+
       return new Response(
-        JSON.stringify({ success: true, data: cachedResult.result }),
+        JSON.stringify(withTokenCharge(cachedPayload, paidCaller.tokenCharge)),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
@@ -605,8 +656,18 @@ ${photoAnalysisText}${chatAnalysisText}
       const percentileData = await calculatePercentile(supabaseClient, 'blind-date', result.score)
       const resultWithPercentile = addPercentileToResult(result, percentileData)
 
+      const responsePayload = { success: true, data: resultWithPercentile }
+
+      await storeFortuneResult(
+        fortuneChargeAdmin,
+        paidCaller.idempotencyKey,
+        paidCaller.userId,
+        'blind-date',
+        responsePayload,
+      )
+
       return new Response(
-        JSON.stringify({ success: true, data: resultWithPercentile }),
+        JSON.stringify(withTokenCharge(responsePayload, paidCaller.tokenCharge)),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
 
@@ -616,6 +677,17 @@ ${photoAnalysisText}${chatAnalysisText}
 
   } catch (error) {
     console.error('Blind Date Fortune API Error:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'blind-date',
+      )
+    }
+
     return new Response(
       JSON.stringify({
         success: false,

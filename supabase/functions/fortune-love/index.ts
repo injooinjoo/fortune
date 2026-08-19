@@ -40,6 +40,12 @@ import {
   saveToCohortPool,
   personalize,
 } from '../_shared/cohort/index.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 
 // TypeScript 인터페이스 정의
 interface LoveFortuneRequest {
@@ -621,6 +627,9 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     if (req.method !== 'POST') {
       return new Response(
@@ -649,17 +658,50 @@ serve(async (req) => {
       }
     }
 
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    // (필수 필드 검증 이후 — 400 으로 끝나는 요청은 과금하지 않는다)
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      supabase,
+      'love',
+      requestBody,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        {
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' }
+        }
+      )
+    }
+    paidCharge = paidCaller
+
     const params: LoveFortuneRequest = requestBody
 
     // 캐시 확인
     const cachedResult = await getCachedFortune(params.userId, params)
     if (cachedResult) {
+      const cachedPayload = {
+        success: true,
+        data: cachedResult,
+        cached: true
+      }
+
+      await storeFortuneResult(
+        supabase,
+        paidCaller.idempotencyKey,
+        paidCaller.userId,
+        'love',
+        cachedPayload,
+      )
+
       return new Response(
-        JSON.stringify({
-          success: true,
-          data: cachedResult,
-          cached: true
-        }),
+        JSON.stringify(withTokenCharge(cachedPayload, paidCaller.tokenCharge)),
         {
           status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' }
@@ -705,8 +747,18 @@ serve(async (req) => {
         },
       }, percentileData)
 
+      const cohortPayload = { success: true, data: resultWithPercentile }
+
+      await storeFortuneResult(
+        supabase,
+        paidCaller.idempotencyKey,
+        paidCaller.userId,
+        'love',
+        cohortPayload,
+      )
+
       return new Response(
-        JSON.stringify({ success: true, data: resultWithPercentile }),
+        JSON.stringify(withTokenCharge(cohortPayload, paidCaller.tokenCharge)),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
@@ -937,8 +989,17 @@ serve(async (req) => {
       .catch((err) => console.warn(`[fortune-love] ⚠️ Cohort Pool 저장 실패 (무시됨):`, err.message))
 
     console.log('연애운세 생성 완료')
+
+    await storeFortuneResult(
+      supabase,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'love',
+      response,
+    )
+
     return new Response(
-      JSON.stringify(response),
+      JSON.stringify(withTokenCharge(response, paidCaller.tokenCharge)),
       {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' }
@@ -948,6 +1009,16 @@ serve(async (req) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     console.error('연애운세 생성 오류:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        supabase,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'love',
+      )
+    }
 
     return new Response(
       JSON.stringify({

@@ -52,11 +52,24 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  type ServerTokenChargeMarker,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 /**
  * 다중 날짜 운세 처리 함수
@@ -80,12 +93,15 @@ async function handleMultipleDates(params: {
   mbtiType: string,
   userId: string,
   processedLocation: string,
-  corsHeaders: Record<string, string>
+  corsHeaders: Record<string, string>,
+  /** 서버 차감 게이트 핸들 — 캐시 저장 + 응답의 tokenCharge 마커에 필요 */
+  paidCaller: { userId: string, idempotencyKey: string, tokenCharge: ServerTokenChargeMarker }
 }) {
   const {
     supabaseClient, targetDatesParam, eventsPerDateParam, calendarEvents,
     calendarSynced, isPremium, name, birthDate, birthTime, gender, isLunar,
-    zodiacSign, zodiacAnimal, mbtiType, userId, processedLocation, corsHeaders: headers
+    zodiacSign, zodiacAnimal, mbtiType, userId, processedLocation, corsHeaders: headers,
+    paidCaller
   } = params
 
   console.log(`[fortune-time] 📅 다중 날짜 모드 시작: ${targetDatesParam.length}개 날짜`)
@@ -310,12 +326,22 @@ ${calendarSection}
 
   console.log(`[fortune-time] ✅ 다중 날짜 응답 생성 완료`)
 
+  const responsePayload = {
+    fortune: fortuneWithPercentile,
+    cached: false,
+    tokensUsed: response.usage?.totalTokens || 0
+  }
+
+  await storeFortuneResult(
+    fortuneChargeAdmin,
+    paidCaller.idempotencyKey,
+    paidCaller.userId,
+    'time',
+    responsePayload,
+  )
+
   return new Response(
-    JSON.stringify({
-      fortune: fortuneWithPercentile,
-      cached: false,
-      tokensUsed: response.usage?.totalTokens || 0
-    }),
+    JSON.stringify(withTokenCharge(responsePayload, paidCaller.tokenCharge)),
     {
       headers: { ...headers, 'Content-Type': 'application/json; charset=utf-8' },
       status: 200
@@ -328,6 +354,9 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
+
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
 
   try {
     const supabaseClient = createClient(
@@ -342,7 +371,6 @@ serve(async (req) => {
 
     const requestData = await req.json()
     const {
-      userId,
       name,
       birthDate,
       birthTime,
@@ -365,6 +393,27 @@ serve(async (req) => {
       hasCalendarEvents = false,
       isPremium = false
     } = requestData
+
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'time',
+      requestData,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } },
+      )
+    }
+    paidCharge = paidCaller
+    // SECURITY: body.userId 는 더 이상 신뢰하지 않는다. JWT 파생 값만 사용.
+    const userId = paidCaller.userId
 
     console.log('💎 [Time] Premium 상태:', isPremium)
     console.log(`[fortune-time] 🎯 Request received:`, { userId, name, birthDate, period, isMultipleDates })
@@ -461,7 +510,8 @@ serve(async (req) => {
         mbtiType,
         userId,
         processedLocation,
-        corsHeaders
+        corsHeaders,
+        paidCaller
       })
     }
 
@@ -837,12 +887,22 @@ ${hasEvents ? `
 
     console.log(`[fortune-time] ✅ 응답 생성 완료`)
 
+    const responsePayload = {
+      fortune: fortuneWithPercentile,
+      cached: false,
+      tokensUsed: response.usage?.totalTokens || 0
+    }
+
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'time',
+      responsePayload,
+    )
+
     return new Response(
-      JSON.stringify({
-        fortune: fortuneWithPercentile,
-        cached: false,
-        tokensUsed: response.usage?.totalTokens || 0
-      }),
+      JSON.stringify(withTokenCharge(responsePayload, paidCaller.tokenCharge)),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
         status: 200
@@ -851,6 +911,17 @@ ${hasEvents ? `
 
   } catch (error) {
     console.error('Error generating time-based fortune:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'time',
+      )
+    }
+
     
     return new Response(
       JSON.stringify({ 

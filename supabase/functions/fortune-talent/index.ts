@@ -60,11 +60,23 @@ import {
   saveToCohortPool,
   personalize,
 } from '../_shared/cohort/index.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 interface TalentRequest {
   talentArea: string; // '예술', '스포츠', '학문', '비즈니스', '기술' 등
@@ -84,6 +96,9 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -99,10 +114,30 @@ serve(async (req) => {
     const experience = requestData.experience || 'beginner'
     const timeAvailable = requestData.timeAvailable || (requestData as any).time_available || '5to10'
     const challenges = requestData.challenges || []
-    const userId = requestData.userId
     const isPremium = requestData.isPremium ?? false
     const hasResume = requestData.hasResume ?? false
     const resumeText = requestData.resumeText
+
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'talent',
+      requestData,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } },
+      )
+    }
+    paidCharge = paidCaller
+    // SECURITY: body.userId 는 더 이상 신뢰하지 않는다. JWT 파생 값만 사용.
+    const userId = paidCaller.userId
 
     console.log('💎 [Talent] Premium 상태:', isPremium, '| 이력서:', hasResume ? '있음' : '없음')
 
@@ -139,8 +174,18 @@ serve(async (req) => {
       }
 
       console.log('✅ [Talent] Returning cohort result')
+      const cohortPayload = { success: true, data: finalResult, cached: true, tokensUsed: 0 }
+
+      await storeFortuneResult(
+        fortuneChargeAdmin,
+        paidCaller.idempotencyKey,
+        paidCaller.userId,
+        'talent',
+        cohortPayload,
+      )
+
       return new Response(
-        JSON.stringify({ success: true, data: finalResult, cached: true, tokensUsed: 0 }),
+        JSON.stringify(withTokenCharge(cohortPayload, paidCaller.tokenCharge)),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
@@ -148,7 +193,7 @@ serve(async (req) => {
 
     // 캐시 확인 (이력서 포함 여부도 캐시 키에 반영)
     const today = new Date().toISOString().split('T')[0]
-    const cacheKey = `${userId || 'anonymous'}_talent_${today}_${JSON.stringify({talentArea, goals, hasResume})}`
+    const cacheKey = `${userId}_talent_${today}_${JSON.stringify({talentArea, goals, hasResume})}`
 
     const { data: cachedResult } = await supabaseClient
       .from('fortune_cache')
@@ -158,13 +203,23 @@ serve(async (req) => {
       .single()
 
     if (cachedResult) {
+      const cachedPayload = {
+        success: true,
+        data: cachedResult.result,
+        cached: true,
+        tokensUsed: 0
+      }
+
+      await storeFortuneResult(
+        fortuneChargeAdmin,
+        paidCaller.idempotencyKey,
+        paidCaller.userId,
+        'talent',
+        cachedPayload,
+      )
+
       return new Response(
-        JSON.stringify({
-          success: true,
-          data: cachedResult.result,
-          cached: true,
-          tokensUsed: 0
-        }),
+        JSON.stringify(withTokenCharge(cachedPayload, paidCaller.tokenCharge)),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
@@ -459,18 +514,38 @@ ${resumeText.slice(0, 3000)}${resumeText.length > 3000 ? '...(이하 생략)' : 
     saveToCohortPool(supabaseClient, 'talent', cohortHash, cohortData, resultWithPercentile)
       .catch(e => console.error('[Talent] Cohort 저장 오류:', e))
 
+    const responsePayload = {
+      success: true,
+      data: resultWithPercentile,
+      cached: false,
+      tokensUsed: response.usage?.totalTokens || 0
+    }
+
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'talent',
+      responsePayload,
+    )
+
     return new Response(
-      JSON.stringify({
-        success: true,
-        data: resultWithPercentile,
-        cached: false,
-        tokensUsed: response.usage?.totalTokens || 0
-      }),
+      JSON.stringify(withTokenCharge(responsePayload, paidCaller.tokenCharge)),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
     )
 
   } catch (error) {
     console.error('Error in fortune-talent:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'talent',
+      )
+    }
 
     return new Response(
       JSON.stringify({
