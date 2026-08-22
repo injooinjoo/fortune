@@ -183,6 +183,9 @@ test.describe('keyboard access', () => {
     expect(skipLinkOutline.style).not.toBe('none');
     expect(skipLinkOutline.width).toBeGreaterThan(0);
 
+    await page.keyboard.press('Enter');
+    await expect(page.locator('main#main')).toBeFocused();
+
     let reachedPrivacyLink = false;
     for (let index = 0; index < 15; index += 1) {
       await page.keyboard.press('Tab');
