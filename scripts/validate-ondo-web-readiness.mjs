@@ -308,6 +308,10 @@ export function assertPublicAssets(runner) {
     runner.check(`${name} has a non-empty title`, /<title>[^<]+<\/title>/.test(html));
     runner.check(`${name} has a meta description`, /<meta\s+name="description"/.test(html));
     runner.check(`${name} has exactly one main landmark`, (html.match(/<main[\s>]/g) ?? []).length === 1);
+    runner.check(
+      `${name} makes the skip-link target programmatically focusable`,
+      /<main\b(?=[^>]*\bid="main")(?=[^>]*\btabindex="-1")[^>]*>/.test(html),
+    );
     runner.check(`${name} has exactly one h1`, (html.match(/<h1[\s>]/g) ?? []).length === 1);
     runner.check(`${name} references the shared stylesheet`, html.includes('/assets/site.css'));
     runner.check(`${name} references /favicon.ico`, html.includes('/favicon.ico'));
