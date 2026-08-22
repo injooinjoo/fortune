@@ -4,102 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ondo 이용약관</title>
-    <style>
-      :root {
-        color-scheme: light;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-        font-family: "Pretendard", "Apple SD Gothic Neo", "Segoe UI", sans-serif;
-        background:
-          radial-gradient(circle at top right, rgba(0, 163, 255, 0.09), transparent 26%),
-          linear-gradient(180deg, #f7fbff 0%, #eff4fa 100%);
-        color: #17212f;
-      }
-
-      main {
-        width: min(920px, calc(100vw - 32px));
-        margin: 32px auto;
-        padding: 28px;
-        border-radius: 24px;
-        background: rgba(255, 255, 255, 0.94);
-        border: 1px solid #d8e4f0;
-        box-shadow: 0 18px 48px rgba(13, 34, 57, 0.08);
-      }
-
-      h1 {
-        margin: 0 0 8px;
-        font-size: clamp(1.8rem, 3vw, 2.5rem);
-      }
-
-      h2 {
-        margin: 0 0 12px;
-        font-size: 1.15rem;
-      }
-
-      p,
-      li {
-        line-height: 1.7;
-      }
-
-      section {
-        margin-top: 24px;
-        padding-top: 24px;
-        border-top: 1px solid #e5edf5;
-      }
-
-      ul {
-        margin: 0;
-        padding-left: 18px;
-      }
-
-      .eyebrow {
-        display: inline-flex;
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: #edf5ff;
-        color: #31506f;
-        font-size: 0.9rem;
-        margin-bottom: 14px;
-      }
-
-      .muted {
-        color: #536273;
-      }
-
-      .links {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-top: 28px;
-      }
-
-      .links a {
-        padding: 10px 14px;
-        border-radius: 999px;
-        border: 1px solid #d7e4f2;
-        background: #f7fbff;
-        color: #0f5fbe;
-        text-decoration: none;
-      }
-
-      a {
-        color: #0f5fbe;
-      }
-    </style>
+    <meta
+      name="description"
+      content="Ondo(온도) 서비스 이용 조건, 계정과 이용자 책임, 토큰·구독 결제, 지원 및 계정 삭제 절차를 안내합니다."
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="stylesheet" href="/assets/site.css" />
   </head>
   <body>
-    <main>
+    <a class="skip-link" href="#main" data-testid="skip-link">본문으로 건너뛰기</a>
+    <main id="main">
       <div class="eyebrow">Terms of Service</div>
       <h1>Ondo 이용약관</h1>
       <p class="muted">
-        시행일: 2026년 3월 22일. Ondo는 대화형 AI 경험과 운세·관계·생활 인사이트를 제공하는 앱이며,
-        아래 약관은 서비스 이용 기준을 설명합니다.
+        최종 개정일: 2026년 4월 23일. Ondo는 대화형 AI 경험과 운세·관계·생활 인사이트를 제공하는 앱이며,
+        아래 약관은 서비스 이용 기준을 설명합니다. 앱 내 [프로필 &gt; 이용약관]에 최신 전문이 있습니다.
       </p>
 
       <section>
@@ -140,16 +60,17 @@
       <section>
         <h2>5. 지원 및 계정 삭제</h2>
         <p>
-          일반 문의는 <a href="mailto:support@zpzg.co.kr">support@zpzg.co.kr</a>로, 개인정보 문의는
-          <a href="mailto:injooinjoo@gmail.com">injooinjoo@gmail.com</a>로 접수할 수 있습니다. 계정 삭제는
-          앱 내 설정 화면에서 직접 요청할 수 있습니다.
+          문의는 <a href="mailto:injooinjoo@gmail.com">injooinjoo@gmail.com</a>로 접수할 수 있습니다.
+          계정 삭제는 앱 내 [프로필 &gt; 계정 삭제]에서 직접 진행할 수 있으며, 절차는
+          <a href="/delete-account">계정 삭제 안내</a>에서 확인할 수 있습니다.
         </p>
       </section>
 
-      <div class="links">
+      <div class="links" data-testid="page-nav">
         <a href="/privacy">개인정보처리방침</a>
         <a href="/support">고객 지원</a>
-        <a href="/">홈</a>
+        <a href="/delete-account">계정 삭제 안내</a>
+        <a href="/" data-testid="home-link">홈</a>
       </div>
     </main>
   </body>

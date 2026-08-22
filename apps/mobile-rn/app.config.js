@@ -121,6 +121,14 @@ const config = {
     // 의 Apple Developer 팀 ID 는 eas build 로그상 5F7CN7Y54D.
     appleTeamId: '5F7CN7Y54D',
     usesAppleSignIn: true,
+    // Universal Links — public/.well-known/apple-app-site-association 는 이미
+    // fortune-mocha.vercel.app 에서 5F7CN7Y54D.com.beyond.fortune 를 선언하고
+    // 있었지만 앱 쪽 associatedDomains 가 없어 실제로는 동작하지 않았다.
+    // AASA components 에 나열한 네이티브 경로(/chat, /onboarding, /premium,
+    // /auth/callback, /account-deletion)만 앱이 가져가고, 공개 문서 경로
+    // (/privacy, /terms, /support, /delete-account)는 브라우저에 남긴다.
+    // 기존 custom scheme(com.beyond.fortune://)은 그대로 유지된다.
+    associatedDomains: ['applinks:fortune-mocha.vercel.app'],
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
       UIBackgroundModes: ['remote-notification'],
@@ -300,6 +308,26 @@ const config = {
     },
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
+    // Android App Links — public/.well-known/assetlinks.json 의
+    // handle_all_urls 선언에 대응하는 앱 쪽 verified HTTPS intent filter.
+    // Android 는 AASA 와 달리 경로 범위를 manifest 에서 정하므로, iOS AASA
+    // components 와 동일한 네이티브 경로만 pathPrefix 로 선언한다. 공개 문서
+    // 경로를 포함하면 /privacy 같은 링크가 앱의 +not-found 로 떨어진다.
+    // `android.scheme` 의 com.beyond.fortune:// intent filter 는 유지된다.
+    intentFilters: [
+      {
+        action: 'VIEW',
+        autoVerify: true,
+        category: ['BROWSABLE', 'DEFAULT'],
+        data: [
+          { scheme: 'https', host: 'fortune-mocha.vercel.app', pathPrefix: '/chat' },
+          { scheme: 'https', host: 'fortune-mocha.vercel.app', pathPrefix: '/onboarding' },
+          { scheme: 'https', host: 'fortune-mocha.vercel.app', pathPrefix: '/premium' },
+          { scheme: 'https', host: 'fortune-mocha.vercel.app', pathPrefix: '/auth/callback' },
+          { scheme: 'https', host: 'fortune-mocha.vercel.app', pathPrefix: '/account-deletion' },
+        ],
+      },
+    ],
   },
   plugins: [
     'expo-router',

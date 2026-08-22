@@ -7,8 +7,24 @@
         ],
         "components": [
           {
-            "/": "/*",
-            "comment": "Match all paths"
+            "/": "/chat",
+            "comment": "Main app surface"
+          },
+          {
+            "/": "/onboarding",
+            "comment": "Onboarding entry"
+          },
+          {
+            "/": "/premium",
+            "comment": "Premium / purchase surface"
+          },
+          {
+            "/": "/auth/callback",
+            "comment": "Social auth callback"
+          },
+          {
+            "/": "/account-deletion",
+            "comment": "In-app account deletion"
           }
         ]
       }

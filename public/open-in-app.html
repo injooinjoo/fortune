@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ondo 앱에서 열리는 화면입니다</title>
+    <meta
+      name="description"
+      content="요청한 주소는 Ondo(온도) 앱 안에서만 동작하는 화면입니다. 이 웹 사이트는 공개 문서와 고객 지원만 제공합니다."
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="stylesheet" href="/assets/site.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main" data-testid="skip-link">본문으로 건너뛰기</a>
+    <main id="main">
+      <div class="eyebrow">App Only</div>
+      <h1>이 화면은 Ondo 앱에서 열립니다</h1>
+      <p class="muted" data-testid="native-route-notice">
+        방금 요청한 주소(<code>/chat</code>, <code>/onboarding</code>, <code>/premium</code>,
+        <code>/auth/callback</code>, <code>/account-deletion</code>)는 Ondo 앱 안에서만 동작하는
+        화면입니다. 이 웹 사이트는 앱 심사와 고객 지원을 위한 공개 문서만 제공하는 정적 페이지이며,
+        같은 기능의 웹 버전을 제공하지 않습니다.
+      </p>
+
+      <section>
+        <h2>앱이 설치된 기기에서</h2>
+        <p>
+          iOS와 Android에서 이 주소를 열면 앱이 설치되어 있을 때 해당 화면으로 바로 이동합니다.
+          앱이 없으면 이 안내 페이지가 표시됩니다.
+        </p>
+      </section>
+
+      <section>
+        <h2>계정 삭제를 하려던 경우</h2>
+        <p data-testid="account-deletion-fallback">
+          앱의 <code>/account-deletion</code> 화면을 열려고 했다면,
+          <a href="/delete-account">계정 삭제 안내</a>에서 앱 내 삭제 절차와 앱을 열 수 없을 때의
+          이메일 요청 방법을 확인할 수 있습니다.
+        </p>
+      </section>
+
+      <section>
+        <h2>로그인과 결제 안내</h2>
+        <ul>
+          <li>로그인과 소셜 인증은 앱에서만 완료할 수 있습니다. 이 페이지는 인증을 처리하지 않습니다.</li>
+          <li>토큰 구매와 구독 결제는 App Store 또는 Google Play 인앱결제로만 진행됩니다.</li>
+          <li>결제·계정 문제는 <a href="/support">고객 지원</a>으로 문의해 주세요.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>이 사이트에서 볼 수 있는 문서</h2>
+        <ul class="link-list">
+          <li><a href="/privacy">개인정보처리방침</a></li>
+          <li><a href="/terms">이용약관</a></li>
+          <li><a href="/support">고객 지원</a></li>
+          <li><a href="/delete-account">계정 삭제 안내</a></li>
+        </ul>
+      </section>
+
+      <div class="links" data-testid="page-nav">
+        <a href="/" data-testid="home-link">홈으로 이동</a>
+        <a href="/support">고객 지원</a>
+      </div>
+    </main>
+  </body>
+</html>
