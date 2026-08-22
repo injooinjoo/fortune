@@ -18,6 +18,7 @@
     "test": "playwright test",
     "test:smoke": "playwright test playwright/tests/smoke.spec.js --project=chromium",
     "test:smoke:ci": "CI=true playwright test playwright/tests/smoke.spec.js --project=chromium",
+    "web:validate": "node scripts/validate-ondo-web-readiness.mjs",
     "test:e2e": "playwright test playwright/tests/e2e/",
     "test:e2e:ci": "CI=true playwright test playwright/tests/e2e/ --project=chromium",
     "test:headed": "playwright test --headed",

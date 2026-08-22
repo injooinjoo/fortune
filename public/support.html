@@ -4,97 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ondo 고객 지원</title>
-    <style>
-      :root {
-        color-scheme: light;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-        font-family: "Pretendard", "Apple SD Gothic Neo", "Segoe UI", sans-serif;
-        background:
-          radial-gradient(circle at top left, rgba(0, 145, 255, 0.11), transparent 24%),
-          linear-gradient(180deg, #f6fbff 0%, #eef4fa 100%);
-        color: #17212f;
-      }
-
-      main {
-        width: min(920px, calc(100vw - 32px));
-        margin: 32px auto;
-        padding: 28px;
-        border-radius: 24px;
-        background: rgba(255, 255, 255, 0.94);
-        border: 1px solid #d8e4f0;
-        box-shadow: 0 18px 48px rgba(13, 34, 57, 0.08);
-      }
-
-      h1 {
-        margin: 0 0 8px;
-        font-size: clamp(1.8rem, 3vw, 2.5rem);
-      }
-
-      h2 {
-        margin: 0 0 12px;
-        font-size: 1.15rem;
-      }
-
-      p,
-      li {
-        line-height: 1.7;
-      }
-
-      section {
-        margin-top: 24px;
-        padding-top: 24px;
-        border-top: 1px solid #e5edf5;
-      }
-
-      ul {
-        margin: 0;
-        padding-left: 18px;
-      }
-
-      a {
-        color: #0f5fbe;
-      }
-
-      .eyebrow {
-        display: inline-flex;
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: #edf5ff;
-        color: #31506f;
-        font-size: 0.9rem;
-        margin-bottom: 14px;
-      }
-
-      .muted {
-        color: #536273;
-      }
-
-      .links {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-top: 28px;
-      }
-
-      .links a {
-        padding: 10px 14px;
-        border-radius: 999px;
-        border: 1px solid #d7e4f2;
-        background: #f7fbff;
-        color: #0f5fbe;
-        text-decoration: none;
-      }
-    </style>
+    <meta
+      name="description"
+      content="Ondo(온도) 앱 사용 문의, 결제 이슈, 계정 삭제 요청, 개인정보 문의 접수 경로를 안내합니다."
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="stylesheet" href="/assets/site.css" />
   </head>
   <body>
-    <main>
+    <a class="skip-link" href="#main" data-testid="skip-link">본문으로 건너뛰기</a>
+    <main id="main">
       <div class="eyebrow">Support</div>
       <h1>Ondo 고객 지원</h1>
       <p class="muted">
@@ -104,16 +24,22 @@
       <section>
         <h2>1. 문의 채널</h2>
         <ul>
-          <li>일반 지원: <a href="mailto:support@zpzg.co.kr">support@zpzg.co.kr</a></li>
-          <li>개인정보 문의: <a href="mailto:injooinjoo@gmail.com">injooinjoo@gmail.com</a></li>
-          <li>응답 목표: 영업일 기준 3일 이내 1차 회신</li>
+          <li>
+            문의 접수: <a href="mailto:injooinjoo@gmail.com">injooinjoo@gmail.com</a>
+            (일반 지원과 개인정보 문의 모두 같은 주소로 접수합니다)
+          </li>
+          <li>운영 시간: 평일 10:00~18:00 (주말·공휴일 휴무)</li>
+          <li>회신 기준: 영업일 기준 7일 이내</li>
         </ul>
       </section>
 
       <section>
         <h2>2. 계정 및 결제 안내</h2>
         <ul>
-          <li>계정 삭제: 앱 내 설정 화면에서 직접 요청할 수 있습니다.</li>
+          <li>
+            계정 삭제: 앱 내 [프로필 &gt; 계정 삭제]에서 직접 진행할 수 있습니다. 자세한 절차와
+            이메일 요청 방법은 <a href="/delete-account">계정 삭제 안내</a>를 확인해 주세요.
+          </li>
           <li>구독 관리와 환불은 App Store 또는 Google Play 정책을 우선 적용합니다.</li>
           <li>문의 시 계정 이메일, 기기 모델, OS 버전, 문제 화면을 함께 보내주면 확인이 빨라집니다.</li>
         </ul>
@@ -124,15 +50,17 @@
         <ul>
           <li><a href="/privacy">개인정보처리방침</a></li>
           <li><a href="/terms">이용약관</a></li>
+          <li><a href="/delete-account">계정 삭제 안내</a></li>
           <li><a href="/.well-known/apple-app-site-association">Apple universal links file</a></li>
           <li><a href="/.well-known/assetlinks.json">Android asset links file</a></li>
         </ul>
       </section>
 
-      <div class="links">
+      <div class="links" data-testid="page-nav">
         <a href="/privacy">개인정보처리방침</a>
         <a href="/terms">이용약관</a>
-        <a href="/">홈</a>
+        <a href="/delete-account">계정 삭제 안내</a>
+        <a href="/" data-testid="home-link">홈</a>
       </div>
     </main>
   </body>
