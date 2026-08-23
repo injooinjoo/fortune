@@ -1,0 +1,204 @@
+/* 웹 전역 베이스 스타일.
+ *
+ * 색/간격/서체 값은 전부 tokens.css 의 --ondo-* 를 통해서만 참조한다.
+ * 하드코딩 색상 금지 (CLAUDE.md 디자인 시스템 규칙).
+ *
+ * dark 전용 — createFortuneTheme('light') 는 repo 전체 호출부가 0 이라
+ * [data-theme] 분기를 두지 않는다.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--ondo-color-background);
+  color: var(--ondo-color-text-primary);
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard',
+    'Noto Sans KR', 'Segoe UI', Roboto, sans-serif;
+  font-size: var(--ondo-typography-body-large-font-size);
+  line-height: var(--ondo-typography-body-large-line-height);
+  word-break: keep-all;
+}
+
+h1,
+h2,
+h3,
+p,
+figure {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ondo-color-accent-secondary);
+  outline-offset: 2px;
+}
+
+/* --- 공용 레이아웃 --- */
+
+.ondo-shell {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--ondo-spacing-xl) var(--ondo-spacing-page-horizontal)
+    var(--ondo-spacing-xxxxl);
+}
+
+.ondo-card {
+  background: var(--ondo-color-surface);
+  border: 1px solid var(--ondo-color-border);
+  border-radius: var(--ondo-radius-card);
+  padding: var(--ondo-spacing-card-padding);
+}
+
+.ondo-kicker {
+  font-size: var(--ondo-typography-kicker-font-size);
+  line-height: var(--ondo-typography-kicker-line-height);
+  font-weight: var(--ondo-typography-kicker-font-weight);
+  letter-spacing: var(--ondo-typography-kicker-letter-spacing);
+  text-transform: uppercase;
+  color: var(--ondo-color-text-tertiary);
+}
+
+.ondo-h1 {
+  font-size: var(--ondo-typography-display-small-font-size);
+  line-height: var(--ondo-typography-display-small-line-height);
+  font-weight: var(--ondo-typography-display-small-font-weight);
+  letter-spacing: -0.5px;
+}
+
+.ondo-h2 {
+  font-size: var(--ondo-typography-heading2-font-size);
+  line-height: var(--ondo-typography-heading2-line-height);
+  font-weight: var(--ondo-typography-heading2-font-weight);
+}
+
+.ondo-h3 {
+  font-size: var(--ondo-typography-heading4-font-size);
+  line-height: var(--ondo-typography-heading4-line-height);
+  font-weight: var(--ondo-typography-heading4-font-weight);
+}
+
+.ondo-muted {
+  color: var(--ondo-color-text-secondary);
+  font-size: var(--ondo-typography-body-medium-font-size);
+  line-height: var(--ondo-typography-body-medium-line-height);
+}
+
+.ondo-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ondo-spacing-stack-gap);
+}
+
+.ondo-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ondo-spacing-inline-gap);
+}
+
+/* --- 컨트롤 --- */
+
+.ondo-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ondo-spacing-xs);
+  padding: 14px var(--ondo-spacing-lg);
+  border: none;
+  border-radius: var(--ondo-radius-full);
+  background: var(--ondo-color-cta-background);
+  color: var(--ondo-color-cta-foreground);
+  font-size: var(--ondo-typography-label-large-font-size);
+  font-weight: var(--ondo-typography-label-large-font-weight);
+  cursor: pointer;
+}
+
+.ondo-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ondo-button--secondary {
+  background: var(--ondo-color-secondary-background);
+  color: var(--ondo-color-secondary-foreground);
+  border: 1px solid var(--ondo-color-border);
+}
+
+.ondo-chip {
+  padding: var(--ondo-spacing-sm) var(--ondo-spacing-button-gap);
+  border-radius: var(--ondo-radius-chip);
+  border: 1px solid var(--ondo-color-border);
+  background: var(--ondo-color-surface-secondary);
+  color: var(--ondo-color-text-secondary);
+  font-size: var(--ondo-typography-label-small-font-size);
+  line-height: var(--ondo-typography-label-small-line-height);
+  cursor: pointer;
+}
+
+.ondo-chip[aria-pressed='true'] {
+  background: var(--ondo-color-cta-background);
+  border-color: var(--ondo-color-cta-background);
+  color: var(--ondo-color-cta-foreground);
+}
+
+.ondo-label {
+  display: block;
+  margin-bottom: var(--ondo-spacing-xs);
+  color: var(--ondo-color-text-secondary);
+  font-size: var(--ondo-typography-label-small-font-size);
+  line-height: var(--ondo-typography-label-small-line-height);
+}
+
+.ondo-input {
+  width: 100%;
+  padding: 12px var(--ondo-spacing-md);
+  border-radius: var(--ondo-radius-md);
+  border: 1px solid var(--ondo-color-border);
+  background: var(--ondo-color-surface-secondary);
+  color: var(--ondo-color-text-primary);
+}
+
+.ondo-notice {
+  border-radius: var(--ondo-radius-md);
+  border: 1px solid var(--ondo-color-border);
+  background: var(--ondo-color-surface-secondary);
+  padding: var(--ondo-spacing-md);
+}
+
+.ondo-notice--error {
+  border-color: var(--ondo-color-error);
+}
+
+.ondo-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ondo-spacing-sm);
+}
+
+@media (max-width: 480px) {
+  .ondo-grid-2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

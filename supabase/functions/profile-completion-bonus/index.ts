@@ -103,63 +103,53 @@ serve(async (req) => {
       )
     }
 
-    // 4. 현재 토큰 잔액 조회
-    const { data: tokenData } = await supabase
-      .from('token_balance')
-      .select('balance, total_earned, total_spent')
-      .eq('user_id', user.id)
-      .single()
+    // 4. 원자 지급 (잔액 증분 + 거래 이력 + 플래그를 한 트랜잭션에서)
+    //
+    // 이전 구현은 잔액을 읽고 → 절대값으로 upsert → 플래그 update → 거래 insert 를
+    // 각각 별도 문장으로 처리했다. 읽기와 쓰기 사이에 결제 지급(grant_purchase_tokens_atomic)
+    // 이 끼면 고객이 구매한 토큰이 통째로 덮어써진다.
+    // 20260818000600_profile_completion_bonus_atomic.sql 참고.
+    const { data: grantResult, error: grantError } = await supabase.rpc(
+      'grant_profile_completion_bonus_atomic',
+      { p_user_id: user.id, p_bonus: PROFILE_COMPLETION_BONUS },
+    )
 
-    const currentBalance = tokenData?.balance ?? 0
-    const totalEarned = tokenData?.total_earned ?? 0
-    const totalSpent = tokenData?.total_spent ?? 0
-
-    // 5. 토큰 추가 + 보너스 플래그 업데이트 (트랜잭션)
-    const newBalance = currentBalance + PROFILE_COMPLETION_BONUS
-    const newTotalEarned = totalEarned + PROFILE_COMPLETION_BONUS
-
-    // 토큰 잔액 업데이트
-    const { error: balanceError } = await supabase
-      .from('token_balance')
-      .upsert({
-        user_id: user.id,
-        balance: newBalance,
-        total_earned: newTotalEarned,
-        total_spent: totalSpent,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'user_id' })
-
-    if (balanceError) {
-      console.error('❌ Token balance update failed:', balanceError.message)
+    if (grantError) {
+      console.error('❌ grant_profile_completion_bonus_atomic failed:', grantError.message)
       return new Response(
         JSON.stringify({ error: 'Failed to grant bonus' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    // 보너스 지급 플래그 업데이트
-    const { error: profileUpdateError } = await supabase
-      .from('user_profiles')
-      .update({ profile_completion_bonus_granted: true })
-      .eq('id', user.id)
-
-    if (profileUpdateError) {
-      console.error('❌ Profile update failed:', profileUpdateError.message)
-      // 토큰은 이미 지급됨 - 로깅만 하고 성공 처리
+    const result = (grantResult ?? {}) as {
+      granted?: boolean
+      reason?: string
+      balance?: number
+      total_earned?: number
+      total_spent?: number
     }
 
-    // 6. 거래 이력 기록
-    await supabase
-      .from('token_transactions')
-      .insert({
-        user_id: user.id,
-        transaction_type: 'earn',
-        amount: PROFILE_COMPLETION_BONUS,
-        balance_after: newBalance,
-        description: '프로필 완성 보너스',
-        reference_type: 'bonus',
-        reference_id: 'profile_completion'
-      })
+    if (!result.granted) {
+      // RPC 가 최종 판정자다. 위 1~3 단계의 사전 조회는 안내 문구용이며,
+      // 동시 호출로 그 사이에 상태가 바뀌었으면 여기서 걸린다.
+      if (result.reason === 'PROFILE_NOT_FOUND') {
+        return new Response(
+          JSON.stringify({ error: 'Profile not found' }),
+          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+
+      const message = result.reason === 'ALREADY_GRANTED'
+        ? '이미 프로필 완성 보너스를 받으셨습니다.'
+        : '프로필을 완성해주세요. (생년월일과 출생시간 모두 필요)'
+
+      console.log(`📌 Bonus not granted: ${result.reason}`)
+      return new Response(
+        JSON.stringify({ success: false, message, bonusGranted: false }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
 
     console.log(`🎁 Profile completion bonus granted: ${PROFILE_COMPLETION_BONUS} tokens to user ${user.id}`)
 
@@ -170,9 +160,9 @@ serve(async (req) => {
         bonusGranted: true,
         bonusAmount: PROFILE_COMPLETION_BONUS,
         balance: {
-          totalTokens: newTotalEarned,
-          usedTokens: totalSpent,
-          remainingTokens: newBalance,
+          totalTokens: result.total_earned ?? 0,
+          usedTokens: result.total_spent ?? 0,
+          remainingTokens: result.balance ?? 0,
           lastUpdated: new Date().toISOString()
         }
       }),

@@ -56,6 +56,12 @@ import {
   saveToCohortPool,
   personalize,
 } from '../_shared/cohort/index.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 
 // 환경 변수 설정
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -63,6 +69,12 @@ const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
 
 // Supabase 클라이언트 생성
 const supabase = createClient(supabaseUrl, supabaseKey)
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 // 좌표 인터페이스
 interface Coordinates {
@@ -182,6 +194,9 @@ serve(async (req) => {
     })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     // 요청 데이터 파싱
     const requestData: MovingFortuneRequest = await req.json()
@@ -218,6 +233,30 @@ serve(async (req) => {
     if (!current_area || !target_area) {
       throw new Error('현재 지역과 이사갈 지역을 입력해주세요.')
     }
+
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'moving',
+      requestData,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        {
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+          },
+        },
+      )
+    }
+    paidCharge = paidCaller
 
     console.log('💎 [Moving] Premium 상태:', isPremium)
     console.log('Moving fortune request:', {
@@ -274,12 +313,22 @@ serve(async (req) => {
         const percentileData = await calculatePercentile(supabase, 'moving', fortuneData.score || 80)
         const fortuneDataWithPercentile = addPercentileToResult(fortuneData, percentileData)
 
-        return new Response(JSON.stringify({
+        const cohortPayload = {
           success: true,
           data: fortuneDataWithPercentile,
           cached: true,
           cohortHit: true,
-        }), {
+        }
+
+        await storeFortuneResult(
+          fortuneChargeAdmin,
+          paidCaller.idempotencyKey,
+          paidCaller.userId,
+          'moving',
+          cohortPayload,
+        )
+
+        return new Response(JSON.stringify(withTokenCharge(cohortPayload, paidCaller.tokenCharge)), {
           headers: {
             'Content-Type': 'application/json; charset=utf-8',
             'Access-Control-Allow-Origin': '*',
@@ -640,7 +689,15 @@ ${concernsText}
       data: fortuneDataWithPercentile
     }
 
-    return new Response(JSON.stringify(responseData), {
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'moving',
+      responseData,
+    )
+
+    return new Response(JSON.stringify(withTokenCharge(responseData, paidCaller.tokenCharge)), {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
@@ -649,6 +706,16 @@ ${concernsText}
   } catch (error) {
     console.error('❌ Error in fortune-moving function:', error)
     const errorMessage = error instanceof Error ? error.message : '분석 중 오류가 발생했습니다.'
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'moving',
+      )
+    }
 
     return new Response(
       JSON.stringify({

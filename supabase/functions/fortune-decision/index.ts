@@ -24,6 +24,12 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 
 // 환경 변수 설정
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -175,11 +181,13 @@ serve(async (req) => {
     })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     // 요청 데이터 파싱
     const requestData: DecisionRequest = await req.json()
     const {
-      userId,
       question,
       decisionType = 'lifestyle',
       options = [],
@@ -190,6 +198,32 @@ serve(async (req) => {
     if (!question || question.trim().length < 5) {
       throw new Error('고민하는 질문을 5자 이상 입력해주세요.')
     }
+
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      supabaseAdmin,
+      'decision',
+      requestData,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        {
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+          },
+        },
+      )
+    }
+    paidCharge = paidCaller
+    // SECURITY: body.userId 는 더 이상 신뢰하지 않는다. JWT 파생 값만 사용.
+    const userId = paidCaller.userId
 
     // 사용자 코치 설정 조회
     const preferences = await getCoachPreferences(userId)
@@ -373,7 +407,15 @@ ${optionsText}
       data: decisionData
     }
 
-    return new Response(JSON.stringify(successResponse), {
+    await storeFortuneResult(
+      supabaseAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'decision',
+      successResponse,
+    )
+
+    return new Response(JSON.stringify(withTokenCharge(successResponse, paidCaller.tokenCharge)), {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
@@ -382,6 +424,16 @@ ${optionsText}
 
   } catch (error) {
     console.error('Decision Error:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        supabaseAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'decision',
+      )
+    }
 
     const errorResponse: DecisionResponse = {
       success: false,

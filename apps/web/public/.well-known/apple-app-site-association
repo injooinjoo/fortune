@@ -1,0 +1,22 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "5F7CN7Y54D.com.beyond.fortune"
+        ],
+        "components": [
+          {
+            "/": "/*",
+            "comment": "Match all paths"
+          }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "5F7CN7Y54D.com.beyond.fortune"
+    ]
+  }
+}

@@ -30,6 +30,12 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 import { parseAndValidateLLMResponse, v } from '../_shared/llm/validation.ts'
 import {
   extractDreamCohort,
@@ -45,6 +51,12 @@ const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
 
 // Supabase 클라이언트 생성
 const supabase = createClient(supabaseUrl, supabaseKey)
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  supabaseUrl,
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 // 꿈 분석 데이터 인터페이스
 interface DreamSymbol {
@@ -348,6 +360,9 @@ serve(async (req) => {
     })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     // ✅ 요청 헤더 로깅
     console.log('🔍 [Headers] Content-Type:', req.headers.get('content-type'))
@@ -396,6 +411,27 @@ serve(async (req) => {
     if (dream.length === 0) {
       throw new Error('꿈 내용을 입력해주세요.')
     }
+
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'dream',
+      requestData,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)), {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
+    }
+    paidCharge = paidCaller
 
     console.log('🔍 [Step 2] Request validated')
 
@@ -454,7 +490,17 @@ serve(async (req) => {
       }
 
       console.log('✅ [Step 5.3] Returning cohort result')
-      return new Response(JSON.stringify({ success: true, data: finalResult }), {
+      const cohortPayload = { success: true, data: finalResult }
+
+      await storeFortuneResult(
+        fortuneChargeAdmin,
+        paidCaller.idempotencyKey,
+        paidCaller.userId,
+        'dream',
+        cohortPayload,
+      )
+
+      return new Response(JSON.stringify(withTokenCharge(cohortPayload, paidCaller.tokenCharge)), {
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
           'Access-Control-Allow-Origin': '*',
@@ -705,7 +751,16 @@ serve(async (req) => {
     }
 
     console.log('✅ [Step 18] Sending response')
-    return new Response(JSON.stringify(response), {
+
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'dream',
+      response,
+    )
+
+    return new Response(JSON.stringify(withTokenCharge(response, paidCaller.tokenCharge)), {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
@@ -714,6 +769,16 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Dream Fortune Error:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'dream',
+      )
+    }
 
     const errorResponse: DreamFortuneResponse = {
       success: false,

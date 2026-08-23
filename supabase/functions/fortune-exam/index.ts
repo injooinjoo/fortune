@@ -13,6 +13,12 @@ import { withFortuneSafetyGuard } from '../_shared/fortune_safety_guard.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
+import {
   extractExamCohort,
   generateCohortHash,
   getFromCohortPool,
@@ -23,6 +29,12 @@ import {
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
 const supabase = createClient(supabaseUrl, supabaseKey)
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 async function createHash(text: string): Promise<string> {
   const encoder = new TextEncoder()
@@ -95,6 +107,9 @@ serve(async (req) => {
     })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     const requestData: ExamFortuneRequest = await req.json()
 
@@ -107,6 +122,30 @@ serve(async (req) => {
     if (!examDate) {
       throw new Error('시험 날짜를 입력해주세요.')
     }
+
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'exam',
+      requestData,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        {
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+          },
+        },
+      )
+    }
+    paidCharge = paidCaller
 
     const daysRemaining = calculateDaysRemaining(examDate)
     const ddayStage = getDdayStage(daysRemaining)
@@ -599,10 +638,20 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
     const percentileData = await calculatePercentile(supabase, 'exam', fortuneData.score)
     const fortuneDataWithPercentile = addPercentileToResult(fortuneData, percentileData)
 
-    return new Response(JSON.stringify({
+    const responsePayload = {
       success: true,
       data: fortuneDataWithPercentile
-    }), {
+    }
+
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'exam',
+      responsePayload,
+    )
+
+    return new Response(JSON.stringify(withTokenCharge(responsePayload, paidCaller.tokenCharge)), {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
@@ -611,6 +660,16 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
 
   } catch (error) {
     console.error('Exam Fortune Error:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'exam',
+      )
+    }
 
     return new Response(JSON.stringify({
       success: false,

@@ -32,11 +32,23 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile } from '../_shared/percentile/calculator.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 // 스포츠 종목별 기본 정보
 const SPORT_INFO: Record<string, { defaultLeague: string; emoji: string; displayName: string }> = {
@@ -227,13 +239,16 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders });
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null;
+
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    const requestData = await req.json();
     const {
-      userId,
       sport,
       league: requestedLeague,
       homeTeam,
@@ -241,10 +256,10 @@ serve(async (req) => {
       gameDate,
       favoriteTeam,
       birthDate,
-    } = await req.json();
+    } = requestData;
 
-    // 필수 파라미터 검증
-    if (!userId || !sport || !homeTeam || !awayTeam || !gameDate) {
+    // 필수 파라미터 검증 (userId 는 body 가 아니라 JWT 에서 파생)
+    if (!sport || !homeTeam || !awayTeam || !gameDate) {
       return new Response(
         JSON.stringify({ error: 'Missing required parameters' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -259,12 +274,32 @@ serve(async (req) => {
       );
     }
 
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'match-insight',
+      requestData,
+    );
+    if ('error' in paidCaller) {
+      return paidCaller.error;
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+    paidCharge = paidCaller;
+    const userId = paidCaller.userId;
+
     // 리그 결정 (요청에서 지정하거나 종목별 기본값 사용)
     const sportInfo = SPORT_INFO[sport];
     const league = requestedLeague || sportInfo.defaultLeague;
 
     // LLM 호출
-    const llm = LLMFactory.createFromConfig('fortune-match-insight');
+    const llm = await LLMFactory.createFromConfigAsync('fortune-match-insight');
 
     const systemPrompt = getSystemPrompt(sport, league);
     const userPrompt = getUserPrompt(
@@ -383,13 +418,31 @@ serve(async (req) => {
       sportEmoji: sportInfo.emoji,
     };
 
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'match-insight',
+      finalResponse,
+    );
+
     return new Response(
-      JSON.stringify(finalResponse),
+      JSON.stringify(withTokenCharge(finalResponse, paidCaller.tokenCharge)),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
     console.error('Error:', error);
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'match-insight',
+      );
+    }
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

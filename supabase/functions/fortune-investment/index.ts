@@ -30,11 +30,16 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { deriveUserIdFromJwt } from '../_shared/auth.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 import { withFortuneSafetyGuard } from '../_shared/fortune_safety_guard.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 import {
   extractInvestmentCohort,
   generateCohortHash,
@@ -47,6 +52,12 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 // 티커 정보 인터페이스
 interface TickerInfo {
@@ -204,6 +215,9 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     console.log('💎 [Step 0] Supabase 클라이언트 생성')
     const supabaseClient = createClient(
@@ -223,13 +237,31 @@ serve(async (req) => {
     }
 
     const { ticker, isPremium = false, sajuData } = requestData
-    // SECURITY: body.userId 무시. JWT 에서만 파생. 게스트는 'anonymous'.
-    const userId = (await deriveUserIdFromJwt(req)) ?? 'anonymous'
 
     if (!ticker || !ticker.symbol || !ticker.name || !ticker.category) {
       console.error('💎 [Step 1] ticker 검증 실패:', JSON.stringify(ticker))
       throw new Error('ticker 정보가 필요합니다 (symbol, name, category)')
     }
+
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'investment',
+      requestData,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
+      )
+    }
+    paidCharge = paidCaller
+    const userId = paidCaller.userId
 
     const { symbol: tickerSymbol, name: tickerName, category: tickerCategory, exchange: tickerExchange } = ticker
 
@@ -277,13 +309,23 @@ serve(async (req) => {
       const percentileData = await calculatePercentile(supabaseClient, 'investment', score)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
+      const cohortPayload = {
+        fortune: resultWithPercentile,
+        cached: true,
+        tokensUsed: 0,
+        cohortHit: true
+      }
+
+      await storeFortuneResult(
+        fortuneChargeAdmin,
+        paidCaller.idempotencyKey,
+        paidCaller.userId,
+        'investment',
+        cohortPayload,
+      )
+
       return new Response(
-        JSON.stringify({
-          fortune: resultWithPercentile,
-          cached: true,
-          tokensUsed: 0,
-          cohortHit: true
-        }),
+        JSON.stringify(withTokenCharge(cohortPayload, paidCaller.tokenCharge)),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
@@ -291,7 +333,7 @@ serve(async (req) => {
 
     // 캐시 확인 (간소화된 키 - 프로필 정보 없음)
     const today = new Date().toISOString().split('T')[0]
-    const cacheKey = `${userId || 'anonymous'}_investment_v2_${today}_${tickerSymbol}_${tickerCategory}`
+    const cacheKey = `${userId}_investment_v2_${today}_${tickerSymbol}_${tickerCategory}`
 
     // ✅ .maybeSingle()은 결과 없을 때 null 반환 (에러 X)
     console.log('💎 [Step 2] 캐시 확인 시작:', cacheKey)
@@ -308,12 +350,22 @@ serve(async (req) => {
     console.log('💎 [Step 2] 캐시 결과:', cachedResult ? '캐시 있음' : '캐시 없음')
 
     if (cachedResult) {
+      const cachedPayload = {
+        fortune: cachedResult.result,
+        cached: true,
+        tokensUsed: 0
+      }
+
+      await storeFortuneResult(
+        fortuneChargeAdmin,
+        paidCaller.idempotencyKey,
+        paidCaller.userId,
+        'investment',
+        cachedPayload,
+      )
+
       return new Response(
-        JSON.stringify({
-          fortune: cachedResult.result,
-          cached: true,
-          tokensUsed: 0
-        }),
+        JSON.stringify(withTokenCharge(cachedPayload, paidCaller.tokenCharge)),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
@@ -528,12 +580,22 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
 
     // ✅ 응답 형식 통일: 캐시와 동일하게 { fortune, cached, tokensUsed }
     console.log('💎 [Step 8] 응답 반환 시작')
+    const responsePayload = {
+      fortune: resultWithPercentile,
+      cached: false,
+      tokensUsed: response.usage?.totalTokens || 0
+    }
+
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'investment',
+      responsePayload,
+    )
+
     return new Response(
-      JSON.stringify({
-        fortune: resultWithPercentile,
-        cached: false,
-        tokensUsed: response.usage?.totalTokens || 0
-      }),
+      JSON.stringify(withTokenCharge(responsePayload, paidCaller.tokenCharge)),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
     )
 
@@ -542,6 +604,16 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
     console.error('❌ [Investment] 전체 에러:', errorMessage)
     console.error('❌ [Investment] 에러 스택:', error instanceof Error ? error.stack : 'N/A')
     console.error('Error in fortune-investment:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'investment',
+      )
+    }
 
     return new Response(
       JSON.stringify({

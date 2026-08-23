@@ -68,11 +68,23 @@ import {
   saveToCohortPool,
   personalize,
 } from '../_shared/cohort/index.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 interface LuckyItemsRequest {
   userId: string;
@@ -113,6 +125,9 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -124,6 +139,7 @@ serve(async (req) => {
       }
     )
 
+    const requestBody: LuckyItemsRequest = await req.json()
     const {
       userId,
       name,
@@ -132,7 +148,31 @@ serve(async (req) => {
       gender,
       interests,
       isPremium = false // ✅ 프리미엄 사용자 여부
-    }: LuckyItemsRequest = await req.json()
+    } = requestBody
+
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'lucky-items',
+      requestBody,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        {
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json; charset=utf-8'
+          }
+        }
+      )
+    }
+    paidCharge = paidCaller
 
     console.log('💎 [LuckyItems] Premium 상태:', isPremium)
     console.log(`[fortune-lucky-items] 🎯 Request received:`, { userId, name, birthDate })
@@ -199,8 +239,18 @@ serve(async (req) => {
         timestamp: new Date().toISOString()
       }, percentileData)
 
+      const cohortPayload = { success: true, data: resultWithPercentile }
+
+      await storeFortuneResult(
+        fortuneChargeAdmin,
+        paidCaller.idempotencyKey,
+        paidCaller.userId,
+        'lucky-items',
+        cohortPayload,
+      )
+
       return new Response(
-        JSON.stringify({ success: true, data: resultWithPercentile }),
+        JSON.stringify(withTokenCharge(cohortPayload, paidCaller.tokenCharge)),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
@@ -487,8 +537,16 @@ ${interests && interests.length > 0 ? `- 관심사: ${interests.join(', ')}` : '
 
     console.log(`[fortune-lucky-items] ✅ 응답 생성 완료`)
 
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'lucky-items',
+      result,
+    )
+
     return new Response(
-      JSON.stringify(result),
+      JSON.stringify(withTokenCharge(result, paidCaller.tokenCharge)),
       {
         headers: {
           ...corsHeaders,
@@ -499,6 +557,16 @@ ${interests && interests.length > 0 ? `- 관심사: ${interests.join(', ')}` : '
 
   } catch (error) {
     console.error('[fortune-lucky-items] ❌ Error:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'lucky-items',
+      )
+    }
 
     return new Response(
       JSON.stringify({

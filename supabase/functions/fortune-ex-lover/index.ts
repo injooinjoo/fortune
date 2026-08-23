@@ -36,6 +36,12 @@ import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 import { withFortuneSafetyGuard } from '../_shared/fortune_safety_guard.ts'
 import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
+import {
   extractExLoverCohort,
   generateCohortHash,
   getFromCohortPool,
@@ -47,6 +53,12 @@ const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
 
 const supabase = createClient(supabaseUrl, supabaseKey)
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 // UTF-8 안전한 해시 생성 함수 (btoa는 Latin1만 지원하여 한글 불가)
 async function createHash(text: string): Promise<string> {
@@ -476,6 +488,9 @@ serve(async (req) => {
     })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     const requestData: ExLoverFortuneRequest = await req.json()
     const {
@@ -527,6 +542,30 @@ serve(async (req) => {
       throw new Error('상세 이야기를 입력해주세요.')
     }
 
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'ex-lover',
+      requestData,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        {
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+          },
+        },
+      )
+    }
+    paidCharge = paidCaller
+
     console.log('Ex-lover fortune request:', {
       name,
       primaryGoal,
@@ -560,11 +599,21 @@ serve(async (req) => {
       const percentileData = await calculatePercentile(supabase, 'ex-lover', score)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
-      return new Response(JSON.stringify({
+      const cohortPayload = {
         success: true,
         data: resultWithPercentile,
         cohortHit: true
-      }), {
+      }
+
+      await storeFortuneResult(
+        fortuneChargeAdmin,
+        paidCaller.idempotencyKey,
+        paidCaller.userId,
+        'ex-lover',
+        cohortPayload,
+      )
+
+      return new Response(JSON.stringify(withTokenCharge(cohortPayload, paidCaller.tokenCharge)), {
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
           'Access-Control-Allow-Origin': '*',
@@ -1013,7 +1062,17 @@ serve(async (req) => {
     const percentileData = await calculatePercentile(supabase, 'ex-lover', fortuneData.score)
     const fortuneDataWithPercentile = addPercentileToResult(fortuneData, percentileData)
 
-    return new Response(JSON.stringify({ success: true, data: fortuneDataWithPercentile }), {
+    const responsePayload = { success: true, data: fortuneDataWithPercentile }
+
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'ex-lover',
+      responsePayload,
+    )
+
+    return new Response(JSON.stringify(withTokenCharge(responsePayload, paidCaller.tokenCharge)), {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
@@ -1022,6 +1081,17 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Ex-Lover Fortune Error:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'ex-lover',
+      )
+    }
+
     return new Response(JSON.stringify({
       success: false,
       data: {},
