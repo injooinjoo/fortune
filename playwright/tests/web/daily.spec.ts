@@ -3,18 +3,19 @@ import { expect, test } from '@playwright/test';
 /**
  * @fortune/web 스모크.
  *
- * 세션이 없는 상태만 다룬다 — `/app/*` 은 `app/app/layout.tsx` 가
- * `supabase.auth.getUser()` 로 막고 있어서, 폼 자체를 그리려면 실제 Supabase
- * 세션 쿠키가 필요하다. 여기서는 랜딩 / 게이트 / 로그인 진입만 검증한다.
+ * 로컬 `next start` 는 인코딩된 한글 App Router 경로를 404 로 처리하지만
+ * Vercel 배포에서는 정상 제공한다. 그래서 한글 상세 경로의 렌더링은
+ * `WEB_BASE_URL` 이 주어진 배포 스모크에서만 실행하고, 로컬/CI는 링크 계약을
+ * 검증한다.
  */
 
 test.describe('랜딩 페이지', () => {
-  test('제목과 두 개의 CTA 가 보인다', async ({ page }) => {
+  test('첫 운세와 로그인 진입점이 보인다', async ({ page }) => {
     await page.goto('/');
 
     await expect(page.getByRole('heading', { level: 1 })).toContainText('생년월일');
     await expect(page.getByRole('link', { name: '오늘의 운세 보기' })).toBeVisible();
-    await expect(page.getByRole('link', { name: '이메일로 로그인' })).toBeVisible();
+    await expect(page.getByRole('link', { name: '로그인' })).toBeVisible();
   });
 
   test('robots.txt 가 로그인 뒤 화면을 제외한다', async ({ request }) => {
@@ -26,23 +27,39 @@ test.describe('랜딩 페이지', () => {
     expect(body).toContain('Disallow: /auth/');
     expect(body).toContain('Disallow: /api/');
   });
+
+  test('푸터가 운영 정책과 고객지원 문서를 연결한다', async ({ page }) => {
+    await page.goto('/');
+
+    const documents = [
+      ['개인정보처리방침', 'https://fortune-mocha.vercel.app/privacy'],
+      ['이용약관', 'https://fortune-mocha.vercel.app/terms'],
+      ['고객 지원', 'https://fortune-mocha.vercel.app/support'],
+      ['계정 삭제 안내', 'https://fortune-mocha.vercel.app/delete-account'],
+    ] as const;
+
+    for (const [name, href] of documents) {
+      await expect(page.getByRole('link', { name })).toHaveAttribute('href', href);
+    }
+  });
 });
 
 test.describe('일일 운세', () => {
-  test('로그인 없이 접근하면 로그인 화면으로 보낸다', async ({ page }) => {
-    await page.goto('/app/f/daily');
+  test('로그인 없이 공개 폼에 접근할 수 있다', async ({ page }) => {
+    test.skip(!process.env.WEB_BASE_URL, '배포된 한글 경로에서 실행하는 스모크입니다.');
 
-    await expect(page).toHaveURL(/\/auth\/login/);
-    await expect(page.getByLabel('이메일 주소')).toBeVisible();
-    await expect(page.getByRole('button', { name: '로그인 링크 받기' })).toBeVisible();
+    await page.goto('/');
+    await page.getByRole('link', { name: '오늘의 운세 보기' }).click();
+
+    await expect(page).toHaveURL(/\/%EC%9A%B4%EC%84%B8\/%EC%98%A4%EB%8A%98/);
+    await expect(page.getByRole('textbox', { name: '생년월일' })).toBeVisible();
+    await expect(page.getByRole('button', { name: '오늘의 운세 보기' })).toBeDisabled();
   });
 
-  test('랜딩의 CTA 가 일일 운세 경로를 가리킨다', async ({ page }) => {
+  test('랜딩 CTA 가 공개 일일 운세 경로를 가리킨다', async ({ page }) => {
     await page.goto('/');
 
-    await expect(page.getByRole('link', { name: '오늘의 운세 보기' })).toHaveAttribute(
-      'href',
-      '/app/f/daily',
-    );
+    const href = await page.getByRole('link', { name: '오늘의 운세 보기' }).getAttribute('href');
+    expect(href && decodeURIComponent(href)).toBe('/운세/오늘');
   });
 });
