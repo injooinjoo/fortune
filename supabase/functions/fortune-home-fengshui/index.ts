@@ -26,6 +26,12 @@ import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 
 // 환경 변수 설정
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -33,6 +39,12 @@ const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
 
 // Supabase 클라이언트 생성
 const supabase = createClient(supabaseUrl, supabaseKey)
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 // 요청 인터페이스
 interface HomeFengshuiRequest {
@@ -68,6 +80,9 @@ serve(async (req) => {
     })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     // 요청 데이터 파싱
     const requestData: HomeFengshuiRequest = await req.json()
@@ -82,6 +97,30 @@ serve(async (req) => {
     if (!address) {
       throw new Error('주소를 입력해주세요.')
     }
+
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'home-fengshui',
+      requestData,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        {
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+          },
+        },
+      )
+    }
+    paidCharge = paidCaller
 
     console.log('🏠 [HomeFengshui] Premium 상태:', isPremium)
     console.log('Home Fengshui request:', {
@@ -389,7 +428,15 @@ ${address} 지역의 지형적 특성과 ${homeType || '일반 주거'}의 구�
       data: fortuneDataWithPercentile
     }
 
-    return new Response(JSON.stringify(responseData), {
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'home-fengshui',
+      responseData,
+    )
+
+    return new Response(JSON.stringify(withTokenCharge(responseData, paidCaller.tokenCharge)), {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
@@ -397,6 +444,16 @@ ${address} 지역의 지형적 특성과 ${homeType || '일반 주거'}의 구�
     })
   } catch (error) {
     console.error('❌ Error in fortune-home-fengshui function:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'home-fengshui',
+      )
+    }
 
     return new Response(
       JSON.stringify({

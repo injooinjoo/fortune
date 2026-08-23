@@ -30,7 +30,12 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { deriveUserIdFromJwt } from '../_shared/auth.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile } from '../_shared/percentile/calculator.ts'
@@ -46,6 +51,12 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 // 완전한 일일 운세 응답 스키마 정의
 interface DailyFortuneResponse {
@@ -310,6 +321,9 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     let requestData: Record<string, unknown> = {}
     if (req.method === 'POST') {
@@ -362,10 +376,31 @@ serve(async (req) => {
       date,      // 클라이언트에서 전달받은 날짜
       isPremium = false // ✅ 프리미엄 사용자 여부
     } = requestData
-    // SECURITY: body.userId 무시. JWT 에서만 파생. 게스트는 'anonymous'.
+    // SECURITY: body.userId 무시. JWT 에서만 파생 + 서버에서 직접 토큰 차감.
+    // 게스트('anonymous') fallback 제거 — 로그인 없이는 LLM 을 태울 수 없다.
     // 이 함수는 widget_fortune_cache에 user_id 키로 row를 insert하므로 JWT
     // 강제가 데이터 격리의 핵심.
-    const userId = (await deriveUserIdFromJwt(req)) ?? 'anonymous'
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'daily',
+      requestData,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
+          status: 200,
+        }
+      )
+    }
+    paidCharge = paidCaller
+    const userId = paidCaller.userId
 
     // ✅ name 유효성 검사 - "undefined", "null", 빈 문자열 등 처리
     const invalidNames = ['undefined', 'null', 'Unknown', ''];
@@ -414,19 +449,29 @@ serve(async (req) => {
             cachedScore
           );
 
+          const cohortPayload = {
+            fortune: {
+              ...personalizedFortune,
+              percentile: percentileData.percentile,
+              totalTodayViewers: percentileData.totalTodayViewers,
+              isPercentileValid: percentileData.isPercentileValid,
+            },
+            storySegments: [],  // 캐시된 결과에서는 스토리 제외
+            cached: true,
+            tokensUsed: 0,
+            cohortHit: true,
+          };
+
+          await storeFortuneResult(
+            fortuneChargeAdmin,
+            paidCaller.idempotencyKey,
+            userId,
+            'daily',
+            cohortPayload,
+          );
+
           return new Response(
-            JSON.stringify({
-              fortune: {
-                ...personalizedFortune,
-                percentile: percentileData.percentile,
-                totalTodayViewers: percentileData.totalTodayViewers,
-                isPercentileValid: percentileData.isPercentileValid,
-              },
-              storySegments: [],  // 캐시된 결과에서는 스토리 제외
-              cached: true,
-              tokensUsed: 0,
-              cohortHit: true,
-            }),
+            JSON.stringify(withTokenCharge(cohortPayload, paidCaller.tokenCharge)),
             {
               headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
               status: 200,
@@ -1945,22 +1990,42 @@ ${name}님에게 보내는 응원 메시지 (친구가 말하듯이!)
     }
 
     // 운세와 스토리를 함께 반환
+    const responsePayload = {
+      fortune: fortuneWithPercentile,
+      storySegments,
+      cached: false,
+      tokensUsed: 0
+    }
+
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      userId,
+      'daily',
+      responsePayload,
+    )
+
     return new Response(
-      JSON.stringify({
-        fortune: fortuneWithPercentile,
-        storySegments,
-        cached: false,
-        tokensUsed: 0
-      }),
-      { 
+      JSON.stringify(withTokenCharge(responsePayload, paidCaller.tokenCharge)),
+      {
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
-        status: 200 
+        status: 200
       }
     )
 
   } catch (error) {
     console.error('Error generating fortune:', error)
-    
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'daily',
+      )
+    }
+
     return new Response(
       JSON.stringify({ 
         error: 'Failed to generate fortune',

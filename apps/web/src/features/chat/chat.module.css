@@ -1,0 +1,198 @@
+/* 대화 화면 전용 스타일.
+ *
+ * globals.css 에는 말풍선/타이핑 인디케이터가 없고, globals.css 는 이 lane 의
+ * 소유가 아니라 CSS Module 로 국소화했다. 색·간격·둥글기는 전부 tokens.css 의
+ * --ondo-* 만 쓴다 (하드코딩 색상 0).
+ */
+
+.thread {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ondo-spacing-sm);
+}
+
+.row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--ondo-spacing-sm);
+  max-width: 100%;
+}
+
+.rowUser {
+  flex-direction: row-reverse;
+}
+
+.avatar {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--ondo-radius-full);
+  display: grid;
+  place-items: center;
+  color: var(--ondo-color-chip-text);
+  font-size: var(--ondo-typography-label-small-font-size);
+  font-weight: var(--ondo-typography-label-large-font-weight);
+  /* 말풍선이 여러 개 연속될 때 아바타 자리를 비워 정렬만 유지. */
+  visibility: visible;
+}
+
+.avatarSpacer {
+  visibility: hidden;
+}
+
+.bubble {
+  max-width: min(78%, 34rem);
+  padding: var(--ondo-spacing-sm) var(--ondo-spacing-md);
+  border-radius: var(--ondo-radius-message-bubble);
+  background: var(--ondo-color-surface);
+  border: 1px solid var(--ondo-color-border);
+  color: var(--ondo-color-text-primary);
+  font-size: var(--ondo-typography-body-medium-font-size);
+  line-height: var(--ondo-typography-body-medium-line-height);
+  /* 줄바꿈은 보존하되 긴 URL 은 잘라 넘긴다. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.bubbleUser {
+  background: var(--ondo-color-user-bubble);
+  border-color: var(--ondo-color-user-bubble);
+}
+
+.systemLine {
+  align-self: center;
+  color: var(--ondo-color-text-tertiary);
+  font-size: var(--ondo-typography-caption-font-size);
+  line-height: var(--ondo-typography-caption-line-height);
+  text-align: center;
+}
+
+/* --- 타이핑 인디케이터 --- */
+
+.typingBubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 14px var(--ondo-spacing-md);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--ondo-radius-full);
+  background: var(--ondo-color-text-tertiary);
+  animation: ondoTypingDot 1.2s ease-in-out infinite;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
+@keyframes ondoTypingDot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.28;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot {
+    animation: none;
+    opacity: 0.55;
+  }
+}
+
+/* --- 입력 --- */
+
+.composer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--ondo-spacing-sm);
+  padding: var(--ondo-spacing-sm) 0 calc(var(--ondo-spacing-sm) + env(safe-area-inset-bottom, 0px));
+  background: var(--ondo-color-background);
+  border-top: 1px solid var(--ondo-color-border);
+}
+
+/* 입력창 라벨은 화면에 안 보이지만 스크린리더에는 남아야 한다. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.input {
+  flex: 1 1 auto;
+  min-height: 46px;
+  max-height: 8.5rem;
+  border-radius: var(--ondo-radius-input-area);
+  resize: none;
+}
+
+.sendButton {
+  flex: 0 0 auto;
+  padding-inline: var(--ondo-spacing-lg);
+}
+
+/* --- 목록 페이지 --- */
+
+.characterCard {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ondo-spacing-md);
+}
+
+.characterCard:hover {
+  border-color: var(--ondo-color-accent-secondary);
+}
+
+.characterCardBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ondo-spacing-xxs);
+  min-width: 0;
+}
+
+.cardAvatar {
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--ondo-radius-full);
+  display: grid;
+  place-items: center;
+  color: var(--ondo-color-chip-text);
+  font-size: var(--ondo-typography-heading4-font-size);
+  font-weight: var(--ondo-typography-heading4-font-weight);
+}
+
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ondo-spacing-xs);
+  margin-top: var(--ondo-spacing-xxs);
+}
+
+.tag {
+  padding: 3px var(--ondo-spacing-sm);
+  border-radius: var(--ondo-radius-chip);
+  border: 1px solid var(--ondo-color-border);
+  color: var(--ondo-color-text-tertiary);
+  font-size: var(--ondo-typography-caption-font-size);
+  line-height: var(--ondo-typography-caption-line-height);
+}

@@ -17,12 +17,25 @@
  * @response { success: true, data: CoachingFortuneData }
  */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
 
 /* ------------------------------------------------------------------ */
 /*  목표 / 방해 요소 카탈로그                                             */
@@ -128,6 +141,9 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     const request = await req.json()
 
@@ -168,12 +184,31 @@ serve(async (req) => {
       )
     }
 
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'coaching',
+      request,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } },
+      )
+    }
+    paidCharge = paidCaller
+
     const goalLabel = GOAL_LABELS[currentGoal] ?? currentGoal
     const blockerLabel = BLOCKER_LABELS[blocker] ?? blocker ?? '없음'
     console.log(`🎯 [coaching] ${name} → 목표: ${goalLabel}, 방해: ${blockerLabel}`)
 
     // LLM 호출
-    const llm = LLMFactory.createFromConfig('coaching')
+    const llm = await LLMFactory.createFromConfigAsync('coaching')
     const prompt = buildPrompt(name, currentGoal, blocker, timeAvailable, mbti)
 
     const llmResponse = await llm.generate([
@@ -282,8 +317,18 @@ serve(async (req) => {
       provider: llmResponse.provider ?? 'unknown',
     }
 
+    const responsePayload = { success: true, data }
+
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'coaching',
+      responsePayload,
+    )
+
     return new Response(
-      JSON.stringify({ success: true, data }),
+      JSON.stringify(withTokenCharge(responsePayload, paidCaller.tokenCharge)),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
         status: 200,
@@ -291,6 +336,17 @@ serve(async (req) => {
     )
   } catch (error) {
     console.error('Error in fortune-coaching:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'coaching',
+      )
+    }
+
     return new Response(
       JSON.stringify({
         success: false,

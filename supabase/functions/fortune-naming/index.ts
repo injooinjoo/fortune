@@ -20,12 +20,19 @@
  */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
+import { createClient as createChargeClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import {
   parseAndValidateLLMResponse,
   v,
 } from '../_shared/llm/validation.ts'
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from '../_shared/fortune_charge.ts'
 
 const PROMPT_INJECTION_CONTROL_CHARS = /[\u0000-\u001f\u007f]/g;
 
@@ -110,6 +117,14 @@ interface NamingFortuneResponse {
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL') ?? '',
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+)
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+// 본 파일은 supabase-js@2.7.1 을 쓰지만 _shared 헬퍼는 @2 타입을 요구하므로
+// 차감 게이트용 클라이언트만 @2 로 별도 생성한다.
+const fortuneChargeAdmin = createChargeClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
 )
 
 // 12지시 변환
@@ -407,6 +422,9 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders })
   }
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null
+
   try {
     if (req.method !== 'POST') {
       return new Response(
@@ -421,8 +439,8 @@ serve(async (req) => {
     const requestBody = await req.json()
     console.log('작명운세 요청 데이터:', requestBody)
 
-    // 필수 필드 검증
-    const requiredFields = ['userId', 'motherBirthDate', 'expectedBirthDate', 'babyGender', 'familyName']
+    // 필수 필드 검증 (userId 는 body 가 아니라 JWT 에서 파생)
+    const requiredFields = ['motherBirthDate', 'expectedBirthDate', 'babyGender', 'familyName']
     for (const field of requiredFields) {
       if (!requestBody[field]) {
         return new Response(
@@ -435,17 +453,47 @@ serve(async (req) => {
       }
     }
 
-    const params: NamingFortuneRequest = requestBody
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      'naming',
+      requestBody,
+    )
+    if ('error' in paidCaller) {
+      return paidCaller.error
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } },
+      )
+    }
+    paidCharge = paidCaller
+
+    // SECURITY: body.userId 는 무시하고 JWT 파생 userId 로 덮어쓴다.
+    const params: NamingFortuneRequest = { ...requestBody, userId: paidCaller.userId }
 
     // 캐시 확인
     const cachedResult = await getCachedFortune(params.userId, params)
     if (cachedResult) {
+      const cachedPayload = {
+        success: true,
+        data: cachedResult,
+        cached: true
+      }
+
+      await storeFortuneResult(
+        fortuneChargeAdmin,
+        paidCaller.idempotencyKey,
+        paidCaller.userId,
+        'naming',
+        cachedPayload,
+      )
+
       return new Response(
-        JSON.stringify({
-          success: true,
-          data: cachedResult,
-          cached: true
-        }),
+        JSON.stringify(withTokenCharge(cachedPayload, paidCaller.tokenCharge)),
         {
           status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' }
@@ -492,9 +540,17 @@ serve(async (req) => {
     // 캐시 저장
     await saveCachedFortune(params.userId, params, response.data)
 
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      'naming',
+      response,
+    )
+
     console.log('작명운세 생성 완료')
     return new Response(
-      JSON.stringify(response),
+      JSON.stringify(withTokenCharge(response, paidCaller.tokenCharge)),
       {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' }
@@ -503,6 +559,16 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('작명운세 생성 오류:', error)
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        'naming',
+      )
+    }
 
     return new Response(
       JSON.stringify({

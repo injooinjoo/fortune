@@ -18,12 +18,24 @@ import {
   GEMINI_SAFE_TEXT_MODEL,
 } from "../_shared/llm/models.ts";
 import { assertLlmRequestAllowed } from "../_shared/llm/safety.ts";
+import {
+  refundFortuneCharge,
+  requirePaidFortuneCaller,
+  storeFortuneResult,
+  withTokenCharge,
+} from "../_shared/fortune_charge.ts";
 
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY")!;
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const GEMINI_TEXT_MODEL = GEMINI_SAFE_TEXT_MODEL;
 const GEMINI_IMAGE_MODEL_NAME = GEMINI_IMAGE_MODEL;
+
+// 서버 차감 게이트 전용 클라이언트 (token RPC + fortune_result_cache 는 service_role 필요)
+const fortuneChargeAdmin = createClient(
+  SUPABASE_URL,
+  SUPABASE_SERVICE_ROLE_KEY,
+);
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -924,18 +936,19 @@ serve(async (req) => {
 
   const requestId = req.headers.get("x-request-id") || crypto.randomUUID();
 
+  // 차감 후 생성이 실패하면 catch 에서 환불하기 위한 핸들
+  let paidCharge: { userId: string; idempotencyKey: string } | null = null;
+
   try {
     const request: YearlyEncounterRequest = await req.json();
     console.log("📥 Yearly Encounter request:", {
       requestId,
-      userId: request.userId,
       targetGender: request.targetGender,
       userAge: request.userAge,
       idealMbti: request.idealMbti,
     });
 
     if (
-      !request.userId ||
       !request.userAge ||
       !request.idealMbti ||
       (request.targetGender !== "male" && request.targetGender !== "female")
@@ -944,7 +957,7 @@ serve(async (req) => {
         JSON.stringify({
           success: false,
           error:
-            "필수 입력값이 누락되었어요. userId/targetGender/userAge/idealMbti를 확인해주세요.",
+            "필수 입력값이 누락되었어요. targetGender/userAge/idealMbti를 확인해주세요.",
         }),
         {
           status: 400,
@@ -952,6 +965,28 @@ serve(async (req) => {
         },
       );
     }
+
+    // SECURITY: 서버에서 인증 + 토큰 차감. 클라 soul-consume 의존 제거.
+    const paidCaller = await requirePaidFortuneCaller(
+      req,
+      fortuneChargeAdmin,
+      "yearly-encounter",
+      request,
+    );
+    if ("error" in paidCaller) {
+      return paidCaller.error;
+    }
+    if (paidCaller.replayed) {
+      // TTL 안의 동일 요청 — LLM 재호출 없이 저장된 응답 그대로.
+      return new Response(
+        JSON.stringify(withTokenCharge(paidCaller.cached, paidCaller.tokenCharge)),
+        { headers: { ...CORS_HEADERS, "Content-Type": "application/json" } },
+      );
+    }
+    paidCharge = paidCaller;
+
+    // SECURITY: body.userId 는 더 이상 신뢰하지 않는다. JWT 파생 값으로 덮어쓴다.
+    request.userId = paidCaller.userId;
 
     const telemetry: TelemetryContext = {
       userId: request.userId,
@@ -1058,11 +1093,32 @@ serve(async (req) => {
       data: resultData,
     };
 
-    return new Response(JSON.stringify(response), {
-      headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
-    });
+    await storeFortuneResult(
+      fortuneChargeAdmin,
+      paidCaller.idempotencyKey,
+      paidCaller.userId,
+      "yearly-encounter",
+      response,
+    );
+
+    return new Response(
+      JSON.stringify(withTokenCharge(response, paidCaller.tokenCharge)),
+      {
+        headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+      },
+    );
   } catch (error) {
     console.error("❌ Error:", error);
+
+    // 차감 후 생성 실패 — 환불 후 에러 응답
+    if (paidCharge) {
+      await refundFortuneCharge(
+        fortuneChargeAdmin,
+        paidCharge.userId,
+        paidCharge.idempotencyKey,
+        "yearly-encounter",
+      );
+    }
 
     await UsageLogger.logError(
       "yearly-encounter",
