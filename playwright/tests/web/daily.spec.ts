@@ -36,6 +36,14 @@ test.describe('랜딩 페이지', () => {
     expect(body).toContain('Disallow: /api/');
   });
 
+  test('웹 CSP가 React client script를 차단하지 않는다', async ({ request }) => {
+    const response = await request.get('/auth/login');
+    expect(response.ok()).toBeTruthy();
+
+    const csp = response.headers()['content-security-policy'] ?? '';
+    expect(csp).not.toContain("script-src 'none'");
+  });
+
   test('푸터가 운영 정책과 고객지원 문서를 연결한다', async ({ page }) => {
     await page.goto('/');
 
