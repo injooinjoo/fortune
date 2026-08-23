@@ -39,7 +39,7 @@ export default function LandingPage() {
           생년월일 하나로 읽어드려요.
         </h1>
         <p className="ondo-muted">
-          앱을 설치하지 않아도 웹에서 바로 오늘의 운세를 볼 수 있습니다. 구글 계정으로 로그인하면 결과가 계정에 남습니다.
+          앱을 설치하지 않아도 웹에서 바로 오늘의 운세를 볼 수 있습니다. 구글 계정으로 로그인해 이용할 수도 있습니다.
         </p>
         <div className="ondo-row" style={{ marginTop: 'var(--ondo-spacing-sm)' }}>
           <Link className="ondo-button" href={fortuneHref('오늘')}>

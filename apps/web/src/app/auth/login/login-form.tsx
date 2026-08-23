@@ -110,8 +110,7 @@ export function LoginForm({
       </button>
 
       <p className="ondo-muted">
-        로그인하지 않아도 운세는 바로 볼 수 있어요. 로그인하면 결과가 계정에 남고 다른 기기에서도
-        이어서 볼 수 있어요.
+        로그인하지 않아도 운세는 바로 볼 수 있어요. Google 계정으로 로그인하면 계정 전용 기능도 이용할 수 있어요.
       </p>
 
       {errorMessage ? (

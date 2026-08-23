@@ -18,6 +18,14 @@ test.describe('랜딩 페이지', () => {
     await expect(page.getByRole('link', { name: '로그인' })).toBeVisible();
   });
 
+  test('영구 결과 저장을 지원하기 전에는 계정 저장을 약속하지 않는다', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByText(/결과가 계정에 남/)).toHaveCount(0);
+
+    await page.goto('/auth/login');
+    await expect(page.getByText(/결과가 계정에 남|다른 기기에서도 이어서/)).toHaveCount(0);
+  });
+
   test('robots.txt 가 로그인 뒤 화면을 제외한다', async ({ request }) => {
     const response = await request.get('/robots.txt');
     expect(response.ok()).toBeTruthy();
