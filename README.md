@@ -71,10 +71,10 @@ Do not start Expo or Metro from automation. For manual app testing, run the RN s
 - [Project overview](docs/getting-started/PROJECT_OVERVIEW.md)
 - [Architecture](docs/APP_ARCHITECTURE.md)
 - [Local native iOS testing](docs/development/local-native-ios-testing.md)
-- [Expo CNG build and release](docs/development/expo-cng-build-and-release.md)
+- [Expo CNG local build and TestFlight release](docs/development/expo-cng-build-and-release.md)
 
 ## Security
 
 - Keep secrets out of git.
 - Use `.env.example` only for placeholder documentation.
-- Runtime secrets are provided through local env files, EAS secrets, Supabase secrets, or GitHub Actions secrets depending on the boundary.
+- Runtime secrets are provided through local env files, Supabase secrets, or GitHub Actions secrets depending on the boundary. EAS secrets are legacy/emergency-only and apply only to an explicitly approved EAS operation.

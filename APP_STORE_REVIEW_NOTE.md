@@ -7,7 +7,7 @@
 - **Primary path:** guest-first review path.
 - **App Store Connect Sign-in required:** `NO`.
 - **Optional test account:** provide for account-gated flows such as profile sync, purchase verification, purchase restore, subscription/token balance sync, and account deletion.
-- **Current release decision:** `NO-GO` until clean frozen SHA, fresh EAS iOS production build, and required iPhone/iPad/IAP evidence are captured.
+- **Current release decision:** `NO-GO` until a clean frozen SHA is archived locally in Xcode, the exact archive is uploaded and processed in App Store Connect/TestFlight, and required iPhone/iPad/IAP evidence is captured.
 
 ## Review notes to paste into App Store Connect
 

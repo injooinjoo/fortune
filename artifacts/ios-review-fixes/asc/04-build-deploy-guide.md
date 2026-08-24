@@ -1,6 +1,6 @@
 # iOS 빌드 + 제출 가이드
 
-커밋 완료 후 실제 빌드·제출까지의 명령 순서. 사용자가 터미널에서 직접 실행해야 합니다 (Claude는 `expo start`/`eas build` 직접 실행 금지).
+커밋 완료 후 실제 빌드·제출까지의 순서. 현재 기본 경로는 **로컬 Xcode Archive → App Store Connect/TestFlight**이며 EAS Cloud Build를 사용하지 않습니다. 최신 정책은 `docs/development/expo-cng-build-and-release.md`가 우선합니다.
 
 ---
 
@@ -9,18 +9,15 @@
 ```bash
 cd /Users/injoo/Desktop/Dev/fortune/apps/mobile-rn
 
-# 1. 환경 변수 — SUPABASE_URL, SUPABASE_ANON_KEY, OPENAI_API_KEY 등이 EAS
-#    secret에 올바르게 등록돼 있는지 확인.
-npx eas secret:list
+# 1. 로컬 release 환경에 필요한 EXPO_PUBLIC_* 값이 준비됐는지 이름만 확인.
+#    비밀 값 자체는 출력하거나 문서/로그에 남기지 않는다.
 
-# 2. Apple Developer 인증서/프로비저닝 프로파일
-npx eas credentials --platform ios
+# 2. Xcode Settings > Accounts에서 Apple Developer 계정/Team이 활성인지 확인.
 
-# 3. ASC App ID 일치 확인 (eas.json: 6749496180)
-cat eas.json | grep ascAppId
+# 3. App Store Connect 앱의 bundle ID가 com.beyond.fortune인지 확인.
 ```
 
-필요한 EAS secrets (누락 시 설정):
+필요한 로컬 release 환경 변수(값은 안전한 로컬 환경에서만 제공):
 - `EXPO_PUBLIC_SUPABASE_URL`
 - `EXPO_PUBLIC_SUPABASE_ANON_KEY`
 - `EXPO_PUBLIC_SENTRY_DSN`
@@ -36,15 +33,17 @@ cat eas.json | grep ascAppId
 ```bash
 cd /Users/injoo/Desktop/Dev/fortune/apps/mobile-rn
 
-# 기존 ios/ + android/ 완전 삭제 후 재생성
-npx expo prebuild --clean --platform ios
+# ios/ 재생성, CocoaPods 설치, workspace/scheme 확인
+cd /Users/injoo/Desktop/Dev/fortune
+pnpm rn:native:prepare
+pnpm rn:native:doctor
 
 # 검증 — 생성된 Info.plist에 실제로 반영됐는지 확인
-grep -A1 "CFBundleShortVersionString" ios/app/Info.plist   # → 1.0.9
-grep -A1 "UIUserInterfaceStyle" ios/app/Info.plist          # → Dark
-grep -c "com.beyond.fortune" ios/app/Info.plist             # → 1 (중복 없음)
-grep -A1 "NSSpeechRecognitionUsageDescription" ios/app/Info.plist  # → 한국어 문구
-grep "NSPrivacyCollectedDataType" ios/app/PrivacyInfo.xcprivacy | wc -l  # → 11
+plutil -p apps/mobile-rn/ios/app/Info.plist | grep CFBundleShortVersionString
+plutil -p apps/mobile-rn/ios/app/Info.plist | grep UIUserInterfaceStyle   # → Dark
+grep -c "com.beyond.fortune" apps/mobile-rn/ios/app/Info.plist          # → 1 (중복 없음)
+plutil -p apps/mobile-rn/ios/app/Info.plist | grep NSSpeechRecognitionUsageDescription
+grep "NSPrivacyCollectedDataType" apps/mobile-rn/ios/app/PrivacyInfo.xcprivacy | wc -l  # → 11
 ```
 
 **위 검증 모두 통과해야 다음 단계 진행.** 하나라도 다르면 `app.config.ts` 설정이 반영 안 된 것.
@@ -123,11 +122,11 @@ curl -i -X POST "https://<PROJECT_REF>.supabase.co/functions/v1/widget-cache" \
 
 ## 3. iOS 빌드 + 제출
 
-### 3a. 로컬 확인용 (옵션 — 시뮬레이터 QA)
+### 3a. 로컬 확인용 (시뮬레이터 QA)
 
 ```bash
-cd /Users/injoo/Desktop/Dev/fortune/apps/mobile-rn
-npx expo run:ios --device
+cd /Users/injoo/Desktop/Dev/fortune
+pnpm rn:native:build
 # 시뮬레이터에서 다음 시나리오 수동 확인:
 #   - welcome carousel (신규 설치) → 한 번만 뜸
 #   - test@zpzg.com 로그인 → chat 진입 (welcome 건너뜀)
@@ -137,28 +136,34 @@ npx expo run:ios --device
 #   - 다크모드 고정 확인 (시스템 라이트 모드에서도 앱은 다크)
 ```
 
-### 3b. Production 빌드
+### 3b. 로컬 Production Archive + 업로드
 
 ```bash
-cd /Users/injoo/Desktop/Dev/fortune/apps/mobile-rn
-
-# Production 빌드 + auto-increment 빌드 번호 (eas.json production 프로필)
-npx eas build --platform ios --profile production --auto-submit
-
-# 또는 auto-submit 없이:
-npx eas build --platform ios --profile production
-# 빌드 완료 후:
-npx eas submit --platform ios --latest
+cd /Users/injoo/Desktop/Dev/fortune
+pnpm rn:native:prepare
+pnpm rn:ios:xcode
 ```
+
+Xcode에서 다음 순서로 진행:
+
+1. Ondo 앱 scheme과 `Any iOS Device (arm64)`를 선택한다.
+2. Team, bundle ID `com.beyond.fortune`, entitlements, extensions, version/build number를 확인한다.
+3. **Product → Archive**를 실행한다.
+4. Organizer에서 archive를 Validate한다.
+5. **Distribute App → App Store Connect → Upload**를 선택한다.
+6. App Store Connect에서 exact version/build가 처리되어 TestFlight에 표시되는지 확인한다.
+
+`eas build`, `eas submit`, `deploy:native`, `deploy:ota`는 기본 절차가 아니다. 사용자가 특정 EAS 작업과 비용/원격 배포를 명시 승인한 경우에만 사용한다.
 
 ### 3c. 빌드 검증
 
-EAS 빌드 페이지에서 로그 확인:
-- [ ] `expo prebuild` 단계 Info.plist/PrivacyInfo 정상 생성
+로컬 Xcode 로그, Organizer, App Store Connect에서 확인:
+- [ ] `pnpm rn:native:prepare` 후 Info.plist/PrivacyInfo 정상 생성
 - [ ] Hermes + New Architecture 활성화 확인
 - [ ] `llama.rn` 네이티브 모듈 링크 성공
 - [ ] dSYM 업로드 성공 (Sentry)
-- [ ] 최종 IPA 업로드 → ASC "Processing"
+- [ ] 로컬 Archive 검증 성공
+- [ ] exact archive 업로드 → ASC "Processing" → TestFlight 표시
 
 ---
 

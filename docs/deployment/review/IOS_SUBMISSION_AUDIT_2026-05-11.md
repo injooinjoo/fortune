@@ -1,5 +1,7 @@
 # iOS App Review Submission Audit — 2026-05-11
 
+> Historical audit record. EAS state and commands below document what was inspected on 2026-05-11; they are not the current release procedure. For a new release, follow `docs/development/expo-cng-build-and-release.md`: local Xcode Archive → App Store Connect/TestFlight.
+
 ## Verdict
 
 **NO-GO for immediate upload/submission.**
@@ -151,8 +153,8 @@ OpenClaw using Claude Opus 4.7 independently reviewed the release state and agre
    - restore purchases
    - iPad review path
 7. Update `STORE_REVIEW_MASTER_CHECKLIST.md`, `IOS_REVIEW_EVIDENCE.md`, and `RELEASE_DECISION_LOG.md` from NO-GO to GO with evidence links/paths.
-8. Create a new EAS production iOS build from the clean pushed commit.
-9. Submit the exact new build to App Store Connect and update review notes with the final RC evidence.
+8. Create a new local Xcode Archive from the clean pushed commit.
+9. Upload the exact archive through Xcode Organizer to App Store Connect and update review notes with the final RC evidence.
 
 ## Commands run during this audit
 
