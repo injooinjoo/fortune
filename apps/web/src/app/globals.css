@@ -1,11 +1,47 @@
 /* 웹 전역 베이스 스타일.
- *
- * 색/간격/서체 값은 전부 tokens.css 의 --ondo-* 를 통해서만 참조한다.
- * 하드코딩 색상 금지 (CLAUDE.md 디자인 시스템 규칙).
- *
- * dark 전용 — createFortuneTheme('light') 는 repo 전체 호출부가 0 이라
- * [data-theme] 분기를 두지 않는다.
+ * packages/design-tokens 는 모바일과 공유하므로 웹의 Warm Celestial Editorial
+ * 팔레트는 여기에서 토큰 별칭으로만 덮어쓴다. 컴포넌트는 계속 --ondo-* 만 쓴다.
  */
+
+:root {
+  --ondo-color-accent: #4b1635;
+  --ondo-color-accent-hover: #351025;
+  --ondo-color-accent-light: #eadccf;
+  --ondo-color-accent-secondary: #6d254b;
+  --ondo-color-accent-tertiary: #9a623d;
+  --ondo-color-background: #f7f2ea;
+  --ondo-color-background-secondary: #efe5d9;
+  --ondo-color-background-tertiary: #e6d9ca;
+  --ondo-color-surface: #fffaf4;
+  --ondo-color-surface-secondary: #f4ece2;
+  --ondo-color-surface-elevated: #fffdf9;
+  --ondo-color-text-primary: #191716;
+  --ondo-color-text-secondary: #625952;
+  --ondo-color-text-tertiary: #82766d;
+  --ondo-color-text-subtitle: #423b37;
+  --ondo-color-border: #d9ccbd;
+  --ondo-color-border-opaque: #cfc0af;
+  --ondo-color-divider: #d9ccbd;
+  --ondo-color-user-bubble: #eee3d7;
+  --ondo-color-cta-background: #4b1635;
+  --ondo-color-cta-foreground: #fffaf4;
+  --ondo-color-secondary-background: #fffaf4;
+  --ondo-color-secondary-foreground: #4b1635;
+  --ondo-color-overlay: rgba(25, 23, 22, 0.42);
+  --ondo-color-chip-blue: #dbe5e5;
+  --ondo-color-chip-green: #dce5d6;
+  --ondo-color-chip-peach: #efd9cd;
+  --ondo-color-chip-lavender: #e4dae8;
+  --ondo-color-chip-text: #292323;
+  --ondo-color-accent-pressed: #351025;
+  --ondo-color-accent-subtle: rgba(75, 22, 53, 0.08);
+  --ondo-color-celestial: #2f1328;
+  --ondo-color-celestial-text: #fff9f1;
+  --ondo-color-celestial-accent: #d9b47d;
+  --ondo-font-serif: 'MaruBuri', 'AppleMyungjo', 'Noto Serif KR', Georgia, serif;
+  --ondo-font-sans: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard',
+    'Noto Sans KR', 'Segoe UI', Roboto, sans-serif;
+}
 
 *,
 *::before,
@@ -14,17 +50,16 @@
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
   -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   background: var(--ondo-color-background);
   color: var(--ondo-color-text-primary);
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard',
-    'Noto Sans KR', 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--ondo-font-sans);
   font-size: var(--ondo-typography-body-large-font-size);
   line-height: var(--ondo-typography-body-large-line-height);
   word-break: keep-all;
@@ -53,13 +88,13 @@ textarea {
 
 :focus-visible {
   outline: 2px solid var(--ondo-color-accent-secondary);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
 /* --- 공용 레이아웃 --- */
 
 .ondo-shell {
-  max-width: 720px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: var(--ondo-spacing-xl) var(--ondo-spacing-page-horizontal)
     var(--ondo-spacing-xxxxl);
@@ -78,10 +113,11 @@ textarea {
   font-weight: var(--ondo-typography-kicker-font-weight);
   letter-spacing: var(--ondo-typography-kicker-letter-spacing);
   text-transform: uppercase;
-  color: var(--ondo-color-text-tertiary);
+  color: var(--ondo-color-accent-tertiary);
 }
 
 .ondo-h1 {
+  font-family: var(--ondo-font-serif);
   font-size: var(--ondo-typography-display-small-font-size);
   line-height: var(--ondo-typography-display-small-line-height);
   font-weight: var(--ondo-typography-display-small-font-weight);
@@ -89,12 +125,14 @@ textarea {
 }
 
 .ondo-h2 {
+  font-family: var(--ondo-font-serif);
   font-size: var(--ondo-typography-heading2-font-size);
   line-height: var(--ondo-typography-heading2-line-height);
   font-weight: var(--ondo-typography-heading2-font-weight);
 }
 
 .ondo-h3 {
+  font-family: var(--ondo-font-serif);
   font-size: var(--ondo-typography-heading4-font-size);
   line-height: var(--ondo-typography-heading4-line-height);
   font-weight: var(--ondo-typography-heading4-font-weight);
@@ -102,8 +140,8 @@ textarea {
 
 .ondo-muted {
   color: var(--ondo-color-text-secondary);
-  font-size: var(--ondo-typography-body-medium-font-size);
-  line-height: var(--ondo-typography-body-medium-line-height);
+  font-size: var(--ondo-typography-body-large-font-size);
+  line-height: var(--ondo-typography-body-large-line-height);
 }
 
 .ondo-stack {
@@ -133,6 +171,12 @@ textarea {
   font-size: var(--ondo-typography-label-large-font-size);
   font-weight: var(--ondo-typography-label-large-font-weight);
   cursor: pointer;
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.ondo-button:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-2px);
 }
 
 .ondo-button:disabled {
@@ -197,8 +241,199 @@ textarea {
   gap: var(--ondo-spacing-sm);
 }
 
+/* --- 공통 헤더 / 푸터 --- */
+
+.ondo-site-header {
+  position: sticky;
+  z-index: 50;
+  top: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--ondo-color-border) 78%, transparent);
+  background: color-mix(in srgb, var(--ondo-color-background) 92%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+.ondo-site-nav {
+  display: flex;
+  width: min(100% - 40px, 1200px);
+  min-height: 72px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  margin-inline: auto;
+}
+
+.ondo-site-logo {
+  color: var(--ondo-color-text-primary);
+  font-family: var(--ondo-font-serif);
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.ondo-desktop-nav,
+.ondo-header-actions,
+.ondo-mobile-menu nav {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+
+.ondo-desktop-nav {
+  margin-left: auto;
+}
+
+.ondo-desktop-nav a,
+.ondo-mobile-menu a {
+  color: var(--ondo-color-text-secondary);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.ondo-desktop-nav a:hover,
+.ondo-mobile-menu a:hover {
+  color: var(--ondo-color-accent);
+}
+
+.ondo-login-link {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  padding-inline: 17px;
+  border: 1px solid var(--ondo-color-border-opaque);
+  border-radius: 999px;
+  color: var(--ondo-color-text-primary);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.ondo-mobile-menu {
+  display: none;
+  position: relative;
+}
+
+.ondo-mobile-menu summary {
+  padding: 8px 12px;
+  border: 1px solid var(--ondo-color-border-opaque);
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 800;
+  list-style: none;
+}
+
+.ondo-mobile-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.ondo-mobile-menu nav {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: min(280px, calc(100vw - 32px));
+  align-items: stretch;
+  flex-direction: column;
+  gap: 0;
+  padding: 10px;
+  border: 1px solid var(--ondo-color-border);
+  background: var(--ondo-color-surface-elevated);
+  box-shadow: 0 18px 50px rgba(25, 23, 22, 0.12);
+}
+
+.ondo-mobile-menu nav a {
+  padding: 12px 10px;
+}
+
+.ondo-site-footer {
+  border-top: 1px solid var(--ondo-color-border);
+  background: var(--ondo-color-surface);
+}
+
+.ondo-footer-inner {
+  display: grid;
+  width: min(100% - 40px, 1200px);
+  grid-template-columns: 1fr auto;
+  gap: 40px;
+  margin-inline: auto;
+  padding: 58px 0 38px;
+}
+
+.ondo-footer-brand {
+  max-width: 560px;
+}
+
+.ondo-footer-brand strong {
+  display: block;
+  margin-bottom: 14px;
+  font-family: var(--ondo-font-serif);
+  font-size: 24px;
+}
+
+.ondo-footer-brand p {
+  color: var(--ondo-color-text-tertiary);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.ondo-footer-links {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.ondo-footer-links a {
+  color: var(--ondo-color-text-secondary);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ondo-footer-bottom {
+  width: min(100% - 40px, 1200px);
+  margin-inline: auto;
+  padding: 20px 0 26px;
+  border-top: 1px solid var(--ondo-color-border);
+  color: var(--ondo-color-text-tertiary);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 760px) {
+  .ondo-site-nav,
+  .ondo-footer-inner,
+  .ondo-footer-bottom {
+    width: min(100% - 32px, 1200px);
+  }
+
+  .ondo-desktop-nav,
+  .ondo-header-actions {
+    display: none;
+  }
+
+  .ondo-mobile-menu {
+    display: block;
+  }
+
+  .ondo-footer-inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 480px) {
   .ondo-grid-2 {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .ondo-button {
+    transition: none;
+  }
+
+  .ondo-button:hover:not(:disabled) {
+    transform: none;
   }
 }
