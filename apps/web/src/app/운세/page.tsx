@@ -26,6 +26,26 @@ export default function FortuneIndexPage() {
       kicker="운세"
       title="무엇을 볼까요?"
     >
+      <section aria-labelledby="fortune-guide-title" className="ondo-notice ondo-stack">
+        <div className="ondo-stack" style={{ gap: 'var(--ondo-spacing-xxs)' }}>
+          <p className="ondo-kicker">고르는 기준</p>
+          <h2 className="ondo-h3" id="fortune-guide-title">
+            지금 궁금한 깊이에 맞춰 골라보세요
+          </h2>
+        </div>
+        <div className="ondo-grid-2">
+          <div className="ondo-stack" style={{ gap: 'var(--ondo-spacing-xxs)' }}>
+            <strong>지금의 흐름을 가볍게</strong>
+            <p className="ondo-muted">오늘의 운세와 타로로 먼저 마음을 정리해 보세요.</p>
+          </div>
+          <div className="ondo-stack" style={{ gap: 'var(--ondo-spacing-xxs)' }}>
+            <strong>관계나 마음을 더 깊게</strong>
+            <p className="ondo-muted">연애·궁합·사주처럼 한 가지 질문을 골라 천천히 읽어보세요.</p>
+          </div>
+        </div>
+        <p className="ondo-muted">각 카드의 온도 사용량을 확인한 뒤, 원하는 리딩을 선택할 수 있어요.</p>
+      </section>
+
       {sections.map((section, index) => {
         const headingId = `fortune-group-${index}`;
         return (

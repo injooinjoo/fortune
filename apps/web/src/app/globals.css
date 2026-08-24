@@ -241,6 +241,20 @@ textarea {
   gap: var(--ondo-spacing-sm);
 }
 
+.ondo-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ondo-spacing-sm);
+  margin-top: var(--ondo-spacing-xs);
+}
+
+.ondo-card-arrow {
+  color: var(--ondo-color-accent-primary);
+  font-size: var(--ondo-typography-label-small-font-size);
+  font-weight: 700;
+}
+
 /* --- 공통 헤더 / 푸터 --- */
 
 .ondo-site-header {

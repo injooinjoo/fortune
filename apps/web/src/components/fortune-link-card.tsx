@@ -20,7 +20,12 @@ export function FortuneLinkCard({ fortune }: { fortune: WebFortune }) {
     >
       <h3 className="ondo-h3">{fortune.title}</h3>
       {fortune.blurb ? <p className="ondo-muted">{fortune.blurb}</p> : null}
-      <p className="ondo-kicker">온도 {fortune.costPoints}개</p>
+      <div className="ondo-card-footer">
+        <span className="ondo-kicker">온도 {fortune.costPoints}개</span>
+        <span aria-hidden="true" className="ondo-card-arrow">
+          열어보기 →
+        </span>
+      </div>
     </Link>
   );
 }
