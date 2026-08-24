@@ -74,7 +74,7 @@ test.describe('운세 탐색과 일일 운세', () => {
       'href',
       /%EC%98%A4%EB%8A%98|오늘/,
     );
-    await expect(page.getByText('온도 1개')).toBeVisible();
+    await expect(page.getByText('온도 1개').first()).toBeVisible();
     await expect(page.getByText('열어보기 →').first()).toBeVisible();
   });
 
