@@ -140,8 +140,8 @@ supabase/functions/_shared/
 
 ## 배포 순서
 
-1. PR 머지 후 OTA — generated 파일은 Edge 코드라 OTA 가 아니라 `supabase functions deploy soul-consume payment-verify-purchase` 등 모든 Edge 재배포.
-2. 클라 OTA 는 별도 (`eas update --branch production`). 단 Edge 와 클라가 잠깐 다른 가격 보면 안 됨 — Edge 먼저 배포 후 클라.
+1. PR 머지 후 generated Edge 코드는 `supabase functions deploy soul-consume payment-verify-purchase` 등 해당 함수를 먼저 재배포한다.
+2. 클라이언트는 Edge 배포 확인 후 로컬 Xcode Archive를 만들고 TestFlight에 업로드한다. EAS Update는 기본 경로가 아니며, 사용자가 이 작업의 원격 배포를 명시 승인한 경우에만 사용한다.
 3. 사용자 잔액/차감 모니터링 (Supabase logs).
 
 ## GSTACK REVIEW REPORT

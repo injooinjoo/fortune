@@ -534,9 +534,9 @@ V1: DB row가 없으면 디폴트 값으로 동작. UI 없이도 시스템 동�
 2. DB 마이그레이션: `supabase db push --include-all`
 3. Edge Function deploy:
    - `supabase functions deploy proactive-message-dispatch character-chat generate-character-proactive-image`
-4. RN OTA: `cd apps/mobile-rn && eas update --branch production`
+4. 모바일 클라이언트 반영: Edge 배포 후 새 로컬 Xcode Archive를 만들고 Organizer에서 TestFlight로 업로드한다.
 
-OTA 가능. native module 추가 없음. runtime bump 불요.
+네이티브 모듈 추가는 없지만 OTA 호환 여부가 원격 배포 승인을 뜻하지는 않는다. 현재 기본 경로는 로컬 바이너리 배포이며, EAS Update는 사용자가 이 작업에 명시 승인한 경우에만 사용한다.
 
 `/ultrareview` 자동 트리거 (DB 마이그레이션 변경 + Edge Function = CLAUDE.md 룰).
 

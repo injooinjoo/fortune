@@ -112,8 +112,9 @@ Stop 훅 `scripts/auto-deploy-on-stop.sh`은 **리뷰 모드가 디폴트**입�
 
 실제 배포 명령(사용자 직접 실행 또는 사용자 명시 승인 후 Claude 실행):
 - Edge Function: `supabase functions deploy <fn>`
-- RN OTA: `cd apps/mobile-rn && eas update --branch production`
-- Native 변경: `pnpm deploy:native` (EAS build)
+- iOS 바이너리: `pnpm rn:native:prepare` → `pnpm rn:ios:xcode` → Xcode **Product → Archive** → Organizer **App Store Connect → Upload**
+- TestFlight 확인: App Store Connect에서 exact version/build 처리 완료 확인 후 실기기 설치·스모크
+- EAS OTA/Cloud Build: 기본 경로 아님. 사용자가 해당 작업과 비용/배포를 명시 승인한 경우에만 실행
 - DB 마이그레이션: `supabase db push --include-all`
 
 `/ship`은 CHANGELOG + commit + PR까지만 — 실제 배포는 머지 후 또는 위 명령으로.
@@ -132,7 +133,8 @@ Stop 훅 `scripts/auto-deploy-on-stop.sh`은 **리뷰 모드가 디폴트**입�
 
 | 금지 | 이유 | 대안 |
 |------|------|------|
-| `expo start` / `eas build` 직접 실행 | 로그 확인 불가, 대화형 프롬프트 | 사용자에게 실행 요청 |
+| `expo start` 직접 실행 | 장기 실행 프로세스·대화형 로그 | 사용자에게 수동 실행 요청 |
+| `eas build` / `deploy:native` / `deploy:ota` | 유료 클라우드 빌드 또는 원격 배포가 기본 경로로 오인됨 | 로컬 Xcode Archive→TestFlight; EAS는 해당 작업의 명시 승인 때만 |
 | 일괄 수정 (`for`, `sed -i`) | 프로젝트 망가짐 | 한 파일씩 Edit |
 | `any` 타입 남발 | 타입 안전성 파괴 | 정확한 타입 정의 또는 `unknown` |
 | 하드코딩 색상/폰트 | 디자인 시스템 위반 | `fortuneTheme.colors.*`, `AppText variant` |

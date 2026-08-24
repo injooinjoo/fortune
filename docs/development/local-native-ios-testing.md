@@ -2,6 +2,8 @@
 
 Use this path when you want to test Ondo without Expo Go, Expo tunnel, EAS build, or EAS OTA spend.
 
+Production iOS binaries follow the same local-native principle: generate locally, archive in Xcode, and upload through Organizer to App Store Connect/TestFlight. See [Expo CNG local build and release policy](expo-cng-build-and-release.md).
+
 ## What this is
 
 - Local native iOS testing via Xcode / iOS Simulator / physical iPhone.
@@ -131,13 +133,13 @@ For install/launch, the iPhone must be connected and available to CoreDevice/dev
 
 If the phone is paired but the tunnel is unavailable, the helper fails early with a clear message instead of claiming the real-phone run succeeded.
 
-## Existing Expo commands
+## Legacy Expo deployment commands
 
-The old commands still exist for compatibility:
+The old commands still exist for compatibility, not as the default release path:
 
 - `pnpm --filter @fortune/mobile-rn start`
 - `pnpm --filter @fortune/mobile-rn ios`
 - `pnpm --filter @fortune/mobile-rn deploy:ota`
 - `pnpm --filter @fortune/mobile-rn deploy:native`
 
-Do not use `deploy:ota` or `deploy:native` unless the user explicitly approves EAS spend/deployment.
+Do not use `deploy:ota` or `deploy:native` unless the user explicitly approves that specific EAS spend/deployment. For a normal release, use local Xcode Archive → Organizer upload → TestFlight verification.
