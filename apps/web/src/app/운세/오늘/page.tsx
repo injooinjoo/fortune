@@ -27,6 +27,17 @@ export default function TodayFortunePage() {
         </p>
       </header>
 
+      <section aria-labelledby="today-reading-guide" className="ondo-notice ondo-stack">
+        <div className="ondo-stack" style={{ gap: 'var(--ondo-spacing-xxs)' }}>
+          <p className="ondo-kicker">미리 보는 구성</p>
+          <h2 className="ondo-h3" id="today-reading-guide">
+            한 번의 입력으로 오늘의 흐름을 나눠 읽어요
+          </h2>
+        </div>
+        <p className="ondo-muted">전체 흐름을 먼저 보고, 애정·재물·일·건강 순서로 필요한 부분을 골라 살펴볼 수 있어요.</p>
+        <p className="ondo-muted">생년월일만 필수예요. 태어난 시간과 성별은 알고 있을 때만 더해 주세요.</p>
+      </section>
+
       <DailyForm />
     </main>
   );

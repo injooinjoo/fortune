@@ -60,7 +60,24 @@ test.describe('랜딩 페이지', () => {
   });
 });
 
-test.describe('일일 운세', () => {
+test.describe('운세 탐색과 일일 운세', () => {
+  test('운세 목록에서 질문에 맞는 시작점을 고를 수 있다', async ({ page }) => {
+    test.skip(!process.env.WEB_BASE_URL, '배포된 한글 경로에서 실행하는 스모크입니다.');
+
+    await page.goto('/%EC%9A%B4%EC%84%B8');
+
+    await expect(page.getByRole('heading', { level: 1, name: '무엇을 볼까요?' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: '지금 궁금한 깊이에 맞춰 골라보세요' })).toBeVisible();
+    await expect(page.getByText('지금의 흐름을 가볍게')).toBeVisible();
+    await expect(page.getByText('관계나 마음을 더 깊게')).toBeVisible();
+    await expect(page.getByRole('link', { name: /오늘의 운세/ }).first()).toHaveAttribute(
+      'href',
+      /%EC%98%A4%EB%8A%98|오늘/,
+    );
+    await expect(page.getByText('온도 1개')).toBeVisible();
+    await expect(page.getByText('열어보기 →').first()).toBeVisible();
+  });
+
   test('로그인 없이 공개 폼에 접근할 수 있다', async ({ page }) => {
     test.skip(!process.env.WEB_BASE_URL, '배포된 한글 경로에서 실행하는 스모크입니다.');
 
@@ -68,6 +85,8 @@ test.describe('일일 운세', () => {
     await page.getByRole('link', { name: '오늘의 운세 보기' }).click();
 
     await expect(page).toHaveURL(/\/%EC%9A%B4%EC%84%B8\/%EC%98%A4%EB%8A%98/);
+    await expect(page.getByRole('heading', { name: '한 번의 입력으로 오늘의 흐름을 나눠 읽어요' })).toBeVisible();
+    await expect(page.getByText('생년월일만 필수예요. 태어난 시간과 성별은 알고 있을 때만 더해 주세요.')).toBeVisible();
     await expect(page.getByRole('textbox', { name: '생년월일' })).toBeVisible();
     await expect(page.getByRole('button', { name: '오늘의 운세 보기' })).toBeDisabled();
   });
