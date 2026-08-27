@@ -40,6 +40,11 @@ export default function PrivacyPage() {
             수집하지 않습니다)
           </li>
           <li>단말·로그: 기기 모델명, OS 버전, 앱 버전, 푸시 토큰, 앱 실행·오류 로그, 성능 지표</li>
+          <li>
+            웹 이용: 로그인 유지에 필요한 인증 쿠키, IP 주소, 브라우저·기기 정보, 방문 경로,
+            접속 시각, 요청·오류 기록. 선택형 분석 도구는 운영 식별자가 설정된 경우에만
+            작동하며 광고 추적 쿠키는 사용하지 않습니다.
+          </li>
         </ul>
       </section>
 
@@ -77,10 +82,12 @@ export default function PrivacyPage() {
         </p>
         <ul>
           <li>Supabase Inc.: 데이터베이스, 인증, 서버 기능 호스팅</li>
+          <li>Vercel Inc.: 웹사이트 제공, 전송 보안, 접속·오류 로그 처리</li>
+          <li>토스페이먼츠 주식회사: 웹 결제창 제공, 결제 승인·취소·환불 처리</li>
           <li>Apple Inc.: iOS 푸시 알림(APNs), App Store 인앱결제 검증, Apple 로그인</li>
           <li>
             Google LLC: Android 푸시 발송(FCM), 구글 로그인, Google Play 결제 검증, AdMob
-            보상형 광고
+            보상형 광고, 운영 식별자가 설정된 경우의 비광고성 웹 이용 통계(GA4)
           </li>
           <li>Expo: 푸시 토큰 중계(Expo Push Service)</li>
           <li>Sentry: 앱 충돌·오류 수집 (메시지 본문과 이메일은 전송하지 않습니다)</li>

@@ -193,6 +193,7 @@ export async function sendCharacterMessage({
   history,
   userMessage,
   userMessageId,
+  fortuneHistoryId,
 }: {
   supabase: SupabaseClient | null;
   character: WebChatCharacter;
@@ -200,6 +201,7 @@ export async function sendCharacterMessage({
   history: ChatMessage[];
   userMessage: string;
   userMessageId: string;
+  fortuneHistoryId?: string | null;
 }): Promise<SendResult> {
   if (!supabase) {
     return { ok: false, failure: CONFIG_FAILURE };
@@ -219,6 +221,7 @@ export async function sendCharacterMessage({
       })),
     userMessage,
     userMessageId,
+    fortuneHistoryId: fortuneHistoryId ?? undefined,
     // 웹에는 푸시가 없다. true 로 두면 서버가 앱 기기로 DM 푸시를 쏜다.
     shouldSendPush: false,
     // 서버가 시간대 인사/맥락에 쓴다. character-chat 의 차감 키는 body 해시가

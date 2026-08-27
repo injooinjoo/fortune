@@ -48,10 +48,10 @@ test.describe('랜딩 페이지', () => {
     await page.goto('/');
 
     const documents = [
-      ['개인정보처리방침', 'https://fortune-mocha.vercel.app/privacy'],
-      ['이용약관', 'https://fortune-mocha.vercel.app/terms'],
-      ['고객 지원', 'https://fortune-mocha.vercel.app/support'],
-      ['계정 삭제 안내', 'https://fortune-mocha.vercel.app/delete-account'],
+      ['개인정보처리방침', '/privacy'],
+      ['이용약관', '/terms'],
+      ['고객 지원', '/support'],
+      ['계정 삭제 안내', '/delete-account'],
     ] as const;
 
     for (const [name, href] of documents) {

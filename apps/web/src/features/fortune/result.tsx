@@ -15,6 +15,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 
 import type { FortuneFailureKind } from './runner';
+import { FortuneChatBridge } from './fortune-chat-bridge';
 
 type MaybeText = string | null | undefined;
 
@@ -234,9 +235,12 @@ export function CardList({
 /** 모든 결과 화면 하단에 붙는 엔터테인먼트 고지. 문구는 앱/랜딩과 동일하게 유지. */
 export function Disclaimer() {
   return (
-    <p className="ondo-muted">
-      온도의 운세는 엔터테인먼트 목적으로 제공되며, 어떠한 전문적 조언도 대체하지 않습니다.
-    </p>
+    <>
+      <FortuneChatBridge />
+      <p className="ondo-muted">
+        온도의 운세는 엔터테인먼트 목적으로 제공되며, 어떠한 전문적 조언도 대체하지 않습니다.
+      </p>
+    </>
   );
 }
 

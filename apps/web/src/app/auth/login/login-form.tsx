@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 
-import { siteUrl } from '@/lib/env';
 import { beginGoogleAuth } from '@/lib/google-auth';
+import { trackProductEvent } from '@/lib/analytics-client';
 import { getBrowserSupabase } from '@/lib/supabase/client';
 
 /**
@@ -77,10 +77,11 @@ export function LoginForm({
     }
 
     setStatus({ kind: 'redirecting' });
+    trackProductEvent('auth_started', { provider: 'google' });
 
     const { error } = await beginGoogleAuth(
       supabase,
-      `${siteUrl}/auth/callback?next=${encodeURIComponent(nextPath)}`,
+      `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
     );
 
     // 성공하면 브라우저가 Google 로 떠나므로 여기 아래는 실패했을 때만 실행된다.

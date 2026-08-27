@@ -33,5 +33,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const { error: bonusError } = await supabase.rpc('claim_account_upgrade_bonus');
   if (bonusError) return failTo('bonus_grant_failed');
 
+  // 계측 실패는 로그인 성공을 되돌리지 않는다. 프로필/메시지/이메일은 기록하지 않는다.
+  await supabase.rpc('record_web_analytics_event', {
+    p_event_name: 'auth_completed',
+    p_session_id: crypto.randomUUID(),
+    p_path: nextPath,
+    p_properties: { provider: 'google', outcome: 'success' },
+  });
+
   return NextResponse.redirect(`${origin}${nextPath}`);
 }

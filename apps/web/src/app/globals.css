@@ -309,6 +309,116 @@ textarea {
   font-weight: 700;
 }
 
+.ondo-status-page {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 62vh;
+  padding-block: clamp(72px, 12vw, 144px);
+}
+
+.ondo-status-page h1 {
+  font-size: clamp(32px, 5vw, 54px);
+  margin: 8px 0 12px;
+  max-width: 720px;
+}
+
+.ondo-status-pulse {
+  animation: ondo-status-pulse 1.4s ease-in-out infinite;
+  background: var(--ondo-color-cta-background);
+  border-radius: 999px;
+  height: 18px;
+  width: 18px;
+}
+
+@keyframes ondo-status-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ondo-status-pulse { animation: none; }
+}
+
+.ondo-payment-grid {
+  display: grid;
+  gap: var(--ondo-spacing-md);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ondo-payment-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ondo-spacing-sm);
+}
+
+.ondo-payment-card .ondo-button {
+  margin-top: auto;
+}
+
+.ondo-account-page {
+  padding-block: clamp(36px, 6vw, 72px);
+}
+
+.ondo-account-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ondo-spacing-md);
+}
+
+.ondo-account-balance {
+  color: var(--ondo-color-text-primary);
+  font-size: 20px;
+}
+
+.ondo-account-balance strong {
+  margin-right: 4px;
+  font-family: var(--ondo-font-serif);
+  font-size: clamp(44px, 7vw, 68px);
+  line-height: 1;
+}
+
+.ondo-section-heading,
+.ondo-history-item,
+.ondo-account-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ondo-spacing-md);
+}
+
+.ondo-section-heading > a,
+.ondo-account-actions > a {
+  color: var(--ondo-color-accent-primary);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.ondo-history-list {
+  display: grid;
+  gap: var(--ondo-spacing-sm);
+  padding: 0;
+  list-style: none;
+}
+
+.ondo-history-item h3 {
+  margin-block: 5px;
+  font-size: 18px;
+}
+
+.ondo-history-score {
+  flex: 0 0 auto;
+  color: var(--ondo-color-accent-primary);
+  font-family: var(--ondo-font-serif);
+  font-size: 24px;
+}
+
+.ondo-account-actions {
+  padding-top: var(--ondo-spacing-md);
+  border-top: 1px solid var(--ondo-color-border);
+}
+
 /* --- 공통 헤더 / 푸터 --- */
 
 .ondo-site-header {
@@ -466,6 +576,16 @@ textarea {
 }
 
 @media (max-width: 760px) {
+  .ondo-account-summary,
+  .ondo-payment-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ondo-account-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
   .ondo-site-nav,
   .ondo-footer-inner,
   .ondo-footer-bottom {

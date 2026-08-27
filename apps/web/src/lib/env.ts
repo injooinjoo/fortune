@@ -12,6 +12,13 @@
 // process.env.NEXT_PUBLIC_* 는 반드시 리터럴로 접근해야 번들러가 인라인한다.
 export const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 export const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
-export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3100';
+export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://zpzg.co.kr';
+const rawGaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? '';
+export const gaMeasurementId = /^G-[A-Z0-9]+$/.test(rawGaMeasurementId)
+  ? rawGaMeasurementId
+  : '';
+export const googleSiteVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? '';
+export const naverSiteVerification = process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION ?? '';
+export const tossClientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY ?? '';
 
 export const isSupabaseConfigured = supabaseUrl.length > 0 && supabaseAnonKey.length > 0;
