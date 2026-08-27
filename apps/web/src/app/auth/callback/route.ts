@@ -15,8 +15,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const code = searchParams.get('code');
   const nextPath = sanitizeNextPath(searchParams.get('next'));
 
-  const failTo = (reason: string) =>
-    NextResponse.redirect(`${origin}/auth/login?error=${reason}`);
+  const failTo = (reason: string) => {
+    const loginUrl = new URL('/auth/login', origin);
+    loginUrl.searchParams.set('error', reason);
+    loginUrl.searchParams.set('next', nextPath);
+    return NextResponse.redirect(loginUrl);
+  };
 
   if (!code) return failTo('missing_code');
 
@@ -25,6 +29,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   const { error } = await supabase.auth.exchangeCodeForSession(code);
   if (error) return failTo('exchange_failed');
+
+  const { error: bonusError } = await supabase.rpc('claim_account_upgrade_bonus');
+  if (bonusError) return failTo('bonus_grant_failed');
 
   return NextResponse.redirect(`${origin}${nextPath}`);
 }
