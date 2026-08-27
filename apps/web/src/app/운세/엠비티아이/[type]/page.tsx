@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { fortuneHref } from '@/lib/href';
-import Link from 'next/link';
+import { AppLink as Link } from '@/components/app-link';
 import { notFound } from 'next/navigation';
 
 import { MbtiForm } from '@/features/f-b/mbti-form';

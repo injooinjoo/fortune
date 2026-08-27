@@ -17,7 +17,7 @@
  * 색은 전부 var(--ondo-*), 클래스는 globals.css 의 .ondo-* 만 쓴다.
  */
 
-import Link from 'next/link';
+import { AppLink as Link } from '@/components/app-link';
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 
 import { ChipSelect, TextField } from '@/features/fortune/fields';

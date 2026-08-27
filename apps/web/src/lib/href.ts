@@ -14,14 +14,34 @@
  * 보이지만, soft navigation 이 전부 죽고 콘솔이 에러로 도배된다.
  * (실제로 배포 후 브라우저 콘솔에서 확인함 — 모든 링크에서 발생)
  *
- * 미리 퍼센트 인코딩해 두면 헤더 값이 ASCII 로 유지돼 정상 동작한다.
- * 주소창은 어차피 디코딩해서 보여주므로 사용자에게 보이는 URL 은 그대로 한글이다.
+ * 목적지 경로의 퍼센트 인코딩은 필수지만, 현재 경로를 담는 Next-Url 이 다시
+ * 디코딩될 수 있어 그것만으로는 충분하지 않다. `AppLink`가 한글 경로 전환을
+ * native navigation으로 격리하고, 이 헬퍼들은 목적지 자체를 ASCII로 유지한다.
+ * 주소창은 디코딩해서 보여주므로 사용자에게 보이는 URL은 그대로 한글이다.
  */
 export function encodePath(path: string): string {
   return path
     .split('/')
     .map((segment) => encodeURIComponent(segment))
     .join('/');
+}
+
+function hasUnicodePathSegment(path: string): boolean {
+  try {
+    return /[^\u0000-\u007f]/.test(decodeURI(path));
+  } catch {
+    return true;
+  }
+}
+
+/**
+ * Next App Router serialises route state into request headers. When either side
+ * of a client transition has a Korean segment, that state can contain raw
+ * Unicode and Chromium rejects the RSC request before it leaves the browser.
+ * Use a normal document navigation for those transitions instead.
+ */
+export function requiresNativeNavigation(currentPath: string, destination: string): boolean {
+  return hasUnicodePathSegment(currentPath) || hasUnicodePathSegment(destination);
 }
 
 /** `/운세/<slug>` */

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { encodePath } from '@/lib/href';
-import Link from 'next/link';
+import { AppLink as Link } from '@/components/app-link';
 
 import { ZodiacForm } from '@/features/f-b/zodiac-form';
 import { ZODIAC_ANIMALS } from '@/features/f-b/zodiac-animals';

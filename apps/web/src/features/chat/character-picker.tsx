@@ -3,7 +3,7 @@
  * 소개가 HTML 로 들어가야 검색/링크 프리뷰에 잡힌다.
  */
 
-import Link from 'next/link';
+import { AppLink as Link } from '@/components/app-link';
 
 import { chatHref } from '@/lib/href';
 

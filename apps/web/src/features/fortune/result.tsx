@@ -11,7 +11,7 @@
  * 서버 컴포넌트로 그대로 쓸 수 있게 순수하게 유지한다 ('use client' 없음).
  */
 
-import Link from 'next/link';
+import { AppLink as Link } from '@/components/app-link';
 import type { ReactNode } from 'react';
 
 import type { FortuneFailureKind } from './runner';

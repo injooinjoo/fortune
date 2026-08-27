@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { AppLink as Link } from '@/components/app-link';
 
 import { AccountHeaderActions } from '@/components/account-header-actions';
 import { CHAT_INDEX_HREF, FORTUNE_INDEX_HREF } from '@/lib/href';

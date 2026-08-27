@@ -5,7 +5,7 @@
  * 여기서 문구를 새로 쓰거나 숫자를 하드코딩하지 않는다.
  */
 
-import Link from 'next/link';
+import { AppLink as Link } from '@/components/app-link';
 
 import { fortuneHref } from '@/lib/href';
 
