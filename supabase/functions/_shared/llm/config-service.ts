@@ -12,7 +12,7 @@ import {
 } from "./models.ts";
 
 export interface DynamicModelConfig {
-  provider: "gemini" | "openai" | "anthropic" | "grok" | "gemma";
+  provider: "gemini" | "openai" | "anthropic" | "grok" | "gemma" | "openrouter";
   model: string;
   temperature: number;
   maxTokens: number;

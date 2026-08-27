@@ -48,10 +48,10 @@ test.describe('Warm Celestial Editorial home', () => {
     await expect(page.getByText('온도 5개', { exact: true }).first()).toBeVisible();
   });
 
-  test('uses the shared warm editorial visual system', async ({ page }) => {
+  test('uses the shared Ondo dark editorial visual system', async ({ page }) => {
     const body = page.locator('body');
-    await expect(body).toHaveCSS('background-color', 'rgb(247, 242, 234)');
-    await expect(body).toHaveCSS('color', 'rgb(25, 23, 22)');
+    await expect(body).toHaveCSS('background-color', 'rgb(11, 11, 16)');
+    await expect(body).toHaveCSS('color', 'rgb(245, 246, 251)');
 
     const heading = page.getByRole('heading', { level: 1 });
     const headingFont = await heading.evaluate((element) => getComputedStyle(element).fontFamily);

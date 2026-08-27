@@ -35,6 +35,7 @@ import {
   SAFETY_BLOCK_FALLBACK_RESPONSE,
 } from "../_shared/moderation.ts";
 import { SERVICE_TONE_PATTERN as LUTS_SERVICE_TONE_PATTERN } from "../_shared/service_tone_guard.ts";
+import { buildFortuneContextPrompt } from "../_shared/fortune_context.ts";
 import {
   buildConversationPreferencePrompt,
   type ConversationTonePreference,
@@ -123,6 +124,7 @@ interface CharacterChatRequest {
   personaKey?: string;
   messages: ChatMessage[];
   userMessage: string;
+  fortuneHistoryId?: string;
   /** "data:image/jpeg;base64,..." 또는 raw base64. 존재하면 마지막 user
    * 메시지를 멀티파트로 변환해 vision-capable LLM 에 전달. */
   imageBase64?: string;
@@ -2796,6 +2798,7 @@ serve(async (req: Request) => {
       personaKey,
       messages,
       userMessage,
+      fortuneHistoryId,
       imageBase64,
       modelPreference,
       userName,
@@ -2920,6 +2923,23 @@ serve(async (req: Request) => {
         console.warn(
           "[character-chat] trustedUserId 무시 (service_role 토큰 아님)",
         );
+      }
+    }
+
+    let fortuneContextPrompt = "";
+    const validFortuneHistoryId = typeof fortuneHistoryId === "string" &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(fortuneHistoryId);
+    if (validFortuneHistoryId && userId && supabase) {
+      const { data: fortuneRow, error: fortuneError } = await supabase
+        .from("fortune_history")
+        .select("title,fortune_type,score,summary")
+        .eq("id", fortuneHistoryId)
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (fortuneError) {
+        console.warn("[character-chat] 운세 컨텍스트 조회 실패");
+      } else if (fortuneRow) {
+        fortuneContextPrompt = buildFortuneContextPrompt(fortuneRow);
       }
     }
 
@@ -3310,7 +3330,8 @@ serve(async (req: Request) => {
     }
 
     // 운세 상담 요청 감지 (유저 메시지에 운세 데이터가 포함된 경우)
-    const isFortuneRequest = userMessage.includes("운세 분석 결과") ||
+    const isFortuneRequest = fortuneContextPrompt.length > 0 ||
+      userMessage.includes("운세 분석 결과") ||
       (systemPrompt?.includes("[운세 상담 모드]") ?? false);
 
     // 유저 메시지 앞에 맥락 리마인더 추가 (모델이 바로 직전에 보게 됨)
@@ -3416,6 +3437,7 @@ serve(async (req: Request) => {
     const systemPromptSections = pilotPersona
       ? [
         fullSystemPrompt,
+        fortuneContextPrompt,
         // pilot 경로에도 lutsStylePrompt 주입 — 이전엔 빠져 있어서 LLM 이
         // service-bot 톤 ("어떻게 도와드릴까요?", "무엇을 도와드릴까요?")
         // 으로 떨어지는 케이스가 자주 발생. 빈 string 이면 join 후에도 무영향.
@@ -3426,6 +3448,7 @@ serve(async (req: Request) => {
       ]
       : [
         fullSystemPrompt,
+        fortuneContextPrompt,
         characterTraits
           ? `\n\n[캐릭터 특성 - 반드시 유지]\n${characterTraits}\n말투의 핵심은 유지하되, 호칭은 관계 단계 가이드를 우선하세요.\n`
           : "",

@@ -11,6 +11,8 @@ import {
 } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
+import { trackProductEvent } from '@/lib/analytics-client';
+
 import { CharacterAvatar } from './character-avatar';
 import type { WebChatCharacter } from './characters';
 import {
@@ -68,6 +70,23 @@ function openerMessage(character: WebChatCharacter): ChatMessage {
   return newMessage('character', character.opener, `opener:${character.id}`);
 }
 
+function readFortuneContextPointer(): { id: string; title: string } | null {
+  try {
+    const raw = sessionStorage.getItem('ondo:last-fortune-context');
+    if (!raw) return null;
+    const value = JSON.parse(raw) as { id?: unknown; title?: unknown; createdAt?: unknown };
+    const fresh = typeof value.createdAt === 'number' && Date.now() - value.createdAt < 30 * 60 * 1000;
+    const validId = typeof value.id === 'string' && /^[0-9a-f-]{36}$/i.test(value.id);
+    if (!fresh || !validId) return null;
+    return {
+      id: value.id as string,
+      title: typeof value.title === 'string' ? value.title.slice(0, 100) : '운세',
+    };
+  } catch {
+    return null;
+  }
+}
+
 type Persistence = 'checking' | 'remote' | 'local';
 
 interface PendingTurn {
@@ -86,6 +105,7 @@ export function ChatThread({ character }: { character: WebChatCharacter }) {
   const [pending, setPending] = useState<PendingTurn | null>(null);
   const [persistence, setPersistence] = useState<Persistence>('checking');
   const [dirty, setDirty] = useState(false);
+  const [fortuneHistoryId, setFortuneHistoryId] = useState<string | null>(null);
 
   const supabaseRef = useRef<SupabaseClient | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -115,6 +135,26 @@ export function ChatThread({ character }: { character: WebChatCharacter }) {
         return;
       }
 
+      const pointer = readFortuneContextPointer();
+      let contextMessage: ChatMessage | null = null;
+      if (pointer) {
+        const { data: ownedHistory } = await session.supabase
+          .from('fortune_history')
+          .select('id,title')
+          .eq('id', pointer.id)
+          .maybeSingle();
+        if (ownedHistory) {
+          setFortuneHistoryId(ownedHistory.id);
+          contextMessage = newMessage(
+            'system',
+            `${ownedHistory.title} 결과를 참고해 첫 대화를 이어갑니다.`,
+            `fortune-context:${ownedHistory.id}`,
+          );
+        } else {
+          sessionStorage.removeItem('ondo:last-fortune-context');
+        }
+      }
+
       const restored = await loadConversation(session.supabase, character.id);
       if (cancelled) return;
 
@@ -124,9 +164,10 @@ export function ChatThread({ character }: { character: WebChatCharacter }) {
       }
 
       setPersistence('remote');
-      if (restored.length > 0) {
-        setMessages(restored);
-      }
+      const base = restored.length > 0 ? restored : [openerMessage(character)];
+      setMessages(contextMessage && !base.some((message) => message.id === contextMessage.id)
+        ? [...base, contextMessage]
+        : base);
     })();
 
     return () => {
@@ -187,6 +228,8 @@ export function ChatThread({ character }: { character: WebChatCharacter }) {
 
   const runTurn = useCallback(
     async (turn: PendingTurn) => {
+      const startedAt = performance.now();
+      trackProductEvent('chat_started', { character_id: character.id });
       setWaiting(true);
       setFailure(null);
 
@@ -196,11 +239,18 @@ export function ChatThread({ character }: { character: WebChatCharacter }) {
         history: turn.history,
         userMessage: turn.text,
         userMessageId: turn.messageId,
+        fortuneHistoryId,
       });
 
       setWaiting(false);
 
       if (!result.ok) {
+        trackProductEvent('chat_completed', {
+          character_id: character.id,
+          duration_ms: Math.round(performance.now() - startedAt),
+          error_kind: result.failure.kind,
+          outcome: 'error',
+        });
         // 자동 재시도 금지 — 중복 과금 가능. 사용자가 버튼으로 결정한다.
         setFailure(result.failure);
         setPending(turn);
@@ -208,10 +258,19 @@ export function ChatThread({ character }: { character: WebChatCharacter }) {
       }
 
       setPending(null);
+      if (fortuneHistoryId) {
+        sessionStorage.removeItem('ondo:last-fortune-context');
+        setFortuneHistoryId(null);
+      }
+      trackProductEvent('chat_completed', {
+        character_id: character.id,
+        duration_ms: Math.round(performance.now() - startedAt),
+        outcome: 'success',
+      });
       setQueue(result.segments);
       setDirty(true);
     },
-    [character],
+    [character, fortuneHistoryId],
   );
 
   function submit() {

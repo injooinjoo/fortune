@@ -1,4 +1,9 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+};
 
 import { WEB_CHAT_CHARACTERS } from '@/features/chat/characters';
 import { WEB_FORTUNES, type WebFortune } from '@/features/fortune/catalog';

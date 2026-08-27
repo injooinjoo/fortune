@@ -5,19 +5,35 @@ import { fortuneColors } from '@fortune/design-tokens';
 
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
-import { siteUrl } from '@/lib/env';
+import { Analytics } from '@/components/analytics';
+import {
+  gaMeasurementId,
+  googleSiteVerification,
+  naverSiteVerification,
+  siteUrl,
+} from '@/lib/env';
 
 import '@/styles/tokens.css';
 import './globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  applicationName: '온도',
+  category: 'lifestyle',
   title: {
     default: '온도 — 오늘의 운세와 캐릭터 대화',
     template: '%s · 온도',
   },
   description:
     '생년월일과 태어난 시간으로 오늘의 운세를 읽고, 나를 기억하는 캐릭터와 대화하는 AI 운세 서비스 온도.',
+  keywords: ['온도', '오늘의 운세', '사주', '타로', 'AI 운세', '캐릭터 대화'],
+  robots: { index: true, follow: true },
+  verification: {
+    google: googleSiteVerification || undefined,
+    other: naverSiteVerification
+      ? { 'naver-site-verification': naverSiteVerification }
+      : undefined,
+  },
   openGraph: {
     type: 'website',
     locale: 'ko_KR',
@@ -25,6 +41,13 @@ export const metadata: Metadata = {
     title: '온도 — 오늘의 운세와 캐릭터 대화',
     description: '생년월일과 태어난 시간으로 읽는 오늘의 운세.',
     url: siteUrl,
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: '온도 — 오늘의 흐름을 읽고 마음을 이어가는 곳' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '온도 — 오늘의 운세와 캐릭터 대화',
+    description: '생년월일과 태어난 시간으로 읽는 오늘의 운세.',
+    images: ['/opengraph-image'],
   },
 };
 
@@ -51,6 +74,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <SiteHeader />
         {children}
         <SiteFooter />
+        <Analytics measurementId={gaMeasurementId} />
       </body>
     </html>
   );

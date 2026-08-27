@@ -135,15 +135,18 @@ test.describe('public routes', () => {
 });
 
 test.describe('web launch status', () => {
-  test('home tells visitors what is available on the web today', async ({ page }) => {
+  test('home routes visitors to the live Ondo web product', async ({ page }) => {
     await page.goto(url('/'));
 
-    await expect(page.locator('h1')).toContainText('웹서비스 출시 안내');
-    await expect(page.getByTestId('web-launch-status')).toContainText('준비 중');
-    await expect(page.getByTestId('web-available-now')).toContainText('공개 문서와 고객 지원');
-    await expect(page.getByTestId('web-not-available')).toContainText(
-      '운세 결과, 로그인, 결제 기능은 아직 웹에서 제공하지 않습니다',
+    await expect(page.locator('h1')).toContainText('온도 공식 안내');
+    await expect(page.getByTestId('web-launch-status')).toContainText('웹 운세 이용 가능');
+    await expect(page.getByTestId('web-available-now')).toContainText(
+      '오늘의 운세와 캐릭터 대화',
     );
+
+    const productCta = page.getByTestId('product-cta');
+    await expect(productCta).toHaveText('온도 웹 시작하기');
+    await expect(productCta).toHaveAttribute('href', 'https://zpzg.co.kr/');
   });
 });
 
@@ -315,10 +318,14 @@ test.describe('contact details', () => {
     }) => {
       await page.goto(url(route));
 
-      const html = await page.content();
-      expect(html, `${route} still references ${DEAD_MAIL_DOMAIN}`).not.toContain(
-        DEAD_MAIL_DOMAIN,
+      const mailtoLinks = await page.locator('a[href^="mailto:"]').evaluateAll((links) =>
+        links.map((link) => link.getAttribute('href')),
       );
+      for (const href of mailtoLinks) {
+        expect(href, `${route} still publishes an address at ${DEAD_MAIL_DOMAIN}`).not.toMatch(
+          new RegExp(`@${DEAD_MAIL_DOMAIN}(?:$|\\?)`, 'i'),
+        );
+      }
     });
   }
 

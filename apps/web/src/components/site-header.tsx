@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { AccountHeaderActions } from '@/components/account-header-actions';
 import { CHAT_INDEX_HREF, FORTUNE_INDEX_HREF } from '@/lib/href';
 
 const NAV_LINKS = [
@@ -14,7 +15,7 @@ function NavigationLinks() {
       {NAV_LINKS.map((link) => (
         <Link href={link.href} key={link.href}>{link.label}</Link>
       ))}
-      <Link href="/auth/login">로그인</Link>
+      <AccountHeaderActions mobile />
     </>
   );
 }
@@ -32,7 +33,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="ondo-header-actions">
-          <Link className="ondo-login-link" href="/auth/login">로그인</Link>
+          <AccountHeaderActions />
         </div>
 
         <details className="ondo-mobile-menu">

@@ -46,6 +46,9 @@ const DELETE_TARGETS: Array<{ table: string; column?: string }> = [
   { table: "talisman_user_cache" },
   { table: "pets" },
   { table: "secondary_profiles", column: "owner_id" },
+  // 크레딧 잔액뿐 아니라 감사 원장과 정확히-한-번 지급 상태도 계정 삭제 시 제거한다.
+  { table: "token_transactions" },
+  { table: "account_credit_grants" },
   { table: "token_balance" },
   { table: "subscriptions" },
   { table: "user_statistics" },

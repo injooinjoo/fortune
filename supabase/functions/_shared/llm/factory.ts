@@ -10,6 +10,12 @@ import { OpenRouterProvider } from "./providers/openrouter.ts";
 import { getModelConfig } from "./config.ts";
 import { ConfigService } from "./config-service.ts";
 import { createUserLlmProvider } from "./user_key.ts";
+import { BoundedFallbackProvider } from "./fallback-provider.ts";
+import { GEMINI_SAFE_TEXT_MODEL } from "./models.ts";
+import {
+  parseOpenRouterRoutingMode,
+  resolvePlatformLlmRoute,
+} from "./routing.ts";
 
 type ProviderId =
   | "gemini"
@@ -18,6 +24,18 @@ type ProviderId =
   | "grok"
   | "gemma"
   | "openrouter";
+
+function envEnabled(name: string): boolean {
+  return ["1", "true", "yes", "on"].includes((Deno.env.get(name) ?? "").trim().toLowerCase());
+}
+
+function getPlatformOpenRouterKey(): string {
+  const workspaceKey = Deno.env.get("OPENROUTER_WORKSPACE_API_KEY")?.trim() ?? "";
+  if (workspaceKey) return workspaceKey;
+  return envEnabled("OPENROUTER_ALLOW_LEGACY_PLATFORM_KEY")
+    ? (Deno.env.get("OPENROUTER_API_KEY")?.trim() ?? "")
+    : "";
+}
 
 export class LLMFactory {
   /**
@@ -42,14 +60,7 @@ export class LLMFactory {
     }
 
     const config = await ConfigService.getModelConfig(fortuneType);
-
-    console.log(
-      `🔧 LLM 설정 (동적): ${config.provider}/${config.model}${
-        config.isAbTest ? " [A/B]" : ""
-      }`,
-    );
-
-    return this.createProvider(config.provider, config.model, fortuneType);
+    return this.createRoutedProvider(config.provider, config.model, fortuneType, config.isAbTest);
   }
 
   /**
@@ -64,10 +75,7 @@ export class LLMFactory {
    */
   static createFromConfig(fortuneType: string): ILLMProvider {
     const config = getModelConfig(fortuneType);
-
-    console.log(`🔧 LLM 설정 (정적): ${config.provider}/${config.model}`);
-
-    return this.createProvider(config.provider, config.model, fortuneType);
+    return this.createRoutedProvider(config.provider, config.model, fortuneType, false);
   }
 
   /**
@@ -82,6 +90,41 @@ export class LLMFactory {
     featureName = "direct",
   ): ILLMProvider {
     return this.createProvider(provider, model, featureName);
+  }
+
+  private static createRoutedProvider(
+    provider: ProviderId,
+    model: string,
+    featureName: string,
+    isAbTest = false,
+  ): ILLMProvider {
+    const openRouterKey = getPlatformOpenRouterKey();
+    const route = resolvePlatformLlmRoute({
+      featureName,
+      requestedProvider: provider,
+      requestedModel: model,
+      mode: parseOpenRouterRoutingMode(Deno.env.get("OPENROUTER_ROUTING_MODE")),
+      hasOpenRouterKey: openRouterKey.length > 0,
+    });
+
+    console.log(
+      `[llm-router] ${featureName}: ${route.provider}/${route.model} reason=${route.reason}${
+        route.shadowModel ? ` shadow=${route.shadowModel}` : ""
+      }${isAbTest ? " ab=true" : ""}`,
+    );
+
+    const primary = this.createProvider(route.provider, route.model, featureName);
+    if (route.provider !== "openrouter" || !envEnabled("OPENROUTER_RUNTIME_FALLBACK_ENABLED")) {
+      return primary;
+    }
+
+    const fallbackProvider: ProviderId = provider === "openrouter" ? "gemini" : provider;
+    const fallbackModel = provider === "openrouter" ? GEMINI_SAFE_TEXT_MODEL : model;
+    return new BoundedFallbackProvider(
+      primary,
+      this.createProvider(fallbackProvider, fallbackModel, featureName),
+      featureName,
+    );
   }
 
   /**
@@ -132,7 +175,7 @@ export class LLMFactory {
       // OpenRouterProvider 를 사용자 키로 직접 생성한다.
       case "openrouter":
         return new OpenRouterProvider({
-          apiKey: Deno.env.get("OPENROUTER_API_KEY") || "",
+          apiKey: getPlatformOpenRouterKey(),
           model,
           featureName,
         });

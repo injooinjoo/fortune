@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 
-import { siteUrl } from '@/lib/env';
+import { beginGoogleAuth } from '@/lib/google-auth';
+import { trackProductEvent } from '@/lib/analytics-client';
 import { getBrowserSupabase } from '@/lib/supabase/client';
 
 /**
@@ -20,7 +21,7 @@ import { getBrowserSupabase } from '@/lib/supabase/client';
  *
  * 단, `redirectTo` 도 허용목록에 있어야 한다 — Supabase 대시보드
  * Authentication → URL Configuration → Redirect URLs 에
- * `https://ondo-web-olive.vercel.app/**` 가 필요하다.
+ * `https://zpzg.co.kr/**` 가 필요하다.
  */
 
 type Status =
@@ -32,6 +33,7 @@ const CALLBACK_ERRORS: Record<string, string> = {
   missing_code: '로그인이 완료되지 않았어요. 다시 시도해 주세요.',
   not_configured: '로그인 설정이 아직 준비되지 않았어요.',
   exchange_failed: '로그인 정보가 만료됐어요. 다시 시도해 주세요.',
+  bonus_grant_failed: '로그인은 됐지만 온도 지급을 확인하지 못했어요. 다시 시도해 주세요.',
 };
 
 /** Google 브랜드 가이드상 로고는 원본 색을 유지해야 해서 여기만 고정 색을 쓴다. */
@@ -75,13 +77,12 @@ export function LoginForm({
     }
 
     setStatus({ kind: 'redirecting' });
+    trackProductEvent('auth_started', { provider: 'google' });
 
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${siteUrl}/auth/callback?next=${encodeURIComponent(nextPath)}`,
-      },
-    });
+    const { error } = await beginGoogleAuth(
+      supabase,
+      `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
+    );
 
     // 성공하면 브라우저가 Google 로 떠나므로 여기 아래는 실패했을 때만 실행된다.
     if (error) {
@@ -110,7 +111,7 @@ export function LoginForm({
       </button>
 
       <p className="ondo-muted">
-        로그인하지 않아도 운세는 바로 볼 수 있어요. Google 계정으로 로그인하면 계정 전용 기능도 이용할 수 있어요.
+        로그인하지 않아도 운세는 바로 볼 수 있어요. Google 계정으로 연결하면 기존 기록을 유지하고 총 50온도로 시작해요.
       </p>
 
       {errorMessage ? (

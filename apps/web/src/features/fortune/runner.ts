@@ -19,7 +19,15 @@
  *    안 날 수도 있다. 양쪽 다 정상으로 취급한다.
  */
 
+import type { SupabaseClient } from '@supabase/supabase-js';
+
 import { invokeEdgeFunction } from '@/lib/edge-invoke';
+import { trackProductEvent } from '@/lib/analytics-client';
+import {
+  fortuneTitle,
+  projectFortuneSummary,
+  stableFortuneFingerprintSource,
+} from '@/lib/fortune-context';
 import { getBrowserSupabase } from '@/lib/supabase/client';
 
 export type FortuneFailureKind = 'auth' | 'tokens' | 'error';
@@ -70,6 +78,46 @@ function readTokenCharge(data: unknown): unknown {
   return (data as Record<string, unknown>).tokenCharge;
 }
 
+async function sha256(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
+  return [...new Uint8Array(digest)]
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+async function saveFortuneContext(
+  supabase: SupabaseClient,
+  fortuneType: string,
+  body: Record<string, unknown>,
+  data: unknown,
+): Promise<void> {
+  if (data === null || typeof data !== 'object') return;
+  const summary = projectFortuneSummary(data);
+  if (summary.highlights.length === 0 && summary.score === null) return;
+
+  const day = new Date().toISOString().slice(0, 10);
+  const historyKey = await sha256(stableFortuneFingerprintSource(fortuneType, body, day));
+  const title = fortuneTitle(fortuneType);
+  const { data: historyId, error } = await supabase.rpc('save_web_fortune_history', {
+    p_fortune_type: fortuneType,
+    p_title: title,
+    p_summary: summary,
+    // Persist the admitted presentation projection, never the raw provider envelope.
+    p_fortune_data: { projectedSummary: summary },
+    p_score: summary.score,
+    p_history_key: historyKey,
+  });
+  if (error || typeof historyId !== 'string') {
+    console.warn('[fortune] 결과 이력을 저장하지 못했어요.');
+    return;
+  }
+
+  sessionStorage.setItem(
+    'ondo:last-fortune-context',
+    JSON.stringify({ id: historyId, title, createdAt: Date.now() }),
+  );
+}
+
 /**
  * LLM provider 원본 에러를 사용자에게 그대로 보여주지 않는다.
  *
@@ -116,8 +164,14 @@ export async function runFortune<T>(
   fortuneType: string,
   body: Record<string, unknown>,
 ): Promise<FortuneRunResult<T>> {
+  const startedAt = performance.now();
+  trackProductEvent('fortune_started', { fortune_type: fortuneType });
   const supabase = getBrowserSupabase();
   if (!supabase) {
+    trackProductEvent('fortune_completed', {
+      fortune_type: fortuneType,
+      outcome: 'configuration_error',
+    });
     return { ok: false, kind: 'error', message: CONFIG_FAILURE_MESSAGE };
   }
 
@@ -132,6 +186,17 @@ export async function runFortune<T>(
   const result = await invokeEdgeFunction<T>(supabase, edgeFunctionName(fortuneType), body);
 
   if (!result.ok) {
+    const errorKind = isAuthFailure(result.status, result.errorCode)
+      ? 'auth'
+      : isTokenFailure(result.status, result.errorCode)
+        ? 'tokens'
+        : 'server';
+    trackProductEvent('fortune_completed', {
+      duration_ms: Math.round(performance.now() - startedAt),
+      error_kind: errorKind,
+      fortune_type: fortuneType,
+      outcome: 'error',
+    });
     if (isAuthFailure(result.status, result.errorCode)) {
       return { ok: false, kind: 'auth', message: AUTH_FAILURE_MESSAGE };
     }
@@ -143,8 +208,25 @@ export async function runFortune<T>(
 
   // 200 인데 바디가 통째로 비는 경우 (LLM 실패 후 빈 응답 등).
   if (result.data === null || result.data === undefined) {
+    trackProductEvent('fortune_completed', {
+      duration_ms: Math.round(performance.now() - startedAt),
+      error_kind: 'empty_response',
+      fortune_type: fortuneType,
+      outcome: 'error',
+    });
     return { ok: false, kind: 'error', message: EMPTY_RESPONSE_MESSAGE };
   }
 
+  trackProductEvent('fortune_completed', {
+    duration_ms: Math.round(performance.now() - startedAt),
+    fortune_type: fortuneType,
+    outcome: 'success',
+  });
+  try {
+    await saveFortuneContext(supabase, fortuneType, body, result.data);
+  } catch {
+    // History persistence cannot turn a successfully generated/charged result into a failure.
+    console.warn('[fortune] 결과 이력 저장 중 오류가 발생했어요.');
+  }
   return { ok: true, data: result.data, tokenCharge: readTokenCharge(result.data) };
 }

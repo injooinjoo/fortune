@@ -67,24 +67,33 @@ export class OpenRouterProvider implements ILLMProvider {
         featureName,
       });
 
-      const response = await fetch(OPENROUTER_CHAT_COMPLETIONS_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${this.config.apiKey}`,
-          // OpenRouter 대시보드 귀속용 (아웃바운드 전용 헤더)
-          "X-Title": "Ondo",
-        },
-        body: JSON.stringify({
-          model: this.config.model,
-          messages: messages,
-          temperature: normalized.temperature ?? 1,
-          max_tokens: normalized.maxTokens,
-          response_format: normalized.jsonMode
-            ? { type: "json_object" }
-            : undefined,
-        }),
-      });
+      const timeoutMs = Math.max(1_000, Math.min(options?.timeout ?? 45_000, 120_000));
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+      let response: Response;
+      try {
+        response = await fetch(OPENROUTER_CHAT_COMPLETIONS_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.config.apiKey}`,
+            // OpenRouter 대시보드 귀속용 (아웃바운드 전용 헤더)
+            "X-Title": "Ondo",
+          },
+          body: JSON.stringify({
+            model: this.config.model,
+            messages: messages,
+            temperature: normalized.temperature ?? 1,
+            max_tokens: normalized.maxTokens,
+            response_format: normalized.jsonMode
+              ? { type: "json_object" }
+              : undefined,
+          }),
+          signal: controller.signal,
+        });
+      } finally {
+        clearTimeout(timeoutId);
+      }
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -120,14 +129,12 @@ export class OpenRouterProvider implements ILLMProvider {
         model: this.config.model,
       };
     } catch (error) {
-      // 에러 객체 원문 대신 마스킹된 메시지만 남긴다 (BYOK 키 유출 방지).
-      console.error(
-        "❌ OpenRouter API 호출 실패:",
-        redactProviderError(
-          error instanceof Error ? error.message : String(error),
-        ),
+      // 에러 객체 원문 대신 마스킹된 메시지만 남기고 호출부에도 같은 정규화 오류를 준다.
+      const safeMessage = redactProviderError(
+        error instanceof Error ? error.message : String(error),
       );
-      throw error;
+      console.error("❌ OpenRouter API 호출 실패:", safeMessage);
+      throw new Error(safeMessage);
     }
   }
 

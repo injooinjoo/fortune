@@ -15,6 +15,32 @@ const wellKnownHeaders = [
   { key: 'Cache-Control', value: 'public, max-age=300' },
 ];
 
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "form-action 'self' https://accounts.google.com",
+  "frame-ancestors 'none'",
+  "object-src 'none'",
+  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://js.tosspayments.com",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data:",
+  "connect-src 'self' https: wss: https://www.google-analytics.com https://region1.google-analytics.com",
+  "media-src 'self' data: blob: https:",
+  "frame-src 'self' https://*.tosspayments.com",
+  "worker-src 'self' blob:",
+].join('; ');
+
+const securityHeaders = [
+  { key: 'Content-Security-Policy', value: contentSecurityPolicy },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(self)' },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'Cross-Origin-Opener-Policy', value: 'same-origin-allow-popups' },
+  { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+];
+
 const nextConfig: NextConfig = {
   /**
    * 모노레포 루트를 명시. 없으면 Next 가 lockfile 을 찾아 루트를 "추론"하는데,
@@ -33,6 +59,10 @@ const nextConfig: NextConfig = {
   ],
   async headers() {
     return [
+      {
+        source: '/:path*',
+        headers: securityHeaders,
+      },
       {
         source: '/.well-known/apple-app-site-association',
         headers: wellKnownHeaders,
