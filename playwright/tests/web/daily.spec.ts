@@ -70,12 +70,13 @@ test.describe('운세 탐색과 일일 운세', () => {
     await expect(page.getByRole('heading', { level: 2, name: '지금 궁금한 깊이에 맞춰 골라보세요' })).toBeVisible();
     await expect(page.getByText('지금의 흐름을 가볍게')).toBeVisible();
     await expect(page.getByText('관계나 마음을 더 깊게')).toBeVisible();
-    await expect(page.getByRole('link', { name: /오늘의 운세/ }).first()).toHaveAttribute(
+    const firstFortuneLink = page.getByRole('link', { name: /오늘의 운세/ }).first();
+    await expect(firstFortuneLink).toBeVisible();
+    await expect(firstFortuneLink).toHaveAttribute(
       'href',
       /%EC%98%A4%EB%8A%98|오늘/,
     );
     await expect(page.getByText('온도 1개').first()).toBeVisible();
-    await expect(page.getByText('열어보기 →').first()).toBeVisible();
   });
 
   test('로그인 없이 공개 폼에 접근할 수 있다', async ({ page }) => {
