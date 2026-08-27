@@ -2,7 +2,7 @@
 /**
  * 디자인 토큰 SoT → 웹 CSS 변수 동기화.
  *
- * Source: packages/design-tokens/src/index.ts (createFortuneTheme('dark'))
+ * Source: packages/design-tokens/src/index.ts (createFortuneTheme('light'))
  * Logic:  packages/design-tokens/src/css.ts   (toCssVariables)
  * Output: apps/web/src/styles/tokens.css
  *
@@ -26,7 +26,7 @@ const OUT = path.join(ROOT, 'apps', 'web', 'src', 'styles', 'tokens.css');
 
 const HEADER = `/* AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY.
  *
- * Source: packages/design-tokens/src/index.ts (createFortuneTheme('dark'))
+ * Source: packages/design-tokens/src/index.ts (createFortuneTheme('light'))
  * Regenerate: pnpm sync:web-tokens
  *
  * 본 파일을 직접 수정하면 CI 가 fail. 토큰 변경은 design-tokens SoT 에서.
@@ -63,7 +63,7 @@ try {
   }
 
   const { toCssVariables } = await import(pathToFileURL(path.join(tmpDir, 'css.js')).href);
-  css = toCssVariables('dark');
+  css = toCssVariables('light');
 } finally {
   fs.rmSync(tmpDir, { recursive: true, force: true });
 }

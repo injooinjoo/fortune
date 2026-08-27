@@ -40,9 +40,9 @@ function toParagraphs(text: MaybeText | ReadonlyArray<MaybeText>): string[] {
   return [];
 }
 
-function Card({ children, gap }: { children: ReactNode; gap: string }) {
+function Card({ children, gap, className = 'ondo-result-block' }: { children: ReactNode; gap: string; className?: string }) {
   return (
-    <div className="ondo-card ondo-stack" style={{ gap }}>
+    <div className={`${className} ondo-stack`} style={{ gap }}>
       {children}
     </div>
   );
@@ -68,7 +68,7 @@ export function ScoreHeadline({
   if (!kickerText && !isScore(score) && !summaryText && !noteText) return null;
 
   return (
-    <Card gap="var(--ondo-spacing-xs)">
+    <Card className="ondo-result-hero" gap="var(--ondo-spacing-xs)">
       {kickerText ? <p className="ondo-kicker">{kickerText}</p> : null}
       {isScore(score) ? (
         <p className="ondo-h1">

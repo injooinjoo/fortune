@@ -4,9 +4,10 @@ import { AccountHeaderActions } from '@/components/account-header-actions';
 import { CHAT_INDEX_HREF, FORTUNE_INDEX_HREF } from '@/lib/href';
 
 const NAV_LINKS = [
+  { href: '/', label: '오늘' },
   { href: FORTUNE_INDEX_HREF, label: '운세' },
-  { href: CHAT_INDEX_HREF, label: '캐릭터 대화' },
-  { href: '/#ondo-guide', label: '온도 이용 안내' },
+  { href: CHAT_INDEX_HREF, label: '대화' },
+  { href: '/app', label: '내 기록' },
 ] as const;
 
 function NavigationLinks() {

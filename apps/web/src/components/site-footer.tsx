@@ -1,5 +1,3 @@
-import { Disclaimer } from '@/features/fortune/result';
-
 const PUBLIC_DOCUMENTS = [
   { href: '/privacy', label: '개인정보처리방침' },
   { href: '/terms', label: '이용약관' },
@@ -13,7 +11,7 @@ export function SiteFooter() {
       <div className="ondo-footer-inner">
         <div className="ondo-footer-brand">
           <strong>온도 · ONDO</strong>
-          <Disclaimer />
+          <p>온도의 운세와 캐릭터 대화는 엔터테인먼트 목적으로 제공되며 전문적 조언을 대체하지 않습니다.</p>
         </div>
         <nav className="ondo-footer-links" aria-label="운영 정보">
           {PUBLIC_DOCUMENTS.map((document) => (
