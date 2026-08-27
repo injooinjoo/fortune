@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { encodePath } from '@/lib/href';
-import Link from 'next/link';
+import { AppLink as Link } from '@/components/app-link';
 
 import { MbtiForm } from '@/features/f-b/mbti-form';
 import { MBTI_TYPES } from '@/features/f-b/mbti-types';
