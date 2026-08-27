@@ -156,6 +156,60 @@ textarea {
   gap: var(--ondo-spacing-inline-gap);
 }
 
+/* --- 법률·지원 문서 --- */
+
+.ondo-legal-page {
+  max-width: 840px;
+}
+
+.ondo-legal-header {
+  display: grid;
+  gap: var(--ondo-spacing-sm);
+  padding-block: var(--ondo-spacing-xl) var(--ondo-spacing-lg);
+  border-bottom: 1px solid var(--ondo-color-border);
+}
+
+.ondo-legal-header p {
+  margin: 0;
+}
+
+.ondo-legal-content {
+  display: grid;
+  gap: var(--ondo-spacing-xl);
+}
+
+.ondo-legal-content section {
+  display: grid;
+  gap: var(--ondo-spacing-sm);
+  padding-top: var(--ondo-spacing-xl);
+}
+
+.ondo-legal-content h2 {
+  font-family: var(--ondo-font-serif);
+  font-size: var(--ondo-typography-heading3-font-size);
+  line-height: var(--ondo-typography-heading3-line-height);
+}
+
+.ondo-legal-content p,
+.ondo-legal-content li {
+  color: var(--ondo-color-text-secondary);
+  font-size: var(--ondo-typography-body-large-font-size);
+  line-height: 1.75;
+}
+
+.ondo-legal-content ul,
+.ondo-legal-content ol {
+  display: grid;
+  gap: var(--ondo-spacing-xs);
+  padding-left: var(--ondo-spacing-lg);
+}
+
+.ondo-legal-content a {
+  color: var(--ondo-color-accent-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* --- 컨트롤 --- */
 
 .ondo-button {

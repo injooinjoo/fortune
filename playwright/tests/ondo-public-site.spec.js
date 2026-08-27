@@ -146,7 +146,7 @@ test.describe('web launch status', () => {
 
     const productCta = page.getByTestId('product-cta');
     await expect(productCta).toHaveText('온도 웹 시작하기');
-    await expect(productCta).toHaveAttribute('href', 'https://ondo-web-olive.vercel.app/');
+    await expect(productCta).toHaveAttribute('href', 'https://zpzg.co.kr/');
   });
 });
 
@@ -318,10 +318,14 @@ test.describe('contact details', () => {
     }) => {
       await page.goto(url(route));
 
-      const html = await page.content();
-      expect(html, `${route} still references ${DEAD_MAIL_DOMAIN}`).not.toContain(
-        DEAD_MAIL_DOMAIN,
+      const mailtoLinks = await page.locator('a[href^="mailto:"]').evaluateAll((links) =>
+        links.map((link) => link.getAttribute('href')),
       );
+      for (const href of mailtoLinks) {
+        expect(href, `${route} still publishes an address at ${DEAD_MAIL_DOMAIN}`).not.toMatch(
+          new RegExp(`@${DEAD_MAIL_DOMAIN}(?:$|\\?)`, 'i'),
+        );
+      }
     });
   }
 

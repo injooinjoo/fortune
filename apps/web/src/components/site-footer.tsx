@@ -1,10 +1,10 @@
 import { Disclaimer } from '@/features/fortune/result';
 
 const PUBLIC_DOCUMENTS = [
-  { href: 'https://fortune-mocha.vercel.app/privacy', label: '개인정보처리방침' },
-  { href: 'https://fortune-mocha.vercel.app/terms', label: '이용약관' },
-  { href: 'https://fortune-mocha.vercel.app/support', label: '고객 지원' },
-  { href: 'https://fortune-mocha.vercel.app/delete-account', label: '계정 삭제 안내' },
+  { href: '/privacy', label: '개인정보처리방침' },
+  { href: '/terms', label: '이용약관' },
+  { href: '/support', label: '고객 지원' },
+  { href: '/delete-account', label: '계정 삭제 안내' },
 ] as const;
 
 export function SiteFooter() {

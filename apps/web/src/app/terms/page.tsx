@@ -1,0 +1,74 @@
+import type { Metadata } from 'next';
+
+import { LegalPage } from '@/components/legal-page';
+
+export const metadata: Metadata = {
+  title: '이용약관',
+  description:
+    'Ondo(온도) 서비스 이용 조건, 계정과 이용자 책임, 온도·구독 결제, 지원 및 계정 삭제 절차를 안내합니다.',
+  alternates: { canonical: '/terms' },
+};
+
+export default function TermsPage() {
+  return (
+    <LegalPage
+      eyebrow="Terms of Service"
+      title="Ondo 이용약관"
+      intro={
+        <p>
+          최종 개정일: 2026년 4월 23일. Ondo는 대화형 AI 경험과 운세·관계·생활 인사이트를
+          제공하는 앱이며, 아래 약관은 서비스 이용 기준을 설명합니다. 앱 내 [프로필 &gt;
+          이용약관]에 최신 전문이 있습니다.
+        </p>
+      }
+    >
+      <section>
+        <h2>1. 서비스 성격</h2>
+        <p>
+          Ondo에서 제공하는 결과와 콘텐츠는 오락 및 웰빙 참고 목적입니다. 의료, 법률, 재무,
+          심리 치료를 대체하지 않으며, 중요한 판단은 전문 자문과 함께 진행해야 합니다.
+        </p>
+      </section>
+
+      <section>
+        <h2>2. 계정과 이용자 책임</h2>
+        <ul>
+          <li>정확한 계정 정보를 제공하고 본인 계정을 안전하게 관리해야 합니다.</li>
+          <li>타인의 정보를 도용하거나 서비스 운영을 방해하는 행위는 금지됩니다.</li>
+          <li>법령 위반, 악성 자동화, 부정 결제 시 이용이 제한될 수 있습니다.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>3. 온도와 구독</h2>
+        <ul>
+          <li>운세 및 AI 기능은 온도를 사용해 이용할 수 있습니다.</li>
+          <li>
+            구독 상품은 정기적으로 온도를 제공할 수 있으며, 실제 지급 조건은 상품 화면 기준입니다.
+          </li>
+          <li>
+            결제와 환불은 구매한 웹 또는 앱 스토어의 표시 조건과 관련 법령을 우선 적용합니다.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>4. 콘텐츠와 면책</h2>
+        <ul>
+          <li>서비스 결과는 참고 자료이며 특정 결과를 보장하지 않습니다.</li>
+          <li>서비스를 통해 얻은 정보로 인한 의사결정 책임은 이용자 본인에게 있습니다.</li>
+          <li>시스템 점검, 결제 정책 변경, 외부 서비스 장애로 일부 기능이 제한될 수 있습니다.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>5. 지원 및 계정 삭제</h2>
+        <p>
+          문의는 <a href="mailto:injooinjoo@gmail.com">injooinjoo@gmail.com</a>로 접수할 수
+          있습니다. 계정 삭제는 앱 내 [프로필 &gt; 계정 삭제]에서 직접 진행할 수 있으며, 절차는{' '}
+          <a href="/delete-account">계정 삭제 안내</a>에서 확인할 수 있습니다.
+        </p>
+      </section>
+    </LegalPage>
+  );
+}
