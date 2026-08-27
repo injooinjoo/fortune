@@ -4,43 +4,12 @@
  */
 
 :root {
-  --ondo-color-accent: #4b1635;
-  --ondo-color-accent-hover: #351025;
-  --ondo-color-accent-light: #eadccf;
-  --ondo-color-accent-secondary: #6d254b;
-  --ondo-color-accent-tertiary: #9a623d;
-  --ondo-color-background: #f7f2ea;
-  --ondo-color-background-secondary: #efe5d9;
-  --ondo-color-background-tertiary: #e6d9ca;
-  --ondo-color-surface: #fffaf4;
-  --ondo-color-surface-secondary: #f4ece2;
-  --ondo-color-surface-elevated: #fffdf9;
-  --ondo-color-text-primary: #191716;
-  --ondo-color-text-secondary: #625952;
-  --ondo-color-text-tertiary: #82766d;
-  --ondo-color-text-subtitle: #423b37;
-  --ondo-color-border: #d9ccbd;
-  --ondo-color-border-opaque: #cfc0af;
-  --ondo-color-divider: #d9ccbd;
-  --ondo-color-user-bubble: #eee3d7;
-  --ondo-color-cta-background: #4b1635;
-  --ondo-color-cta-foreground: #fffaf4;
-  --ondo-color-secondary-background: #fffaf4;
-  --ondo-color-secondary-foreground: #4b1635;
-  --ondo-color-overlay: rgba(25, 23, 22, 0.42);
-  --ondo-color-chip-blue: #dbe5e5;
-  --ondo-color-chip-green: #dce5d6;
-  --ondo-color-chip-peach: #efd9cd;
-  --ondo-color-chip-lavender: #e4dae8;
-  --ondo-color-chip-text: #292323;
-  --ondo-color-accent-pressed: #351025;
-  --ondo-color-accent-subtle: rgba(75, 22, 53, 0.08);
-  --ondo-color-celestial: #2f1328;
-  --ondo-color-celestial-text: #fff9f1;
-  --ondo-color-celestial-accent: #d9b47d;
-  --ondo-font-serif: 'MaruBuri', 'AppleMyungjo', 'Noto Serif KR', Georgia, serif;
-  --ondo-font-sans: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard',
-    'Noto Sans KR', 'Segoe UI', Roboto, sans-serif;
+  --ondo-color-celestial: #16181c;
+  --ondo-color-celestial-text: #f6f7f8;
+  --ondo-color-celestial-accent: #ffa98a;
+  --ondo-font-serif: 'MaruBuri', 'Noto Serif KR', 'AppleMyungjo', Georgia, serif;
+  --ondo-font-sans: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
+    'Pretendard', 'Noto Sans KR', 'Segoe UI', Roboto, sans-serif;
 }
 
 *,
@@ -101,10 +70,11 @@ textarea {
 }
 
 .ondo-card {
-  background: var(--ondo-color-surface);
+  padding: var(--ondo-spacing-card-padding-large);
   border: 1px solid var(--ondo-color-border);
   border-radius: var(--ondo-radius-card);
-  padding: var(--ondo-spacing-card-padding);
+  background: var(--ondo-color-surface);
+  box-shadow: 0 12px 34px rgba(20, 22, 26, .045);
 }
 
 .ondo-kicker {
@@ -214,23 +184,23 @@ textarea {
 
 .ondo-button {
   display: inline-flex;
+  min-height: 46px;
   align-items: center;
   justify-content: center;
   gap: var(--ondo-spacing-xs);
-  padding: 14px var(--ondo-spacing-lg);
+  padding: 12px 18px;
   border: none;
-  border-radius: var(--ondo-radius-full);
+  border-radius: 10px;
   background: var(--ondo-color-cta-background);
   color: var(--ondo-color-cta-foreground);
   font-size: var(--ondo-typography-label-large-font-size);
   font-weight: var(--ondo-typography-label-large-font-weight);
   cursor: pointer;
-  transition: opacity 200ms ease, transform 200ms ease;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
 }
 
 .ondo-button:hover:not(:disabled) {
-  opacity: 0.9;
-  transform: translateY(-2px);
+  background: var(--ondo-color-accent-hover);
 }
 
 .ondo-button:disabled {
@@ -271,11 +241,18 @@ textarea {
 
 .ondo-input {
   width: 100%;
+  min-height: 46px;
   padding: 12px var(--ondo-spacing-md);
-  border-radius: var(--ondo-radius-md);
+  border-radius: 10px;
   border: 1px solid var(--ondo-color-border);
-  background: var(--ondo-color-surface-secondary);
+  background: var(--ondo-color-surface);
   color: var(--ondo-color-text-primary);
+  box-shadow: inset 0 1px 0 rgba(20, 22, 26, .02);
+}
+
+.ondo-input:focus {
+  outline: 3px solid var(--ondo-color-accent-subtle);
+  border-color: var(--ondo-color-accent-primary);
 }
 
 .ondo-notice {
@@ -425,27 +402,27 @@ textarea {
   position: sticky;
   z-index: 50;
   top: 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--ondo-color-border) 78%, transparent);
-  background: color-mix(in srgb, var(--ondo-color-background) 92%, transparent);
-  backdrop-filter: blur(16px);
+  border-bottom: 1px solid color-mix(in srgb, var(--ondo-color-border) 88%, transparent);
+  background: color-mix(in srgb, var(--ondo-color-background) 94%, transparent);
+  backdrop-filter: blur(18px);
 }
 
 .ondo-site-nav {
   display: flex;
-  width: min(100% - 40px, 1200px);
-  min-height: 72px;
+  width: min(100% - 40px, 1120px);
+  min-height: 64px;
   align-items: center;
   justify-content: space-between;
-  gap: 32px;
+  gap: 24px;
   margin-inline: auto;
 }
 
 .ondo-site-logo {
   color: var(--ondo-color-text-primary);
   font-family: var(--ondo-font-serif);
-  font-size: 25px;
-  font-weight: 700;
-  letter-spacing: -0.04em;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.055em;
 }
 
 .ondo-desktop-nav,
@@ -453,23 +430,27 @@ textarea {
 .ondo-mobile-menu nav {
   display: flex;
   align-items: center;
-  gap: 26px;
+  gap: 4px;
 }
 
-.ondo-desktop-nav {
-  margin-left: auto;
-}
+.ondo-desktop-nav { margin-left: auto; }
 
 .ondo-desktop-nav a,
 .ondo-mobile-menu a {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  padding-inline: 13px;
+  border-radius: 8px;
   color: var(--ondo-color-text-secondary);
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 750;
 }
 
 .ondo-desktop-nav a:hover,
 .ondo-mobile-menu a:hover {
-  color: var(--ondo-color-accent);
+  background: var(--ondo-color-background-secondary);
+  color: var(--ondo-color-text-primary);
 }
 
 .ondo-login-link {
@@ -573,6 +554,149 @@ textarea {
   color: var(--ondo-color-text-tertiary);
   font-size: 11px;
   letter-spacing: 0.08em;
+}
+
+/* --- 리딩 탐색 / 결과 / 계정: daily-tool surfaces --- */
+
+.ondo-fortune-shell {
+  max-width: 920px;
+  gap: clamp(38px, 6vw, 68px);
+  padding-block: clamp(56px, 8vw, 96px);
+}
+
+.ondo-fortune-heading {
+  max-width: 650px;
+}
+
+.ondo-fortune-heading .ondo-h2 {
+  font-size: clamp(42px, 7vw, 70px);
+  letter-spacing: -.055em;
+}
+
+.ondo-fortune-guide {
+  gap: 20px;
+  padding: 24px 26px;
+  border-left: 3px solid var(--ondo-color-accent-primary);
+  background: var(--ondo-color-accent-light);
+}
+
+.ondo-fortune-group {
+  gap: 12px;
+}
+
+.ondo-fortune-list {
+  border-top: 1px solid var(--ondo-color-border);
+}
+
+.ondo-fortune-link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  min-height: 94px;
+  padding: 20px 4px;
+  border-bottom: 1px solid var(--ondo-color-border);
+  color: var(--ondo-color-text-primary);
+}
+
+.ondo-fortune-link h3 {
+  margin: 0;
+  font-family: var(--ondo-font-serif);
+  font-size: clamp(21px, 3vw, 28px);
+  letter-spacing: -.035em;
+}
+
+.ondo-fortune-link p {
+  max-width: 620px;
+  font-size: 14px;
+}
+
+.ondo-fortune-link-meta {
+  display: flex;
+  min-width: 110px;
+  justify-content: flex-end;
+  gap: 16px;
+  color: var(--ondo-color-text-tertiary);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.ondo-fortune-link:hover h3,
+.ondo-fortune-link:hover .ondo-fortune-link-meta {
+  color: var(--ondo-color-accent-primary);
+}
+
+.ondo-result-hero,
+.ondo-result-block,
+.ondo-result-conversation {
+  padding: clamp(24px, 5vw, 40px);
+  border-radius: 20px;
+}
+
+.ondo-result-hero {
+  border: 1px solid var(--ondo-color-celestial);
+  background: var(--ondo-color-celestial);
+  color: var(--ondo-color-celestial-text);
+}
+
+.ondo-result-hero .ondo-kicker,
+.ondo-result-hero .ondo-h1 {
+  color: var(--ondo-color-celestial-accent);
+}
+
+.ondo-result-hero .ondo-muted {
+  color: rgba(246, 247, 248, .68);
+}
+
+.ondo-result-block {
+  border: 1px solid var(--ondo-color-border);
+  background: var(--ondo-color-surface);
+  box-shadow: 0 12px 34px rgba(20, 22, 26, .04);
+}
+
+.ondo-result-conversation {
+  border: 1px solid color-mix(in srgb, var(--ondo-color-accent-primary) 25%, var(--ondo-color-border));
+  background: var(--ondo-color-accent-light);
+}
+
+.ondo-account-page {
+  max-width: 980px;
+}
+
+.ondo-account-summary > article:first-child {
+  border-color: var(--ondo-color-celestial);
+  background: var(--ondo-color-celestial);
+  color: var(--ondo-color-celestial-text);
+}
+
+.ondo-account-summary > article:first-child .ondo-kicker,
+.ondo-account-summary > article:first-child .ondo-account-balance,
+.ondo-account-summary > article:first-child .ondo-muted {
+  color: var(--ondo-color-celestial-text);
+}
+
+.ondo-account-summary > article:first-child .ondo-button {
+  background: var(--ondo-color-celestial-accent);
+  color: var(--ondo-color-celestial);
+}
+
+.ondo-history-item {
+  box-shadow: none;
+  transition: border-color 160ms ease;
+}
+
+.ondo-history-item:hover {
+  border-color: var(--ondo-color-accent-primary);
+}
+
+.ondo-payment-card {
+  min-height: 260px;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.ondo-payment-card:hover {
+  border-color: var(--ondo-color-accent-primary);
+  box-shadow: 0 18px 44px rgba(20, 22, 26, .07);
 }
 
 @media (max-width: 760px) {

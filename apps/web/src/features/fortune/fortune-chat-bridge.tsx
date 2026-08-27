@@ -29,7 +29,7 @@ export function FortuneChatBridge() {
 
   if (!pointer) return null;
   return (
-    <div className="ondo-card ondo-stack" style={{ gap: 'var(--ondo-spacing-sm)' }}>
+    <div className="ondo-result-conversation ondo-stack" style={{ gap: 'var(--ondo-spacing-sm)' }}>
       <p className="ondo-kicker">결과 다음 이야기</p>
       <h3 className="ondo-h3">캐릭터와 {pointer.title} 이야기를 이어가세요.</h3>
       <p className="ondo-muted">결과 원문은 URL에 넣지 않고, 내 계정에 저장된 요약만 대화 맥락으로 사용해요.</p>

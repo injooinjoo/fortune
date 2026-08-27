@@ -53,16 +53,15 @@ export const metadata: Metadata = {
 
 // themeColor 는 CSS 변수를 쓸 수 없는 자리라 토큰 SoT 에서 직접 읽는다.
 export const viewport: Viewport = {
-  colorScheme: 'dark',
-  themeColor: fortuneColors.dark.background,
+  colorScheme: 'light',
+  themeColor: fortuneColors.light.background,
 };
 
 /**
- * dark 전용 루트 레이아웃.
+ * 웹 전용 light 루트 레이아웃.
  *
- * `[data-theme]` 분기를 두지 않는다 — `createFortuneTheme('light')` 는
- * repo 전체에서 호출부가 0 이고, 웹만 라이트 팔레트를 들고 있으면
- * 앱과 색이 갈라진다.
+ * 앱의 dark 테마 기본값은 유지하고, 웹은 브라우저 읽기성과 반복 사용성을 위해
+ * design-tokens 의 light 팔레트를 명시적으로 소비한다.
  *
  * 헤더/푸터는 여기에만 둔다. 둘 다 세션을 읽지 않는 순수 컴포넌트라 페이지의
  * 정적 생성 여부를 바꾸지 않는다.

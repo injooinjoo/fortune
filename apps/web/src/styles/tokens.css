@@ -1,46 +1,46 @@
 /* AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY.
  *
- * Source: packages/design-tokens/src/index.ts (createFortuneTheme('dark'))
+ * Source: packages/design-tokens/src/index.ts (createFortuneTheme('light'))
  * Regenerate: pnpm sync:web-tokens
  *
  * 본 파일을 직접 수정하면 CI 가 fail. 토큰 변경은 design-tokens SoT 에서.
  */
 
 :root {
-  --ondo-color-accent: #F5F6FB;
-  --ondo-color-accent-hover: #D0D4E0;
-  --ondo-color-accent-light: rgba(255,255,255,0.07);
-  --ondo-color-accent-secondary: #8FB8FF;
-  --ondo-color-accent-tertiary: #E0A76B;
-  --ondo-color-background: #0B0B10;
-  --ondo-color-background-secondary: #1A1A1A;
-  --ondo-color-background-tertiary: #151821;
-  --ondo-color-surface: #1A1A1A;
-  --ondo-color-surface-secondary: #23232B;
-  --ondo-color-surface-elevated: #17171D;
-  --ondo-color-text-primary: #F5F6FB;
-  --ondo-color-text-secondary: #9198AA;
-  --ondo-color-text-tertiary: #9EA3B3;
-  --ondo-color-text-subtitle: #D0D4E0;
-  --ondo-color-border: rgba(255,255,255,0.08);
-  --ondo-color-border-opaque: #2C2C2E;
-  --ondo-color-divider: #2C2C2E;
-  --ondo-color-user-bubble: #2C2C2E;
-  --ondo-color-cta-background: #8B7BE8;
-  --ondo-color-cta-foreground: #F5F6FB;
-  --ondo-color-secondary-background: #23232B;
-  --ondo-color-secondary-foreground: #F5F6FB;
-  --ondo-color-success: #34C759;
-  --ondo-color-warning: #FFCC00;
-  --ondo-color-error: #FF3B30;
-  --ondo-color-overlay: rgba(0,0,0,0.6);
-  --ondo-color-chip-blue: #E7F1FF;
-  --ondo-color-chip-green: #C9FFDC;
-  --ondo-color-chip-peach: #FFE8D6;
-  --ondo-color-chip-lavender: #E8E0FF;
-  --ondo-color-chip-text: #122031;
-  --ondo-color-accent-pressed: #D0D4E0;
-  --ondo-color-accent-subtle: rgba(245,246,251,0.14);
+  --ondo-color-accent: #14161A;
+  --ondo-color-accent-hover: #C8401A;
+  --ondo-color-accent-light: #FFF3EE;
+  --ondo-color-accent-secondary: #C8401A;
+  --ondo-color-accent-tertiary: #8A2E12;
+  --ondo-color-background: #FAFAFB;
+  --ondo-color-background-secondary: #F4F5F7;
+  --ondo-color-background-tertiary: #ECEEF1;
+  --ondo-color-surface: #FFFFFF;
+  --ondo-color-surface-secondary: #F4F5F7;
+  --ondo-color-surface-elevated: #FFFFFF;
+  --ondo-color-text-primary: #14161A;
+  --ondo-color-text-secondary: #454A52;
+  --ondo-color-text-tertiary: #6E747E;
+  --ondo-color-text-subtitle: #2F3339;
+  --ondo-color-border: #E6E8EC;
+  --ondo-color-border-opaque: #D3D7DE;
+  --ondo-color-divider: #E6E8EC;
+  --ondo-color-user-bubble: #ECEEF1;
+  --ondo-color-cta-background: #C8401A;
+  --ondo-color-cta-foreground: #FFFFFF;
+  --ondo-color-secondary-background: #FFFFFF;
+  --ondo-color-secondary-foreground: #14161A;
+  --ondo-color-success: #248A3D;
+  --ondo-color-warning: #A86400;
+  --ondo-color-error: #C53131;
+  --ondo-color-overlay: rgba(20,22,26,0.42);
+  --ondo-color-chip-blue: #EAF1FA;
+  --ondo-color-chip-green: #E7F3EB;
+  --ondo-color-chip-peach: #FFF0EA;
+  --ondo-color-chip-lavender: #F0ECFA;
+  --ondo-color-chip-text: #20252B;
+  --ondo-color-accent-pressed: #9E3113;
+  --ondo-color-accent-subtle: rgba(200,64,26,0.09);
   --ondo-color-elemental-wood: #5FA66B;
   --ondo-color-elemental-fire: #E26464;
   --ondo-color-elemental-earth: #D4A857;

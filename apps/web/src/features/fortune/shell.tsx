@@ -21,8 +21,8 @@ export function FortunePageShell({
   children: ReactNode;
 }) {
   return (
-    <main className="ondo-shell ondo-stack">
-      <header className="ondo-stack" style={{ gap: 'var(--ondo-spacing-xs)' }}>
+    <main className="ondo-shell ondo-stack ondo-fortune-shell">
+      <header className="ondo-stack ondo-fortune-heading" style={{ gap: 'var(--ondo-spacing-xs)' }}>
         <p className="ondo-kicker">{kicker}</p>
         <h1 className="ondo-h2">{title}</h1>
         {description ? <p className="ondo-muted">{description}</p> : null}

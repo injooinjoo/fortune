@@ -26,7 +26,7 @@ export default function FortuneIndexPage() {
       kicker="운세"
       title="무엇을 볼까요?"
     >
-      <section aria-labelledby="fortune-guide-title" className="ondo-notice ondo-stack">
+      <section aria-labelledby="fortune-guide-title" className="ondo-fortune-guide ondo-stack">
         <div className="ondo-stack" style={{ gap: 'var(--ondo-spacing-xxs)' }}>
           <p className="ondo-kicker">고르는 기준</p>
           <h2 className="ondo-h3" id="fortune-guide-title">
@@ -49,11 +49,11 @@ export default function FortuneIndexPage() {
       {sections.map((section, index) => {
         const headingId = `fortune-group-${index}`;
         return (
-          <section aria-labelledby={headingId} className="ondo-stack" key={section.group}>
+          <section aria-labelledby={headingId} className="ondo-stack ondo-fortune-group" key={section.group}>
             <h2 className="ondo-h3" id={headingId}>
               {section.group}
             </h2>
-            <div className="ondo-grid-2">
+            <div className="ondo-fortune-list">
               {section.fortunes.map((fortune) => (
                 <FortuneLinkCard fortune={fortune} key={fortune.slug} />
               ))}
