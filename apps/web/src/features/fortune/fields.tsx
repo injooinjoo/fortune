@@ -364,9 +364,7 @@ export function BirthDateField({
         </select>
       </div>
       <input name={name} type="hidden" value={value} />
-      <p className="ondo-field-hint">
-        {restored ? '앞에서 입력한 정보를 불러왔어요.' : '전체 연도 중 1990년 근처에서 열려요.'}
-      </p>
+      {restored ? <p className="ondo-field-hint">앞에서 입력한 정보를 불러왔어요.</p> : null}
     </div>
   );
 }

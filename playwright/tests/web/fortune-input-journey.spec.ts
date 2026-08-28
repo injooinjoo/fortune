@@ -81,6 +81,7 @@ test.describe('운세 입력 여정', () => {
       const year = page.getByRole('combobox', { name: '출생 연도' });
       const month = page.getByRole('combobox', { name: '출생 월' });
       const day = page.getByRole('combobox', { name: '출생 일' });
+      await expect(page.getByText('전체 연도 중 1990년 근처에서 열려요.')).toHaveCount(0);
       await expect(year).toHaveText('연도');
       await year.click();
       const listbox = page.getByRole('listbox', { name: '출생 연도' });
