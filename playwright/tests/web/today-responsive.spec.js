@@ -36,6 +36,7 @@ test.describe('Ondo daily fortune responsive journey', () => {
     test(`uses a focused desktop form instead of stretching mobile controls at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height });
       await page.goto(TODAY_PATH);
+      await expect(page.getByRole('form', { name: '오늘의 운세 입력' })).toBeVisible();
 
       const metrics = await layoutMetrics(page);
       expect(metrics.columns.split(' ').length).toBe(2);
@@ -66,6 +67,7 @@ test.describe('Ondo daily fortune responsive journey', () => {
   test('keeps the mobile flow compact and free of horizontal overflow', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(TODAY_PATH);
+    await expect(page.getByRole('form', { name: '오늘의 운세 입력' })).toBeVisible();
 
     const metrics = await layoutMetrics(page);
     expect(metrics.columns.split(' ').length).toBe(1);
@@ -77,6 +79,7 @@ test.describe('Ondo daily fortune responsive journey', () => {
 
   test('lets people enter first and explains account connection only at the value boundary', async ({ page }) => {
     await page.goto(TODAY_PATH);
+    await expect(page.getByRole('form', { name: '오늘의 운세 입력' })).toBeVisible();
 
     const form = page.getByRole('form', { name: '오늘의 운세 입력' });
     await expect(form).toBeVisible();

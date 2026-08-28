@@ -7,7 +7,8 @@
  * 필수 필드 검증이 `!requestBody[field]` 라서 다음 5개가 **반드시 falsy 가 아니어야**
  * 한다 — age, gender, relationshipStatus, datingStyles, valueImportance.
  * 배열/객체는 비어 있어도 truthy 라서 통과하고(그때는 프롬프트가 "미지정" 으로
- * 처리한다), 그래서 화면에서 실제로 받는 필수 입력은 나이·성별·연애 상태 셋뿐이다.
+ * 처리한다), 그래서 화면에서 실제로 받는 필수 입력은 생년월일·성별·연애 상태 셋뿐이다.
+ * 생년월일은 클라이언트에서 만 나이로 계산해 기존 `age` 계약을 그대로 유지한다.
  *
  * `userId` 는 보내지 않는다. 서버가 Authorization JWT 에서 파생해서 캐시 키
  * (`love_<userId>_...`)와 차감에 쓴다 — 클라가 준 id 는 무시된다.
@@ -15,7 +16,8 @@
 
 import { useState, type FormEvent } from 'react';
 
-import { ChipSelect, NumberField, type ChipOption } from '@/features/fortune/fields';
+import { BirthDateField, ChipSelect, GenderChips, type ChipOption } from '@/features/fortune/fields';
+import { calculateAge } from '@/features/fortune/guest-profile';
 import { FailureNotice } from '@/features/fortune/result';
 import { runFortune, type FortuneFailureKind } from '@/features/fortune/runner';
 
@@ -31,11 +33,6 @@ const STATUS_OPTIONS: ChipOption[] = [
   { value: 'breakup', label: '이별 후' },
 ];
 
-/** 서버는 gender 를 프롬프트에 그대로 넣는다. 빈 값이면 400 이라 선택 필수. */
-const GENDER_OPTIONS: ChipOption[] = [
-  { value: 'female', label: '여성' },
-  { value: 'male', label: '남성' },
-];
 
 /** `valueImportance` 는 `{ 항목: 1~5 }`. 고른 하나만 5점으로 강조해 보낸다. */
 const VALUE_OPTIONS: ChipOption[] = [
@@ -54,14 +51,14 @@ type State =
   | { kind: 'failed'; failure: FortuneFailureKind; message: string };
 
 export function LoveForm() {
-  const [age, setAge] = useState('');
+  const [birthDate, setBirthDate] = useState('');
   const [gender, setGender] = useState('');
   const [status, setStatus] = useState('single');
   const [valued, setValued] = useState('');
   const [state, setState] = useState<State>({ kind: 'idle' });
 
-  const ageNumber = Number(age);
-  const ready = Number.isFinite(ageNumber) && ageNumber > 0 && gender !== '';
+  const age = calculateAge(birthDate);
+  const ready = age !== null && age > 0 && gender !== '';
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -69,7 +66,7 @@ export function LoveForm() {
     setState({ kind: 'loading' });
 
     const result = await runFortune<LoveEnvelope>('love', {
-      age: ageNumber,
+      age,
       gender,
       relationshipStatus: status,
       // 아래 둘은 서버 필수 필드지만 빈 값도 통과한다 (프롬프트에서 "미지정" 처리).
@@ -98,18 +95,9 @@ export function LoveForm() {
   return (
     <div className="ondo-stack">
       <form className="ondo-stack" onSubmit={handleSubmit}>
-        <NumberField
-          id="love-age"
-          label="나이"
-          max={120}
-          min={1}
-          onChange={setAge}
-          placeholder="예: 28"
-          required
-          value={age}
-        />
+        <BirthDateField id="love-birth-date" onChange={setBirthDate} value={birthDate} />
 
-        <ChipSelect label="성별" onChange={setGender} options={GENDER_OPTIONS} value={gender} />
+        <GenderChips label="성별" onChange={setGender} required value={gender} />
 
         <ChipSelect
           label="지금 연애 상태"

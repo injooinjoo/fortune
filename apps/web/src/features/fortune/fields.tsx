@@ -12,7 +12,16 @@
  * 호출부가 Number(...) 로 바꾸면 되기 때문이다.
  */
 
-import type { ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
+
+import {
+  createBirthYearOptions,
+  daysInMonth,
+  joinBirthDate,
+  readGuestFortuneProfile,
+  rememberGuestFortuneProfile,
+  splitBirthDate,
+} from './guest-profile';
 
 /** `apps/mobile-rn/src/screens/profile-edit-screen.tsx` 의 슬롯과 동일한 문자열. */
 export const BIRTH_TIME_SLOTS = [
@@ -116,6 +125,7 @@ export function BirthDateField({
   name = 'birthDate',
   label = '생년월일',
   required = true,
+  remember = true,
   value,
   onChange,
 }: {
@@ -123,22 +133,98 @@ export function BirthDateField({
   name?: string;
   label?: string;
   required?: boolean;
+  remember?: boolean;
   value: string;
   onChange: (value: string) => void;
 }) {
+  const initial = splitBirthDate(value);
+  const [year, setYear] = useState(initial.year);
+  const [month, setMonth] = useState(initial.month);
+  const [day, setDay] = useState(initial.day);
+  const [restored, setRestored] = useState(false);
+  const years = useMemo(() => createBirthYearOptions(), []);
+  const dayCount = year && month ? daysInMonth(Number(year), Number(month)) : 31;
+
+  useEffect(() => {
+    if (!remember || value) return;
+    const remembered = readGuestFortuneProfile().birthDate;
+    if (!remembered) return;
+    const parts = splitBirthDate(remembered);
+    if (!parts.year) return;
+    setYear(parts.year);
+    setMonth(parts.month);
+    setDay(parts.day);
+    setRestored(true);
+    onChange(remembered);
+  }, [onChange, remember, value]);
+
+  function updateParts(nextYear: string, nextMonth: string, nextDay: string) {
+    let safeDay = nextDay;
+    if (nextYear && nextMonth && nextDay) {
+      safeDay = String(Math.min(Number(nextDay), daysInMonth(Number(nextYear), Number(nextMonth))));
+    }
+    setYear(nextYear);
+    setMonth(nextMonth);
+    setDay(safeDay);
+    setRestored(false);
+    const next = joinBirthDate(nextYear, nextMonth, safeDay);
+    onChange(next);
+    if (remember) rememberGuestFortuneProfile({ birthDate: next || null });
+  }
+
   return (
-    <div>
+    <div className="ondo-birth-date-field">
       <FieldLabel htmlFor={id} label={label} required={required} />
-      <input
-        className="ondo-input"
-        id={id}
-        max={new Date().toISOString().slice(0, 10)}
-        name={name}
-        onChange={(event) => onChange(event.target.value)}
-        required={required}
-        type="date"
-        value={value}
-      />
+      <div className="ondo-date-selects">
+        <select
+          aria-label="출생 연도"
+          className="ondo-input ondo-date-select"
+          id={id}
+          onChange={(event) => updateParts(event.target.value, month, day)}
+          required={required}
+          value={year}
+        >
+          <option value="">연도</option>
+          <optgroup label="1990년부터">
+            {years.filter((option) => option >= 1990).map((option) => (
+              <option key={option} value={option}>{option}년</option>
+            ))}
+          </optgroup>
+          <optgroup label="이전 연도">
+            {years.filter((option) => option < 1990).map((option) => (
+              <option key={option} value={option}>{option}년</option>
+            ))}
+          </optgroup>
+        </select>
+        <select
+          aria-label="출생 월"
+          className="ondo-input ondo-date-select"
+          onChange={(event) => updateParts(year, event.target.value, day)}
+          required={required}
+          value={month}
+        >
+          <option value="">월</option>
+          {Array.from({ length: 12 }, (_, index) => index + 1).map((option) => (
+            <option key={option} value={option}>{option}월</option>
+          ))}
+        </select>
+        <select
+          aria-label="출생 일"
+          className="ondo-input ondo-date-select"
+          onChange={(event) => updateParts(year, month, event.target.value)}
+          required={required}
+          value={day}
+        >
+          <option value="">일</option>
+          {Array.from({ length: dayCount }, (_, index) => index + 1).map((option) => (
+            <option key={option} value={option}>{option}일</option>
+          ))}
+        </select>
+      </div>
+      <input name={name} type="hidden" value={value} />
+      <p className="ondo-field-hint">
+        {restored ? '앞에서 입력한 정보를 불러왔어요.' : '1990년부터 바로 고를 수 있어요.'}
+      </p>
     </div>
   );
 }
@@ -153,19 +239,56 @@ export function BirthTimeChips({
   value: string;
   onChange: (value: string) => void;
 }) {
-  return <ChipSelect label={label} onChange={onChange} options={BIRTH_TIME_OPTIONS} value={value} />;
+  useEffect(() => {
+    if (value) return;
+    const remembered = readGuestFortuneProfile().birthTime;
+    if (remembered) onChange(remembered);
+  }, [onChange, value]);
+
+  return (
+    <ChipSelect
+      label={label}
+      onChange={(next) => {
+        onChange(next);
+        rememberGuestFortuneProfile({ birthTime: next || null });
+      }}
+      options={BIRTH_TIME_OPTIONS}
+      value={value}
+    />
+  );
 }
 
 export function GenderChips({
   label = '성별 (선택)',
+  required = false,
   value,
   onChange,
 }: {
   label?: string;
+  required?: boolean;
   value: string;
   onChange: (value: string) => void;
 }) {
-  return <ChipSelect label={label} onChange={onChange} options={GENDER_OPTIONS} value={value} />;
+  useEffect(() => {
+    if (value) return;
+    const remembered = readGuestFortuneProfile().gender;
+    if (remembered) onChange(remembered);
+  }, [onChange, value]);
+
+  const options = required ? GENDER_OPTIONS.filter((option) => option.value !== '') : GENDER_OPTIONS;
+  return (
+    <ChipSelect
+      label={label}
+      onChange={(next) => {
+        onChange(next);
+        rememberGuestFortuneProfile({
+          gender: next === 'female' || next === 'male' ? next : null,
+        });
+      }}
+      options={options}
+      value={value}
+    />
+  );
 }
 
 export function TextField({

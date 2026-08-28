@@ -224,7 +224,7 @@ textarea {
 
 .ondo-daily-form {
   display: grid;
-  gap: 24px;
+  gap: 19px;
 }
 
 .ondo-daily-field .ondo-label {
@@ -370,6 +370,7 @@ textarea {
 }
 
 .ondo-chip {
+  min-height: 40px;
   padding: var(--ondo-spacing-sm) var(--ondo-spacing-button-gap);
   border-radius: var(--ondo-radius-chip);
   border: 1px solid var(--ondo-color-border);
@@ -408,6 +409,38 @@ textarea {
 .ondo-input:focus {
   outline: 3px solid var(--ondo-color-accent-subtle);
   border-color: var(--ondo-color-accent-primary);
+}
+
+.ondo-birth-date-field {
+  min-width: 0;
+}
+
+.ondo-date-selects {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ondo-date-select {
+  appearance: none;
+  padding-right: 34px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ondo-color-text-tertiary) 50%),
+    linear-gradient(135deg, var(--ondo-color-text-tertiary) 50%, transparent 50%);
+  background-position: calc(100% - 16px) 50%, calc(100% - 11px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  font: inherit;
+}
+
+.ondo-date-select:invalid {
+  color: var(--ondo-color-text-tertiary);
+}
+
+.ondo-field-hint {
+  margin: 6px 0 0;
+  color: var(--ondo-color-text-tertiary);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .ondo-notice {
@@ -725,7 +758,8 @@ textarea {
 
 .ondo-fortune-heading .ondo-h2 {
   font-size: clamp(42px, 7vw, 70px);
-  letter-spacing: -.055em;
+  line-height: 1.12;
+  letter-spacing: -.045em;
 }
 
 .ondo-fortune-guide {
@@ -855,6 +889,12 @@ textarea {
 }
 
 @media (max-width: 760px) {
+  .ondo-chip,
+  .ondo-daily-time-field .ondo-chip,
+  .ondo-daily-gender-field .ondo-chip {
+    min-height: 44px;
+  }
+
   .ondo-account-summary,
   .ondo-payment-grid {
     grid-template-columns: minmax(0, 1fr);
