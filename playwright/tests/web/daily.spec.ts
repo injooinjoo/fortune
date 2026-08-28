@@ -89,7 +89,9 @@ test.describe('운세 탐색과 일일 운세', () => {
     await expect(page.getByRole('heading', { name: '기본 정보를 알려주세요' })).toBeVisible();
     await expect(page.getByText('생년월일만 필수이며 나머지는 건너뛸 수 있어요.')).toBeVisible();
     await expect(page.getByText(/로그인 없이 바로 확인해요/)).toBeVisible();
-    await expect(page.getByRole('textbox', { name: '생년월일' })).toBeVisible();
+    await expect(page.getByRole('combobox', { name: '출생 연도' })).toBeVisible();
+    await expect(page.getByRole('combobox', { name: '출생 월' })).toBeVisible();
+    await expect(page.getByRole('combobox', { name: '출생 일' })).toBeVisible();
     await expect(page.getByRole('button', { name: '오늘의 운세 보기' })).toBeDisabled();
   });
 

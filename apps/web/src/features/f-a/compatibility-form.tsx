@@ -40,6 +40,7 @@ function PersonFields({
   idPrefix,
   name,
   birthDate,
+  rememberBirthDate,
   onNameChange,
   onBirthDateChange,
 }: {
@@ -47,6 +48,7 @@ function PersonFields({
   idPrefix: string;
   name: string;
   birthDate: string;
+  rememberBirthDate: boolean;
   onNameChange: (value: string) => void;
   onBirthDateChange: (value: string) => void;
 }) {
@@ -66,6 +68,7 @@ function PersonFields({
         id={`${idPrefix}-birth-date`}
         name={`${idPrefix}BirthDate`}
         onChange={onBirthDateChange}
+        remember={rememberBirthDate}
         value={birthDate}
       />
     </div>
@@ -125,6 +128,7 @@ export function CompatibilityForm() {
           name={firstName}
           onBirthDateChange={setFirstBirthDate}
           onNameChange={setFirstName}
+          rememberBirthDate
         />
 
         <PersonFields
@@ -134,6 +138,7 @@ export function CompatibilityForm() {
           name={secondName}
           onBirthDateChange={setSecondBirthDate}
           onNameChange={setSecondName}
+          rememberBirthDate={false}
         />
 
         <button className="ondo-button" disabled={state.kind === 'loading' || !ready} type="submit">
