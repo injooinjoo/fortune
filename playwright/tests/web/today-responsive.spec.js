@@ -88,4 +88,61 @@ test.describe('Ondo daily fortune responsive journey', () => {
     await expect(form.getByRole('link', { name: '개인정보처리방침' })).toHaveAttribute('href', '/privacy');
     await expect(form.getByRole('link', { name: /로그인/ })).toHaveCount(0);
   });
+
+  for (const [width, height, desktop] of [[1280, 800, true], [390, 844, false]]) {
+    test(`expands the result into a ${desktop ? 'desktop-wide' : 'mobile-stacked'} reading at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height });
+      await page.goto('/');
+      const layout = page.locator('main').first();
+      await layout.evaluate((element) => {
+        element.setAttribute('class', 'ondo-shell ondo-daily-page');
+        element.setAttribute('data-testid', 'daily-layout');
+        element.innerHTML = `
+          <div class="ondo-daily-layout">
+            <section class="ondo-daily-context" data-testid="daily-context"></section>
+            <section class="ondo-card ondo-daily-form-panel" data-testid="daily-form-panel">
+              <section class="ondo-daily-result">
+                <div class="ondo-result-hero ondo-stack"><p class="ondo-kicker">오늘의 운세</p><p class="ondo-h1">82점</p><p>오늘은 우선순위를 정하면 흐름이 안정적으로 이어져요.</p><p class="ondo-muted">상위 18%</p></div>
+                <div class="ondo-daily-result-categories"><div></div><div></div><div></div></div>
+                <div class="ondo-daily-result-body"><div></div><div></div></div>
+              </section>
+            </section>
+          </div>`;
+      });
+
+      const metrics = await layout.evaluate((element) => {
+        const grid = element.querySelector('.ondo-daily-layout');
+        const panel = element.querySelector('[data-testid="daily-form-panel"]');
+        const categories = element.querySelector('.ondo-daily-result-categories');
+        const body = element.querySelector('.ondo-daily-result-body');
+        const hero = element.querySelector('.ondo-result-hero');
+        return {
+          columns: getComputedStyle(grid).gridTemplateColumns.split(' ').length,
+          panelWidth: panel.getBoundingClientRect().width,
+          categoryColumns: getComputedStyle(categories).gridTemplateColumns.split(' ').length,
+          bodyColumns: getComputedStyle(body).gridTemplateColumns.split(' ').length,
+          heroDisplay: getComputedStyle(hero).display,
+          heroColumns: getComputedStyle(hero).gridTemplateColumns.split(' ').length,
+          clientWidth: document.documentElement.clientWidth,
+          scrollWidth: document.documentElement.scrollWidth,
+        };
+      });
+
+      expect(metrics.columns).toBe(1);
+      if (desktop) {
+        expect(metrics.panelWidth).toBeGreaterThanOrEqual(1120);
+      } else {
+        expect(metrics.panelWidth).toBe(358);
+      }
+      expect(metrics.categoryColumns).toBe(desktop ? 3 : 1);
+      expect(metrics.bodyColumns).toBe(desktop ? 2 : 1);
+      if (desktop) {
+        expect(metrics.heroDisplay).toBe('grid');
+        expect(metrics.heroColumns).toBe(2);
+      } else {
+        expect(metrics.heroDisplay).toBe('flex');
+      }
+      expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.clientWidth);
+    });
+  }
 });

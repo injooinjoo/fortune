@@ -436,6 +436,57 @@ textarea {
   color: var(--ondo-color-text-tertiary);
 }
 
+.ondo-year-picker {
+  position: relative;
+  min-width: 0;
+}
+
+.ondo-year-trigger {
+  width: 100%;
+  text-align: left;
+}
+
+.ondo-year-listbox {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 8px);
+  left: 0;
+  display: grid;
+  width: min(260px, calc(100vw - 40px));
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 8px;
+  border: 1px solid var(--ondo-color-border);
+  border-radius: 14px;
+  background: var(--ondo-color-surface);
+  box-shadow: 0 20px 54px rgba(20, 22, 26, .16);
+  overscroll-behavior: contain;
+}
+
+.ondo-year-option {
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ondo-color-text-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ondo-year-option:hover,
+.ondo-year-option:focus-visible {
+  outline: 0;
+  background: var(--ondo-color-accent-light);
+}
+
+.ondo-year-option[aria-selected="true"] {
+  background: var(--ondo-color-cta-background);
+  color: var(--ondo-color-cta-foreground);
+  font-weight: 800;
+}
+
 .ondo-field-hint {
   margin: 6px 0 0;
   color: var(--ondo-color-text-tertiary);
@@ -848,6 +899,90 @@ textarea {
   background: var(--ondo-color-accent-light);
 }
 
+.ondo-daily-layout:has(.ondo-daily-result) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.ondo-daily-layout:has(.ondo-daily-result) .ondo-daily-context,
+.ondo-daily-form-panel:has(.ondo-daily-result) > .ondo-daily-form-heading,
+.ondo-daily-form-panel:has(.ondo-daily-result) .ondo-daily-form {
+  display: none;
+}
+
+.ondo-daily-form-panel:has(.ondo-daily-result) {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.ondo-daily-result {
+  display: grid;
+  gap: clamp(24px, 3vw, 36px);
+  width: 100%;
+}
+
+.ondo-daily-result-toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ondo-daily-result-toolbar .ondo-button {
+  min-height: 44px;
+}
+
+.ondo-daily-result .ondo-result-hero {
+  display: grid;
+  min-height: 250px;
+  grid-template-columns: minmax(180px, .55fr) minmax(0, 1.45fr);
+  grid-template-areas:
+    "kicker summary"
+    "score summary"
+    "score note";
+  grid-template-rows: auto 1fr auto;
+  align-items: center;
+  column-gap: clamp(36px, 6vw, 84px);
+  padding: clamp(36px, 5vw, 56px);
+}
+
+.ondo-daily-result .ondo-result-hero > .ondo-kicker {
+  grid-area: kicker;
+  align-self: end;
+}
+
+.ondo-daily-result .ondo-result-hero > .ondo-h1 {
+  grid-area: score;
+  align-self: start;
+  font-size: clamp(64px, 8vw, 104px);
+  line-height: .95;
+}
+
+.ondo-daily-result .ondo-result-hero > p:not(.ondo-kicker):not(.ondo-h1):not(.ondo-muted) {
+  grid-area: summary;
+  max-width: 760px;
+  font-size: clamp(20px, 2.2vw, 27px);
+  line-height: 1.65;
+}
+
+.ondo-daily-result .ondo-result-hero > .ondo-muted {
+  grid-area: note;
+  align-self: start;
+}
+
+.ondo-daily-result-categories {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.ondo-daily-result-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr);
+  gap: 18px;
+  align-items: start;
+}
+
 .ondo-account-page {
   max-width: 980px;
 }
@@ -893,6 +1028,32 @@ textarea {
   .ondo-daily-time-field .ondo-chip,
   .ondo-daily-gender-field .ondo-chip {
     min-height: 44px;
+  }
+
+  .ondo-year-option {
+    min-height: 44px;
+  }
+
+  .ondo-daily-result-categories,
+  .ondo-daily-result-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ondo-daily-result .ondo-result-hero {
+    display: flex;
+    min-height: auto;
+    gap: var(--ondo-spacing-xs);
+    padding: 28px;
+  }
+
+  .ondo-daily-result .ondo-result-hero > .ondo-h1 {
+    font-size: clamp(52px, 17vw, 68px);
+    line-height: 1;
+  }
+
+  .ondo-daily-result .ondo-result-hero > p:not(.ondo-kicker):not(.ondo-h1):not(.ondo-muted) {
+    font-size: 18px;
+    line-height: 1.65;
   }
 
   .ondo-account-summary,

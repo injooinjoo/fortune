@@ -25,13 +25,26 @@ function categoryText(fortune: DailyFortune, key: DailyCategoryKey): string | un
   return advice.detail ?? advice.description ?? advice.idiom;
 }
 
-export function DailyResult({ fortune, cached }: { fortune: DailyFortune; cached: boolean }) {
+export function DailyResult({
+  fortune,
+  cached,
+  onReset,
+}: {
+  fortune: DailyFortune;
+  cached: boolean;
+  onReset: () => void;
+}) {
   const luckyItems: KeyValuePair[] = Object.entries(fortune.lucky_items ?? {}).map(
     ([key, value]) => ({ label: LUCKY_ITEM_LABELS[key] ?? key, value }),
   );
 
   return (
-    <section aria-label="오늘의 운세 결과" className="ondo-stack">
+    <section aria-label="오늘의 운세 결과" className="ondo-daily-result">
+      <div className="ondo-daily-result-toolbar">
+        <button className="ondo-button ondo-button--secondary" onClick={onReset} type="button">
+          정보 다시 입력
+        </button>
+      </div>
       <ScoreHeadline
         kicker={`오늘의 운세${cached ? ' · 저장된 결과' : ''}`}
         note={
@@ -44,7 +57,7 @@ export function DailyResult({ fortune, cached }: { fortune: DailyFortune; cached
       />
 
       {fortune.categories ? (
-        <div className="ondo-grid-2">
+        <div className="ondo-daily-result-categories">
           {CATEGORY_ORDER.map((key) => (
             <ScoreSection
               key={key}
@@ -56,19 +69,22 @@ export function DailyResult({ fortune, cached }: { fortune: DailyFortune; cached
         </div>
       ) : null}
 
-      <TextSection label="조언" text={fortune.advice} />
-
-      <TextSection label="주의" text={fortune.caution} />
-
-      <KeyValueGrid label="행운 요소" pairs={luckyItems} />
-
-      <CardList
-        items={fortune.personalActions?.map((action) => ({
-          title: action.title,
-          description: action.why,
-        }))}
-        label="오늘 해볼 것"
-      />
+      <div className="ondo-daily-result-body">
+        <div className="ondo-stack">
+          <TextSection label="조언" text={fortune.advice} />
+          <TextSection label="주의" text={fortune.caution} />
+        </div>
+        <div className="ondo-stack">
+          <KeyValueGrid label="행운 요소" pairs={luckyItems} />
+          <CardList
+            items={fortune.personalActions?.map((action) => ({
+              title: action.title,
+              description: action.why,
+            }))}
+            label="오늘 해볼 것"
+          />
+        </div>
+      </div>
 
       <section aria-labelledby="next-reading-title" className="ondo-card ondo-stack">
         <div className="ondo-stack" style={{ gap: 'var(--ondo-spacing-xxs)' }}>

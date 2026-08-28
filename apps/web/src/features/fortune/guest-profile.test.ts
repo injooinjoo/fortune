@@ -9,12 +9,11 @@ import {
   splitBirthDate,
 } from './guest-profile.ts';
 
-test('연도 선택은 1990에서 시작해 현재까지 보여준 뒤 이전 연도로 이어진다', () => {
+test('연도 선택은 전체 범위를 오름차순으로 유지하고 1990 포커스를 포함한다', () => {
   const years = createBirthYearOptions(2026);
-  assert.deepEqual(years.slice(0, 4), [1990, 1991, 1992, 1993]);
-  assert.equal(years[36], 2026);
-  assert.equal(years[37], 1989);
-  assert.equal(years.at(-1), 1900);
+  assert.deepEqual(years.slice(0, 4), [1900, 1901, 1902, 1903]);
+  assert.equal(years[90], 1990);
+  assert.equal(years.at(-1), 2026);
 });
 
 test('월별 일수와 윤년을 반영해 유효한 생년월일만 만든다', () => {

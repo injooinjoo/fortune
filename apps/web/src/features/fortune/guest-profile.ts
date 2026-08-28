@@ -12,18 +12,12 @@ type GuestFortuneProfilePatch = {
 
 const GUEST_PROFILE_KEY = 'ondo:guest-fortune-profile:v1';
 const MIN_BIRTH_YEAR = 1900;
-const PREFERRED_START_YEAR = 1990;
 
 export function createBirthYearOptions(currentYear = new Date().getFullYear()): number[] {
-  const recent = Array.from(
-    { length: Math.max(0, currentYear - PREFERRED_START_YEAR + 1) },
-    (_, index) => PREFERRED_START_YEAR + index,
+  return Array.from(
+    { length: Math.max(0, currentYear - MIN_BIRTH_YEAR + 1) },
+    (_, index) => MIN_BIRTH_YEAR + index,
   );
-  const earlier = Array.from(
-    { length: PREFERRED_START_YEAR - MIN_BIRTH_YEAR },
-    (_, index) => PREFERRED_START_YEAR - 1 - index,
-  );
-  return [...recent, ...earlier];
 }
 
 export function daysInMonth(year: number, month: number): number {

@@ -54,33 +54,48 @@ test.describe('운세 입력 여정', () => {
     });
   }
 
-  test('생년월일은 1990 기준 연도·월·일 선택기로 입력한다', async ({ page }) => {
-    test.skip(!runsDeployedJourney, '배포된 한글 경로에서 실행하는 여정 테스트입니다.');
-    await page.goto('/운세/오늘');
+  for (const viewport of VIEWPORTS) {
+    test(`${viewport.name} 연도는 전체 범위를 제공하고 첫 오픈에서 1990을 중앙에 둔다`, async ({ page }) => {
+      test.skip(!runsDeployedJourney, '배포된 한글 경로에서 실행하는 여정 테스트입니다.');
+      await page.setViewportSize(viewport);
+      await page.goto('/운세/오늘');
 
-    await expect(page.locator('input[type="date"]')).toHaveCount(0);
-    const year = page.getByRole('combobox', { name: '출생 연도' });
-    const month = page.getByRole('combobox', { name: '출생 월' });
-    const day = page.getByRole('combobox', { name: '출생 일' });
-    await expect(year.locator('option').nth(1)).toHaveText('1990년');
+      await expect(page.locator('input[type="date"]')).toHaveCount(0);
+      const year = page.getByRole('combobox', { name: '출생 연도' });
+      const month = page.getByRole('combobox', { name: '출생 월' });
+      const day = page.getByRole('combobox', { name: '출생 일' });
+      await expect(year).toHaveText('연도');
+      await year.click();
+      const listbox = page.getByRole('listbox', { name: '출생 연도' });
+      await expect(listbox).toBeVisible();
+      await expect(listbox.getByRole('option').first()).toHaveText('1900년');
+      await expect(listbox.getByRole('option').last()).toContainText('년');
+      await expect.poll(async () => {
+        const listboxBox = await listbox.boundingBox();
+        const preferredBox = await listbox.getByRole('option', { name: '1990년' }).boundingBox();
+        if (!listboxBox || !preferredBox) return Number.POSITIVE_INFINITY;
+        return Math.abs((preferredBox.y + preferredBox.height / 2) - (listboxBox.y + listboxBox.height / 2));
+      }).toBeLessThan(viewport.name === 'mobile' ? 44 : 42);
 
-    await year.selectOption('1990');
-    await month.selectOption('2');
-    await day.selectOption('28');
-    await expect(page.locator('input[name="birthDate"]')).toHaveValue('1990-02-28');
-  });
+      await listbox.getByRole('option', { name: '1990년' }).click();
+      await month.selectOption('2');
+      await day.selectOption('28');
+      await expect(page.locator('input[name="birthDate"]')).toHaveValue('1990-02-28');
+    });
+  }
 
   test('입력한 생년월일과 성별을 연애운에서 다시 묻지 않는다', async ({ page }) => {
     test.skip(!runsDeployedJourney, '배포된 한글 경로에서 실행하는 여정 테스트입니다.');
     await page.goto('/운세/오늘');
-    await page.getByRole('combobox', { name: '출생 연도' }).selectOption('1990');
+    await page.getByRole('combobox', { name: '출생 연도' }).click();
+    await page.getByRole('listbox', { name: '출생 연도' }).getByRole('option', { name: '1990년' }).click();
     await page.getByRole('combobox', { name: '출생 월' }).selectOption('2');
     await page.getByRole('combobox', { name: '출생 일' }).selectOption('28');
     await page.getByRole('button', { name: '여성' }).click();
 
     await page.goto('/운세/연애');
     await expect(page.getByRole('spinbutton', { name: '나이' })).toHaveCount(0);
-    await expect(page.getByRole('combobox', { name: '출생 연도' })).toHaveValue('1990');
+    await expect(page.getByRole('combobox', { name: '출생 연도' })).toHaveText('1990년');
     await expect(page.getByRole('combobox', { name: '출생 월' })).toHaveValue('2');
     await expect(page.getByRole('combobox', { name: '출생 일' })).toHaveValue('28');
     await expect(page.getByRole('button', { name: '여성' })).toHaveAttribute('aria-pressed', 'true');
