@@ -16,6 +16,7 @@ import type { ReactNode } from 'react';
 
 import type { FortuneFailureKind } from './runner';
 import { FortuneChatBridge } from './fortune-chat-bridge';
+import { parseStructuredResultText } from './result-format';
 
 type MaybeText = string | null | undefined;
 
@@ -95,6 +96,7 @@ export function ScoreSection({
   unit?: string;
 }) {
   const bodyText = cleanText(text);
+  const structuredBody = bodyText ? parseStructuredResultText(bodyText) : null;
   if (!isScore(score) && !bodyText) return null;
 
   return (
@@ -106,7 +108,25 @@ export function ScoreSection({
           {unit}
         </p>
       ) : null}
-      {bodyText ? <p className="ondo-muted">{bodyText}</p> : null}
+      {structuredBody ? (
+        <div className="ondo-result-copy ondo-muted">
+          {structuredBody.map((block, index) => (
+            <div className="ondo-result-copy-block" key={`${index}-${block.title ?? block.paragraphs[0]}`}>
+              {block.title ? <p className="ondo-result-copy-title">{block.title}</p> : null}
+              {block.paragraphs.map((paragraph, paragraphIndex) => (
+                <p key={`${paragraphIndex}-${paragraph}`}>{paragraph}</p>
+              ))}
+              {block.items.length > 0 ? (
+                <ul className="ondo-result-copy-list">
+                  {block.items.map((item, itemIndex) => (
+                    <li key={`${itemIndex}-${item}`}>{item}</li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      ) : bodyText ? <p className="ondo-muted">{bodyText}</p> : null}
     </Card>
   );
 }

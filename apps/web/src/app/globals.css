@@ -947,6 +947,28 @@ textarea {
   box-shadow: 0 12px 34px rgba(20, 22, 26, .04);
 }
 
+.ondo-result-copy {
+  display: grid;
+  gap: var(--ondo-spacing-sm);
+}
+
+.ondo-result-copy-block {
+  display: grid;
+  gap: var(--ondo-spacing-xxs);
+}
+
+.ondo-result-copy-title {
+  color: var(--ondo-color-text-primary);
+  font-weight: 700;
+}
+
+.ondo-result-copy-list {
+  display: grid;
+  gap: var(--ondo-spacing-xxs);
+  margin: 0;
+  padding-left: 1.25em;
+}
+
 .ondo-result-conversation {
   border: 1px solid color-mix(in srgb, var(--ondo-color-accent-primary) 25%, var(--ondo-color-border));
   background: var(--ondo-color-accent-light);
