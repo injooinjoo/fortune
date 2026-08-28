@@ -97,7 +97,13 @@ export function DailyForm() {
         <FailureNotice kind={state.failure} loginHref={LOGIN_HREF} message={state.message} />
       ) : null}
 
-      {state.kind === 'done' ? <DailyResult cached={state.cached} fortune={state.fortune} /> : null}
+      {state.kind === 'done' ? (
+        <DailyResult
+          cached={state.cached}
+          fortune={state.fortune}
+          onReset={() => setState({ kind: 'idle' })}
+        />
+      ) : null}
     </div>
   );
 }

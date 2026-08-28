@@ -12,7 +12,7 @@
  * 호출부가 Number(...) 로 바꾸면 되기 때문이다.
  */
 
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 
 import {
   createBirthYearOptions,
@@ -120,6 +120,122 @@ export function ChipSelect({
   );
 }
 
+const PREFERRED_BIRTH_YEAR = 1990;
+
+function YearPicker({
+  id,
+  value,
+  years,
+  onChange,
+}: {
+  id: string;
+  value: string;
+  years: ReadonlyArray<number>;
+  onChange: (value: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const preferredRef = useRef<HTMLButtonElement>(null);
+  const selectedRef = useRef<HTMLButtonElement>(null);
+  const listId = `${id}-year-listbox`;
+
+  useEffect(() => {
+    if (!open) return;
+    const frame = requestAnimationFrame(() => {
+      const list = listRef.current;
+      const target = selectedRef.current ?? preferredRef.current;
+      if (!list || !target) return;
+      list.scrollTop = target.offsetTop - list.clientHeight / 2 + target.offsetHeight / 2;
+      target.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [open, value]);
+
+  useEffect(() => {
+    if (!open) return;
+    function closeOutside(event: PointerEvent) {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    }
+    document.addEventListener('pointerdown', closeOutside);
+    return () => document.removeEventListener('pointerdown', closeOutside);
+  }, [open]);
+
+  function selectYear(next: number) {
+    onChange(String(next));
+    setOpen(false);
+    requestAnimationFrame(() => triggerRef.current?.focus());
+  }
+
+  function handleListKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      setOpen(false);
+      triggerRef.current?.focus();
+      return;
+    }
+    if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    const options = [...event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="option"]')];
+    const activeIndex = options.indexOf(document.activeElement as HTMLButtonElement);
+    const nextIndex = event.key === 'Home'
+      ? 0
+      : event.key === 'End'
+        ? options.length - 1
+        : Math.min(options.length - 1, Math.max(0, activeIndex + (event.key === 'ArrowDown' ? 1 : -1)));
+    options[nextIndex]?.focus();
+    options[nextIndex]?.scrollIntoView({ block: 'nearest' });
+  }
+
+  return (
+    <div className="ondo-year-picker" ref={rootRef}>
+      <button
+        aria-controls={listId}
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        aria-label="출생 연도"
+        className="ondo-input ondo-date-select ondo-year-trigger"
+        id={id}
+        onClick={() => setOpen((current) => !current)}
+        ref={triggerRef}
+        role="combobox"
+        type="button"
+      >
+        {value ? `${value}년` : '연도'}
+      </button>
+      {open ? (
+        <div
+          aria-label="출생 연도"
+          className="ondo-year-listbox"
+          id={listId}
+          onKeyDown={handleListKeyDown}
+          ref={listRef}
+          role="listbox"
+        >
+          {years.map((option) => {
+            const selected = value === String(option);
+            return (
+              <button
+                aria-selected={selected}
+                className="ondo-year-option"
+                key={option}
+                onClick={() => selectYear(option)}
+                ref={selected ? selectedRef : option === PREFERRED_BIRTH_YEAR ? preferredRef : undefined}
+                role="option"
+                tabIndex={-1}
+                type="button"
+              >
+                {option}년
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export function BirthDateField({
   id = 'birth-date',
   name = 'birthDate',
@@ -176,26 +292,12 @@ export function BirthDateField({
     <div className="ondo-birth-date-field">
       <FieldLabel htmlFor={id} label={label} required={required} />
       <div className="ondo-date-selects">
-        <select
-          aria-label="출생 연도"
-          className="ondo-input ondo-date-select"
+        <YearPicker
           id={id}
-          onChange={(event) => updateParts(event.target.value, month, day)}
-          required={required}
+          onChange={(nextYear) => updateParts(nextYear, month, day)}
           value={year}
-        >
-          <option value="">연도</option>
-          <optgroup label="1990년부터">
-            {years.filter((option) => option >= 1990).map((option) => (
-              <option key={option} value={option}>{option}년</option>
-            ))}
-          </optgroup>
-          <optgroup label="이전 연도">
-            {years.filter((option) => option < 1990).map((option) => (
-              <option key={option} value={option}>{option}년</option>
-            ))}
-          </optgroup>
-        </select>
+          years={years}
+        />
         <select
           aria-label="출생 월"
           className="ondo-input ondo-date-select"
@@ -223,7 +325,7 @@ export function BirthDateField({
       </div>
       <input name={name} type="hidden" value={value} />
       <p className="ondo-field-hint">
-        {restored ? '앞에서 입력한 정보를 불러왔어요.' : '1990년부터 바로 고를 수 있어요.'}
+        {restored ? '앞에서 입력한 정보를 불러왔어요.' : '전체 연도 중 1990년 근처에서 열려요.'}
       </p>
     </div>
   );
