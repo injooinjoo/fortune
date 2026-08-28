@@ -372,26 +372,77 @@ export function BirthDateField({
 /** 12지시 + '모름'. 선택 안 하면 빈 문자열 → 호출부에서 undefined 로 접어 보낸다. */
 export function BirthTimeChips({
   label = '태어난 시간 (선택)',
+  progressivelyRevealOnMobile = false,
   value,
   onChange,
 }: {
   label?: string;
+  progressivelyRevealOnMobile?: boolean;
   value: string;
   onChange: (value: string) => void;
 }) {
+  const [mobileExpanded, setMobileExpanded] = useState(false);
+  const mobileToggleRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
     if (value) return;
     const remembered = readGuestFortuneProfile().birthTime;
     if (remembered) onChange(remembered);
   }, [onChange, value]);
 
+  function commit(next: string, collapseMobile = false) {
+    onChange(next);
+    rememberGuestFortuneProfile({ birthTime: next || null });
+    if (!collapseMobile) return;
+    setMobileExpanded(false);
+    requestAnimationFrame(() => mobileToggleRef.current?.focus());
+  }
+
+  if (progressivelyRevealOnMobile) {
+    return (
+      <>
+        <div className="ondo-birth-time-desktop">
+          <ChipSelect label={label} onChange={commit} options={BIRTH_TIME_OPTIONS} value={value} />
+        </div>
+        <fieldset className="ondo-birth-time-mobile">
+          <legend className="ondo-label">{label}</legend>
+          <button
+            aria-expanded={mobileExpanded}
+            className="ondo-birth-time-toggle"
+            onClick={() => setMobileExpanded((expanded) => !expanded)}
+            ref={mobileToggleRef}
+            type="button"
+          >
+            {mobileExpanded
+              ? '시간 선택 닫기'
+              : value
+                ? `${value} 선택됨 · 바꾸기`
+                : '태어난 시간을 알고 있어요'}
+          </button>
+          {mobileExpanded ? (
+            <div className="ondo-row">
+              {BIRTH_TIME_OPTIONS.map((option) => (
+                <button
+                  aria-pressed={value === option.value}
+                  className="ondo-chip"
+                  key={option.label}
+                  onClick={() => commit(option.value, true)}
+                  type="button"
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </fieldset>
+      </>
+    );
+  }
+
   return (
     <ChipSelect
       label={label}
-      onChange={(next) => {
-        onChange(next);
-        rememberGuestFortuneProfile({ birthTime: next || null });
-      }}
+      onChange={commit}
       options={BIRTH_TIME_OPTIONS}
       value={value}
     />

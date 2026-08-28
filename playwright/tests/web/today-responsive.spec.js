@@ -74,6 +74,18 @@ test.describe('Ondo daily fortune responsive journey', () => {
     expect(metrics.panelTop).toBeGreaterThan(metrics.contextTop);
     expect(metrics.panelWidth).toBeLessThanOrEqual(358);
     expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.clientWidth);
+
+    const timeDisclosure = page.getByRole('button', { name: '태어난 시간을 알고 있어요' });
+    const mobileTimeField = page.locator('.ondo-birth-time-mobile');
+    await expect(timeDisclosure).toBeVisible();
+    await expect(mobileTimeField.getByRole('button', { name: '10:00~12:00', exact: true })).toHaveCount(0);
+
+    await timeDisclosure.click();
+    await expect(mobileTimeField.getByRole('button', { name: '10:00~12:00', exact: true })).toBeVisible();
+    await mobileTimeField.getByRole('button', { name: '10:00~12:00', exact: true }).click();
+    await expect(mobileTimeField.getByRole('button', { name: '10:00~12:00', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: '10:00~12:00 선택됨 · 바꾸기' })).toBeVisible();
+
     await expect(page.getByRole('button', { name: '오늘의 운세 보기' })).toBeVisible();
   });
 

@@ -69,7 +69,7 @@ export function DailyForm() {
           <BirthDateField onChange={setBirthDate} value={birthDate} />
         </div>
         <div className="ondo-daily-field ondo-daily-time-field">
-          <BirthTimeChips onChange={setBirthTime} value={birthTime} />
+          <BirthTimeChips onChange={setBirthTime} progressivelyRevealOnMobile value={birthTime} />
         </div>
         <div className="ondo-daily-field ondo-daily-gender-field">
           <GenderChips onChange={setGender} value={gender} />
