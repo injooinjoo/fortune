@@ -12,6 +12,7 @@ const { defineConfig, devices } = require('@playwright/test');
 const baseURL = process.env.WEB_BASE_URL || 'http://localhost:3100';
 const shouldRunWebServer = process.env.PLAYWRIGHT_SKIP_WEBSERVER !== 'true';
 const isCI = process.env.CI === 'true' || process.env.CI === '1';
+const previewBypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
 
 module.exports = defineConfig({
   testDir: './playwright/tests/web',
@@ -22,6 +23,12 @@ module.exports = defineConfig({
   reporter: [['list'], ['html', { outputFolder: 'playwright-report/web', open: 'never' }]],
   use: {
     baseURL,
+    extraHTTPHeaders: previewBypass
+      ? {
+          'x-vercel-protection-bypass': previewBypass,
+          'x-vercel-set-bypass-cookie': 'true',
+        }
+      : undefined,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     actionTimeout: 15000,

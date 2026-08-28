@@ -126,6 +126,161 @@ textarea {
   gap: var(--ondo-spacing-inline-gap);
 }
 
+/* --- 오늘의 운세 입력: desktop-first responsive journey --- */
+
+.ondo-daily-page {
+  max-width: 1180px;
+  padding-block: clamp(52px, 6vw, 72px) clamp(72px, 9vw, 112px);
+}
+
+.ondo-daily-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(520px, 560px);
+  align-items: start;
+  gap: clamp(56px, 7vw, 100px);
+}
+
+.ondo-daily-context {
+  gap: clamp(32px, 4vw, 48px);
+  padding-top: 24px;
+}
+
+.ondo-daily-heading {
+  gap: 14px;
+}
+
+.ondo-daily-heading .ondo-h1 {
+  max-width: 500px;
+  font-size: clamp(42px, 4.4vw, 58px);
+  line-height: 1.13;
+  letter-spacing: -.055em;
+}
+
+.ondo-daily-heading .ondo-muted {
+  max-width: 470px;
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+.ondo-daily-guide {
+  max-width: 470px;
+  gap: 10px;
+  padding-top: 24px;
+  border-top: 1px solid var(--ondo-color-border);
+}
+
+.ondo-daily-guide .ondo-muted {
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.ondo-daily-facts {
+  display: grid;
+  max-width: 470px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  padding: 20px 0 0;
+  border-top: 1px solid var(--ondo-color-border);
+}
+
+.ondo-daily-facts div {
+  display: grid;
+  gap: 5px;
+  padding-right: 16px;
+}
+
+.ondo-daily-facts div + div {
+  padding-left: 16px;
+  border-left: 1px solid var(--ondo-color-border);
+}
+
+.ondo-daily-facts dt {
+  color: var(--ondo-color-text-tertiary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ondo-daily-facts dd {
+  margin: 0;
+  color: var(--ondo-color-text-primary);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.ondo-daily-form-panel {
+  gap: 28px;
+  padding: clamp(28px, 3vw, 36px);
+  border-color: var(--ondo-color-border-opaque);
+  box-shadow: 0 24px 70px rgba(20, 22, 26, .08);
+}
+
+.ondo-daily-form-heading {
+  gap: 8px;
+}
+
+.ondo-daily-form-heading .ondo-muted {
+  font-size: 14px;
+}
+
+.ondo-daily-form {
+  display: grid;
+  gap: 24px;
+}
+
+.ondo-daily-field .ondo-label {
+  margin-bottom: 9px;
+  color: var(--ondo-color-text-primary);
+  font-weight: 750;
+}
+
+.ondo-daily-form .ondo-input {
+  min-height: 52px;
+  background: var(--ondo-color-background);
+}
+
+.ondo-daily-time-field .ondo-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.ondo-daily-time-field .ondo-chip,
+.ondo-daily-gender-field .ondo-chip {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 10px;
+}
+
+.ondo-daily-gender-field .ondo-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.ondo-daily-privacy,
+.ondo-daily-auth-note {
+  color: var(--ondo-color-text-tertiary);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.ondo-daily-privacy a {
+  color: var(--ondo-color-text-secondary);
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ondo-daily-submit {
+  width: 100%;
+  min-height: 52px;
+}
+
+.ondo-daily-auth-note {
+  margin-top: -12px;
+  text-align: center;
+}
+
 /* --- 법률·지원 문서 --- */
 
 .ondo-legal-page {
@@ -730,7 +885,86 @@ textarea {
   }
 }
 
+@media (max-width: 980px) {
+  .ondo-daily-page {
+    max-width: 720px;
+  }
+
+  .ondo-daily-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 36px;
+  }
+
+  .ondo-daily-context {
+    padding-top: 0;
+  }
+
+  .ondo-daily-heading .ondo-h1,
+  .ondo-daily-heading .ondo-muted,
+  .ondo-daily-guide,
+  .ondo-daily-facts {
+    max-width: none;
+  }
+}
+
 @media (max-width: 480px) {
+  .ondo-daily-page {
+    padding: 28px 16px 64px;
+  }
+
+  .ondo-daily-layout {
+    gap: 28px;
+  }
+
+  .ondo-daily-context {
+    gap: 24px;
+  }
+
+  .ondo-daily-heading {
+    gap: 10px;
+  }
+
+  .ondo-daily-heading .ondo-h1 {
+    font-size: 34px;
+    line-height: 1.18;
+  }
+
+  .ondo-daily-heading .ondo-muted {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .ondo-daily-guide {
+    padding-top: 18px;
+  }
+
+  .ondo-daily-facts {
+    padding-top: 16px;
+  }
+
+  .ondo-daily-facts div {
+    padding-right: 10px;
+  }
+
+  .ondo-daily-facts div + div {
+    padding-left: 10px;
+  }
+
+  .ondo-daily-form-panel {
+    gap: 24px;
+    padding: 24px 18px;
+    border-radius: 16px;
+    box-shadow: 0 16px 44px rgba(20, 22, 26, .07);
+  }
+
+  .ondo-daily-form {
+    gap: 22px;
+  }
+
+  .ondo-daily-time-field .ondo-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .ondo-grid-2 {
     grid-template-columns: minmax(0, 1fr);
   }
