@@ -257,6 +257,54 @@ textarea {
   gap: 8px;
 }
 
+.ondo-birth-time-mobile {
+  display: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.ondo-birth-time-toggle {
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border: 1px solid var(--ondo-color-border);
+  border-radius: 10px;
+  background: var(--ondo-color-surface-secondary);
+  color: var(--ondo-color-text-secondary);
+  font: inherit;
+  font-size: var(--ondo-typography-label-small-font-size);
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.ondo-birth-time-toggle:hover,
+.ondo-birth-time-toggle:focus-visible,
+.ondo-birth-time-toggle[aria-expanded='true'] {
+  outline: 0;
+  border-color: var(--ondo-color-accent-primary);
+  background: var(--ondo-color-accent-light);
+  color: var(--ondo-color-text-primary);
+}
+
+.ondo-birth-time-toggle::after {
+  content: '+';
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.ondo-birth-time-toggle[aria-expanded='true']::after {
+  content: '−';
+}
+
+.ondo-birth-time-mobile .ondo-row {
+  margin-top: 8px;
+}
+
 .ondo-daily-privacy,
 .ondo-daily-auth-note {
   color: var(--ondo-color-text-tertiary);
@@ -1169,6 +1217,14 @@ textarea {
 
   .ondo-daily-time-field .ondo-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ondo-birth-time-desktop {
+    display: none;
+  }
+
+  .ondo-birth-time-mobile {
+    display: block;
   }
 
   .ondo-grid-2 {
