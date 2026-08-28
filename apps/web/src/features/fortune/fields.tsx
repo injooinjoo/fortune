@@ -23,6 +23,27 @@ import {
   splitBirthDate,
 } from './guest-profile';
 
+export function getYearListLayout({
+  triggerTop,
+  triggerBottom,
+  viewportHeight,
+}: {
+  triggerTop: number;
+  triggerBottom: number;
+  viewportHeight: number;
+}): { placement: 'above' | 'below'; maxHeight: number } {
+  const viewportPadding = 8;
+  const listGap = 8;
+  const spaceAbove = triggerTop - viewportPadding - listGap;
+  const spaceBelow = viewportHeight - triggerBottom - viewportPadding - listGap;
+  const placement = spaceBelow >= 280 || spaceBelow >= spaceAbove ? 'below' : 'above';
+  const available = placement === 'below' ? spaceBelow : spaceAbove;
+  return {
+    placement,
+    maxHeight: Math.max(88, Math.min(280, Math.floor(available))),
+  };
+}
+
 /** `apps/mobile-rn/src/screens/profile-edit-screen.tsx` 의 슬롯과 동일한 문자열. */
 export const BIRTH_TIME_SLOTS = [
   '모름',
@@ -134,6 +155,8 @@ function YearPicker({
   onChange: (value: string) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [listPlacement, setListPlacement] = useState<'above' | 'below'>('below');
+  const [listMaxHeight, setListMaxHeight] = useState(280);
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -168,6 +191,21 @@ function YearPicker({
     requestAnimationFrame(() => triggerRef.current?.focus());
   }
 
+  function openList() {
+    const trigger = triggerRef.current;
+    if (trigger) {
+      const rect = trigger.getBoundingClientRect();
+      const { placement, maxHeight } = getYearListLayout({
+        triggerTop: rect.top,
+        triggerBottom: rect.bottom,
+        viewportHeight: window.innerHeight,
+      });
+      setListPlacement(placement);
+      setListMaxHeight(maxHeight);
+    }
+    setOpen(true);
+  }
+
   function handleListKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.key === 'Escape') {
       event.preventDefault();
@@ -197,7 +235,7 @@ function YearPicker({
         aria-label="출생 연도"
         className="ondo-input ondo-date-select ondo-year-trigger"
         id={id}
-        onClick={() => setOpen((current) => !current)}
+        onClick={() => (open ? setOpen(false) : openList())}
         ref={triggerRef}
         role="combobox"
         type="button"
@@ -208,10 +246,12 @@ function YearPicker({
         <div
           aria-label="출생 연도"
           className="ondo-year-listbox"
+          data-placement={listPlacement}
           id={listId}
           onKeyDown={handleListKeyDown}
           ref={listRef}
           role="listbox"
+          style={{ maxHeight: listMaxHeight }}
         >
           {years.map((option) => {
             const selected = value === String(option);

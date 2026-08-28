@@ -1,11 +1,28 @@
 import { expect, test } from '@playwright/test';
 
+import { getYearListLayout } from '../../../apps/web/src/features/fortune/fields';
+
 const VIEWPORTS = [
   { name: 'desktop', width: 1440, height: 900 },
   { name: 'mobile', width: 390, height: 844 },
 ] as const;
 
-const runsDeployedJourney = process.env.WEB_BASE_URL?.startsWith('https://') === true;
+const runsTargetJourney = Boolean(process.env.WEB_BASE_URL);
+
+test('연도 목록은 뷰포트에서 더 넓은 방향으로 열리고 실제 여유 높이를 넘지 않는다', () => {
+  expect(getYearListLayout({ triggerTop: 681, triggerBottom: 733, viewportHeight: 844 })).toEqual({
+    placement: 'above',
+    maxHeight: 280,
+  });
+  expect(getYearListLayout({ triggerTop: 120, triggerBottom: 172, viewportHeight: 844 })).toEqual({
+    placement: 'below',
+    maxHeight: 280,
+  });
+  expect(getYearListLayout({ triggerTop: 140, triggerBottom: 192, viewportHeight: 300 })).toEqual({
+    placement: 'above',
+    maxHeight: 124,
+  });
+});
 
 test.describe('운세 입력 여정', () => {
   for (const viewport of VIEWPORTS) {
@@ -56,7 +73,7 @@ test.describe('운세 입력 여정', () => {
 
   for (const viewport of VIEWPORTS) {
     test(`${viewport.name} 연도는 전체 범위를 제공하고 첫 오픈에서 1990을 중앙에 둔다`, async ({ page }) => {
-      test.skip(!runsDeployedJourney, '배포된 한글 경로에서 실행하는 여정 테스트입니다.');
+      test.skip(!runsTargetJourney, '명시한 웹 대상의 한글 경로에서 실행하는 여정 테스트입니다.');
       await page.setViewportSize(viewport);
       await page.goto('/운세/오늘');
 
@@ -77,6 +94,11 @@ test.describe('운세 입력 여정', () => {
         return Math.abs((preferredBox.y + preferredBox.height / 2) - (listboxBox.y + listboxBox.height / 2));
       }).toBeLessThan(viewport.name === 'mobile' ? 44 : 42);
 
+      const listboxBox = await listbox.boundingBox();
+      expect(listboxBox).not.toBeNull();
+      expect(listboxBox!.y).toBeGreaterThanOrEqual(8);
+      expect(listboxBox!.y + listboxBox!.height).toBeLessThanOrEqual(viewport.height - 8);
+
       await listbox.getByRole('option', { name: '1990년' }).click();
       await month.selectOption('2');
       await day.selectOption('28');
@@ -85,7 +107,7 @@ test.describe('운세 입력 여정', () => {
   }
 
   test('입력한 생년월일과 성별을 연애운에서 다시 묻지 않는다', async ({ page }) => {
-    test.skip(!runsDeployedJourney, '배포된 한글 경로에서 실행하는 여정 테스트입니다.');
+    test.skip(!runsTargetJourney, '명시한 웹 대상의 한글 경로에서 실행하는 여정 테스트입니다.');
     await page.goto('/운세/오늘');
     await page.getByRole('combobox', { name: '출생 연도' }).click();
     await page.getByRole('listbox', { name: '출생 연도' }).getByRole('option', { name: '1990년' }).click();

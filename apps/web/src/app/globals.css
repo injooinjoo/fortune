@@ -463,6 +463,11 @@ textarea {
   overscroll-behavior: contain;
 }
 
+.ondo-year-listbox[data-placement="above"] {
+  top: auto;
+  bottom: calc(100% + 8px);
+}
+
 .ondo-year-option {
   min-height: 42px;
   padding: 8px 12px;
