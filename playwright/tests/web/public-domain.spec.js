@@ -28,6 +28,14 @@ test.describe('Ondo public-domain contract', () => {
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /opengraph-image/);
   });
 
+  test('browsers can load the Ondo favicon without a 404', async ({ request }) => {
+    const response = await request.get('/favicon.ico');
+
+    expect(response.status()).toBe(200);
+    expect(response.headers()['content-type']).toContain('image/x-icon');
+    expect((await response.body()).byteLength).toBeGreaterThan(0);
+  });
+
   test('unknown routes render a Korean recovery screen', async ({ page }) => {
     const response = await page.goto('/존재하지-않는-화면');
     expect(response?.status()).toBe(404);
