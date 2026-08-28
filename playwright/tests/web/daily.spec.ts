@@ -86,8 +86,9 @@ test.describe('운세 탐색과 일일 운세', () => {
     await page.getByRole('link', { name: '오늘의 운세 보기' }).click();
 
     await expect(page).toHaveURL(/\/%EC%9A%B4%EC%84%B8\/%EC%98%A4%EB%8A%98/);
-    await expect(page.getByRole('heading', { name: '한 번의 입력으로 오늘의 흐름을 나눠 읽어요' })).toBeVisible();
-    await expect(page.getByText('생년월일만 필수예요. 태어난 시간과 성별은 알고 있을 때만 더해 주세요.')).toBeVisible();
+    await expect(page.getByRole('heading', { name: '기본 정보를 알려주세요' })).toBeVisible();
+    await expect(page.getByText('생년월일만 필수이며 나머지는 건너뛸 수 있어요.')).toBeVisible();
+    await expect(page.getByText(/로그인 없이 바로 확인해요/)).toBeVisible();
     await expect(page.getByRole('textbox', { name: '생년월일' })).toBeVisible();
     await expect(page.getByRole('button', { name: '오늘의 운세 보기' })).toBeDisabled();
   });

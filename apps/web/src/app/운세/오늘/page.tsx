@@ -18,27 +18,56 @@ export const metadata: Metadata = {
 
 export default function TodayFortunePage() {
   return (
-    <main className="ondo-shell ondo-stack">
-      <header className="ondo-stack" style={{ gap: 'var(--ondo-spacing-xs)' }}>
-        <p className="ondo-kicker">오늘의 운세</p>
-        <h1 className="ondo-h2">생년월일을 알려주세요</h1>
-        <p className="ondo-muted">
-          태어난 시간과 성별은 없어도 괜찮아요. 알려주면 사주를 더 정확하게 세울 수 있어요.
-        </p>
-      </header>
+    <main className="ondo-shell ondo-daily-page">
+      <div className="ondo-daily-layout" data-testid="daily-layout">
+        <section className="ondo-daily-context ondo-stack" data-testid="daily-context">
+          <header className="ondo-stack ondo-daily-heading">
+            <p className="ondo-kicker">오늘의 운세</p>
+            <h1 className="ondo-h1">오늘의 흐름을 가볍게 확인해보세요</h1>
+            <p className="ondo-muted">
+              생년월일 하나면 충분해요. 전체 흐름을 먼저 읽고 애정·재물·일·건강 중 지금 필요한 부분을 살펴봅니다.
+            </p>
+          </header>
 
-      <section aria-labelledby="today-reading-guide" className="ondo-notice ondo-stack">
-        <div className="ondo-stack" style={{ gap: 'var(--ondo-spacing-xxs)' }}>
-          <p className="ondo-kicker">미리 보는 구성</p>
-          <h2 className="ondo-h3" id="today-reading-guide">
-            한 번의 입력으로 오늘의 흐름을 나눠 읽어요
-          </h2>
-        </div>
-        <p className="ondo-muted">전체 흐름을 먼저 보고, 애정·재물·일·건강 순서로 필요한 부분을 골라 살펴볼 수 있어요.</p>
-        <p className="ondo-muted">생년월일만 필수예요. 태어난 시간과 성별은 알고 있을 때만 더해 주세요.</p>
-      </section>
+          <section aria-labelledby="today-reading-guide" className="ondo-daily-guide ondo-stack">
+            <p className="ondo-kicker">읽기 전에</p>
+            <h2 className="ondo-h3" id="today-reading-guide">
+              아는 정보만 편하게 입력하세요
+            </h2>
+            <p className="ondo-muted">
+              태어난 시간과 성별은 선택 사항이에요. 모르는 정보 때문에 오늘의 운세를 미룰 필요는 없어요.
+            </p>
+          </section>
 
-      <DailyForm />
+          <dl className="ondo-daily-facts" aria-label="오늘의 운세 이용 정보">
+            <div>
+              <dt>필수 입력</dt>
+              <dd>생년월일</dd>
+            </div>
+            <div>
+              <dt>예상 시간</dt>
+              <dd>약 1분</dd>
+            </div>
+            <div>
+              <dt>사용 온도</dt>
+              <dd>1개</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section
+          aria-labelledby="today-form-title"
+          className="ondo-card ondo-daily-form-panel ondo-stack"
+          data-testid="daily-form-panel"
+        >
+          <header className="ondo-stack ondo-daily-form-heading">
+            <p className="ondo-kicker">오늘을 읽는 정보</p>
+            <h2 className="ondo-h3" id="today-form-title">기본 정보를 알려주세요</h2>
+            <p className="ondo-muted">생년월일만 필수이며 나머지는 건너뛸 수 있어요.</p>
+          </header>
+          <DailyForm />
+        </section>
+      </div>
     </main>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 
+import { AppLink as Link } from '@/components/app-link';
 import { BirthDateField, BirthTimeChips, GenderChips } from '@/features/fortune/fields';
 import { FailureNotice } from '@/features/fortune/result';
 import { runFortune, type FortuneFailureKind } from '@/features/fortune/runner';
@@ -63,14 +64,33 @@ export function DailyForm() {
 
   return (
     <div className="ondo-stack">
-      <form className="ondo-stack" onSubmit={handleSubmit}>
-        <BirthDateField onChange={setBirthDate} value={birthDate} />
-        <BirthTimeChips onChange={setBirthTime} value={birthTime} />
-        <GenderChips onChange={setGender} value={gender} />
+      <form aria-label="오늘의 운세 입력" className="ondo-daily-form" onSubmit={handleSubmit}>
+        <div className="ondo-daily-field">
+          <BirthDateField onChange={setBirthDate} value={birthDate} />
+        </div>
+        <div className="ondo-daily-field ondo-daily-time-field">
+          <BirthTimeChips onChange={setBirthTime} value={birthTime} />
+        </div>
+        <div className="ondo-daily-field ondo-daily-gender-field">
+          <GenderChips onChange={setGender} value={gender} />
+        </div>
 
-        <button className="ondo-button" disabled={state.kind === 'loading' || !birthDate} type="submit">
+        <p className="ondo-daily-privacy">
+          입력한 정보는 운세 제공에 사용돼요. 자세한 내용은{' '}
+          <Link href="/privacy">개인정보처리방침</Link>에서 확인할 수 있어요.
+        </p>
+
+        <button
+          className="ondo-button ondo-daily-submit"
+          disabled={state.kind === 'loading' || !birthDate}
+          type="submit"
+        >
           {state.kind === 'loading' ? '읽는 중…' : '오늘의 운세 보기'}
         </button>
+
+        <p className="ondo-daily-auth-note">
+          로그인 없이 바로 확인해요. 결과를 저장하거나 온도가 더 필요할 때만 계정을 연결합니다.
+        </p>
       </form>
 
       {state.kind === 'failed' ? (
