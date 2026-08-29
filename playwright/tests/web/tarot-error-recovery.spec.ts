@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 const MOBILE_VIEWPORT = { width: 390, height: 844 };
 
-test('타로 실패 안내로 초점을 옮겨 모바일에서 복구 메시지를 바로 읽을 수 있다', async ({ page }) => {
+test('타로 잔액 부족 안내에서 모바일 사용자가 로그인 복구 경로를 바로 선택할 수 있다', async ({ page }) => {
   test.setTimeout(90000);
   test.skip(!process.env.WEB_BASE_URL, '배포된 한글 경로에서 실행하는 여정 테스트입니다.');
 
@@ -49,8 +49,19 @@ test('타로 실패 안내로 초점을 옮겨 모바일에서 복구 메시지�
   await page.getByRole('button', { name: '타로 리딩 보기' }).click();
 
   const alert = page.getByRole('alert').filter({ hasText: '온도가 부족해요' });
-  await expect(alert).toContainText('온도가 부족해요');
+  await expect(alert).toContainText('로그인하면 계정에 남은 온도를 확인하고 이어서 볼 수 있어요.');
+  await expect(alert).not.toContainText('앱에서 온도를 충전');
   await expect(alert).toBeFocused();
+
+  const recoveryLink = alert.getByRole('link', { name: '로그인하고 온도 확인하기' });
+  await expect(recoveryLink).toBeVisible();
+  await expect(recoveryLink).toHaveAttribute(
+    'href',
+    '/auth/login?next=%2F%EC%9A%B4%EC%84%B8%2F%ED%83%80%EB%A1%9C',
+  );
+  await expect
+    .poll(() => recoveryLink.evaluate((element) => element.getBoundingClientRect().height))
+    .toBeGreaterThanOrEqual(44);
 
   await expect
     .poll(() => alert.evaluate((element) => element.getBoundingClientRect().top))
@@ -63,4 +74,8 @@ test('타로 실패 안내로 초점을 옮겨 모바일에서 복구 메시지�
     await expect(page.getByRole('button', { name: `${slot}번 카드`, exact: true })).toHaveAttribute('aria-pressed', 'true');
   }
   await expect(page.getByRole('button', { name: '타로 리딩 보기' })).toBeEnabled();
+
+  await recoveryLink.click();
+  await expect(page).toHaveURL(/\/auth\/login\?next=/);
+  expect(new URL(page.url()).searchParams.get('next')).toBe('/운세/타로');
 });

@@ -41,7 +41,7 @@ export const AUTH_FAILURE_MESSAGE = '세션이 만료됐어요. 다시 로그인
 
 /** 402 바디는 `{ code, required, available }` 뿐이라 사용자 문구가 없다. */
 export const TOKENS_FAILURE_MESSAGE =
-  '잔액이 모자라서 운세를 생성하지 못했어요. 앱에서 온도를 충전한 뒤 다시 시도해 주세요.';
+  '잔액이 모자라서 운세를 생성하지 못했어요. 로그인하면 계정에 남은 온도를 확인하고 이어서 볼 수 있어요.';
 
 const CONFIG_FAILURE_MESSAGE = '서비스 설정이 아직 준비되지 않았어요.';
 

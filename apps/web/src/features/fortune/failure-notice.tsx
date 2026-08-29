@@ -60,6 +60,11 @@ export function FailureNotice({
       >
         <p className="ondo-h3">온도가 부족해요</p>
         <p className="ondo-muted">{message}</p>
+        {loginHref ? (
+          <Link className="ondo-button" href={loginHref}>
+            로그인하고 온도 확인하기
+          </Link>
+        ) : null}
       </div>
     );
   }
