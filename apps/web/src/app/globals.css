@@ -435,6 +435,10 @@ textarea {
   color: var(--ondo-color-cta-foreground);
 }
 
+.ondo-tarot-card-slot {
+  min-inline-size: 44px;
+}
+
 .ondo-label {
   display: block;
   margin-bottom: var(--ondo-spacing-xs);

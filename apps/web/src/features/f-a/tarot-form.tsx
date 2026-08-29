@@ -110,7 +110,7 @@ function CardSlots({
             <button
               aria-label={`${slot}번 카드`}
               aria-pressed={order >= 0}
-              className="ondo-chip"
+              className="ondo-chip ondo-tarot-card-slot"
               key={slot}
               onClick={() => onToggle(slot)}
               type="button"
