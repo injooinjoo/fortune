@@ -66,10 +66,11 @@ test.describe('운세 탐색과 일일 운세', () => {
 
     await page.goto('/%EC%9A%B4%EC%84%B8');
 
+    const guide = page.locator('section[aria-labelledby="fortune-guide-title"]');
     await expect(page.getByRole('heading', { level: 1, name: '무엇을 볼까요?' })).toBeVisible();
-    await expect(page.getByRole('heading', { level: 2, name: '지금 궁금한 깊이에 맞춰 골라보세요' })).toBeVisible();
-    await expect(page.getByText('지금의 흐름을 가볍게')).toBeVisible();
-    await expect(page.getByText('관계나 마음을 더 깊게')).toBeVisible();
+    await expect(guide.getByRole('heading', { level: 2, name: '지금 궁금한 깊이에 맞춰 골라보세요' })).toBeVisible();
+    await expect(guide.getByText('지금의 흐름을 가볍게')).toBeVisible();
+    await expect(guide.getByText('관계나 마음을 더 깊게')).toBeVisible();
     const firstFortuneLink = page.getByRole('link', { name: /오늘의 운세/ }).first();
     await expect(firstFortuneLink).toBeVisible();
     await expect(firstFortuneLink).toHaveAttribute(

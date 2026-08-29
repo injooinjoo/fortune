@@ -877,6 +877,10 @@ textarea {
   background: var(--ondo-color-accent-light);
 }
 
+.ondo-fortune-guide-mobile {
+  display: none;
+}
+
 .ondo-fortune-group {
   gap: 12px;
 }
@@ -1188,6 +1192,57 @@ textarea {
 }
 
 @media (max-width: 480px) {
+  .ondo-fortune-guide-desktop {
+    display: none;
+  }
+
+  .ondo-fortune-guide-mobile {
+    display: block;
+    border-left: 3px solid var(--ondo-color-accent-primary);
+    background: var(--ondo-color-accent-light);
+  }
+
+  .ondo-fortune-guide-mobile > summary {
+    display: flex;
+    min-height: 56px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 16px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .ondo-fortune-guide-mobile > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .ondo-fortune-guide-mobile > summary > span:first-child {
+    display: grid;
+    gap: 2px;
+  }
+
+  .ondo-fortune-guide-mobile > summary strong {
+    font-size: 14px;
+  }
+
+  .ondo-fortune-guide-toggle {
+    color: var(--ondo-color-accent-primary);
+    font-size: 24px;
+    line-height: 1;
+    transition: transform 160ms ease;
+  }
+
+  .ondo-fortune-guide-mobile[open] .ondo-fortune-guide-toggle {
+    transform: rotate(45deg);
+  }
+
+  .ondo-fortune-guide-mobile-content {
+    padding: 16px;
+    border-top: 1px solid color-mix(in srgb, var(--ondo-color-accent-primary) 18%, transparent);
+    border-left: 0;
+  }
+
   .ondo-daily-page {
     padding: 28px 16px 64px;
   }
