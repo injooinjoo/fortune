@@ -14,9 +14,10 @@
 import { AppLink as Link } from '@/components/app-link';
 import type { ReactNode } from 'react';
 
-import type { FortuneFailureKind } from './runner';
 import { FortuneChatBridge } from './fortune-chat-bridge';
 import { parseStructuredResultText } from './result-format';
+
+export { FailureNotice } from './failure-notice';
 
 type MaybeText = string | null | undefined;
 
@@ -261,50 +262,5 @@ export function Disclaimer() {
         온도의 운세는 엔터테인먼트 목적으로 제공되며, 어떠한 전문적 조언도 대체하지 않습니다.
       </p>
     </>
-  );
-}
-
-/**
- * `runFortune` 실패 3종을 그대로 그리는 안내.
- *
- * 12개 페이지가 각자 이 마크업을 복붙하면 문구가 갈라지므로 여기서 한 번만 쓴다.
- * `loginHref` 는 로그인 후 돌아올 경로를 담은 링크 (`/auth/login?next=...`).
- */
-export function FailureNotice({
-  kind,
-  message,
-  loginHref,
-}: {
-  kind: FortuneFailureKind;
-  message: string;
-  loginHref?: string;
-}) {
-  if (kind === 'auth') {
-    return (
-      <div className="ondo-notice ondo-stack" role="alert" style={{ gap: 'var(--ondo-spacing-sm)' }}>
-        <p className="ondo-h3">로그인이 필요해요</p>
-        <p className="ondo-muted">{message}</p>
-        {loginHref ? (
-          <Link className="ondo-button" href={loginHref}>
-            다시 로그인
-          </Link>
-        ) : null}
-      </div>
-    );
-  }
-
-  if (kind === 'tokens') {
-    return (
-      <div className="ondo-notice ondo-stack" role="alert" style={{ gap: 'var(--ondo-spacing-sm)' }}>
-        <p className="ondo-h3">온도가 부족해요</p>
-        <p className="ondo-muted">{message}</p>
-      </div>
-    );
-  }
-
-  return (
-    <p className="ondo-notice ondo-notice--error" role="alert">
-      {message}
-    </p>
   );
 }
