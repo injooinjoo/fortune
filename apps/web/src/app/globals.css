@@ -1248,11 +1248,29 @@ textarea {
   }
 
   .ondo-daily-layout {
-    gap: 28px;
+    gap: 20px;
   }
 
   .ondo-daily-context {
     gap: 24px;
+  }
+
+  .ondo-daily-guide {
+    display: none;
+  }
+
+  .ondo-daily-form-heading .ondo-kicker,
+  .ondo-daily-form-heading .ondo-muted {
+    display: none;
+  }
+
+  .ondo-daily-form-panel {
+    gap: 20px;
+    padding-top: 20px;
+  }
+
+  .ondo-daily-form {
+    gap: 18px;
   }
 
   .ondo-daily-heading {

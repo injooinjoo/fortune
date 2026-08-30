@@ -1,3 +1,5 @@
+import type { Ref } from 'react';
+
 import { AppLink as Link } from '@/components/app-link';
 
 import {
@@ -29,17 +31,24 @@ export function DailyResult({
   fortune,
   cached,
   onReset,
+  resultRef,
 }: {
   fortune: DailyFortune;
   cached: boolean;
   onReset: () => void;
+  resultRef?: Ref<HTMLElement>;
 }) {
   const luckyItems: KeyValuePair[] = Object.entries(fortune.lucky_items ?? {}).map(
     ([key, value]) => ({ label: LUCKY_ITEM_LABELS[key] ?? key, value }),
   );
 
   return (
-    <section aria-label="오늘의 운세 결과" className="ondo-daily-result">
+    <section
+      ref={resultRef}
+      aria-label="오늘의 운세 결과"
+      className="ondo-daily-result"
+      tabIndex={-1}
+    >
       <div className="ondo-daily-result-toolbar">
         <button className="ondo-button ondo-button--secondary" onClick={onReset} type="button">
           정보 다시 입력
