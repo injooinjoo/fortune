@@ -7,12 +7,17 @@ async function layoutMetrics(page) {
     const panel = layout.querySelector('[data-testid="daily-form-panel"]');
     const context = layout.querySelector('[data-testid="daily-context"]');
     const submit = layout.querySelector('button[type="submit"]');
-    if (!panel || !context || !submit) throw new Error('daily layout landmarks are missing');
+    const readingGuide = layout.querySelector('.ondo-daily-guide');
+    const birthYear = layout.querySelector('[aria-label="출생 연도"]');
+    if (!panel || !context || !submit || !readingGuide || !birthYear) {
+      throw new Error('daily layout landmarks are missing');
+    }
 
     const layoutRect = layout.getBoundingClientRect();
     const contextRect = context.getBoundingClientRect();
     const panelRect = panel.getBoundingClientRect();
     const submitRect = submit.getBoundingClientRect();
+    const birthYearRect = birthYear.getBoundingClientRect();
 
     return {
       columns: getComputedStyle(layout).gridTemplateColumns,
@@ -22,6 +27,8 @@ async function layoutMetrics(page) {
       panelLeft: panelRect.left,
       panelTop: panelRect.top,
       panelWidth: panelRect.width,
+      readingGuideDisplay: getComputedStyle(readingGuide).display,
+      birthYearTop: birthYearRect.top,
       submitBottom: submitRect.bottom,
       submitTop: submitRect.top,
       submitWidth: submitRect.width,
@@ -43,6 +50,7 @@ test.describe('Ondo daily fortune responsive journey', () => {
       expect(metrics.contextLeft).toBeLessThan(metrics.panelLeft);
       expect(metrics.panelWidth).toBeLessThanOrEqual(620);
       expect(metrics.submitWidth).toBeLessThanOrEqual(560);
+      expect(metrics.readingGuideDisplay).not.toBe('none');
       expect(metrics.submitBottom).toBeLessThanOrEqual(height);
       expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.clientWidth);
 
@@ -73,6 +81,9 @@ test.describe('Ondo daily fortune responsive journey', () => {
     expect(metrics.columns.split(' ').length).toBe(1);
     expect(metrics.panelTop).toBeGreaterThan(metrics.contextTop);
     expect(metrics.panelWidth).toBeLessThanOrEqual(358);
+    expect(metrics.readingGuideDisplay).toBe('none');
+    expect(metrics.birthYearTop).toBeLessThanOrEqual(500);
+    expect(metrics.submitBottom).toBeLessThanOrEqual(844);
     expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.clientWidth);
 
     const timeDisclosure = page.getByRole('button', { name: '태어난 시간을 알고 있어요' });
@@ -99,6 +110,60 @@ test.describe('Ondo daily fortune responsive journey', () => {
     await expect(form.getByText(/결과를 저장하거나 온도가 더 필요할 때만 계정을 연결/)).toBeVisible();
     await expect(form.getByRole('link', { name: '개인정보처리방침' })).toHaveAttribute('href', '/privacy');
     await expect(form.getByRole('link', { name: /로그인/ })).toHaveCount(0);
+  });
+
+  test('moves a scrolled mobile user to the start of a completed reading', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.route('**/rest/v1/rpc/record_web_analytics_event', (route) =>
+      route.fulfill({ status: 204 }),
+    );
+    await page.route('**/auth/v1/signup*', (route) =>
+      route.fulfill({
+        status: 400,
+        contentType: 'application/json',
+        body: JSON.stringify({ code: 'anonymous_provider_disabled', message: 'Disabled in test.' }),
+      }),
+    );
+    await page.route('**/functions/v1/fortune-daily', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          fortune: {
+            overall_score: 84,
+            summary: '오늘은 우선순위를 정하면 흐름이 안정적으로 이어져요.',
+            advice: '가장 중요한 일부터 시작해 보세요.',
+            caution: '한꺼번에 너무 많은 일을 벌이지 마세요.',
+          },
+          cached: false,
+        }),
+      }),
+    );
+    await page.route('**/rest/v1/rpc/save_web_fortune_history', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify('00000000-0000-0000-0000-000000000001'),
+      }),
+    );
+
+    await page.goto(TODAY_PATH);
+    await page.getByRole('combobox', { name: '출생 연도' }).click();
+    await page.getByRole('listbox', { name: '출생 연도' }).getByRole('option', { name: '1990년' }).click();
+    await page.getByRole('combobox', { name: '출생 월' }).selectOption('1');
+    await page.getByRole('combobox', { name: '출생 일' }).selectOption('1');
+
+    const submit = page.getByRole('button', { name: '오늘의 운세 보기' });
+    await submit.scrollIntoViewIfNeeded();
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+    await submit.click();
+
+    const result = page.getByRole('region', { name: '오늘의 운세 결과' });
+    await expect(result).toBeVisible();
+    await expect(result).toBeFocused();
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThanOrEqual(1);
+    await expect.poll(() => result.evaluate((element) => element.getBoundingClientRect().top)).toBeGreaterThanOrEqual(0);
+    await expect.poll(() => result.evaluate((element) => element.getBoundingClientRect().top)).toBeLessThan(844);
   });
 
   for (const [width, height, desktop] of [[1280, 800, true], [390, 844, false]]) {

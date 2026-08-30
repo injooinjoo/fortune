@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 
 import { AppLink as Link } from '@/components/app-link';
 import { BirthDateField, BirthTimeChips, GenderChips } from '@/features/fortune/fields';
@@ -24,6 +24,14 @@ export function DailyForm() {
   const [birthTime, setBirthTime] = useState('');
   const [gender, setGender] = useState('');
   const [state, setState] = useState<State>({ kind: 'idle' });
+  const resultRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (state.kind !== 'done') return;
+
+    resultRef.current?.focus({ preventScroll: true });
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [state.kind]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -102,6 +110,7 @@ export function DailyForm() {
           cached={state.cached}
           fortune={state.fortune}
           onReset={() => setState({ kind: 'idle' })}
+          resultRef={resultRef}
         />
       ) : null}
     </div>
