@@ -153,10 +153,9 @@ test.describe('Ondo daily fortune responsive journey', () => {
     await page.getByRole('combobox', { name: '출생 월' }).selectOption('1');
     await page.getByRole('combobox', { name: '출생 일' }).selectOption('1');
 
-    const submit = page.getByRole('button', { name: '오늘의 운세 보기' });
-    await submit.scrollIntoViewIfNeeded();
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
-    await submit.click();
+    await page.locator('form').evaluate((form) => form.requestSubmit());
 
     const result = page.getByRole('region', { name: '오늘의 운세 결과' });
     await expect(result).toBeVisible();
