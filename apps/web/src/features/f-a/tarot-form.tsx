@@ -16,7 +16,7 @@
  *    새로 만든다 (앱 `chat-results/edge-runtime.ts` 의 createClientChargeId 와 동일).
  */
 
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 
 import { ChipSelect, TextField, type ChipOption } from '@/features/fortune/fields';
 import { FailureNotice } from '@/features/fortune/result';
@@ -131,8 +131,10 @@ export function TarotForm() {
   const [spreadType, setSpreadType] = useState<string>('threeCard');
   const [purpose, setPurpose] = useState('guidance');
   const [question, setQuestion] = useState('');
+  const [questionOpen, setQuestionOpen] = useState(false);
   const [selected, setSelected] = useState<number[]>([]);
   const [state, setState] = useState<State>({ kind: 'idle' });
+  const questionTriggerRef = useRef<HTMLButtonElement>(null);
 
   const cardsNeeded = SPREADS.find((spread) => spread.value === spreadType)?.cards ?? 3;
   const ready = selected.length === cardsNeeded;
@@ -151,6 +153,31 @@ export function TarotForm() {
       return [...current, slot];
     });
   }
+
+  function focusQuestionInput() {
+    requestAnimationFrame(() => {
+      document.getElementById('tarot-question')?.focus();
+    });
+  }
+
+  function openQuestion() {
+    setQuestionOpen(true);
+    focusQuestionInput();
+  }
+
+  function closeQuestion() {
+    setQuestionOpen(false);
+    requestAnimationFrame(() => questionTriggerRef.current?.focus());
+  }
+
+  function clearQuestion() {
+    setQuestion('');
+    focusQuestionInput();
+  }
+
+  const questionPreview = question.trim().length > 18
+    ? `${question.trim().slice(0, 18)}…`
+    : question.trim();
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -193,6 +220,67 @@ export function TarotForm() {
           value={purpose}
         />
 
+        {!questionOpen ? (
+          <button
+            aria-controls="tarot-question-panel"
+            aria-expanded="false"
+            aria-label={questionPreview ? `질문 수정: ${question.trim()}` : undefined}
+            className="ondo-tarot-question-trigger"
+            onClick={openQuestion}
+            ref={questionTriggerRef}
+            type="button"
+          >
+            {questionPreview ? (
+              <>
+                <span className="ondo-tarot-question-trigger__preview">“{questionPreview}”</span>
+                <span className="ondo-tarot-question-trigger__action">고치기</span>
+              </>
+            ) : (
+              <>
+                <span aria-hidden="true" className="ondo-tarot-question-trigger__plus">+</span>
+                <span className="ondo-tarot-question-trigger__action">더 구체적으로 적을래요</span>
+                <span className="ondo-tarot-question-trigger__optional">(선택)</span>
+              </>
+            )}
+          </button>
+        ) : null}
+
+        <div className="ondo-tarot-question-panel" hidden={!questionOpen} id="tarot-question-panel">
+          <TextField
+            id="tarot-question"
+            label="질문 (선택)"
+            maxLength={120}
+            onChange={setQuestion}
+            placeholder="예: 지금 고민 중인 이직, 어떻게 흘러갈까요?"
+            value={question}
+          />
+          <div className="ondo-tarot-question-panel__footer">
+            <p className="ondo-field-hint">안 적어도 괜찮아요. 고른 결로 읽어드릴게요.</p>
+            <div className="ondo-tarot-question-panel__actions">
+              {question ? (
+                <button
+                  aria-label="질문 지우기"
+                  className="ondo-tarot-question-text-button"
+                  onClick={clearQuestion}
+                  type="button"
+                >
+                  지우기
+                </button>
+              ) : null}
+              <button
+                aria-controls="tarot-question-panel"
+                aria-expanded="true"
+                aria-label="질문 접기"
+                className="ondo-tarot-question-text-button"
+                onClick={closeQuestion}
+                type="button"
+              >
+                접기
+              </button>
+            </div>
+          </div>
+        </div>
+
         <ChipSelect
           label="스프레드"
           onChange={handleSpreadChange}
@@ -205,15 +293,6 @@ export function TarotForm() {
           onToggle={toggleSlot}
           selected={selected}
           slots={SLOTS}
-        />
-
-        <TextField
-          id="tarot-question"
-          label="질문 (선택)"
-          maxLength={120}
-          onChange={setQuestion}
-          placeholder="예: 지금 고민 중인 이직, 어떻게 흘러갈까요?"
-          value={question}
         />
 
         <button className="ondo-button" disabled={state.kind === 'loading' || !ready} type="submit">
