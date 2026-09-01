@@ -102,7 +102,7 @@ export default async function AppHomePage() {
                 // 온도를 내고 본 결과다. 예전에는 그냥 `<li>` 라서 목록에 제목만
                 // 남고 본문을 다시 열 방법이 없었다.
                 <li className="ondo-card ondo-history-item" key={item.id}>
-                  <Link href={`/운세/기록/${item.id}`}>
+                  <Link href={`/app/history/${item.id}`}>
                     <p className="ondo-kicker">{formatKoreanDateTime(item.createdAt)}</p>
                     <h3>{item.title}</h3>
                     {label ? <p className="ondo-muted">{label}</p> : null}
