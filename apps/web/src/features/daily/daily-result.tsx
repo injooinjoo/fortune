@@ -35,7 +35,8 @@ export function DailyResult({
 }: {
   fortune: DailyFortune;
   cached: boolean;
-  onReset: () => void;
+  /** 저장된 기록을 다시 볼 때는 되돌릴 입력이 없어서 툴바를 통째로 뺀다. */
+  onReset?: () => void;
   resultRef?: Ref<HTMLElement>;
 }) {
   const luckyItems: KeyValuePair[] = Object.entries(fortune.lucky_items ?? {}).map(
@@ -49,11 +50,13 @@ export function DailyResult({
       className="ondo-daily-result"
       tabIndex={-1}
     >
-      <div className="ondo-daily-result-toolbar">
-        <button className="ondo-button ondo-button--secondary" onClick={onReset} type="button">
-          정보 다시 입력
-        </button>
-      </div>
+      {onReset ? (
+        <div className="ondo-daily-result-toolbar">
+          <button className="ondo-button ondo-button--secondary" onClick={onReset} type="button">
+            정보 다시 입력
+          </button>
+        </div>
+      ) : null}
       <ScoreHeadline
         kicker={`오늘의 운세${cached ? ' · 저장된 결과' : ''}`}
         note={
