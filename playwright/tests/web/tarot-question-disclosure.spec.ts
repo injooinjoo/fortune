@@ -10,6 +10,7 @@ async function openTarot(page: Page) {
 }
 
 test('타로 선택 질문을 목적 바로 뒤에서 필요할 때만 펼치고 다시 접을 수 있다', async ({ page }) => {
+  test.skip(!process.env.WEB_BASE_URL, '배포된 한글 경로에서 실행하는 여정 테스트입니다.');
   await page.setViewportSize(MOBILE_VIEWPORT);
   await openTarot(page);
 
@@ -47,6 +48,7 @@ test('타로 선택 질문을 목적 바로 뒤에서 필요할 때만 펼치고
 });
 
 test('타로 필수 선택과 단일 CTA를 모든 대상 뷰포트에서 유지한다', async ({ page }) => {
+  test.skip(!process.env.WEB_BASE_URL, '배포된 한글 경로에서 실행하는 여정 테스트입니다.');
   for (const viewport of [
     { width: 1440, height: 900 },
     { width: 1280, height: 800 },
