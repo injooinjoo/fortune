@@ -439,6 +439,105 @@ textarea {
   min-inline-size: 44px;
 }
 
+.ondo-tarot-question-trigger {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  align-self: flex-start;
+  gap: 6px;
+  padding: 0 2px;
+  border: 0;
+  background: transparent;
+  color: var(--ondo-color-text-secondary);
+  font-size: var(--ondo-typography-label-small-font-size);
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.ondo-tarot-question-trigger__plus {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.ondo-tarot-question-trigger__action {
+  text-decoration: underline;
+  text-decoration-color: var(--ondo-color-border-opaque);
+  text-underline-offset: 3px;
+}
+
+.ondo-tarot-question-trigger__optional {
+  color: var(--ondo-color-text-tertiary);
+  font-weight: 500;
+}
+
+.ondo-tarot-question-trigger__preview {
+  max-width: min(64vw, 260px);
+  overflow: hidden;
+  color: var(--ondo-color-text-primary);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ondo-tarot-question-trigger:hover,
+.ondo-tarot-question-trigger:focus-visible {
+  color: var(--ondo-color-text-primary);
+}
+
+.ondo-tarot-question-trigger:hover .ondo-tarot-question-trigger__action,
+.ondo-tarot-question-trigger:focus-visible .ondo-tarot-question-trigger__action {
+  text-decoration-color: currentColor;
+}
+
+.ondo-tarot-question-trigger:focus-visible,
+.ondo-tarot-question-text-button:focus-visible {
+  border-radius: 6px;
+  outline: 3px solid var(--ondo-color-accent-subtle);
+  outline-offset: 2px;
+}
+
+.ondo-tarot-question-panel {
+  width: min(100%, 560px);
+}
+
+.ondo-tarot-question-panel__footer {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ondo-spacing-sm);
+}
+
+.ondo-tarot-question-panel__footer .ondo-field-hint {
+  margin: 0;
+}
+
+.ondo-tarot-question-panel__actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 4px;
+}
+
+.ondo-tarot-question-text-button {
+  min-height: 44px;
+  padding: 0 6px;
+  border: 0;
+  background: transparent;
+  color: var(--ondo-color-text-secondary);
+  font-size: var(--ondo-typography-label-small-font-size);
+  font-weight: 750;
+  text-decoration: underline;
+  text-decoration-color: var(--ondo-color-border-opaque);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.ondo-tarot-question-text-button:hover {
+  color: var(--ondo-color-text-primary);
+  text-decoration-color: currentColor;
+}
+
 .ondo-label {
   display: block;
   margin-bottom: var(--ondo-spacing-xs);
