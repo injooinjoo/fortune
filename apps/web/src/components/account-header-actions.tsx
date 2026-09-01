@@ -3,6 +3,7 @@
 import { AppLink as Link } from '@/components/app-link';
 import { useEffect, useState } from 'react';
 
+import { subscribeBalanceChanged } from '@/lib/balance-signal';
 import { getBrowserSupabase } from '@/lib/supabase/client';
 
 type AccountState =
@@ -17,6 +18,10 @@ type AccountState =
  * 헤더에 "로그인"만 띄웠는데, 그 결과 `/app` 본문은 "로그아웃"을 보여주는데
  * 헤더는 "로그인"을 보여주는 모순이 생겼고, 정작 온도를 쓰는 사람에게 잔액이
  * 아무 화면에도 안 보였다. 세션이 있으면 잔액을 보여준다.
+ *
+ * 잔액은 로그인 상태가 아니라 운세·대화 요청에서 깎이므로, 인증 이벤트만 듣고
+ * 있으면 차감 후에도 옛 숫자가 남는다(실측: 헤더 3개 / `/app` 2개). 온도를 쓴
+ * 요청이 끝날 때 오는 신호와 화면 복귀까지 함께 구독한다.
  */
 export function AccountHeaderActions({ mobile = false }: { mobile?: boolean }) {
   const [state, setState] = useState<AccountState>({ kind: 'loading' });
@@ -52,9 +57,11 @@ export function AccountHeaderActions({ mobile = false }: { mobile?: boolean }) {
 
     void refresh();
     const { data: subscription } = client.auth.onAuthStateChange(() => void refresh());
+    const unsubscribeBalance = subscribeBalanceChanged(() => void refresh());
     return () => {
       active = false;
       subscription.subscription.unsubscribe();
+      unsubscribeBalance();
     };
   }, []);
 

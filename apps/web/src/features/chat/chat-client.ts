@@ -27,6 +27,7 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 
+import { notifyBalanceChanged } from '@/lib/balance-signal';
 import { invokeEdgeFunction } from '@/lib/edge-invoke';
 import { getBrowserSupabase } from '@/lib/supabase/client';
 
@@ -229,6 +230,9 @@ export async function sendCharacterMessage({
     // 아니라 userMessageId 라서 이 값이 매번 달라도 중복 과금되지 않는다.
     clientTimestamp: new Date().toISOString(),
   });
+
+  // 답장 한 번에 온도가 깎인다. 잔액부족으로 막힌 경우도 표시된 숫자는 낡았다.
+  notifyBalanceChanged();
 
   if (!result.ok) {
     if (result.status === 401 || matchesCode(result.errorCode, 'auth_required')) {
