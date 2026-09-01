@@ -78,3 +78,5 @@ Do not start Expo or Metro from automation. For manual app testing, run the RN s
 - Keep secrets out of git.
 - Use `.env.example` only for placeholder documentation.
 - Runtime secrets are provided through local env files, Supabase secrets, or GitHub Actions secrets depending on the boundary. EAS secrets are legacy/emergency-only and apply only to an explicitly approved EAS operation.
+
+<!-- CI baseline probe 2026-09-01: no-op, delete after run. -->
