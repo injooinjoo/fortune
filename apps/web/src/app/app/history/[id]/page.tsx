@@ -14,6 +14,14 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
  * 이게 없어서 온도를 내고 본 결과가 화면을 벗어나는 순간 사라졌다. 기록은
  * `/app` 에 남는데 열 수가 없었고, 잔액이 0 이면 다시 뽑을 수도 없다.
  *
+ * 경로가 ASCII 인 이유는 취향이 아니라 라우팅이다. 처음에는 다른 운세 화면을
+ * 따라 `/운세/기록/<id>` 로 뒀는데 프로덕션에서 `x-matched-path: /404` 가 났다.
+ * Next 는 요청으로 들어온 퍼센트 인코딩 경로를 디코딩해서 앱 라우터 세그먼트에
+ * 맞추지 않는다(vercel/next.js#62292). 지금 동작하는 한글 경로는 전부
+ * `generateStaticParams` 로 미리 만들어져 출력 맵에 그대로 들어간 것들인데,
+ * 사용자마다 id 가 다른 이 페이지는 미리 만들 수 없다. 게다가 개인 결과라
+ * 색인 대상이 아니니 `/app/*` 아래가 맞는 자리이기도 하다.
+ *
  * 행 접근은 RLS 가 막는다(`fortune_history` 는 `authenticated` 에게 SELECT 만
  * 주고 정책이 `user_id = auth.uid()` 로 좁힌다). 그래서 남의 id 를 넣어도
  * 결과가 안 나오고, 여기서는 없으면 404 로 끝낸다.
@@ -53,7 +61,7 @@ export default async function FortuneHistoryDetailPage({
   const supabase = await createSupabaseServerClient();
   const user = supabase ? (await supabase.auth.getUser()).data.user : null;
   if (!supabase || !user) {
-    redirect(`/auth/login?next=${encodeURIComponent(`/운세/기록/${decodedId}`)}`);
+    redirect(`/auth/login?next=${encodeURIComponent(`/app/history/${decodedId}`)}`);
   }
 
   const { data: row, error } = await supabase
