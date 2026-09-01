@@ -118,10 +118,12 @@ jobs:
       - name: Install Playwright chromium
         run: npx playwright install --with-deps chromium chromium-headless-shell
 
+      # NEXT_PUBLIC_SITE_URL 은 여기서 덮어쓰지 않는다. 이 값은 `lib/env.ts` 의
+      # `siteUrl` 이고 canonical/og 메타데이터의 출처라, localhost 로 바꾸면
+      # public-domain.spec.js 의 canonical 계약(zpzg.co.kr)이 깨진다. 브라우저가
+      # 어디로 접속할지는 playwright.web.config.js 의 baseURL 이 이미 정한다.
       - name: Web smoke (Playwright)
         run: npm run test:web:ci
-        env:
-          NEXT_PUBLIC_SITE_URL: http://localhost:3100
 
       - name: Upload Playwright report
         if: always()

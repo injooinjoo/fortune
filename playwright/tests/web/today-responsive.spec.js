@@ -2,6 +2,16 @@ const { test, expect } = require('@playwright/test');
 
 const TODAY_PATH = '/운세/오늘';
 
+/**
+ * `/운세/오늘` 은 한글 세그먼트 라우트다. Next 는 요청으로 들어온 퍼센트 인코딩
+ * 경로(`/%EC%9A%B4%EC%84%B8/%EC%98%A4%EB%8A%98`)를 디코딩해서 앱 라우터
+ * 세그먼트에 맞추지 않는다 (vercel/next.js#62292). 그래서 `next start`/`next dev`
+ * 로 띄운 로컬 서버는 이 경로를 항상 404 로 돌려주고, 배포된 Vercel 라우팅에서만
+ * 200 이 된다. 같은 이유로 daily.spec.ts / fortune-input-journey.spec.ts 도 이미
+ * `WEB_BASE_URL` 이 있을 때만 실행한다.
+ */
+const DEPLOYED_KOREAN_PATH_ONLY = '배포된 한글 경로에서 실행하는 반응형 스모크입니다.';
+
 async function layoutMetrics(page) {
   return page.locator('[data-testid="daily-layout"]').evaluate((layout) => {
     const panel = layout.querySelector('[data-testid="daily-form-panel"]');
@@ -41,6 +51,7 @@ async function layoutMetrics(page) {
 test.describe('Ondo daily fortune responsive journey', () => {
   for (const [width, height] of [[1440, 900], [1280, 800]]) {
     test(`uses a focused desktop form instead of stretching mobile controls at ${width}px`, async ({ page }) => {
+      test.skip(!process.env.WEB_BASE_URL, DEPLOYED_KOREAN_PATH_ONLY);
       await page.setViewportSize({ width, height });
       await page.goto(TODAY_PATH);
       await expect(page.getByRole('form', { name: '오늘의 운세 입력' })).toBeVisible();
@@ -73,6 +84,7 @@ test.describe('Ondo daily fortune responsive journey', () => {
   }
 
   test('keeps the mobile flow compact and free of horizontal overflow', async ({ page }) => {
+    test.skip(!process.env.WEB_BASE_URL, DEPLOYED_KOREAN_PATH_ONLY);
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(TODAY_PATH);
     await expect(page.getByRole('form', { name: '오늘의 운세 입력' })).toBeVisible();
@@ -101,6 +113,7 @@ test.describe('Ondo daily fortune responsive journey', () => {
   });
 
   test('lets people enter first and explains account connection only at the value boundary', async ({ page }) => {
+    test.skip(!process.env.WEB_BASE_URL, DEPLOYED_KOREAN_PATH_ONLY);
     await page.goto(TODAY_PATH);
     await expect(page.getByRole('form', { name: '오늘의 운세 입력' })).toBeVisible();
 
@@ -113,6 +126,7 @@ test.describe('Ondo daily fortune responsive journey', () => {
   });
 
   test('moves a scrolled mobile user to the start of a completed reading', async ({ page }) => {
+    test.skip(!process.env.WEB_BASE_URL, DEPLOYED_KOREAN_PATH_ONLY);
     await page.setViewportSize({ width: 390, height: 844 });
     await page.route('**/rest/v1/rpc/record_web_analytics_event', (route) =>
       route.fulfill({ status: 204 }),
