@@ -103,6 +103,13 @@ jobs:
       - name: tsc --noEmit
         run: pnpm --filter @fortune/web typecheck
 
+      # apps/web 의 테스트 파일은 저장소에 있는데 실행되는 곳이 없었다.
+      # typecheck 는 타입만 보고 Playwright 는 브라우저 동작만 본다 — 잔액
+      # 정규화, 분석 이벤트 화이트리스트, 스냅샷 차단 키 같은 순수 로직은
+      # 게이트 없이 master 로 들어가고 있었다. build 앞에 둬서 빨리 실패하게 한다.
+      - name: Web unit tests
+        run: node scripts/run-web-unit-tests.mjs
+
       - name: next build
         run: pnpm --filter @fortune/web build
 
