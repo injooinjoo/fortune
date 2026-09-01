@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { getFortuneCostPoints } from '@fortune/product-contracts';
 
 import { SignOutButton } from '@/components/sign-out-button';
+import { findWebFortuneByType } from '@/features/fortune/catalog';
 import {
   displayAccountName,
   formatKoreanDateTime,
@@ -13,6 +14,12 @@ import {
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
+
+/** 히스토리 항목의 보조 라벨. 제목과 겹치거나 모르는 타입이면 아무것도 안 쓴다. */
+function historyLabel(fortuneType: string, title: string): string | null {
+  const label = findWebFortuneByType(fortuneType)?.title;
+  return label && label !== title ? label : null;
+}
 
 export default async function AppHomePage() {
   const supabase = await createSupabaseServerClient();
@@ -59,7 +66,7 @@ export default async function AppHomePage() {
           <p className="ondo-kicker">계정 상태</p>
           <h2 className="ondo-h3">{user.is_anonymous ? '게스트' : 'Google 연결 완료'}</h2>
           <p className="ondo-muted">
-            {user.is_anonymous ? '계정을 연결하면 45온도가 한 번 추가돼요.' : '운세와 대화 기록이 이 계정에 보관돼요.'}
+            {user.is_anonymous ? '계정을 연결하면 온도 45개가 한 번 추가돼요.' : '운세와 대화 기록이 이 계정에 보관돼요.'}
           </p>
           {user.is_anonymous ? (
             <Link className="ondo-button" href="/auth/login?next=%2Fapp">Google 계정 연결</Link>
@@ -84,16 +91,24 @@ export default async function AppHomePage() {
 
         {history.length ? (
           <ol className="ondo-history-list">
-            {history.map((item) => (
-              <li className="ondo-card ondo-history-item" key={item.id}>
-                <div>
-                  <p className="ondo-kicker">{formatKoreanDateTime(item.createdAt)}</p>
-                  <h3>{item.title}</h3>
-                  <p className="ondo-muted">{item.fortuneType}</p>
-                </div>
-                {item.score === null ? null : <strong className="ondo-history-score">{item.score}점</strong>}
-              </li>
-            ))}
+            {history.map((item) => {
+              // `fortune_type` 은 `daily` 같은 원문 enum 이라 한국어 화면에 그대로
+              // 내보내면 안 된다. 카탈로그 라벨로 바꾸고, 제목과 같으면 같은 말을
+              // 두 번 쓰지 않는다.
+              const label = historyLabel(item.fortuneType, item.title);
+              return (
+                <li className="ondo-card ondo-history-item" key={item.id}>
+                  <div>
+                    <p className="ondo-kicker">{formatKoreanDateTime(item.createdAt)}</p>
+                    <h3>{item.title}</h3>
+                    {label ? <p className="ondo-muted">{label}</p> : null}
+                  </div>
+                  {item.score === null ? null : (
+                    <strong className="ondo-history-score">{item.score}점</strong>
+                  )}
+                </li>
+              );
+            })}
           </ol>
         ) : (
           <div className="ondo-card ondo-stack">

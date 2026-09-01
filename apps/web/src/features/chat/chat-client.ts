@@ -47,8 +47,9 @@ const CONFIG_FAILURE: ChatFailure = {
 
 const AUTH_FAILURE_MESSAGE = '세션이 만료됐어요. 다시 로그인하면 이어서 대화할 수 있어요.';
 
+// 여기는 웹이다. "앱에서 충전"으로 보내면 결제 의사가 가장 높은 순간에 막다른 길이 된다.
 const TOKENS_FAILURE_MESSAGE =
-  '온도가 모자라서 답장을 만들지 못했어요. 앱에서 충전한 뒤 다시 보내주세요.';
+  '온도가 모자라서 답장을 만들지 못했어요. 온도를 충전하면 이어서 대화할 수 있어요.';
 
 /** 429 바디의 `error` 는 `daily_chat_limit_reached` 라는 코드 문자열이다. */
 const LIMIT_FAILURE_MESSAGE = '오늘 대화 사용량을 다 썼어요. 내일 다시 이어가요.';
