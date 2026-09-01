@@ -1,0 +1,124 @@
+name: Deploy Edge Functions
+
+# 엣지 함수는 Vercel 이 배포하지 않는다. 이게 붙기 전까지는 master 에 머지해도
+# 사람이 손으로 `supabase functions deploy` 를 쳐야 반영됐고, 실제로 안 쳐서
+# 프로덕션과 저장소가 벌어진 적이 있다 (2026-09-01, fortune-daily 스팸 필터).
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'supabase/functions/**'
+  workflow_dispatch:
+    inputs:
+      functions:
+        description: '배포할 함수 슬러그 (공백 구분). 비우면 직전 커밋 변경분에서 자동 산출한다.'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-edge-functions
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy affected functions
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      SUPABASE_PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF || 'hayjukwfcsdmppairazc' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # 변경분 산출에 push 이전 커밋이 로컬에 있어야 한다.
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Resolve functions to deploy
+        id: resolve
+        env:
+          # 사용자 입력과 ref 는 셸에 직접 보간하지 않는다.
+          REQUESTED: ${{ inputs.functions }}
+          BEFORE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          if [ -n "$REQUESTED" ]; then
+            printf '%s\n' $REQUESTED > /tmp/slugs.txt
+            echo "수동 지정된 함수를 배포합니다."
+          else
+            # 브랜치 첫 push 면 before 가 0으로 채워져 온다. 그때는 직전 커밋을 쓴다.
+            base="$BEFORE_SHA"
+            if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ] \
+               || ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+              base="$HEAD_SHA~1"
+            fi
+            node scripts/changed-edge-functions.mjs "$base" "$HEAD_SHA" > /tmp/slugs.txt
+          fi
+
+          COUNT=$(grep -c . /tmp/slugs.txt || true)
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "### 배포 대상 ${COUNT}개"
+            echo ""
+            if [ "$COUNT" -gt 0 ]; then
+              sed 's/^/- /' /tmp/slugs.txt
+            else
+              echo "변경된 엣지 함수가 없습니다."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Check credentials
+        if: steps.resolve.outputs.count != '0'
+        env:
+          # 토큰 자체가 아니라 존재 여부만 셸로 넘긴다.
+          TOKEN_PRESENT: ${{ secrets.SUPABASE_ACCESS_TOKEN != '' }}
+        run: |
+          if [ "$TOKEN_PRESENT" != "true" ]; then
+            echo "::error::SUPABASE_ACCESS_TOKEN 시크릿이 없습니다. Settings → Secrets and variables → Actions 에서 추가하세요."
+            exit 1
+          fi
+
+      - name: Setup Supabase CLI
+        if: steps.resolve.outputs.count != '0'
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Deploy
+        if: steps.resolve.outputs.count != '0'
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          # 하나가 실패해도 나머지는 계속 배포하고, 마지막에 실패 목록을 낸다.
+          # 저장소에 없는 오래된 함수가 Supabase 쪽에 다수 남아 있어서 개별
+          # 실패가 전체 배포를 막지 않게 한다.
+          failed=()
+          while read -r slug; do
+            [ -z "$slug" ] && continue
+            echo "::group::deploy $slug"
+            # 루프의 stdin 이 슬러그 목록이라, CLI 가 그걸 먹지 않도록 끊는다.
+            if supabase functions deploy "$slug" --project-ref "$SUPABASE_PROJECT_REF" < /dev/null; then
+              echo "- ✅ \`$slug\`" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "::error::$slug 배포 실패"
+              echo "- ❌ \`$slug\`" >> "$GITHUB_STEP_SUMMARY"
+              failed+=("$slug")
+            fi
+            echo "::endgroup::"
+          done < /tmp/slugs.txt
+
+          if [ ${#failed[@]} -gt 0 ]; then
+            echo "배포 실패: ${failed[*]}"
+            exit 1
+          fi
