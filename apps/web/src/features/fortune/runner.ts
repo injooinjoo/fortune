@@ -24,6 +24,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { invokeEdgeFunction } from '@/lib/edge-invoke';
 import { trackProductEvent } from '@/lib/analytics-client';
 import { notifyBalanceChanged } from '@/lib/balance-signal';
+import { projectFortuneSnapshot } from '@/lib/fortune-snapshot';
 import {
   fortuneTitle,
   projectFortuneSummary,
@@ -104,7 +105,15 @@ async function saveFortuneContext(
     p_title: title,
     p_summary: summary,
     // Persist the admitted presentation projection, never the raw provider envelope.
-    p_fortune_data: { projectedSummary: summary },
+    //
+    // `projectedSummary` 는 대화 컨텍스트용이라 하이라이트 8개로 잘려 있어서,
+    // 이것만 두면 온도를 내고 본 결과를 다시 열 수 없다. `snapshot` 은 차단 키를
+    // 걷어내고 크기 상한을 씌운 구조 복사본이라 `/운세/기록/<id>` 에서 그대로
+    // 다시 렌더된다. 상한을 넘기면 `null` 이고, 그때는 요약만으로 계속 간다.
+    p_fortune_data: {
+      projectedSummary: summary,
+      snapshot: projectFortuneSnapshot(fortuneType, data),
+    },
     p_score: summary.score,
     p_history_key: historyKey,
   });
