@@ -11,6 +11,8 @@ import {
 } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
+import { getFortuneCostPoints } from '@fortune/product-contracts';
+
 import { trackProductEvent } from '@/lib/analytics-client';
 
 import { CharacterAvatar } from './character-avatar';
@@ -24,6 +26,9 @@ import {
 } from './chat-client';
 import type { ChatMessage } from './types';
 import styles from './chat.module.css';
+
+/** 가격 SoT 는 `packages/product-contracts`. 화면에 숫자를 직접 적지 않는다. */
+const CHAT_COST_POINTS = getFortuneCostPoints('character-chat');
 
 /**
  * 캐릭터 대화 스레드.
@@ -344,6 +349,13 @@ export function ChatThread({ character }: { character: WebChatCharacter }) {
         </button>
       </form>
 
+      {/* 유료 재화가 줄어드는 행동은 누르기 전에 알려야 한다. 이 고지가 없던 동안
+          채팅은 화면 어디에도 비용을 안 밝힌 채 메시지마다 온도를 차감했다. */}
+      <p className="ondo-muted">
+        답장 한 번에 온도 {CHAT_COST_POINTS}개를 사용해요.{' '}
+        <Link href="/app">남은 온도 보기</Link>
+      </p>
+
       {persistence === 'local' ? (
         <div className="ondo-notice ondo-stack" style={{ gap: 'var(--ondo-spacing-sm)' }}>
           <p className="ondo-muted">
@@ -426,6 +438,12 @@ function FailureBox({
         {failure.kind === 'auth' ? (
           <Link className="ondo-button" href={loginHref}>
             다시 로그인
+          </Link>
+        ) : null}
+        {/* 온도가 바닥난 순간이 결제 의사가 가장 높은 지점이다. 여기서 끊지 않는다. */}
+        {failure.kind === 'tokens' ? (
+          <Link className="ondo-button" href="/app/charge">
+            온도 충전하기
           </Link>
         ) : null}
         {/* 자동 재시도를 안 하는 대신 버튼으로 남긴다. 같은 턴 id 로 다시 보낸다. */}
