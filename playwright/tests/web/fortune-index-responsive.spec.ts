@@ -5,6 +5,16 @@ const VIEWPORTS = [
   { width: 1280, height: 800 },
 ] as const;
 
+/**
+ * `/운세` 는 한글 세그먼트 라우트다. Next 는 요청으로 들어온 퍼센트 인코딩
+ * 경로(`/%EC%9A%B4%EC%84%B8`)를 디코딩해서 앱 라우터 세그먼트에 맞추지 않는다
+ * (vercel/next.js#62292). 그래서 `next start`/`next dev` 로 띄운 로컬 서버는
+ * 이 경로를 항상 404 로 돌려주고, 배포된 Vercel 라우팅에서만 200 이 된다.
+ * 같은 이유로 daily.spec.ts / fortune-input-journey.spec.ts 도 이미
+ * `WEB_BASE_URL` 이 있을 때만 실행한다.
+ */
+const DEPLOYED_KOREAN_PATH_ONLY = '배포된 한글 경로에서 실행하는 반응형 스모크입니다.';
+
 async function enterFortuneIndexFromHome(page: import('@playwright/test').Page) {
   await page.goto('/');
 
@@ -28,6 +38,7 @@ async function enterFortuneIndexFromHome(page: import('@playwright/test').Page) 
 test.describe('운세 목록의 반응형 선택 안내', () => {
   for (const viewport of VIEWPORTS) {
     test(`${viewport.width} 데스크톱은 선택 기준을 바로 보여준다`, async ({ page }) => {
+      test.skip(!process.env.WEB_BASE_URL, DEPLOYED_KOREAN_PATH_ONLY);
       await page.setViewportSize(viewport);
       await enterFortuneIndexFromHome(page);
 
@@ -47,6 +58,7 @@ test.describe('운세 목록의 반응형 선택 안내', () => {
   }
 
   test('390 모바일은 선택 기준을 접고 첫 리딩을 앞당기되 필요할 때 펼친다', async ({ page }) => {
+    test.skip(!process.env.WEB_BASE_URL, DEPLOYED_KOREAN_PATH_ONLY);
     await page.setViewportSize({ width: 390, height: 844 });
     await enterFortuneIndexFromHome(page);
 
