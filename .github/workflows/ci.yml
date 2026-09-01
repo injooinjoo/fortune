@@ -133,6 +133,32 @@ jobs:
           path: playwright-report/web
           retention-days: 7
 
+  # apps/web 의 테스트 파일은 저장소에 있는데 실행되는 곳이 없었다. typecheck 는
+  # 타입만 보고 Playwright 는 브라우저 동작만 본다 — 잔액 정규화, 분석 이벤트
+  # 화이트리스트, 운세 요약 투영, 스냅샷 차단 키 같은 순수 로직이 게이트 없이
+  # master 로 들어가고 있었다.
+  #
+  # 별도 잡으로 둔 이유는 Node 버전이다. 다른 잡은 20.x 인데 그 버전은 `.ts` 를
+  # 실행하지 못한다(타입 스트리핑 없음). 여기만 24.x 를 쓴다 — Vercel 의
+  # `ondo-web` 프로젝트가 실제로 쓰는 런타임과 같은 메이저다. 빌드를 하지 않아
+  # 30초 안에 끝난다.
+  web-unit-tests:
+    name: web unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+
+      - name: Run web unit tests
+        run: node scripts/run-web-unit-tests.mjs
+
   rls-static-audit:
     name: Supabase RLS static audit
     runs-on: ubuntu-latest
