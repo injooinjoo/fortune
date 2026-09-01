@@ -15,18 +15,24 @@
  */
 
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { glob } from 'node:fs/promises';
-import { relative, resolve } from 'node:path';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join, relative, resolve } from 'node:path';
 
 const WEB_ROOT = resolve(import.meta.dirname, '..', 'apps', 'web');
 const TSX_IMPORT = /from\s+['"][^'"]+\.tsx['"]/;
 
-const all = [];
-for await (const entry of glob('src/**/*.test.{ts,tsx}', { cwd: WEB_ROOT })) {
-  all.push(entry);
+/** `node:fs/promises` 의 glob 은 Node 22+ 라 직접 훑는다. 러너 자체는 어디서든 돌아야 한다. */
+function collectTests(dir) {
+  const found = [];
+  for (const entry of readdirSync(join(WEB_ROOT, dir), { withFileTypes: true })) {
+    const child = join(dir, entry.name);
+    if (entry.isDirectory()) found.push(...collectTests(child));
+    else if (/\.test\.tsx?$/.test(entry.name)) found.push(child);
+  }
+  return found;
 }
-all.sort();
+
+const all = collectTests('src').sort();
 
 const runnable = [];
 const skipped = [];
@@ -47,7 +53,9 @@ if (runnable.length === 0) {
   process.exit(1);
 }
 
-execFileSync(process.execPath, ['--test', ...runnable], {
+// 타입 스트리핑은 Node 23.6 부터 기본이지만 22 에서는 플래그가 필요하다.
+// 플래그는 최신 버전에서도 그대로 받아주므로 명시해 둔다.
+execFileSync(process.execPath, ['--experimental-strip-types', '--test', ...runnable], {
   cwd: WEB_ROOT,
   stdio: 'inherit',
 });
