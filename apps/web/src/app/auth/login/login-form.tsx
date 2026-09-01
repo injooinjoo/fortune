@@ -107,11 +107,11 @@ export function LoginForm({
         type="button"
       >
         <GoogleMark />
-        {status.kind === 'redirecting' ? 'Google 로 이동 중…' : 'Google 로 계속하기'}
+        {status.kind === 'redirecting' ? 'Google로 이동 중…' : 'Google로 계속하기'}
       </button>
 
       <p className="ondo-muted">
-        로그인하지 않아도 운세는 바로 볼 수 있어요. Google 계정으로 연결하면 기존 기록을 유지하고 총 50온도로 시작해요.
+        로그인하지 않아도 운세는 바로 볼 수 있어요. Google 계정으로 연결하면 기존 기록을 유지하고 온도 50개로 시작해요.
       </p>
 
       {errorMessage ? (

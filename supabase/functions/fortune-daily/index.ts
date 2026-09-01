@@ -37,6 +37,7 @@ import {
   withTokenCharge,
 } from '../_shared/fortune_charge.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { sanitizeLlmText } from '../_shared/llm_text_sanitizer.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile } from '../_shared/percentile/calculator.ts'
 import {
@@ -864,7 +865,15 @@ ${name}님에게 보내는 응원 메시지 (친구가 말하듯이!)
           metadata: { category, categoryScore, idiom, name, birthDate, zodiacAnimal, zodiacSign, mbtiType }
         })
 
-        const rawContent = response.content.trim()
+        // 모델이 학습 데이터의 스팸 꼬리표(예: 중국어 도박 사이트 토큰)를 문장 끝에
+        // 붙여 보내는 사고가 실제로 있었다. 사용자에게 닿기 전에 여기서 걸러낸다.
+        const sanitized = sanitizeLlmText(response.content.trim())
+        if (sanitized.removed.length > 0) {
+          console.warn(
+            `⚠️ LLM 응답 이물질 제거 (${category}): ${JSON.stringify(sanitized.removed)}`
+          )
+        }
+        const rawContent = sanitized.text
 
         // 카테고리 카드용: 첫 줄 [한줄요약] 파싱 (total 제외)
         if (category !== 'total') {
