@@ -1,8 +1,13 @@
 import type { Metadata } from 'next';
 import { AppLink as Link } from '@/components/app-link';
 
+import {
+  FortuneListStructuredData,
+  WebSiteStructuredData,
+} from '@/components/structured-data';
 import { WEB_CHAT_CHARACTERS } from '@/features/chat/characters';
 import { WEB_FORTUNES, type WebFortune } from '@/features/fortune/catalog';
+import { siteUrl } from '@/lib/env';
 import {
   CHAT_INDEX_HREF,
   FORTUNE_INDEX_HREF,
@@ -42,9 +47,23 @@ const featuredFortunes = FEATURED_TYPES.map((item) => ({ ...item, fortune: requi
 const todayFortune = requireFortune('daily');
 const firstCharacter = WEB_CHAT_CHARACTERS[0];
 
+const SITE_NAME = '온도';
+const SITE_DESCRIPTION =
+  '생년월일과 태어난 시간으로 오늘의 운세를 읽고, 나를 기억하는 캐릭터와 대화하는 AI 운세 서비스 온도.';
+
 export default function HomePage() {
   return (
     <main className={styles.home}>
+      {/* 검색엔진이 사이트와 운세 목록을 구조로 읽게 한다. 값은 전부 카탈로그 SoT 에서 온다. */}
+      <WebSiteStructuredData description={SITE_DESCRIPTION} name={SITE_NAME} siteUrl={siteUrl} />
+      <FortuneListStructuredData
+        items={WEB_FORTUNES.map((fortune) => ({
+          name: fortune.title,
+          description: fortune.blurb,
+          path: `운세/${fortune.slug}`,
+        }))}
+        siteUrl={siteUrl}
+      />
       <section className={styles.todaySection} aria-labelledby="home-title">
         <div className={styles.todayGrid}>
           <article className={styles.todayPanel}>
