@@ -23,6 +23,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 import { invokeEdgeFunction } from '@/lib/edge-invoke';
 import { trackProductEvent } from '@/lib/analytics-client';
+import { notifyBalanceChanged } from '@/lib/balance-signal';
 import {
   fortuneTitle,
   projectFortuneSummary,
@@ -184,6 +185,10 @@ export async function runFortune<T>(
   }
 
   const result = await invokeEdgeFunction<T>(supabase, edgeFunctionName(fortuneType), body);
+
+  // 차감은 엣지 함수 안에서 끝난다. 성공이면 깎였고, 잔액부족이면 바닥을 친
+  // 상태다. 어느 쪽이든 화면에 남아 있는 잔액은 이미 낡았으니 여기서 알린다.
+  notifyBalanceChanged();
 
   if (!result.ok) {
     const errorKind = isAuthFailure(result.status, result.errorCode)

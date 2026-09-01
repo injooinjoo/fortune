@@ -1,12 +1,13 @@
 'use client';
 
-import { productCatalog, storefrontConsumableProductIds } from '@fortune/product-contracts';
 import Script from 'next/script';
 import { useState } from 'react';
 
 import { trackProductEvent } from '@/lib/analytics-client';
 import { invokeEdgeFunction } from '@/lib/edge-invoke';
 import { getBrowserSupabase } from '@/lib/supabase/client';
+
+import { ChargeProductGrid } from './product-grid';
 
 type TossPayment = {
   requestPayment(input: {
@@ -106,28 +107,22 @@ export function ChargeClient({
           strategy="afterInteractive"
         />
       ) : null}
-      <div className="ondo-payment-grid">
-        {storefrontConsumableProductIds.map((productId) => {
-          const product = productCatalog[productId];
-          const busy = pendingProduct === productId;
-          return (
-            <article className="ondo-card ondo-payment-card" key={productId}>
-              <p className="ondo-kicker">온도 충전</p>
-              <h2>{product.points.toLocaleString('ko-KR')}온도</h2>
-              <p className="ondo-muted">{product.description}</p>
-              <strong>{product.price.toLocaleString('ko-KR')}원</strong>
-              <button
-                className="ondo-button"
-                disabled={!clientKey || !sdkReady || pendingProduct !== null}
-                onClick={() => void startPayment(productId)}
-                type="button"
-              >
-                {busy ? '결제 준비 중…' : clientKey ? '카드로 결제하기' : '웹 결제 준비 중'}
-              </button>
-            </article>
-          );
-        })}
-      </div>
+      <ChargeProductGrid
+        action={(productId) => (
+          <button
+            className="ondo-button"
+            disabled={!clientKey || !sdkReady || pendingProduct !== null}
+            onClick={() => void startPayment(productId)}
+            type="button"
+          >
+            {pendingProduct === productId
+              ? '결제 준비 중…'
+              : clientKey
+                ? '카드로 결제하기'
+                : '웹 결제 준비 중'}
+          </button>
+        )}
+      />
       {!clientKey ? (
         <div className="ondo-notice" role="status">
           <strong>웹 결제를 준비하고 있어요.</strong>

@@ -58,9 +58,11 @@ export default async function AppHomePage() {
           <p className="ondo-kicker">사용 가능한 온도</p>
           <p className="ondo-account-balance"><strong>{balance}</strong>개</p>
           <p className="ondo-muted">오늘의 운세는 온도 {getFortuneCostPoints('daily')}개를 사용해요.</p>
-          {user.is_anonymous ? null : (
-            <Link className="ondo-button" href="/app/charge">온도 충전</Link>
-          )}
+          {/* 게스트에게도 충전 입구를 연다. 예전에는 익명이면 이 버튼을 숨겨서,
+              잔액이 바닥난 화면은 "온도 충전하기" 를 권하는데 정작 계정 화면에는
+              충전할 길이 없는 모순이 났다. `/app/charge` 가 로그인 여부에 따라
+              가격 안내와 결제를 알아서 나눠 보여준다. */}
+          <Link className="ondo-button" href="/app/charge">온도 충전</Link>
         </article>
         <article className="ondo-card ondo-stack">
           <p className="ondo-kicker">계정 상태</p>
