@@ -6,6 +6,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type ChangeEvent,
   type FormEvent,
   type KeyboardEvent,
 } from 'react';
@@ -17,6 +18,7 @@ import { trackProductEvent } from '@/lib/analytics-client';
 
 import { CharacterAvatar } from './character-avatar';
 import type { WebChatCharacter } from './characters';
+import { readChatDraft, writeChatDraft } from './chat-draft';
 import {
   ensureChatSession,
   loadConversation,
@@ -119,6 +121,12 @@ export function ChatThread({ character }: { character: WebChatCharacter }) {
 
   const busy = waiting || queue.length > 0;
   const booting = persistence === 'checking';
+
+  // 보내지 않은 문장은 같은 탭에서 잠깐 다른 화면을 확인해도 잃지 않는다.
+  // sessionStorage라서 새 탭이나 브라우저를 닫은 뒤까지 남기지는 않는다.
+  useEffect(() => {
+    setInput(readChatDraft(window.sessionStorage, character.id));
+  }, [character.id]);
 
   // 게스트 부트스트랩 + 저장된 스레드 복원.
   useEffect(() => {
@@ -290,7 +298,14 @@ export function ChatThread({ character }: { character: WebChatCharacter }) {
 
     setMessages((prev) => [...prev, newMessage('user', text, turn.messageId)]);
     setInput('');
+    writeChatDraft(window.sessionStorage, character.id, '');
     void runTurn(turn);
+  }
+
+  function handleInputChange(event: ChangeEvent<HTMLTextAreaElement>) {
+    const next = event.target.value;
+    setInput(next);
+    writeChatDraft(window.sessionStorage, character.id, next);
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -333,7 +348,7 @@ export function ChatThread({ character }: { character: WebChatCharacter }) {
           className={`ondo-input ${styles.input}`}
           disabled={booting}
           id="chat-input"
-          onChange={(event) => setInput(event.target.value)}
+          onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder={booting ? '연결하는 중이에요…' : `${character.name}에게 보낼 말`}
           ref={inputRef}
