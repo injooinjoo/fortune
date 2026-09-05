@@ -1,15 +1,18 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
+import { getFortuneCostPoints } from '@fortune/product-contracts';
 
 import { ChipSelect, type ChipOption } from '@/features/fortune/fields';
 import { FailureNotice } from '@/features/fortune/result';
 import { runFortune, type FortuneFailureKind } from '@/features/fortune/runner';
 
 import { MbtiResult, type MbtiEnvelope, type MbtiFortune } from './mbti-result';
+import { mbtiButtonLabel } from './mbti-copy';
 import { MBTI_TYPES, findMbtiType } from './mbti-types';
 
 const EMPTY_RESPONSE_MESSAGE = 'MBTI 운세 응답이 비어 있어요. 잠시 후 다시 시도해 주세요.';
+const MBTI_COST_POINTS = getFortuneCostPoints('mbti');
 
 const OPTIONS: ReadonlyArray<ChipOption> = MBTI_TYPES.map((type) => ({
   value: type.id,
@@ -90,11 +93,11 @@ export function MbtiForm({ initialMbti }: { initialMbti?: string }) {
           disabled={state.kind === 'loading' || mbti.length === 0}
           type="submit"
         >
-          {state.kind === 'loading'
-            ? '읽는 중…'
-            : locked
-              ? `${mbti} 오늘의 운세 보기`
-              : '오늘의 MBTI 운세 보기'}
+          {mbtiButtonLabel({
+            costPoints: MBTI_COST_POINTS,
+            loading: state.kind === 'loading',
+            lockedMbti: locked ? mbti : undefined,
+          })}
         </button>
       </form>
 
