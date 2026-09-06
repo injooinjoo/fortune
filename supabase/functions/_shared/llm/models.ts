@@ -42,7 +42,8 @@ const GEMINI_MODEL_CATALOG: Record<string, GeminiModelCatalogEntry> = {
   },
 };
 
-const DEFAULT_SAFE_TEXT_MODEL = "gemini-2.0-flash-lite";
+// Gemini 2.0 was shut down on 2026-06-01. Keep the supported low-cost fallback.
+const DEFAULT_SAFE_TEXT_MODEL = "gemini-2.5-flash-lite";
 const DEFAULT_CHAT_MODEL = "gemini-2.5-flash-lite";
 const DEFAULT_IMAGE_MODEL = "gemini-2.5-flash-image";
 const DEFAULT_PREVIEW_TEXT_MODEL = "gemini-3.1-flash-lite";

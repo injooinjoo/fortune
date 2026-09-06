@@ -40,13 +40,7 @@ import { LLMFactory } from '../_shared/llm/factory.ts'
 import { sanitizeLlmText } from '../_shared/llm_text_sanitizer.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile } from '../_shared/percentile/calculator.ts'
-import {
-  extractDailyCohort,
-  generateCohortHash,
-  getFromCohortPool,
-  personalize,
-  saveToCohortPool,
-} from '../_shared/cohort/index.ts'
+import { resolveDailyAdvice, type DailyAdvice, type DailyAdviceSource } from '../_shared/daily-advice-pool.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -356,27 +350,30 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     )
 
-    // Service Role 클라이언트 (Cohort Pool 접근용 - RLS 우회)
+    // Service Role 클라이언트 (비공개 공통 조언 풀 접근용)
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
     )
 
-    const {
-      name: rawName,
-      birthDate,
-      birthTime,
-      gender,
-      isLunar,
-      mbtiType,
-      bloodType,
-      zodiacSign,
-      zodiacAnimal,
-      location,  // 옵셔널 위치 정보 (deprecated)
-      userLocation,  // ✅ LocationManager에서 전달받은 실제 사용자 위치
-      date,      // 클라이언트에서 전달받은 날짜
-      isPremium = false // ✅ 프리미엄 사용자 여부
-    } = requestData
+    const textFields = ['name', 'birthDate', 'mbtiType', 'zodiacSign', 'zodiacAnimal', 'location', 'userLocation', 'date'] as const;
+    const invalidField = textFields.find((key) => requestData[key] != null && typeof requestData[key] !== 'string');
+    const textValue = (key: typeof textFields[number]): string => typeof requestData[key] === 'string' ? requestData[key] as string : '';
+    const birthDate = textValue('birthDate');
+    const date = textValue('date');
+    // Invalid conditions must never consume a point or create a shared pool key.
+    if (invalidField || !birthDate || !Number.isFinite(Date.parse(birthDate)) || (date && !Number.isFinite(Date.parse(date)))) {
+      return new Response(JSON.stringify({ error: '생년월일과 날짜 입력을 확인해 주세요.' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
+      });
+    }
+    const rawName = textValue('name');
+    const mbtiType = textValue('mbtiType');
+    const zodiacSign = textValue('zodiacSign');
+    const zodiacAnimal = textValue('zodiacAnimal');
+    const location = textValue('location');
+    const userLocation = textValue('userLocation');
+    const isPremium = requestData.isPremium === true;
     // SECURITY: body.userId 무시. JWT 에서만 파생 + 서버에서 직접 토큰 차감.
     // 게스트('anonymous') fallback 제거 — 로그인 없이는 LLM 을 태울 수 없다.
     // 이 함수는 widget_fortune_cache에 user_id 키로 row를 insert하므로 JWT
@@ -411,81 +408,10 @@ serve(async (req) => {
     console.log('👤 [Daily] 사용자 이름:', name, '(원본:', rawName, ')')
     console.log('📍 [Daily] 사용자 위치:', userLocation || location || '미제공')
 
-    // ============================================
-    // 🚀 Cohort Pool 조회 (API 비용 90% 절감)
-    // ============================================
-    // 온디맨드 Pool 저장을 위해 cohortData를 외부에 선언
-    let dailyCohortData: Record<string, string> | null = null;
-    let dailyCohortHash: string | null = null;
-
-    if (birthDate) {
-      try {
-        dailyCohortData = extractDailyCohort({
-          birthDate,
-          now: date ? new Date(date) : undefined,
-        });
-        const cohortData = dailyCohortData;
-        dailyCohortHash = await generateCohortHash(cohortData);
-
-        console.log(`🔍 [Cohort] Daily 조회 시도:`, JSON.stringify(cohortData), `hash: ${dailyCohortHash.slice(0, 8)}...`);
-
-        const cachedResult = await getFromCohortPool(supabaseAdmin, 'daily', dailyCohortHash);
-
-        if (cachedResult) {
-          console.log('✅ [Cohort] Pool에서 결과 반환 (LLM 호출 절약!)');
-
-          // 개인화 처리
-          const personalizedFortune = personalize(cachedResult, {
-            name,
-            userName: name,
-            birthDate,
-            age: birthDate ? new Date().getFullYear() - new Date(birthDate).getFullYear() : 20,
-          });
-
-          // 퍼센타일 계산 (캐시된 점수 사용)
-          const cachedScore = (personalizedFortune as any).overall_score || 75;
-          const percentileData = await calculatePercentile(
-            supabaseClient,
-            'daily',
-            cachedScore
-          );
-
-          const cohortPayload = {
-            fortune: {
-              ...personalizedFortune,
-              percentile: percentileData.percentile,
-              totalTodayViewers: percentileData.totalTodayViewers,
-              isPercentileValid: percentileData.isPercentileValid,
-            },
-            storySegments: [],  // 캐시된 결과에서는 스토리 제외
-            cached: true,
-            tokensUsed: 0,
-            cohortHit: true,
-          };
-
-          await storeFortuneResult(
-            fortuneChargeAdmin,
-            paidCaller.idempotencyKey,
-            userId,
-            'daily',
-            cohortPayload,
-          );
-
-          return new Response(
-            JSON.stringify(withTokenCharge(cohortPayload, paidCaller.tokenCharge)),
-            {
-              headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
-              status: 200,
-            }
-          );
-        } else {
-          console.log('⚠️ [Cohort] Pool에 결과 없음, LLM 호출로 진행');
-        }
-      } catch (cohortError) {
-        console.error('[Cohort] 조회 실패 (무시하고 계속):', cohortError);
-      }
-    }
-    // ============================================
+    // Personal scores/details are composed per request. Only identity-free
+    // category advice below is shared; legacy whole-result cohorts are excluded.
+    const adviceSources: Record<DailyAdviceSource, number> = { pool: 0, generated: 0, fallback: 0 };
+    let generatedTokens = 0;
 
     // 클라이언트에서 전달받은 날짜 또는 한국 시간대로 현재 날짜 생성
     const today = date
@@ -517,7 +443,7 @@ serve(async (req) => {
     
     // 띠별 오늘의 운세 요약 (날짜별로 다른 메시지)
     const generateZodiacFortune = (userZodiac: string) => {
-      const zodiacFortuneVariations = {
+      const zodiacFortuneVariations: Record<string, Array<{ title: string; content: string }>> = {
         '쥐': [
           { title: '기회를 놓치지 마세요', content: '새로운 기회가 다가오고 있습니다. 적극적인 자세로 임하세요.' },
           { title: '지혜로운 선택의 시간', content: '오늘은 신중한 판단력이 빛을 발할 때입니다. 꼼꼼히 살펴보세요.' },
@@ -595,7 +521,7 @@ serve(async (req) => {
 
     // 별자리별 오늘의 운세 요약 (날짜별로 다른 메시지)
     const generateZodiacSignFortune = (userSign: string) => {
-      const signFortuneVariations = {
+      const signFortuneVariations: Record<string, Array<{ title: string; content: string }>> = {
         '물병자리': [
           { title: '독창성이 빛나는 날', content: '혁신적인 아이디어로 주목받을 수 있습니다.' },
           { title: '미래를 내다보는 시각', content: '앞선 생각으로 새로운 트렌드를 이끌어가세요.' },
@@ -673,7 +599,7 @@ serve(async (req) => {
 
     // MBTI별 오늘의 운세 요약
     const generateMBTIFortune = (userMBTI: string) => {
-      const mbtiFortunes = {
+      const mbtiFortunes: Record<string, { title: string; content: string; score: number }> = {
         'ENFP': { title: '창의적 영감이 넘치는 날', content: '새로운 아이디어와 가능성을 탐험해보세요.', score: 89 },
         'ENFJ': { title: '타인을 이끄는 리더십 발휘', content: '따뜻한 카리스마로 주변을 감화시키세요.', score: 87 },
         'ENTP': { title: '논리적 창의성이 빛남', content: '혁신적인 해결책으로 문제를 해결하세요.', score: 88 },
@@ -736,7 +662,7 @@ serve(async (req) => {
       }
     }
 
-    // OpenAI GPT로 조언 생성 (비동기 함수)
+    // Generate an identity-free fragment only while holding a pool lease.
     const generateCategoryAdviceWithGPT = async (category: string, categoryScore: number, idiom?: string) => {
       try {
         // 카테고리별 프롬프트 생성
@@ -753,17 +679,17 @@ serve(async (req) => {
 
         let prompt = '';
         if (category === 'total' && idiom) {
-          prompt = `${name}님의 오늘의 ${categoryName} 조언을 MZ 감성으로 작성해줘!
+          prompt = `오늘의 ${categoryName} 조언을 MZ 감성으로 작성해줘!
 
 조건:
-- 사용자 이름: ${name}님 (본문에서 "${name}님" 호칭을 자연스럽게 1~2회 사용!)
+- 이름, 생일, 나이, 위치 등 개인 정보는 넣지 마. 누구에게나 같은 조건으로 적용되는 조언이야.
 - 참고 키워드: ${idiom} (딱딱하게 쓰지 말고 현대적으로 해석!)
 - 갓생 지수: ${categoryScore}점 🔥
 - 300~400자 정도로 핵심만!
 
 형식:
 💫 오늘의 바이브
-"${name}님, ${categoryScore >= 85 ? '오늘 뭘 해도 다 됨!' : categoryScore >= 70 ? '무난하게 잘 풀리는 날' : '천천히 가도 OK인 날'}" 이런 느낌으로 한 줄!
+"${categoryScore >= 85 ? '오늘 뭘 해도 다 됨!' : categoryScore >= 70 ? '무난하게 잘 풀리는 날' : '천천히 가도 OK인 날'}" 이런 느낌으로 한 줄!
 
 🎯 갓생 치트키
 • 진짜 실행 가능한 꿀팁 3가지
@@ -773,7 +699,7 @@ serve(async (req) => {
 한 줄로 짧게! (근데 무섭지 않게)
 
 💬 오늘의 한마디
-${name}님에게 보내는 응원 메시지 (친구가 말하듯이!)
+읽는 사람에게 보내는 응원 메시지 (친구가 말하듯이!)
 
 스타일:
 - MZ 말투 (~해봐요, 진짜 좋음!, 레전드!)
@@ -814,11 +740,11 @@ ${name}님에게 보내는 응원 메시지 (친구가 말하듯이!)
         const llm = await LLMFactory.createFromConfigAsync('daily')
 
         const systemContent = category === 'total'
-          ? `MZ 세대 감성의 친근한 인사이트 전문가야! 지금 상담 중인 사용자 이름은 "${name}님"이야.
+          ? `MZ 세대 감성의 친근한 인사이트 전문가야! 개인 정보 없이 공통 조언만 작성해.
 
 🔥 스타일 가이드:
 - 친구처럼 반말+존댓말 섞어서 (~해봐요, ~거예요, 진짜 좋음!)
-- "${name}님"을 자연스럽게 불러줘 (인사, 응원 등에서 1~2회)
+- 이름, 생일, 나이, 특정 날짜나 장소는 넣지 마.
 - "갓생", "럭키비키", "무지성", "레전드" 같은 MZ 표현 적극 활용
 - 이모지 적극 사용 (✨💫🔥💪😎🍀💯 등)
 - 짧고 임팩트 있게! 두바이 초콜릿처럼 달달하게!
@@ -850,8 +776,11 @@ ${name}님에게 보내는 응원 메시지 (친구가 말하듯이!)
         ], {
           temperature: 0.7,
           maxTokens: 1024,
-          jsonMode: false
+          jsonMode: false,
+          timeout: 20000,
         })
+
+        generatedTokens += response.usage.totalTokens;
 
         console.log(`✅ LLM 호출 완료 (${category}): ${response.provider}/${response.model} - ${response.latency}ms`)
 
@@ -862,8 +791,10 @@ ${name}님에게 보내는 응원 메시지 (친구가 말하듯이!)
           provider: response.provider,
           model: response.model,
           response: response,
-          metadata: { category, categoryScore, idiom, name, birthDate, zodiacAnimal, zodiacSign, mbtiType }
+          metadata: { category, categoryScore, idiom, poolVersion: 'daily-advice-v1' }
         })
+        // Truncated output still incurred usage, even though it cannot enter the pool.
+        if (response.finishReason !== 'stop') throw new Error('Incomplete daily advice');
 
         // 모델이 학습 데이터의 스팸 꼬리표(예: 중국어 도박 사이트 토큰)를 문장 끝에
         // 붙여 보내는 사고가 실제로 있었다. 사용자에게 닿기 전에 여기서 걸러낸다.
@@ -872,6 +803,7 @@ ${name}님에게 보내는 응원 메시지 (친구가 말하듯이!)
           console.warn(
             `⚠️ LLM 응답 이물질 제거 (${category}): ${JSON.stringify(sanitized.removed)}`
           )
+          throw new Error('Unsafe daily advice is excluded from the shared pool');
         }
         const rawContent = sanitized.text
 
@@ -892,9 +824,8 @@ ${name}님에게 보내는 응원 메시지 (친구가 말하듯이!)
 
         return rawContent
       } catch (error) {
-        console.error(`GPT API 호출 실패 (${category}):`, error);
-        // Fallback: 기본 조언 반환
-        return generateFallbackAdvice(category, categoryScore);
+        console.error(`Daily advice generation failed (${category}):`, error);
+        throw error;
       }
     };
 
@@ -915,7 +846,20 @@ ${name}님에게 보내는 응원 메시지 (친구가 말하듯이!)
       return fallbacks[category] || { description: '✨ 좋은 하루!', detail: '오늘도 럭키비키한 하루 보내세요! 🍀' };
     };
 
-    // GPT API로 각 카테고리 조언 생성 (비동기 병렬 처리)
+    const generateCategoryAdviceWithPool = async (category: string, categoryScore: number, idiom?: string): Promise<DailyAdvice> => {
+      const resolved = await resolveDailyAdvice({
+        client: supabaseAdmin,
+        category,
+        score: categoryScore,
+        idiom,
+        generate: () => generateCategoryAdviceWithGPT(category, categoryScore, idiom),
+        fallback: () => generateFallbackAdvice(category, categoryScore),
+      });
+      adviceSources[resolved.source] += 1;
+      return resolved.advice;
+    };
+
+    // Resolve common fragments from the DB; cold slots alone call the model.
     const totalScore = score;
     const totalIdiom = generateFourCharacterIdiom(totalScore);
     const loveScore = generateCategoryScore(score, 1);
@@ -924,14 +868,14 @@ ${name}님에게 보내는 응원 메시지 (친구가 말하듯이!)
     const studyScore = generateCategoryScore(score, 4);
     const healthScore = generateCategoryScore(score, 5);
 
-    // 모든 GPT API 호출을 병렬로 처리
+    // Six independent categories can resolve in parallel.
     const [totalAdvice, loveAdvice, moneyAdvice, workAdvice, studyAdvice, healthAdvice] = await Promise.all([
-      generateCategoryAdviceWithGPT('total', totalScore, totalIdiom),
-      generateCategoryAdviceWithGPT('love', loveScore),
-      generateCategoryAdviceWithGPT('money', moneyScore),
-      generateCategoryAdviceWithGPT('work', workScore),
-      generateCategoryAdviceWithGPT('study', studyScore),
-      generateCategoryAdviceWithGPT('health', healthScore),
+      generateCategoryAdviceWithPool('total', totalScore, totalIdiom),
+      generateCategoryAdviceWithPool('love', loveScore),
+      generateCategoryAdviceWithPool('money', moneyScore),
+      generateCategoryAdviceWithPool('work', workScore),
+      generateCategoryAdviceWithPool('study', studyScore),
+      generateCategoryAdviceWithPool('health', healthScore),
     ]);
 
     const categories = {
@@ -1661,7 +1605,7 @@ ${name}님에게 보내는 응원 메시지 (친구가 말하듯이!)
       
       // MBTI별 맞춤 팁
       if (mbtiType) {
-        const mbtiTips = {
+        const mbtiTips: Record<string, string> = {
           'ENTJ': '목표 달성을 위한 구체적인 로드맵을 그려보세요. 당신의 추진력이 빛날 때입니다.',
           'ENFJ': '주변 사람들에게 긍정적인 영향을 미칠 수 있는 기회를 찾아보세요.',
           'INTJ': '장기적인 비전을 구체화하는 시간을 가져보세요. 혁신적인 아이디어를 실현시킬 때입니다.',
@@ -1686,7 +1630,7 @@ ${name}님에게 보내는 응원 메시지 (친구가 말하듯이!)
       
       // 띠별 맞춤 팁
       if (zodiacAnimal) {
-        const zodiacTips = {
+        const zodiacTips: Record<string, string> = {
           '쥐': '기회를 놓치지 말고 재빠른 판단력을 발휘해보세요.',
           '소': '꾸준함과 인내심으로 큰 성과를 이룰 수 있는 때입니다.',
           '호랑이': '용감한 도전정신을 발휘해 새로운 영역에 도전해보세요.',
@@ -1976,34 +1920,13 @@ ${name}님에게 보내는 응원 메시지 (친구가 말하듯이!)
       console.warn('[widget-cache] 저장 실패 (무시):', err.message)
     })
 
-    // ✅ Cohort Pool 온디맨드 저장 (백그라운드, 비동기 - 응답 지연 없음)
-    // Pool이 50개 미만일 때만 저장되어 자연스럽게 축적됨
-    if (dailyCohortData && dailyCohortHash) {
-      // 템플릿화: 개인 정보를 플레이스홀더로 대체
-      const userName = name || '회원님';
-      const fortuneTemplate = {
-        ...fortune,
-        // 개인화 필드는 플레이스홀더로 대체
-        greeting: fortune.greeting?.replace(userName, '{{userName}}') || '',
-        content: fortune.content?.replace(userName, '{{userName}}') || '',
-        description: fortune.description?.replace(userName, '{{userName}}') || '',
-      };
-
-      saveToCohortPool(supabaseAdmin, 'daily', dailyCohortHash, dailyCohortData, fortuneTemplate).then(saved => {
-        if (saved) {
-          console.log('✅ [Cohort] Pool에 새 결과 저장됨');
-        }
-      }).catch(err => {
-        console.warn('[Cohort] Pool 저장 실패 (무시):', err.message);
-      });
-    }
-
     // 운세와 스토리를 함께 반환
     const responsePayload = {
       fortune: fortuneWithPercentile,
       storySegments,
-      cached: false,
-      tokensUsed: 0
+      cached: adviceSources.pool === 6,
+      tokensUsed: generatedTokens,
+      adviceSources,
     }
 
     await storeFortuneResult(
@@ -2038,7 +1961,7 @@ ${name}님에게 보내는 응원 메시지 (친구가 말하듯이!)
     return new Response(
       JSON.stringify({ 
         error: 'Failed to generate fortune',
-        message: error.message 
+        message: error instanceof Error ? error.message : 'Unknown fortune error'
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },

@@ -19,6 +19,16 @@ import { FORTUNE_CATALOG } from './fortune-catalog';
 import { FORTUNE_POINT_COSTS } from './fortune-pricing';
 
 describe('fortune-pricing SoT', () => {
+  test('기본 리딩은 1 온도이고 장문·이미지 프리미엄 가격은 유지한다', () => {
+    for (const key of ['daily', 'love', 'career', 'wealth', 'health', 'compatibility', 'tarot', 'biorhythm', 'mbti'] as const) {
+      expect(FORTUNE_POINT_COSTS[key]).toBe(1);
+    }
+    expect(FORTUNE_POINT_COSTS['traditional-saju']).toBe(12);
+    expect(FORTUNE_POINT_COSTS['face-reading']).toBe(5);
+    expect(FORTUNE_POINT_COSTS.talisman).toBe(25);
+    expect(FORTUNE_POINT_COSTS['past-life']).toBe(50);
+  });
+
   test('catalog 의 모든 id 가 SoT 에 존재한다 (drift 차단)', () => {
     for (const entry of FORTUNE_CATALOG) {
       expect(
