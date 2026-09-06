@@ -152,9 +152,52 @@
 
 /* --- 목록 페이지 --- */
 
+.characterGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ondo-spacing-lg);
+}
+
+.characterIdentity {
+  display: flex;
+  align-items: center;
+  gap: var(--ondo-spacing-md);
+  margin-bottom: var(--ondo-spacing-sm);
+}
+
+.characterIdentity > span { display: grid; gap: var(--ondo-spacing-xxs); }
+
+.openerPreview {
+  margin-top: var(--ondo-spacing-md);
+  padding-top: var(--ondo-spacing-md);
+  border-top: 1px solid var(--ondo-color-border);
+  font-family: var(--ondo-font-serif);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.characterCardAction {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ondo-spacing-sm);
+  margin-top: auto;
+  padding-top: var(--ondo-spacing-lg);
+  color: var(--ondo-color-accent-tertiary);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.characterCardAction small { color: var(--ondo-color-text-secondary); font-weight: 400; }
+
+@media (max-width: 700px) {
+  .characterGrid { grid-template-columns: minmax(0, 1fr); }
+}
+
 .characterCard {
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   gap: var(--ondo-spacing-md);
 }
 
@@ -167,6 +210,7 @@
   flex-direction: column;
   gap: var(--ondo-spacing-xxs);
   min-width: 0;
+  width: 100%;
 }
 
 .cardAvatar {

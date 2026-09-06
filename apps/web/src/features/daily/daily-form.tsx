@@ -25,6 +25,7 @@ export function DailyForm() {
   const [gender, setGender] = useState('');
   const [state, setState] = useState<State>({ kind: 'idle' });
   const resultRef = useRef<HTMLElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (state.kind !== 'done') return;
@@ -35,6 +36,7 @@ export function DailyForm() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!birthDate || state.kind === 'loading') return;
     setState({ kind: 'loading' });
 
     // 게스트 진입/익명 세션/401·402 분류는 전부 runFortune 안에 있다.
@@ -72,32 +74,35 @@ export function DailyForm() {
 
   return (
     <div className="ondo-stack">
-      <form aria-label="오늘의 운세 입력" className="ondo-daily-form" onSubmit={handleSubmit}>
-        <div className="ondo-daily-field">
-          <BirthDateField onChange={setBirthDate} value={birthDate} />
-        </div>
-        <div className="ondo-daily-field ondo-daily-time-field">
-          <BirthTimeChips onChange={setBirthTime} progressivelyRevealOnMobile value={birthTime} />
-        </div>
-        <div className="ondo-daily-field ondo-daily-gender-field">
-          <GenderChips onChange={setGender} value={gender} />
-        </div>
+      <form aria-label="오늘의 운세 입력" aria-busy={state.kind === 'loading'} className="ondo-daily-form" onSubmit={handleSubmit} ref={formRef}>
+        <fieldset aria-label="운세 입력 정보" className="ondo-daily-controls" disabled={state.kind === 'loading'}>
+          <div className="ondo-daily-field">
+            <BirthDateField onChange={setBirthDate} value={birthDate} />
+          </div>
+          <div className="ondo-daily-field ondo-daily-time-field">
+            <BirthTimeChips onChange={setBirthTime} progressivelyRevealOnMobile value={birthTime} />
+          </div>
+          <div className="ondo-daily-field ondo-daily-gender-field">
+            <GenderChips onChange={setGender} value={gender} />
+          </div>
 
-        <p className="ondo-daily-privacy">
-          입력한 정보는 운세 제공에 사용돼요. 자세한 내용은{' '}
-          <Link href="/privacy">개인정보처리방침</Link>에서 확인할 수 있어요.
-        </p>
+          <p className="ondo-daily-privacy">
+            입력한 정보는 운세 제공에 사용돼요. 자세한 내용은{' '}
+            <Link href="/privacy">개인정보처리방침</Link>에서 확인할 수 있어요.
+          </p>
 
-        <button
-          className="ondo-button ondo-daily-submit"
-          disabled={state.kind === 'loading' || !birthDate}
-          type="submit"
-        >
-          {state.kind === 'loading' ? '읽는 중…' : '오늘의 운세 보기'}
-        </button>
-
-        <p className="ondo-daily-auth-note">
-          로그인 없이 바로 확인해요. 결과를 저장하거나 온도가 더 필요할 때만 계정을 연결합니다.
+          <button
+            className="ondo-button ondo-daily-submit"
+            disabled={state.kind === 'loading' || !birthDate}
+            type="submit"
+          >
+            {state.kind === 'loading' ? '읽는 중…' : '오늘의 운세 보기'}
+          </button>
+        </fieldset>
+        <p className="ondo-daily-auth-note" role="status">
+          {state.kind === 'loading'
+            ? '오늘의 흐름을 읽고 있어요. 잠시만 기다려 주세요.'
+            : '로그인 없이 바로 확인해요. 결과를 저장하거나 온도가 더 필요할 때만 계정을 연결합니다.'}
         </p>
       </form>
 
@@ -109,7 +114,10 @@ export function DailyForm() {
         <DailyResult
           cached={state.cached}
           fortune={state.fortune}
-          onReset={() => setState({ kind: 'idle' })}
+          onReset={() => {
+            setState({ kind: 'idle' });
+            requestAnimationFrame(() => formRef.current?.querySelector<HTMLButtonElement>('[role="combobox"]')?.focus());
+          }}
           resultRef={resultRef}
         />
       ) : null}

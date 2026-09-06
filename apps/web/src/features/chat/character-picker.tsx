@@ -4,6 +4,7 @@
  */
 
 import { AppLink as Link } from '@/components/app-link';
+import { getFortuneCostPoints } from '@fortune/product-contracts';
 
 import { chatHref } from '@/lib/href';
 
@@ -13,18 +14,21 @@ import styles from './chat.module.css';
 
 export function CharacterPicker() {
   return (
-    <div className="ondo-stack">
+    <div className={styles.characterGrid}>
       {WEB_CHAT_CHARACTERS.map((character) => (
         <Link
           className={`ondo-card ${styles.characterCard}`}
           href={chatHref(character.id)}
           key={character.id}
         >
-          <CharacterAvatar character={character} large />
-
           <span className={styles.characterCardBody}>
-            <span className="ondo-kicker">{character.relationship}</span>
-            <span className="ondo-h3">{character.name}</span>
+            <span className={styles.characterIdentity}>
+              <CharacterAvatar character={character} large />
+              <span>
+                <span className="ondo-kicker">{character.relationship}</span>
+                <span className="ondo-h3">{character.name}</span>
+              </span>
+            </span>
             <span className="ondo-muted">{character.tagline}</span>
 
             <span className={styles.tagRow}>
@@ -33,6 +37,11 @@ export function CharacterPicker() {
                   #{tag}
                 </span>
               ))}
+            </span>
+            <span className={styles.openerPreview}>“{character.opener}”</span>
+            <span className={styles.characterCardAction}>
+              <span>대화 시작하기 <span aria-hidden="true">→</span></span>
+              <small>답장당 온도 {getFortuneCostPoints('character-chat')}개</small>
             </span>
           </span>
         </Link>
