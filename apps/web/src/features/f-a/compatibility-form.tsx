@@ -14,7 +14,7 @@
  *    서버가 male/female 로 채운다 → 입력을 늘리지 않으려고 보내지 않는다.
  */
 
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 
 import { BirthDateField, TextField } from '@/features/fortune/fields';
 import { FailureNotice } from '@/features/fortune/result';
@@ -25,6 +25,11 @@ import {
   type CompatibilityEnvelope,
   type CompatibilityFortune,
 } from './compatibility-result';
+import {
+  clearCompatibilityDraft,
+  readCompatibilityDraft,
+  writeCompatibilityDraft,
+} from './compatibility-draft';
 
 const LOGIN_HREF = `/auth/login?next=${encodeURIComponent('/운세/궁합')}`;
 
@@ -80,7 +85,29 @@ export function CompatibilityForm() {
   const [firstBirthDate, setFirstBirthDate] = useState('');
   const [secondName, setSecondName] = useState('');
   const [secondBirthDate, setSecondBirthDate] = useState('');
+  const [draftRestored, setDraftRestored] = useState(false);
   const [state, setState] = useState<State>({ kind: 'idle' });
+
+  useEffect(() => {
+    const draft = readCompatibilityDraft(window.sessionStorage);
+    if (draft) {
+      setFirstName(draft.firstName);
+      setFirstBirthDate(draft.firstBirthDate);
+      setSecondName(draft.secondName);
+      setSecondBirthDate(draft.secondBirthDate);
+    }
+    setDraftRestored(true);
+  }, []);
+
+  useEffect(() => {
+    if (!draftRestored) return;
+    writeCompatibilityDraft(window.sessionStorage, {
+      firstName,
+      firstBirthDate,
+      secondName,
+      secondBirthDate,
+    });
+  }, [draftRestored, firstName, firstBirthDate, secondName, secondBirthDate]);
 
   const ready =
     firstName.trim() !== '' &&
@@ -115,6 +142,7 @@ export function CompatibilityForm() {
       return;
     }
 
+    clearCompatibilityDraft(window.sessionStorage);
     setState({ kind: 'done', fortune });
   }
 
