@@ -20,6 +20,8 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   applicationName: '온도',
   category: 'lifestyle',
+  // Public publisher identity for site review; this does not load advertising code.
+  other: { 'google-adsense-account': 'ca-pub-2803643717997352' },
   title: {
     default: '온도 — 오늘의 운세와 캐릭터 대화',
     template: '%s · 온도',
