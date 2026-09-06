@@ -68,32 +68,26 @@ export class OpenRouterProvider implements ILLMProvider {
       });
 
       const timeoutMs = Math.max(1_000, Math.min(options?.timeout ?? 45_000, 120_000));
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-      let response: Response;
-      try {
-        response = await fetch(OPENROUTER_CHAT_COMPLETIONS_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${this.config.apiKey}`,
-            // OpenRouter 대시보드 귀속용 (아웃바운드 전용 헤더)
-            "X-Title": "Ondo",
-          },
-          body: JSON.stringify({
-            model: this.config.model,
-            messages: messages,
-            temperature: normalized.temperature ?? 1,
-            max_tokens: normalized.maxTokens,
-            response_format: normalized.jsonMode
-              ? { type: "json_object" }
-              : undefined,
-          }),
-          signal: controller.signal,
-        });
-      } finally {
-        clearTimeout(timeoutId);
-      }
+      // Keep the deadline active while reading the body as well as headers.
+      const response = await fetch(OPENROUTER_CHAT_COMPLETIONS_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.config.apiKey}`,
+          // OpenRouter 대시보드 귀속용 (아웃바운드 전용 헤더)
+          "X-Title": "Ondo",
+        },
+        body: JSON.stringify({
+          model: this.config.model,
+          messages: messages,
+          temperature: normalized.temperature ?? 1,
+          max_tokens: normalized.maxTokens,
+          response_format: normalized.jsonMode
+            ? { type: "json_object" }
+            : undefined,
+        }),
+        signal: AbortSignal.timeout(timeoutMs),
+      });
 
       if (!response.ok) {
         const errorText = await response.text();

@@ -12,6 +12,7 @@ import { ConfigService } from "./config-service.ts";
 import { createUserLlmProvider } from "./user_key.ts";
 import { BoundedFallbackProvider } from "./fallback-provider.ts";
 import { GEMINI_SAFE_TEXT_MODEL } from "./models.ts";
+import { economyRoute } from "./economy.ts";
 import {
   parseOpenRouterRoutingMode,
   resolvePlatformLlmRoute,
@@ -106,7 +107,20 @@ export class LLMFactory {
       mode: parseOpenRouterRoutingMode(Deno.env.get("OPENROUTER_ROUTING_MODE")),
       hasOpenRouterKey: openRouterKey.length > 0,
     });
-
+    // Respect the router's provider/kill-switch choice before bounding cost.
+    const economy = economyRoute(featureName, route.provider);
+    if (economy) {
+      console.log(`[llm-economy] ${featureName}: ${economy.provider}/${economy.model}`);
+      const primary = this.createProvider(economy.provider, economy.model, featureName);
+      if (economy.provider === 'openrouter' && envEnabled('OPENROUTER_RUNTIME_FALLBACK_ENABLED')) {
+        return new BoundedFallbackProvider(
+          primary,
+          this.createProvider('gemini', economy.fallbackModel, featureName),
+          featureName,
+        );
+      }
+      return primary;
+    }
     console.log(
       `[llm-router] ${featureName}: ${route.provider}/${route.model} reason=${route.reason}${
         route.shadowModel ? ` shadow=${route.shadowModel}` : ""

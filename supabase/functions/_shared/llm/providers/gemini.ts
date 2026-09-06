@@ -94,6 +94,10 @@ export class GeminiProvider implements ILLMProvider {
             "Content-Type": "application/json; charset=utf-8",
           },
           body: bodyString,
+          // A daily-pool lease must outlive the complete request, including its body.
+          signal: options?.timeout
+            ? AbortSignal.timeout(Math.max(1_000, Math.min(options.timeout, 120_000)))
+            : undefined,
         },
       );
       console.log("✅ [Gemini] API call completed, status:", response.status);

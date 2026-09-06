@@ -13,7 +13,7 @@
  * 클라이언트는 `fortune-catalog.ts` 가 본 파일의 lookup 으로 `costPoints` 채움.
  *
  * 가격 계층:
- *  - 1 (Light):    단순/짧은 텍스트 운세, 채팅 1턴 (배칭됨)
+ *  - 1 (Light):    기본 텍스트 운세, 채팅 1턴 (배칭됨)
  *  - 5 (Mid):      중간 텍스트 + vision input (관상/손금/OOTD 등)
  *  - 12 (Heavy):   사주 등 장문 / 6K+ 출력 텍스트
  *  - 25 (Premium): 헤비 보고서 + 이미지 생성 1장 (~₩52 원가)
@@ -64,14 +64,17 @@ export const FORTUNE_POINT_COSTS = {
   birthdate: 1,
   'lucky-guide': 1,
 
+  // 기본 리딩은 광고 보상으로도 자주 이용할 수 있도록 1 온도.
+  // 사진/장문/이미지 생성 상품은 아래의 기존 가격을 유지한다.
+  love: 1,
+  career: 1,
+  wealth: 1,
+  health: 1,
+  compatibility: 1,
+  tarot: 1,
+  biorhythm: 1,
+
   // === Mid (5 토큰) ===
-  love: 5,
-  career: 5,
-  wealth: 5,
-  health: 5,
-  compatibility: 5,
-  tarot: 5,
-  biorhythm: 5,
   personality: 5,
   'personality-dna': 5,
   weekly: 5,
