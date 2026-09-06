@@ -781,7 +781,6 @@ serve(async (req) => {
         })
 
         generatedTokens += response.usage.totalTokens;
-        if (response.finishReason !== 'stop') throw new Error('Incomplete daily advice');
 
         console.log(`✅ LLM 호출 완료 (${category}): ${response.provider}/${response.model} - ${response.latency}ms`)
 
@@ -794,6 +793,8 @@ serve(async (req) => {
           response: response,
           metadata: { category, categoryScore, idiom, poolVersion: 'daily-advice-v1' }
         })
+        // Truncated output still incurred usage, even though it cannot enter the pool.
+        if (response.finishReason !== 'stop') throw new Error('Incomplete daily advice');
 
         // 모델이 학습 데이터의 스팸 꼬리표(예: 중국어 도박 사이트 토큰)를 문장 끝에
         // 붙여 보내는 사고가 실제로 있었다. 사용자에게 닿기 전에 여기서 걸러낸다.
