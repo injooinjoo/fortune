@@ -178,7 +178,7 @@ export default function HomePage() {
         <ul className={styles.characterList}>
           {WEB_CHAT_CHARACTERS.map((character) => (
             <li key={character.id}>
-              <Link href={chatHref(character.id)} aria-label={`${character.name}과 대화하기`}>
+              <Link href={chatHref(character.id)} aria-label={`${character.name} 대화 열기`}>
                 <span aria-hidden="true">{character.name.slice(0, 1)}</span>
                 <div><strong>{character.name}</strong><small>{character.relationship}</small></div>
                 <em>{character.tags.slice(0, 2).map((tag) => `#${tag}`).join(' ')}</em>
