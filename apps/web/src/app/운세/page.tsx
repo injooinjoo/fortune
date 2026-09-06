@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
-import { FortuneLinkCard } from '@/components/fortune-link-card';
 import { groupWebFortunes } from '@/features/fortune/catalog';
+import { FortuneExplorer } from '@/features/fortune/fortune-explorer';
 import { FortunePageShell } from '@/features/fortune/shell';
 
 /**
@@ -70,21 +70,7 @@ export default function FortuneIndexPage() {
         </div>
       </details>
 
-      {sections.map((section, index) => {
-        const headingId = `fortune-group-${index}`;
-        return (
-          <section aria-labelledby={headingId} className="ondo-stack ondo-fortune-group" key={section.group}>
-            <h2 className="ondo-h3" id={headingId}>
-              {section.group}
-            </h2>
-            <div className="ondo-fortune-list">
-              {section.fortunes.map((fortune) => (
-                <FortuneLinkCard fortune={fortune} key={fortune.slug} />
-              ))}
-            </div>
-          </section>
-        );
-      })}
+      <FortuneExplorer sections={sections} />
     </FortunePageShell>
   );
 }

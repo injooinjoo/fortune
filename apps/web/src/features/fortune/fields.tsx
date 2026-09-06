@@ -12,7 +12,7 @@
  * 호출부가 Number(...) 로 바꾸면 되기 때문이다.
  */
 
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 
 import {
   createBirthYearOptions,
@@ -164,16 +164,13 @@ function YearPicker({
   const selectedRef = useRef<HTMLButtonElement>(null);
   const listId = `${id}-year-listbox`;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!open) return;
-    const frame = requestAnimationFrame(() => {
-      const list = listRef.current;
-      const target = selectedRef.current ?? preferredRef.current;
-      if (!list || !target) return;
-      list.scrollTop = target.offsetTop - list.clientHeight / 2 + target.offsetHeight / 2;
-      target.focus({ preventScroll: true });
-    });
-    return () => cancelAnimationFrame(frame);
+    const list = listRef.current;
+    const target = selectedRef.current ?? preferredRef.current;
+    if (!list || !target) return;
+    list.scrollTop = target.offsetTop - list.clientHeight / 2 + target.offsetHeight / 2;
+    target.focus({ preventScroll: true });
   }, [open, value]);
 
   useEffect(() => {
@@ -188,7 +185,7 @@ function YearPicker({
   function selectYear(next: number) {
     onChange(String(next));
     setOpen(false);
-    requestAnimationFrame(() => triggerRef.current?.focus());
+    triggerRef.current?.focus();
   }
 
   function openList() {
@@ -227,7 +224,13 @@ function YearPicker({
   }
 
   return (
-    <div className="ondo-year-picker" ref={rootRef}>
+    <div
+      className="ondo-year-picker"
+      ref={rootRef}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+      }}
+    >
       <button
         aria-controls={listId}
         aria-expanded={open}
@@ -236,6 +239,11 @@ function YearPicker({
         className="ondo-input ondo-date-select ondo-year-trigger"
         id={id}
         onClick={() => (open ? setOpen(false) : openList())}
+        onKeyDown={(event) => {
+          if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+          event.preventDefault();
+          openList();
+        }}
         ref={triggerRef}
         role="combobox"
         type="button"

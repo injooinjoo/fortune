@@ -22,6 +22,7 @@ html {
   color-scheme: light;
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  scroll-padding-top: 120px;
 }
 
 body {
@@ -238,6 +239,20 @@ textarea {
   background: var(--ondo-color-background);
 }
 
+.ondo-daily-controls {
+  display: grid;
+  gap: inherit;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.ondo-daily-controls:disabled { opacity: .7; }
+
+.ondo-explorer-controls { gap: 16px; }
+.ondo-explorer-controls input { background: var(--ondo-color-surface); }
+
 .ondo-daily-time-field .ondo-row {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -247,7 +262,7 @@ textarea {
 .ondo-daily-time-field .ondo-chip,
 .ondo-daily-gender-field .ondo-chip {
   width: 100%;
-  min-height: 40px;
+  min-height: 44px;
   padding: 9px 10px;
 }
 
@@ -418,7 +433,7 @@ textarea {
 }
 
 .ondo-chip {
-  min-height: 40px;
+  min-height: 44px;
   padding: var(--ondo-spacing-sm) var(--ondo-spacing-button-gap);
   border-radius: var(--ondo-radius-chip);
   border: 1px solid var(--ondo-color-border);
@@ -833,7 +848,7 @@ textarea {
 .ondo-desktop-nav a,
 .ondo-mobile-menu a {
   display: inline-flex;
-  min-height: 40px;
+  min-height: 44px;
   align-items: center;
   padding-inline: 13px;
   border-radius: 8px;
@@ -848,9 +863,15 @@ textarea {
   color: var(--ondo-color-text-primary);
 }
 
+.ondo-desktop-nav a[aria-current='page'],
+.ondo-mobile-menu a[aria-current='page'] {
+  background: var(--ondo-color-accent-light);
+  color: var(--ondo-color-accent-tertiary);
+}
+
 .ondo-login-link {
   display: inline-flex;
-  min-height: 38px;
+  min-height: 44px;
   align-items: center;
   padding-inline: 17px;
   border: 1px solid var(--ondo-color-border-opaque);
@@ -866,6 +887,9 @@ textarea {
 }
 
 .ondo-mobile-menu summary {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
   padding: 8px 12px;
   border: 1px solid var(--ondo-color-border-opaque);
   border-radius: 999px;
@@ -890,6 +914,7 @@ textarea {
   padding: 10px;
   border: 1px solid var(--ondo-color-border);
   background: var(--ondo-color-surface-elevated);
+  border-radius: 14px;
   box-shadow: 0 18px 50px rgba(25, 23, 22, 0.12);
 }
 
@@ -955,8 +980,8 @@ textarea {
 
 .ondo-fortune-shell {
   max-width: 920px;
-  gap: clamp(38px, 6vw, 68px);
-  padding-block: clamp(56px, 8vw, 96px);
+  gap: clamp(28px, 4vw, 44px);
+  padding-block: clamp(32px, 5vw, 56px);
 }
 
 .ondo-fortune-heading {
@@ -964,8 +989,8 @@ textarea {
 }
 
 .ondo-fortune-heading .ondo-h2 {
-  font-size: clamp(42px, 7vw, 70px);
-  line-height: 1.12;
+  font-size: clamp(32px, 4vw, 48px);
+  line-height: 1.25;
   letter-spacing: -.045em;
 }
 
@@ -1254,13 +1279,32 @@ textarea {
     width: min(100% - 32px, 1200px);
   }
 
-  .ondo-desktop-nav,
   .ondo-header-actions {
     display: none;
   }
 
+  .ondo-site-nav {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0 12px;
+    padding-top: 8px;
+  }
+
+  .ondo-desktop-nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: 100%;
+    margin: 4px 0 8px;
+  }
+
+  .ondo-desktop-nav a { justify-content: center; padding-inline: 4px; }
+
   .ondo-mobile-menu {
     display: block;
+    grid-column: 2;
+    grid-row: 1;
   }
 
   .ondo-footer-inner {
@@ -1291,6 +1335,16 @@ textarea {
 }
 
 @media (max-width: 480px) {
+  .ondo-fortune-shell { gap: 20px; padding-block: 24px 48px; }
+  .ondo-explorer-controls { gap: 12px; }
+  .ondo-explorer-controls .ondo-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 4px;
+    margin: -4px;
+  }
+  .ondo-explorer-controls .ondo-chip { flex-shrink: 0; }
+
   .ondo-fortune-guide-desktop {
     display: none;
   }
@@ -1307,7 +1361,7 @@ textarea {
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    padding: 12px 16px;
+    padding: 8px 16px;
     cursor: pointer;
     list-style: none;
   }
@@ -1343,15 +1397,15 @@ textarea {
   }
 
   .ondo-daily-page {
-    padding: 28px 16px 64px;
+    padding: 20px 16px 64px;
   }
 
   .ondo-daily-layout {
-    gap: 20px;
+    gap: 16px;
   }
 
   .ondo-daily-context {
-    gap: 24px;
+    gap: 16px;
   }
 
   .ondo-daily-guide {
@@ -1369,7 +1423,7 @@ textarea {
   }
 
   .ondo-daily-form {
-    gap: 18px;
+    gap: 16px;
   }
 
   .ondo-daily-heading {
@@ -1377,7 +1431,7 @@ textarea {
   }
 
   .ondo-daily-heading .ondo-h1 {
-    font-size: 34px;
+    font-size: 30px;
     line-height: 1.18;
   }
 
@@ -1391,7 +1445,7 @@ textarea {
   }
 
   .ondo-daily-facts {
-    padding-top: 16px;
+    padding-top: 12px;
   }
 
   .ondo-daily-facts div {
@@ -1403,8 +1457,8 @@ textarea {
   }
 
   .ondo-daily-form-panel {
-    gap: 24px;
-    padding: 24px 18px;
+    gap: 20px;
+    padding: 20px 18px;
     border-radius: 16px;
     box-shadow: 0 16px 44px rgba(20, 22, 26, .07);
   }
