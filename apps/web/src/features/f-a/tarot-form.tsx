@@ -16,7 +16,7 @@
  *    새로 만든다 (앱 `chat-results/edge-runtime.ts` 의 createClientChargeId 와 동일).
  */
 
-import { useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 
 import { ChipSelect, TextField, type ChipOption } from '@/features/fortune/fields';
 import { FailureNotice } from '@/features/fortune/result';
@@ -128,6 +128,7 @@ function CardSlots({
 const SLOTS = Array.from({ length: SLOT_COUNT }, (_, index) => index + 1);
 
 export function TarotForm() {
+  const [interactive, setInteractive] = useState(false);
   const [spreadType, setSpreadType] = useState<string>('threeCard');
   const [purpose, setPurpose] = useState('guidance');
   const [question, setQuestion] = useState('');
@@ -135,6 +136,10 @@ export function TarotForm() {
   const [selected, setSelected] = useState<number[]>([]);
   const [state, setState] = useState<State>({ kind: 'idle' });
   const questionTriggerRef = useRef<HTMLButtonElement>(null);
+
+  // The server-rendered controls are visible before React attaches listeners.
+  // Keep early taps from disappearing while the client code is still loading.
+  useEffect(() => setInteractive(true), []);
 
   const cardsNeeded = SPREADS.find((spread) => spread.value === spreadType)?.cards ?? 3;
   const ready = selected.length === cardsNeeded;
@@ -212,7 +217,14 @@ export function TarotForm() {
 
   return (
     <div className="ondo-stack">
-      <form className="ondo-stack" onSubmit={handleSubmit}>
+      <form aria-busy={!interactive || state.kind === 'loading'} className="ondo-stack" onSubmit={handleSubmit}>
+        <noscript><p className="ondo-notice">타로를 보려면 브라우저의 JavaScript를 켜 주세요.</p></noscript>
+        <fieldset
+          aria-label="타로 입력 정보"
+          className="ondo-stack"
+          disabled={!interactive || state.kind === 'loading'}
+          style={{ border: 0, margin: 0, padding: 0, minWidth: 0 }}
+        >
         <ChipSelect
           label="무엇이 궁금한가요?"
           onChange={setPurpose}
@@ -298,6 +310,7 @@ export function TarotForm() {
         <button className="ondo-button" disabled={state.kind === 'loading' || !ready} type="submit">
           {state.kind === 'loading' ? '카드를 읽는 중…' : '타로 리딩 보기'}
         </button>
+        </fieldset>
       </form>
 
       {state.kind === 'failed' ? (

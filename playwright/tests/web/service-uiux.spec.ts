@@ -28,6 +28,15 @@ test('모바일 메뉴는 Escape로 닫고 초점을 돌려준다', async ({ pag
 test.describe('실제 상세 경로의 입력과 탐색', () => {
   test.skip(!process.env.WEB_BASE_URL, '한글 경로를 제공하는 미리보기 환경에서 검증');
 
+  test.describe('타로 초기 렌더링', () => {
+    test.use({ javaScriptEnabled: false });
+    test('스크립트가 준비되기 전에는 입력을 받지 않는다', async ({ page }) => {
+      await page.goto('/운세/타로');
+      await expect(page.getByRole('button', { name: '더 구체적으로 적을래요 (선택)' })).toBeDisabled();
+      await expect(page.getByRole('button', { name: '1번 카드', exact: true })).toBeDisabled();
+    });
+  });
+
   test('운세 검색과 분류를 조합하고 빈 결과에서 복구한다', async ({ page }) => {
     await page.goto('/운세');
     const search = page.getByRole('searchbox', { name: '운세 검색' });
