@@ -1,0 +1,5 @@
+{
+  "name": "injoo-mods",
+  "owner": { "name": "injooinjoo" },
+  "plugins": [{ "name": "session-pulse", "source": "./.claude/mods/session-pulse" }]
+}

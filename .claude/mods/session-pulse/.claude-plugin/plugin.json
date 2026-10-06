@@ -1,0 +1,6 @@
+{
+  "name": "session-pulse",
+  "version": "0.1.0",
+  "description": "Shows where a session is in its session-start → test → push → PR → merge-run → attest pipeline, answers progress questions from that record, and handles model/effort switch phrases locally.",
+  "types": "./types/index.d.ts"
+}
